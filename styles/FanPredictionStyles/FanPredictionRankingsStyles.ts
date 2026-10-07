@@ -6,7 +6,7 @@ export const fanPredictionRankingsStyles = (isDark: boolean) => {
   const global = globalStyles(isDark);
 
   return StyleSheet.create({
-    screen: { backgroundColor: colors.background },
+    screen: { flex: 1, backgroundColor: colors.background },
     content: { padding: 12, paddingBottom: 40 },
     header: { gap: 20, marginBottom: 12 },
     intro: {

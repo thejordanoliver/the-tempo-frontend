@@ -3,6 +3,7 @@ import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
+import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
@@ -83,7 +84,12 @@ export default function HockeyGamePreviewModal({
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
+  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
+
+  const homeCoach = homeTeamDetails?.coach;
+  const awayCoach = awayTeamDetails?.coach;
 
   const isLoading = !!details;
 
@@ -96,7 +102,7 @@ export default function HockeyGamePreviewModal({
   });
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-  const state = score?.status?.state;
+  const state = score?.status?.state ?? "";
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
   const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;
@@ -117,6 +123,9 @@ export default function HockeyGamePreviewModal({
   const homeRecord = game?.home?.record ?? "0-0";
   const awayRecord = game?.away?.record ?? "0-0";
   const clock = game.status?.clock;
+  const injuries = details?.injuries ?? [];
+  const officials = details?.officials ?? [];
+  const highlights = details?.highlights ?? [];
   const lineScore = score?.periodScores?.length
     ? {
         home: score.periodScores.map((p) => p.home.toString()),
@@ -195,7 +204,7 @@ export default function HockeyGamePreviewModal({
                   gameStatusDescription={gameStatusDescription}
                   isHome={false}
                   league={LEAGUE}
-                  isDark
+                  isDark={isDark}
                 />
 
                 {/* Game Info */}
@@ -207,7 +216,7 @@ export default function HockeyGamePreviewModal({
                   broadcast={broadcast}
                   gameStatusShortDescription={gameStatusDetail}
                   gameStatusDescription={gameStatusDescription}
-                  isDark
+                  isDark={isDark}
                 />
 
                 {/* Home Team Row */}
@@ -223,7 +232,7 @@ export default function HockeyGamePreviewModal({
                   gameStatusDescription={gameStatusDescription}
                   isHome={true}
                   league={LEAGUE}
-                  isDark
+                  isDark={isDark}
                 />
               </View>
 
@@ -243,6 +252,11 @@ export default function HockeyGamePreviewModal({
                   awayId={awayId}
                   homeLogo={homeLogo}
                   lineScore={lineScore}
+                  homeCoach={homeCoach}
+                  awayCoach={awayCoach}
+                  injuries={injuries}
+                  officials={officials}
+                  highlights={highlights}
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}
                   venueImage={venueImage}

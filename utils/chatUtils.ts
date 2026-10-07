@@ -3,6 +3,7 @@ import type {
   ChatReactionMap,
   IncomingChatMessage,
 } from "types/chat";
+import { CHAT_EMOJIS, chatMessageKey } from "utils/gameChatState";
 import { BASE_URL } from "utils/apiClient";
 import { buildChatPayload, type ChatSendPayload } from "utils/chatPayload";
 
@@ -92,7 +93,7 @@ const normalizeReactions = (value: unknown): ChatReactionMap | undefined => {
   const reactions = Object.entries(value as Record<string, unknown>).reduce<
     ChatReactionMap
   >((acc, [emoji, users]) => {
-    if (!Array.isArray(users)) return acc;
+    if (!CHAT_EMOJIS.includes(emoji) || !Array.isArray(users)) return acc;
 
     const normalizedUsers = Array.from(
       new Set(
@@ -192,16 +193,20 @@ export const getFallbackMessageId = (message: IncomingChatMessage) =>
     getMessageGifUrl(message) ?? "",
   ].join(":");
 
-export const createMessageKey = (
-  message: ChatMessageItem | IncomingChatMessage,
-) =>
-  normalizeId(message.clientId) ??
-  normalizeId(message.id) ??
-  getFallbackMessageId(message as IncomingChatMessage);
+export const createMessageKey = (message: ChatMessageItem | IncomingChatMessage) => {
+  const raw = message as FlexibleIncomingChatMessage;
+  return chatMessageKey({
+    senderId: normalizeSenderId(raw.senderId ?? raw.sender_id),
+    gameId: getMessageGameId(message),
+    clientId: normalizeId(message.clientId),
+    id: normalizeId(message.id) ?? getFallbackMessageId(message),
+  });
+};
 
 export const normalizeMessage = (
   message: IncomingChatMessage,
 ): ChatMessageItem | null => {
+  if (!message || typeof message !== "object") return null;
   const raw = message as FlexibleIncomingChatMessage;
 
   const cleanText = getMessageText(message);
@@ -215,6 +220,7 @@ export const normalizeMessage = (
       normalizeId(raw.message_id) ??
       createMessageKey(message),
     clientId: normalizeId(raw.clientId),
+    cursor: typeof raw.cursor === "string" ? raw.cursor : undefined,
     senderId: normalizeSenderId(raw.senderId ?? raw.sender_id),
     user: getMessageUser(message),
     message: cleanText,
@@ -222,6 +228,7 @@ export const normalizeMessage = (
     profile_image: getMessageProfileImage(message),
     gif_url: gifUrl,
     reactions: normalizeReactions(raw.reactions),
+    reactionVersion: typeof raw.reactionVersion === "number" ? raw.reactionVersion : 0,
     gameId: getMessageGameId(message),
   };
 };

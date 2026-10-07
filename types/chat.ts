@@ -3,6 +3,7 @@ export type ChatReactionMap = Record<string, string[]>;
 export type ChatMessageItem = {
   id: string;
   clientId?: string;
+  cursor?: string;
   senderId?: number | null;
   user: string;
   message: string;
@@ -10,12 +11,17 @@ export type ChatMessageItem = {
   profile_image?: string;
   gif_url?: string;
   reactions?: ChatReactionMap;
+  reactionVersion?: number;
   gameId?: string | number;
+  delivery?: "pending" | "sent" | "failed";
+  error?: string;
+  receivedAt?: number;
 };
 
 export type IncomingChatMessage = {
   id?: unknown;
   clientId?: unknown;
+  cursor?: unknown;
   senderId?: unknown;
   sender_id?: unknown;
   user?: unknown;
@@ -24,11 +30,15 @@ export type IncomingChatMessage = {
   profile_image?: unknown;
   gif_url?: unknown;
   reactions?: unknown;
+  reactionVersion?: unknown;
   gameId?: unknown;
 };
 
 export type GameChatHistoryResponse = {
+  viewerUserId: number;
   messages: IncomingChatMessage[];
+  nextCursor?: string;
+  hasMore?: boolean;
 };
 
 export type SendGameChatMessagePayload = {
@@ -52,6 +62,8 @@ export type SendGameChatMessageAck =
 export type ToggleGameChatReactionPayload = {
   messageId: string;
   emoji: string;
+  active: boolean;
+  gameId: string;
 };
 
 export type ToggleGameChatReactionAck =
@@ -59,6 +71,7 @@ export type ToggleGameChatReactionAck =
       ok: true;
       messageId: string;
       reactions: ChatReactionMap;
+      reactionVersion?: number;
     }
   | {
       ok: false;
@@ -70,4 +83,5 @@ export type GameChatReactionUpdate = {
   gameId: string;
   messageId: string;
   reactions: ChatReactionMap;
+  reactionVersion?: number;
 };

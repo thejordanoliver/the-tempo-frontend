@@ -43,11 +43,11 @@ function getError(error: unknown): Error {
 export function useBaseballTeamGames(
   league: BaseballTeamScheduleLeague,
   teamId: string | number | null,
-  season: string | number | null,
+  season?: string | number | null,
 ): UseBaseballTeamGamesResult {
   return useMonthlyTeamSchedule({
-    sport: "baseball", league, teamId, season, requireSeason: true,
-    endpoint: `api/games/baseball/team/${league}/${teamId}/${season}`,
+    sport: "baseball", league, teamId, season,
+    endpoint: `api/games/baseball/team/${league}/${teamId}${season != null && season !== "" ? `/${season}` : ""}`,
     normalize, errorFrom: getError,
   });
 }

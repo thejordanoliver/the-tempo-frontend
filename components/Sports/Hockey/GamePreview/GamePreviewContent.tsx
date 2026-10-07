@@ -1,28 +1,41 @@
 import {
   GameLocation,
+  HeadCoaches,
+  Highlights,
   LastFiveGames,
+  LineScore,
+  Officials,
+  TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
-import LineScore from "@/components/Sports/Basketball/GameDetails/LineScore";
+import {
+  Official,
+  TeamInjury,
+} from "@/hooks/FootballHooks/useFootballGameDetails";
+import { Coach } from "@/hooks/useTeams";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 
 type GamePreviewContentProps = {
-  homeId: number;
-  awayId: number;
   homeColor: string;
-  homeName: string;
   homeCode: string;
   homeLogo: any;
   awayColor: string;
-  awayName: string;
   awayCode: string;
+  homeId: number;
+  awayId: number;
+  homeName: string;
+  awayName: string;
   awayLogo: any;
   lineScore: any;
+  injuries: TeamInjury[];
   homeLastGames: LastFiveGame[];
   awayLastGames: LastFiveGame[];
+  homeCoach: Coach | undefined | null;
+  awayCoach: Coach | undefined | null;
   venueImage?: any;
   venueName?: string;
   venueLocation?: string;
@@ -31,20 +44,30 @@ type GamePreviewContentProps = {
   venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
+  officials: Official[];
+  highlights: Highlight[];
   gameStatusDescription: string;
-  state?: string;
+  state: string;
   league: string;
   isDark: boolean;
 };
 
 export default function GamePreviewContent({
+  homeColor,
+  homeCode,
+  homeLogo,
+  awayColor,
+  awayCode,
   homeId,
   awayId,
-  homeCode,
-  awayCode,
   homeName,
   awayName,
+  awayLogo,
+  homeCoach,
+  awayCoach,
   lineScore,
+  injuries,
+  highlights,
   homeLastGames,
   awayLastGames,
   venueImage,
@@ -54,6 +77,7 @@ export default function GamePreviewContent({
   venueAttendance,
   venueCapacity,
   weather,
+  officials,
   state,
   league,
   isDark,
@@ -85,6 +109,35 @@ export default function GamePreviewContent({
           state={state}
           isDark={isDark}
         />
+
+        <Highlights highlights={highlights} isDark={isDark} />
+
+        <TeamInjuries
+          injuries={injuries}
+          awayId={awayId}
+          homeId={homeId}
+          homeCode={homeCode}
+          awayCode={awayCode}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
+          state={state}
+          league={league}
+          isDark={isDark}
+        />
+
+        <HeadCoaches
+          homeCode={homeCode}
+          awayCode={awayCode}
+          homeCoach={homeCoach}
+          awayCoach={awayCoach}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
+          isDark={isDark}
+          state={state}
+        />
+
+        <Officials officials={officials ?? []} state={state} isDark={isDark} />
+
         <GameLocation
           venueImage={venueImage}
           venueName={venueName}

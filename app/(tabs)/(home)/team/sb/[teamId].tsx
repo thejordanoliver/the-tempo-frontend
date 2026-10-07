@@ -5,7 +5,6 @@ import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getSBTeam, getSBTeamLogo } from "@/constants/teamsSB";
 import useTeamDetails from "@/hooks/useTeams";
-import { getWNBASeason } from "@/utils/dateUtils";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -18,7 +17,6 @@ import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function SoftballTeamDetailScreen() {
   const league = "sb";
-  const currentSeason = getWNBASeason();
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
@@ -65,7 +63,7 @@ export default function SoftballTeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useBaseballTeamGames("sb", teamIdNum ?? null, currentSeason);
+  } = useBaseballTeamGames("sb", teamIdNum ?? null);
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {

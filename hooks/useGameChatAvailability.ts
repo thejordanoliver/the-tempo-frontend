@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { AppState } from "react-native";
 import { shouldShowGameChat } from "utils/dateUtils";
@@ -14,10 +15,9 @@ export function useGameChatAvailability(gameDate: Date | null): boolean {
       setTick((tick) => tick + 1);
       const now = Date.now();
       const opening = gameTime - 15 * 60 * 1000;
-      const closing = new Date(gameTime);
-      closing.setHours(0, 0, 0, 0);
-      closing.setDate(closing.getDate() + 1);
-      const nextBoundary = opening > now ? opening : closing.getTime();
+      const nextDay = dayjs(gameTime).tz("America/New_York").add(1, "day").format("YYYY-MM-DD");
+      const closing = dayjs.tz(nextDay, "America/New_York");
+      const nextBoundary = opening > now ? opening : closing.valueOf();
       clearTimeout(timer);
       if (nextBoundary > now) {
         timer = setTimeout(refresh, Math.min(nextBoundary - now, 2_147_483_647));

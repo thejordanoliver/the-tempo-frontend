@@ -15,11 +15,9 @@ import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getNBASeason } from "utils/dateUtils";
 
 export default function GLeagueTeamDetailScreen() {
   const league = "gleague";
-  const currentSeason = getNBASeason();
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
@@ -73,7 +71,7 @@ export default function GLeagueTeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useBasketballTeamGames(league, teamIdNum, currentSeason);
+  } = useBasketballTeamGames(league, teamIdNum);
 
   const handleRefresh = async () => {
     await screen.runRefresh(async () => {

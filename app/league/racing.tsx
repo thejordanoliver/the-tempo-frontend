@@ -35,6 +35,7 @@ export default function RacingLeagueScreen() {
   }>();
 
   const league = params.league ?? "f1";
+  const leagueLabel = params.leagueLabel;
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
@@ -170,14 +171,14 @@ export default function RacingLeagueScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName={league.toUpperCase()}
+          tabName={leagueLabel}
           league={league}
           onBack={goBack}
           {...favoriteHeaderProps}
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league]);
+  }, [favoriteHeaderProps, navigation, league, leagueLabel]);
 
   return (
     <>
@@ -185,8 +186,8 @@ export default function RacingLeagueScreen() {
         tabs={tabs}
         selected={selectedTab}
         onTabPress={handleTabPress}
-        isDark={isDark}
         scrollProgress={scrollProgress}
+        isDark={isDark}
       />
       <View style={styles.container}>
         <PagerView
@@ -224,8 +225,8 @@ export default function RacingLeagueScreen() {
                 items={articles}
                 loading={newsLoading}
                 error={newsError}
-              refreshing={refreshingNews}
-              loadingMore={loadingMoreNews}
+                refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />

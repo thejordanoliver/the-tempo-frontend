@@ -10,7 +10,6 @@ import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import useTeamDetails from "@/hooks/useTeams";
-import { getFootballSeason } from "@/utils/dateUtils";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
@@ -25,7 +24,6 @@ import { getFirstSeasonGame } from "utils/seasonGames";
 
 export default function TeamDetailScreen() {
   const league = "cfb";
-  const currentSeason = getFootballSeason();
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
@@ -94,7 +92,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum, league, currentSeason);
+  } = useFootballTeamGames(teamIdNum, league);
 
   const {
     teamRoster,

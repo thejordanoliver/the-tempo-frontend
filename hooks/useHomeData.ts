@@ -1,5 +1,5 @@
 import type { HomeLeagueSource, LeagueGame } from "@/types/leagues";
-import { filterByDate, getFootballSeason } from "@/utils/dateUtils";
+import { filterByDate } from "@/utils/dateUtils";
 import { HOME_SCORE_LEAGUES, type HomeLeagueId } from "constants/leagues";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
@@ -24,7 +24,6 @@ dayjs.extend(timezone);
 const getStartOfToday = () => dayjs().startOf("day").toDate();
 
 export function useHomeData(selectedTab: "scores" | "for you") {
-  const currentFootballSeason = getFootballSeason();
   const {
     favorites,
     favoriteSports,
@@ -62,7 +61,6 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     refreshGames: refreshCFBGames,
   } = useFootballGames({
     date: selectedDate,
-    season: currentFootballSeason,
     league: "cfb",
   });
 
@@ -72,7 +70,6 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     refreshGames: refreshNFLGames,
   } = useFootballGames({
     date: selectedDate,
-    season: currentFootballSeason,
     league: "nfl",
   });
 
@@ -82,7 +79,6 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     refreshGames: refreshUFLGames,
   } = useFootballGames({
     date: selectedDate,
-    season: currentFootballSeason,
     league: "ufl",
   });
 

@@ -120,7 +120,7 @@ export default function FootballLeagueScreen() {
 function NFLLeagueScreen() {
   const league = "nfl";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-  const currentSeason = getFootballSeason();
+  const currentSeason = getFootballSeason(undefined, league);
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -416,7 +416,7 @@ function NFLLeagueScreen() {
 function CFBLeagueScreen() {
   const league = "cfb";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-  const currentSeason = getFootballSeason();
+  const currentSeason = getFootballSeason(undefined, league);
   const currentRecruitCycle = String(getRecruitYear());
   const navigation = useNavigation();
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
@@ -802,7 +802,7 @@ function CFBLeagueScreen() {
 function UFLLeagueScreen() {
   const league = "ufl";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-  const currentSeason = getFootballSeason();
+  const currentSeason = getFootballSeason(undefined, league);
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

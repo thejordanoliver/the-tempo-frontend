@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -6,6 +5,7 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -24,6 +24,9 @@ const PreferencesScreen = () => {
     leagueLayoutError,
     viewMode,
     setViewMode,
+    viewModeLoading,
+    viewModeSaving,
+    viewModeError,
     colorScheme,
     resolvedColorScheme,
     setColorScheme,
@@ -62,136 +65,139 @@ const PreferencesScreen = () => {
     };
   }, []);
 
-  const handleToggleActivityStatus = useCallback(async (next: boolean) => {
-    if (isUpdatingActivityStatus) return;
+  const handleToggleActivityStatus = useCallback(
+    async (next: boolean) => {
+      if (isUpdatingActivityStatus) return;
 
-    const previous = showActivityStatus;
+      const previous = showActivityStatus;
 
-    setShowActivityStatus(next);
-    setIsUpdatingActivityStatus(true);
+      setShowActivityStatus(next);
+      setIsUpdatingActivityStatus(true);
 
-    try {
-      const saved = await updateActivityStatusPreference(next);
-      setShowActivityStatus(saved);
-    } catch {
-      setShowActivityStatus(previous);
-    } finally {
-      setIsUpdatingActivityStatus(false);
-    }
-  }, [isUpdatingActivityStatus, showActivityStatus]);
+      try {
+        const saved = await updateActivityStatusPreference(next);
+        setShowActivityStatus(saved);
+      } catch {
+        setShowActivityStatus(previous);
+      } finally {
+        setIsUpdatingActivityStatus(false);
+      }
+    },
+    [isUpdatingActivityStatus, showActivityStatus],
+  );
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={navigationContentStyle(styles.scrollContent)}>
+      <ScrollView
+        contentContainerStyle={navigationContentStyle(styles.scrollContent)}
+      >
         <HeadingTwo isDark={isDark}>Gamecard Layout</HeadingTwo>
         <View>
-          <View
-            style={[
-              styles.optionButtonContainer,
-              viewMode === "list" && { borderBottomColor: selectedBorderColor },
-            ]}
-          >
-            <TouchableOpacity
-              onPress={() => setViewMode("list")}
-              style={styles.optionButton}
+          {(["list", "grid", "stacked"] as const).map((layout) => (
+            <View
+              key={layout}
+              style={[
+                styles.optionButtonContainer,
+                viewMode === layout && { borderBottomColor: selectedBorderColor },
+              ]}
             >
-              <Text
-                style={[
-                  styles.optionText,
-                  {
-                    color: viewMode === "list" ? textColor : notSelected,
-                  },
-                ]}
+              <TouchableOpacity
+                accessibilityRole="radio"
+                accessibilityState={{
+                  checked: viewMode === layout,
+                  disabled: viewModeLoading || viewModeSaving,
+                }}
+                disabled={viewModeLoading || viewModeSaving}
+                onPress={() => {
+                  void setViewMode(layout);
+                }}
+                style={styles.optionButton}
               >
-                List
-              </Text>
-              {viewMode === "list" && (
-                <Ionicons name="checkmark" size={24} color={textColor} />
-              )}
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={[
-              styles.optionButtonContainer,
-              viewMode === "grid" && { borderBottomColor: selectedBorderColor },
-            ]}
-          >
-            <TouchableOpacity
-              onPress={() => setViewMode("grid")}
-              style={styles.optionButton}
+                <Text
+                  style={[
+                    styles.optionText,
+                    { color: viewMode === layout ? textColor : notSelected },
+                  ]}
+                >
+                  {layout === "list"
+                    ? "List"
+                    : layout === "grid"
+                      ? "Grid"
+                      : "Stacked"}
+                </Text>
+                {viewMode === layout && (
+                  <Ionicons name="checkmark" size={24} color={textColor} />
+                )}
+              </TouchableOpacity>
+            </View>
+          ))}
+          {viewModeError && (
+            <Text
+              accessibilityRole="alert"
+              style={[
+                styles.optionText,
+                { color: isDark ? Colors.dark.lightRed : Colors.light.red },
+              ]}
             >
-              <Text
-                style={[
-                  styles.optionText,
-                  {
-                    color: viewMode === "grid" ? textColor : notSelected,
-                  },
-                ]}
-              >
-                Grid
-              </Text>
-              {viewMode === "grid" && (
-                <Ionicons name="checkmark" size={24} color={textColor} />
-              )}
-            </TouchableOpacity>
-          </View>
-          <View
-            style={[
-              styles.optionButtonContainer,
-              viewMode === "stacked" && {
-                borderBottomColor: selectedBorderColor,
-              },
-            ]}
-          >
-            <TouchableOpacity
-              onPress={() => setViewMode("stacked")}
-              style={styles.optionButton}
-            >
-              <Text
-                style={[
-                  styles.optionText,
-                  {
-                    color: viewMode === "stacked" ? textColor : notSelected,
-                  },
-                ]}
-              >
-                Stacked
-              </Text>
-              {viewMode === "stacked" && (
-                <Ionicons name="checkmark" size={24} color={textColor} />
-              )}
-            </TouchableOpacity>
-          </View>
+              {viewModeError}
+            </Text>
+          )}
         </View>
 
         <View style={styles.seperator} />
 
         <HeadingTwo isDark={isDark}>League Screen Layout</HeadingTwo>
         <View>
-          {(["carousel", "list"] as const).map(layout => (
-            <View key={layout} style={[
-              styles.optionButtonContainer,
-              leagueLayout === layout && { borderBottomColor: selectedBorderColor },
-            ]}>
+          {(["carousel", "list"] as const).map((layout) => (
+            <View
+              key={layout}
+              style={[
+                styles.optionButtonContainer,
+                leagueLayout === layout && {
+                  borderBottomColor: selectedBorderColor,
+                },
+              ]}
+            >
               <TouchableOpacity
                 accessibilityRole="radio"
-                accessibilityState={{ checked: leagueLayout === layout, disabled: leagueLayoutLoading || leagueLayoutSaving }}
+                accessibilityState={{
+                  checked: leagueLayout === layout,
+                  disabled: leagueLayoutLoading || leagueLayoutSaving,
+                }}
                 disabled={leagueLayoutLoading || leagueLayoutSaving}
-                onPress={() => { void setLeagueLayout(layout); }}
+                onPress={() => {
+                  void setLeagueLayout(layout);
+                }}
                 style={styles.optionButton}
               >
-                <Text style={[styles.optionText, { color: leagueLayout === layout ? textColor : notSelected }]}>
-                  {layout === "carousel" ? "Carousel" : "Default list"}
+                <Text
+                  style={[
+                    styles.optionText,
+                    {
+                      color: leagueLayout === layout ? textColor : notSelected,
+                    },
+                  ]}
+                >
+                  {layout === "carousel" ? "Carousel" : "List"}
                 </Text>
-                {leagueLayout === layout && <Ionicons name="checkmark" size={24} color={textColor} />}
+                {leagueLayout === layout && (
+                  <Ionicons name="checkmark" size={24} color={textColor} />
+                )}
               </TouchableOpacity>
             </View>
           ))}
-          {(leagueLayoutLoading || leagueLayoutSaving) && (
-            <Text style={styles.optionText}>{leagueLayoutSaving ? "Saving…" : "Loading…"}</Text>
+
+          {leagueLayoutError && (
+            <Text
+              accessibilityRole="alert"
+              style={[
+                styles.optionText,
+                { color: isDark ? Colors.dark.lightRed : Colors.light.red },
+              ]}
+            >
+              {leagueLayoutError}
+            </Text>
           )}
-          {leagueLayoutError && <Text accessibilityRole="alert" style={[styles.optionText, { color: isDark ? Colors.dark.lightRed : Colors.light.red }]}>{leagueLayoutError}</Text>}
         </View>
         <View style={styles.seperator} />
 

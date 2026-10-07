@@ -39,6 +39,8 @@ type ShotChartTab =
 
 const COURT_LENGTH = 94;
 const COURT_WIDTH = 50;
+const NBA_BASKET_OFFSET = 5.25;
+const SHOT_MARKER_EXTENT = 1.65;
 
 const normalizeId = (value: string | number | null | undefined) =>
   String(value ?? "").trim();
@@ -168,24 +170,29 @@ export default function ShotChart({
   }, [plays, selectedPeriod, isCollegeBasketball]);
 
   const renderShots = filteredPlays.map((play, index) => {
-    const rawX = Number(play.coordinate?.x);
-    const rawY = Number(play.coordinate?.y);
+    if (play.coordinate?.x == null || play.coordinate?.y == null) {
+      return null;
+    }
+
+    const rawX = Number(play.coordinate.x);
+    const rawY = Number(play.coordinate.y);
 
     if (!Number.isFinite(rawX) || !Number.isFinite(rawY)) {
       return null;
     }
 
     const playTeamId = normalizeId(play.team?.id);
+    const playEspnId = normalizeId(play.team?.espnId) || playTeamId;
 
     /*
      * Plays can contain either the ESPN team ID or the database team ID.
      * Check both so away shots are properly identified and mirrored.
      */
     const matchesHomeEspnId =
-      playTeamId !== "" && playTeamId === homeEspnIdString;
+      playEspnId !== "" && playEspnId === homeEspnIdString;
 
     const matchesAwayEspnId =
-      playTeamId !== "" && playTeamId === awayEspnIdString;
+      playEspnId !== "" && playEspnId === awayEspnIdString;
 
     const matchesHomeDatabaseId =
       playTeamId !== "" && playTeamId === homeDatabaseIdString;
@@ -205,11 +212,12 @@ export default function ShotChart({
       (!matchesHomeEspnId && !isHomeShot && matchesAwayDatabaseId);
 
     /*
-     * ESPN coordinates are represented as:
-     * x = court width
-     * y = distance along the court
+     * The backend supplies x across the court and y along the court.
+     * NBA y is measured from the basket, 5.25 feet inside the baseline.
+     * Translate that origin into the full-court image's baseline origin.
      */
-    let svgX = COURT_LENGTH - rawY;
+    const basketOffset = league === "nba" ? NBA_BASKET_OFFSET : 0;
+    let svgX = COURT_LENGTH - basketOffset - rawY;
     let svgY = rawX;
 
     /*
@@ -222,11 +230,17 @@ export default function ShotChart({
     }
 
     /*
-     * Keep markers inside the SVG if an upstream coordinate
-     * is slightly outside the expected court dimensions.
+     * Include the marker radius and miss outline when keeping shots
+     * inside the court, so sideline shots do not extend off the image.
      */
-    svgX = Math.max(0, Math.min(COURT_LENGTH, svgX));
-    svgY = Math.max(0, Math.min(COURT_WIDTH, svgY));
+    svgX = Math.max(
+      SHOT_MARKER_EXTENT,
+      Math.min(COURT_LENGTH - SHOT_MARKER_EXTENT, svgX),
+    );
+    svgY = Math.max(
+      SHOT_MARKER_EXTENT,
+      Math.min(COURT_WIDTH - SHOT_MARKER_EXTENT, svgY),
+    );
 
     const color = isHomeShot
       ? homeColorValue

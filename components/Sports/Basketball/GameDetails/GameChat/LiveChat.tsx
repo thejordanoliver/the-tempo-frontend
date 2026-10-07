@@ -31,13 +31,14 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ChatMessageItem } from "types/chat";
 import type { ChatSendPayload } from "utils/chatPayload";
+import { CHAT_EMOJIS } from "utils/gameChatState";
 import { createMessageKey } from "utils/chatUtils";
 import { snapPoints } from "utils/modalUtils";
 import { GiphySearchModal } from "../../../../Messages/GiphySearchModal";
 import ChatInputBar from "./ChatInputBar";
 import ChatMessage from "./ChatMessage";
 
-const EMOJIS = ["😂", "😱", "😳", "🔥"];
+const EMOJIS = CHAT_EMOJIS;
 const FALLBACK_INPUT_HEIGHT = 84;
 const NEAR_BOTTOM_THRESHOLD = 96;
 
@@ -58,6 +59,10 @@ const BottomSheetChatList =
   BottomSheetFlatList as unknown as React.ComponentType<BottomSheetChatListProps>;
 
 type Props = {
+  currentUserId?: number;
+  error: string | null;
+  onRetry: (id: string) => void;
+  onDelete: (id: string) => void;
   messages: ChatMessageItem[];
   userCount: number;
   currentUserName: string;
@@ -70,6 +75,7 @@ type Props = {
 };
 
 export default function LiveChat({
+  currentUserId, error, onRetry, onDelete,
   messages,
   userCount,
   currentUserName,
@@ -220,6 +226,9 @@ export default function LiveChat({
   const renderItem = useCallback(
     ({ item }: { item: ChatMessageItem }) => (
       <ChatMessage
+        currentUserId={currentUserId}
+        onRetry={onRetry}
+        onDelete={onDelete}
         item={item}
         userName={currentUserName}
         isDark={isDark}
@@ -228,7 +237,7 @@ export default function LiveChat({
         onBlockedUser={onBlockedUser}
       />
     ),
-    [currentUserName, isDark, onBlockedUser, onReaction],
+    [currentUserId, currentUserName, isDark, onBlockedUser, onReaction, onRetry, onDelete],
   );
 
   const handleSend = useCallback(
@@ -279,12 +288,13 @@ export default function LiveChat({
     () => (
       <View style={styles.header}>
         <Text style={styles.title}>Live Chat</Text>
+        {error && <Text accessibilityRole="alert" style={styles.userCount}>{error}</Text>}
         <Text style={styles.userCount}>
           {userCount} {userCount === 1 ? "person" : "people"} in chat
         </Text>
       </View>
     ),
-    [styles.header, styles.title, styles.userCount, userCount],
+    [error, styles.header, styles.title, styles.userCount, userCount],
   );
 
   const renderFooter = useCallback(

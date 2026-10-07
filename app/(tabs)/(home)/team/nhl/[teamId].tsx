@@ -77,7 +77,7 @@ export default function TeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useTeamGames("nhl", teamIdNum, currentSeason);
+  } = useTeamGames("nhl", teamIdNum);
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {

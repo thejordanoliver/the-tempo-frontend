@@ -104,7 +104,7 @@ export default function TeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useBasketballTeamGames("wnba", teamIdNum, currentSeason);
+  } = useBasketballTeamGames("wnba", teamIdNum);
 
   const handleRefresh = async () => {
     await screen.runRefresh(async () => {

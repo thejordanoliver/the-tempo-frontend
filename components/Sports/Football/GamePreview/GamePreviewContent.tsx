@@ -10,6 +10,7 @@ import {
 import {
   BoxScorePlayerTeam,
   FootballDrive,
+  Official,
   PlayObject,
   TeamInjury,
   TeamLeaders,
@@ -62,7 +63,7 @@ type GamePreviewContentProps = {
   awayLastGames: LastFiveGame[];
   homeCoach: Coach | undefined | null;
   awayCoach: Coach | undefined | null;
-  officials: any[];
+  officials: Official[];
   error?: string | null;
   venueImage?: any;
   venueName?: string;

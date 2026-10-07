@@ -24,7 +24,6 @@ import { getNBASeason } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
   const league = "nba";
-  const currentSeason = getNBASeason();
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
@@ -104,7 +103,7 @@ export default function TeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useBasketballTeamGames(league, teamIdNum, currentSeason);
+  } = useBasketballTeamGames(league, teamIdNum);
 
   const handleRefresh = async () => {
     await screen.runRefresh(async () => {

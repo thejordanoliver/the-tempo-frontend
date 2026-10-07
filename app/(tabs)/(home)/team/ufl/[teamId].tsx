@@ -19,7 +19,6 @@ import { getFirstSeasonGame } from "utils/seasonGames";
 
 export default function TeamDetailScreen() {
   const league = "ufl";
-  const currentSeason = getFootballSeason();
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
@@ -48,7 +47,7 @@ export default function TeamDetailScreen() {
     setModalVisible,
   } = screen;
   const [standingsYear, setStandingsYear] = useState(
-    getFootballSeason().toString(),
+    getFootballSeason(undefined, league).toString(),
   );
 
   const { teamDetails } = useTeamDetails(league, teamIdNum);
@@ -69,7 +68,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum, league, currentSeason);
+  } = useFootballTeamGames(teamIdNum, league);
 
   const firstSeasonGame = useMemo(
     () => getFirstSeasonGame(teamGames),

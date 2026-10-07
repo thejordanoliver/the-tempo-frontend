@@ -15,10 +15,8 @@ import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getMLBSeason } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
-  const currentSeason = getMLBSeason();
   const styles = TeamDetailStyles;
   const { teamId, league } = useLocalSearchParams<{
     teamId: string;
@@ -55,7 +53,7 @@ export default function TeamDetailScreen() {
     refreshing: gamesRefreshing,
     error: gamesError,
     refresh: refreshTeamGames,
-  } = useSoccerTeamGames(teamIdNum, league, currentSeason);
+  } = useSoccerTeamGames(teamIdNum, league);
 
   const {
     sections,

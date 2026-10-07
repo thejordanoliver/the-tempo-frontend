@@ -136,7 +136,7 @@ export function useTeamGames(
 
   const fetchSchedule = useCallback(
     async (isRefresh = false) => {
-      if (!league || !teamId || season === null || season === undefined || season === "") {
+      if (!league || !teamId) {
         setData(null);
         setLoading(false);
         setRefreshing(false);
@@ -154,7 +154,7 @@ export function useTeamGames(
         }
 
         const response = await apiClient.get<TeamScheduleResponse>(
-          `api/games/hockey/team/${league}/${teamId}/${season}`,
+          `api/games/hockey/team/${league}/${teamId}${season != null && season !== "" ? `/${season}` : ""}`,
         );
 
         const games = sortGamesByDate(response.data.games || []);

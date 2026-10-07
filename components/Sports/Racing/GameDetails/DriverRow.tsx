@@ -17,7 +17,6 @@ export const DriverRow = ({
 }: RacingProps) => {
   const router = useScopedRouter();
   const styles = DriverRowStyles(isDark);
-
   const route = "/player/racing/[id]";
 
   const handleTeamPress = () => {
@@ -53,8 +52,8 @@ export const DriverRow = ({
         </View>
 
         <View>
-          <Text style={styles.subText}>Laps: {laps}</Text>
-          <Text style={styles.subText}>Time: {time}</Text>
+          {laps && <Text style={styles.subText}>Laps: {laps}</Text>}
+          {time && <Text style={styles.subText}>Time: {time}</Text>}
         </View>
       </View>
     </View>

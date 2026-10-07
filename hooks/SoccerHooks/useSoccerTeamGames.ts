@@ -62,8 +62,7 @@ export function useSoccerTeamGames(
     league,
     teamId,
     season,
-    requireSeason: true,
-    endpoint: `api/games/soccer/team/${league}/${teamId}/${season}`,
+    endpoint: `api/games/soccer/team/${league}/${teamId}${season != null && season !== "" ? `/${season}` : ""}`,
     normalize,
     errorFrom: getError,
   });

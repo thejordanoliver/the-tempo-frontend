@@ -165,8 +165,6 @@ export function useFootballGames({
 
         if (season != null && season !== "") {
           params.season = season;
-        } else {
-          params.season = dayjs().year();
         }
 
         if (seasontype != null && seasontype !== "") {

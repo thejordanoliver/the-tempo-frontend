@@ -675,6 +675,7 @@ export default function GameDetailsScreen(
 
       {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
+          context={{ sport: "basketball", league: LEAGUE, date: gameDateObj?.toISOString() }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}

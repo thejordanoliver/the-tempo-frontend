@@ -1,3 +1,5 @@
+import { useGameCardLayoutPreference } from "hooks/useGameCardLayoutPreference";
+import type { GameCardLayout } from "types/preferences";
 import { useLeagueLayoutPreference } from "hooks/useLeagueLayoutPreference";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {
@@ -10,13 +12,16 @@ import React, {
 } from "react";
 import { Appearance } from "react-native";
 
-export type ViewMode = "list" | "grid" | "stacked";
+export type ViewMode = GameCardLayout;
 export type ColorSchemePreference = "light" | "dark" | "system";
 export type ResolvedColorScheme = "light" | "dark";
 
 type PreferencesContextType = ReturnType<typeof useLeagueLayoutPreference> & {
   viewMode: ViewMode;
-  setViewMode: (mode: ViewMode) => void;
+  setViewMode: (mode: ViewMode) => Promise<void>;
+  viewModeLoading: boolean;
+  viewModeSaving: boolean;
+  viewModeError: string | null;
   toggleViewMode: () => void;
 
   colorScheme: ColorSchemePreference;
@@ -29,14 +34,19 @@ const PreferencesContext = createContext<PreferencesContextType | undefined>(
   undefined,
 );
 
-const VIEW_MODE_KEY = "@view_mode_preference";
 const COLOR_SCHEME_KEY = "@color_scheme_preference";
 
 export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const leaguePreference = useLeagueLayoutPreference();
-  const [viewMode, setViewModeState] = useState<ViewMode>("list");
+  const {
+    gameCardLayout: viewMode,
+    setGameCardLayout: setViewMode,
+    gameCardLayoutLoading: viewModeLoading,
+    gameCardLayoutSaving: viewModeSaving,
+    gameCardLayoutError: viewModeError,
+  } = useGameCardLayoutPreference();
   const [colorScheme, setColorSchemeState] =
     useState<ColorSchemePreference>("system");
 
@@ -59,18 +69,7 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const load = async () => {
       try {
-        const [storedView, storedTheme] = await Promise.all([
-          AsyncStorage.getItem(VIEW_MODE_KEY),
-          AsyncStorage.getItem(COLOR_SCHEME_KEY),
-        ]);
-
-        if (
-          storedView === "list" ||
-          storedView === "grid" ||
-          storedView === "stacked"
-        ) {
-          setViewModeState(storedView);
-        }
+        const storedTheme = await AsyncStorage.getItem(COLOR_SCHEME_KEY);
 
         if (
           storedTheme === "light" ||
@@ -89,14 +88,6 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   /* ---------------- Persist helpers ---------------- */
 
-  const persistViewMode = useCallback(async (mode: ViewMode) => {
-    try {
-      await AsyncStorage.setItem(VIEW_MODE_KEY, mode);
-    } catch (e) {
-      console.warn("Failed to save view mode:", e);
-    }
-  }, []);
-
   const persistColorScheme = useCallback(
     async (scheme: ColorSchemePreference) => {
       try {
@@ -110,14 +101,6 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   /* ---------------- Setters ---------------- */
 
-  const setViewMode = useCallback(
-    (mode: ViewMode) => {
-      setViewModeState(mode);
-      void persistViewMode(mode);
-    },
-    [persistViewMode],
-  );
-
   const setColorScheme = useCallback(
     (scheme: ColorSchemePreference) => {
       setColorSchemeState(scheme);
@@ -129,18 +112,10 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
   /* ---------------- Toggles ---------------- */
 
   const toggleViewMode = useCallback(() => {
-    setViewModeState((currentMode) => {
-      const nextMode =
-        currentMode === "list"
-          ? "grid"
-          : currentMode === "grid"
-            ? "stacked"
-            : "list";
-
-      void persistViewMode(nextMode);
-      return nextMode;
-    });
-  }, [persistViewMode]);
+    const nextMode =
+      viewMode === "list" ? "grid" : viewMode === "grid" ? "stacked" : "list";
+    void setViewMode(nextMode);
+  }, [setViewMode, viewMode]);
 
   const toggleColorScheme = useCallback(() => {
     setColorSchemeState((currentScheme) => {
@@ -160,6 +135,9 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
     () => ({
       ...leaguePreference,
       viewMode,
+      viewModeLoading,
+      viewModeSaving,
+      viewModeError,
       setViewMode,
       toggleViewMode,
       colorScheme,
@@ -176,6 +154,9 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
       toggleColorScheme,
       toggleViewMode,
       viewMode,
+      viewModeLoading,
+      viewModeSaving,
+      viewModeError,
     ],
   );
 

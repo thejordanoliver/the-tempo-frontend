@@ -81,16 +81,24 @@ function FanPredictionContent(props: Props) {
       {canVote && (
         <View style={styles.bonusRow}>
           {scoring ? (
-            <Text style={scoring.pointsValue === 2 ? styles.bonusBadge : styles.subtitle}>
+            <Text
+              style={
+                scoring.pointsValue === 2 ? styles.bonusBadge : styles.subtitle
+              }
+            >
               {scoring.pointsValue === 2
-                ? `2× points · ${{ rivalry: "Rivalry game", ranked: "Both teams ranked", playoff: "Playoff game", championship: "Championship", knockout: "Tournament knockout" }[scoring.bonusReason!]}`
+                ? `2× points · ${{ rivalry: "Rivalry game🫯", ranked: "Ranked Matchup🔥", playoff: "Playoff game🏆", championship: "Championship", knockout: "Tournament knockout" }[scoring.bonusReason!]}`
                 : "1 point for a correct pick"}
             </Text>
           ) : scoringError ? (
             <Pressable onPress={retryScoring} accessibilityRole="button">
-              <Text style={global.errorText}>Couldn’t load points. Tap to retry.</Text>
+              <Text style={global.errorText}>
+                Couldn’t load points. Tap to retry.
+              </Text>
             </Pressable>
-          ) : <Text style={styles.subtitle}>Checking prediction points…</Text>}
+          ) : (
+            <Text style={styles.subtitle}>Checking prediction points…</Text>
+          )}
         </View>
       )}
       <View style={styles.cardsRow}>
@@ -139,7 +147,8 @@ function FanPredictionContent(props: Props) {
           </View>
           <View style={styles.footer}>
             <Text style={styles.rankingHint}>
-              Correct picks earn 1 point, or 2 for qualifying important matchups.
+              Correct picks earn 1 point, or 2 for qualifying important
+              matchups.
             </Text>
             <FanRankingsLink />
           </View>

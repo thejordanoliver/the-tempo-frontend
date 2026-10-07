@@ -1,12 +1,15 @@
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { Image } from "expo-image";
 import { memo, useMemo } from "react";
-import { Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import SafetyActionsModal from "components/SafetyActionsModal";
 import type { ChatMessageItem } from "types/chat";
 
 interface Props {
+  currentUserId?: number;
+  onRetry: (id: string) => void;
+  onDelete: (id: string) => void;
   item: ChatMessageItem;
   userName: string;
   isDark: boolean;
@@ -18,7 +21,7 @@ interface Props {
 const profilePlaceholder =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
 
-function ChatMessage({ item, userName, isDark, emojis, onReaction, onBlockedUser }: Props) {
+function ChatMessage({ currentUserId, onRetry, onDelete, item, userName, isDark, emojis, onReaction, onBlockedUser }: Props) {
   const styles = useMemo(() => ChatMessageStyles(isDark), [isDark]);
 
   const time = new Date(item.time).toLocaleTimeString([], {
@@ -30,7 +33,7 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction, onBlockedUser
   const gifUrl = item.gif_url;
   const hasGif = Boolean(gifUrl);
 
-  const isCurrentUser = item.user === userName;
+  const isCurrentUser = item.senderId != null && item.senderId === currentUserId;
   const safety = useSafetyActions({
     userId: item.senderId,
     username: item.user,
@@ -43,7 +46,9 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction, onBlockedUser
   return (
     <>
     <Pressable
-      onLongPress={isCurrentUser ? undefined : safety.open}
+      onLongPress={isCurrentUser && item.delivery === "sent" ? () => Alert.alert("Delete message?", "This removes the message for everyone.", [
+        { text: "Cancel", style: "cancel" }, { text: "Delete", style: "destructive", onPress: () => onDelete(item.id) },
+      ]) : isCurrentUser ? undefined : safety.open}
       delayLongPress={350}
       accessibilityHint={isCurrentUser ? undefined : "Long press for safety actions"}
       style={[
@@ -85,10 +90,13 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction, onBlockedUser
         )}
 
         <Text style={[styles.time, isCurrentUser && styles.currentUserTime]}>
-          {time}
+          {time}{item.delivery === "pending" ? " · Sending…" : ""}
         </Text>
       </View>
 
+      {item.delivery === "failed" && <TouchableOpacity onPress={() => onRetry(item.id)} accessibilityRole="button">
+        <Text style={styles.message}>{item.error ?? "Message failed"} · Retry</Text>
+      </TouchableOpacity>}
       <View
         style={[
           styles.reactionContainer,
@@ -97,12 +105,13 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction, onBlockedUser
       >
         {emojis.map((emoji) => {
           const count = item.reactions?.[emoji]?.length ?? 0;
-          const selected = item.reactions?.[emoji]?.includes(userName) ?? false;
+          const selected = item.reactions?.[emoji]?.includes(String(currentUserId)) ?? false;
 
           return (
             <TouchableOpacity
               key={emoji}
               activeOpacity={activeOpacity}
+              disabled={item.delivery !== "sent"}
               onPress={() => onReaction(item.id, emoji)}
               style={[
                 styles.reactionButtonWrapper,
@@ -131,6 +140,9 @@ export default memo(
   ChatMessage,
   (prevProps, nextProps) =>
     prevProps.item === nextProps.item &&
+    prevProps.currentUserId === nextProps.currentUserId &&
+    prevProps.onRetry === nextProps.onRetry &&
+    prevProps.onDelete === nextProps.onDelete &&
     prevProps.userName === nextProps.userName &&
     prevProps.isDark === nextProps.isDark &&
     prevProps.emojis === nextProps.emojis &&

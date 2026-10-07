@@ -20,13 +20,12 @@ export function shouldShowGameChat(gameDate: Date | null): boolean {
   const chatStart = gameDate.getTime() - 15 * 60 * 1000;
 
   // End at midnight on the calendar day after the game.
-  const chatEnd = new Date(gameDate);
-  chatEnd.setHours(0, 0, 0, 0);
-  chatEnd.setDate(chatEnd.getDate() + 1);
+  const nextDay = dayjs(gameDate).tz("America/New_York").add(1, "day").format("YYYY-MM-DD");
+  const chatEnd = dayjs.tz(nextDay, "America/New_York");
 
   const currentTime = Date.now();
 
-  return currentTime >= chatStart && currentTime < chatEnd.getTime();
+  return currentTime >= chatStart && currentTime < chatEnd.valueOf();
 }
 
 export function formatDateToUTCYYYYMMDD(
@@ -134,9 +133,11 @@ export function getNBACalendarSeason(): string {
   return String(month >= 10 ? year + 1 : year);
 }
 
-export function getFootballSeason(date = new Date()) {
+export function getFootballSeason(date = new Date(), league = "nfl") {
   const year = date.getFullYear();
   const month = date.getMonth();
+  if (league === "ufl") return year;
+  if (league === "cfb") return month === 0 ? year - 1 : year;
   return month < 5 ? year - 1 : year;
 }
 

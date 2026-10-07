@@ -24,7 +24,6 @@ import { getFirstSeasonGame } from "utils/seasonGames";
 
 export default function TeamDetailScreen() {
   const league = "nfl";
-  const currentSeason = getFootballSeason();
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
@@ -81,7 +80,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum, league, currentSeason);
+  } = useFootballTeamGames(teamIdNum, league);
 
   const {
     teamRoster,

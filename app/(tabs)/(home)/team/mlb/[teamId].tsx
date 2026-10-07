@@ -98,7 +98,7 @@ export default function TeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useBaseballTeamGames("mlb", teamIdNum, currentSeason);
+  } = useBaseballTeamGames("mlb", teamIdNum);
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {

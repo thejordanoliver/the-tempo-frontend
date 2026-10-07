@@ -5,7 +5,6 @@ import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getCBTeam, getCBTeamLogo } from "@/constants/teamsCB";
 import useTeamDetails from "@/hooks/useTeams";
-import { getWNBASeason } from "@/utils/dateUtils";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -18,7 +17,6 @@ import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "cb";
-  const currentSeason = getWNBASeason();
   const styles = TeamDetailStyles;
 
   const { teamId } = useLocalSearchParams();
@@ -64,7 +62,7 @@ export default function TeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useBaseballTeamGames("cb", teamIdNum ?? null, currentSeason);
+  } = useBaseballTeamGames("cb", teamIdNum ?? null);
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {

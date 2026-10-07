@@ -1,5 +1,5 @@
 import LiveChat from "@/components/Sports/Basketball/GameDetails/GameChat/LiveChat";
-import { useLiveGameChat } from "hooks/useLiveGameChat";
+import { useLiveGameChat, type GameChatContext } from "hooks/useLiveGameChat";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
 import type { ChatMessageItem } from "types/chat";
@@ -7,6 +7,10 @@ import type { ChatSendPayload } from "utils/chatPayload";
 import FloatingButton from "../../../../Buttons/FloatingButton";
 
 type GameChatSessionProps = {
+  currentUserId?: number;
+  error: string | null;
+  retryMessage: (id: string) => void;
+  deleteMessage: (id: string) => void;
   messages: ChatMessageItem[];
   userCount: number;
   currentUserName: string;
@@ -18,12 +22,14 @@ type GameChatSessionProps = {
 };
 
 type GameLiveChat = {
+  context: GameChatContext;
   gameId: string;
   opacityAnim: Animated.Value;
   state?: string | null;
 };
 
 type MountedGameLiveChatOverlayProps = {
+  context: GameChatContext;
   gameId: string;
   opacityAnim: Animated.Value;
   chatOpen: boolean;
@@ -32,6 +38,10 @@ type MountedGameLiveChatOverlayProps = {
 };
 
 const GameChatSession = memo(function GameChatSession({
+  currentUserId,
+  error,
+  retryMessage,
+  deleteMessage,
   messages,
   userCount,
   currentUserName,
@@ -50,6 +60,10 @@ const GameChatSession = memo(function GameChatSession({
 
   return (
     <LiveChat
+      currentUserId={currentUserId}
+      error={error}
+      onRetry={retryMessage}
+      onDelete={deleteMessage}
       messages={messages}
       userCount={userCount}
       currentUserName={currentUserName}
@@ -63,6 +77,7 @@ const GameChatSession = memo(function GameChatSession({
 });
 
 function MountedGameLiveChatOverlay({
+  context,
   gameId,
   opacityAnim,
   chatOpen,
@@ -77,7 +92,8 @@ function MountedGameLiveChatOverlay({
     sendMessage,
     addReaction,
     hideBlockedUser,
-  } = useLiveGameChat(gameId);
+    currentUserId, error, retryMessage, deleteMessage,
+  } = useLiveGameChat(gameId, context);
 
   return (
     <>
@@ -94,6 +110,10 @@ function MountedGameLiveChatOverlay({
 
       {chatOpen && (
         <GameChatSession
+          currentUserId={currentUserId}
+          error={error}
+          retryMessage={retryMessage}
+          deleteMessage={deleteMessage}
           messages={messages}
           userCount={userCount}
           currentUserName={currentUserName}
@@ -109,6 +129,7 @@ function MountedGameLiveChatOverlay({
 }
 
 export default function GameLiveChatOverlay({
+  context,
   gameId,
   state,
   opacityAnim,
@@ -141,6 +162,7 @@ export default function GameLiveChatOverlay({
 
   return (
     <MountedGameLiveChatOverlay
+      context={context}
       gameId={gameId}
       opacityAnim={opacityAnim}
       chatOpen={chatOpen}
