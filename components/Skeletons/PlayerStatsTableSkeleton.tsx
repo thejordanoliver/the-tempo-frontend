@@ -10,14 +10,14 @@ const CELL_HEIGHT = 10;
 const CELL_MARGIN = 8;
 const ROW_HEIGHT = 36;
 
-export default function PlayerStatTableSkeleton() {
+export default function PlayerStatTableSkeleton({ showHeader = true }: { showHeader?: boolean } = {}) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   return (
     <View style={styles.container}>
-      <HeaderSkeleton style={{ marginHorizontal: 0 }} />
+      {showHeader && <HeaderSkeleton style={{ marginHorizontal: 0 }} />}
       {/* ---------------- Fixed 1st Column + Scrollable Block ---------------- */}
       <View style={styles.tableWrapper}>
         {/* FIXED COLUMN BLOCK */}

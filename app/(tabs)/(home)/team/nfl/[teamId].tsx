@@ -1,12 +1,10 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import Roster from "@/components/Sports/Baseball/Team/Roster";
-import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { Colors } from "@/constants/styles";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import useTeamDetails from "@/hooks/useTeams";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -26,7 +24,8 @@ export default function TeamDetailScreen() {
   const league = "nfl";
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
-  const teamIdNum = Number(teamId);
+  const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
+  const teamIdNum = Number(teamIdStr);
   const team = getNFLTeam(teamIdNum);
   const teamLogo = getNFLTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
@@ -44,19 +43,19 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
+
   const {
+    runRefresh,
     selectedTab,
     hasVisitedTab,
     refreshing,
     isDark,
-    modalVisible,
-    setModalVisible,
   } = screen;
+
   const [standingsYear, setStandingsYear] = useState(
     getFootballSeason().toString(),
   );
 
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -103,7 +102,7 @@ export default function TeamDetailScreen() {
 
   const handleRefresh = async () => {
     try {
-      await screen.runRefresh(async () => {
+      await runRefresh(async () => {
         if (selectedTab === "schedule") {
           await refreshTeamGames?.();
         } else if (selectedTab === "roster") {
@@ -121,16 +120,6 @@ export default function TeamDetailScreen() {
     <SharedTeamDetailScreen
       ready={Boolean(team)}
       screen={screen}
-      footer={
-        <TeamInfoModal
-          teamDetails={teamDetails}
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          teamId={teamIdNum}
-          teamLogo={teamLogo}
-          league={league}
-        />
-      }
     >
       {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
@@ -184,8 +173,8 @@ export default function TeamDetailScreen() {
           teamStats={teamStats}
           loading={rosterStatsLoading || teamStatsLoading}
           error={rosterStatsError || teamStatsError}
-          refreshing={refreshingStats}
-          onRefresh={refetch}
+          refreshing={refreshingStats || refreshing}
+          onRefresh={handleRefresh}
           league={league}
         />
       </View>
@@ -201,7 +190,7 @@ export default function TeamDetailScreen() {
 
       {/* FORUM */}
       <View key="forum" style={styles.contentArea}>
-        <ForumFeed teamId={teamId as string} league={league} />
+        <ForumFeed teamId={teamIdStr ?? ""} league={league} />
       </View>
     </SharedTeamDetailScreen>
   );

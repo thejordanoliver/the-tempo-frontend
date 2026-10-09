@@ -1,4 +1,3 @@
-import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import { NotificationRow } from "@/components/Notifications/NotificationRow";
@@ -9,6 +8,7 @@ import { NotificationsCenterStyles } from "@/styles/NotificationCenterStyles";
 import type { AppNotification } from "@/types/notifications";
 import { getNotificationCenterHref } from "@/utils/notificationCenter";
 import { Ionicons } from "@expo/vector-icons";
+import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { Href, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -325,7 +325,13 @@ export default function NotificationsCenter() {
             </View>
           )
         }
-        ListFooterComponent={loadingMore ? <CustomActivityIndicator /> : null}
+        ListFooterComponent={
+          loadingMore ? (
+            <View style={global.emptyContainer}>
+              <CustomActivityIndicator />
+            </View>
+          ) : null
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -338,14 +344,18 @@ export default function NotificationsCenter() {
         }}
         onEndReachedThreshold={0.35}
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={isSelectionMode ? [
-          styles.container,
-          visibleNotifications.length === 0 && styles.emptyContainer,
-        ] : navigationContentStyle([
-          styles.container,
-          visibleNotifications.length === 0 && styles.emptyContainer,
-          { paddingBottom: 20 + bottomInset },
-        ])}
+        contentContainerStyle={
+          isSelectionMode
+            ? [
+                styles.container,
+                visibleNotifications.length === 0 && styles.emptyContainer,
+              ]
+            : navigationContentStyle([
+                styles.container,
+                visibleNotifications.length === 0 && styles.emptyContainer,
+                { paddingBottom: 20 + bottomInset },
+              ])
+        }
         showsVerticalScrollIndicator={false}
       />
 
@@ -353,10 +363,13 @@ export default function NotificationsCenter() {
         <Animated.View
           entering={FadeInDown.duration(180)}
           exiting={FadeOutDown.duration(140)}
-          style={[styles.selectionToolbar, {
-            paddingBottom: 12 + bottomInset,
-            marginBottom: navigationBarInset,
-          }]}
+          style={[
+            styles.selectionToolbar,
+            {
+              paddingBottom: 12 + bottomInset,
+              marginBottom: navigationBarInset,
+            },
+          ]}
         >
           <Pressable
             disabled={selectedCount === 0}

@@ -383,7 +383,6 @@ function MLBLeagueScreen() {
 function CBLeagueScreen() {
   const league = "cb";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
@@ -517,6 +516,7 @@ function CBLeagueScreen() {
         refreshing={gamesRefreshing}
         onRefresh={handleScoresRefresh}
         scrollEnabled={true}
+        isCB={true}
       />
     </View>
   );

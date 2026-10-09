@@ -45,6 +45,7 @@ export type FanPredictionPick = {
   gameId: string;
   startsAt: string;
   pickedName: string;
+  pickedShortName?: string;
   matchup: string;
   outcome: "pending" | "void" | "correct" | "incorrect";
 };

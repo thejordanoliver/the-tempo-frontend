@@ -1,12 +1,10 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
-import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import useTeamDetails from "@/hooks/useTeams";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -22,6 +20,7 @@ export default function GLeagueTeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getGLeagueTeam(teamIdNum);
+  const teamColor = team?.color ?? Colors.midTone;
   const teamLogo = getGLeagueTeamLogo(teamIdNum, true);
   const screen = useTeamDetailScreen({
     tabLeague: league,
@@ -29,7 +28,7 @@ export default function GLeagueTeamDetailScreen() {
       league,
       teamId: teamIdNum,
       teamName: team?.name,
-      teamColor: team?.color ?? Colors.midTone,
+      teamColor,
       logo: teamLogo,
       favorite: team?.id
         ? { lookupId: team.id, toggleId: teamIdNum }
@@ -41,11 +40,8 @@ export default function GLeagueTeamDetailScreen() {
     hasVisitedTab,
     selectedTab,
     refreshing,
-    modalVisible,
-    setModalVisible,
     isDark,
   } = screen;
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
   const {
     articles,
     loading: newsLoading,
@@ -85,16 +81,6 @@ export default function GLeagueTeamDetailScreen() {
     <SharedTeamDetailScreen
       ready={Boolean(team)}
       screen={screen}
-      footer={
-        <TeamInfoModal
-          teamDetails={teamDetails}
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          teamId={teamIdNum}
-          teamLogo={teamLogo}
-          league={league}
-        />
-      }
     >
       <View key="schedule" style={TeamDetailStyles.contentArea}>
         <MonthSelector

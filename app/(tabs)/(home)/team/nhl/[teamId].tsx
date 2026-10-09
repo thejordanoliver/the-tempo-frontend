@@ -1,11 +1,8 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import ForumFeed from "@/components/Forum/ForumFeed";
-import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Hockey/Games/GamesList";
-import { Colors } from "@/constants/styles";
+import { Colors, globalStyles } from "@/constants/styles";
 import { useTeamGames } from "@/hooks/HockeyHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import useTeamDetails from "@/hooks/useTeams";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
@@ -16,12 +13,11 @@ import { useLocalSearchParams } from "expo-router";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Text, View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getNHLSeason } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
-  const navigationContentStyle = useNavigationBarContentStyle();
   const league = "nhl";
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
@@ -46,8 +42,14 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
+  const {
+    runRefresh,
+    selectedTab,
+    hasVisitedTab,
+    refreshing,
+    isDark,
+  } = screen;
 
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -57,14 +59,15 @@ export default function TeamDetailScreen() {
     loadingMore: loadingMoreNews,
     refresh: refreshNews,
   } = useTeamNews(league, teamIdNum, 10, {
-    enabled: screen.hasVisitedTab("news"),
+    enabled: hasVisitedTab("news"),
   });
 
   const {
     sections,
     loading: playersLoading,
     error: playersError,
-  } = useRoster(teamIdNum, league, { enabled: screen.hasVisitedTab("roster") });
+    refreshPlayers,
+  } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
 
   const {
     games,
@@ -80,12 +83,16 @@ export default function TeamDetailScreen() {
   } = useTeamGames("nhl", teamIdNum);
 
   const handleRefresh = () =>
-    screen.runRefresh(async () => {
-      if (screen.selectedTab === "schedule") {
+    runRefresh(async () => {
+      if (selectedTab === "schedule") {
         await refreshTeamGames();
       }
 
-      if (screen.selectedTab === "news") {
+      if (selectedTab === "roster") {
+        await refreshPlayers();
+      }
+
+      if (selectedTab === "news") {
         await refreshNews();
       }
     });
@@ -94,16 +101,6 @@ export default function TeamDetailScreen() {
     <SharedTeamDetailScreen
       ready={Boolean(team)}
       screen={screen}
-      footer={
-        <TeamInfoModal
-          teamDetails={teamDetails}
-          visible={screen.modalVisible}
-          onClose={() => screen.setModalVisible(false)}
-          teamId={teamIdNum}
-          teamLogo={teamLogo}
-          league={league}
-        />
-      }
     >
       <View key="schedule" style={styles.contentArea}>
         <View style={styles.monthSelector}>
@@ -119,7 +116,7 @@ export default function TeamDetailScreen() {
           games={games}
           error={gamesError}
           loading={gamesLoading}
-          refreshing={gamesRefreshing || screen.refreshing}
+          refreshing={gamesRefreshing || refreshing}
           onRefresh={handleRefresh}
           showHeaders={true}
           showCountdown={showCountdown}
@@ -140,7 +137,7 @@ export default function TeamDetailScreen() {
           refreshing={refreshingNews}
           loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
-          isDark={screen.isDark}
+          isDark={isDark}
         />
       </View>
 
@@ -149,13 +146,16 @@ export default function TeamDetailScreen() {
           sections={sections}
           loading={playersLoading}
           error={playersError}
-          refreshing={screen.refreshing}
+          refreshing={refreshing}
           onRefresh={handleRefresh}
           league={league}
         />
       </View>
 
-      <ScrollView contentContainerStyle={navigationContentStyle()} key="stats" style={styles.contentArea} />
+      <View key="stats" style={globalStyles(isDark).emptyContainer}>
+        <Text style={globalStyles(isDark).emptyTitle}>Team stats unavailable</Text>
+        <Text style={globalStyles(isDark).emptySubText}>Stats are not available for this team yet.</Text>
+      </View>
 
       <View key="standings" style={styles.contentArea}>
         <StandingsList

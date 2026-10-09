@@ -30,9 +30,9 @@ export const GamePreviewModalStyles = ({
       backgroundColor: isChampionship ? Colors.lightGray : Colors.midTone,
     },
     backgroundStyle: {
+      overflow: "hidden",
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      overflow: "hidden",
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
     container: {
@@ -45,8 +45,6 @@ export const GamePreviewModalStyles = ({
       flex: 1,
       padding: 12,
       paddingTop: 40,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
     },
     contentContainerStyle: {
       paddingBottom: 40,

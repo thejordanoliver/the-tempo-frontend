@@ -1,10 +1,8 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
-import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getSBTeam, getSBTeamLogo } from "@/constants/teamsSB";
-import useTeamDetails from "@/hooks/useTeams";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -39,7 +37,6 @@ export default function SoftballTeamDetailScreen() {
     },
   });
 
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -80,16 +77,6 @@ export default function SoftballTeamDetailScreen() {
     <SharedTeamDetailScreen
       ready={Boolean(team)}
       screen={screen}
-      footer={
-        <TeamInfoModal
-          teamDetails={teamDetails}
-          visible={screen.modalVisible}
-          onClose={() => screen.setModalVisible(false)}
-          teamId={teamIdNum}
-          teamLogo={teamLogo}
-          league={league}
-        />
-      }
     >
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector
@@ -125,7 +112,7 @@ export default function SoftballTeamDetailScreen() {
         />
       </View>
 
-      <View key="standings">
+      <View key="standings" style={styles.contentArea}>
         <CBStandingsList league="sb" />
       </View>
 

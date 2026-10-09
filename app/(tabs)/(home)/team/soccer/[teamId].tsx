@@ -18,18 +18,29 @@ import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const styles = TeamDetailStyles;
-  const { teamId, league } = useLocalSearchParams<{
-    teamId: string;
-    league: SupportedRosterLeague;
+  const { teamId, league: leagueParam } = useLocalSearchParams<{
+    teamId?: string | string[];
+    league?: SupportedRosterLeague | SupportedRosterLeague[];
   }>();
-  const teamIdNum = Number(teamId);
-  const team = getSOCCTeam(teamId);
-  const teamLogo = getSOCCTeamLogo(teamId, true);
+  const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
+  const teamIdNum = Number(teamIdStr);
+  const team = getSOCCTeam(teamIdNum);
+  const league = (Array.isArray(leagueParam) ? leagueParam[0] : leagueParam) ?? "mls";
+  const teamLogo = getSOCCTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
   const teamName = team?.name;
   const screen = useTeamDetailScreen({
     tabLeague: "SOCC",
-    header: { league, teamId: teamIdNum, teamName, teamColor, logo: teamLogo },
+    header: {
+      league,
+      teamId: teamIdNum,
+      teamName,
+      teamColor,
+      logo: teamLogo,
+      favoriteLeague: "socc",
+      favorite: team ? { lookupId: team.id, toggleId: team.id } : undefined,
+      infoEnabled: true,
+    },
   });
   const { selectedTab, hasVisitedTab, refreshing, isDark } = screen;
 
@@ -59,7 +70,8 @@ export default function TeamDetailScreen() {
     sections,
     loading: playersLoading,
     error: playersError,
-  } = useRoster(teamIdNum, "SOCC", { enabled: hasVisitedTab("roster") });
+    refreshPlayers,
+  } = useRoster(teamIdNum, "socc", { enabled: hasVisitedTab("roster") });
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {
@@ -70,8 +82,8 @@ export default function TeamDetailScreen() {
       if (selectedTab === "news") {
         await refreshNews();
       }
-      if (selectedTab === "forum") {
-        await refreshNews();
+      if (selectedTab === "roster") {
+        await refreshPlayers();
       }
     });
 
@@ -124,7 +136,7 @@ export default function TeamDetailScreen() {
 
       {/* FORUM */}
       <View key="forum" style={styles.contentArea}>
-        <ForumFeed teamId={teamId as string} league={league} />
+        <ForumFeed teamId={teamIdStr ?? ""} league={league} />
       </View>
     </TeamDetailScreenShell>
   );

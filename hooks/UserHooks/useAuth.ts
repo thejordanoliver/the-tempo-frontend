@@ -276,7 +276,7 @@ export function useAuth() {
   };
 
   const deleteAccount = async (password: string) => {
-    const currentPassword = password.trim();
+    const currentPassword = password;
 
     if (!currentPassword) {
       throw new Error("Password is required");

@@ -14,7 +14,7 @@ interface Props {
   seasons: Season[];
   loading: boolean;
   error: string | null;
-  league: "NHL";
+  league: "nhl" | "NHL";
 }
 
 type StatView = "totals" | "pergame";
@@ -1059,15 +1059,13 @@ export default function PlayerStatTable({ seasons, loading, error }: Props) {
       <View style={styles.statsHeader}>
         <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
 
-        {filteredRows.length > 0 ? (
-          <Dropdown
-            isDark={isDark}
-            options={STAT_OPTIONS}
-            selectedValue={statView}
-            onSelect={(value) => setStatView(value as StatView)}
-            style={styles.dropdown}
-          />
-        ) : null}
+        <Dropdown
+          isDark={isDark}
+          options={STAT_OPTIONS}
+          selectedValue={statView}
+          onSelect={(value) => setStatView(value as StatView)}
+          style={styles.dropdown}
+        />
       </View>
 
       <PillTabs
@@ -1081,14 +1079,16 @@ export default function PlayerStatTable({ seasons, loading, error }: Props) {
   if (loading) {
     return (
       <View style={styles.container}>
-        <PlayerStatTableSkeleton />
+        {renderHeader()}
+        <PlayerStatTableSkeleton showHeader={false} />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={global.emptyContainer}>
+      <View style={styles.container}>
+        {renderHeader()}
         <Text style={global.errorText}>Failed to load stats</Text>
       </View>
     );
@@ -1096,8 +1096,9 @@ export default function PlayerStatTable({ seasons, loading, error }: Props) {
 
   if (!normalizedRows.length) {
     return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>No stats available</Text>
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={global.emptyText}>{emptyText}</Text>
       </View>
     );
   }

@@ -16,7 +16,7 @@ export const statsTableStyles = (isDark: boolean) => {
 
   return StyleSheet.create({
     container: {
-      paddingTop: 24,
+    
       width: "100%",
     },
 

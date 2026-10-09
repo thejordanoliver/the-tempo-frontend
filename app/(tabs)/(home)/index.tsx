@@ -1,17 +1,14 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useCallback, useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 
-import {
-  CustomHeader,
-  type HomeHeaderTab,
-} from "components/CustomHeader";
+import { CustomHeader, type HomeHeaderTab } from "components/CustomHeader";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
-import LeagueGamesList from "components/League/Games/LeagueGamesList";
 import ForYouFeed from "components/Home/ForYouFeed";
+import LeagueGamesList from "components/League/Games/LeagueGamesList";
 import { Colors } from "constants/styles";
 import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";

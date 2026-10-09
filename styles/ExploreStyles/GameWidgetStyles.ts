@@ -263,8 +263,8 @@ export const gameWidgetStyles = (
     dateTime: {
       flexShrink: 1,
       fontFamily: Fonts.REGULAR,
-      fontSize: metaFz,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontSize: infoFz,
+      color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
 
@@ -301,7 +301,7 @@ export const gameWidgetStyles = (
       width: 0.5,
       height: divH,
       marginHorizontal: clamp(gap * 0.2, 3, 12),
-      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
     finalDivder: {
       width: StyleSheet.hairlineWidth,

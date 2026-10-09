@@ -5,7 +5,7 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { normalizeGames } from "utils/games";
 import { buildHomeGameSections } from "utils/homeGames";
 
@@ -14,9 +14,9 @@ import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
 import { useFootballGames } from "./FootballHooks/useFootballGames";
 import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
 import { useMMAEvents } from "./MMAHooks/useMMAEvents";
-import { useForYouFeed } from "./useForYouFeed";
 import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 import { useTennisMatches } from "./TennisHooks/useTennisMatches";
+import { useForYouFeed } from "./useForYouFeed";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -34,8 +34,32 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getStartOfToday);
+  const isGeneralHome =
+    favoriteTeamsReady &&
+    (favoriteSportsReady || userId === null) &&
+    favorites.length === 0 &&
+    favoriteSports.length === 0;
+  const shouldResetDate =
+    favoriteTeamsReady && favoriteSportsReady && !isGeneralHome;
+  const [previousShouldResetDate, setPreviousShouldResetDate] =
+    useState(shouldResetDate);
 
-  const forYouFeed = useForYouFeed(selectedTab === "for you", userId);
+  // Reset before committing children when loaded preferences switch the home
+  // feed to personalized scores, so game hooks receive the updated date.
+  if (previousShouldResetDate !== shouldResetDate) {
+    setPreviousShouldResetDate(shouldResetDate);
+    if (shouldResetDate && !dayjs(selectedDate).isSame(getStartOfToday(), "day")) {
+      setSelectedDate(getStartOfToday());
+    }
+  }
+
+  const forYouFeed = useForYouFeed(
+    selectedTab === "for you" &&
+      favoriteTeamsReady &&
+      (favoriteSportsReady || favoriteSportsError !== null || userId === null),
+    userId,
+    JSON.stringify([favorites, favoriteSports]),
+  );
 
   const {
     games: nbaGames,
@@ -453,9 +477,17 @@ export function useHomeData(selectedTab: "scores" | "for you") {
         sources: homeLeagueSources,
         favoriteTeams: favorites,
         favoriteSports,
-        favoriteSportsReady,
+        favoriteSportsReady:
+          favoriteSportsReady || (userId === null && favoriteTeamsReady),
       }),
-    [favoriteSports, favoriteSportsReady, favorites, homeLeagueSources],
+    [
+      favoriteSports,
+      favoriteSportsReady,
+      favorites,
+      homeLeagueSources,
+      userId,
+      favoriteTeamsReady,
+    ],
   );
 
   const handleRefresh = async () => {
@@ -543,7 +575,23 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     atpLoading ||
     wtaLoading;
 
+  const searchingUpcoming =
+    isGeneralHome &&
+    !scoresLoading &&
+    homeGameSections.length === 0 &&
+    dayjs(selectedDate).diff(dayjs(getStartOfToday()), "day") < 7;
+
+  useEffect(() => {
+    if (selectedTab !== "scores" || !searchingUpcoming) return;
+    const timer = setTimeout(
+      () => setSelectedDate((date) => dayjs(date).add(1, "day").toDate()),
+      250,
+    );
+    return () => clearTimeout(timer);
+  }, [selectedTab, searchingUpcoming, selectedDate]);
+
   return {
+    isGeneralHome,
     selectedDate,
     setSelectedDate,
     currentUserId: userId,
@@ -560,7 +608,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     favoriteLeagues: forYouFeed.favoriteLeagues,
     loading:
       selectedTab === "scores"
-        ? scoresLoading || refreshing
+        ? scoresLoading || refreshing || searchingUpcoming
         : forYouFeed.loading,
   };
 }

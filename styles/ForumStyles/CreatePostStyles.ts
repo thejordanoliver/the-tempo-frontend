@@ -193,17 +193,11 @@ export const createPostStyles = (isDark: boolean) =>
 
     // ─── Poll card ───────────────────────────────────────────────────────
     pollCardContainer: {
-      marginHorizontal: 16,
-      marginBottom: 12,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 12,
+      margin: 12,
       overflow: "hidden",
     },
     pollQuestion: {
-      paddingHorizontal: 12,
-      paddingTop: 10,
-      paddingBottom: 6,
+      marginBottom: 12,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
@@ -211,12 +205,10 @@ export const createPostStyles = (isDark: boolean) =>
     optionRow: {
       flexDirection: "row",
       alignItems: "center",
-      marginHorizontal: 12,
-      marginBottom: 6,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
+      marginBottom: 12,
+      padding: 12,
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
       borderRadius: 8,
     },
     pollOptionsText: {

@@ -53,8 +53,9 @@ export function useFavoriteTeams() {
   const loadRequestId = useRef(0);
   const currentUserIdRef = useRef<number | null>(null);
   const hasLoadedFavoritesRef = useRef(false);
+  const savedFavoritesRef = useRef<FavoriteTeamKey[]>([]);
   const router = useScopedRouter();
-  const { refreshTeamSubscriptions } = useNotifications();
+  const { refreshTeamSubscriptions, removeUnfavoritedTeamSubscriptions } = useNotifications();
   const favoriteSportsState = useFavoriteSports(userId);
   const { clearFavoriteSports } = favoriteSportsState;
 
@@ -113,6 +114,7 @@ export function useFavoriteTeams() {
     currentUserIdRef.current = null;
     hasLoadedFavoritesRef.current = false;
 
+    savedFavoritesRef.current = [];
     setUserId(null);
     setFavorites([]);
     setReady(false);
@@ -167,6 +169,7 @@ export function useFavoriteTeams() {
         if (!nextUserId || !Number.isInteger(nextUserId)) {
           currentUserIdRef.current = null;
           hasLoadedFavoritesRef.current = true;
+          savedFavoritesRef.current = [];
           setUserId(null);
           setFavorites([]);
           setReady(true);
@@ -174,6 +177,7 @@ export function useFavoriteTeams() {
         }
 
         if (nextUserId !== currentUserIdRef.current) {
+          savedFavoritesRef.current = [];
           setFavorites([]);
         }
 
@@ -201,6 +205,7 @@ export function useFavoriteTeams() {
           );
         }
 
+        savedFavoritesRef.current = cachedFavorites;
         setFavorites(cachedFavorites);
 
         try {
@@ -210,6 +215,7 @@ export function useFavoriteTeams() {
             return;
           }
 
+          savedFavoritesRef.current = serverFavorites;
           setFavorites(serverFavorites);
           await AsyncStorage.setItem(
             storageKey,
@@ -303,6 +309,12 @@ export function useFavoriteTeams() {
           normalizeFavoriteTeamKeys(nextFavorites),
         );
 
+        if (currentUserIdRef.current !== userId) return false;
+
+        removeUnfavoritedTeamSubscriptions(
+          savedFavoritesRef.current.filter((favorite) => !savedFavorites.includes(favorite)),
+        );
+        savedFavoritesRef.current = savedFavorites;
         setFavorites(savedFavorites);
         await AsyncStorage.setItem(
           getFavoritesStorageKey(userId),
@@ -324,7 +336,7 @@ export function useFavoriteTeams() {
         return false;
       }
     },
-    [refreshTeamSubscriptions, userId],
+    [refreshTeamSubscriptions, removeUnfavoritedTeamSubscriptions, userId],
   );
 
   /* ---------------- TOGGLE FAVORITE ---------------- */

@@ -1,4 +1,3 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import FavoritesScrollSkeleton from "components/Skeletons/FavoritesScrollSkeleton";
 import { LEAGUE_CONFIG } from "constants/leagues";
@@ -6,12 +5,9 @@ import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import * as Haptics from "expo-haptics";
 import { type Href } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, Text, View } from "react-native";
 import DraggableFlatList, {
   type DragEndParams,
   type DraggableFlatListProps,
@@ -33,10 +29,7 @@ import {
   reorderFavoriteRailItems,
   splitFavoriteRailOrder,
 } from "types/favorites";
-import {
-  getFavoriteBaseTeam,
-  getFavoriteTeamRoute,
-} from "utils/favoriteTeams";
+import { getFavoriteBaseTeam, getFavoriteTeamRoute } from "utils/favoriteTeams";
 import { FavoritesTab } from "./FavoritesTab";
 
 function setSharedValue<T>(sharedValue: { value: T }, value: T) {
@@ -103,8 +96,7 @@ function FavoriteDragBoundary({
   useAnimatedReaction(
     () => ({
       activeIndex: activeIndexAnim.value,
-      translatedDistance:
-        touchTranslate.value + autoScrollDistance.value,
+      translatedDistance: touchTranslate.value + autoScrollDistance.value,
     }),
     ({ activeIndex, translatedDistance }) => {
       if (activeIndex < 0) {
@@ -199,6 +191,7 @@ export default function FavoritesScroll({
     syncFavorites,
     setFavorites,
     isLoading,
+    ready: teamsReady,
     favoriteSports,
     favoriteSportsLoading,
     favoriteSportsReady,
@@ -289,7 +282,10 @@ export default function FavoritesScroll({
   }, [userId]); // Data for the new user is committed below as it hydrates.
 
   useEffect(() => {
-    if (railOrder.userId === userId && railOrder.sectionKeys.league.length > 0) {
+    if (
+      railOrder.userId === userId &&
+      railOrder.sectionKeys.league.length > 0
+    ) {
       return;
     }
 
@@ -621,7 +617,10 @@ export default function FavoritesScroll({
   }, [data.length, handleEditFavorites, isDark, styles]);
 
   const favoritesLoading =
-    isLoading || (favoriteSportsLoading && !favoriteSportsReady);
+    !teamsReady ||
+    isLoading ||
+    (userId !== null && !favoriteSportsReady) ||
+    (favoriteSportsLoading && !favoriteSportsReady);
 
   if (favoritesLoading) {
     return <FavoritesScrollSkeleton isDark={isDark} />;

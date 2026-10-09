@@ -3,6 +3,7 @@ import { BaseballGame } from "@/types/baseball/baseball";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey/hockey";
+import type { MMAFight } from "types/mma/mma";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
@@ -12,12 +13,14 @@ import * as Haptics from "expo-haptics";
 import { useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import FootballGamePreviewModal from "../../Football/GamePreview/FootballGamePreviewModal";
-import FootballGameCard from "../../Football/Games/FootballGameCard";
-import HockeyGamePreviewModal from "../../Hockey/GamePreview/HockeyGamePreviewModal";
-import HockeyGameCard from "../../Hockey/Games/HockeyGameCard";
-import BasketballGamePreviewModal from "../GamePreview/BasketballGamePreviewModal";
-import BasketballGameCard from "../Games/BasketballGameCard";
+import BasketballGamePreviewModal from "../Sports/Basketball/GamePreview/BasketballGamePreviewModal";
+import BasketballGameCard from "../Sports/Basketball/Games/BasketballGameCard";
+import FootballGamePreviewModal from "../Sports/Football/GamePreview/FootballGamePreviewModal";
+import FootballGameCard from "../Sports/Football/Games/FootballGameCard";
+import HockeyGamePreviewModal from "../Sports/Hockey/GamePreview/HockeyGamePreviewModal";
+import HockeyGameCard from "../Sports/Hockey/Games/HockeyGameCard";
+import MMAGameCard from "../Sports/MMA/Games/MMAGameCard";
+import MMAGamePreviewModal from "../Sports/MMA/GamePreview/MMAGamePreviewModal";
 
 type BaseProps = {
   error: string | null;
@@ -60,8 +63,17 @@ type FootballProps = BaseProps & {
   league: "nfl" | "cfb";
   game: FootballGame | null;
 };
+type MMAProps = BaseProps & {
+  league: "mma" | "ufc";
+  game: MMAFight | null;
+};
 
-type Props = BasketballProps | BaseballProps | HockeyProps | FootballProps;
+type Props =
+  | BasketballProps
+  | BaseballProps
+  | HockeyProps
+  | FootballProps
+  | MMAProps;
 
 export default function LatestGame(props: Props) {
   const {
@@ -75,9 +87,8 @@ export default function LatestGame(props: Props) {
     isNFL = false,
     isCFB = false,
   } = props;
-
+  const { league, game } = props;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleLongPress = (event: {
@@ -142,6 +153,10 @@ export default function LatestGame(props: Props) {
 
       case "nhl":
         return <HockeyGameCard game={game} isNHL={true} isMCH={false} />;
+
+      case "mma":
+      case "ufc":
+        return <MMAGameCard game={game} />;
     }
   };
 
@@ -149,14 +164,6 @@ export default function LatestGame(props: Props) {
     if (!modalVisible) {
       return null;
     }
-
-    /*
-     * Narrow game again inside this function.
-     *
-     * The earlier component-level check does not reliably carry
-     * into a nested function.
-     */
-    const { league, game } = props;
 
     if (!game) {
       return null;
@@ -259,6 +266,10 @@ export default function LatestGame(props: Props) {
             isMCH={false}
           />
         );
+
+      case "mma":
+      case "ufc":
+        return <MMAGamePreviewModal game={game} visible={modalVisible} onClose={handleCloseModal} />;
     }
   };
 
@@ -282,7 +293,7 @@ export default function LatestGame(props: Props) {
   return (
     <>
       <View>
-        <HeadingTwo isDark={isDark}>Latest Game</HeadingTwo>
+        <HeadingTwo isDark={isDark}>{league === "mma" || league === "ufc" ? "Latest Fight" : "Latest Game"}</HeadingTwo>
 
         <LongPressGestureHandler
           onHandlerStateChange={handleLongPress}

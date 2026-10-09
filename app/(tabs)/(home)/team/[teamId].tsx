@@ -2,13 +2,11 @@ import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
-import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useRosterStats } from "@/hooks/NBAHooks/useRosterStats";
-import useTeamDetails from "@/hooks/useTeams";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
@@ -50,12 +48,9 @@ export default function TeamDetailScreen() {
     hasVisitedTab,
     selectedTab,
     refreshing,
-    modalVisible,
-    setModalVisible,
     isDark,
   } = screen;
 
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -79,6 +74,7 @@ export default function TeamDetailScreen() {
   const {
     teamStats,
     loading: teamStatsLoading,
+    refresh: refreshTeamStats,
     error: teamStatsError,
   } = useTeamStats({
     enabled: hasVisitedTab("stats"),
@@ -90,6 +86,7 @@ export default function TeamDetailScreen() {
     players,
     loading: playersLoading,
     error: playersError,
+    refreshPlayers,
   } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
 
   const {
@@ -111,12 +108,16 @@ export default function TeamDetailScreen() {
         await refreshTeamGames();
       }
 
+      if (selectedTab === "roster") {
+        await refreshPlayers();
+      }
+
       if (selectedTab === "news") {
         await refreshNews();
       }
 
       if (selectedTab === "stats") {
-        await refetch();
+        await Promise.all([refetch(), refreshTeamStats()]);
       }
     });
   };
@@ -125,16 +126,6 @@ export default function TeamDetailScreen() {
     <SharedTeamDetailScreen
       ready={Boolean(team)}
       screen={screen}
-      footer={
-        <TeamInfoModal
-          teamDetails={teamDetails}
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          teamId={teamIdNum}
-          teamLogo={teamLogo}
-          league={league}
-        />
-      }
     >
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector
@@ -187,8 +178,8 @@ export default function TeamDetailScreen() {
           teamStats={teamStats}
           loading={rosterStatsLoading || teamStatsLoading}
           error={rosterStatsError || teamStatsError}
-          refreshing={refreshingStats}
-          onRefresh={refetch}
+          refreshing={refreshingStats || refreshing}
+          onRefresh={handleRefresh}
           league={league}
         />
       </View>

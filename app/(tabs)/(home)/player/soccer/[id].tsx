@@ -92,18 +92,18 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, teamLogo, teamColor]);
 
-  if (seasonsLoading || loading)
+  if (loading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
       </View>
     );
 
-  if (seasonsError || error)
+  if (error)
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>
-          {seasonsError || error || "Failed to load player"}
+          {error || "Failed to load player"}
         </Text>
       </View>
     );
@@ -125,7 +125,14 @@ export default function PlayerDetailScreen() {
 
       <PlayerStatTable
         seasons={seasons}
-        teamOptions={teamOptions}
+        teamOptions={teamOptions.length || !headerTeamId ? teamOptions : [{
+          value: headerTeamId,
+          label: team?.name ?? headerTeamId,
+          teamId: headerTeamId,
+          teamName: team?.name ?? null,
+          teamSlug: null,
+          competitions: [],
+        }]}
         selectedTeamId={effectiveSelectedTeamId}
         selectedCompetition={selectedCompetition}
         onTeamChange={handleTeamChange}

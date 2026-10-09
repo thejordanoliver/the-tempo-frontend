@@ -1,59 +1,27 @@
 import InfoCard from "@/components/Sports/Basketball/Team/InfoCard";
-import { getSOCCTeam } from "@/constants/teamsSOCC";
-import { getWCBBTeam } from "@/constants/teamsWCBB";
-import { TeamDetails } from "@/hooks/useTeams";
-import { Team } from "@/types/football/football";
-import { getNBATeam } from "constants/teams";
-import { getMCBBTeam } from "constants/teamsMCBB";
-import { getCFBTeam } from "constants/teamsCFB";
-import { getMLBTeam } from "constants/teamsMLB";
-import { getNFLTeam } from "constants/teamsNFL";
-import { getNHLTeam } from "constants/teamsNHL";
-import { getWNBATeam } from "constants/teamsWNBA";
+import type { TeamDetails } from "hooks/useTeams";
 import { StyleSheet, View } from "react-native";
 
 type Props = {
   teamId?: string | number;
   teamDetails: TeamDetails | null;
   league: string;
+  teamColor?: string;
 };
 
-export default function TeamInfo({ teamId, teamDetails, league }: Props) {
+export default function TeamInfo({
+  teamId,
+  teamDetails,
+  league,
+  teamColor,
+}: Props) {
   if (!teamId) return null;
 
-  const team = (() => {
-    switch (league) {
-      case "nba":
-        return getNBATeam(teamId);
-      case "cfb":
-        return getCFBTeam(teamId);
-      case "mcbb":
-        return getMCBBTeam(teamId);
-      case "wcbb":
-        return getWCBBTeam(teamId);
-      case "nfl":
-        return getNFLTeam(teamId);
-      case "mlb":
-        return getMLBTeam(teamId);
-      case "nhl":
-        return getNHLTeam(teamId);
-      case "wnba":
-        return getWNBATeam(teamId);
-      case "soccer":
-        return getSOCCTeam(teamId);
-      default:
-        return null;
-    }
-  })();
-
-  if (!team) return null;
-
-  const t = team as Team;
   const coachName = `${teamDetails?.coach?.firstName ?? ""} ${
     teamDetails?.coach?.lastName ?? ""
   }`.trim();
 
-  const showConference = ["cfb", "mcbb", "wcbb"].includes(league);
+  const showConference = ["cfb", "mcbb", "wcbb", "cb", "sb"].includes(league);
 
   return (
     <View style={styles.infoCardContainer}>
@@ -61,20 +29,32 @@ export default function TeamInfo({ teamId, teamDetails, league }: Props) {
         label={league === "mlb" ? "Manager" : "Coach"}
         value={coachName}
         image={teamDetails?.coach?.image}
-        team={t}
+        teamColor={teamColor}
       />
 
-      <InfoCard label="Location" value={teamDetails?.location} team={t} />
+      <InfoCard
+        label="Location"
+        value={teamDetails?.location?.trim() || [teamDetails?.city, teamDetails?.state].filter(Boolean).join(", ")}
+        teamColor={teamColor}
+      />
 
-      <InfoCard label="Established" value={teamDetails?.established} team={t} />
+      <InfoCard
+        label="Established"
+        value={teamDetails?.established && teamDetails.established > 0 ? teamDetails.established : null}
+        teamColor={teamColor}
+      />
 
-      <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
+      <InfoCard
+        label="Venue"
+        value={teamDetails?.venue?.name}
+        teamColor={teamColor}
+      />
 
       {showConference && (
         <InfoCard
           label="Conference"
-          value={teamDetails?.conference?.shortName}
-          team={t}
+          value={teamDetails?.conference?.shortName || teamDetails?.conference?.name}
+          teamColor={teamColor}
         />
       )}
     </View>

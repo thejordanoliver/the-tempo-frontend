@@ -20,7 +20,10 @@ export function shouldShowGameChat(gameDate: Date | null): boolean {
   const chatStart = gameDate.getTime() - 15 * 60 * 1000;
 
   // End at midnight on the calendar day after the game.
-  const nextDay = dayjs(gameDate).tz("America/New_York").add(1, "day").format("YYYY-MM-DD");
+  const nextDay = dayjs(gameDate)
+    .tz("America/New_York")
+    .add(1, "day")
+    .format("YYYY-MM-DD");
   const chatEnd = dayjs.tz(nextDay, "America/New_York");
 
   const currentTime = Date.now();
@@ -201,9 +204,19 @@ export const safeDate = (date?: string | null) => {
   return isNaN(d.getTime()) ? new Date() : d;
 };
 
-export const formatDate = (date: Date | string): string => {
+export const formatDate = (
+  date: Date | string,
+  isNumeric?: boolean,
+): string => {
   const parsedDate = typeof date === "string" ? new Date(date) : date;
   if (Number.isNaN(parsedDate.getTime())) return "";
+
+  if (isNumeric) {
+    return parsedDate.toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+    });
+  }
 
   return parsedDate.toLocaleDateString("en-US", {
     month: "short",

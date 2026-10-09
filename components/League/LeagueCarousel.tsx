@@ -1,15 +1,14 @@
-/* eslint-disable react-hooks/immutability -- Reanimated shared values are mutable and are read in effects, handlers, and UI worklets. */
 import { Ionicons } from "@expo/vector-icons";
 import { BROWSEABLE_LEAGUES, LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, globalStyles } from "constants/styles";
-import { useFocusEffect } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
+import { useFocusEffect } from "expo-router";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AccessibilityInfo,
   AppState,
   Image,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -23,20 +22,25 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
+  withSpring,
   withTiming,
   type SharedValue,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import type { LeagueType } from "types/types";
 import {
-  leagueDistanceFromFront,
-  leagueOrbitPosition,
   leagueCarouselMotionAction,
+  leagueCarouselWindow,
+  leagueDistanceFromFront,
+  leagueOrbitGeometry,
+  leagueOrbitPosition,
   wrapLeagueRotation,
+  type LeagueOrbitGeometry,
 } from "utils/leagueCarousel";
 
 const COUNT = BROWSEABLE_LEAGUES.length;
 const TURN_MS = 5000;
+const IS_WEB = Platform.OS === "web";
 
 type Props = {
   isDark: boolean;
@@ -50,6 +54,7 @@ type CardProps = {
   rotation: SharedValue<number>;
   width: number;
   cardWidth: number;
+  geometry: LeagueOrbitGeometry;
   isDark: boolean;
   active: boolean;
   onSelect: (league: LeagueType) => void;
@@ -61,11 +66,13 @@ const OrbitCard = memo(function OrbitCard({
   rotation,
   width,
   cardWidth,
+  geometry,
   isDark,
   active,
   onSelect,
 }: CardProps) {
   const config = LEAGUE_CONFIG[league];
+  const styles = LeagueCarouselStyles;
   const theme = isDark ? Colors.dark : Colors.light;
   const typography = useMemo(() => globalStyles(isDark), [isDark]);
   const animatedStyle = useAnimatedStyle(() => {
@@ -73,22 +80,23 @@ const OrbitCard = memo(function OrbitCard({
       leagueIndex,
       rotation.value,
       COUNT,
-      width,
+      geometry,
     );
     return {
       opacity: orbit.opacity,
       zIndex: orbit.zIndex,
-      transform: [
-        { translateX: orbit.translateX },
-        { translateY: orbit.translateY },
-        { scale: orbit.scale },
-      ],
+      // RN web's imperative style path serializes `matrix` as CSS matrix(),
+      // which accepts only six values. Use matrix3d explicitly for this path.
+      transform: IS_WEB
+        ? `matrix3d(${orbit.matrix.join(",")})`
+        : [{ matrix: orbit.matrix }],
     };
   });
 
   return (
     <Animated.View
       pointerEvents={active ? "auto" : "none"}
+      aria-hidden={!active}
       accessibilityElementsHidden={!active}
       importantForAccessibility={active ? "auto" : "no-hide-descendants"}
       style={[
@@ -108,15 +116,11 @@ const OrbitCard = memo(function OrbitCard({
         style={[
           styles.cardContent,
           {
-            backgroundColor: theme.transparentItemBackground,
+            backgroundColor: theme.itemBackground,
           },
         ]}
       >
         <View pointerEvents="none" style={styles.cardVisuals}>
-          <BlurView
-            intensity={100}
-            style={styles.cardBlur}
-          />
           <LinearGradient
             colors={[config.color, `${config.color}66`, `${config.color}00`]}
             locations={[0, 0.4, 1]}
@@ -137,7 +141,11 @@ const OrbitCard = memo(function OrbitCard({
         </Text>
         <View style={[styles.open, { borderTopColor: theme.gray }]}>
           <Text style={typography.secondaryText}>Explore league</Text>
-          <Ionicons name="arrow-forward" size={18} color={theme.text} />
+          <Ionicons
+            name="arrow-forward"
+            size={18}
+            color={isDark ? Colors.lightGray : Colors.darkGray}
+          />
         </View>
         <View
           pointerEvents="none"
@@ -154,6 +162,7 @@ export default function LeagueCarousel({
   onSelect,
 }: Props) {
   const theme = isDark ? Colors.dark : Colors.light;
+  const styles = LeagueCarouselStyles;
   const typography = useMemo(() => globalStyles(isDark), [isDark]);
   const [index, setIndex] = useState(0);
   const [width, setWidth] = useState(320);
@@ -221,7 +230,12 @@ export default function LeagueCarousel({
 
   useEffect(() => {
     const action = leagueCarouselMotionAction({
-      focused, appActive, paused, reduceMotion, interacting, searching,
+      focused,
+      appActive,
+      paused,
+      reduceMotion,
+      interacting,
+      searching,
     });
     // Manual navigation must be allowed to finish even when autoplay is paused.
     if (action === "manual") return;
@@ -231,13 +245,15 @@ export default function LeagueCarousel({
       return () => cancelAnimationFrame(frame);
     }
     // One uninterrupted revolution; its endpoints are visually identical.
-    rotation.value = withRepeat(
-      withTiming(rotation.value + COUNT, {
-        duration: COUNT * TURN_MS,
-        easing: Easing.linear,
-      }),
-      -1,
-      false,
+    rotation.set(
+      withRepeat(
+        withTiming(rotation.value + COUNT, {
+          duration: COUNT * TURN_MS,
+          easing: Easing.linear,
+        }),
+        -1,
+        false,
+      ),
     );
   }, [
     appActive,
@@ -254,17 +270,19 @@ export default function LeagueCarousel({
     (target: number) => {
       cancelAnimation(rotation);
       setInteracting(true);
-      rotation.value = withTiming(
-        target,
-        {
-          duration: reduceMotion
-            ? 0
-            : Math.min(1500, 450 + Math.abs(target - rotation.value) * 85),
-          easing: Easing.out(Easing.cubic),
-        },
-        (finished) => {
-          if (finished) scheduleOnRN(finishInteraction);
-        },
+      rotation.set(
+        withTiming(
+          target,
+          {
+            duration: reduceMotion
+              ? 0
+              : Math.min(1500, 450 + Math.abs(target - rotation.value) * 85),
+            easing: Easing.out(Easing.cubic),
+          },
+          (finished) => {
+            if (finished) scheduleOnRN(finishInteraction);
+          },
+        ),
       );
     },
     [finishInteraction, reduceMotion, rotation],
@@ -300,13 +318,16 @@ export default function LeagueCarousel({
     };
   }, [matches, moveToLeague]);
 
-  const selectSearchPill = useCallback((league: LeagueType) => {
-    if (pendingSearch.current !== null) {
-      clearTimeout(pendingSearch.current);
-      pendingSearch.current = null;
-    }
-    moveToLeague(league);
-  }, [moveToLeague]);
+  const selectSearchPill = useCallback(
+    (league: LeagueType) => {
+      if (pendingSearch.current !== null) {
+        clearTimeout(pendingSearch.current);
+        pendingSearch.current = null;
+      }
+      moveToLeague(league);
+    },
+    [moveToLeague],
+  );
 
   const gesture = useMemo(
     () =>
@@ -315,44 +336,54 @@ export default function LeagueCarousel({
         .failOffsetY([-15, 15])
         .onStart(() => {
           cancelAnimation(rotation);
-          dragStart.value = rotation.value;
-          dragging.value = true;
+          dragStart.set(rotation.value);
+          dragging.set(true);
           scheduleOnRN(setInteracting, true);
         })
         .onUpdate((event) => {
-          rotation.value =
-            dragStart.value - event.translationX / (width * 0.55);
+          rotation.set(dragStart.value - event.translationX / (width * 0.55));
         })
         .onEnd((event) => {
-          const direction =
-            Math.abs(event.velocityX) > 400
-              ? event.velocityX < 0
-                ? 1
-                : -1
-              : 0;
-          const target = Math.round(rotation.value) + direction;
-          rotation.value = withTiming(
-            target,
-            {
-              duration: reduceMotion ? 0 : 450,
-              easing: Easing.out(Easing.cubic),
-            },
-            (finished) => {
-              if (finished) scheduleOnRN(finishInteraction);
-            },
+          // Project a short coast, then settle onto a league. Cap the coast so
+          // a fast flick remains predictable and doesn't race across the ring.
+          const coast = Math.max(
+            -2,
+            Math.min(2, (-event.velocityX * 0.18) / (width * 0.55)),
+          );
+          const target = Math.round(rotation.value + coast);
+          const complete = (finished?: boolean) => {
+            "worklet";
+            if (finished) scheduleOnRN(finishInteraction);
+          };
+          rotation.set(
+            reduceMotion
+              ? withTiming(target, { duration: 0 }, complete)
+              : withSpring(
+                  target,
+                  {
+                    mass: 0.8,
+                    stiffness: 180,
+                    damping: 24,
+                    velocity: -event.velocityX / (width * 0.55),
+                    overshootClamping: true,
+                  },
+                  complete,
+                ),
           );
         })
         .onFinalize((_, success) => {
           if (!success && dragging.value) {
-            rotation.value = withTiming(
-              Math.round(rotation.value),
-              { duration: reduceMotion ? 0 : 250 },
-              (finished) => {
-                if (finished) scheduleOnRN(finishInteraction);
-              },
+            rotation.set(
+              withTiming(
+                Math.round(rotation.value),
+                { duration: reduceMotion ? 0 : 250 },
+                (finished) => {
+                  if (finished) scheduleOnRN(finishInteraction);
+                },
+              ),
             );
           }
-          dragging.value = false;
+          dragging.set(false);
         }),
     [dragging, dragStart, finishInteraction, reduceMotion, rotation, width],
   );
@@ -364,7 +395,15 @@ export default function LeagueCarousel({
     },
     [onSelect, rotation],
   );
-  const cardWidth = 280;
+  const cardWidth = Math.min(270, width * 0.62);
+  const geometry = useMemo(
+    () => leagueOrbitGeometry(width, cardWidth),
+    [width, cardWidth],
+  );
+  const visibleLeagues = useMemo(
+    () => leagueCarouselWindow(index, COUNT),
+    [index],
+  );
   const selected = BROWSEABLE_LEAGUES[index];
 
   return (
@@ -377,17 +416,18 @@ export default function LeagueCarousel({
       </View>
       <GestureDetector gesture={gesture}>
         <View
-          style={[styles.deck, { height: cardWidth * 1.5 + 42 }]}
+          style={[styles.deck, { height: cardWidth * 1.5 + 64 }]}
           onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
         >
-          {BROWSEABLE_LEAGUES.map((league, leagueIndex) => (
+          {visibleLeagues.map((leagueIndex) => (
             <OrbitCard
-              key={league}
-              league={league}
+              key={BROWSEABLE_LEAGUES[leagueIndex]}
+              league={BROWSEABLE_LEAGUES[leagueIndex]}
               leagueIndex={leagueIndex}
               rotation={rotation}
               width={width}
               cardWidth={cardWidth}
+              geometry={geometry}
               isDark={isDark}
               active={index === leagueIndex}
               onSelect={openLeague}
@@ -431,7 +471,9 @@ export default function LeagueCarousel({
         accessibilityLabel={
           searching
             ? "Rotation paused while searching"
-            : paused ? "Resume automatic rotation" : "Pause automatic rotation"
+            : paused
+              ? "Resume automatic rotation"
+              : "Pause automatic rotation"
         }
         onPress={() => setPaused((value) => !value)}
         style={styles.playback}
@@ -447,8 +489,8 @@ export default function LeagueCarousel({
             : searching
               ? "Rotation paused while searching"
               : paused
-              ? "Resume rotation"
-              : "Pause rotation"}
+                ? "Resume"
+                : "Pause"}
         </Text>
       </Pressable>
       {query && (
@@ -486,12 +528,13 @@ export default function LeagueCarousel({
   );
 }
 
-const styles = StyleSheet.create({
+const LeagueCarouselStyles = StyleSheet.create({
   heading: { paddingTop: 14, gap: 4 },
   deck: { marginTop: 18, overflow: "hidden" },
   card: {
     position: "absolute",
-    top: 16,
+    top: 28,
+    backfaceVisibility: "hidden",
     borderRadius: 22,
     shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 6 },
@@ -513,13 +556,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     borderRadius: 22,
     overflow: "hidden",
-  },
-  cardBlur: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
   },
   cardBorder: {
     position: "absolute",

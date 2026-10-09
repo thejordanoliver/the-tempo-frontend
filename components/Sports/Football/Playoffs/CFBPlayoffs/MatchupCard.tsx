@@ -55,7 +55,7 @@ export function MatchupCard({
   const awayLogo = getCFBTeamLogo(awayId, isDark);
 
   const gameDate = safeDate(game.date);
-  const formattedDate = formatDate(gameDate);
+  const formattedDate = formatDate(gameDate, true);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game.headline ?? holidayLabel;
@@ -167,9 +167,7 @@ export function MatchupCard({
     return (
       <View style={styles.infoWrapper}>
         <Text style={styles.date}>{formattedDate}</Text>
-
         <View style={styles.statusDivider} />
-
         <Text style={styles.date}>{tbd || formattedTime}</Text>
       </View>
     );

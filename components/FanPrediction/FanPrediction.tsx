@@ -62,7 +62,15 @@ function FanPredictionContent(props: Props) {
   const voteDisabled = (canVote && !scoring) || !canVote || userVote != null || submittingTeamId != null;
 
   if (phase === "loading" || (phase === "ready" && canVote && !scoring && !scoringError)) {
-    return <FanPredictionSkeleton isDark={isDark} isLive={isLive} />;
+    return (
+      <FanPredictionSkeleton
+        isDark={isDark}
+        isLive={isLive}
+        canVote={canVote}
+        resultsRevealed={resultsRevealed}
+        showLiveStatus={userVote != null}
+      />
+    );
   }
 
   if (phase === "error") {

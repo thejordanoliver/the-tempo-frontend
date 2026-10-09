@@ -374,7 +374,7 @@ const ForegroundNotificationBannerStyles = (isDark: boolean) =>
     },
 
     body: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: isDark ? Colors.white : Colors.black,
 
       fontSize: 13,
       lineHeight: 18,

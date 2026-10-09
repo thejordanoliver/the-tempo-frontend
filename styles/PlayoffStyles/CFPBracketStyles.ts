@@ -142,34 +142,28 @@ export const CFPBracketStyles = (isDark: boolean) =>
       fontFamily: Fonts.BOLD,
       fontSize: 18,
       textAlign: "center",
+      color: isDark ? Colors.white : Colors.black,
     },
-
     teamLogo: {
       width: 34,
       height: 34,
     },
-
     teamCode: {
       flex: 1,
       marginLeft: 4,
       fontFamily: Fonts.BOLD,
       fontSize: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
-
     seedPlaceholder: {
       width: 20,
     },
-
     winsBadge: {
       minWidth: 30,
       height: 30,
       paddingHorizontal: 8,
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 100,
-      backgroundColor: isDark
-        ? Colors.transparentDarkGray
-        : Colors.transparentLightGray,
     },
     record: {
       color: isDark ? Colors.white : Colors.black,
@@ -211,29 +205,12 @@ export const CFPBracketStyles = (isDark: boolean) =>
       fontSize: 12,
       textTransform: "uppercase",
     },
-    statusDivider: {
-      width: 1,
-      height: 10,
-      marginHorizontal: 3,
-      backgroundColor: isDark ? Colors.white : Colors.black,
-    },
-    finalStatusDivider: {
-      width: 1,
-      height: 10,
-      marginHorizontal: 3,
-      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-    },
     infoWrapper: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
     },
-    footerText: {
-      color: Colors.midTone,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      textAlign: "center",
-    },
+
     headline: {
       color: Colors.midTone,
       fontFamily: Fonts.REGULAR,
@@ -263,6 +240,18 @@ export const CFPBracketStyles = (isDark: boolean) =>
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
+    },
+    statusDivider: {
+      width: 1,
+      height: 10,
+      marginHorizontal: 3,
+      backgroundColor: isDark ? Colors.white : Colors.black,
+    },
+    finalStatusDivider: {
+      width: 1,
+      height: 10,
+      marginHorizontal: 3,
+      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     downDistance: {
       color: Colors.midTone,

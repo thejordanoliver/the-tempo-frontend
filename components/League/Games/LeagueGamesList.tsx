@@ -180,7 +180,7 @@ export default function LeagueGamesList({
       const regularInSection: HomeGameItem[] = [];
 
       for (const item of section.data) {
-        if (isChampionshipGame(item)) {
+        if (!section.id.startsWith("general-") && isChampionshipGame(item)) {
           champs.push(item);
         } else {
           regularInSection.push(item);

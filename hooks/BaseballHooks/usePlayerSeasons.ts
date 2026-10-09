@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
-export type BaseballLeague = "MLB" | "CB" | "SB";
+export type BaseballLeague = "mlb" | "cb" | "sb" | "MLB" | "CB" | "SB";
 
 export type StatValue = number | string | null | undefined;
 
@@ -317,7 +317,7 @@ export function useBaseballPlayerSeasons(
         setError(null);
 
         const res = await apiClient.get<PlayerStatsResponse>(
-          `api/player/stats/${league}/${playerId}`,
+          `api/player/stats/${league.toLowerCase()}/${playerId}`,
         );
 
         if (cancelled) return;

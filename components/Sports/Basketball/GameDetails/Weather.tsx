@@ -2,7 +2,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { WeatherData } from "hooks/useWeather";
-import LottieView from "lottie-react-native";
+import WeatherAnimation from "./WeatherAnimation";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import ClearDay from "../../../../assets/Weather/clear-day.json";
@@ -97,7 +97,7 @@ const Weather: React.FC<Props> = ({
               const rainAnimation = isNight ? RainNight : RainDay;
 
               return (
-                <LottieView
+                <WeatherAnimation
                   source={rainAnimation}
                   autoPlay
                   loop
@@ -112,7 +112,7 @@ const Weather: React.FC<Props> = ({
 
           {/* Main weather animation */}
           {animation && (
-            <LottieView
+            <WeatherAnimation
               source={animation}
               autoPlay
               loop

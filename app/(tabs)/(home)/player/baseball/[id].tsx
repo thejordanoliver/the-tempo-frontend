@@ -1,23 +1,24 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import LatestGame from "@/components/Player/LatestGame";
 import SeasonStatCard from "@/components/Sports/Baseball/Player/SeasonStatCard";
-import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import {
   BaseballPlayerSeason,
   useBaseballPlayerSeasons,
 } from "@/hooks/BaseballHooks/usePlayerSeasons";
-import { useTeamLatestGame } from "@/hooks/BaseballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
+import PlayerGameLog from "components/Player/PlayerGameLog";
 import PlayerHeader from "components/Sports/Baseball/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/Baseball/Player/PlayerStatTable";
 import { Colors, globalStyles } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { usePlayerLatestGame } from "hooks/BaseballHooks/usePlayerLatestGame";
+import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
+import { useLayoutEffect, useMemo, useState } from "react";
+import { Text, View } from "react-native";
 
 function getSeasonNumber(season: BaseballPlayerSeason) {
   const rawSeason = season.season ?? season.year ?? season.displaySeason;
@@ -54,16 +55,18 @@ function getLatestPlayerSeason(seasons: BaseballPlayerSeason[]) {
 }
 
 export default function PlayerDetailScreen() {
-  const navigationContentStyle = useNavigationBarContentStyle();
-  const { id, teamId, league } = useLocalSearchParams<{
+  const {
+    id,
+    teamId,
+    league = "mlb",
+  } = useLocalSearchParams<{
     id: string;
     teamId: string;
-    league: any;
+    league?: "mlb";
   }>();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = playerScreenStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const playerId = Number(id);
 
@@ -99,11 +102,37 @@ export default function PlayerDetailScreen() {
     return getLatestPlayerSeason(seasons);
   }, [seasons]);
 
+  const gameLogPlayerKey = `${league}:${playerId}`;
+  const [gameLogSelection, setGameLogSelection] = useState<{
+    playerKey: string;
+    season: string | null;
+    category: string | null;
+  } | null>(null);
+  const latestGameLog = usePlayerGameLog(playerId, league);
+  const currentSelection =
+    gameLogSelection?.playerKey === gameLogPlayerKey ? gameLogSelection : null;
+  const selectedSeason = currentSelection?.season ?? null;
+  const selectedCategory =
+    currentSelection?.category ?? latestGameLog.data?.category ?? null;
+  const needsFilteredLog =
+    (selectedSeason !== null &&
+      selectedSeason !== String(latestGameLog.data?.season)) ||
+    selectedCategory !== (latestGameLog.data?.category ?? null);
+  const filteredGameLog = usePlayerGameLog(
+    needsFilteredLog ? playerId : "",
+    league,
+    selectedSeason ??
+      (latestGameLog.data ? String(latestGameLog.data.season) : null),
+    selectedCategory,
+  );
+  const tableGameLog = needsFilteredLog ? filteredGameLog : latestGameLog;
   const {
     game,
-    loading: gameLoading,
-    error: gameError,
-  } = useTeamLatestGame(league, currentTeamId);
+    loading: latestGameLoading,
+    error: latestGameError,
+  } = usePlayerLatestGame(latestGameLog.data, league);
+  const gameLoading = latestGameLog.loading || latestGameLoading;
+  const gameError = latestGameLog.error || latestGameError;
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
@@ -136,39 +165,77 @@ export default function PlayerDetailScreen() {
   /* -------------------------
      Render
   ------------------------- */
+  const pages = [
+    {
+      label: "Career Stats",
+      content: (
+        <PlayerStatTable
+          data={seasons}
+          loading={seasonsLoading}
+          error={seasonsError}
+          position={player.position}
+          league={league}
+        />
+      ),
+    },
+    {
+      label: "Game Log",
+      content: (
+        <PlayerGameLog
+          sport="baseball"
+          league={league}
+          data={tableGameLog.data}
+          filterData={latestGameLog.data}
+          selectedSeason={selectedSeason}
+          selectedCategory={selectedCategory}
+          loading={tableGameLog.loading}
+          error={tableGameLog.error}
+          onSeasonChange={(season) =>
+            setGameLogSelection({
+              playerKey: gameLogPlayerKey,
+              season,
+              category: selectedCategory,
+            })
+          }
+          onCategoryChange={(category) =>
+            setGameLogSelection({
+              playerKey: gameLogPlayerKey,
+              season: selectedSeason,
+              category,
+            })
+          }
+          onRetry={tableGameLog.refetch}
+        />
+      ),
+    },
+  ];
+
   return (
-    <ScrollView
-      contentContainerStyle={navigationContentStyle(
-        styles.contentContainerStyle,
-      )}
-    >
-      <PlayerHeader player={player} isDark={isDark} />
-
-      <SeasonStatCard
-        season={latestSeason}
-        loading={seasonsLoading}
-        error={seasonsError}
-        position={position}
-        isActive={isActive}
-        rankings={currentSeasonRankings}
-        teamColor={teamColor}
-      />
-
-      <LatestGame
-        game={game}
-        loading={gameLoading}
-        error={gameError}
-        isDark={isDark}
-        league={league}
-      />
-
-      <PlayerStatTable
-        data={seasons}
-        loading={seasonsLoading}
-        error={seasonsError}
-        position={player.position}
-        league={league}
-      />
-    </ScrollView>
+    <PlayerDetailsPager
+      key={gameLogPlayerKey}
+      pages={pages}
+      isDark={isDark}
+      overview={
+        <>
+          <PlayerHeader player={player} isDark={isDark} />
+          <SeasonStatCard
+            season={latestSeason}
+            loading={seasonsLoading}
+            error={seasonsError}
+            position={position}
+            isActive={isActive}
+            rankings={currentSeasonRankings}
+            teamColor={teamColor}
+          />
+          <LatestGame
+            game={game}
+            loading={gameLoading}
+            error={gameError}
+            isDark={isDark}
+            league={league}
+          />
+        </>
+      }
+    />
   );
 }

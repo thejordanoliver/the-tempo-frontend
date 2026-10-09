@@ -107,7 +107,7 @@ const PostShareModal = forwardRef<PostShareModalRef, Props>(
                 >
                   <Text style={global.textMedium}>@{post.username}</Text>
                   <Text style={global.secondaryText} numberOfLines={2}>
-                    {post.text.trim() || "Media post"}
+                    {post?.text?.trim() || "Media post"}
                   </Text>
                 </View>
 

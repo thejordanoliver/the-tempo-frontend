@@ -220,7 +220,9 @@ function AppLayout() {
           screenOptions={({ route, navigation }) => {
             const isTabScreen = route.name === "(tabs)";
 
-            const isSplashScreen = route.name === "signup/success";
+            const isSplashScreen =
+              route.name === "signup/success" ||
+              route.name === "settings/deleteaccountsplash";
 
             const isProfileScreen = route.name === "profile";
 
@@ -262,6 +264,11 @@ function AppLayout() {
           <Stack.Screen
             name="forgot-password"
             options={{ headerShown: true }}
+          />
+
+          <Stack.Screen
+            name="settings/deleteaccountsplash"
+            options={{ animation: "fade", gestureEnabled: false, headerShown: false }}
           />
 
           <Stack.Screen

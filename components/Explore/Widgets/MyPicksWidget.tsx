@@ -102,7 +102,8 @@ export default function MyPicksWidget({
           </View>
           {!(isEditing && size !== "large") &&
             data.picks.slice(0, count).map((pick) => {
-              const date = formatDate(pick.startsAt)
+              const date = formatDate(pick.startsAt);
+              const pickedName = pick.pickedShortName || pick.pickedName;
               return (
                 <TouchableOpacity
                   key={`${pick.sport}:${pick.league}:${pick.gameId}`}
@@ -123,7 +124,7 @@ export default function MyPicksWidget({
                   }
                   style={[styles.pick, compact && styles.compactPick]}
                   accessibilityRole="button"
-                  accessibilityLabel={`${pick.matchup}, you picked ${pick.pickedName}, ${pick.outcome === "void" ? "not scored" : pick.outcome}`}
+                  accessibilityLabel={`${pick.matchup}, you picked ${pickedName}, ${pick.outcome === "void" ? "not scored" : pick.outcome}`}
                 >
                   <View
                     style={[
@@ -132,7 +133,7 @@ export default function MyPicksWidget({
                     ]}
                   >
                     <Text style={styles.pickName} numberOfLines={1}>
-                      You picked {pick.pickedName}
+                      You picked {pickedName}
                     </Text>
                     {size === "large" && (
                       <Text style={styles.label} numberOfLines={1}>

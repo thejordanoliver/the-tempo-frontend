@@ -38,13 +38,13 @@ export function CenterInfo({
   const styles = gameInfoStyles(isDark);
 
   const isScheduled = state === "pre";
-  const isFinal = state === "post";
+  const isFinal = gameStatusDescription === "Final";
   const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeited";
-  const endOfInning = gameStatusDetail.includes("End");
+  const isEndOfInning = gameStatusDetail.includes("End");
   const isDelayed =
     gameStatusDescription === "Delayed" ||
     gameStatusDescription === "Rain Delay";
@@ -61,17 +61,16 @@ export function CenterInfo({
 
   return (
     <View style={styles.container}>
-      {/* ⚾ Scheduled */}
       {isScheduled && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{date}</Text>
+          <Text style={styles.date}>{date || "TBD"}</Text>
           <View style={styles.statusDivider} />
-          <Text style={styles.date}>{time}</Text>
+          <Text style={styles.date}>{time || ""}</Text>
         </View>
       )}
 
       {/* 🕒 In Progress */}
-      {inProgress && !isDelayed && !endOfInning && (
+      {inProgress && !isDelayed && !isEndOfInning && (
         <View>
           <View style={styles.infoWrapper}>
             {isTopInning && (
@@ -100,7 +99,7 @@ export function CenterInfo({
       )}
 
       {/* 🕒 In Progress */}
-      {endOfInning && (
+      {isEndOfInning && (
         <View>
           <View style={styles.infoWrapper}>
             <Text style={styles.finalText}>{gameStatusDetail}</Text>
@@ -150,11 +149,6 @@ export function CenterInfo({
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>Delayed</Text>
         </View>
-      )}
-
-      {/* 📺 Broadcast */}
-      {!isFinal && broadcast && (
-        <Text style={styles.broadcasts}>{broadcast}</Text>
       )}
     </View>
   );

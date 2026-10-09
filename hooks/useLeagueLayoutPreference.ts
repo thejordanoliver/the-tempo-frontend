@@ -15,6 +15,7 @@ export function useLeagueLayoutPreference() {
   const controller = useRef<AbortController | null>(null);
 
   useEffect(() => {
+    const generationRef = generation;
     let active = true;
     const load = async (token: string | null) => {
       const version = ++generation.current;
@@ -61,7 +62,7 @@ export function useLeagueLayoutPreference() {
     });
     return () => {
       active = false;
-      generation.current++;
+      generationRef.current++;
       controller.current?.abort();
       unsubscribe();
     };

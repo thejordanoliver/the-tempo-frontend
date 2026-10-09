@@ -1121,16 +1121,14 @@ export default function PlayerStatTable({
             />
           ) : null}
 
-          {filteredRows.length > 0 ? (
-            <Dropdown
-              isDark={isDark}
-              options={STAT_OPTIONS}
-              selectedValue={statView}
-              onSelect={(value) => setStatView(value as StatView)}
-              style={styles.filterDropdown}
-              width={160}
-            />
-          ) : null}
+          <Dropdown
+            isDark={isDark}
+            options={STAT_OPTIONS}
+            selectedValue={statView}
+            onSelect={(value) => setStatView(value as StatView)}
+            style={styles.filterDropdown}
+            width={160}
+          />
         </View>
       </View>
 
@@ -1147,31 +1145,25 @@ export default function PlayerStatTable({
   if (loading) {
     return (
       <View style={styles.container}>
-        <PlayerStatTableSkeleton />
+        {renderHeader()}
+        <PlayerStatTableSkeleton showHeader={false} />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={global.emptyContainer}>
+      <View style={styles.container}>
+        {renderHeader()}
         <Text style={global.errorText}>Failed to load stats</Text>
       </View>
     );
   }
 
   if (!normalizedRows.length) {
-    if (isPostseasonSelected) {
-      return (
-        <View style={styles.container}>
-          {renderHeader()}
-          <Text style={global.emptyText}>{emptyText}</Text>
-        </View>
-      );
-    }
-
     return (
-      <View style={global.emptyContainer}>
+      <View style={styles.container}>
+        {renderHeader()}
         <Text style={global.emptyText}>{emptyText}</Text>
       </View>
     );

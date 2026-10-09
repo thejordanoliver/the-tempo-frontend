@@ -4,7 +4,13 @@ import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import type { SafetyActionsModalProps } from "hooks/useSafetyActions";
 import { useMemo } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import type { ReportReason } from "services/usersApi";
 
 const REPORT_REASONS: { label: string; value: ReportReason }[] = [
@@ -126,7 +132,13 @@ export default function SafetyActionsModal(props: SafetyActionsModalProps) {
   );
 }
 
-function ActionRow({ label, icon, danger = false, onPress, styles }: {
+function ActionRow({
+  label,
+  icon,
+  danger = false,
+  onPress,
+  styles,
+}: {
   label: string;
   icon: "flag-outline" | "ban-outline" | "person-add-outline";
   danger?: boolean;
@@ -140,7 +152,9 @@ function ActionRow({ label, icon, danger = false, onPress, styles }: {
       accessibilityRole="button"
       accessibilityLabel={label}
     >
-      <Text style={[styles.optionText, danger && styles.dangerText]}>{label}</Text>
+      <Text style={[styles.optionText, danger && styles.dangerText]}>
+        {label}
+      </Text>
       <Ionicons
         name={icon}
         size={20}

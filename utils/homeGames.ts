@@ -84,9 +84,14 @@ function isFavoriteTeamGame(
   );
 }
 
+function getGamePriority(item: HomeGameItem): number {
+  if (isGameLive(item.game)) return 0;
+  return item.game.status?.state === "post" ? 2 : 1;
+}
+
 function sortLiveFirst(items: readonly HomeGameItem[]): HomeGameItem[] {
   return [...items].sort(
-    (a, b) => Number(isGameLive(b.game)) - Number(isGameLive(a.game)),
+    (a, b) => getGamePriority(a) - getGamePriority(b),
   );
 }
 
@@ -122,10 +127,11 @@ export function getPersonalizedLeagueOrder({
 
   const ordered = new Set<FavoriteSportId>();
 
-  favoriteSports.forEach((league) => ordered.add(league));
   getFavoriteTeamLeagueOrder(favoriteTeams).forEach((league) =>
     ordered.add(league),
   );
+
+  favoriteSports.forEach((league) => ordered.add(league));
 
   return Array.from(ordered);
 }
@@ -168,6 +174,17 @@ export function buildHomeGameSections({
   }
 
   const sections: HomeGameSection[] = [];
+  if (favoriteSportsReady && favoriteTeamKeys.size === 0 && favoriteSports.length === 0) {
+    const games = safeSources.flatMap(source => nonFavoriteGamesByLeague.get(source.id) ?? []);
+    return [
+      { id: "general-live" as const, title: "Live now", priority: 0 },
+      { id: "general-upcoming" as const, title: "Upcoming", priority: 1 },
+      { id: "general-final" as const, title: "Final", priority: 2 },
+    ].map(({ id, title, priority }) => ({
+      id, title, data: games.filter(item => getGamePriority(item) === priority),
+    })).filter(section => section.data.length > 0);
+  }
+
   const sortedFavoriteTeamGames = sortLiveFirst(favoriteTeamGames);
 
   if (sortedFavoriteTeamGames.length > 0) {
@@ -191,7 +208,8 @@ export function buildHomeGameSections({
   };
 
   if (favoriteSportsReady) {
-    (favoriteSports ?? []).forEach(appendFavoriteLeague);
+    getPersonalizedLeagueOrder({ favoriteTeams, favoriteSports, favoriteSportsReady })
+      .forEach(appendFavoriteLeague);
   }
 
   for (const league of orderedLeagueIds) {

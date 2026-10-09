@@ -6,6 +6,7 @@ import type {
 } from "@/hooks/SoccerHooks/usePlayerSeasons";
 import Dropdown, { type DropdownOption } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useState } from "react";
@@ -550,13 +551,9 @@ export default function PlayerStatTable({
   };
 
   const renderFilters = () => {
-    if (teamDropdownOptions.length === 0) {
-      return null;
-    }
-
     return (
       <View style={styles.filtersRow}>
-        <Dropdown
+        {teamDropdownOptions.length > 0 ? <Dropdown
           isDark={isDark}
           options={teamDropdownOptions}
           selectedValue={
@@ -569,7 +566,7 @@ export default function PlayerStatTable({
           onSelect={onTeamChange}
           width={140}
           style={styles.filterDropdown}
-        />
+        /> : null}
 
         <Dropdown
           isDark={isDark}
@@ -605,12 +602,18 @@ export default function PlayerStatTable({
   );
 
   if (loading) {
-    return <View style={styles.container}>{renderHeader()}</View>;
+    return (
+      <View style={styles.container}>
+        {renderHeader()}
+        <PlayerStatTableSkeleton showHeader={false} />
+      </View>
+    );
   }
 
   if (error) {
     return (
-      <View style={global.emptyContainer}>
+      <View style={styles.container}>
+        {renderHeader()}
         <Text style={global.errorText}>
           {error || "Failed to load soccer stats"}
         </Text>
@@ -631,14 +634,20 @@ export default function PlayerStatTable({
 
   if (seasons.length === 0) {
     return (
-      <Text style={[global.emptyText, styles.emptyText]}>{emptyStatsText}</Text>
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={[global.emptyText, styles.emptyText]}>{emptyStatsText}</Text>
+      </View>
     );
   }
   if (!hasRenderableStats) {
     return (
-      <Text style={[global.emptyText, styles.emptyText]}>
-        No stats for the selected team/competition/category
-      </Text>
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={[global.emptyText, styles.emptyText]}>
+          No stats for the selected team/competition/category
+        </Text>
+      </View>
     );
   }
 

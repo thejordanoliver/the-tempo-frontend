@@ -2,95 +2,31 @@ import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { ReactNode } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-
-import { soccerTeams } from "@/constants/teamsSOCC";
-import { teams } from "constants/teams";
-import { mcbbTeams } from "constants/teamsMCBB";
-import { cfbTeams } from "constants/teamsCFB";
-import { mlbTeams } from "constants/teamsMLB";
-import { nflTeams } from "constants/teamsNFL";
-import { nhlTeams } from "constants/teamsNHL";
-
-type TeamColors = {
-  id?: string | number | null;
-  name?: string;
-  fullName?: string;
-  color?: string | null;
-  secondaryColor?: string | null;
-};
+import { getContrastingTextColor } from "utils/color";
 
 type Props = {
   label: string;
-  value: string | number | ReactNode | string[] | number[];
+  value?: string | number | ReactNode | string[] | number[];
   image?: string | null;
-  team: TeamColors;
-  teamId?: string;
-  teamName?: string;
-};
-
-const allTeams: TeamColors[] = [
-  ...teams,
-  ...nflTeams,
-  ...cfbTeams,
-  ...mlbTeams,
-  ...nhlTeams,
-  ...mcbbTeams,
-  ...soccerTeams,
-];
-
-const findTeam = (
-  teamId?: string,
-  teamName?: string,
-  fallback?: TeamColors,
-) => {
-  let teamObj: TeamColors | undefined;
-
-  if (teamId) {
-    teamObj = allTeams.find((t) => String(t.id) === String(teamId));
-  }
-
-  if (!teamObj && teamName) {
-    const clean = teamName.toLowerCase();
-    teamObj = allTeams.find(
-      (t) =>
-        t.name?.toLowerCase() === clean || t.fullName?.toLowerCase() === clean,
-    );
-  }
-
-  if (!teamObj && fallback?.fullName) {
-    const clean = fallback.fullName.toLowerCase();
-    teamObj = allTeams.find(
-      (t) =>
-        t.name?.toLowerCase() === clean || t.fullName?.toLowerCase() === clean,
-    );
-  }
-
-  return teamObj ?? fallback;
+  teamColor?: string;
 };
 
 export default function InfoCard({
   label,
   value,
   image,
-  team,
-  teamId,
-  teamName,
+  teamColor = Colors.midTone,
 }: Props) {
-  const teamObj = findTeam(teamId, teamName, team) ?? {
-    color: Colors.midTone,
-  };
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
-  const styles = InfoCardStyles(isDark, teamObj);
-
+  const styles = InfoCardStyles(isDark, teamColor);
   let formattedValue: string | ReactNode;
 
   if (Array.isArray(value)) {
     formattedValue = value.join(", ");
   } else {
-    formattedValue = value;
+    formattedValue = typeof value === "string" ? value.trim() : value;
   }
 
   return (
@@ -104,13 +40,13 @@ export default function InfoCard({
           </View>
         )}
 
-        <Text style={styles.value}>{formattedValue}</Text>
+        <Text style={styles.value}>{formattedValue === null || formattedValue === undefined || formattedValue === "" ? "Not available" : formattedValue}</Text>
       </View>
     </>
   );
 }
 
-export const InfoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
+export const InfoCardStyles = (isDark: boolean, teamColor: string) =>
   StyleSheet.create({
     label: {
       marginBottom: 8,
@@ -133,7 +69,7 @@ export const InfoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
       borderWidth: 1,
       borderColor: Colors.midTone,
       borderRadius: 8,
-      backgroundColor: teamObj?.color ?? Colors.midTone,
+      backgroundColor: teamColor ?? Colors.midTone,
     },
 
     imageContainer: {
@@ -141,7 +77,7 @@ export const InfoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
       justifyContent: "center",
       marginRight: 12,
       borderWidth: 1,
-      borderColor: Colors.white,
+      borderColor: getContrastingTextColor(teamColor),
       borderRadius: 100,
       overflow: "hidden",
       width: 54,
@@ -160,6 +96,6 @@ export const InfoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
       flexShrink: 1,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
-      color: Colors.white,
+      color: getContrastingTextColor(teamColor),
     },
   });

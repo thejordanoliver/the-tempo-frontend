@@ -19,6 +19,16 @@ export const exploreStyles = (isDark: boolean) =>
       paddingVertical: 12,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
+    resultText: {
+      flex: 1,
+      minWidth: 0,
+    },
+    deleteButton: {
+      width: 44,
+      minHeight: 44,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     name: {
       fontFamily: Fonts.LIGHT,
       fontSize: 16,
@@ -31,6 +41,7 @@ export const exploreStyles = (isDark: boolean) =>
       color: Colors.midTone,
     },
     playerRow: {
+      width: "100%",
       flexDirection: "row",
       alignItems: "center",
     },
@@ -73,6 +84,7 @@ export const exploreStyles = (isDark: boolean) =>
       marginRight: 12,
     },
     userRow: {
+      width: "100%",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",

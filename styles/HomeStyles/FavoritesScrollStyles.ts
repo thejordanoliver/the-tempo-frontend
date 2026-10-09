@@ -7,6 +7,22 @@ const FAVORITES_RAIL_ITEM_SIZE = 80;
 
 export const FavoritesScrollStyles = (isDark: boolean) =>
   StyleSheet.create({
+    emptyCard: {
+      margin: 12,
+      padding: 16,
+      borderRadius: 12,
+      gap: 12,
+      backgroundColor: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
+    },
+    emptyCopy: { gap: 4 },
+    addButton: {
+      alignSelf: "flex-start",
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
+    },
     railContainer: {
       position: "relative",
     },

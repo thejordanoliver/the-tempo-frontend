@@ -1,4 +1,3 @@
-import { getWCBBTeam } from "@/constants/teamsWCBB";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { Championships } from "@/hooks/useTeams";
 import Fill from "assets/banners/Fill.png";
@@ -6,19 +5,13 @@ import Outline from "assets/banners/Outline.png";
 import OutlineLight from "assets/banners/OutlineLight.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
-import { getNBATeam } from "constants/teams";
-import { getMCBBTeam } from "constants/teamsMCBB";
-import { getCFBTeam } from "constants/teamsCFB";
-import { getMLBTeam } from "constants/teamsMLB";
-import { getNFLTeam } from "constants/teamsNFL";
-import { getNHLTeam } from "constants/teamsNHL";
-import { getWNBATeam } from "constants/teamsWNBA";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   championships: Championships[] | undefined;
   teamId?: string | number;
   teamName?: string;
+  teamColor?: string;
   teamLogo?: any;
   league?: string;
 };
@@ -37,48 +30,19 @@ function isColorDark(hex: string | undefined): boolean {
   return luminance < 140;
 }
 
-function getTeamByLeague(league: string, teamId?: string | number) {
-  if (!teamId) return undefined;
-
-  switch (league) {
-    case "nfl":
-      return getNFLTeam(teamId);
-
-    case "cfb":
-      return getCFBTeam(teamId);
-
-    case "mcbb":
-      return getMCBBTeam(teamId);
-    case "wcbb":
-      return getWCBBTeam(teamId);
-
-    case "mlb":
-      return getMLBTeam(teamId);
-
-    case "nhl":
-      return getNHLTeam(teamId);
-
-    case "wnba":
-      return getWNBATeam(teamId);
-
-    default:
-      return getNBATeam(teamId);
-  }
-}
-
 export default function ChampionshipBanner({
   championships,
   teamId,
   teamName,
+  teamColor,
   teamLogo,
   league = "nba",
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const team = getTeamByLeague(league, teamId);
   const styles = championshipBannerStyles(isDark);
 
-  if (!team) {
+  if (!teamId) {
     console.warn(
       `ChampionshipBanner: No team found for id=${teamId}, name=${teamName}, league=${league}`,
     );
@@ -146,6 +110,9 @@ export default function ChampionshipBanner({
         if (league === "wnba") {
           label = "WNBA CHAMPIONS";
         }
+        if (["cb", "sb", "mcbb", "wcbb"].includes(league)) {
+          label = "NATIONAL CHAMPIONS";
+        }
 
         return (
           <View
@@ -156,13 +123,13 @@ export default function ChampionshipBanner({
               source={Fill}
               style={[
                 styles.bannerFill,
-                { tintColor: team?.color ?? Colors.midTone },
+                { tintColor: teamColor ?? Colors.midTone },
               ]}
               resizeMode="contain"
             />
 
             <Image
-              source={isColorDark(team?.color ?? "") ? OutlineLight : Outline}
+              source={isColorDark(teamColor ?? "") ? OutlineLight : Outline}
               style={styles.bannerOutline}
               resizeMode="contain"
             />

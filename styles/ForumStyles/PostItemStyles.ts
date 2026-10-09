@@ -101,12 +101,7 @@ export function PostItemStyles(isDark: boolean) {
     },
 
     pollContainer: {
-      marginTop: 14,
-      padding: 14,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor,
       borderRadius: 14,
-      backgroundColor: surfaceColor,
     },
 
     pollQuestion: {
@@ -120,9 +115,8 @@ export function PostItemStyles(isDark: boolean) {
     optionWrapper: {
       position: "relative",
       minHeight: 46,
-      marginBottom: 9,
+      marginBottom: 12,
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor,
       borderRadius: 10,
       overflow: "hidden",
     },

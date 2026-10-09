@@ -29,7 +29,7 @@ export type HomeGameItem = {
 };
 
 export type HomeGameSection = {
-  id: HomeLeagueId | typeof MY_TEAMS_SECTION_ID;
+  id: HomeLeagueId | typeof MY_TEAMS_SECTION_ID | "general-live" | "general-upcoming" | "general-final";
   title: string;
   data: HomeGameItem[];
 };

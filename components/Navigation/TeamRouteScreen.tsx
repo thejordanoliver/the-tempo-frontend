@@ -1,4 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
+import { globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Text, View } from "react-native";
 
 import NBATeamScreen from "app/(tabs)/(home)/team/[teamId]";
 import CBTeamScreen from "app/(tabs)/(home)/team/cb/[teamId]";
@@ -31,13 +34,20 @@ const TEAM_SCREENS = {
 } as const;
 
 export default function TeamRouteScreen() {
-  const { teamType } = useLocalSearchParams<{ teamType?: string }>();
-  const resolvedTeamType = teamType ?? "nba";
+  const { teamType } = useLocalSearchParams<{ teamType?: string | string[] }>();
+  const { resolvedColorScheme } = usePreferences();
+  const global = globalStyles(resolvedColorScheme === "dark");
+  const resolvedTeamType = (Array.isArray(teamType) ? teamType[0] : teamType)?.toLowerCase() ?? "nba";
   const TeamScreen =
     TEAM_SCREENS[resolvedTeamType as keyof typeof TEAM_SCREENS];
 
   if (!TeamScreen) {
-    return null;
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>Team unavailable</Text>
+        <Text style={global.emptySubText}>This league is not supported.</Text>
+      </View>
+    );
   }
 
   return <TeamScreen />;

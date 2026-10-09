@@ -18,8 +18,8 @@ type ButtonProps = {
   isDark: boolean;
   variant?: ButtonVariant;
   children?: ReactNode;
-  accessibilityRole: AccessibilityRole | undefined;
-  accessibilityLabel: string | undefined;
+  accessibilityRole?: AccessibilityRole | undefined;
+  accessibilityLabel?: string | undefined;
 };
 
 export default function Button({

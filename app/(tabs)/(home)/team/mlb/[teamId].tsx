@@ -1,12 +1,10 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import RosterStats from "@/components/Sports/Baseball/Team/RosterStats";
-import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { useRosterStats } from "@/hooks/BaseballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BaseballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import useTeamDetails from "@/hooks/useTeams";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
@@ -43,12 +41,20 @@ export default function TeamDetailScreen() {
       teamName,
       teamColor,
       logo: teamLogo,
-      favorite: team ? { lookupId: team.id, toggleId: team.id } : undefined,
+      favorite: team
+        ? { lookupId: team.id ?? 0, toggleId: teamIdNum }
+        : undefined,
       infoEnabled: true,
     },
   });
+  const {
+    runRefresh,
+    hasVisitedTab,
+    selectedTab,
+    refreshing,
+    isDark,
+  } = screen;
 
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -58,7 +64,7 @@ export default function TeamDetailScreen() {
     loadingMore: loadingMoreNews,
     refresh: refreshNews,
   } = useTeamNews(league, teamIdNum, 10, {
-    enabled: screen.hasVisitedTab("news"),
+    enabled: hasVisitedTab("news"),
   });
 
   const {
@@ -68,15 +74,16 @@ export default function TeamDetailScreen() {
     error: rosterStatsError,
     refetch,
   } = useRosterStats(teamIdNum, league, {
-    enabled: screen.hasVisitedTab("stats"),
+    enabled: hasVisitedTab("stats"),
   });
 
   const {
     teamStats,
     loading: teamStatsLoading,
+    refresh: refreshTeamStats,
     error: teamStatsError,
   } = useTeamStats({
-    enabled: screen.hasVisitedTab("stats"),
+    enabled: hasVisitedTab("stats"),
     teamId: teamIdNum,
     league,
   });
@@ -85,7 +92,8 @@ export default function TeamDetailScreen() {
     sections,
     loading: playersLoading,
     error: playersError,
-  } = useRoster(teamIdNum, league, { enabled: screen.hasVisitedTab("roster") });
+    refreshPlayers,
+  } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
 
   const {
     games,
@@ -101,12 +109,20 @@ export default function TeamDetailScreen() {
   } = useBaseballTeamGames("mlb", teamIdNum);
 
   const handleRefresh = () =>
-    screen.runRefresh(async () => {
-      if (screen.selectedTab === "schedule") {
+    runRefresh(async () => {
+      if (selectedTab === "schedule") {
         await refreshTeamGames();
       }
 
-      if (screen.selectedTab === "news") {
+      if (selectedTab === "roster") {
+        await refreshPlayers();
+      }
+
+      if (selectedTab === "stats") {
+        await Promise.all([refetch(), refreshTeamStats()]);
+      }
+
+      if (selectedTab === "news") {
         await refreshNews();
       }
     });
@@ -115,16 +131,6 @@ export default function TeamDetailScreen() {
     <SharedTeamDetailScreen
       ready={Boolean(team)}
       screen={screen}
-      footer={
-        <TeamInfoModal
-          teamDetails={teamDetails}
-          visible={screen.modalVisible}
-          onClose={() => screen.setModalVisible(false)}
-          teamId={teamIdNum}
-          teamLogo={teamLogo}
-          league={league}
-        />
-      }
     >
       {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
@@ -139,7 +145,7 @@ export default function TeamDetailScreen() {
           games={games}
           error={gamesError}
           loading={gamesLoading}
-          refreshing={gamesRefreshing || screen.refreshing}
+          refreshing={gamesRefreshing || refreshing}
           onRefresh={handleRefresh}
           showHeaders={true}
           showCountdown={showCountdown}
@@ -161,7 +167,7 @@ export default function TeamDetailScreen() {
           refreshing={refreshingNews}
           loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
-          isDark={screen.isDark}
+          isDark={isDark}
         />
       </View>
 
@@ -171,7 +177,7 @@ export default function TeamDetailScreen() {
           sections={sections}
           loading={playersLoading}
           error={playersError}
-          refreshing={screen.refreshing}
+          refreshing={refreshing}
           onRefresh={handleRefresh}
           league={league}
         />
@@ -185,8 +191,8 @@ export default function TeamDetailScreen() {
           teamStats={teamStats}
           loading={rosterStatsLoading || teamStatsLoading}
           error={rosterStatsError || teamStatsError}
-          refreshing={refreshingStats}
-          onRefresh={refetch}
+          refreshing={refreshingStats || refreshing}
+          onRefresh={handleRefresh}
           league={league}
         />
       </View>

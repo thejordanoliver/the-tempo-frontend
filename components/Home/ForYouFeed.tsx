@@ -1,16 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
-import PredictionFeedCard from "./PredictionFeedCard";
-import type { FeedPrediction } from "types/fanPredictions";
-import { interleavePredictions } from "utils/forYouFeed";
+import { PostItem } from "components/Forum/PostItem/PostItem";
+import PostItemSkeleton from "components/Forum/PostItemSkeleton";
 import NewsCard from "components/News/NewsCard";
 import NewsCardSkeleton from "components/Skeletons/NewsCardSkeleton";
-import PostItemSkeleton from "components/Forum/PostItemSkeleton";
-import { PostItem } from "components/Forum/PostItem/PostItem";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import type { ForYouArticle } from "hooks/useForYouFeed";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import type { FeedPrediction } from "types/fanPredictions";
 import type { ForumPost } from "types/forum";
+import { interleavePredictions } from "utils/forYouFeed";
+import PredictionFeedCard from "./PredictionFeedCard";
 
 type ForYouFeedProps = {
   articles: ForYouArticle[];
@@ -47,25 +47,35 @@ export default function ForYouFeed({
 }: ForYouFeedProps) {
   const styles = useMemo(() => forYouFeedStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-  const feed = useMemo<FeedItem[]>(
-    () =>
-      interleavePredictions<FeedItem>([
-        ...articles.map((article) => ({
-          kind: "article" as const,
-          date: article.published,
-          article,
-        })),
-        ...posts.map((post) => ({
-          kind: "post" as const,
-          date: post.created_at,
-          post,
-        })),
-      ].sort(
-        (first, second) =>
-          getTimestamp(second.date) - getTimestamp(first.date),
-      ), predictions.map(prediction => ({ kind: "prediction", prediction }))),
-    [articles, posts, predictions],
-  );
+  const feed = useMemo<FeedItem[]>(() => {
+    const articleItems = articles.map((article) => ({
+      kind: "article" as const,
+      date: article.published,
+      article,
+    }));
+    const postItems = posts.map((post) => ({
+      kind: "post" as const,
+      date: post.created_at,
+      post,
+    }));
+    const items: FeedItem[] =
+      favoriteLeagues.length === 0
+        ? Array.from(
+            { length: Math.max(articleItems.length, postItems.length) },
+            (_, index) =>
+              [articleItems[index], postItems[index]].filter(
+                (item): item is NonNullable<typeof item> => Boolean(item),
+              ),
+          ).flat()
+        : [...articleItems, ...postItems].sort(
+            (first, second) =>
+              getTimestamp(second.date) - getTimestamp(first.date),
+          );
+    return interleavePredictions<FeedItem>(
+      items,
+      predictions.map((prediction) => ({ kind: "prediction", prediction })),
+    );
+  }, [articles, posts, predictions, favoriteLeagues.length]);
 
   if (loading && feed.length === 0) {
     return (
@@ -102,11 +112,11 @@ export default function ForYouFeed({
             color={isDark ? Colors.white : Colors.black}
           />
         </View>
-        <Text style={global.emptyTitle}>Make it yours</Text>
+
         <Text style={global.emptyText}>
           {hasFavoriteLeagues
             ? "Follow people to see their posts here. New stories from your favorite leagues will appear as they publish."
-            : "Choose favorite leagues and follow people to build your personalized feed."}
+            : "New sports stories and community posts will appear here as they publish."}
         </Text>
       </View>
     );
@@ -116,7 +126,13 @@ export default function ForYouFeed({
     <View style={styles.container}>
       {feed.map((item) => {
         if (item.kind === "prediction") {
-          return <PredictionFeedCard key={`prediction-${item.prediction.sport}-${item.prediction.league}-${item.prediction.gameId}`} game={item.prediction} isDark={isDark} />;
+          return (
+            <PredictionFeedCard
+              key={`prediction-${item.prediction.sport}-${item.prediction.league}-${item.prediction.gameId}`}
+              game={item.prediction}
+              isDark={isDark}
+            />
+          );
         }
         if (item.kind === "article") {
           return (
@@ -144,7 +160,11 @@ export default function ForYouFeed({
                 size={14}
                 color={styles.contextText.color}
               />
-              <Text style={styles.contextText}>FROM SOMEONE YOU FOLLOW</Text>
+              <Text style={styles.contextText}>
+                {favoriteLeagues.length === 0 && !item.post.isFollowing
+                  ? "FROM THE COMMUNITY"
+                  : "FROM SOMEONE YOU FOLLOW"}
+              </Text>
             </View>
             <PostItem
               item={item.post}

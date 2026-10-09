@@ -33,6 +33,7 @@ import {
   mergeNotifications,
   reconcileHydratedUnreadCount,
 } from "@/utils/notificationState";
+import { buildFavoriteTeamKey, type FavoriteTeamKey } from "types/favorites";
 import React, {
   createContext,
   useCallback,
@@ -99,6 +100,7 @@ type NotificationContextType = {
   clearCenterNotifications: () => void;
   teamSubscriptions: TeamNotificationSubscription[];
   gameSubscriptions: GameNotificationSubscription[];
+  removeUnfavoritedTeamSubscriptions: (teams: readonly FavoriteTeamKey[]) => void;
   refreshTeamSubscriptions: () => Promise<boolean>;
   toggleTeamNotifications: (
     sport: NotificationTeamSport,
@@ -634,6 +636,21 @@ export function NotificationProvider({
     [teamSubscriptions],
   );
 
+  // The favorites endpoint deletes these subscriptions in the same transaction.
+  // Reflect that result immediately, even if the subsequent refresh fails.
+  const removeUnfavoritedTeamSubscriptions = useCallback(
+    (teams: readonly FavoriteTeamKey[]) => {
+      const removed = new Set(teams);
+      setTeamSubscriptions((current) =>
+        current.filter((subscription) => {
+          const key = buildFavoriteTeamKey(subscription.league, subscription.teamId);
+          return !key || !removed.has(key);
+        }),
+      );
+    },
+    [],
+  );
+
   const refreshTeamSubscriptions = useCallback(async () => {
     const generation = generationRef.current;
     const userId = userIdRef.current;
@@ -1049,6 +1066,7 @@ export function NotificationProvider({
       clearCenterNotifications,
       teamSubscriptions,
       gameSubscriptions,
+      removeUnfavoritedTeamSubscriptions,
       refreshTeamSubscriptions,
       toggleTeamNotifications,
       isTeamNotified,
@@ -1081,6 +1099,7 @@ export function NotificationProvider({
       markConversationNotificationsRead,
       mergeRealtimeNotification,
       refreshing,
+      removeUnfavoritedTeamSubscriptions,
       refreshTeamSubscriptions,
       refreshNotifications,
       removeCenterNotification,

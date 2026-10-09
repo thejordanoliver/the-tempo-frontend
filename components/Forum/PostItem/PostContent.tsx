@@ -30,8 +30,8 @@ export const PostContent = memo(function PostContent({
 }: PostContentProps) {
   const styles = PostItemStyles(isDark);
   const router = useScopedRouter();
-  const previewText = item.text.slice(0, 280).split("\n").slice(0, 4).join("\n");
-  const isTruncated = !showFullText && previewText.length < item.text.length;
+  const previewText = item?.text?.slice(0, 280).split("\n").slice(0, 4).join("\n");
+  const isTruncated = !showFullText && previewText?.length < item?.text?.length;
 
   /* -------------------------------------------------------------------------- */
   /*                                   Media                                    */
@@ -81,7 +81,7 @@ export const PostContent = memo(function PostContent({
     <View style={styles.postTextWrapper}>
       {!!item.text && (
         <Text style={styles.postText}>
-          {isTruncated ? `${previewText.trimEnd()}…` : item.text}
+          {isTruncated ? `${previewText?.trimEnd()}…` : item?.text}
         </Text>
       )}
 

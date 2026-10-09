@@ -43,41 +43,63 @@ export function useFanPrediction({
   state,
   initialState,
 }: FanPredictionInput) {
-  const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
+  const canVote = state === "pre";
+  const [phase, setPhase] = useState<"loading" | "ready" | "error">(
+    initialState ? "ready" : "loading",
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [userVote, setUserVote] = useState<TeamId | null>(null);
-  const [results, setResults] = useState<PollResult[]>([]);
-  const [resultsRevealed, setResultsRevealed] = useState(false);
+  const [userVote, setUserVote] = useState<TeamId | null>(
+    initialState?.userVote ?? null,
+  );
+  const [results, setResults] = useState<PollResult[]>(initialState?.votes ?? []);
+  const [resultsRevealed, setResultsRevealed] = useState(
+    initialState != null && (initialState.userVote != null || !canVote),
+  );
   const [submittingTeamId, setSubmittingTeamId] = useState<TeamId | null>(null);
   const [optimisticVote, setOptimisticVote] = useState<OptimisticVote | null>(
     null,
   );
 
   const submittingRef = useRef(false);
-  const canVote = state === "pre";
+  const [previousInput, setPreviousInput] = useState({
+    gameId,
+    state,
+    initialState,
+  });
 
-  // Restore the saved pick and totals when the game or voting availability changes.
-  useEffect(() => {
+  // Adjust input-dependent state before rendering children, without an effect render.
+  if (
+    previousInput.gameId !== gameId ||
+    previousInput.state !== state ||
+    previousInput.initialState !== initialState
+  ) {
+    setPreviousInput({ gameId, state, initialState });
     if (initialState) {
       setResults(initialState.votes);
       if (initialState.userVote != null) setUserVote(initialState.userVote);
-      setResultsRevealed(previous => previous || initialState.userVote != null || !canVote);
+      setResultsRevealed(
+        previous => previous || initialState.userVote != null || !canVote,
+      );
       setPhase("ready");
-      return;
+    } else {
+      setPhase("loading");
+      setErrorMessage(null);
+      setResults([]);
+      setUserVote(null);
+      setResultsRevealed(false);
+      setOptimisticVote(null);
     }
+  }
+
+  // Fetch saved picks and totals only when the caller has not supplied them.
+  useEffect(() => {
+    if (initialState) return;
     let active = true;
 
     const controller = new AbortController();
 
     const loadPredictionState = async () => {
       try {
-        setPhase("loading");
-        setErrorMessage(null);
-        setResults([]);
-        setUserVote(null);
-        setResultsRevealed(false);
-        setOptimisticVote(null);
-
         const data = await fetchVoteResults(gameId, {
           signal: controller.signal,
         });

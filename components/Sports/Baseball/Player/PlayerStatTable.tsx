@@ -11,7 +11,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
@@ -784,7 +784,7 @@ export default function PlayerStatTable({
   const availableGroups = useMemo(() => {
     const groupsByName = new Map<string, Category>();
 
-    visibleData.forEach((season) => {
+    sortedData.forEach((season) => {
       getFilteredCategories(season, seasonTypeContext).forEach((category) => {
         if (!groupsByName.has(category.name)) {
           groupsByName.set(category.name, category);
@@ -792,37 +792,22 @@ export default function PlayerStatTable({
       });
     });
 
+    // Keep regular/postseason category controls even before that section has stats.
+    const prefix = seasonTypeContext === "postseason" ? "postseason-" : "";
+    for (const name of groupsByName.size ? [] : ["batting", "pitching", "fielding"]) {
+      const key = `${prefix}${name}`;
+      groupsByName.set(key, { name: key, displayName: getGroupDisplayName(null, key), stats: [] });
+    }
     return Array.from(groupsByName.values()).sort((a, b) =>
       sortGroupNames(a.name, b.name),
     );
-  }, [seasonTypeContext, visibleData]);
+  }, [seasonTypeContext, sortedData]);
 
   const [selectedGroup, setSelectedGroup] = useState<string>("");
 
-  useEffect(() => {
-    let cancelled = false;
-
-    void Promise.resolve().then(() => {
-      if (cancelled) return;
-
-      if (!availableGroups.length) {
-        setSelectedGroup("");
-        return;
-      }
-
-      const availableGroupNames = availableGroups.map((group) => group.name);
-
-      if (!selectedGroup || !availableGroupNames.includes(selectedGroup)) {
-        setSelectedGroup(availableGroups[0].name);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [availableGroups, selectedGroup]);
-
-  const activeGroup = selectedGroup || availableGroups[0]?.name;
+  const activeGroup = availableGroups.find(group => group.name === selectedGroup)?.name
+    ?? availableGroups.find(group => group.name.replace(/^(?:postseason-|career-)/, "") === selectedGroup.replace(/^(?:postseason-|career-)/, ""))?.name
+    ?? availableGroups[0]?.name;
 
   const seasonsWithGroup = useMemo(() => {
     return visibleData.map((season, index) => {
@@ -920,7 +905,7 @@ export default function PlayerStatTable({
       : "No stats available";
 
   const shouldShowCategoryDropdown =
-    visibleData.length > 0 && availableGroups.length > 0 && statKeys.length > 0;
+    availableGroups.length > 0;
 
   const renderHeader = () => (
     <>
@@ -957,17 +942,28 @@ export default function PlayerStatTable({
   if (loading) {
     return (
       <View style={styles.container}>
-        <PlayerStatTableSkeleton />
+        {renderHeader()}
+        <PlayerStatTableSkeleton showHeader={false} />
       </View>
     );
   }
 
   if (error) {
-    return <Text style={global.errorText}>{error}</Text>;
+    return (
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
   }
 
   if (!sortedData.length) {
-    return <Text style={global.emptyText}>No stats available</Text>;
+    return (
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={global.emptyText}>{emptyText}</Text>
+      </View>
+    );
   }
 
   if (!visibleData.length) {

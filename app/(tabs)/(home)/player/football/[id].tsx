@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
+import LatestGame from "@/components/Player/LatestGame";
 import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import SeasonStatCard from "@/components/Sports/Football/Player/SeasonStatCard";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
@@ -7,19 +7,20 @@ import {
   FootballPlayerSeason,
   usePlayerSeasons,
 } from "@/hooks/FootballHooks/usePlayerSeasons";
-import { useTeamLatestGame } from "@/hooks/FootballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
+import PlayerGameLog from "components/Player/PlayerGameLog";
 import PlayerHeader from "components/Sports/Football/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/Football/Player/PlayerStatTable";
 import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { usePlayerLatestGame } from "hooks/FootballHooks/usePlayerLatestGame";
+import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
+import { useLayoutEffect, useMemo, useState } from "react";
+import { Text, View } from "react-native";
 
 type FootballRouteLeague = "nfl" | "cfb";
 
@@ -64,7 +65,6 @@ function normalizeFootballLeague(league: unknown): FootballRouteLeague {
 }
 
 export default function PlayerDetailScreen() {
-  const navigationContentStyle = useNavigationBarContentStyle();
   const {
     id,
     teamId: routeTeamId,
@@ -82,8 +82,6 @@ export default function PlayerDetailScreen() {
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const navigation = useNavigation();
-
-  const styles = playerScreenStyles;
 
   /**
    * =========================================
@@ -237,25 +235,33 @@ export default function PlayerDetailScreen() {
     return isNFL ? getNFLTeamLogo(teamId, true) : getCFBTeamLogo(teamId, true);
   }, [teamId, isNFL]);
 
-  /**
-   * =========================================
-   * LAST GAME
-   * =========================================
-   *
-   * Uses the canonical/current league and team.
-   *
-   * Carson Beck:
-   *
-   * CFB route
-   * -> resolves NFL
-   * -> NFL team latest game
-   */
-
+  const gameLogPlayerId = canonicalPlayerId ?? "";
+  const gameLogPlayerKey = `${canonicalLeague}:${gameLogPlayerId}`;
+  const [gameLogSelection, setGameLogSelection] = useState<{
+    playerKey: string;
+    season: string;
+  } | null>(null);
+  const selectedGameLogSeason =
+    gameLogSelection?.playerKey === gameLogPlayerKey
+      ? gameLogSelection.season
+      : null;
+  const latestGameLog = usePlayerGameLog(gameLogPlayerId, canonicalLeague);
+  const needsSeasonLog =
+    selectedGameLogSeason !== null &&
+    selectedGameLogSeason !== String(latestGameLog.data?.season);
+  const seasonGameLog = usePlayerGameLog(
+    needsSeasonLog ? gameLogPlayerId : "",
+    canonicalLeague,
+    selectedGameLogSeason,
+  );
+  const tableGameLog = needsSeasonLog ? seasonGameLog : latestGameLog;
   const {
     game,
-    loading: gameLoading,
-    error: gameError,
-  } = useTeamLatestGame(canonicalLeague, teamId);
+    loading: latestGameLoading,
+    error: latestGameError,
+  } = usePlayerLatestGame(latestGameLog.data, canonicalLeague);
+  const gameLoading = latestGameLog.loading || latestGameLoading;
+  const gameError = latestGameLog.error || latestGameError;
 
   /**
    * =========================================
@@ -352,76 +358,84 @@ export default function PlayerDetailScreen() {
     );
   }
 
-  /**
-   * =========================================
-   * RENDER
-   * =========================================
-   */
+  const pages = [
+    {
+      label: "Career Stats",
+      content: (
+        <PlayerStatTable
+          data={data}
+          collegeData={collegeData}
+          loading={seasonsLoading}
+          error={seasonsError}
+          position={player.position}
+          league={canonicalLeague}
+        />
+      ),
+    },
+    {
+      label: "Game Log",
+      content: (
+        <PlayerGameLog
+          sport="football"
+          league={canonicalLeague}
+          data={tableGameLog.data}
+          filterData={latestGameLog.data}
+          selectedSeason={selectedGameLogSeason}
+          loading={tableGameLog.loading}
+          error={tableGameLog.error}
+          onSeasonChange={(season) =>
+            setGameLogSelection({ playerKey: gameLogPlayerKey, season })
+          }
+          onRetry={tableGameLog.refetch}
+        />
+      ),
+    },
+    ...(isNFL
+      ? [
+          {
+            label: "Awards",
+            content: player.awards?.length ? (
+              <PlayerAwardList player={player} />
+            ) : (
+              <View style={global.emptyContainer}>
+                <Text style={global.emptyText}>No awards available</Text>
+              </View>
+            ),
+          },
+        ]
+      : []),
+  ];
 
   return (
-    <ScrollView
-      contentContainerStyle={navigationContentStyle(
-        styles.contentContainerStyle,
-      )}
-    >
-      {/* =====================================
-          CANONICAL PLAYER PROFILE
-         ===================================== */}
-
-      <PlayerHeader player={player} isDark={isDark} isCFB={isCFB} />
-
-      {/* =====================================
-          CURRENT / PRO SEASON
-         ===================================== */}
-
-      <SeasonStatCard
-        season={latestSeason}
-        loading={seasonsLoading}
-        error={seasonsError}
-        player={player}
-        isActive={isActive}
-        rankings={currentSeasonRankings}
-        teamColor={teamColor}
-      />
-
-      {/* =====================================
-          LATEST GAME
-
-          Only current active players.
-         ===================================== */}
-
-      {isActive && teamId ? (
-        <LatestGame
-          game={game}
-          loading={gameLoading}
-          error={gameError}
-          isDark={isDark}
-          league={canonicalLeague}
-          isNFL={isNFL}
-          isCFB={isCFB}
-        />
-      ) : null}
-
-      {/* =====================================
-          CAREER STATS
-
-          NFL player:
-          NFL | College
-
-          CFB-only player:
-          College stats only
-         ===================================== */}
-
-      <PlayerStatTable
-        data={data}
-        collegeData={collegeData}
-        loading={seasonsLoading}
-        error={seasonsError}
-        position={player.position}
-        league={canonicalLeague}
-      />
-
-      <PlayerAwardList player={player} />
-    </ScrollView>
+    <PlayerDetailsPager
+      key={gameLogPlayerKey}
+      pages={pages}
+      isDark={isDark}
+      overview={
+        <>
+          <PlayerHeader player={player} isDark={isDark} isCFB={isCFB} />
+          <SeasonStatCard
+            season={latestSeason}
+            loading={seasonsLoading}
+            error={seasonsError}
+            player={player}
+            isActive={isActive}
+            rankings={currentSeasonRankings}
+            teamColor={teamColor}
+          />
+          {canonicalPlayerId ? (
+            <LatestGame
+              game={game}
+              loading={gameLoading}
+              error={gameError}
+              isDark={isDark}
+              league={canonicalLeague}
+              isNFL={isNFL}
+              isCFB={isCFB}
+            />
+          ) : null}
+        </>
+      }
+    />
   );
 }

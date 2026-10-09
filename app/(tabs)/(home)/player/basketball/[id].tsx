@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
+import LatestGame from "@/components/Player/LatestGame";
 import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
@@ -22,6 +22,8 @@ import {
 import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
+import PlayerGameLog from "components/Player/PlayerGameLog";
 import { Colors, globalStyles } from "constants/styles";
 import {
   getMCBBTeam,
@@ -30,10 +32,10 @@ import {
 } from "constants/teamsMCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { usePlayerLatestGame } from "hooks/BasketballHooks/usePlayerLatestGame";
+import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
+import { useLayoutEffect, useMemo, useState } from "react";
+import { Text, View } from "react-native";
 
 const BASKETBALL_LEAGUES = new Set<BasketballLeague>([
   "nba",
@@ -52,7 +54,6 @@ function normalizeBasketballLeague(league: unknown): BasketballLeague {
 }
 
 export default function PlayerDetailScreen() {
-  const navigationContentStyle = useNavigationBarContentStyle();
   const {
     id,
     teamId: routeTeamId,
@@ -62,7 +63,6 @@ export default function PlayerDetailScreen() {
     teamId?: string;
     league?: string;
   }>();
-  const styles = playerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const global = useMemo(() => globalStyles(isDark), [isDark]);
@@ -99,6 +99,7 @@ export default function PlayerDetailScreen() {
   const isWNBA = canonicalLeague === "wnba";
   const isMCBB = canonicalLeague === "mcbb";
   const isWCBB = canonicalLeague === "wcbb";
+  const hasPlayerGameLog = isNBA || isMCBB || isWCBB;
 
   const { player, loading, error } = usePlayerById(
     canonicalPlayerId,
@@ -157,10 +158,49 @@ export default function PlayerDetailScreen() {
   const resolvedTeamId = team?.id != null ? String(team.id) : currentTeamId;
 
   const {
-    game,
-    loading: gameLoading,
-    error: gameError,
-  } = useTeamLatestGame(canonicalLeague, resolvedTeamId);
+    game: teamGame,
+    loading: teamGameLoading,
+    error: teamGameError,
+  } = useTeamLatestGame(
+    canonicalLeague,
+    hasPlayerGameLog ? null : resolvedTeamId,
+  );
+
+  const gameLogPlayerId = hasPlayerGameLog ? (canonicalPlayerId ?? "") : "";
+  const gameLogPlayerKey = `${canonicalLeague}:${gameLogPlayerId}`;
+  const [gameLogSelection, setGameLogSelection] = useState<{
+    playerKey: string;
+    season: string;
+  } | null>(null);
+  const selectedGameLogSeason =
+    gameLogSelection?.playerKey === gameLogPlayerKey
+      ? gameLogSelection.season
+      : null;
+  const latestGameLog = usePlayerGameLog(gameLogPlayerId, canonicalLeague);
+  // Share the initial log; request another season only when the dropdown changes.
+  const needsSeasonLog =
+    selectedGameLogSeason !== null &&
+    selectedGameLogSeason !== String(latestGameLog.data?.season);
+  const seasonGameLog = usePlayerGameLog(
+    needsSeasonLog ? gameLogPlayerId : "",
+    canonicalLeague,
+    selectedGameLogSeason,
+  );
+  const tableGameLog = needsSeasonLog ? seasonGameLog : latestGameLog;
+
+  const {
+    game: playerGame,
+    loading: playerGameLoading,
+    error: playerGameError,
+  } = usePlayerLatestGame(latestGameLog.data, canonicalLeague);
+
+  const game = hasPlayerGameLog ? playerGame : teamGame;
+  const gameLoading = hasPlayerGameLog
+    ? latestGameLog.loading || playerGameLoading
+    : teamGameLoading;
+  const gameError = hasPlayerGameLog
+    ? latestGameLog.error || playerGameError
+    : teamGameError;
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
@@ -200,46 +240,93 @@ export default function PlayerDetailScreen() {
       </View>
     );
 
-  return (
-    <ScrollView
-      contentContainerStyle={navigationContentStyle(
-        styles.contentContainerStyle,
-      )}
-    >
-      <PlayerHeader player={player} isDark={isDark} league={canonicalLeague} />
-
-      <SeasonStatCard
-        seasons={seasons}
-        loading={seasonsLoading}
-        error={seasonsError}
-        league={canonicalLeague}
-        isActive={isActive}
-        rankings={currentSeasonRankings}
-        teamColor={teamColor}
-      />
-
-      {isActive && resolvedTeamId ? (
-        <LatestGame
-          game={game}
-          loading={gameLoading}
-          error={gameError}
-          isDark={isDark}
+  const pages = [
+    {
+      label: "Career Stats",
+      content: (
+        <PlayerStatTable
+          seasons={seasons}
+          collegeSeasons={collegeSeasons}
+          loading={seasonsLoading}
+          error={seasonsError}
           league={canonicalLeague}
-          isMCBB={isMCBB}
-          isWCBB={isWCBB}
-          isWNBA={isWNBA}
         />
-      ) : null}
+      ),
+    },
+    ...(hasPlayerGameLog && canonicalPlayerId
+      ? [
+          {
+            label: "Game Log",
+            content: (
+              <PlayerGameLog
+                league={canonicalLeague}
+                data={tableGameLog.data}
+                filterData={latestGameLog.data}
+                selectedSeason={selectedGameLogSeason}
+                loading={tableGameLog.loading}
+                error={tableGameLog.error}
+                onSeasonChange={(season) =>
+                  setGameLogSelection({ playerKey: gameLogPlayerKey, season })
+                }
+                onRetry={tableGameLog.refetch}
+              />
+            ),
+          },
+        ]
+      : []),
+    ...(!isMCBB && !isWCBB
+      ? [
+          {
+            label: "Awards",
+            content: player.awards?.length ? (
+              <PlayerAwardList player={player} />
+            ) : (
+              <View style={global.emptyContainer}>
+                <Text style={global.emptyText}>No awards available</Text>
+              </View>
+            ),
+          },
+        ]
+      : []),
+  ];
 
-      <PlayerStatTable
-        seasons={seasons}
-        collegeSeasons={collegeSeasons}
-        loading={seasonsLoading}
-        error={seasonsError}
-        league={canonicalLeague}
-      />
-
-      <PlayerAwardList player={player} />
-    </ScrollView>
+  return (
+    <PlayerDetailsPager
+      key={`${canonicalLeague}:${canonicalPlayerId}`}
+      pages={pages}
+      isDark={isDark}
+      overview={
+        <>
+          <PlayerHeader
+            player={player}
+            isDark={isDark}
+            league={canonicalLeague}
+          />
+          <SeasonStatCard
+            seasons={seasons}
+            loading={seasonsLoading}
+            error={seasonsError}
+            league={canonicalLeague}
+            isActive={isActive}
+            rankings={currentSeasonRankings}
+            teamColor={teamColor}
+          />
+          {(hasPlayerGameLog && canonicalPlayerId) ||
+          (isActive && resolvedTeamId) ? (
+            <LatestGame
+              game={game}
+              loading={gameLoading}
+              error={gameError}
+              isDark={isDark}
+              league={canonicalLeague}
+              isNBA={isNBA}
+              isMCBB={isMCBB}
+              isWCBB={isWCBB}
+              isWNBA={isWNBA}
+            />
+          ) : null}
+        </>
+      }
+    />
   );
 }

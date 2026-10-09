@@ -12460,6 +12460,24 @@ export const CFB_RIVALRIES = [
     group: "acc",
   },
   {
+    id: "florida-state-miami",
+    name: "Florida State–Miami",
+    teamIds: [49, 123],
+    group: "acc",
+  },
+  {
+    id: "florida-state-clemson",
+    name: "Florida State–Clemson",
+    teamIds: [49, 209],
+    group: "acc",
+  },
+  {
+    id: "north-carolina-nc-state",
+    name: "North Carolina–NC State",
+    teamIds: [53, 121],
+    group: "acc",
+  },
+  {
     id: "sunshine-showdown",
     name: "Sunshine Showdown",
     teamIds: [49, 113],
@@ -12498,6 +12516,30 @@ export const CFB_RIVALRIES = [
     id: "iron-bowl",
     name: "Iron Bowl",
     teamIds: [171, 106],
+    group: "sec",
+  },
+  {
+    id: "palmetto-bowl",
+    name: "Palmetto Bowl",
+    teamIds: [209, 188],
+    group: "sec",
+  },
+  {
+    id: "governors-cup",
+    name: "Governor's Cup",
+    teamIds: [129, 198],
+    group: "sec",
+  },
+  {
+    id: "florida-tennessee",
+    name: "Florida–Tennessee",
+    teamIds: [113, 69],
+    group: "sec",
+  },
+  {
+    id: "alabama-lsu",
+    name: "Alabama–LSU",
+    teamIds: [106, 207],
     group: "sec",
   },
   {
@@ -12566,6 +12608,18 @@ export const CFB_RIVALRIES = [
     group: "big-ten",
   },
   {
+    id: "land-grant-trophy",
+    name: "Land Grant Trophy",
+    teamIds: [92, 78],
+    group: "big-ten",
+  },
+  {
+    id: "little-brown-jug",
+    name: "Little Brown Jug",
+    teamIds: [115, 85],
+    group: "big-ten",
+  },
+  {
     id: "paul-bunyan-trophy",
     name: "Paul Bunyan Trophy",
     teamIds: [115, 92],
@@ -12616,6 +12670,12 @@ export const CFB_RIVALRIES = [
     id: "bedlam",
     name: "Bedlam",
     teamIds: [117, 61],
+    group: "big-12",
+  },
+  {
+    id: "revivalry",
+    name: "Revivalry",
+    teamIds: [105, 118],
     group: "big-12",
   },
   {
@@ -12683,6 +12743,30 @@ export const CFB_RIVALRIES = [
     group: "other",
   },
   {
+    id: "cy-hawk",
+    name: "Cy-Hawk",
+    teamIds: [138, 151],
+    group: "other",
+  },
+  {
+    id: "backyard-brawl",
+    name: "Backyard Brawl",
+    teamIds: [63, 64],
+    group: "other",
+  },
+  {
+    id: "river-city-rivalry",
+    name: "River City Rivalry",
+    teamIds: [63, 128],
+    group: "other",
+  },
+  {
+    id: "battle-for-the-iron-skillet",
+    name: "Battle for the Iron Skillet",
+    teamIds: [105, 190],
+    group: "other",
+  },
+  {
     id: "commander-in-chief-army-navy",
     name: "Commander-in-Chief's Trophy",
     teamIds: [177, 145],
@@ -12740,6 +12824,18 @@ export const CFB_RIVALRIES = [
     name: "Catholics vs. Convicts",
     teamIds: [108, 123],
     group: "independent",
+  },
+  {
+    id: "war-on-i-4",
+    name: "War on I-4",
+    teamIds: [71, 135],
+    group: "aac",
+  },
+  {
+    id: "civil-conflict",
+    name: "Civil Conflict",
+    teamIds: [71, 46],
+    group: "aac",
   },
 ] as const satisfies readonly CFBRivalry[];
 

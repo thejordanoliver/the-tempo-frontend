@@ -1,10 +1,8 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
-import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getCBTeam, getCBTeamLogo } from "@/constants/teamsCB";
-import useTeamDetails from "@/hooks/useTeams";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -30,6 +28,7 @@ export default function TeamDetailScreen() {
     header: {
       league,
       teamId: team?.id ?? teamIdNum,
+      teamName: team?.name,
       notificationTeamId: teamIdNum,
       teamColor,
       logo: teamLogo,
@@ -38,7 +37,6 @@ export default function TeamDetailScreen() {
     },
   });
 
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -79,16 +77,6 @@ export default function TeamDetailScreen() {
     <SharedTeamDetailScreen
       ready={Boolean(team)}
       screen={screen}
-      footer={
-        <TeamInfoModal
-          teamDetails={teamDetails}
-          visible={screen.modalVisible}
-          onClose={() => screen.setModalVisible(false)}
-          teamId={teamIdNum}
-          teamLogo={teamLogo}
-          league={league}
-        />
-      }
     >
       {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
@@ -128,7 +116,7 @@ export default function TeamDetailScreen() {
 
       {/* ROSTER */}
       {/* STANDINGS */}
-      <View key="standings">
+      <View key="standings" style={styles.contentArea}>
         <CBStandingsList league="cb" />
       </View>
 

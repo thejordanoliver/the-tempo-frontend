@@ -713,7 +713,7 @@ export default function PlayerStatTable({
     const ordered = getOrderedStatGroups(position);
     const actualGroups = new Set<string>();
 
-    visibleData.forEach((season) => {
+    sortedData.forEach((season) => {
       season.categories?.forEach((category) => {
         if (category?.stats?.length > 0) {
           actualGroups.add(normalizeCategoryDisplayName(category));
@@ -727,7 +727,7 @@ export default function PlayerStatTable({
     );
 
     return orderedGroups.length ? [...orderedGroups, ...extraGroups] : ordered;
-  }, [visibleData, position]);
+  }, [sortedData, position]);
 
   const [selectedGroup, setSelectedGroup] = useState<string>("");
 
@@ -820,7 +820,7 @@ export default function PlayerStatTable({
       : "No stats available";
 
   const shouldShowCategoryDropdown =
-    visibleData.length > 0 && availableGroups.length > 0 && statKeys.length > 0;
+    availableGroups.length > 0;
 
   const renderHeader = () => (
     <>
@@ -868,13 +868,19 @@ export default function PlayerStatTable({
   if (loading) {
     return (
       <View style={styles.container}>
-        <PlayerStatTableSkeleton />
+        {renderHeader()}
+        <PlayerStatTableSkeleton showHeader={false} />
       </View>
     );
   }
 
   if (error) {
-    return <Text style={global.errorText}>{error}</Text>;
+    return (
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
   }
 
   if (!sortedData.length) {

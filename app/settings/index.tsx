@@ -4,7 +4,7 @@ import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import TextInputComponent from "components/TextInput";
-import { Colors } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
@@ -35,8 +35,10 @@ export default function SettingsScreen() {
   const [showLogoutModal, setshowLogoutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [password, setPassword] = useState("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const styles = settingsStyles(isDark);
+  const sharedStyles = globalStyles(isDark);
 
   const closeAlert = useCallback(() => {
     setAlertConfig(null);
@@ -92,17 +94,11 @@ export default function SettingsScreen() {
   };
 
   const confirmDeleteAccount = async () => {
-    const currentPassword = password.trim();
+    const currentPassword = password;
+    setDeleteError(null);
 
     if (!currentPassword) {
-      setShowDeleteModal(false);
-
-      queueAlert({
-        title: "Password Required",
-        message: "Please enter your current password.",
-        confirmText: "OK",
-      });
-
+      setDeleteError("Please enter your current password.");
       return;
     }
 
@@ -119,17 +115,11 @@ export default function SettingsScreen() {
 
       console.warn("Failed to delete account:", message);
 
-      setShowDeleteModal(false);
-      setPassword("");
-
-      queueAlert({
-        title: "Delete Account Failed",
-        message:
-          message === "Incorrect password" || message === "Invalid password"
-            ? "The password you entered is incorrect. Please try again."
-            : message,
-        confirmText: "OK",
-      });
+      setDeleteError(
+        /(?:incorrect|invalid)(?: current)? password/i.test(message)
+          ? "The password you entered is incorrect. Please try again."
+          : message,
+      );
     }
   };
 
@@ -199,7 +189,10 @@ export default function SettingsScreen() {
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
             style={styles.optionButton}
-            onPress={() => setShowDeleteModal(true)}
+            onPress={() => {
+              setDeleteError(null);
+              setShowDeleteModal(true);
+            }}
           >
             <Text style={styles.dangerText}>Delete Account</Text>
           </TouchableOpacity>
@@ -231,6 +224,7 @@ export default function SettingsScreen() {
         onCancel={() => {
           setShowDeleteModal(false);
           setPassword("");
+          setDeleteError(null);
         }}
       >
         <TextInputComponent
@@ -241,8 +235,16 @@ export default function SettingsScreen() {
           autoCorrect={false}
           textContentType="password"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(value) => {
+            setPassword(value);
+            setDeleteError(null);
+          }}
         />
+        {!!deleteError && (
+          <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={sharedStyles.errorText}>
+            {deleteError}
+          </Text>
+        )}
       </ConfirmModal>
 
       <ConfirmModal

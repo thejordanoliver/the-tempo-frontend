@@ -3,14 +3,12 @@ import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
-import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import useTeamDetails from "@/hooks/useTeams";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -30,12 +28,6 @@ export default function TeamDetailScreen() {
   const team = getMCBBTeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
-  const {
-    teamDetails,
-    loading: teamDetailsLoading,
-    error: teamDetailsError,
-  } = useTeamDetails(league, teamIdNum);
-  const conferenceId = teamDetails?.conferenceId;
   const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getMCBBTeamLogo(teamIdNum, true);
@@ -53,12 +45,13 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
+  const { teamDetails, teamDetailsLoading, teamDetailsError } = screen;
+  const conferenceId = teamDetails?.conferenceId;
   const {
+    runRefresh,
     hasVisitedTab,
     selectedTab,
     refreshing,
-    modalVisible,
-    setModalVisible,
     isDark,
   } = screen;
 
@@ -94,6 +87,7 @@ export default function TeamDetailScreen() {
   const {
     teamStats,
     loading: teamStatsLoading,
+    refresh: refreshTeamStats,
     error: teamStatsError,
   } = useTeamStats({
     enabled: hasVisitedTab("stats"),
@@ -105,6 +99,7 @@ export default function TeamDetailScreen() {
     players,
     loading: playersLoading,
     error: playersError,
+    refreshPlayers,
   } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
 
   const {
@@ -121,9 +116,13 @@ export default function TeamDetailScreen() {
   } = useBasketballTeamGames(league, espnId);
 
   const handleRefresh = async () => {
-    await screen.runRefresh(async () => {
+    await runRefresh(async () => {
       if (selectedTab === "schedule") {
         await refreshTeamGames();
+      }
+
+      if (selectedTab === "roster") {
+        await refreshPlayers();
       }
 
       if (selectedTab === "news") {
@@ -131,7 +130,7 @@ export default function TeamDetailScreen() {
       }
 
       if (selectedTab === "stats") {
-        await refetch();
+        await Promise.all([refetch(), refreshTeamStats()]);
       }
     });
   };
@@ -140,16 +139,6 @@ export default function TeamDetailScreen() {
     <SharedTeamDetailScreen
       ready={Boolean(team)}
       screen={screen}
-      footer={
-        <TeamInfoModal
-          teamDetails={teamDetails}
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          teamId={teamIdNum}
-          teamLogo={teamLogo}
-          league={league}
-        />
-      }
     >
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector
@@ -206,8 +195,8 @@ export default function TeamDetailScreen() {
           teamStats={teamStats}
           loading={rosterStatsLoading || teamStatsLoading}
           error={rosterStatsError || teamStatsError}
-          refreshing={refreshingStats}
-          onRefresh={refetch}
+          refreshing={refreshingStats || refreshing}
+          onRefresh={handleRefresh}
           league={league}
         />
       </View>

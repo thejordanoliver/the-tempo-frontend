@@ -72,6 +72,8 @@ export type Championships = {
   season: number | string;
   teamId: number;
   teamName: string;
+  champion?: string;
+  mop?: string | null;
 
   // Some championship records include these fields.
   era?: string | null;

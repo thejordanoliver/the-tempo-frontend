@@ -185,7 +185,7 @@ export default function BaseballGamePreviewModal({
   const awayRecord = away?.record ?? "0—0";
   const homeRank = home?.homeRank;
   const awayRank = away?.awayRank;
-  const teamStats = score?.GameTeamStats ?? [];
+  const teamStats = score?.teamStats ?? [];
   const playerStats = score?.playerStats ?? [];
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];

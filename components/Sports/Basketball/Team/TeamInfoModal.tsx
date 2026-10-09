@@ -1,15 +1,20 @@
+import Button from "@/components/Buttons/Button";
+import CenteredHeader from "@/components/Headings/CenteredHeader";
 import ChampionshipBanner from "@/components/Sports/Basketball/Team/ChampionshipBanner";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { TeamDetails } from "@/hooks/useTeams";
+import { TeamInfoModalStyles } from "@/styles/ModalsStyles/TeamInfoModalStyles";
 import { snapPoints } from "@/utils/modalUtils";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { Colors, Fonts } from "constants/styles";
+import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
+import { globalStyles } from "constants/styles";
+import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TeamInfo from "./TeamInfo";
 
@@ -21,7 +26,11 @@ type Props = {
   teamHistory?: string;
   teamId?: string | number;
   teamLogo?: any;
+  teamColor?: string;
   league: string;
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => Promise<void>;
 };
 
 export default function TeamInfoModal({
@@ -30,7 +39,11 @@ export default function TeamInfoModal({
   onClose,
   teamId,
   teamLogo,
+  teamColor,
   league,
+  loading = false,
+  error,
+  onRetry,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -38,6 +51,7 @@ export default function TeamInfoModal({
   const sheetRef = useRef<BottomSheetModal>(null);
   const isPresentedRef = useRef(false);
   const styles = TeamInfoModalStyles(isDark, insets);
+  const global = globalStyles(isDark);
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -80,106 +94,59 @@ export default function TeamInfoModal({
       enablePanDownToClose
       enableDynamicSizing={false}
       backdropComponent={renderBackdrop}
-      backgroundStyle={styles.backgroundStyle}
       handleStyle={styles.handleStyle}
       handleIndicatorStyle={styles.handleIndicatorStyle}
+      backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        {teamDetails?.name && (
-          <Text
-            style={styles.teamName}
-            numberOfLines={1}
-            adjustsFontSizeToFit={true}
-            minimumFontScale={0.5}
+        <BlurView intensity={100} style={styles.blurViewContainer}>
+          <BottomSheetScrollView
+            contentContainerStyle={styles.contentContainerStyle}
+            showsVerticalScrollIndicator={false}
           >
-            {teamDetails.name}
-          </Text>
-        )}
+            {!teamDetails && (loading || !error) ? (
+              <SeasonStatCardSkeleton />
+            ) : error ? (
+              <>
+                <Text style={global.errorText}>
+                  Could not load team information.
+                </Text>
+                {onRetry && (
+                  <Button
+                    accessibilityRole="button"
+                    accessibilityLabel="Retry loading team information"
+                    onPress={() => void onRetry()}
+                    isDark={isDark}
+                    variant="outline"
+                  >
+                    Try again
+                  </Button>
+                )}
+              </>
+            ) : (
+              <>
+                <CenteredHeader isDark={isDark}>Championships</CenteredHeader>
 
-        <BottomSheetScrollView
-          contentContainerStyle={styles.contentContainerStyle}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.sectionTitle}>Championships</Text>
+                <ChampionshipBanner
+                  championships={teamDetails?.championships}
+                  teamName={teamDetails?.name ?? teamDetails?.shortName}
+                  teamLogo={teamLogo}
+                  teamColor={teamColor}
+                  teamId={teamId}
+                  league={league}
+                />
 
-          <ChampionshipBanner
-            championships={teamDetails?.championships}
-            teamName={teamDetails?.name ?? teamDetails?.shortName}
-            teamLogo={teamLogo}
-            teamId={teamId}
-            league={league}
-          />
-
-          <TeamInfo
-            teamId={teamId}
-            teamDetails={teamDetails ?? null}
-            league={league}
-          />
-        </BottomSheetScrollView>
+                <TeamInfo
+                  teamId={teamId}
+                  teamDetails={teamDetails ?? null}
+                  league={league}
+                  teamColor={teamColor}
+                />
+              </>
+            )}
+          </BottomSheetScrollView>
+        </BlurView>
       </View>
     </BottomSheetModal>
   );
 }
-
-export const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
-  StyleSheet.create({
-    backgroundStyle: {
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      overflow: "hidden",
-      backgroundColor: isDark ? Colors.black : Colors.white,
-    },
-    handleStyle: {
-      position: "absolute",
-      top: 0,
-      right: 8,
-      left: 8,
-      alignItems: "center",
-      justifyContent: "center",
-      height: 40,
-      backgroundColor: "transparent",
-    },
-    handleIndicatorStyle: {
-      zIndex: 9999,
-      width: 36,
-      height: 4,
-      marginBottom: 4,
-      borderRadius: 2,
-      backgroundColor: Colors.midTone,
-    },
-    container: {
-      flex: 1,
-      padding: 12,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      overflow: "hidden",
-    },
-    blurViewContainer: {
-      flex: 1,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-    },
-
-    contentContainerStyle: {
-      paddingTop: 20,
-      paddingBottom: 40,
-    },
-    teamName: {
-      paddingBottom: 12,
-      paddingTop: Math.max(insets?.top - 20, 12),
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 20,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    sectionTitle: {
-      marginBottom: 8,
-      paddingBottom: 4,
-      borderBottomWidth: 0.5,
-      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 20,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-  });

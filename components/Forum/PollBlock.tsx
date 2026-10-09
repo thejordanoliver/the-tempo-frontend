@@ -12,6 +12,7 @@ export default function PollBlock({
   isDark: boolean;
 }) {
   const styles = PostItemStyles(isDark);
+  const borderColor = isDark ? Colors.lightGray : Colors.darkGray;
   const { poll, loading, voting, hasVoted, totalVotes, isExpired, handleVote } =
     useForumPoll(postId);
 
@@ -35,17 +36,17 @@ export default function PollBlock({
             onPress={() => handleVote(opt.id)}
             disabled={hasVoted || isExpired || voting}
             activeOpacity={hasVoted || isExpired ? 1 : 0.7}
-            style={{ marginBottom: 8 }}
           >
             <View
               style={[
                 styles.optionWrapper,
                 {
-                  borderColor: isSelected
-                    ? Colors.light.blue
-                    : isDark
-                      ? Colors.darkGray
-                      : Colors.lightGray,
+                  borderColor:
+                    isSelected && isDark
+                      ? Colors.dark.green
+                      : isSelected
+                        ? Colors.light.green
+                        : borderColor,
                 },
               ]}
             >
@@ -56,11 +57,14 @@ export default function PollBlock({
                     styles.optionFill,
                     {
                       width: `${pct}%`,
-                      backgroundColor: isSelected
-                        ? Colors.dark.blue + "88" // 20% opacity tint for selected
-                        : isDark
-                          ? Colors.transparentDarkGray
-                          : Colors.transparentLightGray,
+                      backgroundColor:
+                        isSelected && isDark
+                          ? Colors.dark.transparentGreen
+                          : isSelected
+                            ? Colors.light.transparentGreen
+                            : isDark
+                              ? Colors.transparentDarkGray
+                              : Colors.transparentLightGray,
                     },
                   ]}
                 />
@@ -73,7 +77,7 @@ export default function PollBlock({
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
-                      color={isDark ? Colors.dark.blue : Colors.light.blue}
+                      color={isDark ? Colors.dark.green : Colors.light.green}
                     />
                   )}
                   <Text
@@ -89,7 +93,21 @@ export default function PollBlock({
                 </View>
 
                 {showResults && (
-                  <Text style={styles.percentageText}>{pct}%</Text>
+                  <Text
+                    style={[
+                      styles.percentageText,
+                      {
+                        color:
+                          isSelected && isDark
+                            ? Colors.dark.text
+                            : isSelected
+                              ? Colors.light.text
+                              : Colors.midTone,
+                      },
+                    ]}
+                  >
+                    {pct}%
+                  </Text>
                 )}
               </View>
             </View>

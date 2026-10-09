@@ -1,6 +1,6 @@
-export type MMACardGame = any;
+export type MMAEvent = any;
 
-export function getMMAGameId(game: MMACardGame) {
+export function getMMAGameId(game: MMAEvent) {
   return (
     game?.gameId ??
     game?.eventId ??
@@ -11,7 +11,7 @@ export function getMMAGameId(game: MMACardGame) {
   );
 }
 
-function getMainEvent(game: MMACardGame) {
+function getMainEvent(game: MMAEvent) {
   if (game?.mainEvent) return game.mainEvent;
   if (Array.isArray(game?.fights)) return game.fights[0] ?? null;
   return null;
@@ -77,7 +77,8 @@ function toFighterWrapper(fighter: any, fallbackId: number) {
       flag_url: fighter?.flag ?? fighter?.flag_url ?? null,
       record: fighter?.record ?? "0-0",
       color: fighter?.color ?? null,
-      alternate_color: fighter?.alternateColor ?? fighter?.alternate_color ?? null,
+      alternate_color:
+        fighter?.alternateColor ?? fighter?.alternate_color ?? null,
       images: image
         ? [
             {
@@ -90,7 +91,7 @@ function toFighterWrapper(fighter: any, fallbackId: number) {
   };
 }
 
-function getCompetitors(game: MMACardGame) {
+function getCompetitors(game: MMAEvent) {
   const mainEvent = getMainEvent(game);
   const mainCompetitors = Array.isArray(mainEvent?.competitors)
     ? mainEvent.competitors
@@ -123,7 +124,7 @@ function getCompetitors(game: MMACardGame) {
   return { first, second };
 }
 
-export function getMMAFighters(game: MMACardGame) {
+export function getMMAFighters(game: MMAEvent) {
   if (game?.fighters?.first || game?.fighters?.second) {
     return {
       first: game?.fighters?.first ?? toFighterWrapper(null, 1),
@@ -139,11 +140,11 @@ export function getMMAFighters(game: MMACardGame) {
   };
 }
 
-export function getMMAEventDate(game: MMACardGame) {
+export function getMMAEventDate(game: MMAEvent) {
   return game?.date ?? game?.startDate ?? game?.mainEvent?.date ?? null;
 }
 
-export function getMMAStatusDescription(game: MMACardGame, score?: any) {
+export function getMMAStatusDescription(game: MMAEvent, score?: any) {
   const status = game?.status ?? {};
   const description =
     score?.gameStatusDescription ??
@@ -157,13 +158,14 @@ export function getMMAStatusDescription(game: MMACardGame, score?: any) {
   const state = String(status?.state ?? score?.status ?? "").toLowerCase();
 
   if (state === "in" || state === "in_play") return "In Progress";
-  if (state === "post" || state === "final" || status?.completed) return "Final";
+  if (state === "post" || state === "final" || status?.completed)
+    return "Final";
   if (state.includes("cancel")) return "Canceled";
 
   return "Scheduled";
 }
 
-export function getMMAStatusDetail(game: MMACardGame, score?: any) {
+export function getMMAStatusDetail(game: MMAEvent, score?: any) {
   return (
     score?.gameStatusDetail ??
     score?.statusText ??
@@ -173,14 +175,14 @@ export function getMMAStatusDetail(game: MMACardGame, score?: any) {
   );
 }
 
-export function getMMABroadcasts(game: MMACardGame, details?: any) {
+export function getMMABroadcasts(game: MMAEvent, details?: any) {
   if (Array.isArray(details?.broadcasts)) return details.broadcasts;
   if (Array.isArray(game?.broadcasts)) return game.broadcasts;
   if (game?.broadcast) return [game.broadcast];
   return [];
 }
 
-export function getMMAPeriod(game: MMACardGame, score?: any) {
+export function getMMAPeriod(game: MMAEvent, score?: any) {
   return (
     score?.period ??
     game?.status?.period ??
@@ -190,7 +192,7 @@ export function getMMAPeriod(game: MMACardGame, score?: any) {
   );
 }
 
-export function getMMADisplayClock(game: MMACardGame, score?: any) {
+export function getMMADisplayClock(game: MMAEvent, score?: any) {
   return (
     score?.displayClock ??
     game?.status?.displayClock ??
@@ -201,7 +203,7 @@ export function getMMADisplayClock(game: MMACardGame, score?: any) {
 }
 
 export function getMMAEventHeadline(
-  game: MMACardGame,
+  game: MMAEvent,
   details?: any,
   score?: any,
 ) {
@@ -218,7 +220,7 @@ export function getMMAEventHeadline(
   );
 }
 
-export function getMMARouteParams(game: MMACardGame) {
+export function getMMARouteParams(game: MMAEvent) {
   const gameId = getMMAGameId(game);
 
   return {

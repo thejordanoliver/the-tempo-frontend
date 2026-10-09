@@ -1,29 +1,33 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import LatestGame from "@/components/Player/LatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
+import FighterCareerStats from "components/Sports/MMA/Player/FighterCareerStats";
+import FighterFightLog from "components/Sports/MMA/Player/FighterFightLog";
 import PlayerHeader from "components/Sports/MMA/Player/PlayerHeader";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useMemo, useLayoutEffect } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { useFighterFightLog } from "hooks/MMAHooks/useFighterFightLog";
+import { useFighterLatestGame } from "hooks/MMAHooks/useFighterLatestGame";
+import { useLayoutEffect, useMemo } from "react";
+import { Text, View } from "react-native";
 
 export default function PlayerDetailScreen() {
-  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = playerScreenStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
-  const { id, league } = useLocalSearchParams<{
+  const { id, league = "mma" } = useLocalSearchParams<{
     id: string;
-    league: string;
+    league?: "mma" | "ufc";
   }>();
 
   const playerId = Number(id);
-  const { player, loading, error } = usePlayerById(playerId, league);
+  const { player, loading, error } = usePlayerById(playerId, "mma");
+  const fightLog = useFighterFightLog(playerId);
+  const latestFight = useFighterLatestGame(fightLog.data);
   const flag = player?.flag_url;
   const color = player?.citizenship_country_alt_color ?? Colors.midTone;
 
@@ -47,8 +51,7 @@ export default function PlayerDetailScreen() {
       ),
     });
   }, [navigation, flag, color, league, loading, player]);
-
-  if (loading || !player)
+  if (loading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
@@ -58,17 +61,50 @@ export default function PlayerDetailScreen() {
   if (error || !player)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>{error ?? "Fighter not found"}</Text>
       </View>
     );
 
   return (
-    <ScrollView
-      contentContainerStyle={navigationContentStyle(
-        styles.contentContainerStyle,
-      )}
-    >
-      <PlayerHeader player={player} isDark={isDark} />
-    </ScrollView>
+    <PlayerDetailsPager
+      key={`mma:${playerId}`}
+      isDark={isDark}
+      overview={
+        <>
+          <PlayerHeader player={player} isDark={isDark} />
+          <LatestGame
+            game={latestFight.game}
+            loading={fightLog.loading || latestFight.loading}
+            error={fightLog.error || latestFight.error}
+            isDark={isDark}
+            league={league}
+          />
+        </>
+      }
+      pages={[
+        {
+          label: "Career Stats",
+          content: (
+            <FighterCareerStats
+              data={fightLog.data}
+              loading={fightLog.loading}
+              error={fightLog.error}
+              isDark={isDark}
+            />
+          ),
+        },
+        {
+          label: "Fight Log",
+          content: (
+            <FighterFightLog
+              data={fightLog.data}
+              loading={fightLog.loading}
+              error={fightLog.error}
+              onRetry={fightLog.refetch}
+            />
+          ),
+        },
+      ]}
+    />
   );
 }

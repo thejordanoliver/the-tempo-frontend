@@ -26,6 +26,9 @@ export function useLiveGameChat(gameId: string | number, context: GameChatContex
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sessionVersion, setSessionVersion] = useState(0);
+  const identity = `${userId}:${roomId}`;
+  const connectionKey = JSON.stringify([identity, contextKey, sessionVersion]);
+  const [previousConnection, setPreviousConnection] = useState({ identity, key: connectionKey });
   const socketRef = useRef<Socket | null>(null);
   const messagesRef = useRef(messages);
   const generation = useRef(0);
@@ -37,7 +40,19 @@ export function useLiveGameChat(gameId: string | number, context: GameChatContex
   const recentSendRef = useRef<{ key: string; time: number } | null>(null);
   const deletedIds = useRef(new Set<string>());
   const syncRef = useRef<(() => Promise<void>) | null>(null);
-  messagesRef.current = messages;
+  // Reset state before committing a different room, account, or connection.
+  if (previousConnection.key !== connectionKey) {
+    setPreviousConnection({ identity, key: connectionKey });
+    setIsReady(false);
+    setUserCount(0);
+    setMessages(previousConnection.identity !== identity ? [] : messages.map((row) => row.delivery === "pending" ?
+      { ...row, delivery: "failed", error: "Connection changed before delivery was confirmed. Tap to retry." } : row));
+    setError(null);
+  }
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   useEffect(() => subscribeAuthSession(({ accessToken }) => {
     generation.current += 1;
@@ -59,7 +74,7 @@ export function useLiveGameChat(gameId: string | number, context: GameChatContex
       ...current.filter((row) => row.id !== message.id && !(message.clientId && row.clientId === message.clientId && row.senderId === message.senderId)),
       { ...keepNewestChatReactions(message, current.find((row) => row.id === message.id)), delivery: "sent", receivedAt: Date.now() },
     ]));
-  }, [roomId]);
+  }, [roomId, setMessages]);
 
   useEffect(() => {
     const run = ++generation.current;
@@ -80,11 +95,6 @@ export function useLiveGameChat(gameId: string | number, context: GameChatContex
     if (identityChanged) { blockedIds.current.clear(); deletedIds.current.clear(); verifiedIdentityRef.current = ""; recentSendRef.current = null; }
     sendInFlight.current.clear();
     reactionInFlight.current.clear();
-    setIsReady(false);
-    setUserCount(0);
-    setMessages((rows) => identityChanged ? [] : rows.map((row) => row.delivery === "pending" ?
-      { ...row, delivery: "failed", error: "Connection changed before delivery was confirmed. Tap to retry." } : row));
-    setError(null);
 
     const sync = async (catchUp = false) => {
       if (!userId || !active() || refreshing) return;
@@ -305,13 +315,13 @@ export function useLiveGameChat(gameId: string | number, context: GameChatContex
     } catch (failure) {
       if (run === generation.current) { setError(failure instanceof Error ? failure.message : "Unable to update reaction"); void syncRef.current?.().catch(() => {}); }
     } finally { reactionInFlight.current.delete(key); }
-  }, [isReady, roomId, userId]);
+  }, [isReady, roomId, userId, setMessages, setError]);
 
   const hideBlockedUser = useCallback((id: number) => {
     blockedIds.current.add(id);
     setMessages((rows) => rows.filter((row) => row.senderId !== id));
     void syncRef.current?.().catch(() => {});
-  }, []);
+  }, [setMessages]);
 
   const deleteMessage = useCallback(async (id: string) => {
     const run = generation.current;
@@ -319,7 +329,7 @@ export function useLiveGameChat(gameId: string | number, context: GameChatContex
       await apiClient.delete(`/api/game-chat/${encodeURIComponent(roomId)}/messages/${encodeURIComponent(id)}`, { params: JSON.parse(contextKey) });
       if (generation.current === run) { deletedIds.current.add(id); setMessages((rows) => rows.filter((row) => row.id !== id)); }
     } catch { if (generation.current === run) setError("Unable to delete message"); }
-  }, [roomId, contextKey]);
+  }, [roomId, contextKey, setMessages, setError]);
 
   return { messages, userCount, currentUserName, currentUserId: userId, isReady, error, sendMessage, retryMessage, deleteMessage, addReaction, hideBlockedUser };
 }
