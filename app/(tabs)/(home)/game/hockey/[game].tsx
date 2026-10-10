@@ -1,4 +1,3 @@
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
@@ -22,7 +21,6 @@ import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
-import { useVenue } from "@/hooks/useVenue";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
   formatDate,
@@ -35,6 +33,7 @@ import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
@@ -129,8 +128,8 @@ export default function GameDetailsScreen(
   const homeTeam = getNHLTeam(homeId);
   const awayTeam = getNHLTeam(awayId);
 
-  const homeEspnId = homeTeam?.espnId ?? 0;
-  const awayEspnId = awayTeam?.espnId ?? 0;
+  const homeEspnId = homeTeam?.id ?? 0;
+  const awayEspnId = awayTeam?.id ?? 0;
 
   const homeLogo = getNHLTeamLogo(homeId, isDark);
   const awayLogo = getNHLTeamLogo(awayId, isDark);
@@ -151,7 +150,13 @@ export default function GameDetailsScreen(
   const awayCoach = awayTeamDetails?.coach;
 
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
-  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
+  const {
+    votes: liveVotes,
+    castVote: castLiveVote,
+    scoring,
+    scoringError,
+    retryScoring,
+  } = useLiveVotes(gameId, {
     sport: "hockey",
     league: LEAGUE,
     state: score?.status?.state ?? undefined,
@@ -184,8 +189,8 @@ export default function GameDetailsScreen(
   const awayWins = awayScore > homeScore;
   const homeRecord = score?.home?.records[0]?.summary ?? "0-0";
   const awayRecord = score?.away?.records[0]?.summary ?? "0-0";
-  const homeTimeouts = score?.home?.timeouts ?? 0;
-  const awayTimeouts = score?.away.timeouts ?? 0;
+  const homeTimeouts = score?.home?.timeouts;
+  const awayTimeouts = score?.away.timeouts;
   const officials = details?.officials ?? [];
   const injuries = details?.injuries ?? [];
   const highlights = details?.highlights ?? [];
@@ -197,24 +202,28 @@ export default function GameDetailsScreen(
     : undefined;
 
   const neutralSite = details?.neutralSite;
-  const venueId = Number(details?.venue?.id);
-  const { venue } = useVenue({ sport: "hockey", id: venueId });
+  const venue = details?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
     date: gameDateObj,
   });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
-  const venueAttendance = game?.attendance || null;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueAttendance = details?.attendance ?? null;
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
@@ -452,7 +461,11 @@ export default function GameDetailsScreen(
 
       {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
-          context={{ sport: "hockey", league: LEAGUE, date: gameDateObj?.toISOString() }}
+          context={{
+            sport: "hockey",
+            league: LEAGUE,
+            date: gameDateObj?.toISOString(),
+          }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}

@@ -1,18 +1,14 @@
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
-// components/StandingsList.tsx
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { getUFLTeam } from "@/constants/teamsUFL";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
-import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
-import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
+import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
-import {
-  getNHLTeamByEspnId as getNHLTeamByESPNId,
-  getNHLTeamLogo,
-} from "constants/teamsNHL";
+import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -346,7 +342,7 @@ export const StandingsList = ({
 
   const getTeam = (item: StandingsTeam) => {
     if (league === "nba") {
-      return getTeamByESPNId(Number(item.id));
+      return getNBATeam(Number(item.id));
     }
 
     if (league === "wnba") {
@@ -362,10 +358,10 @@ export const StandingsList = ({
     }
 
     if (league === "mlb") {
-      return getMLBTeamByEspnId(item.id);
+      return getMLBTeam(item.id);
     }
 
-    return getNHLTeamByESPNId(Number(item.id));
+    return getNHLTeam(Number(item.id));
   };
 
   const getTeamRoute = () => {

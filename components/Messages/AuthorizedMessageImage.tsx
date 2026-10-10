@@ -113,7 +113,7 @@ export default function AuthorizedMessageImage({
   }
 
   return (
-    <View style={style}>
+    <View style={[style, localStyles.imageContainer]}>
       <Image
         source={{ uri: url }}
         style={StyleSheet.absoluteFill}
@@ -130,6 +130,9 @@ export default function AuthorizedMessageImage({
 }
 
 const localStyles = StyleSheet.create({
+  imageContainer: {
+    overflow: "hidden",
+  },
   loading: {
     alignItems: "center",
     justifyContent: "center",

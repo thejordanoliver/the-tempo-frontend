@@ -1,10 +1,10 @@
 import Dropdown from "@/components/Dropdown";
 import { Play } from "@/hooks/BasketballHooks/useBasketballGameDetails";
-import MCBBCourtImage from "assets/Placeholders/MCBBCourtPlaceholder.png";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
+import MCBBCourtImage from "assets/Placeholders/MCBBCourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
-import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getMCBBTeamByESPNId, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
@@ -97,7 +97,7 @@ export default function ShotChart({
       return getWNBATeamByESPNId(homeEspnId);
     }
 
-    return getTeamByESPNId(homeEspnId);
+    return getNBATeam(homeEspnId);
   }, [homeEspnId, isMensMCBB, isWCBB, isWNBA]);
 
   const awayTeam = useMemo(() => {
@@ -113,7 +113,7 @@ export default function ShotChart({
       return getWNBATeamByESPNId(awayEspnId);
     }
 
-    return getTeamByESPNId(awayEspnId);
+    return getNBATeam(awayEspnId);
   }, [awayEspnId, isMensMCBB, isWCBB, isWNBA]);
 
   const courtLogo = useMemo(() => {
@@ -146,15 +146,15 @@ export default function ShotChart({
   const filteredPlays = useMemo(() => {
     const periodMap: Partial<Record<ShotChartTab, number>> = isCollegeBasketball
       ? {
-        "1st Half": 1,
-        "2nd Half": 2,
-      }
+          "1st Half": 1,
+          "2nd Half": 2,
+        }
       : {
-        "1st": 1,
-        "2nd": 2,
-        "3rd": 3,
-        "4th": 4,
-      };
+          "1st": 1,
+          "2nd": 2,
+          "3rd": 3,
+          "4th": 4,
+        };
 
     return plays.filter((play) => {
       if (!play.coordinate || !play.shootingPlay) {
@@ -287,7 +287,7 @@ export default function ShotChart({
     );
   });
 
-  const MadeView = ({ color }: { color: string; }) => (
+  const MadeView = ({ color }: { color: string }) => (
     <View
       style={[
         styles.madeMarker,
@@ -298,7 +298,7 @@ export default function ShotChart({
     />
   );
 
-  const MissView = ({ color }: { color: string; }) => (
+  const MissView = ({ color }: { color: string }) => (
     <View
       style={[
         styles.missedMarker,
@@ -388,20 +388,20 @@ export default function ShotChart({
               <View style={styles.divider} />
 
               <Text style={styles.legendText}>Make</Text>
-              {MadeView({ "color": awayColorValue })}
+              {MadeView({ color: awayColorValue })}
 
               <Text style={styles.legendText}>Miss</Text>
-              {MissView({ "color": awayColorValue })}
+              {MissView({ color: awayColorValue })}
             </View>
           )}
 
           {homeTeam && (
             <View style={styles.legendItem}>
               <Text style={styles.legendText}>Make</Text>
-              {MadeView({ "color": homeColorValue })}
+              {MadeView({ color: homeColorValue })}
 
               <Text style={styles.legendText}>Miss</Text>
-              {MissView({ "color": homeColorValue })}
+              {MissView({ color: homeColorValue })}
 
               <View style={styles.divider} />
 

@@ -1,6 +1,6 @@
 import PillTabs from "@/components/TabBars/PillTabs";
 import { getCBTeam } from "@/constants/teamsCB";
-import { getMLBTeamByEspnId } from "@/constants/teamsMLB";
+import { getMLBTeam } from "@/constants/teamsMLB";
 import type {
   BaseballPlayerSeason,
   Category,
@@ -535,7 +535,7 @@ function getSeasonTeamCode(season: BaseballPlayerSeason, league: string) {
   }
 
   if (league === "mlb") {
-    const team = getMLBTeamByEspnId(teamId);
+    const team = getMLBTeam(teamId);
     return team?.code || "—";
   }
 
@@ -794,9 +794,15 @@ export default function PlayerStatTable({
 
     // Keep regular/postseason category controls even before that section has stats.
     const prefix = seasonTypeContext === "postseason" ? "postseason-" : "";
-    for (const name of groupsByName.size ? [] : ["batting", "pitching", "fielding"]) {
+    for (const name of groupsByName.size
+      ? []
+      : ["batting", "pitching", "fielding"]) {
       const key = `${prefix}${name}`;
-      groupsByName.set(key, { name: key, displayName: getGroupDisplayName(null, key), stats: [] });
+      groupsByName.set(key, {
+        name: key,
+        displayName: getGroupDisplayName(null, key),
+        stats: [],
+      });
     }
     return Array.from(groupsByName.values()).sort((a, b) =>
       sortGroupNames(a.name, b.name),
@@ -805,9 +811,14 @@ export default function PlayerStatTable({
 
   const [selectedGroup, setSelectedGroup] = useState<string>("");
 
-  const activeGroup = availableGroups.find(group => group.name === selectedGroup)?.name
-    ?? availableGroups.find(group => group.name.replace(/^(?:postseason-|career-)/, "") === selectedGroup.replace(/^(?:postseason-|career-)/, ""))?.name
-    ?? availableGroups[0]?.name;
+  const activeGroup =
+    availableGroups.find((group) => group.name === selectedGroup)?.name ??
+    availableGroups.find(
+      (group) =>
+        group.name.replace(/^(?:postseason-|career-)/, "") ===
+        selectedGroup.replace(/^(?:postseason-|career-)/, ""),
+    )?.name ??
+    availableGroups[0]?.name;
 
   const seasonsWithGroup = useMemo(() => {
     return visibleData.map((season, index) => {
@@ -904,8 +915,7 @@ export default function PlayerStatTable({
       ? "Stats not available"
       : "No stats available";
 
-  const shouldShowCategoryDropdown =
-    availableGroups.length > 0;
+  const shouldShowCategoryDropdown = availableGroups.length > 0;
 
   const renderHeader = () => (
     <>

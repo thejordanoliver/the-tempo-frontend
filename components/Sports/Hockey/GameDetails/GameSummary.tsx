@@ -2,7 +2,7 @@ import { Play } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
+import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
@@ -151,11 +151,11 @@ export default function GameSummary({
           contentContainerStyle={navigationContentStyle({ paddingBottom: 20 })}
         >
           {filteredPlays?.map((play) => {
-            const team = getNHLTeamByEspnId(Number(play.team?.id));
+            const team = getNHLTeam(Number(play.team?.id));
             const teamLogo = getNHLTeamLogo(team?.id, isDark);
 
             const showLogo =
-              !!team?.espnId &&
+              !!team?.id &&
               play.text &&
               !play.text.toLowerCase().includes("start of") &&
               !play.text.toLowerCase().includes("end of");

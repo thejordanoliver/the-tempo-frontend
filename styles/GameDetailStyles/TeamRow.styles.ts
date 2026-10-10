@@ -203,31 +203,24 @@ export type SoccerProps = {
 
 export type NHLProps = {
   id: number | null;
-
   logo: any;
   name: string;
   record: string;
-
-  timeouts?: number;
+  timeouts?: number | null;
   rank?: number | null;
   score?: number;
-
   isDark: boolean;
   isHome?: boolean;
   isWinner?: boolean;
   hideRecord?: boolean;
-
   size?: SizeType;
-
   colors?: {
     text: string;
     record: string;
     score: string;
     winnerScore: string;
   };
-
   gameStatusDescription?: string;
-
   league: string;
 };
 

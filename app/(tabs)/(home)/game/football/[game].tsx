@@ -16,7 +16,6 @@ import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDet
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
-import { useVenue } from "@/hooks/useVenue";
 import { FootballGameCardProps } from "@/types/football/football";
 import {
   formatPeriod,
@@ -367,26 +366,26 @@ export default function GameDetailsScreen(
   const teamStats = score?.boxScore?.teams ?? [];
   const playerStats = score?.boxScore?.players ?? [];
   const neutralSite = details?.neutralSite;
-  const venueId = Number(details?.venue?.id);
   const baseVenue = details?.venue;
-  const { venue } = useVenue({ sport: "football", id: venueId });
+  const venue = details?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
     date: gameDateObj,
   });
 
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName ?? null;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueAddress = venue?.address.formatted ?? (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href ?? null;
   const venueAttendance = details?.attendance ?? null;
-  const venueSurface = baseVenue?.grass;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueSurface = venue?.grass ?? baseVenue?.grass ?? undefined;
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`

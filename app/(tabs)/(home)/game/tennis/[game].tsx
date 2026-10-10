@@ -3,9 +3,8 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
-
 import MatchInformation from "@/components/Sports/Tennis/GameDetails/MatchInformation";
-import GameHeader from "@/components/Sports/Tennis/GamePreview/GameHeader";
+import GameHeader from "@/components/Sports/Tennis/GameDetails/GameHeader";
 import { useScrollFade } from "@/hooks/useScrollFade";
 import { gameDetailsScreenStyles } from "@/styles/GameDetailStyles/GameDetailsScreenStyles";
 import { formatDate, formatTime, safeDate } from "@/utils/dateUtils";

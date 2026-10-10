@@ -1,3 +1,4 @@
+import { resolveSoccerTeamLeague } from "./soccerTeamLeague";
 import { getUserProfileParams } from "utils/userProfileNavigation";
 import type { ResultItem, SearchAffiliation } from "types/explore";
 
@@ -11,7 +12,6 @@ export type ExploreRoute =
 type TeamLeagueRoute = {
   flag: keyof Extract<ResultItem, { type: "team" }>;
   teamType: string;
-  includeLeagueParam?: boolean;
 };
 
 type PlayerLeagueRoute = {
@@ -33,7 +33,6 @@ const TEAM_LEAGUE_ROUTES: TeamLeagueRoute[] = [
   {
     flag: "isSOCC",
     teamType: "soccer",
-    includeLeagueParam: true,
   },
   { flag: "isWCBB", teamType: "wcbb" },
 ];
@@ -127,24 +126,20 @@ export function getExploreRouteForResult(
       Boolean(item[route.flag]),
     );
 
-    if (!teamRoute) {
-      return `/(tabs)/(explore)/team/${item.id}`;
-    }
-
-    const routeId = item.id;
-
-    if (teamRoute.includeLeagueParam) {
-      return {
-        pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
-        params: {
-          teamType: teamRoute.teamType,
-          teamId: String(routeId),
-          league: String(item.league ?? "socc"),
-        },
-      };
-    }
-
-    return `/(tabs)/(explore)/team/${teamRoute.teamType}/${routeId}`;
+    const teamType = teamRoute?.teamType ?? "nba";
+    const league = teamType === "soccer"
+      ? resolveSoccerTeamLeague(item.id, item.leagueKey || item.league)
+      : teamType;
+    return {
+      pathname: teamType === "nba"
+        ? "/(tabs)/(explore)/team/[teamId]"
+        : "/(tabs)/(explore)/team/[teamType]/[teamId]",
+      params: {
+        teamId: String(item.id),
+        league,
+        ...(teamType === "nba" ? {} : { teamType }),
+      },
+    };
   }
 
   if (item.isMCBB || item.isWCBB) {

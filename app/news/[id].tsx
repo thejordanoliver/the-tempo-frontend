@@ -129,7 +129,7 @@ export default function ArticleScreen() {
       return;
     }
 
-    const params = { teamId: target.id };
+    const params = { teamId: target.id, league: target.league };
 
     switch (target.league) {
       case "nba":

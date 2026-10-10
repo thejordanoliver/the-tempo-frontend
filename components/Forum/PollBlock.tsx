@@ -43,9 +43,9 @@ export default function PollBlock({
                 {
                   borderColor:
                     isSelected && isDark
-                      ? Colors.dark.green
+                      ? Colors.dark.blue
                       : isSelected
-                        ? Colors.light.green
+                        ? Colors.light.blue
                         : borderColor,
                 },
               ]}
@@ -59,9 +59,9 @@ export default function PollBlock({
                       width: `${pct}%`,
                       backgroundColor:
                         isSelected && isDark
-                          ? Colors.dark.transparentGreen
+                          ? Colors.dark.transparentBlue
                           : isSelected
-                            ? Colors.light.transparentGreen
+                            ? Colors.light.transparentBlue
                             : isDark
                               ? Colors.transparentDarkGray
                               : Colors.transparentLightGray,
@@ -77,7 +77,7 @@ export default function PollBlock({
                     <Ionicons
                       name="checkmark-circle"
                       size={16}
-                      color={isDark ? Colors.dark.green : Colors.light.green}
+                      color={isDark ? Colors.dark.blue : Colors.light.blue}
                     />
                   )}
                   <Text

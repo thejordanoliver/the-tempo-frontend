@@ -1,3 +1,4 @@
+import type { GameVenueInfo } from "types/gameVenue";
 export type MMALeague = "ufc" | "mma";
 
 export type MMAAthlete = {
@@ -60,6 +61,7 @@ export type MMAFight = {
   time?: string | null;
   order?: number | null;
   venue?: any;
+  venueInfo?: GameVenueInfo | null;
   broadcasts?: string[];
   geoBroadcasts?: any[];
   raw?: any;
@@ -90,6 +92,7 @@ export type MMAEvent = {
     [key: string]: any;
   } | null;
   venue?: any;
+  venueInfo?: GameVenueInfo | null;
   broadcasts?: string[];
   geoBroadcasts?: any[];
   fights?: MMAFight[];

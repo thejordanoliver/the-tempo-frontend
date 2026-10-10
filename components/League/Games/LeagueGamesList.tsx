@@ -4,6 +4,8 @@ import BasketballStackedGameCard from "@/components/Sports/Basketball/Games/Bask
 import FootballGameCard from "@/components/Sports/Football/Games/FootballGameCard";
 import FootballStackedGameCard from "@/components/Sports/Football/Games/FootballStackedGameCard";
 import NHLStackedGameCard from "@/components/Sports/Hockey/Games/HockeyStackedGameCard";
+import TennisSquareGameCard from "@/components/Sports/Tennis/Games/TennisSquareGameCard";
+import TennisStackedGameCard from "@/components/Sports/Tennis/Games/TennisStackedGameCard";
 import type { HomeLeagueId } from "@/constants/leagues";
 import type { BaseballGame } from "@/types/baseball/baseball";
 import type { BasketballGame } from "@/types/basketball/basketball";
@@ -12,8 +14,6 @@ import type { HockeyGame } from "@/types/hockey/hockey";
 import type { HomeGameItem, HomeGameSection } from "@/types/leagues";
 import type { SoccerGame } from "@/types/soccer/soccer";
 import type { TennisMatch } from "@/types/tennis/tennis";
-import TennisSquareGameCard from "@/components/Sports/Tennis/Games/TennisSquareGameCard";
-import TennisStackedGameCard from "@/components/Sports/Tennis/Games/TennisStackedGameCard";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
@@ -228,10 +228,10 @@ export default function LeagueGamesList({
       case "nba": {
         const game = item.game as BasketballGame;
         if (viewMode === "list")
-          return wrapper(<BasketballGameCard game={game} />);
+          return wrapper(<BasketballGameCard game={game} isNBA />);
         if (viewMode === "grid")
-          return wrapper(<BasketballSquareGameCard game={game} />);
-        return wrapper(<BasketballStackedGameCard game={game} />);
+          return wrapper(<BasketballSquareGameCard game={game} isNBA />);
+        return wrapper(<BasketballStackedGameCard game={game} isNBA />);
       }
 
       case "mcbb": {
@@ -248,9 +248,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<BasketballGameCard game={game} isWCBB />);
         if (viewMode === "grid")
-          return wrapper(
-            <BasketballSquareGameCard game={game} isWCBB />,
-          );
+          return wrapper(<BasketballSquareGameCard game={game} isWCBB />);
         return wrapper(<BasketballStackedGameCard game={game} isWCBB />);
       }
 
@@ -259,9 +257,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<BasketballGameCard game={game} isWNBA />);
         if (viewMode === "grid")
-          return wrapper(
-            <BasketballSquareGameCard game={game} isWNBA />,
-          );
+          return wrapper(<BasketballSquareGameCard game={game} isWNBA />);
         return wrapper(<BasketballStackedGameCard game={game} isWNBA />);
       }
 
@@ -306,9 +302,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<NHLGameCard game={game} isNHL isMCH={false} />);
         if (viewMode === "grid")
-          return wrapper(
-            <NHLGameSquareCard game={game} isNHL isMCH={false} />,
-          );
+          return wrapper(<NHLGameSquareCard game={game} isNHL isMCH={false} />);
         return wrapper(<NHLStackedGameCard game={game} isNHL isMCH={false} />);
       }
 
@@ -365,15 +359,17 @@ export default function LeagueGamesList({
     if (viewMode === "grid") {
       return (
         <View style={styles.skeletonGridWrapper}>
-          {chunkIntoGridRows(Array.from({ length: count })).map((row, rowIndex) => (
-            <View key={`skeleton-row-${rowIndex}`} style={styles.gridRow}>
-              {row.map((item, columnIndex) => (
-                <View key={columnIndex} style={styles.gridItem}>
-                  {item !== null && <SquareGameCardSkeleton />}
-                </View>
-              ))}
-            </View>
-          ))}
+          {chunkIntoGridRows(Array.from({ length: count })).map(
+            (row, rowIndex) => (
+              <View key={`skeleton-row-${rowIndex}`} style={styles.gridRow}>
+                {row.map((item, columnIndex) => (
+                  <View key={columnIndex} style={styles.gridItem}>
+                    {item !== null && <SquareGameCardSkeleton />}
+                  </View>
+                ))}
+              </View>
+            ),
+          )}
         </View>
       );
     }
@@ -470,14 +466,19 @@ export default function LeagueGamesList({
           {visibleSections.map((section, sectionIndex) => (
             <View key={section.id} style={styles.gridSection}>
               {showHeaders && (
-                <View style={sectionIndex > 0 ? styles.sectionSpacing : undefined}>
+                <View
+                  style={sectionIndex > 0 ? styles.sectionSpacing : undefined}
+                >
                   <HeadingTwo isDark={isDark}>
                     {getSectionTitle(section)}
                   </HeadingTwo>
                 </View>
               )}
               {chunkIntoGridRows(section.data).map((row, rowIndex) => (
-                <View key={`${section.id}-row-${rowIndex}`} style={styles.gridRow}>
+                <View
+                  key={`${section.id}-row-${rowIndex}`}
+                  style={styles.gridRow}
+                >
                   {row.map((item, columnIndex) => (
                     <View
                       key={item?.key ?? `${section.id}-empty-${columnIndex}`}

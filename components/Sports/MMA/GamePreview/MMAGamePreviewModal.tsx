@@ -1,7 +1,6 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import { Colors } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import {
   formatDate,
@@ -49,7 +48,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
     else sheetRef.current?.dismiss();
   }, [visible]);
 
-  const gameDate = safeDate(game?.date);
+  const gameDate = safeDate(game.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
@@ -121,30 +120,32 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const period = formatPeriod({ period: game?.status?.period, isMMA: true });
   const clock = game?.status?.displayClock;
 
-  const venueId = Number(game?.venue?.id);
-  const { venue } = useVenue({ sport: "mma", id: venueId });
+  const venue = game?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
-    date: formattedDate,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
+    date: gameDate,
   });
-
   const baseVenue = game?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? "";
-  const venueAttendance = baseVenue?.attendance || null;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
+  const venueAttendance = game?.attendance ?? game?.attendance ?? null;
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
-
   return (
     <BottomSheetModal
       ref={sheetRef}

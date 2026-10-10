@@ -1,7 +1,7 @@
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatsTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -90,7 +90,19 @@ export default function FighterFightLog({ data, loading, error, onRetry }: Props
               {fights.map((fight, index) => (
                 <View key={`${fight.eventId}:${fight.fightId}`} style={rowStyle(index)}>
                   <Text style={[styles.cell, layout.opponent]} numberOfLines={1} accessibilityLabel={fight.opponent.name}>{fight.opponent.name || "—"}</Text>
-                  <Text style={styles.cell} accessibilityLabel={fight.result === "NC" ? "No contest" : undefined}>{fight.result ?? "—"}</Text>
+                  <Text
+                    style={[
+                      styles.cell,
+                      fight.result === "W"
+                        ? { color: isDark ? Colors.dark.green : Colors.light.green }
+                        : fight.result === "L"
+                          ? { color: isDark ? Colors.dark.lightRed : Colors.light.red }
+                          : undefined,
+                    ]}
+                    accessibilityLabel={fight.result === "NC" ? "No contest" : undefined}
+                  >
+                    {fight.result ?? "—"}
+                  </Text>
                   <Text style={[styles.cell, layout.method]} numberOfLines={1} adjustsFontSizeToFit>{fight.method ?? "—"}</Text>
                   <Text style={styles.cell}>{fight.round ?? "—"}</Text>
                   <Text style={styles.cell}>{fight.time ?? "—"}</Text>

@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { Href, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useNotificationSelection } from "hooks/useNotificationSelection";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   useCallback,
@@ -18,7 +19,6 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import {
@@ -58,11 +58,23 @@ export default function NotificationsCenter() {
 
   const isDark = resolvedColorScheme === "dark";
   const [relativeTimeNow, setRelativeTimeNow] = useState(() => Date.now());
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
-  const [hiddenIds, setHiddenIds] = useState<Set<string>>(() => new Set());
-  const [suppressEmptyState, setSuppressEmptyState] = useState(false);
-  const emptyStateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const {
+    visibleNotifications,
+    isSelectionMode,
+    isAllSelected,
+    selectedIds,
+    selectedCount,
+    suppressEmptyState,
+    toggleSelectionMode,
+    handleToggleSelection,
+    handleToggleSelectAll,
+    handleDeleteSelected,
+  } = useNotificationSelection({
+    centerNotifications,
+    removeCenterNotification,
+    removeAllCenterNotifications,
+  });
 
   const styles = NotificationsCenterStyles(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
@@ -73,13 +85,6 @@ export default function NotificationsCenter() {
   const navigation = useNavigation();
   const router = useScopedRouter();
 
-  const visibleNotifications = useMemo(
-    () =>
-      centerNotifications.filter(
-        (notification) => !hiddenIds.has(notification.id),
-      ),
-    [centerNotifications, hiddenIds],
-  );
   const hasUnreadNotifications = visibleNotifications.some(
     (notification) => !notification.readAt,
   );
@@ -87,15 +92,6 @@ export default function NotificationsCenter() {
   const handleMarkAllRead = useCallback(() => {
     void markAllCenterNotificationsRead();
   }, [markAllCenterNotificationsRead]);
-
-  const toggleSelectionMode = useCallback(() => {
-    setIsSelectionMode((current) => {
-      if (current) {
-        setSelectedIds(new Set());
-      }
-      return !current;
-    });
-  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -129,15 +125,6 @@ export default function NotificationsCenter() {
     return () => clearInterval(intervalId);
   }, []);
 
-  useEffect(
-    () => () => {
-      if (emptyStateTimerRef.current) {
-        clearTimeout(emptyStateTimerRef.current);
-      }
-    },
-    [],
-  );
-
   const handleNotificationPress = useCallback(
     (notification: AppNotification) => {
       if (!notification.readAt) {
@@ -155,84 +142,6 @@ export default function NotificationsCenter() {
     [markCenterNotificationRead, router],
   );
 
-  const handleToggleSelection = useCallback((id: string) => {
-    setSelectedIds((current) => {
-      const next = new Set(current);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }, []);
-
-  const allNotificationsSelected =
-    visibleNotifications.length > 0 &&
-    visibleNotifications.every((notification) =>
-      selectedIds.has(notification.id),
-    );
-  const selectedCount = visibleNotifications.reduce(
-    (count, notification) => count + Number(selectedIds.has(notification.id)),
-    0,
-  );
-
-  const handleToggleSelectAll = useCallback(() => {
-    setSelectedIds(
-      allNotificationsSelected
-        ? new Set()
-        : new Set(visibleNotifications.map((notification) => notification.id)),
-    );
-  }, [allNotificationsSelected, visibleNotifications]);
-
-  const handleDeleteSelected = useCallback(() => {
-    const idsToDelete = visibleNotifications
-      .map((notification) => notification.id)
-      .filter((id) => selectedIds.has(id));
-
-    if (idsToDelete.length === 0) {
-      return;
-    }
-
-    const deletingEntireList =
-      idsToDelete.length === visibleNotifications.length;
-
-    setHiddenIds((current) => new Set([...current, ...idsToDelete]));
-    setSelectedIds(new Set());
-    setIsSelectionMode(false);
-
-    if (deletingEntireList) {
-      setSuppressEmptyState(true);
-      if (emptyStateTimerRef.current) {
-        clearTimeout(emptyStateTimerRef.current);
-      }
-      emptyStateTimerRef.current = setTimeout(() => {
-        setSuppressEmptyState(false);
-      }, 240);
-    }
-
-    void (async () => {
-      if (deletingEntireList) {
-        await removeAllCenterNotifications();
-      } else {
-        for (const id of idsToDelete) {
-          await removeCenterNotification(id);
-        }
-      }
-
-      setHiddenIds((current) => {
-        const next = new Set(current);
-        idsToDelete.forEach((id) => next.delete(id));
-        return next;
-      });
-    })();
-  }, [
-    removeAllCenterNotifications,
-    removeCenterNotification,
-    selectedIds,
-    visibleNotifications,
-  ]);
-
   const renderNotificationItem = useCallback<ListRenderItem<AppNotification>>(
     ({ item }) => (
       <Animated.View
@@ -245,7 +154,7 @@ export default function NotificationsCenter() {
           now={relativeTimeNow}
           onPress={handleNotificationPress}
           isEditing={isSelectionMode}
-          isSelected={selectedIds.has(item.id)}
+          isSelected={isAllSelected || selectedIds.has(item.id)}
           onToggleSelection={handleToggleSelection}
         />
       </Animated.View>
@@ -254,6 +163,7 @@ export default function NotificationsCenter() {
       handleNotificationPress,
       handleToggleSelection,
       isDark,
+      isAllSelected,
       isSelectionMode,
       relativeTimeNow,
       selectedIds,
@@ -274,21 +184,23 @@ export default function NotificationsCenter() {
       <FlatList
         style={styles.list}
         data={visibleNotifications}
-        extraData={{ relativeTimeNow, isSelectionMode, selectedIds }}
+        extraData={{ relativeTimeNow, isSelectionMode, isAllSelected, selectedIds }}
         keyExtractor={(item) => item.id}
         renderItem={renderNotificationItem}
         ListHeaderComponent={
           isSelectionMode ? (
             <View style={styles.selectionHeader}>
               <Text style={styles.selectionCount}>
-                {selectedCount} selected
+                {isAllSelected
+                  ? "All notifications selected"
+                  : `${selectedCount} selected`}
               </Text>
 
               <Pressable
                 onPress={handleToggleSelectAll}
                 accessibilityRole="button"
                 accessibilityLabel={
-                  allNotificationsSelected
+                  isAllSelected
                     ? "Deselect all notifications"
                     : "Select all notifications"
                 }
@@ -299,7 +211,7 @@ export default function NotificationsCenter() {
                 ]}
               >
                 <Text style={styles.selectAllText}>
-                  {allNotificationsSelected ? "Deselect All" : "Select All"}
+                  {isAllSelected ? "Deselect All" : "Select All"}
                 </Text>
               </Pressable>
             </View>
@@ -375,7 +287,11 @@ export default function NotificationsCenter() {
             disabled={selectedCount === 0}
             onPress={handleDeleteSelected}
             accessibilityRole="button"
-            accessibilityLabel={`Delete ${selectedCount} selected notifications`}
+            accessibilityLabel={
+              isAllSelected
+                ? "Delete all notifications"
+                : `Delete ${selectedCount} selected notifications`
+            }
             accessibilityState={{ disabled: selectedCount === 0 }}
             style={({ pressed }) => [
               styles.deleteButton,
@@ -385,7 +301,9 @@ export default function NotificationsCenter() {
           >
             <Ionicons name="trash-outline" size={20} color={Colors.white} />
             <Text style={styles.deleteButtonText}>
-              Delete{selectedCount > 0 ? ` (${selectedCount})` : ""}
+              {isAllSelected
+                ? "Delete All"
+                : `Delete${selectedCount > 0 ? ` (${selectedCount})` : ""}`}
             </Text>
           </Pressable>
         </Animated.View>

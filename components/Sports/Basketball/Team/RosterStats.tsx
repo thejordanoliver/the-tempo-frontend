@@ -43,7 +43,7 @@ import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 export default function RosterStats({
   rosterStats,
   teamId,
-  GameTeamStats,
+  teamStats,
   loading,
   error,
   refreshing = false,
@@ -316,12 +316,12 @@ export default function RosterStats({
     );
   };
 
-  const renderGameTeamStats = () => {
-    if (!GameTeamStats) return null;
+  const renderTeamStats = () => {
+    if (!teamStats) return null;
 
-    const summaryRows = getTeamSummaryRows(GameTeamStats);
-    const displayAverages = getTeamDisplayAverages(GameTeamStats);
-    const displayTotals = getTeamDisplayTotals(GameTeamStats);
+    const summaryRows = getTeamSummaryRows(teamStats);
+    const displayAverages = getTeamDisplayAverages(teamStats);
+    const displayTotals = getTeamDisplayTotals(teamStats);
 
     const renderTable = (rows: TeamStatRow[]) => (
       <View style={styles.table}>
@@ -382,7 +382,7 @@ export default function RosterStats({
     return <Text style={global.errorText}>{error.message}</Text>;
   }
 
-  if (!activeRoster.length && !GameTeamStats) {
+  if (!activeRoster.length && !teamStats) {
     return <Text style={global.emptyText}>No player stats available.</Text>;
   }
 
@@ -422,7 +422,7 @@ export default function RosterStats({
           ]}
           pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
         >
-          {renderGameTeamStats()}
+          {renderTeamStats()}
         </View>
       )}
     </ScrollView>

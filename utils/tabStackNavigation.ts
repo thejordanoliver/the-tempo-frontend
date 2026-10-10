@@ -1,4 +1,5 @@
 import type { Href } from "expo-router";
+import { withTeamLeague } from "./teamNavigation";
 
 export type TabGroup = "(home)" | "(league)" | "(explore)" | "(profile)";
 
@@ -56,6 +57,7 @@ function scopePathname(pathname: string, tabGroup: TabGroup | null) {
 }
 
 export function scopeHrefToTab(href: Href, tabGroup: TabGroup | null): Href {
+  href = withTeamLeague(href);
   if (typeof href === "string") {
     return scopePathname(href, tabGroup) as Href;
   }

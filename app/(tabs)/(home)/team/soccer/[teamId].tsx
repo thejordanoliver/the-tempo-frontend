@@ -13,6 +13,7 @@ import TeamDetailScreenShell from "components/Team/TeamDetailScreen";
 import { useLocalSearchParams } from "expo-router";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
+import { resolveSoccerTeamLeague } from "utils/soccerTeamLeague";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
@@ -25,12 +26,12 @@ export default function TeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
   const team = getSOCCTeam(teamIdNum);
-  const league = (Array.isArray(leagueParam) ? leagueParam[0] : leagueParam) ?? "mls";
+  const league = resolveSoccerTeamLeague(teamIdStr, leagueParam) as SupportedRosterLeague;
   const teamLogo = getSOCCTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
   const teamName = team?.name;
   const screen = useTeamDetailScreen({
-    tabLeague: "SOCC",
+    tabLeague: league === "msoc" || league === "wsoc" ? league : "SOCC",
     header: {
       league,
       teamId: teamIdNum,
@@ -71,7 +72,9 @@ export default function TeamDetailScreen() {
     loading: playersLoading,
     error: playersError,
     refreshPlayers,
-  } = useRoster(teamIdNum, "socc", { enabled: hasVisitedTab("roster") });
+  } = useRoster(teamIdNum, "socc", {
+    enabled: screen.tabs.includes("roster") && hasVisitedTab("roster"),
+  });
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {

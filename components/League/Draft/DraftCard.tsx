@@ -1,7 +1,7 @@
 // components/NBA/DraftCard.tsx
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
-import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -84,7 +84,7 @@ export default function DraftCard({
     ? getNFLTeamByESPNId(player.teamId)
     : isWNBA
       ? getWNBATeamByESPNId(player.teamId)
-      : getTeamByESPNId(player.teamId);
+      : getNBATeam(player.teamId);
 
   const logo = isWNBA
     ? getWNBATeamLogo(team?.id, isDark)

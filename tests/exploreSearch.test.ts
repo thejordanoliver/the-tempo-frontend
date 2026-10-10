@@ -89,10 +89,10 @@ test("routes G League team search results to the G League team screen", () => {
   };
 
   assert.equal(getExploreResultIdentity(team), "team:gleague:2");
-  assert.equal(
-    getExploreRouteForResult(team),
-    "/(tabs)/(explore)/team/gleague/2",
-  );
+  assert.deepEqual(getExploreRouteForResult(team), {
+    pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
+    params: { teamType: "gleague", teamId: "2", league: "gleague" },
+  });
 });
 
 test("routes players without legacy flags through the Explore stack", () => {

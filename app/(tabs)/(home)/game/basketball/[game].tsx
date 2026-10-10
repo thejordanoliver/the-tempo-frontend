@@ -30,7 +30,6 @@ import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballG
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
-import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import type { BasketballGameCardProps } from "@/types/basketball/basketball";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -344,24 +343,24 @@ export default function GameDetailsScreen(
   const homeBonus = score?.home?.fouls?.bonusState ?? null;
   const awayBonus = score?.away?.fouls?.bonusState ?? null;
   const neutralSite = details?.neutralSite;
-  const venueId = Number(details?.venue?.id);
-  const { venue } = useVenue({ sport: "basketball", id: venueId });
+  const venue = details?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
     date: gameDateObj,
   });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueAddress = venue?.address.formatted ?? (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
   const venueAttendance = details?.attendance ?? game?.attendance ?? null;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`

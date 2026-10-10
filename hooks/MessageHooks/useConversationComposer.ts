@@ -63,7 +63,7 @@ export function useConversationComposer({
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ["images"],
         allowsEditing: false,
         quality: 0.85,
       });
@@ -168,29 +168,25 @@ export function useConversationComposer({
     sendInFlightRef.current = true;
     setIsSending(true);
 
-    try {
-      const didSend = await sendMessage({
-        text: trimmedMessage,
-        attachment: selectedAttachment,
-      });
+    // Capture this send before clearing the composer so a new draft stays intact.
+    const payload = { text: trimmedMessage, attachment: selectedAttachment };
+    setDraftMessage("");
+    setSelectedAttachment(null);
+    setAttachmentMenuVisible(false);
+    notifyTyping("");
 
-      if (!didSend) return;
-
-      setDraftMessage((current) => current === draftMessage ? "" : current);
-      setSelectedAttachment((current) =>
-        current === selectedAttachment ? null : current,
-      );
-      setAttachmentMenuVisible(false);
+    requestAnimationFrame(() => {
       scrollToBottom();
+      inputRef.current?.focus();
+    });
 
-      requestAnimationFrame(() => {
-        inputRef.current?.focus();
-      });
+    try {
+      await sendMessage(payload);
     } finally {
       sendInFlightRef.current = false;
       setIsSending(false);
     }
-  }, [draftMessage, isUploadingImage, scrollToBottom, selectedAttachment, sendMessage]);
+  }, [draftMessage, isUploadingImage, notifyTyping, scrollToBottom, selectedAttachment, sendMessage]);
 
   return {
     inputRef,

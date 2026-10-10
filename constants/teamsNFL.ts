@@ -41,7 +41,7 @@ const placeholderLogo =
 
 export const nflTeams: Team[] = [
   {
-    id: 1,
+    id: 13,
     espnId: 13,
     fullName: "Las Vegas Raiders",
     code: "LV",
@@ -61,7 +61,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 2,
+    id: 30,
     espnId: 30,
     fullName: "Jacksonville Jaguars",
     code: "JAX",
@@ -81,7 +81,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 3,
+    id: 17,
     espnId: 17,
     fullName: "New England Patriots",
     code: "NE",
@@ -101,7 +101,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 4,
+    id: 19,
     espnId: 19,
     fullName: "New York Giants",
     code: "NYG",
@@ -121,7 +121,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 5,
+    id: 33,
     espnId: 33,
     fullName: "Baltimore Ravens",
     code: "BAL",
@@ -141,7 +141,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 6,
+    id: 10,
     espnId: 10,
     fullName: "Tennessee Titans",
     code: "TEN",
@@ -161,7 +161,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 7,
+    id: 8,
     espnId: 8,
     fullName: "Detroit Lions",
     code: "DET",
@@ -182,7 +182,7 @@ export const nflTeams: Team[] = [
   },
 
   {
-    id: 8,
+    id: 1,
     espnId: 1,
     fullName: "Atlanta Falcons",
     code: "ATL",
@@ -202,7 +202,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 9,
+    id: 5,
     espnId: 5,
     fullName: "Cleveland Browns",
     code: "CLE",
@@ -222,7 +222,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 10,
+    id: 4,
     espnId: 4,
     fullName: "Cincinnati Bengals",
     code: "CIN",
@@ -242,7 +242,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 11,
+    id: 22,
     espnId: 22,
     fullName: "Arizona Cardinals",
     code: "ARI",
@@ -262,7 +262,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 12,
+    id: 21,
     espnId: 21,
     fullName: "Philadelphia Eagles",
     code: "PHI",
@@ -282,7 +282,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 13,
+    id: 20,
     espnId: 20,
     fullName: "New York Jets",
     code: "NYJ",
@@ -302,7 +302,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 14,
+    id: 25,
     espnId: 25,
     fullName: "San Francisco 49ers",
     code: "SF",
@@ -322,7 +322,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 15,
+    id: 9,
     espnId: 9,
 
     fullName: "Green Bay Packers",
@@ -344,7 +344,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 16,
+    id: 3,
     espnId: 3,
     fullName: "Chicago Bears",
     code: "CHI",
@@ -364,7 +364,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 17,
+    id: 12,
     espnId: 12,
     fullName: "Kansas City Chiefs",
     code: "KC",
@@ -384,7 +384,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 18,
+    id: 28,
     espnId: 28,
     fullName: "Washington Commanders",
     code: "WSH",
@@ -404,7 +404,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 19,
+    id: 29,
     espnId: 29,
     fullName: "Carolina Panthers",
     code: "CAR",
@@ -424,7 +424,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 20,
+    id: 2,
     espnId: 2,
     fullName: "Buffalo Bills",
     code: "BUF",
@@ -444,7 +444,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 21,
+    id: 11,
     espnId: 11,
     fullName: "Indianapolis Colts",
     code: "IND",
@@ -464,7 +464,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 22,
+    id: 23,
     espnId: 23,
     fullName: "Pittsburgh Steelers",
     code: "PIT",
@@ -484,7 +484,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 23,
+    id: 26,
     espnId: 26,
     fullName: "Seattle Seahawks",
     code: "SEA",
@@ -504,7 +504,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 24,
+    id: 27,
     espnId: 27,
     fullName: "Tampa Bay Buccaneers",
     code: "TB",
@@ -524,7 +524,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 25,
+    id: 15,
     espnId: 15,
     fullName: "Miami Dolphins",
     code: "MIA",
@@ -544,7 +544,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 26,
+    id: 34,
     espnId: 34,
     fullName: "Houston Texans",
     code: "HOU",
@@ -564,7 +564,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 27,
+    id: 18,
     espnId: 18,
     fullName: "New Orleans Saints",
     code: "NO",
@@ -584,7 +584,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 28,
+    id: 7,
     espnId: 7,
     fullName: "Denver Broncos",
     code: "DEN",
@@ -604,7 +604,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 29,
+    id: 6,
     espnId: 6,
     fullName: "Dallas Cowboys",
     code: "DAL",
@@ -624,7 +624,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 30,
+    id: 24,
     espnId: 24,
     fullName: "Los Angeles Chargers",
     code: "LAC",
@@ -644,7 +644,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 31,
+    id: 14,
     espnId: 14,
     fullName: "Los Angeles Rams",
     code: "LAR",
@@ -664,7 +664,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 32,
+    id: 16,
     espnId: 16,
     fullName: "Minnesota Vikings",
     code: "MIN",
@@ -684,7 +684,7 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
   {
-    id: 34,
+    id: 31,
     espnId: 31,
     fullName: "AFC All-Stars",
     code: "AFC",
@@ -704,7 +704,7 @@ export const nflTeams: Team[] = [
   },
 
   {
-    id: 33,
+    id: 32,
     espnId: 32,
     fullName: "NFC All-Stars",
     code: "NFC",
@@ -737,11 +737,7 @@ export function getNFLTeamLogo(
 
   const normalizedId = String(id);
 
-  const team = nflTeams.find(
-    (team) =>
-      String(team.id) === normalizedId ||
-      String(team.summerLeagueId) === normalizedId,
-  );
+  const team = getNFLTeam(normalizedId);
 
   if (!team) {
     return placeholderLogo;
@@ -767,301 +763,301 @@ export const NFL_RIVALRIES = [
   {
     id: "packers-bears",
     name: "Packers–Bears",
-    teamIds: [15, 16],
+    teamIds: [9, 3],
     group: "division",
   },
   {
     id: "packers-vikings",
     name: "Packers–Vikings",
-    teamIds: [15, 32],
+    teamIds: [9, 16],
     group: "division",
   },
   {
     id: "bears-lions",
     name: "Bears–Lions",
-    teamIds: [16, 7],
+    teamIds: [3, 8],
     group: "division",
   },
   {
     id: "bears-vikings",
     name: "Bears–Vikings",
-    teamIds: [16, 32],
+    teamIds: [3, 16],
     group: "division",
   },
   {
     id: "packers-lions",
     name: "Packers–Lions",
-    teamIds: [15, 7],
+    teamIds: [9, 8],
     group: "division",
   },
   {
     id: "lions-vikings",
     name: "Lions–Vikings",
-    teamIds: [7, 32],
+    teamIds: [8, 16],
     group: "division",
   },
   {
     id: "steelers-ravens",
     name: "Steelers–Ravens",
-    teamIds: [22, 5],
+    teamIds: [23, 33],
     group: "division",
   },
   {
     id: "steelers-browns",
     name: "Steelers–Browns",
-    teamIds: [22, 9],
+    teamIds: [23, 5],
     group: "division",
   },
   {
     id: "steelers-bengals",
     name: "Steelers–Bengals",
-    teamIds: [22, 10],
+    teamIds: [23, 4],
     group: "division",
   },
   {
     id: "bengals-browns",
     name: "Battle of Ohio",
-    teamIds: [10, 9],
+    teamIds: [4, 5],
     group: "division",
   },
   {
     id: "ravens-bengals",
     name: "Ravens–Bengals",
-    teamIds: [5, 10],
+    teamIds: [33, 4],
     group: "division",
   },
   {
     id: "ravens-browns",
     name: "Ravens–Browns",
-    teamIds: [5, 9],
+    teamIds: [33, 5],
     group: "division",
   },
   {
     id: "cowboys-eagles",
     name: "Cowboys–Eagles",
-    teamIds: [29, 12],
+    teamIds: [6, 21],
     group: "division",
   },
   {
     id: "cowboys-commanders",
     name: "Cowboys–Commanders",
-    teamIds: [29, 18],
+    teamIds: [6, 28],
     group: "division",
   },
   {
     id: "cowboys-giants",
     name: "Cowboys–Giants",
-    teamIds: [29, 4],
+    teamIds: [6, 19],
     group: "division",
   },
   {
     id: "eagles-giants",
     name: "Eagles–Giants",
-    teamIds: [12, 4],
+    teamIds: [21, 19],
     group: "division",
   },
   {
     id: "eagles-commanders",
     name: "Eagles–Commanders",
-    teamIds: [12, 18],
+    teamIds: [21, 28],
     group: "division",
   },
   {
     id: "giants-commanders",
     name: "Giants–Commanders",
-    teamIds: [4, 18],
+    teamIds: [19, 28],
     group: "division",
   },
   {
     id: "chiefs-raiders",
     name: "Chiefs–Raiders",
-    teamIds: [17, 1],
+    teamIds: [12, 13],
     group: "division",
   },
   {
     id: "chiefs-broncos",
     name: "Chiefs–Broncos",
-    teamIds: [17, 28],
+    teamIds: [12, 7],
     group: "division",
   },
   {
     id: "raiders-broncos",
     name: "Raiders–Broncos",
-    teamIds: [1, 28],
+    teamIds: [13, 7],
     group: "division",
   },
   {
     id: "raiders-chargers",
     name: "Raiders–Chargers",
-    teamIds: [1, 30],
+    teamIds: [13, 24],
     group: "division",
   },
   {
     id: "chiefs-chargers",
     name: "Chiefs–Chargers",
-    teamIds: [17, 30],
+    teamIds: [12, 24],
     group: "division",
   },
   {
     id: "broncos-chargers",
     name: "Broncos–Chargers",
-    teamIds: [28, 30],
+    teamIds: [7, 24],
     group: "division",
   },
   {
     id: "patriots-jets",
     name: "Patriots–Jets",
-    teamIds: [3, 13],
+    teamIds: [17, 20],
     group: "division",
   },
   {
     id: "bills-dolphins",
     name: "Bills–Dolphins",
-    teamIds: [20, 25],
+    teamIds: [2, 15],
     group: "division",
   },
   {
     id: "patriots-bills",
     name: "Patriots–Bills",
-    teamIds: [3, 20],
+    teamIds: [17, 2],
     group: "division",
   },
   {
     id: "patriots-dolphins",
     name: "Patriots–Dolphins",
-    teamIds: [3, 25],
+    teamIds: [17, 15],
     group: "division",
   },
   {
     id: "jets-dolphins",
     name: "Jets–Dolphins",
-    teamIds: [13, 25],
+    teamIds: [20, 15],
     group: "division",
   },
   {
     id: "bills-jets",
     name: "Bills–Jets",
-    teamIds: [20, 13],
+    teamIds: [2, 20],
     group: "division",
   },
   {
     id: "saints-falcons",
     name: "Saints–Falcons",
-    teamIds: [27, 8],
+    teamIds: [18, 1],
     group: "division",
   },
   {
     id: "saints-buccaneers",
     name: "Saints–Buccaneers",
-    teamIds: [27, 24],
+    teamIds: [18, 27],
     group: "division",
   },
   {
     id: "saints-panthers",
     name: "Saints–Panthers",
-    teamIds: [27, 19],
+    teamIds: [18, 29],
     group: "division",
   },
   {
     id: "falcons-panthers",
     name: "Falcons–Panthers",
-    teamIds: [8, 19],
+    teamIds: [1, 29],
     group: "division",
   },
   {
     id: "falcons-buccaneers",
     name: "Falcons–Buccaneers",
-    teamIds: [8, 24],
+    teamIds: [1, 27],
     group: "division",
   },
   {
     id: "panthers-buccaneers",
     name: "Panthers–Buccaneers",
-    teamIds: [19, 24],
+    teamIds: [29, 27],
     group: "division",
   },
   {
     id: "49ers-seahawks",
     name: "49ers–Seahawks",
-    teamIds: [14, 23],
+    teamIds: [25, 26],
     group: "division",
   },
   {
     id: "49ers-rams",
     name: "49ers–Rams",
-    teamIds: [14, 31],
+    teamIds: [25, 14],
     group: "division",
   },
   {
     id: "49ers-cardinals",
     name: "49ers–Cardinals",
-    teamIds: [14, 11],
+    teamIds: [25, 22],
     group: "division",
   },
   {
     id: "rams-seahawks",
     name: "Rams–Seahawks",
-    teamIds: [31, 23],
+    teamIds: [14, 26],
     group: "division",
   },
   {
     id: "rams-cardinals",
     name: "Rams–Cardinals",
-    teamIds: [31, 11],
+    teamIds: [14, 22],
     group: "division",
   },
   {
     id: "seahawks-cardinals",
     name: "Seahawks–Cardinals",
-    teamIds: [23, 11],
+    teamIds: [26, 22],
     group: "division",
   },
   {
     id: "texans-titans",
     name: "Texans–Titans",
-    teamIds: [26, 6],
+    teamIds: [34, 10],
     group: "division",
   },
   {
     id: "colts-titans",
     name: "Colts–Titans",
-    teamIds: [21, 6],
+    teamIds: [11, 10],
     group: "division",
   },
   {
     id: "colts-texans",
     name: "Colts–Texans",
-    teamIds: [21, 26],
+    teamIds: [11, 34],
     group: "division",
   },
   {
     id: "colts-jaguars",
     name: "Colts–Jaguars",
-    teamIds: [21, 2],
+    teamIds: [11, 30],
     group: "division",
   },
   {
     id: "jaguars-titans",
     name: "Jaguars–Titans",
-    teamIds: [2, 6],
+    teamIds: [30, 10],
     group: "division",
   },
   {
     id: "jaguars-texans",
     name: "Jaguars–Texans",
-    teamIds: [2, 26],
+    teamIds: [30, 34],
     group: "division",
   },
   {
     id: "cowboys-49ers",
     name: "Cowboys–49ers",
-    teamIds: [29, 14],
+    teamIds: [6, 25],
     group: "national",
   },
   {
     id: "patriots-colts",
     name: "Patriots–Colts",
-    teamIds: [3, 21],
+    teamIds: [17, 11],
     group: "national",
   },
 ] as const satisfies readonly NFLRivalry[];

@@ -7,6 +7,7 @@ const SOCKET_NAMESPACE = "/notifications";
 const SOCKET_URL = getSocketNamespaceUrl(SOCKET_NAMESPACE);
 
 type NotificationServerEvents = {
+  "predictions:picks-changed": (payload: { userId: number }) => void;
   "badge:earned": (payload: BadgeEarnedSocketPayload) => void;
   "notification:new": (payload: AppNotification) => void;
   "notification:read": (payload: AppNotification) => void;

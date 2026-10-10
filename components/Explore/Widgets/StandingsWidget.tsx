@@ -2,13 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
-import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
-import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
+import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
-import {
-  getNHLTeamByEspnId,
-  getNHLTeamLogo,
-} from "constants/teamsNHL";
+import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { getUFLTeamByESPNId, getUFLTeamLogo } from "constants/teamsUFL";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
@@ -18,22 +15,19 @@ import {
   type StandingsTeam,
   useLeagueStandings,
 } from "hooks/LeagueHooks/useLeagueStandings";
-import { useCallback, useMemo, useState } from "react";
 import { useScopedRouter } from "hooks/useScopedRouter";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { collegePollWidgetStyles } from "styles/ExploreStyles/CollegePollWidgetStyles";
-import type {
-  ExploreStandingsLeague,
-  ExploreWidgetSize,
-} from "types/widgets";
+import type { ExploreStandingsLeague, ExploreWidgetSize } from "types/widgets";
 import {
   buildStandingsPreviewGroups,
   buildStandingsSlides,
   formatStandingsMetric,
   formatStandingsRecord,
 } from "utils/standingsWidget";
-import WidgetCarousel from "./WidgetCarousel";
 import StandingsLeagueModal from "../StandingsLeagueModal";
+import WidgetCarousel from "./WidgetCarousel";
 import { WidgetEditControls } from "./WidgetSlider";
 
 type StandingsWidgetProps = {
@@ -57,7 +51,8 @@ type StandingsWidgetProps = {
 type StandingsTableProps = Pick<
   StandingsWidgetProps,
   "height" | "isDark" | "isEditing" | "league"
-> & Pick<StandingsWidgetProps, "size" | "width">;
+> &
+  Pick<StandingsWidgetProps, "size" | "width">;
 
 type StandingsConferenceProps = Pick<
   StandingsWidgetProps,
@@ -88,9 +83,7 @@ function StandingsConference({
     <View style={styles.conferenceGroup}>
       <View style={styles.conferenceHeader}>
         <Text style={styles.conferenceName} numberOfLines={1}>
-          {showConferenceName
-            ? group.name
-            : group.abbreviation || group.name}
+          {showConferenceName ? group.name : group.abbreviation || group.name}
         </Text>
       </View>
 
@@ -113,7 +106,10 @@ function StandingsConference({
             key={`${conference}:${team.id}`}
             disabled={isEditing}
             onPress={() => onOpenTeam(team)}
-            style={({ pressed }) => [styles.row, pressed && !isEditing && styles.pressed]}
+            style={({ pressed }) => [
+              styles.row,
+              pressed && !isEditing && styles.pressed,
+            ]}
             accessibilityRole="button"
             accessibilityLabel={`Open ${team.name} team page`}
             accessibilityState={{ disabled: isEditing }}
@@ -141,10 +137,7 @@ function StandingsConference({
                   : team.shortName || team.name}
               </Text>
             </View>
-            <Text
-              style={[styles.stat, styles.recordColumn]}
-              numberOfLines={1}
-            >
+            <Text style={[styles.stat, styles.recordColumn]} numberOfLines={1}>
               {formatStandingsRecord(team, league)}
             </Text>
             {!compact ? (
@@ -166,7 +159,7 @@ function getLocalTeamLogo(
 ) {
   switch (league) {
     case "nba": {
-      const localTeam = getTeamByESPNId(team.id);
+      const localTeam = getNBATeam(team.id);
       return localTeam ? getNBATeamLogo(localTeam.id, isDark) : undefined;
     }
     case "wnba": {
@@ -182,11 +175,11 @@ function getLocalTeamLogo(
       return localTeam ? getUFLTeamLogo(localTeam.id, isDark) : undefined;
     }
     case "mlb": {
-      const localTeam = getMLBTeamByEspnId(team.id);
+      const localTeam = getMLBTeam(team.id);
       return localTeam ? getMLBTeamLogo(localTeam.id, isDark) : undefined;
     }
     case "nhl": {
-      const localTeam = getNHLTeamByEspnId(team.id);
+      const localTeam = getNHLTeam(team.id);
       return localTeam ? getNHLTeamLogo(localTeam.id, isDark) : undefined;
     }
   }
@@ -194,12 +187,12 @@ function getLocalTeamLogo(
 
 function getLocalTeam(team: StandingsTeam, league: ExploreStandingsLeague) {
   const lookup = {
-    nba: getTeamByESPNId,
+    nba: getNBATeam,
     wnba: getWNBATeamByESPNId,
     nfl: getNFLTeamByESPNId,
     ufl: getUFLTeamByESPNId,
-    mlb: getMLBTeamByEspnId,
-    nhl: getNHLTeamByEspnId,
+    mlb: getMLBTeam,
+    nhl: getNHLTeam,
   };
   return lookup[league](team.id);
 }
@@ -213,13 +206,16 @@ function StandingsTable({
   width,
 }: StandingsTableProps) {
   const router = useScopedRouter();
-  const openTeam = useCallback((team: StandingsTeam) => {
-    const teamId = getLocalTeam(team, league)?.id ?? team.id;
-    router.push({
-      pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
-      params: { teamType: league, teamId: String(teamId), league },
-    });
-  }, [league, router]);
+  const openTeam = useCallback(
+    (team: StandingsTeam) => {
+      const teamId = getLocalTeam(team, league)?.id ?? team.id;
+      router.push({
+        pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
+        params: { teamType: league, teamId: String(teamId), league },
+      });
+    },
+    [league, router],
+  );
   const { standings, seasonDisplayName, loading, error, refetch } =
     useLeagueStandings(league);
   const compact = size === "small" || width < 240;
@@ -299,12 +295,18 @@ function StandingsTable({
           autoPlay
           disabled={isEditing}
           keyExtractor={(slide) => slide.key}
-          accessibilityLabel={(index, count) => `Standings, slide ${index + 1} of ${count}`}
+          accessibilityLabel={(index, count) =>
+            `Standings, slide ${index + 1} of ${count}`
+          }
           renderItem={(slide) => {
             if (slide.type === "conference") {
               return (
                 <View style={styles.compactSlide}>
-                  <Ionicons name="podium-outline" size={40} color={isDark ? Colors.white : Colors.black} />
+                  <Ionicons
+                    name="podium-outline"
+                    size={40}
+                    color={isDark ? Colors.white : Colors.black}
+                  />
                   <Text style={styles.compactConferenceName}>{slide.name}</Text>
                 </View>
               );
@@ -316,13 +318,19 @@ function StandingsTable({
               <Pressable
                 disabled={isEditing}
                 onPress={() => openTeam(team)}
-                style={({ pressed }) => [styles.compactSlide, pressed && !isEditing && styles.pressed]}
+                style={({ pressed }) => [
+                  styles.compactSlide,
+                  pressed && !isEditing && styles.pressed,
+                ]}
                 accessibilityRole="button"
                 accessibilityLabel={`Open ${team.name} team page`}
                 accessibilityState={{ disabled: isEditing }}
               >
                 <LinearGradient
-                  colors={[(getLocalTeam(team, league)?.color || Colors.midTone), isDark ? Colors.black : Colors.white]}
+                  colors={[
+                    getLocalTeam(team, league)?.color || Colors.midTone,
+                    isDark ? Colors.black : Colors.white,
+                  ]}
                   locations={[0, 0.8]}
                   start={{ x: 0.5, y: 0 }}
                   end={{ x: 0.5, y: 1 }}
@@ -332,16 +340,29 @@ function StandingsTable({
                   <Text style={styles.compactRank}>#{position}</Text>
                 </BlurView>
                 {logo ? (
-                  <Image source={logo} style={styles.compactLogo} contentFit="contain" />
+                  <Image
+                    source={logo}
+                    style={styles.compactLogo}
+                    contentFit="contain"
+                  />
                 ) : (
-                  <Text style={styles.compactConferenceName}>{team.code || team.shortName || team.name}</Text>
+                  <Text style={styles.compactConferenceName}>
+                    {team.code || team.shortName || team.name}
+                  </Text>
                 )}
                 <View style={styles.compactCopy}>
-                  <Text style={styles.compactTeamName} numberOfLines={1}>{team.shortName || team.name}</Text>
+                  <Text style={styles.compactTeamName} numberOfLines={1}>
+                    {team.shortName || team.name}
+                  </Text>
                   <View style={styles.compactStatsContainer}>
-                    <Text style={styles.compactStats} numberOfLines={1}>{formatStandingsRecord(team, league)}</Text>
+                    <Text style={styles.compactStats} numberOfLines={1}>
+                      {formatStandingsRecord(team, league)}
+                    </Text>
                     <View style={styles.compactStatsDivider} />
-                    <Text style={styles.compactStats} numberOfLines={1}>{formatStandingsMetric(team, league)} {league === "nhl" ? "PTS" : "PCT"}</Text>
+                    <Text style={styles.compactStats} numberOfLines={1}>
+                      {formatStandingsMetric(team, league)}{" "}
+                      {league === "nhl" ? "PTS" : "PCT"}
+                    </Text>
                   </View>
                 </View>
               </Pressable>
@@ -428,7 +449,9 @@ export default function StandingsWidget({
             accessibilityLabel={`Change standings league. Currently ${leagueConfig.label}`}
             accessibilityState={{ disabled: isEditing }}
           >
-            {size === "small" ? <BlurView intensity={100} style={StyleSheet.absoluteFill} /> : null}
+            {size === "small" ? (
+              <BlurView intensity={100} style={StyleSheet.absoluteFill} />
+            ) : null}
             <Image
               source={isDark ? leagueConfig.logoLight : leagueConfig.logo}
               style={styles.leagueLogo}
@@ -441,27 +464,29 @@ export default function StandingsWidget({
           <View style={styles.header}>
             <View style={styles.headingCopy}>
               <Text style={styles.title}>Standings</Text>
-              {!compact ? <Text style={styles.subtitle}>By conference</Text> : null}
+              {!compact ? (
+                <Text style={styles.subtitle}>By conference</Text>
+              ) : null}
             </View>
-          <Pressable
-            disabled={isEditing}
-            onPress={() => setPickerVisible(true)}
-            style={({ pressed }) => [
-              styles.leagueButton,
-              pressed && !isEditing && styles.pressed,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={`Change standings league. Currently ${leagueConfig.label}`}
-            accessibilityState={{ disabled: isEditing }}
-          >
-            <Image
-              source={isDark ? leagueConfig.logoLight : leagueConfig.logo}
-              style={styles.leagueLogo}
-              contentFit="contain"
-            />
-            <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
-            <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
-          </Pressable>
+            <Pressable
+              disabled={isEditing}
+              onPress={() => setPickerVisible(true)}
+              style={({ pressed }) => [
+                styles.leagueButton,
+                pressed && !isEditing && styles.pressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={`Change standings league. Currently ${leagueConfig.label}`}
+              accessibilityState={{ disabled: isEditing }}
+            >
+              <Image
+                source={isDark ? leagueConfig.logoLight : leagueConfig.logo}
+                style={styles.leagueLogo}
+                contentFit="contain"
+              />
+              <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
+              <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
+            </Pressable>
           </View>
         )}
 
@@ -596,7 +621,11 @@ const standingsWidgetStyles = (isDark: boolean, compact: boolean) =>
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
-    compactConferenceLabel: { fontFamily: Fonts.MEDIUM, fontSize: 10, color: Colors.midTone },
+    compactConferenceLabel: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 10,
+      color: Colors.midTone,
+    },
     table: {
       flex: 1,
       minHeight: 0,

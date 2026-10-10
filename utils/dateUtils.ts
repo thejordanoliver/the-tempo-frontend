@@ -207,6 +207,7 @@ export const safeDate = (date?: string | null) => {
 export const formatDate = (
   date: Date | string,
   isNumeric?: boolean,
+  isFullDate?: boolean,
 ): string => {
   const parsedDate = typeof date === "string" ? new Date(date) : date;
   if (Number.isNaN(parsedDate.getTime())) return "";
@@ -215,6 +216,15 @@ export const formatDate = (
     return parsedDate.toLocaleDateString("en-US", {
       month: "numeric",
       day: "numeric",
+    });
+  }
+  if (isFullDate) {
+    return parsedDate.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
     });
   }
 

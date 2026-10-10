@@ -98,7 +98,9 @@ export default function BasketballGameCard({
           ? getWNBATeamLogo(homeId, isDark)
           : isGLEAGUE
             ? getGLeagueTeamLogo(homeId, isDark)
-            : getNBATeamLogo(homeId, isDark);
+            : getNBATeamLogo(homeId, isDark, isSL);
+
+
 
   const awayLogo = isMCBB
     ? getMCBBTeamLogo(awayId, isDark)
@@ -108,7 +110,7 @@ export default function BasketballGameCard({
         ? getWNBATeamLogo(awayId, isDark)
         : isGLEAGUE
           ? getGLeagueTeamLogo(awayId, isDark)
-          : getNBATeamLogo(awayId, isDark);
+          : getNBATeamLogo(awayId, isDark, isSL);
 
   const rivalry = isMCBB
     ? getMCBBRivalry(homeId, awayId)?.name

@@ -30,7 +30,7 @@ export const TeamRow = ({
   const handleTeamPress = () => {
     if (id && league === "mlb") router.push(`/team/mlb/${id}`);
     if (id && league === "cb") router.push(`/team/cb/${id}`);
-    if (id && league === "sb") router.push(`/team/mlb/${id}`);
+    if (id && league === "sb") router.push(`/team/sb/${id}`);
   };
 
   const showRecordInsteadOfScore = state === "pre";

@@ -1,6 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import OfferList from "@/components/League/Recruiting/OfferLists";
-import PredictionRing from "@/components/League/Recruiting/PredictionRing";
 import RecruitHeader from "@/components/League/Recruiting/RecruitHeader";
 import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useRecruit } from "@/hooks/RecruitHooks/useRecruit";
@@ -37,18 +36,6 @@ export default function RecruitDetailScreen() {
     league === "cfb"
       ? getCFBTeamLogo(teamId, true)
       : getMCBBTeamLogo(teamId, true);
-
-  const predictionPercentage = useMemo(() => {
-    const rawPercentage = player?.prediction_percentage;
-
-    if (!rawPercentage) {
-      return 0;
-    }
-
-    const parsedPercentage = Number(rawPercentage.replaceAll("%", "").trim());
-
-    return Number.isFinite(parsedPercentage) ? parsedPercentage : 0;
-  }, [player?.prediction_percentage]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -96,22 +83,6 @@ export default function RecruitDetailScreen() {
     );
   }
 
-  const predictionTeamName =
-    player.predicted_team_name ??
-    player.predicted_schools?.[0]?.team_name ??
-    null;
-
-  const predictionTeamId =
-    player.predicted_team_id ??
-    player.predicted_schools?.[0]?.team_id ??
-    player.committed_team_id ??
-    null;
-
-  const shouldShowPrediction =
-    player.has_prediction &&
-    Boolean(predictionTeamName) &&
-    Boolean(predictionTeamId);
-
   return (
     <ScrollView
       contentContainerStyle={navigationContentStyle(
@@ -119,19 +90,6 @@ export default function RecruitDetailScreen() {
       )}
     >
       <RecruitHeader player={player} isDark={isDark} />
-
-      {shouldShowPrediction && predictionTeamId && (
-        <PredictionRing
-          prediction={predictionTeamName}
-          predictedSchools={player.predicted_schools}
-          teamId={predictionTeamId}
-          percentage={predictionPercentage}
-          delay={500}
-          duration={1400}
-          size={200}
-          isDark={isDark}
-        />
-      )}
 
       <OfferList recruit={player} isDark={isDark} />
     </ScrollView>

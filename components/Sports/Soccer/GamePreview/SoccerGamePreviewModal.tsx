@@ -2,7 +2,6 @@ import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { SoccerGame } from "@/types/soccer/soccer";
@@ -146,24 +145,28 @@ export default function SoccerGamePreviewModal({
   const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE).games;
 
-  const venueId = Number(details?.venue?.id);
-  const { venue } = useVenue({ sport: "soccer", id: venueId });
+  const venue = details?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
     date: gameDateObj,
   });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
-  const venueAttendance = game?.attendance || null;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
+  const venueAttendance = game?.attendance ?? null;
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`

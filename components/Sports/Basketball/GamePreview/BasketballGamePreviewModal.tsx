@@ -9,7 +9,6 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
-import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BasketballGame } from "@/types/basketball/basketball";
@@ -129,7 +128,7 @@ export default function GamePreviewModal({
         ? getWNBATeamLogo(homeId, isDark)
         : isGLEAGUE
           ? getGLeagueTeamLogo(homeId, isDark)
-          : getNBATeamLogo(homeId, isDark);
+          : getNBATeamLogo(homeId, isDark, isSL);
 
   const awayLogo = isMCBB
     ? getMCBBTeamLogo(awayId, isDark)
@@ -139,7 +138,7 @@ export default function GamePreviewModal({
         ? getWNBATeamLogo(awayId, isDark)
         : isGLEAGUE
           ? getGLeagueTeamLogo(awayId, isDark)
-          : getNBATeamLogo(awayId, isDark);
+          : getNBATeamLogo(awayId, isDark, isSL);
 
   const homeHeaderLogo = isMCBB
     ? getMCBBTeamLogo(homeId, true)
@@ -147,7 +146,7 @@ export default function GamePreviewModal({
       ? getWCBBTeamLogo(homeId, true)
       : isWNBA
         ? getWNBATeamLogo(homeId, true)
-        : getNBATeamLogo(homeId, true);
+        : getNBATeamLogo(homeId, true, isSL);
 
   const awayHeaderLogo = isMCBB
     ? getMCBBTeamLogo(awayId, true)
@@ -155,7 +154,7 @@ export default function GamePreviewModal({
       ? getWCBBTeamLogo(awayId, true)
       : isWNBA
         ? getWNBATeamLogo(awayId, true)
-        : getNBATeamLogo(awayId, true);
+        : getNBATeamLogo(awayId, true, isSL);
 
   const holidayLabel = getHolidayLabel(gameDate);
   const rivalry = isMCBB
@@ -237,24 +236,28 @@ export default function GamePreviewModal({
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const venueId = Number(details?.venue?.id);
-  const { venue } = useVenue({ sport: "basketball", id: venueId });
+  const venue = details?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
     date: gameDateObj,
   });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
-  const venueAttendance = game?.attendance || null;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueAttendance = details?.attendance ?? game?.attendance ?? null;
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`

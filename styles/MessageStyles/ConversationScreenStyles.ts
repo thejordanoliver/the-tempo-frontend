@@ -70,11 +70,12 @@ export const ConversationScreenStyles = (isDark: boolean) =>
       borderRadius: 18,
     },
 
-    attachmentMessageBubble: {
-      paddingHorizontal: 6,
-      paddingTop: 6,
-      paddingBottom: 8,
-      overflow: "hidden",
+    mediaCaptionBubble: {
+      maxWidth: 210,
+    },
+
+    mediaCaptionSpacer: {
+      height: 12,
     },
 
     currentUserBubble: {
@@ -98,11 +99,6 @@ export const ConversationScreenStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
 
-    attachmentCaptionText: {
-      marginTop: 8,
-      paddingHorizontal: 6,
-    },
-
     currentUserMessageText: {
       color: isDark ? Colors.black : Colors.white,
     },
@@ -120,10 +116,6 @@ export const ConversationScreenStyles = (isDark: boolean) =>
       fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: Colors.midTone,
-    },
-
-    attachmentMessageTime: {
-      paddingHorizontal: 6,
     },
 
     currentUserMessageTime: {

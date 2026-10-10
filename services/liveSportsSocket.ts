@@ -320,7 +320,7 @@ function ensureAppStateHandling() {
   AppState.addEventListener("change", (state) => {
     if (!sportsLiveSocket) return;
 
-    if (state === "active") {
+    if (state === "active" && subscriptionsByLocalKey.size > 0) {
       sportsLiveSocket.connect();
       return;
     }
@@ -335,7 +335,7 @@ export function getSportsLiveSocket(): SportsLiveSocket | null {
   if (!namespaceUrl) return null;
 
   if (sportsLiveSocket) {
-    if (!sportsLiveSocket.connected) {
+    if (!sportsLiveSocket.connected && AppState.currentState === "active") {
       sportsLiveSocket.connect();
     }
 
@@ -344,7 +344,7 @@ export function getSportsLiveSocket(): SportsLiveSocket | null {
 
   sportsLiveSocket = io(namespaceUrl, {
     transports: ["websocket", "polling"],
-    autoConnect: true,
+    autoConnect: AppState.currentState === "active",
     reconnection: true,
     auth: async (callback) => {
       const token = await getAccessToken();

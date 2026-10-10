@@ -1,5 +1,5 @@
 import PillTabs from "@/components/TabBars/PillTabs";
-import { getTeamByESPNId } from "@/constants/teams";
+import { getNBATeam } from "@/constants/teams";
 import { getMCBBTeamByESPNId } from "@/constants/teamsMCBB";
 import { getWNBATeamByESPNId } from "@/constants/teamsWNBA";
 import Dropdown from "components/Dropdown";
@@ -381,7 +381,7 @@ const getTeamCodeFromSeason = (season: Season, league: BasketballLeague) => {
 
   const team =
     league === "nba"
-      ? getTeamByESPNId(teamId)
+      ? getNBATeam(teamId)
       : league === "wnba"
         ? getWNBATeamByESPNId(teamId)
         : league === "wcbb"

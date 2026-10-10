@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:local": "node ./scripts/start-local.mjs",
+    "start:hosted": "node ./scripts/start-hosted.mjs",
     "reset-project": "node ./scripts/reset-project.js",
     "test:bracket": "node ./scripts/test-tournament-bracket-utils.js",
     "test:play-by-play-field": "node ./scripts/test-play-by-play-field-utils.js",

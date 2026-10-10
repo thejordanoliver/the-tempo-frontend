@@ -9,8 +9,8 @@ import React, { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { formatDate, formatTime, safeDate } from "utils/dateUtils";
 import { snapPoints } from "utils/modalUtils";
-import { CompetitorRow } from "./CompetitorRow";
-import { GameInfo } from "./GameInfo";
+import { CompetitorRow } from "./../GameDetails/CompetitorRow";
+import { GameInfo } from "./../GameDetails/GameInfo";
 
 type Props = {
   visible: boolean;

@@ -1,5 +1,5 @@
 import PillTabs from "@/components/TabBars/PillTabs";
-import { getNHLTeamByEspnId } from "@/constants/teamsNHL";
+import { getNHLTeam } from "@/constants/teamsNHL";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
@@ -513,7 +513,7 @@ const getTeamCodeFromSeason = (season: Season): string => {
     return fallbackTeamCode;
   }
 
-  const team = getNHLTeamByEspnId(numericTeamId);
+  const team = getNHLTeam(numericTeamId);
 
   return team?.code ?? fallbackTeamCode;
 };

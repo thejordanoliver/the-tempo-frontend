@@ -110,6 +110,7 @@ export default function ConversationScreen() {
     sendError,
     isOtherUserTyping,
     sendMessage,
+    unsendMessage,
     notifyTyping,
     refresh,
     loadOlder,
@@ -219,6 +220,7 @@ export default function ConversationScreen() {
         secondaryAccent={messageAccent.secondary}
         usesCustomMessageAccent={usesCustomMessageAccent}
         usesGradient={usesGradient}
+        onUnsend={unsendMessage}
         onRetry={(message) => {
           void sendMessage({
             text: message.text,
@@ -235,6 +237,7 @@ export default function ConversationScreen() {
       messageAccent.secondary,
       messageReceiptLabels,
       sendMessage,
+      unsendMessage,
       styles,
       usesCustomMessageAccent,
       usesGradient,

@@ -604,6 +604,15 @@ export const sendMessageRest = async (
   );
 };
 
+export const unsendMessage = async (
+  conversationId: string,
+  messageId: string,
+): Promise<void> => {
+  await apiClient.delete(
+    `/api/messages/conversations/${encodeURIComponent(conversationId)}/messages/${encodeURIComponent(messageId)}`,
+  );
+};
+
 export const markConversationRead = async (
   conversationId: string,
 ): Promise<ConversationReadPayload | null> => {

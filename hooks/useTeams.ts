@@ -247,6 +247,13 @@ export default function useTeamDetails(
         };
       };
 
+      if (axiosLikeError.response?.status === 404) {
+        setTeamDetails(null);
+        setLeagueName(null);
+        setError(null);
+        return;
+      }
+
       const responseData = axiosLikeError.response?.data;
 
       const message =

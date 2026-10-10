@@ -1,3 +1,4 @@
+import { normalizeNHLTeamId } from "../utils/nhlTeamId";
 import type { FavoriteSportId } from "constants/leagues";
 import type { ImageSourcePropType } from "react-native";
 
@@ -61,7 +62,8 @@ export function normalizeFavoriteTeamKey(
   // Upgrade persisted favorites from the former men's basketball league key.
   const storedLeague = match[1].toLowerCase();
   const league = storedLeague === "cbb" ? "mcbb" : storedLeague;
-  const teamId = Number(match[2]);
+  const storedTeamId = Number(match[2]);
+  const teamId = league === "nhl" ? normalizeNHLTeamId(storedTeamId) : storedTeamId;
 
   if (!isFavoriteLeague(league)) return null;
   if (!Number.isSafeInteger(teamId) || teamId <= 0) return null;

@@ -258,7 +258,7 @@ export default function CommentThreadScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ["images", "videos"],
       allowsEditing: false,
       quality: 0.9,
       videoQuality: ImagePicker.UIImagePickerControllerQualityType.Medium,

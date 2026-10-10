@@ -24,6 +24,7 @@ import {
   normalizeMessage,
   pinConversation,
   sendMessageRest,
+  unsendMessage as unsendMessageRequest,
 } from "services/messagesApi";
 import {
   disconnectMessagesSocket,
@@ -277,6 +278,7 @@ type MessagesContextValue = {
     conversationId: string,
     payload: ComposeDirectMessagePayload,
   ) => Promise<boolean>;
+  unsendDirectMessage: (message: DirectMessageItem) => Promise<void>;
   markRead: (conversationId: string) => Promise<void>;
 };
 
@@ -1129,6 +1131,34 @@ export function MessagesProvider({
     ],
   );
 
+  const unsendDirectMessage = useCallback(
+    async (message: DirectMessageItem) => {
+      if (!enabled || !token || !message.isCurrentUser ||
+          message.status === "pending" || message.status === "failed") {
+        throw new Error("Only your sent messages can be unsent.");
+      }
+
+      const conversationId = normalizeId(message.conversationId);
+      const messageId = normalizeId(message.id);
+      if (!conversationId || !messageId) {
+        throw new Error("Message is not available.");
+      }
+
+      await unsendMessageRequest(conversationId, messageId);
+      snapshotDeletionsRef.current[conversationId]?.add(messageId);
+      updateMessageState(conversationId, (state) => ({
+        ...state,
+        messages: removeMessageFromList(state.messages, messageId),
+      }));
+
+      // Refresh the preview even when this device has no socket connection.
+      void getConversation(conversationId, userId).then((conversation) => {
+        if (conversation) upsertConversation(conversation);
+      }).catch(() => {});
+    },
+    [enabled, token, updateMessageState, upsertConversation, userId],
+  );
+
   const sendDirectMessage = useCallback(
     async (conversationId: string, payload: ComposeDirectMessagePayload) => {
       const normalizedConversationId = normalizeId(conversationId);
@@ -1375,6 +1405,7 @@ export function MessagesProvider({
       loadConversationMessages,
       loadOlderMessages,
       sendDirectMessage,
+      unsendDirectMessage,
       markRead,
     }),
     [
@@ -1389,6 +1420,7 @@ export function MessagesProvider({
       loadOlderMessages,
       markRead,
       sendDirectMessage,
+      unsendDirectMessage,
       togglePinConversation,
       upsertConversation,
     ],

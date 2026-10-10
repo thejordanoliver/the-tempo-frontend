@@ -37,7 +37,7 @@ export function CenterInfo({
   const isHalftime = gameStatusDescription === "Halftime";
 
   return (
-    <View>
+    <View style={styles.container}>
       {isFinal && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>{gameStatusShortDescription}</Text>
@@ -48,7 +48,9 @@ export function CenterInfo({
 
       {inProgress && !endOfPeriod && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{formatPeriod({ period, isNHL: true })}</Text>
+          <Text style={styles.date}>
+            {formatPeriod({ period, isNHL: true })}
+          </Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>

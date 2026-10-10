@@ -11,7 +11,6 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
-import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { FootballGame } from "@/types/football/football";
@@ -222,25 +221,29 @@ export default function FootballGamePreviewModal({
   const leaders = score?.leaders ?? [];
   const teamStats = score?.boxScore?.teams ?? [];
   const playerStats = score?.boxScore?.players ?? [];
-  const venueId = Number(details?.venue?.id);
-  const baseVenue = details?.venue;
-  const { venue } = useVenue({ sport: "football", id: venueId });
+  const venue = details?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
     date: gameDateObj,
   });
+  const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href ?? null;
-  const venueAttendance = details?.attendance ?? null;
-  const venueSurface = baseVenue?.grass;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
+  const venueAttendance = details?.attendance ?? game?.attendance ?? null;
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
+  const venueSurface = venue?.grass ?? false;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`

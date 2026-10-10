@@ -7,7 +7,6 @@ import {
   GameLocation,
 } from "@/components/Sports/Basketball/GameDetails";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
-import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import {
   formatDate,
@@ -168,25 +167,25 @@ export default function GameDetailsScreen(
   const clock = game?.status.displayClock;
   const isLoading = !game;
 
-  const venueId = Number(game?.venue?.id);
-  const { venue } = useVenue({ sport: "mma", id: venueId });
+  const venue = game?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
     date: gameDateObj,
   });
 
   const baseVenue = game?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueName = venue?.name ?? baseVenue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address.formatted ?? (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? "";
-  const venueAttendance = baseVenue?.attendance || null;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueAttendance = baseVenue?.attendance ?? null;
+  const venueCity = venue?.address.city ?? baseVenue?.city ?? baseVenue?.address?.city;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ?? baseVenue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`

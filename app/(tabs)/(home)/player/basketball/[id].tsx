@@ -4,7 +4,7 @@ import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardLi
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
-import { getNBATeam, getNBATeamLogo, getTeamByESPNId } from "@/constants/teams";
+import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import {
   getWCBBTeam,
   getWCBBTeamByESPNId,
@@ -128,7 +128,7 @@ export default function PlayerDetailScreen() {
     if (!currentTeamId) return null;
 
     if (isNBA) {
-      return getNBATeam(currentTeamId) ?? getTeamByESPNId(currentTeamId);
+      return getNBATeam(currentTeamId);
     }
 
     if (isWNBA) {

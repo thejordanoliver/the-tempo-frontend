@@ -1,4 +1,5 @@
 import Button from "@/components/Buttons/Button";
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import CenteredHeader from "@/components/Headings/CenteredHeader";
 import ChampionshipBanner from "@/components/Sports/Basketball/Team/ChampionshipBanner";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -10,7 +11,6 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { globalStyles } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useRef } from "react";
@@ -105,7 +105,9 @@ export default function TeamInfoModal({
             showsVerticalScrollIndicator={false}
           >
             {!teamDetails && (loading || !error) ? (
-              <SeasonStatCardSkeleton />
+              <View style={global.emptyContainer}>
+                <CustomActivityIndicator />
+              </View>
             ) : error ? (
               <>
                 <Text style={global.errorText}>

@@ -127,6 +127,8 @@ export const TEAM_TABS = {
 
   // Soccer
   socc: ["schedule", "news", "roster", "forum"],
+  msoc: ["schedule", "news", "forum"],
+  wsoc: ["schedule", "news", "forum"],
 } as const;
 
 export type League = keyof typeof LEAGUE_TABS;

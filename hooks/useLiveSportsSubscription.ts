@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useFocusEffect } from "expo-router";
 import {
   getSportsLiveSubscriptionLocalKey,
   subscribeSportsLive,
@@ -38,7 +39,7 @@ export function useLiveSportsSubscription<TPayload = unknown>({
     payloadRef.current = payload;
   }, [stableSubscriptionKey, payload]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (!enabled) return undefined;
 
     return subscribeSportsLive<TPayload>({
@@ -48,5 +49,5 @@ export function useLiveSportsSubscription<TPayload = unknown>({
         onUpdateRef.current(envelope.payload, envelope);
       },
     });
-  }, [enabled, kind, stableSubscriptionKey]);
+  }, [enabled, kind, stableSubscriptionKey]));
 }

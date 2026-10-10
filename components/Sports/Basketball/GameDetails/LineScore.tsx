@@ -215,7 +215,7 @@ export default function LineScore({
   if (isBaseball) {
     return (
       <View style={styles.container}>
-        <HeadingTwo isDark={isDark}>Score Summary</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Line Score</HeadingTwo>
 
         <View style={styles.wrapper}>
           <View
@@ -401,7 +401,7 @@ export default function LineScore({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo isDark={isDark}>Score Summary</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Line Score</HeadingTwo>
 
       <View style={styles.wrapper}>
         <View style={styles.headerRow}>

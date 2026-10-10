@@ -25,6 +25,33 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Local backend on Wi-Fi
+
+Run `npm run start:local` to detect your computer's LAN IPv4 address, write
+`EXPO_PUBLIC_API_URL=http://<address>:4000` to `.env.local`, and start Expo.
+Other environment variables and `.env` are preserved. `.env.local` is already
+Git-ignored and overrides the same variable in `.env` for other Expo commands too.
+
+The script checks for address changes every five seconds while Expo runs. When
+the URL changes, reload the app; you may also need to reconnect to Expo on the
+new network. Your phone and backend computer must be on the same reachable
+network, with the backend listening on port 4000.
+
+Expo options can be forwarded with `npm run start:local -- --ios` (or `--android`
+or `--web`). To update the file without starting Expo, use
+`npm run start:local -- --update-only`. If detection is ambiguous or a VPN uses
+the default route, select the LAN interface explicitly, for example
+`TEMPO_LOCAL_INTERFACE=en0 npm run start:local` on macOS.
+
+Use this command only for local development. To use your Render backend, set
+`EXPO_PUBLIC_API_URL=https://your-backend.onrender.com` in `.env` and run
+`npm run start:hosted`. This command uses the API URL from `.env` even when
+`.env.local` contains a local URL, without changing either file. Other local
+environment settings still load normally. Both commands accept Expo's cache
+clear flag: `npm run start:local -- -c` or `npm run start:hosted -- -c`.
+Stop the running Expo server before switching modes. These commands select the
+backend for development sessions; production builds need their own API configuration.
+
 ## Get a fresh project
 
 When you're ready, run:

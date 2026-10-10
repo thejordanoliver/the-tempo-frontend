@@ -1,14 +1,10 @@
-import {
-  getNBATeam,
-  getTeamByESPNId,
-  getTeamBySummerId,
-} from "@/constants/teams";
+import { getNBATeam, getTeamBySummerId } from "@/constants/teams";
 import { getCBTeam } from "@/constants/teamsCB";
-import { getMCBBTeam, getMCBBTeamByESPNId } from "@/constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamByESPNId } from "@/constants/teamsCFB";
-import { getMLBTeam, getMLBTeamByEspnId } from "@/constants/teamsMLB";
+import { getMCBBTeam, getMCBBTeamByESPNId } from "@/constants/teamsMCBB";
+import { getMLBTeam } from "@/constants/teamsMLB";
 import { getNFLTeam, getNFLTeamByESPNId } from "@/constants/teamsNFL";
-import { getNHLTeam, getNHLTeamByEspnId } from "@/constants/teamsNHL";
+import { getNHLTeam } from "@/constants/teamsNHL";
 import { getSBTeam } from "@/constants/teamsSB";
 import { getSOCCTeam } from "@/constants/teamsSOCC";
 import { getUFLTeam, getUFLTeamByESPNId } from "@/constants/teamsUFL";
@@ -31,10 +27,7 @@ export type NotificationGameTeams = {
   matchup: string;
 };
 
-const notificationDataString = (
-  notification: AppNotification,
-  key: string,
-) => {
+const notificationDataString = (notification: AppNotification, key: string) => {
   const value = notification.data?.[key];
   return typeof value === "string" || typeof value === "number"
     ? String(value)
@@ -50,7 +43,7 @@ const resolveTeam = (
 
   switch (league) {
     case "nba":
-      return getNBATeam(teamId) ?? getTeamByESPNId(teamId);
+      return getNBATeam(teamId) ?? getNBATeam(teamId);
     case "wnba":
       return getWNBATeam(teamId) ?? getWNBATeamByESPNId(teamId);
     case "mcbb":
@@ -64,7 +57,7 @@ const resolveTeam = (
     case "ufl":
       return getUFLTeam(teamId) ?? getUFLTeamByESPNId(teamId);
     case "mlb":
-      return getMLBTeam(teamId) ?? getMLBTeamByEspnId(teamId);
+      return getMLBTeam(teamId) ?? getMLBTeam(teamId);
     case "cb":
     case "college-baseball":
       return getCBTeam(teamId);
@@ -72,13 +65,11 @@ const resolveTeam = (
     case "college-softball":
       return getSBTeam(teamId);
     case "nhl":
-      return getNHLTeam(teamId) ?? getNHLTeamByEspnId(teamId);
+      return getNHLTeam(teamId) ?? getNHLTeam(teamId);
     case "summerutah":
     case "summervegas":
       return (
-        getTeamBySummerId(teamId) ??
-        getNBATeam(teamId) ??
-        getTeamByESPNId(teamId)
+        getTeamBySummerId(teamId) ?? getNBATeam(teamId) ?? getNBATeam(teamId)
       );
     default:
       return sport === "soccer" ? getSOCCTeam(teamId) : undefined;
@@ -95,7 +86,7 @@ const presentTeam = (
     id: String(team.id),
     name: team.fullName || team.shortName || team.name,
     code: team.code || team.shortName || team.name,
-    logo: (isDark ? team.logoLight ?? team.logo : team.logo) as ImageSource,
+    logo: (isDark ? (team.logoLight ?? team.logo) : team.logo) as ImageSource,
   };
 };
 
@@ -119,9 +110,10 @@ export const getNotificationGameTeams = (
     : null;
   if (!away && !home) return null;
 
-  const matchup = away && home
-    ? `${away.code} at ${home.code}`
-    : (away?.code ?? home?.code ?? "");
+  const matchup =
+    away && home
+      ? `${away.code} at ${home.code}`
+      : (away?.code ?? home?.code ?? "");
 
   return { away, home, matchup };
 };

@@ -279,8 +279,8 @@ export const CBStandingsList = ({ league }: Props) => {
                 if (!teamId) return;
                 // TODO: Replace with the college baseball/softball team route when one exists.
                 router.push({
-                  pathname: "/team/cfb/[teamId]",
-                  params: { teamId: String(teamId) },
+                  pathname: "/team/cb/[teamId]",
+                  params: { teamId: String(teamId), league: "cb" },
                 });
               }}
             >

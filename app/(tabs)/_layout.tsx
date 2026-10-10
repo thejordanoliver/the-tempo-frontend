@@ -9,7 +9,11 @@ export default function TabLayout() {
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
   const pathname = usePathname();
-  const hideNavigationBar = pathname.split("/").filter(Boolean).at(-1) === "edit-favorites" || pathname.endsWith("/settings/deleteaccountsplash");
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const hideNavigationBar =
+    pathSegments.includes("messages") ||
+    pathSegments.at(-1) === "edit-favorites" ||
+    pathname.endsWith("/settings/deleteaccountsplash");
 
   return (
     <NavigationBarInsetContext.Provider value={hideNavigationBar ? 0 : NAVIGATION_BAR_ROW_HEIGHT + insets.bottom}>

@@ -1,3 +1,4 @@
+import type { GameVenueInfo } from "types/gameVenue";
 import { Venue } from "@/types/types";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
@@ -325,6 +326,8 @@ export type GameDetails = {
     away: TeamRecords;
   };
   venue?: Venue | null;
+  venueInfo?: GameVenueInfo | null;
+  attendance?: number | null;
 };
 
 type HockeyGameDetailsResponse = {

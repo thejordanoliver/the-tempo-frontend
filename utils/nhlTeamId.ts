@@ -1,0 +1,38 @@
+// Legacy Tempo IDs are disjoint from canonical ESPN NHL team IDs.
+const legacyNHLTeamIds: Record<number, number> = {
+  670: 25,
+  673: 1,
+  674: 2,
+  675: 3,
+  676: 7,
+  678: 4,
+  679: 17,
+  680: 29,
+  681: 9,
+  682: 5,
+  683: 6,
+  684: 26,
+  685: 8,
+  687: 30,
+  688: 10,
+  689: 27,
+  690: 11,
+  691: 12,
+  692: 13,
+  693: 14,
+  695: 15,
+  696: 16,
+  697: 18,
+  1436: 124292,
+  698: 19,
+  699: 20,
+  700: 21,
+  2483: 129764,
+  701: 22,
+  702: 37,
+  703: 23,
+  704: 28,
+};
+
+export const normalizeNHLTeamId = (id: number): number =>
+  legacyNHLTeamIds[id] ?? id;

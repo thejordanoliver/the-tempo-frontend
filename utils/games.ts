@@ -139,14 +139,16 @@ export const normalizeVenueName = (name?: string | null) =>
     .trim() ?? "";
 
 export const formatVenueAddress = (address?: {
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  country?: string;
+  street?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zipCode?: string | null;
+  postalCode?: string | null;
+  country?: string | null;
 }) => {
   if (!address) return undefined;
 
-  return [address.city, address.state, address.zipCode, address.country]
+  return [address.street, address.city, address.state, address.postalCode ?? address.zipCode, address.country]
     .filter(Boolean)
     .join(" ");
 };

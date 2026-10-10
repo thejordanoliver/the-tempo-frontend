@@ -341,10 +341,10 @@ import AirForceLogo from "assets/College_Logos/AirForceLogo.png";
 import AirForceLogoLight from "assets/College_Logos/AirForceLogoLight.png";
 import AkronLogo from "assets/College_Logos/AkronLogo.png";
 import AkronLogoLight from "assets/College_Logos/AkronLogoLight.png";
-import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
-import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
 import AlabamaAAndMLogo from "assets/College_Logos/AlabamaAAndMLogo.png";
 import AlabamaAAndMLogoLight from "assets/College_Logos/AlabamaAAndMLogoLight.png";
+import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
+import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
 import AlabamaStateLogo from "assets/College_Logos/AlabamaStateLogo.png";
 import AlabamaStateLogoLight from "assets/College_Logos/AlabamaStateLogoLight.png";
 import AlcornStateLogo from "assets/College_Logos/AlcornStateLogo.png";
@@ -403,10 +403,10 @@ import ButlerLogo from "assets/College_Logos/ButlerLogo.png";
 import ButlerLogoLight from "assets/College_Logos/ButlerLogoLight.png";
 import BYULogo from "assets/College_Logos/BYULogo.png";
 import BYULogoLight from "assets/College_Logos/BYULogoLight.png";
-import CaliforniaLogo from "assets/College_Logos/CaliforniaLogo.png";
-import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLogoLight.png";
 import CaliforniaBaptistLogo from "assets/College_Logos/CaliforniaBaptistLogo.png";
 import CaliforniaBaptistLogoLight from "assets/College_Logos/CaliforniaBaptistLogoLight.png";
+import CaliforniaLogo from "assets/College_Logos/CaliforniaLogo.png";
+import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLogoLight.png";
 import CalPolyLogo from "assets/College_Logos/CalPolyLogo.png";
 import CalPolyLogoLight from "assets/College_Logos/CalPolyLogoLight.png";
 import CalStateBakersfieldLogo from "assets/College_Logos/CalStateBakersfieldLogo.png";
@@ -509,10 +509,10 @@ import FisherCollegeLogo from "assets/College_Logos/FisherCollegeLogo.png";
 import FisherCollegeLogoLight from "assets/College_Logos/FisherCollegeLogoLight.png";
 import FIULogo from "assets/College_Logos/FIULogo.png";
 import FIULogoLight from "assets/College_Logos/FIULogoLight.png";
-import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
-import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
 import FloridaGulfCoastLogo from "assets/College_Logos/FloridaGulfCoastLogo.png";
 import FloridaGulfCoastLogoLight from "assets/College_Logos/FloridaGulfCoastLogoLight.png";
+import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
+import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
 import FloridaStateLogo from "assets/College_Logos/FloridaStateLogo.png";
 import FloridaStateLogoLight from "assets/College_Logos/FloridaStateLogoLight.png";
 import FordhamLogo from "assets/College_Logos/FordhamLogo.png";
@@ -553,10 +553,10 @@ import HofstraLogo from "assets/College_Logos/HofstraLogo.png";
 import HofstraLogoLight from "assets/College_Logos/HofstraLogoLight.png";
 import HolyCrossLogo from "assets/College_Logos/HolyCrossLogo.png";
 import HolyCrossLogoLight from "assets/College_Logos/HolyCrossLogoLight.png";
-import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
-import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
 import HoustonChristianLogo from "assets/College_Logos/HoustonChristianLogo.png";
 import HoustonChristianLogoLight from "assets/College_Logos/HoustonChristianLogoLight.png";
+import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
+import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
 import HowardLogo from "assets/College_Logos/HowardLogo.png";
 import HowardLogoLight from "assets/College_Logos/HowardLogoLight.png";
 import IdahoLogo from "assets/College_Logos/IdahoLogo.png";
@@ -589,10 +589,10 @@ import JaxStateLogo from "assets/College_Logos/JaxStateLogo.png";
 import JaxStateLogoLight from "assets/College_Logos/JaxStateLogoLight.png";
 import JMULogo from "assets/College_Logos/JMULogo.png";
 import JMULogoLight from "assets/College_Logos/JMULogoLight.png";
-import KansasLogo from "assets/College_Logos/KansasLogo.png";
-import KansasLogoLight from "assets/College_Logos/KansasLogoLight.png";
 import KansasCityLogo from "assets/College_Logos/KansasCityLogo.png";
 import KansasCityLogoLight from "assets/College_Logos/KansasCityLogoLight.png";
+import KansasLogo from "assets/College_Logos/KansasLogo.png";
+import KansasLogoLight from "assets/College_Logos/KansasLogoLight.png";
 import KansasStateLogo from "assets/College_Logos/KansasStateLogo.png";
 import KansasStateLogoLight from "assets/College_Logos/KansasStateLogoLight.png";
 import KennesawStateLogo from "assets/College_Logos/KennesawStateLogo.png";
@@ -625,10 +625,10 @@ import LongIslandLogo from "assets/College_Logos/LongIslandLogo.png";
 import LongIslandLogoLight from "assets/College_Logos/LongIslandLogoLight.png";
 import LongwoodLogo from "assets/College_Logos/LongwoodLogo.png";
 import LongwoodLogoLight from "assets/College_Logos/LongwoodLogoLight.png";
-import LouisianaLogo from "assets/College_Logos/LouisianaLogo.png";
-import LouisianaLogoLight from "assets/College_Logos/LouisianaLogoLight.png";
 import LouisianaChristianLogo from "assets/College_Logos/LouisianaChristianLogo.png";
 import LouisianaChristianLogoLight from "assets/College_Logos/LouisianaChristianLogoLight.png";
+import LouisianaLogo from "assets/College_Logos/LouisianaLogo.png";
+import LouisianaLogoLight from "assets/College_Logos/LouisianaLogoLight.png";
 import LouisianaTechLogo from "assets/College_Logos/LouisianaTechLogo.png";
 import LouisianaTechLogoLight from "assets/College_Logos/LouisianaTechLogoLight.png";
 import LouisvilleLogo from "assets/College_Logos/LouisvilleLogo.png";
@@ -795,10 +795,10 @@ import PrincetonLogo from "assets/College_Logos/PrincetonLogo.png";
 import PrincetonLogoLight from "assets/College_Logos/PrincetonLogoLight.png";
 import ProvidenceLogo from "assets/College_Logos/ProvidenceLogo.png";
 import ProvidenceLogoLight from "assets/College_Logos/ProvidenceLogoLight.png";
-import PurdueLogo from "assets/College_Logos/PurdueLogo.png";
-import PurdueLogoLight from "assets/College_Logos/PurdueLogoLight.png";
 import PurdueFortWayneLogo from "assets/College_Logos/PurdueFortWayneLogo.png";
 import PurdueFortWayneLogoLight from "assets/College_Logos/PurdueFortWayneLogoLight.png";
+import PurdueLogo from "assets/College_Logos/PurdueLogo.png";
+import PurdueLogoLight from "assets/College_Logos/PurdueLogoLight.png";
 import QueensLogo from "assets/College_Logos/QueensLogo.png";
 import QueensLogoLight from "assets/College_Logos/QueensLogoLight.png";
 import QuinnipiacLogo from "assets/College_Logos/QuinnipiacLogo.png";
@@ -869,12 +869,12 @@ import SouthDakotaLogo from "assets/College_Logos/SouthDakotaLogo.png";
 import SouthDakotaLogoLight from "assets/College_Logos/SouthDakotaLogoLight.png";
 import SouthDakotaStateLogo from "assets/College_Logos/SouthDakotaStateLogo.png";
 import SouthDakotaStateLogoLight from "assets/College_Logos/SouthDakotaStateLogoLight.png";
-import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
-import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
 import SouthernIllinoisLogo from "assets/College_Logos/SouthernIllinoisLogo.png";
 import SouthernIllinoisLogoLight from "assets/College_Logos/SouthernIllinoisLogoLight.png";
 import SouthernIndianaLogo from "assets/College_Logos/SouthernIndianaLogo.png";
 import SouthernIndianaLogoLight from "assets/College_Logos/SouthernIndianaLogoLight.png";
+import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
+import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
 import SouthernMissLogo from "assets/College_Logos/SouthernMissLogo.png";
 import SouthernMissLogoLight from "assets/College_Logos/SouthernMissLogoLight.png";
 import SouthernUtahLogo from "assets/College_Logos/SouthernUtahLogo.png";
@@ -911,12 +911,12 @@ import TennesseeLogo from "assets/College_Logos/TennesseeLogo.png";
 import TennesseeLogoLight from "assets/College_Logos/TennesseeLogoLight.png";
 import TennesseeTechLogo from "assets/College_Logos/TennesseeTechLogo.png";
 import TennesseeTechLogoLight from "assets/College_Logos/TennesseeTechLogoLight.png";
-import TexasLogo from "assets/College_Logos/TexasLogo.png";
-import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
-import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
-import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
 import TexasAAndMCorpusChristiLogo from "assets/College_Logos/TexasAAndMCorpusChristiLogo.png";
 import TexasAAndMCorpusChristiLogoLight from "assets/College_Logos/TexasAAndMCorpusChristiLogoLight.png";
+import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
+import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
+import TexasLogo from "assets/College_Logos/TexasLogo.png";
+import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
 import TexasSouthernLogo from "assets/College_Logos/TexasSouthernLogo.png";
 import TexasSouthernLogoLight from "assets/College_Logos/TexasSouthernLogoLight.png";
 import TexasStateLogo from "assets/College_Logos/TexasStateLogo.png";
@@ -55563,9 +55563,9 @@ export const soccerTeams: Team[] = [
   },
   {
     id: 131303,
-    name: "HANOVER",
-    fullName: "HANOVER",
-    shortName: "HANOVER",
+    name: "Hanover",
+    fullName: "Hanover",
+    shortName: "Hanover",
     code: "HAN",
     color: null,
     secondaryColor: "#C60000",
@@ -69624,274 +69624,274 @@ export const soccerTeams: Team[] = [
   },
   // College teams added to the backend NCAA catalog.
   {
-    "id": 132534,
-    "name": "Defiance",
-    "fullName": "Defiance",
-    "shortName": "Defiance",
-    "code": "DFC",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132534,
+    name: "Defiance",
+    fullName: "Defiance",
+    shortName: "Defiance",
+    code: "DFC",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132957,
-    "name": "Florida Polytechnic",
-    "fullName": "Florida Polytechnic",
-    "shortName": "Florida Poly",
-    "code": "FLP",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132957,
+    name: "Florida Polytechnic",
+    fullName: "Florida Polytechnic",
+    shortName: "Florida Poly",
+    code: "FLP",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132921,
-    "name": "Keystone",
-    "fullName": "Keystone",
-    "shortName": "Keystone",
-    "code": "KYSN",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132921,
+    name: "Keystone",
+    fullName: "Keystone",
+    shortName: "Keystone",
+    code: "KYSN",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132899,
-    "name": "Pensacola Christian",
-    "fullName": "Pensacola Christian",
-    "shortName": "Pensacola Chr",
-    "code": "PCC",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132899,
+    name: "Pensacola Christian",
+    fullName: "Pensacola Christian",
+    shortName: "Pensacola Chr",
+    code: "PCC",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132374,
-    "name": "SUNY Maritime",
-    "fullName": "SUNY Maritime",
-    "shortName": "SUNY Maritime",
-    "code": "NYMT",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132374,
+    name: "SUNY Maritime",
+    fullName: "SUNY Maritime",
+    shortName: "SUNY Maritime",
+    code: "NYMT",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 133324,
-    "name": "Southern Oregon",
-    "fullName": "Southern Oregon",
-    "shortName": "Southern Oregon",
-    "code": "Southern Oregon",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 133324,
+    name: "Southern Oregon",
+    fullName: "Southern Oregon",
+    shortName: "Southern Oregon",
+    code: "Southern Oregon",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132898,
-    "name": "Spring Hill",
-    "fullName": "Spring Hill",
-    "shortName": "Spring Hill",
-    "code": "SPR",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132898,
+    name: "Spring Hill",
+    fullName: "Spring Hill",
+    shortName: "Spring Hill",
+    code: "SPR",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132510,
-    "name": "William Peace",
-    "fullName": "William Peace",
-    "shortName": "Will Peace",
-    "code": "WPEA",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132510,
+    name: "William Peace",
+    fullName: "William Peace",
+    shortName: "Will Peace",
+    code: "WPEA",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132992,
-    "name": "Columbia (SC)",
-    "fullName": "Columbia (SC)",
-    "shortName": "Columbia",
-    "code": "CCSC",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132992,
+    name: "Columbia (SC)",
+    fullName: "Columbia (SC)",
+    shortName: "Columbia",
+    code: "CCSC",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132878,
-    "name": "Mount Royal",
-    "fullName": "Mount Royal",
-    "shortName": "Mt Royal",
-    "code": "MR",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132878,
+    name: "Mount Royal",
+    fullName: "Mount Royal",
+    shortName: "Mt Royal",
+    code: "MR",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 133866,
-    "name": "North Dakota State College of Science",
-    "fullName": "North Dakota State College of Science",
-    "shortName": "ND ST COS",
-    "code": "NDSC",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 133866,
+    name: "North Dakota State College of Science",
+    fullName: "North Dakota State College of Science",
+    shortName: "ND ST COS",
+    code: "NDSC",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 133062,
-    "name": "Saint Xavier",
-    "fullName": "Saint Xavier",
-    "shortName": "St. Xavier",
-    "code": "STX",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 133062,
+    name: "Saint Xavier",
+    fullName: "Saint Xavier",
+    shortName: "St. Xavier",
+    code: "STX",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132823,
-    "name": "United States Sports University",
-    "fullName": "United States Sports University",
-    "shortName": "US Sports Univ",
-    "code": "USSU",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132823,
+    name: "United States Sports University",
+    fullName: "United States Sports University",
+    shortName: "US Sports Univ",
+    code: "USSU",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 131339,
-    "name": "Western Oregon",
-    "fullName": "Western Oregon",
-    "shortName": "Western Oregon",
-    "code": "WOR",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 131339,
+    name: "Western Oregon",
+    fullName: "Western Oregon",
+    shortName: "Western Oregon",
+    code: "WOR",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
   {
-    "id": 132790,
-    "name": "Wiley",
-    "fullName": "Wiley",
-    "shortName": "Wiley",
-    "code": "WILY",
-    "color": "#000000",
-    "secondaryColor": "#C60000",
-    "logo": null,
-    "logoLight": null,
-    "isActive": true,
-    "isAllStar": false,
-    "isNational": false,
-    "league": "socc",
-    "city": null,
-    "location": null,
-    "established": 0
+    id: 132790,
+    name: "Wiley",
+    fullName: "Wiley",
+    shortName: "Wiley",
+    code: "WILY",
+    color: "#000000",
+    secondaryColor: "#C60000",
+    logo: null,
+    logoLight: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "socc",
+    city: null,
+    location: null,
+    established: 0,
   },
 ];
 
@@ -69912,11 +69912,9 @@ export function getSOCCTeamLogo(
 
   const logo = isDark ? team.logoLight || team.logo : team.logo;
 
-  // Remote/string logos should use the local placeholder
   if (!logo || typeof logo === "string") {
     return PlaceholderLogo;
   }
 
-  // Local require/import assets
   return logo;
 }

@@ -1,3 +1,4 @@
+import type { GameVenueInfo } from "types/gameVenue";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
 import { Highlight, Venue } from "types/types";
@@ -322,6 +323,7 @@ export type Details = {
   highlights: Highlight[];
   neutralSite: boolean;
   venue: Venue | null;
+  venueInfo?: GameVenueInfo | null;
   headline?: string | null;
   predictor: Predictor | null;
   attendance: number | null;

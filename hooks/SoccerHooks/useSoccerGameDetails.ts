@@ -1,3 +1,4 @@
+import type { GameVenueInfo } from "types/gameVenue";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
@@ -319,6 +320,7 @@ export type Details = {
 
   neutralSite: boolean;
   venue: any | null;
+  venueInfo?: GameVenueInfo | null;
   attendance?: number | null;
 
   records: {

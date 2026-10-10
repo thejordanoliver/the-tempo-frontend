@@ -9,10 +9,10 @@ import type {
   FootballStatPath,
   FootballStatValue,
   FootballTableColumn,
-  GameTeamStats,
   StatDisplayCategory,
   StatRow,
   StatTab,
+  TeamStats,
 } from "@/types/football/stats";
 
 export const STAT_TABS = [
@@ -239,7 +239,7 @@ export const PLAYER_STAT_TABLES: FootballPlayerStatTable[] = [
 ];
 
 export const buildFootballStatCategories = (
-  stats: GameTeamStats,
+  stats: TeamStats,
 ): StatDisplayCategory[] => [
   {
     key: "passing",

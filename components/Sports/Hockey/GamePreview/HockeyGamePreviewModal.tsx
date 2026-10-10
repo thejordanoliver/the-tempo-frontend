@@ -4,7 +4,6 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
-import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { HockeyGame } from "@/types/hockey/hockey";
@@ -116,8 +115,8 @@ export default function HockeyGamePreviewModal({
   const awayScore = score?.away?.score ?? 0;
   const homeRank = score?.home?.rank;
   const awayRank = score?.away?.rank;
-  const homeTimeouts = score?.home?.timeouts ?? 0;
-  const awayTimeouts = score?.away?.timeouts ?? 0;
+  const homeTimeouts = score?.home?.timeouts;
+  const awayTimeouts = score?.away?.timeouts;
   const homeWins = homeScore > awayScore;
   const awayWins = awayScore > homeScore;
   const homeRecord = game?.home?.record ?? "0-0";
@@ -133,24 +132,28 @@ export default function HockeyGamePreviewModal({
       }
     : undefined;
 
-  const venueId = Number(details?.venue?.id);
-  const { venue } = useVenue({ sport: "hockey", id: venueId });
+  const venue = details?.venueInfo;
   const { weather } = useWeather({
-    lat: Number(venue?.latitude),
-    lon: Number(venue?.longitude),
-    location: venue?.city,
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
     date: gameDateObj,
   });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
-  const venueAttendance = game?.attendance || null;
-  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueAttendance = details?.attendance ?? game?.attendance ?? null;
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
-    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.state ??
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`

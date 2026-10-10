@@ -117,7 +117,7 @@ expectRoutes("Profile exposes every reusable detail-screen family", [
 test("unqualified detail routes stay inside their active tab stack", () => {
   assert.equal(
     scopeHrefToTab("/team/nfl/12", "(league)"),
-    "/(tabs)/(league)/team/nfl/12",
+    "/(tabs)/(league)/team/nfl/12?league=nfl",
   );
 
   assert.deepEqual(
@@ -158,7 +158,7 @@ test("query strings, fragments, and trailing slashes preserve root routes", () =
 
 test("detail query strings and object params stay intact inside the active tab", () => {
   assert.equal(scopeHrefToTab("/team/nfl/12?season=2026#games", "(league)"),
-    "/(tabs)/(league)/team/nfl/12?season=2026#games");
+    "/(tabs)/(league)/team/nfl/12?season=2026&league=nfl#games");
   assert.deepEqual(scopeHrefToTab({
     pathname: "/news/[id]", params: { id: "42", source: "feed" },
   }, "(explore)"), {
@@ -171,5 +171,5 @@ test("external, relative, qualified, and unsupported paths remain unchanged", ()
     "../team/12", "/unknown-screen", "/(other)/news/12"]) {
     assert.equal(scopeHrefToTab(route as Href, "(home)"), route);
   }
-  assert.equal(scopeHrefToTab("/team/nfl/12", null), "/team/nfl/12");
+  assert.equal(scopeHrefToTab("/team/nfl/12", null), "/team/nfl/12?league=nfl");
 });

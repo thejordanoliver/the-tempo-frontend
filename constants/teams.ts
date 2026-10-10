@@ -40,7 +40,6 @@ const placeholderLogo =
 export const teams: Team[] = [
   {
     id: 1,
-    espnId: 1,
     summerLeagueId: 1,
     name: "Hawks",
     shortName: "Hawks",
@@ -57,11 +56,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
     id: 2,
-    espnId: 2,
     summerLeagueId: 2,
     name: "Celtics",
     shortName: "Celtics",
@@ -78,11 +76,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 4,
-    espnId: 17,
+    id: 17,
     summerLeagueId: 110732,
     name: "Nets",
     shortName: "Nets",
@@ -99,11 +96,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 5,
-    espnId: 30,
+    id: 30,
     summerLeagueId: 5,
     name: "Hornets",
     shortName: "Hornets",
@@ -120,11 +116,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 6,
-    espnId: 4,
+    id: 4,
     summerLeagueId: 6,
     name: "Bulls",
     shortName: "Bulls",
@@ -141,11 +136,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 7,
-    espnId: 5,
+    id: 5,
     summerLeagueId: 7,
     name: "Cavaliers",
     shortName: "Cavaliers",
@@ -162,11 +156,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 8,
-    espnId: 6,
+    id: 6,
     summerLeagueId: 8,
     name: "Mavericks",
     shortName: "Mavericks",
@@ -183,11 +176,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 9,
-    espnId: 7,
+    id: 7,
     summerLeagueId: 9,
     name: "Nuggets",
     shortName: "Nuggets",
@@ -204,11 +196,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 10,
-    espnId: 8,
+    id: 8,
     summerLeagueId: 10,
     name: "Pistons",
     shortName: "Pistons",
@@ -225,11 +216,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 11,
-    espnId: 9,
+    id: 9,
     summerLeagueId: 11,
     name: "Warriors",
     shortName: "Warriors",
@@ -246,11 +236,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
     id: 132761,
-    espnId: 132761,
     summerLeagueId: 132761,
     name: "Warriors",
     shortName: "Warriors Blue",
@@ -267,11 +256,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 14,
-    espnId: 10,
+    id: 10,
     summerLeagueId: 14,
     name: "Rockets",
     shortName: "Rockets",
@@ -288,11 +276,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 15,
-    espnId: 11,
+    id: 11,
     summerLeagueId: 15,
     name: "Pacers",
     shortName: "Pacers",
@@ -309,11 +296,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 16,
-    espnId: 12,
+    id: 12,
     summerLeagueId: 16,
     name: "Clippers",
     shortName: "Clippers",
@@ -330,11 +316,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 17,
-    espnId: 13,
+    id: 13,
     summerLeagueId: 17,
     name: "Lakers",
     shortName: "Lakers",
@@ -351,11 +336,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 19,
-    espnId: 29,
+    id: 29,
     summerLeagueId: 19,
     name: "Grizzlies",
     shortName: "Grizzlies",
@@ -372,11 +356,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 20,
-    espnId: 14,
+    id: 14,
     summerLeagueId: 20,
     name: "Heat",
     shortName: "Heat",
@@ -393,11 +376,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 21,
-    espnId: 15,
+    id: 15,
     summerLeagueId: 110746,
     name: "Bucks",
     shortName: "Bucks",
@@ -414,11 +396,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 22,
-    espnId: 16,
+    id: 16,
     summerLeagueId: 22,
     name: "Timberwolves",
     shortName: "Timberwolves",
@@ -435,12 +416,11 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
 
   {
-    id: 23,
-    espnId: 3,
+    id: 3,
     summerLeagueId: 23,
     name: "Pelicans",
     shortName: "Pelicans",
@@ -457,11 +437,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 24,
-    espnId: 18,
+    id: 18,
     summerLeagueId: 24,
     name: "Knicks",
     shortName: "Knicks",
@@ -478,11 +457,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
     id: 25,
-    espnId: 25,
     summerLeagueId: 25,
     name: "Thunder",
     shortName: "Thunder",
@@ -499,12 +477,11 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
 
   {
-    id: 26,
-    espnId: 19,
+    id: 19,
     summerLeagueId: 26,
     name: "Magic",
     shortName: "Magic",
@@ -521,11 +498,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 27,
-    espnId: 20,
+    id: 20,
     summerLeagueId: 27,
     name: "76ers",
     shortName: "76ers",
@@ -542,11 +518,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 28,
-    espnId: 21,
+    id: 21,
     summerLeagueId: 28,
     name: "Suns",
     shortName: "Suns",
@@ -563,11 +538,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 29,
-    espnId: 22,
+    id: 22,
     summerLeagueId: 29,
     name: "Trail Blazers",
     shortName: "Trail Blazers",
@@ -584,11 +558,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 30,
-    espnId: 23,
+    id: 23,
     summerLeagueId: 30,
     name: "Kings",
     shortName: "Kings",
@@ -605,11 +578,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 31,
-    espnId: 24,
+    id: 24,
     summerLeagueId: 31,
     name: "Spurs",
     shortName: "Spurs",
@@ -626,11 +598,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 38,
-    espnId: 28,
+    id: 28,
     summerLeagueId: 38,
     name: "Raptors",
     shortName: "Raptors",
@@ -647,11 +618,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 40,
-    espnId: 26,
+    id: 26,
     summerLeagueId: 40,
     name: "Jazz",
     shortName: "Jazz",
@@ -668,11 +638,10 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
   {
-    id: 41,
-    espnId: 27,
+    id: 27,
     summerLeagueId: 41,
     name: "Wizards",
     shortName: "Wizards",
@@ -689,37 +658,28 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nba",
+    league: "nba",
   },
 ];
-
-export const getTeamByESPNId = (espnId: number | string) => {
-  return teams.find((t) => t.espnId?.toString() === espnId?.toString());
-};
-
-export const getTeamBySummerId = (id?: number | string) =>
-  teams.find((t) => String(t.summerLeagueId) === String(id));
 
 export const getNBATeam = (id: number | string) => {
   if (id == null) return undefined;
   return teams.find((t) => String(t.id) === String(id));
 };
 
+export const getTeamBySummerId = (id?: number | string) =>
+  teams.find((t) => String(t.summerLeagueId) === String(id));
+
 export function getNBATeamLogo(
   id: number | string | undefined,
   isDark: boolean,
+  isSummerLeague = false,
 ) {
   if (id === undefined || id === null || id === "") {
     return placeholderLogo;
   }
 
-  const normalizedId = String(id);
-
-  const team = teams.find(
-    (team) =>
-      String(team.id) === normalizedId ||
-      String(team.summerLeagueId) === normalizedId,
-  );
+  const team = isSummerLeague ? getTeamBySummerId(id) : getNBATeam(id);
 
   if (!team) {
     return placeholderLogo;
@@ -730,7 +690,6 @@ export function getNBATeamLogo(
     : (team.logo ?? placeholderLogo);
 }
 
-
 export type NBARivalryGroup = "national" | "regional";
 export type NBARivalry = {
   id: string;
@@ -739,115 +698,113 @@ export type NBARivalry = {
   group: NBARivalryGroup;
 };
 
-// Curated rivalries use local team IDs, matching the CFB registry.
-// Background reference: https://www.nba.com/news/viewers-guide-for-nbas-first-ever-rivals-week
 export const NBA_RIVALRIES = [
   {
     id: "celtics-lakers",
     name: "Celtics–Lakers",
-    teamIds: [2, 17],
+    teamIds: [2, 13],
     group: "national",
   },
   {
     id: "celtics-76ers",
     name: "Celtics–76ers",
-    teamIds: [2, 27],
+    teamIds: [2, 20],
     group: "regional",
   },
   {
     id: "celtics-knicks",
     name: "Celtics–Knicks",
-    teamIds: [2, 24],
+    teamIds: [2, 18],
     group: "regional",
   },
   {
     id: "knicks-nets",
     name: "Battle of the Boroughs",
-    teamIds: [24, 4],
+    teamIds: [18, 17],
     group: "regional",
   },
   {
     id: "lakers-clippers",
     name: "Battle of Los Angeles",
-    teamIds: [17, 16],
+    teamIds: [13, 12],
     group: "regional",
   },
   {
     id: "warriors-lakers",
     name: "Warriors–Lakers",
-    teamIds: [11, 17],
+    teamIds: [9, 13],
     group: "regional",
   },
   {
     id: "bulls-pistons",
     name: "Bulls–Pistons",
-    teamIds: [6, 10],
+    teamIds: [4, 8],
     group: "regional",
   },
   {
     id: "bulls-knicks",
     name: "Bulls–Knicks",
-    teamIds: [6, 24],
+    teamIds: [4, 18],
     group: "national",
   },
   {
     id: "knicks-pacers",
     name: "Knicks–Pacers",
-    teamIds: [24, 15],
+    teamIds: [18, 11],
     group: "national",
   },
   {
     id: "knicks-heat",
     name: "Knicks–Heat",
-    teamIds: [24, 20],
+    teamIds: [18, 14],
     group: "national",
   },
   {
     id: "celtics-heat",
     name: "Celtics–Heat",
-    teamIds: [2, 20],
+    teamIds: [2, 14],
     group: "national",
   },
   {
     id: "warriors-cavaliers",
     name: "Warriors–Cavaliers",
-    teamIds: [11, 7],
+    teamIds: [9, 5],
     group: "national",
   },
   {
     id: "mavericks-spurs",
     name: "Mavericks–Spurs",
-    teamIds: [8, 31],
+    teamIds: [6, 24],
     group: "regional",
   },
   {
     id: "rockets-spurs",
     name: "Rockets–Spurs",
-    teamIds: [14, 31],
+    teamIds: [10, 24],
     group: "regional",
   },
   {
     id: "mavericks-rockets",
     name: "Mavericks–Rockets",
-    teamIds: [8, 14],
+    teamIds: [6, 10],
     group: "regional",
   },
   {
     id: "lakers-kings",
     name: "Lakers–Kings",
-    teamIds: [17, 30],
+    teamIds: [13, 23],
     group: "regional",
   },
   {
     id: "lakers-suns",
     name: "Lakers–Suns",
-    teamIds: [17, 28],
+    teamIds: [13, 21],
     group: "regional",
   },
   {
     id: "warriors-clippers",
     name: "Warriors–Clippers",
-    teamIds: [11, 16],
+    teamIds: [9, 12],
     group: "regional",
   },
 ] as const satisfies readonly NBARivalry[];

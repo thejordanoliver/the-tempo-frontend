@@ -89,9 +89,10 @@ export default function GameLocation({
       ? Intl.NumberFormat("en-US").format(Number(venueAttendance))
       : null;
 
-  const formattedCapcity = Intl.NumberFormat("en-US").format(
-    Number(venueCapacity),
-  );
+  const formattedCapacity =
+    venueCapacity !== null && venueCapacity !== undefined && Number.isFinite(venueCapacity)
+      ? Intl.NumberFormat("en-US").format(venueCapacity)
+      : "N/A";
 
   const surfaceLabel =
     typeof grass === "boolean"
@@ -182,7 +183,7 @@ export default function GameLocation({
     {
       icon: "person" as const,
       label: "Capacity",
-      value: formattedCapcity || "N/A",
+      value: formattedCapacity,
     },
     formattedAttendance
       ? {

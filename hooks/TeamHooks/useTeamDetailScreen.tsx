@@ -43,7 +43,7 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
     });
     return () => { cancelled = true; };
   }, [header.league, header.teamId]);
-  const detailsLeague = tabLeague.trim().toLowerCase() === "socc"
+  const detailsLeague = ["socc", "msoc", "wsoc"].includes(tabLeague.trim().toLowerCase())
     ? "socc"
     : header.league;
   const {

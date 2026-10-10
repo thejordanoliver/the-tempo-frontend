@@ -5,7 +5,7 @@ import {
 } from "types/favorites";
 import { isFavoriteSportId, type FavoriteSportId } from "constants/leagues";
 
-export const USER_PROFILE_CACHE_VERSION = 3;
+export const USER_PROFILE_CACHE_VERSION = 5;
 export const USER_PROFILE_CACHE_TTL = 1000 * 60 * 10;
 export const USER_PROFILE_STALE_TTL = 1000 * 60 * 60 * 24;
 export const USER_PROFILE_CACHE_KEY_PREFIX = "userProfileCache:";

@@ -14,8 +14,8 @@ type Props = {
   awayRank?: number;
   homeScore: number;
   awayScore: number;
-  homeTimeouts?: number;
-  awayTimeouts?: number;
+  homeTimeouts?: number | null;
+  awayTimeouts?: number | null;
   homeWins: boolean;
   awayWins: boolean;
   period: string | number;

@@ -1,3 +1,4 @@
+import type { GameVenueInfo } from "types/gameVenue";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
@@ -53,6 +54,7 @@ export type MMAFight = {
   time?: string | null;
   order?: number | null;
   venue?: any;
+  venueInfo?: GameVenueInfo | null;
   broadcasts?: string[];
   geoBroadcasts?: any[];
   raw?: any;
@@ -83,6 +85,7 @@ export type MMAEvent = {
     [key: string]: any;
   } | null;
   venue?: any;
+  venueInfo?: GameVenueInfo | null;
   broadcasts?: string[];
   geoBroadcasts?: any[];
   fights?: MMAFight[];

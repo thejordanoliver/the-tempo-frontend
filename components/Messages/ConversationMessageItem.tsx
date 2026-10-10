@@ -1,10 +1,13 @@
 import AuthorizedMessageImage from "@/components/Messages/AuthorizedMessageImage";
+import MessageImageViewer from "@/components/Messages/MessageImageViewer";
+import ConfirmModal from "components/ConfirmModal";
+import { activeOpacity } from "constants/styles";
 import SafetyActionsModal from "components/SafetyActionsModal";
 import { ConversationScreenStyles } from "@/styles/MessageStyles/ConversationScreenStyles";
 import { Image } from "expo-image";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSharedForumPostId } from "utils/forumPostShare";
-import { memo } from "react";
+import { memo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import type { DirectMessageItem } from "types/messages";
@@ -23,6 +26,7 @@ interface ConversationMessageItemProps {
   secondaryAccent: string;
   usesCustomMessageAccent: boolean;
   usesGradient: boolean;
+  onUnsend?: (item: DirectMessageItem) => Promise<void>;
   onRetry?: (item: DirectMessageItem) => void;
   onBlocked?: () => void;
 }
@@ -37,16 +41,48 @@ function ConversationMessageItem({
   secondaryAccent,
   usesCustomMessageAccent,
   usesGradient,
+  onUnsend,
   onRetry,
   onBlocked,
 }: ConversationMessageItemProps) {
   const router = useScopedRouter();
+  const [imageViewerVisible, setImageViewerVisible] = useState(false);
+  const unsendingRef = useRef(false);
+  const [unsendModalVisible, setUnsendModalVisible] = useState(false);
+  const [unsendFailed, setUnsendFailed] = useState(false);
+  const canUnsend = item.isCurrentUser && Boolean(onUnsend) &&
+    item.status !== "pending" && item.status !== "failed";
+
+  const openMessageActions = () => {
+    if (!item.isCurrentUser) {
+      safety.open();
+      return;
+    }
+    if (!canUnsend || unsendingRef.current) return;
+
+    setUnsendFailed(false);
+    setUnsendModalVisible(true);
+  };
+
+  const handleUnsend = async () => {
+    if (!onUnsend || unsendingRef.current) return;
+    unsendingRef.current = true;
+    try {
+      await onUnsend(item);
+      setUnsendModalVisible(false);
+    } catch {
+      setUnsendFailed(true);
+    } finally {
+      unsendingRef.current = false;
+    }
+  };
   const sharedPostId = getSharedForumPostId(item.text);
   const messageText = sharedPostId
     ? item.text.trim().split("\n").slice(0, -1).join("\n").trim()
     : item.text;
   const hasText = messageText.trim().length > 0;
   const hasAttachment = Boolean(item.attachment);
+  const showsBubble = !hasAttachment || hasText || Boolean(sharedPostId);
   const safety = useSafetyActions({
     userId: item.senderId,
     username: item.senderUsername,
@@ -73,7 +109,7 @@ function ConversationMessageItem({
     item.senderProfileImageUrl || conversationProfileImageUrl || fallbackAvatar;
   const bubbleStyle = [
     styles.messageBubble,
-    hasAttachment && styles.attachmentMessageBubble,
+    hasAttachment && styles.mediaCaptionBubble,
     item.isCurrentUser ? styles.currentUserBubble : styles.otherUserBubble,
     usesCustomMessageAccent &&
       !usesGradient && { backgroundColor: customBubbleColor },
@@ -82,25 +118,32 @@ function ConversationMessageItem({
     },
   ];
 
+  const timestamp = (
+    <Text
+      style={[
+        styles.messageTime,
+        showsBubble && item.isCurrentUser && !usesCustomMessageAccent && styles.currentUserMessageTime,
+        showsBubble && (usesCustomMessageAccent || usesGradient) && {
+          color: customTextColor,
+          opacity: 0.72,
+        },
+      ]}
+    >
+      {item.timestamp}
+    </Text>
+  );
+
   const bubbleContent = (
     <>
-      {item.attachment && (
-        <AuthorizedMessageImage
-          attachment={item.attachment}
-          style={styles.messageAttachment}
-          contentFit="cover"
-        />
-      )}
-
       {hasText && (
         <Text
           style={[
             styles.messageText,
-            hasAttachment && styles.attachmentCaptionText,
-            item.isCurrentUser &&
+            showsBubble &&
+              item.isCurrentUser &&
               !usesCustomMessageAccent &&
               styles.currentUserMessageText,
-            (usesCustomMessageAccent || usesGradient) && {
+            showsBubble && (usesCustomMessageAccent || usesGradient) && {
               color: customTextColor,
             },
           ]}
@@ -117,27 +160,13 @@ function ConversationMessageItem({
           style={{ paddingVertical: 8 }}
         >
           <Text style={[styles.messageText, { textDecorationLine: "underline" },
-            item.isCurrentUser && !usesCustomMessageAccent && styles.currentUserMessageText,
-            (usesCustomMessageAccent || usesGradient) && { color: customTextColor },
+            showsBubble && item.isCurrentUser && !usesCustomMessageAccent && styles.currentUserMessageText,
+            showsBubble && (usesCustomMessageAccent || usesGradient) && { color: customTextColor },
           ]}>View post in Tempo →</Text>
         </Pressable>
       )}
 
-      <Text
-        style={[
-          styles.messageTime,
-          hasAttachment && styles.attachmentMessageTime,
-          item.isCurrentUser &&
-            !usesCustomMessageAccent &&
-            styles.currentUserMessageTime,
-          (usesCustomMessageAccent || usesGradient) && {
-            color: customTextColor,
-            opacity: 0.72,
-          },
-        ]}
-      >
-        {item.timestamp}
-      </Text>
+      {timestamp}
     </>
   );
 
@@ -165,14 +194,34 @@ function ConversationMessageItem({
             : styles.otherUserMessageStack,
         ]}
       >
-        <Pressable
-          style={bubbleStyle}
-          onLongPress={item.isCurrentUser ? undefined : safety.open}
-          delayLongPress={350}
-          accessibilityHint={item.isCurrentUser ? undefined : "Long press for safety actions"}
-        >
-          {bubbleContent}
-        </Pressable>
+        {item.attachment && (
+          <Pressable
+            style={({ pressed }) => pressed && { opacity: activeOpacity }}
+            onPress={() => setImageViewerVisible(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Open full-screen image"
+            onLongPress={openMessageActions}
+            delayLongPress={350}
+            accessibilityHint={canUnsend ? "Long press to unsend" : item.isCurrentUser ? undefined : "Long press for safety actions"}
+          >
+            <AuthorizedMessageImage
+              attachment={item.attachment}
+              style={styles.messageAttachment}
+              contentFit="cover"
+            />
+          </Pressable>
+        )}
+        {hasAttachment && showsBubble && <View style={styles.mediaCaptionSpacer} />}
+        {showsBubble ? (
+          <Pressable
+            style={({ pressed }) => [bubbleStyle, pressed && { opacity: activeOpacity }]}
+            onLongPress={openMessageActions}
+            delayLongPress={350}
+            accessibilityHint={canUnsend ? "Long press to unsend" : item.isCurrentUser ? undefined : "Long press for safety actions"}
+          >
+            {bubbleContent}
+          </Pressable>
+        ) : timestamp}
 
         {item.isCurrentUser && item.status === "pending" && (
           <Text style={styles.messageReceiptText}>Sending...</Text>
@@ -187,6 +236,22 @@ function ConversationMessageItem({
         )}
       </View>
     </View>
+    {imageViewerVisible && item.attachment && (
+      <MessageImageViewer
+        attachment={item.attachment}
+        onClose={() => setImageViewerVisible(false)}
+      />
+    )}
+    <ConfirmModal
+      visible={unsendModalVisible}
+      title={unsendFailed ? "Couldn't unsend message" : "Unsend message?"}
+      message={unsendFailed ? "Please try again." : "This message will be removed for everyone."}
+      confirmText={unsendFailed ? "Retry" : "Unsend"}
+      cancelText="Cancel"
+      variant="danger"
+      onCancel={() => setUnsendModalVisible(false)}
+      onConfirm={handleUnsend}
+    />
     <SafetyActionsModal {...safety.modalProps} />
     </>
   );

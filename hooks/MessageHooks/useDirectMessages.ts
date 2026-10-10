@@ -9,6 +9,7 @@ import {
 } from "services/messagesSocket";
 import {
   ComposeDirectMessagePayload,
+  DirectMessageItem,
   MessageThemePreference,
 } from "types/messages";
 import {
@@ -28,6 +29,7 @@ export const useDirectMessages = (
     loadConversationMessages,
     loadOlderMessages,
     sendDirectMessage,
+    unsendDirectMessage,
     markRead,
     upsertConversation,
   } = useMessagesContext();
@@ -158,6 +160,11 @@ export const useDirectMessages = (
     [conversationId, sendDirectMessage, stopTyping],
   );
 
+  const unsendMessage = useCallback(
+    (message: DirectMessageItem) => unsendDirectMessage(message),
+    [unsendDirectMessage],
+  );
+
   const updateMessageThemePreference = useCallback(
     async (nextPreference: MessageThemePreference) => {
       if (!conversationId) {
@@ -241,6 +248,7 @@ export const useDirectMessages = (
     refresh,
     loadOlder,
     sendMessage,
+    unsendMessage,
     notifyTyping,
   };
 };

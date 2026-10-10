@@ -2,7 +2,7 @@ import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatsTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import PillTabs from "components/TabBars/PillTabs";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo, useState } from "react";
@@ -263,7 +263,15 @@ export default function PlayerGameLog({
                     {game.team.abbreviation || "—"}
                   </Text>
                   <Text
-                    style={[styles.cell, layout.resultCell]}
+                    style={[
+                      styles.cell,
+                      layout.resultCell,
+                      game.result === "W"
+                        ? { color: isDark ? Colors.dark.green : Colors.light.green }
+                        : game.result === "L"
+                          ? { color: isDark ? Colors.dark.lightRed : Colors.light.red }
+                          : undefined,
+                    ]}
                     numberOfLines={1}
                     adjustsFontSizeToFit
                   >

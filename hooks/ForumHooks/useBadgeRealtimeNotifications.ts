@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { notifyPredictionPicksChanged } from "services/predictionUpdates";
 import { AppState, type AppStateStatus } from "react-native";
 import { usePathname } from "expo-router";
 import {
@@ -200,6 +201,9 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
     const handleUnreadCount = (payload: { unreadCount: number }) => {
       applyRealtimeUnreadCount(Number(payload?.unreadCount));
     };
+    const handlePicksChanged = (payload: { userId: number }) => {
+      if (active && payload?.userId === normalizedUserId) notifyPredictionPicksChanged(payload.userId);
+    };
 
     const handleConnect = () => {
       const connectedSocket = socket;
@@ -215,6 +219,7 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
       ])
         .then(async ([, joined]) => {
           if (!active || socket !== connectedSocket) return;
+          notifyPredictionPicksChanged(normalizedUserId);
 
           if (!joined && __DEV__) {
             console.warn(
@@ -247,6 +252,7 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
       socket = getNotificationSocket(latestToken);
       if (!socket) return;
       socket.on("notification:new", handleNew);
+      socket.on("predictions:picks-changed", handlePicksChanged);
       socket.on("notification:read", handleRead);
       socket.on("notification:archived", handleArchive);
       socket.on("notification:unread-count", handleUnreadCount);
@@ -282,6 +288,7 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
     return () => {
       active = false;
       socket?.off("notification:new", handleNew);
+      socket?.off("predictions:picks-changed", handlePicksChanged);
       socket?.off("notification:read", handleRead);
       socket?.off("notification:archived", handleArchive);
       socket?.off("notification:unread-count", handleUnreadCount);
