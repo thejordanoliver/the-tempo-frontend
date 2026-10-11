@@ -5,11 +5,11 @@ import HomeAwayTabBar, {
 } from "@/components/TabBars/HomeAwayTabBar";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
-import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
+import {getMCBBTeam,  getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";

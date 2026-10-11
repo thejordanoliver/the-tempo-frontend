@@ -2,8 +2,8 @@
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
-import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -81,9 +81,9 @@ export default function DraftCard({
   const isNFL = league === "nfl";
   const isWNBA = league === "wnba";
   const team = isNFL
-    ? getNFLTeamByESPNId(player.teamId)
+    ? getNFLTeam(player.teamId)
     : isWNBA
-      ? getWNBATeamByESPNId(player.teamId)
+      ? getWNBATeam(player.teamId)
       : getNBATeam(player.teamId);
 
   const logo = isWNBA

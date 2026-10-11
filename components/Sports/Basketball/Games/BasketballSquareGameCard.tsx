@@ -1,11 +1,11 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getMCBBRivalry, getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import {getMCBBTeam,  getMCBBRivalry, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getWCBBRivalry, getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
+import {getWCBBTeam,  getWCBBRivalry, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";

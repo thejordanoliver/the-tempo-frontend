@@ -1,3 +1,4 @@
+import { resolveGameTeamGroups } from "utils/gameTeamIdentity";
 import { LeadersType } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -15,7 +16,6 @@ type SeasonCategory = "pointsPerGame" | "assistsPerGame" | "reboundsPerGame";
 
 type Category = GameCategory | SeasonCategory;
 
-type TeamIdField = "id" | "espnId";
 
 type LeaderEntry = LeadersType["leaders"][number]["leaders"][number];
 
@@ -41,10 +41,6 @@ type CategoryConfig = {
   stats: StatDefinition[];
 };
 
-type ResolvedLeaderTeams = {
-  away: LeadersType | undefined;
-  home: LeadersType | undefined;
-};
 
 type Props = {
   leaders: LeadersType[];
@@ -121,10 +117,6 @@ const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
   },
 };
 
-function idsMatch(first: unknown, second: TeamId): boolean {
-  return first != null && String(first) === String(second);
-}
-
 function normalizeImageSource(
   source: ImageSourcePropType | string | null | undefined,
 ): ImageSourcePropType {
@@ -133,81 +125,6 @@ function normalizeImageSource(
   }
 
   return typeof source === "string" ? { uri: source } : source;
-}
-
-function findTeamGroup(
-  leaders: LeadersType[],
-  teamId: TeamId,
-  field: TeamIdField,
-): LeadersType | undefined {
-  return leaders.find((group) => idsMatch(group.team[field], teamId));
-}
-
-function resolveUsingField(
-  leaders: LeadersType[],
-  awayId: TeamId,
-  homeId: TeamId,
-  field: TeamIdField,
-): ResolvedLeaderTeams | null {
-  const away = findTeamGroup(leaders, awayId, field);
-  const home = findTeamGroup(leaders, homeId, field);
-
-  if (!away || !home || away === home) {
-    return null;
-  }
-
-  return { away, home };
-}
-
-function resolveLeaderTeams(
-  leaders: LeadersType[],
-  awayId: TeamId,
-  homeId: TeamId,
-): ResolvedLeaderTeams {
-  /*
-   * Resolve both teams with database IDs first.
-   *
-   * This prevents a value such as 24 from matching one team's database ID
-   * and another team's ESPN ID.
-   */
-  const databaseIdMatch = resolveUsingField(leaders, awayId, homeId, "id");
-
-  if (databaseIdMatch) {
-    return databaseIdMatch;
-  }
-
-  const espnIdMatch = resolveUsingField(leaders, awayId, homeId, "espnId");
-
-  if (espnIdMatch) {
-    return espnIdMatch;
-  }
-
-  /*
-   * Fallback for responses where the IDs are mixed. The selected groups
-   * must still be different.
-   */
-  const awayCandidates = leaders.filter(
-    (group) =>
-      idsMatch(group.team.id, awayId) || idsMatch(group.team.espnId, awayId),
-  );
-
-  const homeCandidates = leaders.filter(
-    (group) =>
-      idsMatch(group.team.id, homeId) || idsMatch(group.team.espnId, homeId),
-  );
-
-  for (const away of awayCandidates) {
-    const home = homeCandidates.find((candidate) => candidate !== away);
-
-    if (home) {
-      return { away, home };
-    }
-  }
-
-  return {
-    away: awayCandidates[0],
-    home: homeCandidates.find((candidate) => candidate !== awayCandidates[0]),
-  };
 }
 
 function getStatValue(
@@ -311,7 +228,7 @@ export default function GameLeaders({
   }, [isScheduled]);
 
   const resolvedTeams = useMemo(
-    () => resolveLeaderTeams(leaders, awayId, homeId),
+    () => resolveGameTeamGroups(leaders, awayId, homeId),
     [leaders, awayId, homeId],
   );
 

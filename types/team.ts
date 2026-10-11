@@ -33,6 +33,8 @@ export type Team = {
   isActive: boolean;
 };
 
+
+
 export const emptyAwayTeam = {
   id: 0,
   espnId: -2,

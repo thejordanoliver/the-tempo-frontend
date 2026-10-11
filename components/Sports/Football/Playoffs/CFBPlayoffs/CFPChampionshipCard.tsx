@@ -64,8 +64,8 @@ export function CFPChampionshipCard({
   const broadcast = !isFinal && getBroadcastDisplay(broadcasts);
   const downDistanceText = game?.situation.downDistanceText;
   const possessionTeamId = game?.situation.possession;
-  const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
-  const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
+  const homeHasPossession = inProgress && possessionTeamId === home?.id;
+  const awayHasPossession = inProgress && possessionTeamId === away?.id;
   const homeRecord = game?.home.record ?? "0-0";
   const awayRecord = game?.away.record ?? "0-0";
   const homeScore = game?.home.score ?? 0;

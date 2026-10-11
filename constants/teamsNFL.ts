@@ -42,7 +42,6 @@ const placeholderLogo =
 export const nflTeams: Team[] = [
   {
     id: 13,
-    espnId: 13,
     fullName: "Las Vegas Raiders",
     code: "LV",
     city: "Las Vegas",
@@ -62,7 +61,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 30,
-    espnId: 30,
     fullName: "Jacksonville Jaguars",
     code: "JAX",
     city: "Jacksonville",
@@ -82,7 +80,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 17,
-    espnId: 17,
     fullName: "New England Patriots",
     code: "NE",
     city: "Foxborough",
@@ -102,7 +99,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 19,
-    espnId: 19,
     fullName: "New York Giants",
     code: "NYG",
     city: "New York",
@@ -122,7 +118,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 33,
-    espnId: 33,
     fullName: "Baltimore Ravens",
     code: "BAL",
     city: "Baltimore",
@@ -142,7 +137,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 10,
-    espnId: 10,
     fullName: "Tennessee Titans",
     code: "TEN",
     city: "Nashville",
@@ -162,7 +156,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 8,
-    espnId: 8,
     fullName: "Detroit Lions",
     code: "DET",
     city: "Detroit",
@@ -183,7 +176,6 @@ export const nflTeams: Team[] = [
 
   {
     id: 1,
-    espnId: 1,
     fullName: "Atlanta Falcons",
     code: "ATL",
     city: "Atlanta",
@@ -203,7 +195,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 5,
-    espnId: 5,
     fullName: "Cleveland Browns",
     code: "CLE",
     city: "Cleveland",
@@ -223,7 +214,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 4,
-    espnId: 4,
     fullName: "Cincinnati Bengals",
     code: "CIN",
     city: "Cincinnati",
@@ -243,7 +233,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 22,
-    espnId: 22,
     fullName: "Arizona Cardinals",
     code: "ARI",
     city: "Glendale",
@@ -263,7 +252,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 21,
-    espnId: 21,
     fullName: "Philadelphia Eagles",
     code: "PHI",
     city: "Philadelphia",
@@ -283,7 +271,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 20,
-    espnId: 20,
     fullName: "New York Jets",
     code: "NYJ",
     city: "New York",
@@ -303,7 +290,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 25,
-    espnId: 25,
     fullName: "San Francisco 49ers",
     code: "SF",
     city: "San Francisco",
@@ -323,7 +309,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 9,
-    espnId: 9,
 
     fullName: "Green Bay Packers",
     code: "GB",
@@ -345,7 +330,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 3,
-    espnId: 3,
     fullName: "Chicago Bears",
     code: "CHI",
     city: "Chicago",
@@ -365,7 +349,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 12,
-    espnId: 12,
     fullName: "Kansas City Chiefs",
     code: "KC",
     city: "Kansas City",
@@ -385,7 +368,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 28,
-    espnId: 28,
     fullName: "Washington Commanders",
     code: "WSH",
     city: "Washington",
@@ -405,7 +387,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 29,
-    espnId: 29,
     fullName: "Carolina Panthers",
     code: "CAR",
     city: "Charlotte",
@@ -425,7 +406,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 2,
-    espnId: 2,
     fullName: "Buffalo Bills",
     code: "BUF",
     city: "Buffalo",
@@ -445,7 +425,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 11,
-    espnId: 11,
     fullName: "Indianapolis Colts",
     code: "IND",
     city: "Indianapolis",
@@ -465,7 +444,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 23,
-    espnId: 23,
     fullName: "Pittsburgh Steelers",
     code: "PIT",
     city: "Pittsburgh",
@@ -485,7 +463,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 26,
-    espnId: 26,
     fullName: "Seattle Seahawks",
     code: "SEA",
     city: "Seattle",
@@ -505,7 +482,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 27,
-    espnId: 27,
     fullName: "Tampa Bay Buccaneers",
     code: "TB",
     city: "Tampa",
@@ -525,7 +501,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 15,
-    espnId: 15,
     fullName: "Miami Dolphins",
     code: "MIA",
     city: "Miami",
@@ -545,7 +520,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 34,
-    espnId: 34,
     fullName: "Houston Texans",
     code: "HOU",
     city: "Houston",
@@ -565,7 +539,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 18,
-    espnId: 18,
     fullName: "New Orleans Saints",
     code: "NO",
     city: "New Orleans",
@@ -585,7 +558,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 7,
-    espnId: 7,
     fullName: "Denver Broncos",
     code: "DEN",
     city: "Denver",
@@ -605,7 +577,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 6,
-    espnId: 6,
     fullName: "Dallas Cowboys",
     code: "DAL",
     city: "Dallas",
@@ -625,7 +596,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 24,
-    espnId: 24,
     fullName: "Los Angeles Chargers",
     code: "LAC",
     city: "Los Angeles",
@@ -645,7 +615,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 14,
-    espnId: 14,
     fullName: "Los Angeles Rams",
     code: "LAR",
     city: "Los Angeles",
@@ -665,7 +634,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 16,
-    espnId: 16,
     fullName: "Minnesota Vikings",
     code: "MIN",
     city: "Minneapolis",
@@ -685,7 +653,6 @@ export const nflTeams: Team[] = [
   },
   {
     id: 31,
-    espnId: 31,
     fullName: "AFC All-Stars",
     code: "AFC",
     city: "American Football Conference",
@@ -705,7 +672,6 @@ export const nflTeams: Team[] = [
 
   {
     id: 32,
-    espnId: 32,
     fullName: "NFC All-Stars",
     code: "NFC",
     city: "National Football Conference",
@@ -723,33 +689,6 @@ export const nflTeams: Team[] = [
     league: "nfl",
   },
 ];
-
-export const getNFLTeam = (id: number | string) =>
-  nflTeams.find((t) => String(t.id) === String(id));
-
-export function getNFLTeamLogo(
-  id: number | string | undefined,
-  isDark: boolean,
-) {
-  if (id === undefined || id === null || id === "") {
-    return placeholderLogo;
-  }
-
-  const normalizedId = String(id);
-
-  const team = getNFLTeam(normalizedId);
-
-  if (!team) {
-    return placeholderLogo;
-  }
-
-  return isDark
-    ? (team.logoLight ?? team.logo ?? placeholderLogo)
-    : (team.logo ?? placeholderLogo);
-}
-export const getNFLTeamByESPNId = (espnId: number | string) => {
-  return nflTeams.find((t) => t.espnId?.toString() === espnId?.toString());
-};
 
 export type NFLRivalryGroup = "division" | "national";
 export type NFLRivalry = {
@@ -1090,3 +1029,29 @@ export function isNFLRivalry(
 ): boolean {
   return getNFLRivalry(homeTeamId, awayTeamId) !== undefined;
 }
+
+export const getNFLTeam = (id: number | string) =>
+  nflTeams.find((t) => String(t.id) === String(id));
+
+export function getNFLTeamLogo(
+  id: number | string | undefined,
+  isDark: boolean,
+) {
+  if (id === undefined || id === null || id === "") {
+    return placeholderLogo;
+  }
+
+  const normalizedId = String(id);
+
+  const team = getNFLTeam(normalizedId);
+
+  if (!team) {
+    return placeholderLogo;
+  }
+
+  return isDark
+    ? (team.logoLight ?? team.logo ?? placeholderLogo)
+    : (team.logo ?? placeholderLogo);
+}
+
+

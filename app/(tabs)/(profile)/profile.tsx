@@ -376,7 +376,6 @@ export default function ProfileScreen() {
 
         return {
           ...team,
-          espnId: team.espnId ?? null,
           city: team.city ?? undefined,
           location: team.location ?? undefined,
           league: league as LeagueType,

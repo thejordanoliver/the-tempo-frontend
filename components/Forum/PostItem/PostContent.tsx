@@ -106,7 +106,7 @@ export const PostContent = memo(function PostContent({
         <PostImages media={media} item={item} currentUserId={currentUserId} />
       )}
 
-      <PollBlock postId={item.id} isDark={isDark} />
+      <PollBlock postId={item.id} isDark={isDark} initialPoll={item.poll} />
     </View>
   );
 });

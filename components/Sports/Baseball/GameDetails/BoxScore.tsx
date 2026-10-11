@@ -34,7 +34,6 @@ type StatSectionType = "batting" | "pitching" | "fielding";
 type TeamInfo = {
   id?: number | string | null;
   teamId?: number | string | null;
-  espnId?: number | string | null;
   code?: string | null;
   name?: string | null;
   fullName?: string | null;
@@ -270,7 +269,7 @@ const resolveScoreShape = (value: unknown): ScoreShape | null => {
 };
 
 const collectTeamIdentifiers = (team?: TeamInfo | null) => {
-  const values = [team?.id, team?.teamId, team?.espnId];
+  const values = [team?.id, team?.teamId];
 
   return values
     .map(normalizeIdentifier)
@@ -667,7 +666,7 @@ const getTeamIdFromGroup = (
   teamGroup: TeamGroup | null,
   fallbackTeamId?: number | string | null,
 ) => {
-  return fallbackTeamId ?? teamGroup?.team?.id ?? teamGroup?.team?.espnId;
+  return fallbackTeamId ?? teamGroup?.team?.id;
 };
 
 const getDisplayLabels = (

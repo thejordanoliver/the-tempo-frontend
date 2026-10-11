@@ -130,8 +130,6 @@ import CentralConnecticutLogo from "assets/College_Logos/CentralConnecticutLogo.
 import CentralConnecticutLogoLight from "assets/College_Logos/CentralConnecticutLogoLight.png";
 import CentralMichiganLogo from "assets/College_Logos/CentralMichiganLogo.png";
 import CentralMichiganLogoLight from "assets/College_Logos/CentralMichiganLogoLight.png";
-import CentralWashingtonLogo from "assets/College_Logos/CentralWashingtonLogo.png";
-import CentralWashingtonLogoLight from "assets/College_Logos/CentralWashingtonLogoLight.png";
 import ChaminadeLogo from "assets/College_Logos/ChaminadeLogo.png";
 import ChaminadeLogoLight from "assets/College_Logos/ChaminadeLogoLight.png";
 import ChampionChristianLogo from "assets/College_Logos/ChampionChristianLogo.png";
@@ -322,8 +320,6 @@ import IndianaLogo from "assets/College_Logos/IndianaLogo.png";
 import IndianaLogoLight from "assets/College_Logos/IndianaLogoLight.png";
 import IndianaStateLogo from "assets/College_Logos/IndianaStateLogo.png";
 import IndianaStateLogoLight from "assets/College_Logos/IndianaStateLogoLight.png";
-import IndianaWesleyanLogo from "assets/College_Logos/IndianaWesleyanLogo.png";
-import IndianaWesleyanLogoLight from "assets/College_Logos/IndianaWesleyanLogoLight.png";
 import IonaLogo from "assets/College_Logos/IonaLogo.png";
 import IonaLogoLight from "assets/College_Logos/IonaLogoLight.png";
 import IowaLogo from "assets/College_Logos/IowaLogo.png";
@@ -927,8 +923,7 @@ import YoungstownStateLogoLight from "assets/College_Logos/YoungstownStateLogoLi
 
 export const mcbbTeams: Team[] = [
   {
-    id: 1504,
-    espnId: 242,
+    id: 242,
     name: "Rice",
     fullName: "Rice Owls",
     code: "RICE",
@@ -946,8 +941,7 @@ export const mcbbTeams: Team[] = [
   },
 
   {
-    id: 2201,
-    espnId: 98,
+    id: 98,
     name: "Western Kentucky",
     shortName: "W Kentucky",
     fullName: "Western Kentucky Hilltoppers",
@@ -965,8 +959,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WesternKentuckyLogoLight,
   },
   {
-    id: 1823,
-    espnId: 2046,
+    id: 2046,
     name: "Austin Peay",
     fullName: "Austin Peay Governors",
     code: "APSU",
@@ -983,8 +976,7 @@ export const mcbbTeams: Team[] = [
     logoLight: AustinPeayLogoLight,
   },
   {
-    id: 2182,
-    espnId: 2670,
+    id: 2670,
     name: "VCU",
     fullName: "VCU Rams",
     shortName: "VCU",
@@ -1002,8 +994,7 @@ export const mcbbTeams: Team[] = [
     logoLight: VCULogoLight,
   },
   {
-    id: 2053,
-    espnId: 77,
+    id: 77,
     name: "Northwestern",
     fullName: "Northwestern Wildcats",
     code: "NU",
@@ -1020,8 +1011,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthwesternLogoLight,
   },
   {
-    id: 2045,
-    espnId: 111,
+    id: 111,
     name: "Northeastern",
     fullName: "Northeastern Huskies",
     shortName: "Northeastern",
@@ -1039,8 +1029,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NortheasternLogoLight,
   },
   {
-    id: 1904,
-    espnId: 339,
+    id: 339,
     name: "Evansville",
     fullName: "Evansville Purple Aces",
     shortName: "Evansville",
@@ -1058,8 +1047,7 @@ export const mcbbTeams: Team[] = [
     logoLight: EvansvilleLogoLight,
   },
   {
-    id: 195,
-    espnId: 158,
+    id: 158,
     name: "Nebraska",
     fullName: "Nebraska Cornhuskers",
     code: "NEB",
@@ -1076,8 +1064,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2171,
-    espnId: 2439,
+    id: 2439,
     name: "UNLV",
     fullName: "UNLV Rebels",
     code: "UNLV",
@@ -1094,8 +1081,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1943,
-    espnId: 304,
+    id: 304,
     name: "Idaho State",
     fullName: "Idaho State Bengals",
     code: "IDST",
@@ -1112,8 +1098,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IdahoStateLogoLight,
   },
   {
-    id: 2074,
-    espnId: 2492,
+    id: 2492,
     name: "Pepperdine",
     fullName: "Pepperdine Waves",
     shortName: "Pepperdine",
@@ -1131,8 +1116,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PepperdineLogoLight,
   },
   {
-    id: 2180,
-    espnId: 328,
+    id: 328,
     name: "Utah State",
     fullName: "Utah State Aggies",
     code: "USU",
@@ -1149,8 +1133,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2179,
-    espnId: 41,
+    id: 41,
     name: "UConn",
     fullName: "UConn Huskies",
     code: "CONN",
@@ -1167,8 +1150,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UConnLogoLight,
   },
   {
-    id: 1944,
-    espnId: 356,
+    id: 356,
     name: "Illinois",
     fullName: "Illinois Fighting Illini",
     code: "ILL",
@@ -1185,8 +1167,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IllinoisLogoLight,
   },
   {
-    id: 1506,
-    espnId: 2751,
+    id: 2751,
     name: "Wyoming",
     fullName: "Wyoming Cowboys",
     code: "WYO",
@@ -1203,8 +1184,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1914,
-    espnId: 52,
+    id: 52,
     name: "Florida State",
     fullName: "Florida State Seminoles",
     code: "FSU",
@@ -1221,8 +1201,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FloridaStateLogoLight,
   },
   {
-    id: 1891,
-    espnId: 2184,
+    id: 2184,
     name: "Duquesne",
     fullName: "Duquesne Dukes",
     code: "DUQ",
@@ -1239,8 +1218,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 230,
-    espnId: 2226,
+    id: 2226,
     name: "FAU",
     shortName: "FAU",
     fullName: "Florida Atlantic Owls",
@@ -1258,8 +1236,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FAULogoLight,
   },
   {
-    id: 3429,
-    espnId: 2429,
+    id: 2429,
     name: "Charlotte",
     fullName: "Charlotte 49ers",
     code: "CLT",
@@ -1276,8 +1253,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 190,
-    espnId: 288,
+    id: 288,
     name: "Lipscomb",
     fullName: "Lipscomb Bisons",
     shortName: "Lipscomb",
@@ -1295,8 +1271,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LipscombLogoLight,
   },
   {
-    id: 1830,
-    espnId: 2066,
+    id: 2066,
     name: "Binghamton",
     fullName: "Binghamton Bearcats",
     shortName: "Binghamton",
@@ -1314,8 +1289,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BinghamtonLogoLight,
   },
   {
-    id: 7597,
-    espnId: 178,
+    id: 178,
     name: "RIT",
     fullName: "RIT Tigers",
     shortName: "RIT",
@@ -1333,8 +1307,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RITLogoLight,
   },
   {
-    id: 2505,
-    espnId: 2590,
+    id: 2590,
     name: "Spring Hill",
     fullName: "Spring Hill Badgers",
     shortName: "Spring Hill",
@@ -1352,8 +1325,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SpringHillLogoLight,
   },
   {
-    id: 1842,
-    espnId: 2081,
+    id: 2081,
     name: "Bryan (TN)",
     fullName: "Bryan (TN) Lions",
     shortName: "Bryan",
@@ -1371,8 +1343,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BryanTNLogoLight,
   },
   {
-    id: 2093,
-    espnId: 2520,
+    id: 2520,
     name: "Rider",
     fullName: "Rider Broncs",
     shortName: "Rider",
@@ -1390,8 +1361,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RiderLogoLight,
   },
   {
-    id: 2375,
-    espnId: 128256,
+    id: 128256,
     name: "Carolina University",
     fullName: "Carolina University Bruins",
     shortName: "Carolina U",
@@ -1409,8 +1379,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CarolinaUniversityLogoLight,
   },
   {
-    id: 6201,
-    espnId: 108942,
+    id: 108942,
     name: "Biblical Stud",
     fullName: "College Of Biblical Studies Ambassadors",
     shortName: "Biblical Stud",
@@ -1428,8 +1397,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BiblicalStudLogoLight,
   },
   {
-    id: 1878,
-    espnId: 2154,
+    id: 2154,
     name: "Coppin State",
     fullName: "Coppin State Eagles",
     shortName: "Coppin St",
@@ -1447,8 +1415,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CoppinStateLogoLight,
   },
   {
-    id: 2039,
-    espnId: 153,
+    id: 153,
     name: "North Carolina",
     fullName: "North Carolina Tar Heels",
     code: "UNC",
@@ -1465,8 +1432,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthCarolinaLogoLight,
   },
   {
-    id: 2028,
-    espnId: 350,
+    id: 350,
     name: "UNC Wilmington",
     fullName: "UNC Wilmington Seahawks",
     shortName: "UNC Wilmington",
@@ -1484,8 +1450,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1910,
-    espnId: 50,
+    id: 50,
     name: "Florida A&M",
     fullName: "Florida A&M Rattlers",
     code: "FAMU",
@@ -1502,8 +1467,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FloridaAAndMLogoLight,
   },
   {
-    id: 2035,
-    espnId: 166,
+    id: 166,
     name: "New Mexico State",
     shortName: "New Mexico St",
     fullName: "New Mexico State Aggies",
@@ -1521,8 +1485,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NewMexicoStateLogoLight,
   },
   {
-    id: 2032,
-    espnId: 2440,
+    id: 2440,
     name: "Nevada",
     fullName: "Nevada Wolf Pack",
     code: "NEV",
@@ -1539,8 +1502,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2177,
-    espnId: 2638,
+    id: 2638,
     name: "UTEP",
     fullName: "UTEP Miners",
     code: "UTEP",
@@ -1557,8 +1519,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1496,
-    espnId: 249,
+    id: 249,
     name: "North Texas",
     fullName: "North Texas Mean Green",
     code: "UNT",
@@ -1575,8 +1536,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthTexasLogoLight,
   },
   {
-    id: 1933,
-    espnId: 62,
+    id: 62,
     name: "Hawai'i",
     fullName: "Hawai'i Rainbow Warriors",
     code: "HAW",
@@ -1593,8 +1553,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HawaiiLogoLight,
   },
   {
-    id: 2185,
-    espnId: 238,
+    id: 238,
     name: "Vanderbilt",
     fullName: "Vanderbilt Commodores",
     code: "VAN",
@@ -1611,8 +1570,7 @@ export const mcbbTeams: Team[] = [
     logoLight: VanderbiltLogoLight,
   },
   {
-    id: 2060,
-    espnId: 197,
+    id: 197,
     name: "Oklahoma State",
     fullName: "Oklahoma State Cowboys",
     code: "OKST",
@@ -1629,8 +1587,7 @@ export const mcbbTeams: Team[] = [
     logoLight: OklahomaStateLogoLight,
   },
   {
-    id: 211,
-    espnId: 2117,
+    id: 2117,
     name: "Central Michigan",
     fullName: "Central Michigan Chippewas",
     code: "CMU",
@@ -1647,8 +1604,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2079,
-    espnId: 221,
+    id: 221,
     name: "Pittsburgh",
     fullName: "Pittsburgh Panthers",
     code: "PITT",
@@ -1665,8 +1621,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 223,
-    espnId: 277,
+    id: 277,
     name: "West Virginia",
     fullName: "West Virginia Mountaineers",
     code: "WVU",
@@ -1683,8 +1638,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2036,
-    espnId: 315,
+    id: 315,
     name: "Niagara",
     fullName: "Niagara Purple Eagles",
     shortName: "Niagara",
@@ -1702,8 +1656,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NiagaraLogoLight,
   },
   {
-    id: 2192,
-    espnId: 154,
+    id: 154,
     name: "Wake Forest",
     fullName: "Wake Forest Demon Deacons",
     code: "WAKE",
@@ -1721,8 +1674,7 @@ export const mcbbTeams: Team[] = [
   },
 
   {
-    id: 2183,
-    espnId: 2678,
+    id: 2678,
     name: "VMI",
     fullName: "VMI Keydets",
     code: "VMI",
@@ -1739,8 +1691,7 @@ export const mcbbTeams: Team[] = [
     logoLight: VMILogoLight,
   },
   {
-    id: 1805,
-    espnId: 2006,
+    id: 2006,
     name: "Akron",
     fullName: "Akron Zips",
     code: "AKR",
@@ -1757,8 +1708,7 @@ export const mcbbTeams: Team[] = [
     logoLight: AkronLogoLight,
   },
   {
-    id: 201,
-    espnId: 2598,
+    id: 2598,
     name: "Saint Francis",
     fullName: "Saint Francis Red Flash",
     shortName: "Saint Francis",
@@ -1776,8 +1726,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SaintFrancisLogoLight,
   },
   {
-    id: 1917,
-    espnId: 111170,
+    id: 111170,
     name: "Franciscan University",
     fullName: "Franciscan University Barons",
     shortName: "Franciscan",
@@ -1795,8 +1744,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FranciscanUniversityLogoLight,
   },
   {
-    id: 2141,
-    espnId: 2633,
+    id: 2633,
     name: "Tennessee",
     fullName: "Tennessee Volunteers",
     code: "TENN",
@@ -1813,8 +1761,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1824,
-    espnId: 2050,
+    id: 2050,
     name: "Ball State",
     fullName: "Ball State Cardinals",
     code: "BALL",
@@ -1831,8 +1778,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2165,
-    espnId: 2116,
+    id: 2116,
     name: "UCF",
     fullName: "UCF Knights",
     code: "UCF",
@@ -1849,8 +1795,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UCFLogoLight,
   },
   {
-    id: 2117,
-    espnId: 2569,
+    id: 2569,
     name: "South Carolina St",
     fullName: "South Carolina State Bulldogs",
     code: "SCST",
@@ -1867,8 +1812,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthCarolinaStLogoLight,
   },
   {
-    id: 5782,
-    espnId: 2347,
+    id: 2347,
     name: "Louisiana Christian",
     fullName: "Louisiana Christian Wildcats",
     code: "LCHR",
@@ -1886,8 +1830,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LouisianaChristianLogoLight,
   },
   {
-    id: 2117,
-    espnId: 2448,
+    id: 2448,
     name: "North Carolina A&T",
     fullName: "North Carolina A&T Aggies",
     shortName: "NC A&T",
@@ -1905,8 +1848,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthCarolinaAAndTLogoLight,
   },
   {
-    id: 7588,
-    espnId: 2441,
+    id: 2441,
     name: "New Haven",
     fullName: "New Haven Chargers",
     shortName: "New Haven",
@@ -1924,8 +1866,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NewHavenLogoLight,
   },
   {
-    id: 2187,
-    espnId: 261,
+    id: 261,
     name: "Vermont",
     fullName: "Vermont Catamounts",
     shortName: "Vermont",
@@ -1943,8 +1884,7 @@ export const mcbbTeams: Team[] = [
     logoLight: VermontLogoLight,
   },
   {
-    id: 6685,
-    espnId: 551,
+    id: 551,
     name: "Vermont State - Lyndon",
     fullName: "Vermont State - Lyndon Hornets",
     shortName: "VT-Lyndon",
@@ -1962,8 +1902,7 @@ export const mcbbTeams: Team[] = [
     logoLight: VermontStateLyndonLogoLight,
   },
   {
-    id: 6684,
-    espnId: 126751,
+    id: 126751,
     name: "Vermont State - Johnson",
     fullName: "Vermont State - Johnson Badgers",
     shortName: "VT-Johnson",
@@ -1981,8 +1920,7 @@ export const mcbbTeams: Team[] = [
     logoLight: VermontStateJohnsonLogoLight,
   },
   {
-    id: 2069,
-    espnId: 279,
+    id: 279,
     name: "Pacific",
     fullName: "Pacific Tigers",
     shortName: "Pacific",
@@ -2000,8 +1938,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PacificLogoLight,
   },
   {
-    id: 5628,
-    espnId: 2229,
+    id: 2229,
     name: "FIU",
     fullName: "Florida International Panthers",
     code: "FIU",
@@ -2018,8 +1955,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1860,
-    espnId: 3134,
+    id: 3134,
     name: "Champion Christian",
     fullName: "Champion Christian Tigers",
     shortName: "Champ Chrstn",
@@ -2037,8 +1973,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ChampionChristianLogoLight,
   },
   {
-    id: 2486,
-    espnId: 123410,
+    id: 123410,
     name: "Kansas Christian",
     fullName: "Kansas Christian Falcons",
     shortName: "Kansas Chrstn",
@@ -2056,8 +1991,7 @@ export const mcbbTeams: Team[] = [
     logoLight: KansasChristianLogoLight,
   },
   {
-    id: 7590,
-    espnId: 354,
+    id: 354,
     name: "Olivet",
     fullName: "Olivet Comets",
     shortName: "Olivet",
@@ -2075,8 +2009,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2374,
-    espnId: 2077,
+    id: 2077,
     name: "Brewton Parker",
     fullName: "Brewton-Parker Wildcats",
     shortName: "Brewton Parker",
@@ -2094,8 +2027,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BrewtonParkerLogoLight,
   },
   {
-    id: 1859,
-    espnId: 2124,
+    id: 2124,
     name: "Chaminade",
     fullName: "Chaminade Silverswords",
     code: "CHAM",
@@ -2112,8 +2044,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ChaminadeLogoLight,
   },
   {
-    id: 1843,
-    espnId: 2803,
+    id: 2803,
     name: "Bryant",
     fullName: "Bryant Bulldogs",
     code: "BRY",
@@ -2130,8 +2061,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BryantLogoLight,
   },
   {
-    id: 204,
-    espnId: 2649,
+    id: 2649,
     name: "Toledo",
     fullName: "Toledo Rockets",
     code: "TOL",
@@ -2148,8 +2078,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1966,
-    espnId: 112358,
+    id: 112358,
     name: "Long Island",
     fullName: "Long Island University Sharks",
     shortName: "LIU",
@@ -2167,8 +2096,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LongIslandLogoLight,
   },
   {
-    id: 1974,
-    espnId: 299,
+    id: 299,
     name: "Long Beach State",
     fullName: "Long Beach State Beach",
     shortName: "Long Beach St",
@@ -2186,8 +2114,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2358,
-    espnId: 91,
+    id: 91,
     name: "Bellarmine",
     fullName: "Bellarmine Knights",
     shortName: "Bellarmine",
@@ -2205,8 +2132,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BellarmineLogoLight,
   },
   {
-    id: 2233,
-    espnId: 3238,
+    id: 3238,
     name: "Southwestern Christian",
     fullName: "Southwestern Christian Eagles",
     shortName: "SW Christian U",
@@ -2224,8 +2150,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthwesternChristianLogoLight,
   },
   {
-    id: 2418,
-    espnId: 3189,
+    id: 3189,
     name: "Coastal Georgia",
     fullName: "Coastal Georgia Mariner",
     shortName: "Coastal GA",
@@ -2243,8 +2168,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CoastalGeorgiaLogoLight,
   },
   {
-    id: 2085,
-    espnId: 2509,
+    id: 2509,
     name: "Purdue",
     fullName: "Purdue Boilermakers",
     code: "PUR",
@@ -2261,8 +2185,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PurdueLogoLight,
   },
   {
-    id: 2073,
-    espnId: 213,
+    id: 213,
     name: "Penn State",
     fullName: "Penn State Nittany Lions",
     code: "PSU",
@@ -2279,8 +2202,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PennStateLogoLight,
   },
   {
-    id: 2048,
-    espnId: 2459,
+    id: 2459,
     name: "Northern Illinois",
     fullName: "Northern Illinois Huskies",
     code: "NIU",
@@ -2297,8 +2219,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthernIllinoisLogoLight,
   },
   {
-    id: 1894,
-    espnId: 2197,
+    id: 2197,
     name: "Eastern Illinois",
     fullName: "Eastern Illinois Panthers",
     code: "EIU",
@@ -2315,8 +2236,7 @@ export const mcbbTeams: Team[] = [
     logoLight: EasternIllinoisLogoLight,
   },
   {
-    id: 221,
-    espnId: 5,
+    id: 5,
     name: "UAB",
     fullName: "UAB Blazers",
     code: "UAB",
@@ -2333,8 +2253,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UABLogoLight,
   },
   {
-    id: 2160,
-    espnId: 2031,
+    id: 2031,
     name: "Little Rock",
     fullName: "Little Rock Trojans",
     shortName: "Little Rock",
@@ -2353,8 +2272,7 @@ export const mcbbTeams: Team[] = [
   },
 
   {
-    id: 1806,
-    espnId: 2010,
+    id: 2010,
     name: "Alabama A&M",
     fullName: "Alabama A&M Bulldogs",
     code: "AAMU",
@@ -2371,8 +2289,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2006,
-    espnId: 142,
+    id: 142,
     name: "Missouri",
     fullName: "Missouri Tigers",
     code: "MIZ",
@@ -2389,8 +2306,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MissouriLogoLight,
   },
   {
-    id: 1976,
-    espnId: 2348,
+    id: 2348,
     name: "Louisiana Tech",
     shortName: "LA Tech",
     fullName: "Louisiana Tech Bulldogs",
@@ -2408,8 +2324,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LouisianaTechLogoLight,
   },
   {
-    id: 2003,
-    espnId: 135,
+    id: 135,
     name: "Minnesota",
     fullName: "Minnesota Golden Gophers",
     code: "MINN",
@@ -2426,8 +2341,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1816,
-    espnId: 9,
+    id: 9,
     name: "Arizona State",
     fullName: "Arizona State Sun Devils",
     code: "ASU",
@@ -2444,8 +2358,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ArizonaStateLogoLight,
   },
   {
-    id: 2046,
-    espnId: 2464,
+    id: 2464,
     name: "Northern Arizona",
     fullName: "Northern Arizona Lumberjacks",
     code: "NAU",
@@ -2462,8 +2375,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1919,
-    espnId: 278,
+    id: 278,
     name: "Fresno State",
     fullName: "Fresno State Bulldogs",
     code: "FRES",
@@ -2480,8 +2392,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FresnoStateLogoLight,
   },
   {
-    id: 1847,
-    espnId: 13,
+    id: 13,
     name: "Cal Poly",
     fullName: "Cal Poly Mustangs",
     code: "CP",
@@ -2498,8 +2409,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CalPolyLogoLight,
   },
   {
-    id: 2110,
-    espnId: 23,
+    id: 23,
     name: "San José State",
     fullName: "San José State Spartans",
     code: "SJSU",
@@ -2516,8 +2426,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SanJoseStateLogoLight,
   },
   {
-    id: 1995,
-    espnId: 127,
+    id: 127,
     name: "Michigan State",
     shortName: "Michigan St.",
     fullName: "Michigan State Spartans",
@@ -2535,8 +2444,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2202,
-    espnId: 2711,
+    id: 2711,
     name: "Western Michigan",
     fullName: "Western Michigan Broncos",
     code: "WMU",
@@ -2553,8 +2461,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WesternMichiganLogoLight,
   },
   {
-    id: 1896,
-    espnId: 2199,
+    id: 2199,
     name: "Eastern Michigan",
     fullName: "Eastern Michigan Eagles",
     code: "EMU",
@@ -2571,8 +2478,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1895,
-    espnId: 2198,
+    id: 2198,
     name: "Eastern Kentucky",
     fullName: "Eastern Kentucky Colonels",
     code: "EKU",
@@ -2589,8 +2495,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2061,
-    espnId: 295,
+    id: 295,
     name: "Old Dominion",
     fullName: "Old Dominion Monarchs",
     code: "ODU",
@@ -2607,8 +2512,7 @@ export const mcbbTeams: Team[] = [
     logoLight: OldDominionLogoLight,
   },
   {
-    id: 2190,
-    espnId: 259,
+    id: 259,
     name: "Virginia Tech",
     fullName: "Virginia Tech Hokies",
     code: "VT",
@@ -2625,8 +2529,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1983,
-    espnId: 269,
+    id: 269,
     name: "Marquette",
     fullName: "Marquette Golden Eagles",
     shortName: "Marquette",
@@ -2644,8 +2547,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MarquetteLogoLight,
   },
   {
-    id: 2213,
-    espnId: 270,
+    id: 270,
     name: "Milwaukee",
     fullName: "Milwaukee Panthers",
     shortName: "Milwaukee",
@@ -2663,8 +2565,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MilwaukeeLogoLight,
   },
   {
-    id: 214,
-    espnId: 2253,
+    id: 2253,
     name: "Grand Canyon",
     fullName: "Grand Canyon Lopes",
     shortName: "Grand Canyon",
@@ -2682,8 +2583,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 191,
-    espnId: 2350,
+    id: 2350,
     name: "Loyola Chicago",
     fullName: "Loyola Chicago Ramblers",
     shortName: "Loyola Chicago",
@@ -2701,8 +2601,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LoyolaChicagoLogoLight,
   },
   {
-    id: 2001,
-    espnId: 2397,
+    id: 2397,
     name: "Milligan",
     fullName: "Milligan Buffaloes",
     shortName: "Milligan",
@@ -2720,8 +2619,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MilliganLogoLight,
   },
   {
-    id: 1503,
-    espnId: 2352,
+    id: 2352,
     name: "Loyola Maryland",
     fullName: "Loyola Maryland Greyhounds",
     shortName: "Loyola MD",
@@ -2739,8 +2637,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LoyolaMarylandLogoLight,
   },
   {
-    id: 3382,
-    espnId: 2351,
+    id: 2351,
     name: "Loyola Marymount",
     fullName: "Loyola Marymount Lions",
     shortName: "LMU",
@@ -2758,8 +2655,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LoyolaMarymountLogoLight,
   },
   {
-    id: 1489,
-    espnId: 2099,
+    id: 2099,
     name: "Canisius",
     fullName: "Canisius Golden Griffins",
     shortName: "Canisius",
@@ -2777,8 +2673,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CanisiusLogoLight,
   },
   {
-    id: 1499,
-    espnId: 2244,
+    id: 2244,
     name: "George Mason",
     fullName: "George Mason Patriots",
     shortName: "George Mason",
@@ -2796,8 +2691,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GeorgeMasonLogoLight,
   },
   {
-    id: 1890,
-    espnId: 150,
+    id: 150,
     name: "Duke",
     fullName: "Duke Blue Devils",
     code: "DUKE",
@@ -2815,8 +2709,7 @@ export const mcbbTeams: Team[] = [
   },
 
   {
-    id: 2130,
-    espnId: 2608,
+    id: 2608,
     name: "Saint Mary's",
     fullName: "Saint Mary's Gaels",
     shortName: "Saint Mary's",
@@ -2834,8 +2727,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2140,
-    espnId: 218,
+    id: 218,
     name: "Temple",
     fullName: "Temple Owls",
     code: "TEM",
@@ -2852,8 +2744,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1959,
-    espnId: 2305,
+    id: 2305,
     name: "Kansas",
     fullName: "Kansas Jayhawks",
     code: "KU",
@@ -2870,8 +2761,7 @@ export const mcbbTeams: Team[] = [
     logoLight: KansasLogoLight,
   },
   {
-    id: 2143,
-    espnId: 2635,
+    id: 2635,
     name: "Tennessee Tech",
     fullName: "Tennessee Tech Golden Eagles",
     code: "TNTC",
@@ -2888,8 +2778,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TennesseeTechLogoLight,
   },
   {
-    id: 189,
-    espnId: 84,
+    id: 84,
     name: "Indiana",
     fullName: "Indiana Hoosiers",
     code: "IU",
@@ -2906,8 +2795,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 5566,
-    espnId: 88,
+    id: 88,
     name: "Southern Indiana",
     fullName: "Southern Indiana Screaming Eagles",
     shortName: "So Indiana",
@@ -2925,8 +2813,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthernIndianaLogoLight,
   },
   {
-    id: 1570,
-    espnId: 2561,
+    id: 2561,
     name: "Siena",
     fullName: "Siena Saints",
     shortName: "Siena",
@@ -2944,8 +2831,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SienaLogoLight,
   },
   {
-    id: 233,
-    espnId: 2261,
+    id: 2261,
     name: "Hampton",
     fullName: "Hampton Pirates",
     shortName: "Hampton",
@@ -2963,8 +2849,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HamptonLogoLight,
   },
   {
-    id: 181,
-    espnId: 38,
+    id: 38,
     name: "Colorado",
     fullName: "Colorado Buffaloes",
     code: "COLO",
@@ -2981,8 +2866,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ColoradoLogoLight,
   },
   {
-    id: 202,
-    espnId: 2628,
+    id: 2628,
     name: "TCU",
     fullName: "TCU Horned Frogs",
     code: "TCU",
@@ -2999,8 +2883,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 176,
-    espnId: 333,
+    id: 333,
     name: "Alabama",
     fullName: "Alabama Crimson Tide",
     code: "ALA",
@@ -3017,8 +2900,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2058,
-    espnId: 194,
+    id: 194,
     name: "Ohio State",
     fullName: "Ohio State Buckeyes",
     code: "OSU",
@@ -3035,8 +2917,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2055,
-    espnId: 87,
+    id: 87,
     name: "Notre Dame",
     fullName: "Notre Dame Fighting Irish",
     code: "ND",
@@ -3053,8 +2934,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1924,
-    espnId: 61,
+    id: 61,
     name: "Georgia",
     fullName: "Georgia Bulldogs",
     code: "UGA",
@@ -3071,8 +2951,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GeorgiaLogoLight,
   },
   {
-    id: 2065,
-    espnId: 2483,
+    id: 2483,
     name: "Oregon",
     fullName: "Oregon Ducks",
     code: "ORE",
@@ -3089,8 +2968,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2144,
-    espnId: 245,
+    id: 245,
     name: "Texas A&M",
     fullName: "Texas A&M Aggies",
     code: "TA&M",
@@ -3107,8 +2985,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2145,
-    espnId: 357,
+    id: 357,
     name: "Texas A&M-Corpus Christi",
     fullName: "Texas A&M-Corpus Christi Islanders",
     shortName: "Texas A&M-CC",
@@ -3126,8 +3003,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TexasAAndMCorpusChristiLogoLight,
   },
   {
-    id: 1909,
-    espnId: 57,
+    id: 57,
     name: "Florida",
     fullName: "Florida Gators",
     code: "FLA",
@@ -3144,8 +3020,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FloridaLogoLight,
   },
   {
-    id: 2181,
-    espnId: 254,
+    id: 254,
     name: "Utah",
     fullName: "Utah Utes",
     code: "UTAH",
@@ -3162,8 +3037,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1981,
-    espnId: 2363,
+    id: 2363,
     name: "Manhattan",
     fullName: "Manhattan Jaspers",
     shortName: "Manhattan",
@@ -3181,8 +3055,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1994,
-    espnId: 130,
+    id: 130,
     name: "Michigan",
     fullName: "Michigan Wolverines",
     code: "MICH",
@@ -3199,8 +3072,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MichiganLogoLight,
   },
   {
-    id: 1870,
-    espnId: 36,
+    id: 36,
     name: "Colorado State",
     fullName: "Colorado State Rams",
     code: "CSU",
@@ -3217,8 +3089,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ColoradoStateLogoLight,
   },
   {
-    id: 2059,
-    espnId: 201,
+    id: 201,
     name: "Oklahoma",
     fullName: "Oklahoma Sooners",
     code: "OU",
@@ -3235,8 +3106,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1825,
-    espnId: 239,
+    id: 239,
     name: "Baylor",
     fullName: "Baylor Bears",
     code: "BAY",
@@ -3253,8 +3123,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1892,
-    espnId: 151,
+    id: 151,
     name: "East Carolina",
     fullName: "East Carolina Pirates",
     code: "ECU",
@@ -3271,8 +3140,7 @@ export const mcbbTeams: Team[] = [
     logoLight: EastCarolinaLogoLight,
   },
   {
-    id: 194,
-    espnId: 152,
+    id: 152,
     name: "NC State",
     fullName: "NC State Wolfpack",
     code: "NCSU",
@@ -3289,8 +3157,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NCStateLogoLight,
   },
   {
-    id: 2173,
-    espnId: 2908,
+    id: 2908,
     name: "South Carolina Upstate",
     fullName: "South Carolina Upstate Spartans",
     shortName: "SC Upstate",
@@ -3308,8 +3175,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2172,
-    espnId: 30,
+    id: 30,
     name: "USC",
     fullName: "USC Trojans",
     code: "USC",
@@ -3326,8 +3192,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1993,
-    espnId: 2390,
+    id: 2390,
     name: "Miami",
     fullName: "Miami Hurricanes",
     code: "MIA",
@@ -3345,8 +3210,7 @@ export const mcbbTeams: Team[] = [
   },
 
   {
-    id: 1829,
-    espnId: 2065,
+    id: 2065,
     name: "Bethune-Cookman",
     fullName: "Bethune-Cookman Wildcats",
     code: "BCU",
@@ -3364,8 +3228,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BethuneCookmanLogoLight,
   },
   {
-    id: 1991,
-    espnId: 2379,
+    id: 2379,
     name: "Md.-East. Shore",
     shortName: "MD East Shore",
     fullName: "Maryland Eastern Shore Hawks",
@@ -3383,8 +3246,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MdEastShoreLogoLight,
   },
   {
-    id: 3248,
-    espnId: 524,
+    id: 524,
     name: "Fisher College",
     shortName: "Fisher",
     fullName: "Fisher College Eagles",
@@ -3402,8 +3264,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FisherCollegeLogoLight,
   },
   {
-    id: 2214,
-    espnId: 275,
+    id: 275,
     name: "Wisconsin",
     fullName: "Wisconsin Badgers",
     code: "WIS",
@@ -3420,8 +3281,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WisconsinLogoLight,
   },
   {
-    id: 1945,
-    espnId: 2287,
+    id: 2287,
     name: "Illinois State",
     fullName: "Illinois State Redbirds",
     code: "ILST",
@@ -3438,8 +3298,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IllinoisStateLogoLight,
   },
   {
-    id: 177,
-    espnId: 8,
+    id: 8,
     name: "Arkansas",
     fullName: "Arkansas Razorbacks",
     code: "ARK",
@@ -3456,8 +3315,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 3347,
-    espnId: 2027,
+    id: 2027,
     name: "Arkansas Baptist",
     shortName: "Ark Baptist",
     fullName: "Arkansas Baptist Buffaloes",
@@ -3475,8 +3333,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ArkansasBaptistLogoLight,
   },
   {
-    id: 0,
-    espnId: 2503,
+    id: 2503,
     name: "Puerto Rico-Mayaguez",
     shortName: "PR-Mayaguez",
     fullName: "Puerto Rico-Mayaguez Bulldogs",
@@ -3494,8 +3351,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PuertoRicoMayaguezLogoLight,
   },
   {
-    id: 6646,
-    espnId: 294,
+    id: 294,
     name: "Jacksonville",
     fullName: "Jacksonville Dolphins",
     code: "JAX",
@@ -3512,8 +3368,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1865,
-    espnId: 2132,
+    id: 2132,
     name: "Cincinnati",
     fullName: "Cincinnati Bearcats",
     code: "CIN",
@@ -3530,8 +3385,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1964,
-    espnId: 96,
+    id: 96,
     name: "Kentucky",
     fullName: "Kentucky Wildcats",
     code: "UK",
@@ -3548,8 +3402,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1495,
-    espnId: 193,
+    id: 193,
     name: "Miami (OH)",
     fullName: "Miami (OH) RedHawks",
     code: "M-OH",
@@ -3566,8 +3419,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MiamiOHLogoLight,
   },
   {
-    id: 2062,
-    espnId: 145,
+    id: 145,
     name: "Ole Miss",
     fullName: "Ole Miss Rebels",
     code: "MISS",
@@ -3584,8 +3436,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2157,
-    espnId: 2653,
+    id: 2653,
     name: "Troy",
     fullName: "Troy Trojans",
     code: "TROY",
@@ -3602,8 +3453,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TroyLogoLight,
   },
   {
-    id: 238,
-    espnId: 2885,
+    id: 2885,
     name: "NJIT",
     fullName: "NJIT Highlanders",
     shortName: "NJIT",
@@ -3621,8 +3471,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NJITLogoLight,
   },
   {
-    id: 2178,
-    espnId: 2636,
+    id: 2636,
     name: "UTSA",
     fullName: "UTSA Roadrunners",
     code: "UTSA",
@@ -3639,8 +3488,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UTSALogoLight,
   },
   {
-    id: 1938,
-    espnId: 248,
+    id: 248,
     name: "Houston",
     fullName: "Houston Cougars",
     code: "HOU",
@@ -3657,8 +3505,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HoustonLogoLight,
   },
   {
-    id: 218,
-    espnId: 58,
+    id: 58,
     name: "South Florida",
     fullName: "South Florida Bulls",
     code: "USF",
@@ -3675,8 +3522,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthFloridaLogoLight,
   },
   {
-    id: 1841,
-    espnId: 252,
+    id: 252,
     name: "BYU",
     fullName: "BYU Cougars",
     code: "BYU",
@@ -3693,8 +3539,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1856,
-    espnId: 2115,
+    id: 2115,
     name: "Central Connecticut",
     fullName: "Central Connecticut Blue Devils",
     shortName: "C Connecticut",
@@ -3712,8 +3557,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CentralConnecticutLogoLight,
   },
   {
-    id: 1950,
-    espnId: 2294,
+    id: 2294,
     name: "Iowa",
     fullName: "Iowa Hawkeyes",
     code: "IOWA",
@@ -3730,8 +3574,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 200,
-    espnId: 2571,
+    id: 2571,
     name: "South Dakota State",
     fullName: "South Dakota State Jackrabbits",
     shortName: "S Dakota St",
@@ -3749,8 +3592,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthDakotaStateLogoLight,
   },
   {
-    id: 1985,
-    espnId: 120,
+    id: 120,
     name: "Maryland",
     fullName: "Maryland Terrapins",
     code: "MD",
@@ -3767,8 +3609,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MarylandLogoLight,
   },
   {
-    id: 1845,
-    espnId: 2084,
+    id: 2084,
     name: "Buffalo",
     fullName: "Buffalo Bulls",
     code: "BUF",
@@ -3785,8 +3626,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BuffaloLogoLight,
   },
   {
-    id: 1836,
-    espnId: 103,
+    id: 103,
     name: "Boston College",
     fullName: "Boston College Eagles",
     code: "BC",
@@ -3803,8 +3643,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1837,
-    espnId: 104,
+    id: 104,
     name: "Boston University",
     fullName: "Boston University Terriers",
     shortName: "Boston U",
@@ -3822,8 +3661,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2096,
-    espnId: 164,
+    id: 164,
     name: "Rutgers",
     fullName: "Rutgers Scarlet Knights",
     code: "RUTG",
@@ -3840,8 +3678,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RutgersLogoLight,
   },
   {
-    id: 1813,
-    espnId: 2026,
+    id: 2026,
     name: "App State",
     fullName: "App State Mountaineers",
     code: "APP",
@@ -3858,8 +3695,7 @@ export const mcbbTeams: Team[] = [
     logoLight: AppStateLogoLight,
   },
   {
-    id: 2029,
-    espnId: 2426,
+    id: 2426,
     name: "Navy",
     fullName: "Navy Midshipmen",
     code: "NAVY",
@@ -3876,8 +3712,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NavyLogoLight,
   },
   {
-    id: 1884,
-    espnId: 48,
+    id: 48,
     name: "Delaware",
     fullName: "Delaware Blue Hens",
     code: "DEL",
@@ -3894,8 +3729,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DelawareLogoLight,
   },
   {
-    id: 2189,
-    espnId: 258,
+    id: 258,
     name: "Virginia",
     fullName: "Virginia Cavaliers",
     code: "UVA",
@@ -3912,8 +3746,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 243,
-    espnId: 2547,
+    id: 2547,
     name: "Seattle U",
     fullName: "Seattle U Redhawks",
     shortName: "Seattle U",
@@ -3931,8 +3764,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SeattleULogoLight,
   },
   {
-    id: 2092,
-    espnId: 257,
+    id: 257,
     name: "Richmond",
     fullName: "Richmond Spiders",
     code: "RICH",
@@ -3949,8 +3781,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1804,
-    espnId: 2005,
+    id: 2005,
     name: "Air Force",
     fullName: "Air Force Falcons",
     code: "AF",
@@ -3967,8 +3798,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2049,
-    espnId: 2460,
+    id: 2460,
     name: "Northern Iowa",
     fullName: "Northern Iowa Panthers",
     code: "UNI",
@@ -3985,8 +3815,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthernIowaLogoLight,
   },
   {
-    id: 209,
-    espnId: 2463,
+    id: 2463,
     name: "Cal State Northridge",
     fullName: "Cal State Northridge Matadors",
     shortName: "CSU Northridge",
@@ -4004,8 +3833,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CalStateNorthridgeLogoLight,
   },
   {
-    id: 2090,
-    espnId: 2890,
+    id: 2890,
     name: "Reinhardt",
     fullName: "Reinhardt Eagles",
     shortName: "Reinhardt",
@@ -4023,8 +3851,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ReinhardtLogoLight,
   },
   {
-    id: 1951,
-    espnId: 66,
+    id: 66,
     name: "Iowa State",
     fullName: "Iowa State Cyclones",
     code: "ISU",
@@ -4041,8 +3868,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IowaStateLogoLight,
   },
   {
-    id: 2118,
-    espnId: 2546,
+    id: 2546,
     name: "SE Missouri State",
     fullName: "Southeast Missouri State Redhawks",
     shortName: "SE Missouri",
@@ -4060,8 +3886,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SEMissouriStateLogoLight,
   },
   {
-    id: 2166,
-    espnId: 26,
+    id: 26,
     name: "UCLA",
     fullName: "UCLA Bruins",
     code: "UCLA",
@@ -4078,8 +3903,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1838,
-    espnId: 189,
+    id: 189,
     name: "Bowling Green",
     fullName: "Bowling Green Falcons",
     code: "BGSU",
@@ -4096,8 +3920,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BowlingGreenLogoLight,
   },
   {
-    id: 2108,
-    espnId: 21,
+    id: 21,
     name: "San Diego State",
     fullName: "San Diego State Aztecs",
     code: "SDSU",
@@ -4114,8 +3937,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SanDiegoStateLogoLight,
   },
   {
-    id: 1815,
-    espnId: 12,
+    id: 12,
     name: "Arizona",
     fullName: "Arizona Wildcats",
     code: "ARIZ",
@@ -4132,8 +3954,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ArizonaLogoLight,
   },
   {
-    id: 2041,
-    espnId: 155,
+    id: 155,
     name: "North Dakota",
     fullName: "North Dakota Fighting Hawks",
     code: "UND",
@@ -4150,8 +3971,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthDakotaLogoLight,
   },
   {
-    id: 2043,
-    espnId: 2454,
+    id: 2454,
     name: "North Florida",
     fullName: "North Florida Ospreys",
     code: "UNF",
@@ -4168,8 +3988,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthFloridaLogoLight,
   },
   {
-    id: 1912,
-    espnId: 526,
+    id: 526,
     name: "Florida Gulf Coast",
     fullName: "Florida Gulf Coast Eagles",
     shortName: "FGCU",
@@ -4187,8 +4006,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FloridaGulfCoastLogoLight,
   },
   {
-    id: 2423,
-    espnId: 126864,
+    id: 126864,
     name: "Fort Lauderdale",
     fullName: "Fort Lauderdale Eagles",
     shortName: "Ft Lauderdale",
@@ -4206,8 +4024,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FortLauderdaleLogoLight,
   },
   {
-    id: 3351,
-    espnId: 124809,
+    id: 124809,
     name: "Miami (OH)-Hamilton",
     fullName: "Miami (OH)-Hamilton Harriers",
     shortName: "Miami Hamilton",
@@ -4225,8 +4042,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2507,
-    espnId: 117,
+    id: 117,
     name: "St. Mary's (MD)",
     fullName: "St. Mary's (MD) Seahawks",
     shortName: "St Mary's (MD)",
@@ -4244,8 +4060,7 @@ export const mcbbTeams: Team[] = [
     logoLight: StMarysMDLogoLight,
   },
   {
-    id: 237,
-    espnId: 276,
+    id: 276,
     name: "Marshall",
     fullName: "Marshall Thundering Herd",
     code: "MRSH",
@@ -4262,8 +4077,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MarshallLogoLight,
   },
   {
-    id: 196,
-    espnId: 2450,
+    id: 2450,
     name: "Norfolk State",
     fullName: "Norfolk State Spartans",
     code: "NORF",
@@ -4280,8 +4094,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorfolkStateLogoLight,
   },
   {
-    id: 2159,
-    espnId: 202,
+    id: 202,
     name: "Tulsa",
     fullName: "Tulsa Golden Hurricane",
     code: "TLSA",
@@ -4298,8 +4111,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1850,
-    espnId: 25,
+    id: 25,
     name: "California",
     fullName: "California Golden Bears",
     code: "CAL",
@@ -4316,8 +4128,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2163,
-    espnId: 27,
+    id: 27,
     name: "UC Riverside",
     fullName: "UC Riverside Highlanders",
     shortName: "UC Riverside",
@@ -4335,8 +4146,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UCRiversideLogoLight,
   },
   {
-    id: 2164,
-    espnId: 2540,
+    id: 2540,
     name: "UC Santa Barbara",
     fullName: "UC Santa Barbara Gauchos",
     shortName: "Santa Barbara",
@@ -4354,8 +4164,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UCSantaBarbaraLogoLight,
   },
   {
-    id: 2111,
-    espnId: 2541,
+    id: 2541,
     name: "Santa Clara",
     fullName: "Santa Clara Broncos",
     shortName: "Santa Clara",
@@ -4373,8 +4182,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SantaClaraLogoLight,
   },
   {
-    id: 2363,
-    espnId: 28,
+    id: 28,
     name: "UC San Diego",
     fullName: "UC San Diego Tritons",
     shortName: "UC San Diego",
@@ -4392,8 +4200,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UCSanDiegoLogoLight,
   },
   {
-    id: 2161,
-    espnId: 302,
+    id: 302,
     name: "UC Davis",
     fullName: "UC Davis Aggies",
     code: "UCD",
@@ -4410,8 +4217,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1828,
-    espnId: 3246,
+    id: 3246,
     name: "Bethesda",
     fullName: "Bethesda University Flames",
     code: "BTHS",
@@ -4428,8 +4234,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BethesdaLogoLight,
   },
   {
-    id: 2115,
-    espnId: 6,
+    id: 6,
     name: "South Alabama",
     fullName: "South Alabama Jaguars",
     code: "USA",
@@ -4446,8 +4251,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthAlabamaLogoLight,
   },
   {
-    id: 188,
-    espnId: 2275,
+    id: 2275,
     name: "Hofstra",
     fullName: "Hofstra Pride",
     shortName: "Hofstra",
@@ -4465,8 +4269,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2037,
-    espnId: 2447,
+    id: 2447,
     name: "Nicholls",
     fullName: "Nicholls Colonels",
     code: "NICH",
@@ -4483,8 +4286,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NichollsLogoLight,
   },
   {
-    id: 247,
-    espnId: 326,
+    id: 326,
     name: "Texas State",
     fullName: "Texas State Bobcats",
     code: "TXST",
@@ -4501,8 +4303,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TexasStateLogoLight,
   },
   {
-    id: 1501,
-    espnId: 290,
+    id: 290,
     name: "Georgia Southern",
     fullName: "Georgia Southern Eagles",
     code: "GASO",
@@ -4519,8 +4320,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GeorgiaSouthernLogoLight,
   },
   {
-    id: 2018,
-    espnId: 2415,
+    id: 2415,
     name: "Morgan State",
     fullName: "Morgan State Bears",
     code: "MORG",
@@ -4537,8 +4337,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MorganStateLogoLight,
   },
   {
-    id: 2057,
-    espnId: 195,
+    id: 195,
     name: "Ohio",
     fullName: "Ohio Bobcats",
     code: "OHIO",
@@ -4555,8 +4354,7 @@ export const mcbbTeams: Team[] = [
     logoLight: OhioLogoLight,
   },
   {
-    id: 1954,
-    espnId: 256,
+    id: 256,
     name: "JMU",
     fullName: "James Madison Dukes",
     code: "JMU",
@@ -4573,8 +4371,7 @@ export const mcbbTeams: Team[] = [
     logoLight: JMULogoLight,
   },
   {
-    id: 1999,
-    espnId: 2393,
+    id: 2393,
     name: "Middle Tennessee",
     shortName: "Mid Tenn",
     fullName: "Middle Tennessee Blue Raiders",
@@ -4592,8 +4389,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MiddleTennesseeLogoLight,
   },
   {
-    id: 1822,
-    espnId: 2,
+    id: 2,
     name: "Auburn",
     fullName: "Auburn Tigers",
     code: "AUB",
@@ -4610,8 +4406,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1494,
-    espnId: 2382,
+    id: 2382,
     name: "Mercer",
     fullName: "Mercer Bears",
     code: "MER",
@@ -4628,8 +4423,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MercerLogoLight,
   },
   {
-    id: 1901,
-    espnId: 2210,
+    id: 2210,
     name: "Elon",
     fullName: "Elon Phoenix",
     code: "ELON",
@@ -4646,8 +4440,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ElonLogoLight,
   },
   {
-    id: 1960,
-    espnId: 2306,
+    id: 2306,
     name: "Kansas State",
     fullName: "Kansas State Wildcats",
     code: "KSU",
@@ -4664,8 +4457,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1498,
-    espnId: 233,
+    id: 233,
     name: "South Dakota",
     fullName: "South Dakota Coyotes",
     code: "SDAK",
@@ -4682,8 +4474,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthDakotaLogoLight,
   },
   {
-    id: 212,
-    espnId: 324,
+    id: 324,
     name: "Coastal Carolina",
     fullName: "Coastal Carolina Chanticleers",
     code: "CCU",
@@ -4700,8 +4491,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CoastalCarolinaLogoLight,
   },
   {
-    id: 1820,
-    espnId: 349,
+    id: 349,
     name: "Army",
     fullName: "Army Black Knights",
     code: "ARMY",
@@ -4718,8 +4508,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ArmyLogoLight,
   },
   {
-    id: 7566,
-    espnId: 2854,
+    id: 2854,
     name: "Bloomfield",
     fullName: "Bloomfield Deacons",
     code: "BFC",
@@ -4736,8 +4525,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BloomfieldLogoLight,
   },
   {
-    id: 219,
-    espnId: 2572,
+    id: 2572,
     name: "Southern Miss",
     fullName: "Southern Miss Golden Eagles",
     code: "USM",
@@ -4754,8 +4542,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthernMissLogoLight,
   },
   {
-    id: 1972,
-    espnId: 2335,
+    id: 2335,
     name: "Liberty",
     fullName: "Liberty Flames",
     code: "LIB",
@@ -4772,8 +4559,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LibertyLogoLight,
   },
   {
-    id: 2158,
-    espnId: 2655,
+    id: 2655,
     name: "Tulane",
     fullName: "Tulane Green Wave",
     code: "TULN",
@@ -4790,8 +4576,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TulaneLogoLight,
   },
   {
-    id: 2168,
-    espnId: 113,
+    id: 113,
     name: "UMass",
     fullName: "Massachusetts Minutemen",
     code: "MASS",
@@ -4808,8 +4593,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UMassLogoLight,
   },
   {
-    id: 2112,
-    espnId: 2550,
+    id: 2550,
     name: "Seton Hall",
     fullName: "Seton Hall Pirates",
     shortName: "Seton Hall",
@@ -4827,8 +4611,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SetonHallLogoLight,
   },
   {
-    id: 1906,
-    espnId: 2217,
+    id: 2217,
     name: "Fairfield",
     fullName: "Fairfield Stags",
     shortName: "Fairfield",
@@ -4846,8 +4629,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FairfieldLogoLight,
   },
   {
-    id: 1949,
-    espnId: 314,
+    id: 314,
     name: "Iona",
     fullName: "Iona Gaels",
     shortName: "Iona",
@@ -4865,8 +4647,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IonaLogoLight,
   },
   {
-    id: 240,
-    espnId: 2506,
+    id: 2506,
     name: "Presbyterian",
     fullName: "Presbyterian Blue Hose",
     shortName: "Presbyterian",
@@ -4884,8 +4665,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PresbyterianLogoLight,
   },
   {
-    id: 5737,
-    espnId: 130129,
+    id: 130129,
     name: "Clinton College",
     fullName: "Clinton College Golden Bears",
     shortName: "Clinton",
@@ -4903,8 +4683,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ClintonCollegeLogoLight,
   },
   {
-    id: 1505,
-    espnId: 140,
+    id: 140,
     name: "Kansas City",
     fullName: "Kansas City Roos",
     shortName: "Kansas City",
@@ -4922,8 +4701,7 @@ export const mcbbTeams: Team[] = [
     logoLight: KansasCityLogoLight,
   },
   {
-    id: 2169,
-    espnId: 2349,
+    id: 2349,
     name: "UMass Lowell",
     fullName: "UMass Lowell River Hawks",
     shortName: "UMass Lowell",
@@ -4941,8 +4719,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UMassLowellLogoLight,
   },
   {
-    id: 3245,
-    espnId: 108842,
+    id: 108842,
     name: "Emerson",
     fullName: "Emerson Lions",
     shortName: "Emerson",
@@ -4960,8 +4737,7 @@ export const mcbbTeams: Team[] = [
     logoLight: EmersonLogoLight,
   },
   {
-    id: 2103,
-    espnId: 2603,
+    id: 2603,
     name: "Saint Joseph's",
     fullName: "Saint Joseph's Hawks",
     shortName: "Saint Joseph's",
@@ -4979,8 +4755,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SaintJosephsLogoLight,
   },
   {
-    id: 1932,
-    espnId: 535,
+    id: 535,
     name: "Haskell",
     fullName: "Haskell Jayhawks",
     shortName: "Haskell",
@@ -4998,8 +4773,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HaskellLogoLight,
   },
   {
-    id: 2131,
-    espnId: 2612,
+    id: 2612,
     name: "Saint Peter's",
     fullName: "Saint Peter's Peacocks",
     shortName: "Saint Peter's",
@@ -5017,8 +4791,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SaintPetersLogoLight,
   },
   {
-    id: 5730,
-    espnId: 2114,
+    id: 2114,
     name: "Centenary (NJ)",
     fullName: "Centenary (NJ) Cyclones",
     shortName: "Centenary (NJ)",
@@ -5036,8 +4809,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CentenaryNJLogoLight,
   },
   {
-    id: 2128,
-    espnId: 139,
+    id: 139,
     name: "Saint Louis",
     fullName: "Saint Louis Billikens",
     shortName: "Saint Louis",
@@ -5055,8 +4827,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SaintLouisLogoLight,
   },
   {
-    id: 2162,
-    espnId: 300,
+    id: 300,
     name: "UC Irvine",
     fullName: "UC Irvine Anteaters",
     shortName: "UC Irvine",
@@ -5074,8 +4845,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UCIrvineLogoLight,
   },
   {
-    id: 1968,
-    espnId: 2325,
+    id: 2325,
     name: "La Salle",
     fullName: "La Salle Explorers",
     shortName: "La Salle",
@@ -5093,8 +4863,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LaSalleLogoLight,
   },
   {
-    id: 2167,
-    espnId: 2378,
+    id: 2378,
     name: "UMBC",
     fullName: "UMBC Retrievers",
     shortName: "UMBC",
@@ -5112,8 +4881,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UMBCLogoLight,
   },
   {
-    id: 1975,
-    espnId: 309,
+    id: 309,
     name: "Louisiana",
     fullName: "Louisiana Ragin' Cajuns",
     code: "UL",
@@ -5130,8 +4898,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LouisianaLogoLight,
   },
   {
-    id: 2098,
-    espnId: 2545,
+    id: 2545,
     name: "SE Louisiana",
     fullName: "SE Louisiana Lions",
     code: "SELA",
@@ -5148,8 +4915,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SELouisianaLogoLight,
   },
   {
-    id: 1817,
-    espnId: 2032,
+    id: 2032,
     name: "Arkansas State",
     fullName: "Arkansas State Red Wolves",
     code: "ARST",
@@ -5166,8 +4932,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ArkansasStateLogoLight,
   },
   {
-    id: 232,
-    espnId: 2755,
+    id: 2755,
     name: "Grambling",
     fullName: "Grambling Tigers",
     code: "GRAM",
@@ -5184,8 +4949,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GramblingLogoLight,
   },
   {
-    id: 2005,
-    espnId: 344,
+    id: 344,
     name: "Mississippi State",
     shortName: "Miss St",
     fullName: "Mississippi State Bulldogs",
@@ -5203,8 +4967,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MississippiStateLogoLight,
   },
   {
-    id: 192,
-    espnId: 235,
+    id: 235,
     name: "Memphis",
     fullName: "Memphis Tigers",
     code: "MEM",
@@ -5221,8 +4984,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MemphisLogoLight,
   },
   {
-    id: 2116,
-    espnId: 2579,
+    id: 2579,
     name: "South Carolina",
     fullName: "South Carolina Gamecocks",
     code: "SC",
@@ -5239,8 +5001,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1925,
-    espnId: 2247,
+    id: 2247,
     name: "Georgia State",
     fullName: "Georgia State Panthers",
     code: "GAST",
@@ -5257,8 +5018,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GeorgiaStateLogoLight,
   },
   {
-    id: 7578,
-    espnId: 111179,
+    id: 111179,
     name: "Georgian Court",
     shortName: "Georgian Court",
     fullName: "Georgian Court Lions",
@@ -5276,8 +5036,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2099,
-    espnId: 2567,
+    id: 2567,
     name: "SMU",
     fullName: "SMU Mustangs",
     code: "SMU",
@@ -5294,8 +5053,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SMULogoLight,
   },
   {
-    id: 2133,
-    espnId: 24,
+    id: 24,
     name: "Stanford",
     fullName: "Stanford Cardinal",
     code: "STAN",
@@ -5312,8 +5070,7 @@ export const mcbbTeams: Team[] = [
     logoLight: StanfordLogoLight,
   },
   {
-    id: 1491,
-    espnId: 2142,
+    id: 2142,
     name: "Colgate",
     fullName: "Colgate Raiders",
     code: "COLG",
@@ -5330,8 +5087,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2146,
-    espnId: 2641,
+    id: 2641,
     name: "Texas Tech",
     fullName: "Texas Tech Red Raiders",
     code: "TTU",
@@ -5348,8 +5104,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TexasTechLogoLight,
   },
   {
-    id: 2024,
-    espnId: 93,
+    id: 93,
     name: "Murray State",
     fullName: "Murray State Racers",
     code: "MUR",
@@ -5366,8 +5121,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MurrayStateLogoLight,
   },
   {
-    id: 2030,
-    espnId: 2437,
+    id: 2437,
     name: "Nebraska O.",
     fullName: "Omaha Mavericks",
     shortName: "Omaha",
@@ -5385,8 +5139,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NebraskaOLogoLight,
   },
   {
-    id: 203,
-    espnId: 251,
+    id: 251,
     name: "Texas",
     fullName: "Texas Longhorns",
     code: "TEX",
@@ -5403,8 +5156,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 236,
-    espnId: 2433,
+    id: 2433,
     name: "UL Monroe",
     fullName: "UL Monroe Warhawks",
     code: "ULM",
@@ -5421,8 +5173,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ULMonroeLogoLight,
   },
   {
-    id: 2137,
-    espnId: 183,
+    id: 183,
     name: "Syracuse",
     fullName: "Syracuse Orange",
     code: "SYR",
@@ -5439,8 +5190,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1840,
-    espnId: 2913,
+    id: 2913,
     name: "Brevard",
     fullName: "Brevard Tornados",
     code: "BRE",
@@ -5457,8 +5207,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BrevardLogoLight,
   },
   {
-    id: 6210,
-    espnId: 513,
+    id: 513,
     name: "Dakota Wesleyan",
     fullName: "Dakota Wesleyan Tigers",
     code: "BRE",
@@ -5475,8 +5224,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DakotaWesleyanLogoLight,
   },
   {
-    id: 2210,
-    espnId: 108807,
+    id: 108807,
     name: "William Peace",
     fullName: "William Peace Pacers",
     code: "WPEA",
@@ -5493,8 +5241,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WilliamPeaceLogoLight,
   },
   {
-    id: 1977,
-    espnId: 97,
+    id: 97,
     name: "Louisville",
     fullName: "Louisville Cardinals",
     code: "LOU",
@@ -5511,8 +5258,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LouisvilleLogoLight,
   },
   {
-    id: 2034,
-    espnId: 167,
+    id: 167,
     name: "New Mexico",
     fullName: "New Mexico Lobos",
     code: "UNM",
@@ -5529,8 +5275,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NewMexicoLogoLight,
   },
   {
-    id: 1979,
-    espnId: 311,
+    id: 311,
     name: "Maine",
     fullName: "Maine Black Bears",
     code: "ME",
@@ -5547,8 +5292,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MaineLogoLight,
   },
   {
-    id: 2195,
-    espnId: 265,
+    id: 265,
     name: "Washington State",
     shortName: "Washington St.",
     fullName: "Washington State Cougars",
@@ -5566,8 +5310,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1942,
-    espnId: 70,
+    id: 70,
     name: "Idaho",
     fullName: "Idaho Vandals",
     code: "IDHO",
@@ -5584,8 +5327,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IdahoLogoLight,
   },
   {
-    id: 2066,
-    espnId: 204,
+    id: 204,
     name: "Oregon State",
     fullName: "Oregon State Beavers",
     code: "ORST",
@@ -5602,8 +5344,7 @@ export const mcbbTeams: Team[] = [
     logoLight: OregonStateLogoLight,
   },
   {
-    id: 3312,
-    espnId: 2517,
+    id: 2517,
     name: "Regis College",
     shortName: "Regis",
     fullName: "Regis Pride",
@@ -5621,8 +5362,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RegisCollegeLogoLight,
   },
   {
-    id: 2150,
-    espnId: 2648,
+    id: 2648,
     name: "Toccoa Falls",
     shortName: "Toccoa Falls",
     fullName: "Toccoa Falls Eagles",
@@ -5640,8 +5380,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ToccoaFallsLogoLight,
   },
   {
-    id: 1835,
-    espnId: 68,
+    id: 68,
     name: "Boise State",
     fullName: "Boise State Broncos",
     code: "BOIS",
@@ -5658,8 +5397,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BoiseStateLogoLight,
   },
   {
-    id: 2193,
-    espnId: 264,
+    id: 264,
     name: "Washington",
     fullName: "Washington Huskies",
     code: "WASH",
@@ -5676,8 +5414,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 235,
-    espnId: 2309,
+    id: 2309,
     name: "Kent State",
     fullName: "Kent State Golden Flashes",
     code: "KENT",
@@ -5694,8 +5431,7 @@ export const mcbbTeams: Team[] = [
     logoLight: KentStateLogoLight,
   },
   {
-    id: 1967,
-    espnId: 99,
+    id: 99,
     name: "LSU",
     fullName: "LSU Tigers",
     code: "LSU",
@@ -5712,8 +5448,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1926,
-    espnId: 59,
+    id: 59,
     name: "Georgia Tech",
     fullName: "Georgia Tech Yellow Jackets",
     code: "GT",
@@ -5730,8 +5465,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 180,
-    espnId: 228,
+    id: 228,
     name: "Clemson",
     fullName: "Clemson Tigers",
     code: "CLEM",
@@ -5748,8 +5482,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2106,
-    espnId: 2535,
+    id: 2535,
     name: "Samford",
     fullName: "Samford Bulldogs",
     code: "SAM",
@@ -5766,8 +5499,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SamfordLogoLight,
   },
   {
-    id: 185,
-    espnId: 231,
+    id: 231,
     name: "Furman",
     fullName: "Furman Paladins",
     code: "FUR",
@@ -5784,8 +5516,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FurmanLogoLight,
   },
   {
-    id: 1834,
-    espnId: 3243,
+    id: 3243,
     name: "Bob Jones",
     fullName: "Bob Jones Bruins",
     code: "BOBJ",
@@ -5802,8 +5533,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BobJonesLogoLight,
   },
   {
-    id: 1872,
-    espnId: 3242,
+    id: 3242,
     name: "Columbia International",
     fullName: "Columbia International Rams",
     shortName: "Columbia Int'l",
@@ -5821,8 +5551,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ColumbiaInternationalLogoLight,
   },
   {
-    id: 244,
-    espnId: 253,
+    id: 253,
     name: "Southern Utah",
     fullName: "Southern Utah Thunderbirds",
     code: "SUU",
@@ -5839,8 +5568,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthernUtahLogoLight,
   },
   {
-    id: 226,
-    espnId: 2127,
+    id: 2127,
     name: "Charleston Southern",
     fullName: "Charleston Southern Buccaneers",
     shortName: "Charleston So",
@@ -5858,8 +5586,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CharlestonSouthernLogoLight,
   },
   {
-    id: 1861,
-    espnId: 232,
+    id: 232,
     name: "Charleston",
     fullName: "Charleston Cougars",
     shortName: "Charleston",
@@ -5877,8 +5604,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CharlestonLogoLight,
   },
   {
-    id: 1490,
-    espnId: 2110,
+    id: 2110,
     name: "Central Arkansas",
     shortName: "C Arkansas",
     fullName: "Central Arkansas Bears",
@@ -5896,8 +5622,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CentralArkansasLogoLight,
   },
   {
-    id: 2446,
-    espnId: 3167,
+    id: 3167,
     name: "La Sierra",
     shortName: "La Sierra",
     fullName: "La Sierra Golden Eagles",
@@ -5915,8 +5640,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LaSierraLogoLight,
   },
   {
-    id: 6220,
-    espnId: 2312,
+    id: 2312,
     name: "King (TN)",
     shortName: "King (TN)",
     fullName: "King (TN) Tornado",
@@ -5934,8 +5658,7 @@ export const mcbbTeams: Team[] = [
     logoLight: KingTNLogoLight,
   },
   {
-    id: 2200,
-    espnId: 2710,
+    id: 2710,
     name: "Western Illinois",
     fullName: "Western Illinois Leathernecks",
     code: "WIU",
@@ -5952,8 +5675,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WesternIllinoisLogoLight,
   },
   {
-    id: 1969,
-    espnId: 322,
+    id: 322,
     name: "Lafayette",
     fullName: "Lafayette Leopards",
     code: "LAF",
@@ -5970,8 +5692,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LafayetteLogoLight,
   },
   {
-    id: 205,
-    espnId: 2724,
+    id: 2724,
     name: "Wichita State",
     fullName: "Wichita State Shockers",
     code: "WICH",
@@ -5988,8 +5709,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WichitaStateLogoLight,
   },
   {
-    id: 1963,
-    espnId: 338,
+    id: 338,
     name: "Kennesaw State",
     fullName: "Kennesaw State Owls",
     shortName: "Kenn St",
@@ -6007,8 +5727,7 @@ export const mcbbTeams: Team[] = [
     logoLight: KennesawStateLogoLight,
   },
   {
-    id: 1948,
-    espnId: 282,
+    id: 282,
     name: "Indiana State",
     fullName: "Indiana State Sycamores",
     code: "INST",
@@ -6025,8 +5744,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IndianaStateLogoLight,
   },
   {
-    id: 2191,
-    espnId: 2681,
+    id: 2681,
     name: "Wagner",
     fullName: "Wagner Seahawks",
     code: "WAG",
@@ -6043,8 +5761,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WagnerLogoLight,
   },
   {
-    id: 2047,
-    espnId: 2458,
+    id: 2458,
     name: "Northern Colorado",
     fullName: "Northern Colorado Bears",
     shortName: "N Colorado",
@@ -6062,8 +5779,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthernColoradoLogoLight,
   },
   {
-    id: 1807,
-    espnId: 2011,
+    id: 2011,
     name: "Alabama State",
     fullName: "Alabama State Hornets",
     code: "ALST",
@@ -6080,8 +5796,7 @@ export const mcbbTeams: Team[] = [
     logoLight: AlabamaStateLogoLight,
   },
   {
-    id: 1946,
-    espnId: 2916,
+    id: 2916,
     name: "Incarnate Word",
     fullName: "Incarnate Word Cardinals",
     code: "UIW",
@@ -6098,8 +5813,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IncarnateWordLogoLight,
   },
   {
-    id: 1936,
-    espnId: 107,
+    id: 107,
     name: "Holy Cross",
     fullName: "Holy Cross Crusaders",
     code: "HC",
@@ -6116,8 +5830,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HolyCrossLogoLight,
   },
   {
-    id: 242,
-    espnId: 2523,
+    id: 2523,
     name: "Robert Morris",
     fullName: "Robert Morris Colonials",
     code: "RMU",
@@ -6134,8 +5847,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RobertMorrisLogoLight,
   },
   {
-    id: 2064,
-    espnId: 198,
+    id: 198,
     name: "Oral Roberts",
     fullName: "Oral Roberts Golden Eagles",
     shortName: "Oral Roberts",
@@ -6153,8 +5865,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1922,
-    espnId: 2241,
+    id: 2241,
     name: "Gardner-Webb",
     fullName: "Gardner-Webb Runnin' Bulldogs",
     code: "GWEB",
@@ -6171,8 +5882,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GardnerWebbLogoLight,
   },
   {
-    id: 2199,
-    espnId: 2717,
+    id: 2717,
     name: "Western Carolina",
     fullName: "Western Carolina Catamounts",
     code: "WCU",
@@ -6189,8 +5899,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WesternCarolinaLogoLight,
   },
   {
-    id: 2196,
-    espnId: 2692,
+    id: 2692,
     name: "Weber State",
     fullName: "Weber State Wildcats",
     code: "WEB",
@@ -6207,8 +5916,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WeberStateLogoLight,
   },
   {
-    id: 1809,
-    espnId: 2016,
+    id: 2016,
     name: "Alcorn State",
     fullName: "Alcorn State Braves",
     code: "ALCN",
@@ -6225,8 +5933,7 @@ export const mcbbTeams: Team[] = [
     logoLight: AlcornStateLogoLight,
   },
   {
-    id: 1970,
-    espnId: 2320,
+    id: 2320,
     name: "Lamar",
     fullName: "Lamar Cardinals",
     shortName: "Lamar",
@@ -6244,8 +5951,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LamarLogoLight,
   },
   {
-    id: 6714,
-    espnId: 130174,
+    id: 130174,
     name: "Texas A&M SA",
     fullName: "Texas A&M SA Jaguars",
     shortName: "Texas A&M SA",
@@ -6263,8 +5969,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TexasAAndMSALogoLight,
   },
   {
-    id: 215,
-    espnId: 47,
+    id: 47,
     name: "Howard",
     fullName: "Howard Bison",
     code: "HOW",
@@ -6281,8 +5986,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HowardLogoLight,
   },
   {
-    id: 2134,
-    espnId: 2617,
+    id: 2617,
     name: "Stephen F. Austin",
     fullName: "Stephen F. Austin Lumberjacks",
     shortName: "SF Austin",
@@ -6300,8 +6004,7 @@ export const mcbbTeams: Team[] = [
     logoLight: StephenFAustinLogoLight,
   },
   {
-    id: 2121,
-    espnId: 2582,
+    id: 2582,
     name: "Southern",
     fullName: "Southern Jaguars",
     code: "SOU",
@@ -6318,8 +6021,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthernLogoLight,
   },
   {
-    id: 2373,
-    espnId: 2075,
+    id: 2075,
     name: "Bowie State",
     fullName: "Bowie State Bulldogs",
     code: "BOWE",
@@ -6336,8 +6038,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BowieStateLogoLight,
   },
   {
-    id: 222,
-    espnId: 3084,
+    id: 3084,
     name: "Utah Valley",
     fullName: "Utah Valley Wolverines",
     shortName: "Utah Valley",
@@ -6355,8 +6056,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UtahValleyLogoLight,
   },
   {
-    id: 1898,
-    espnId: 3120,
+    id: 3120,
     name: "Ecclesia",
     fullName: "Ecclesia Royals",
     code: "ECCL",
@@ -6373,8 +6073,7 @@ export const mcbbTeams: Team[] = [
     logoLight: EcclesiaLogoLight,
   },
   {
-    id: 246,
-    espnId: 2640,
+    id: 2640,
     name: "Texas Southern",
     fullName: "Texas Southern Tigers",
     code: "TXSO",
@@ -6391,8 +6090,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TexasSouthernLogoLight,
   },
   {
-    id: 1990,
-    espnId: 2377,
+    id: 2377,
     name: "McNeese",
     fullName: "McNeese Cowboys",
     code: "MCN",
@@ -6409,8 +6107,7 @@ export const mcbbTeams: Team[] = [
     logoLight: McNeeseLogoLight,
   },
   {
-    id: 1492,
-    espnId: 331,
+    id: 331,
     name: "Eastern Washington",
     fullName: "Eastern Washington Eagles",
     shortName: "EWU",
@@ -6428,8 +6125,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 3299,
-    espnId: 2886,
+    id: 2886,
     name: "Northwood",
     fullName: "Northwood (MI) Timberwolves",
     code: "NAR",
@@ -6446,8 +6142,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthwoodLogoLight,
   },
   {
-    id: 3291,
-    espnId: 571,
+    id: 571,
     name: "Morris College",
     fullName: "Morris College Hornets",
     shortName: "Morris",
@@ -6465,8 +6160,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MorrisCollegeLogoLight,
   },
   {
-    id: 3274,
-    espnId: 2330,
+    id: 2330,
     name: "Le Moyne",
     fullName: "Le Moyne Dolphins",
     code: "LEM",
@@ -6483,8 +6177,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LeMoyneLogoLight,
   },
   {
-    id: 1818,
-    espnId: 2029,
+    id: 2029,
     name: "Arkansas-Pine Bluff",
     fullName: "Arkansas-Pine Bluff Golden Lions",
     shortName: "AR-Pine Bluff",
@@ -6502,8 +6195,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ArkansasPineBluffLogoLight,
   },
   {
-    id: 6664,
-    espnId: 130201,
+    id: 130201,
     name: "Nobel",
     fullName: "Nobel Knights",
     code: "NOB",
@@ -6520,8 +6212,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NobelLogoLight,
   },
   {
-    id: 2218,
-    espnId: 2754,
+    id: 2754,
     name: "Youngstown State",
     shortName: "Youngstown St",
     fullName: "Youngstown State Penguins",
@@ -6539,8 +6230,7 @@ export const mcbbTeams: Team[] = [
     logoLight: YoungstownStateLogoLight,
   },
   {
-    id: 216,
-    espnId: 2344,
+    id: 2344,
     name: "Longwood",
     fullName: "Longwood Lancers",
     shortName: "Longwood",
@@ -6558,8 +6248,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LongwoodLogoLight,
   },
   {
-    id: 2008,
-    espnId: 2623,
+    id: 2623,
     name: "Missouri State",
     shortName: "Missouri St",
     fullName: "Missouri State Bears",
@@ -6577,8 +6266,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MissouriStateLogoLight,
   },
   {
-    id: 2215,
-    espnId: 2747,
+    id: 2747,
     name: "Wofford",
     fullName: "Wofford Terriers",
     code: "WOF",
@@ -6595,8 +6283,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WoffordLogoLight,
   },
   {
-    id: 1803,
-    espnId: 2000,
+    id: 2000,
     name: "Abilene Christian",
     fullName: "Abilene Christian Wildcats",
     code: "ACU",
@@ -6613,8 +6300,7 @@ export const mcbbTeams: Team[] = [
     logoLight: AbileneChristianLogoLight,
   },
   {
-    id: 3003,
-    espnId: 2903,
+    id: 2903,
     name: "Southwestern Adventist",
     fullName: "Southwestern Adventist Knights",
     shortName: "SW Adventist",
@@ -6632,8 +6318,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 6645,
-    espnId: 130262,
+    id: 130262,
     name: "IU Columbus",
     fullName: "IU Columbus Crimson Pride",
     shortName: "IU Columbus",
@@ -6651,8 +6336,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IUColumbusLogoLight,
   },
   {
-    id: 6712,
-    espnId: 85,
+    id: 85,
     name: "IU Indianapolis",
     fullName: "IU Indianapolis Jaguars",
     shortName: "IU Indy",
@@ -6670,8 +6354,7 @@ export const mcbbTeams: Team[] = [
     logoLight: IUIndianapolisLogoLight,
   },
   {
-    id: 2170,
-    espnId: 2427,
+    id: 2427,
     name: "UNC Asheville",
     fullName: "UNC Asheville Bulldogs",
     shortName: "UNC Asheville",
@@ -6689,8 +6372,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UNCAshevilleLogoLight,
   },
   {
-    id: 2188,
-    espnId: 222,
+    id: 222,
     name: "Villanova",
     fullName: "Villanova Wildcats",
     code: "VILL",
@@ -6707,8 +6389,7 @@ export const mcbbTeams: Team[] = [
     logoLight: VillanovaLogoLight,
   },
   {
-    id: 2120,
-    espnId: 79,
+    id: 79,
     name: "Southern Illinois",
     fullName: "Southern Illinois Salukis",
     code: "SIU",
@@ -6725,8 +6406,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SouthernIllinoisLogoLight,
   },
   {
-    id: 2152,
-    espnId: 119,
+    id: 119,
     name: "Towson",
     fullName: "Towson Tigers",
     code: "TOW",
@@ -6743,8 +6423,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TowsonLogoLight,
   },
   {
-    id: 6228,
-    espnId: 128342,
+    id: 128342,
     name: "Notre Dame (MD)",
     fullName: "Notre Dame (MD) Gators",
     code: "NDMD",
@@ -6761,8 +6440,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NotreDameMDLogoLight,
   },
   {
-    id: 1844,
-    espnId: 2083,
+    id: 2083,
     name: "Bucknell",
     fullName: "Bucknell Bison",
     code: "BUCK",
@@ -6779,8 +6457,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BucknellLogoLight,
   },
   {
-    id: 2209,
-    espnId: 2729,
+    id: 2729,
     name: "William & Mary",
     fullName: "William & Mary Tribe",
     shortName: "William & Mary",
@@ -6798,8 +6475,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WilliamAndMaryLogoLight,
   },
   {
-    id: 2087,
-    espnId: 2515,
+    id: 2515,
     name: "Radford",
     fullName: "Radford Highlanders",
     code: "RAD",
@@ -6816,8 +6492,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RadfordLogoLight,
   },
   {
-    id: 220,
-    espnId: 2619,
+    id: 2619,
     name: "Stony Brook",
     fullName: "Stony Brook Seawolves",
     code: "STBK",
@@ -6834,8 +6509,7 @@ export const mcbbTeams: Team[] = [
     logoLight: StonyBrookLogoLight,
   },
   {
-    id: 208,
-    espnId: 225,
+    id: 225,
     name: "Brown",
     fullName: "Brown Bears",
     shortName: "Brown",
@@ -6853,8 +6527,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BrownLogoLight,
   },
   {
-    id: 2176,
-    espnId: 2630,
+    id: 2630,
     name: "UT Martin",
     fullName: "UT Martin Skyhawks",
     code: "UTM",
@@ -6871,8 +6544,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UTMartinLogoLight,
   },
   {
-    id: 248,
-    espnId: 292,
+    id: 292,
     name: "UT Rio Grande Valley",
     fullName: "UT Rio Grande Valley Vaqueros",
     shortName: "UT Rio Grande",
@@ -6890,8 +6562,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UTRioGrandeValleyLogoLight,
   },
   {
-    id: 2174,
-    espnId: 250,
+    id: 250,
     name: "UT Arlington",
     fullName: "UT Arlington Mavericks",
     shortName: "UT Arlington",
@@ -6909,8 +6580,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UTArlingtonLogoLight,
   },
   {
-    id: 7562,
-    espnId: 1,
+    id: 1,
     name: "Alaska Anchorage",
     fullName: "Alaska Anchorage Seawolves",
     shortName: "AK-Anchorage",
@@ -6928,8 +6598,7 @@ export const mcbbTeams: Team[] = [
     logoLight: AlaskaAnchorageLogoLight,
   },
   {
-    id: 1965,
-    espnId: 3077,
+    id: 3077,
     name: "Kentucky Christian",
     shortName: "KCU",
     fullName: "Kentucky Christian Knights",
@@ -6947,27 +6616,7 @@ export const mcbbTeams: Team[] = [
     logoLight: KentuckyChristianLogoLight,
   },
   {
-    id: 2025,
-    espnId: 2448,
-    name: "North Carolina A&T",
-    fullName: "North Carolina A&T Aggies",
-    shortName: "NC A&T",
-    code: "NCAT",
-    color: "#0505aa",
-    secondaryColor: "#004684",
-    logo: NorthCarolinaAAndTLogo,
-    location: "Greensboro, NC",
-    city: "Greensboro",
-    established: 1891,
-    isActive: true,
-    isAllStar: false,
-    isNational: false,
-    league: "mcbb",
-    logoLight: NorthCarolinaAAndTLogoLight,
-  },
-  {
-    id: 179,
-    espnId: 2097,
+    id: 2097,
     name: "Campbell",
     fullName: "Campbell Fighting Camels",
     code: "CAM",
@@ -6984,8 +6633,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CampbellLogoLight,
   },
   {
-    id: 1826,
-    espnId: 2057,
+    id: 2057,
     name: "Belmont",
     fullName: "Belmont Bruins",
     shortName: "Belmont",
@@ -7003,8 +6651,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BelmontLogoLight,
   },
   {
-    id: 1493,
-    espnId: 55,
+    id: 55,
     name: "Jax State",
     fullName: "Jacksonville State Gamecocks",
     code: "JVST",
@@ -7021,8 +6668,7 @@ export const mcbbTeams: Team[] = [
     logoLight: JaxStateLogoLight,
   },
   {
-    id: 2054,
-    espnId: 2466,
+    id: 2466,
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
     shortName: "N'Western St",
@@ -7040,8 +6686,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthwesternStateLogoLight,
   },
   {
-    id: 2142,
-    espnId: 2634,
+    id: 2634,
     name: "Tennessee State",
     fullName: "Tennessee State Tigers",
     shortName: "Tennessee St",
@@ -7059,8 +6704,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TennesseeStateLogoLight,
   },
   {
-    id: 2013,
-    espnId: 147,
+    id: 147,
     name: "Montana State",
     fullName: "Montana State Bobcats",
     code: "MTST",
@@ -7077,8 +6721,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MontanaStateLogoLight,
   },
   {
-    id: 2042,
-    espnId: 2449,
+    id: 2449,
     name: "North Dakota St",
     fullName: "North Dakota State Bison",
     code: "NDSU",
@@ -7095,8 +6738,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthDakotaStateLogoLight,
   },
   {
-    id: 2359,
-    espnId: 236,
+    id: 236,
     name: "Chattanooga",
     fullName: "Chattanooga Mocs",
     code: "UTC",
@@ -7113,8 +6755,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ChattanoogaLogoLight,
   },
   {
-    id: 224,
-    espnId: 2239,
+    id: 2239,
     name: "Cal State Fullerton",
     fullName: "Cal State Fullerton Titans",
     shortName: "Fullerton",
@@ -7132,8 +6773,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CalStateFullertonLogoLight,
   },
   {
-    id: 225,
-    espnId: 2934,
+    id: 2934,
     name: "Cal State Bakersfield",
     fullName: "Cal State Bakersfield Roadrunners",
     shortName: "Bakersfield",
@@ -7151,8 +6791,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CalStateBakersfieldLogoLight,
   },
   {
-    id: 2091,
-    espnId: 227,
+    id: 227,
     name: "Rhode Island",
     fullName: "Rhode Island Rams",
     code: "URI",
@@ -7169,8 +6808,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RhodeIslandLogoLight,
   },
   {
-    id: 3313,
-    espnId: 2519,
+    id: 2519,
     name: "Rhodes",
     fullName: "Rhodes Lynx",
     code: "RHO",
@@ -7187,8 +6825,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RhodesLogoLight,
   },
   {
-    id: 1852,
-    espnId: 2098,
+    id: 2098,
     name: "Campbellsville",
     fullName: "Campbellsville Tigers",
     code: "CBVU",
@@ -7205,8 +6842,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CampbellsvilleLogoLight,
   },
   {
-    id: 6654,
-    espnId: 2772,
+    id: 2772,
     name: "Minnesota Crookston",
     fullName: "Minnesota Crookston Golden Eagles",
     shortName: "Minn Crook",
@@ -7224,8 +6860,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MinnesotaCrookstonLogoLight,
   },
   {
-    id: 2076,
-    espnId: 2496,
+    id: 2496,
     name: "Piedmont",
     fullName: "Piedmont Lions",
     shortName: "Piedmont",
@@ -7243,8 +6878,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PiedmontLogoLight,
   },
   {
-    id: 1916,
-    espnId: 2230,
+    id: 2230,
     name: "Fordham",
     fullName: "Fordham Rams",
     shortName: "Fordham",
@@ -7262,8 +6896,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FordhamLogoLight,
   },
   {
-    id: 257,
-    espnId: 2870,
+    id: 2870,
     name: "Purdue Fort Wayne",
     fullName: "Purdue Fort Wayne Mastodons",
     shortName: "Purdue FW",
@@ -7281,8 +6914,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PurdueFortWayneLogoLight,
   },
   {
-    id: 2101,
-    espnId: 16,
+    id: 16,
     name: "Sacramento State",
     fullName: "Sacramento State Hornets",
     shortName: "Sacramento St",
@@ -7300,8 +6932,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SacramentoStateLogoLight,
   },
   {
-    id: 1939,
-    espnId: 2277,
+    id: 2277,
     name: "Houston Christian",
     fullName: "Houston Christian Huskies",
     shortName: "Hou Christian",
@@ -7319,8 +6950,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HoustonChristianLogoLight,
   },
   {
-    id: 1866,
-    espnId: 2643,
+    id: 2643,
     name: "The Citadel",
     fullName: "The Citadel Bulldogs",
     shortName: "The Citadel",
@@ -7338,8 +6968,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 6663,
-    espnId: 160,
+    id: 160,
     name: "New Hampshire",
     fullName: "New Hampshire Wildcats",
     shortName: "New Hampshire",
@@ -7357,8 +6986,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NewHampshireLogoLight,
   },
   {
-    id: 239,
-    espnId: 2443,
+    id: 2443,
     name: "New Orleans",
     fullName: "New Orleans Privateers",
     shortName: "New Orleans",
@@ -7376,8 +7004,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NewOrleansLogoLight,
   },
   {
-    id: 206,
-    espnId: 2750,
+    id: 2750,
     name: "Wright State",
     fullName: "Wright State Raiders",
     shortName: "Wright St",
@@ -7395,8 +7022,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WrightStateLogoLight,
   },
   {
-    id: 3352,
-    espnId: 2980,
+    id: 2980,
     name: "Ohio Wesleyan",
     fullName: "Ohio Wesleyan Battling Bishops",
     shortName: "Ohio Wesleyan",
@@ -7414,8 +7040,7 @@ export const mcbbTeams: Team[] = [
     logoLight: OhioWesleyanLogoLight,
   },
   {
-    id: 229,
-    espnId: 2193,
+    id: 2193,
     name: "East Tennessee State",
     fullName: "East Tennessee State Buccaneers",
     shortName: "ETSU",
@@ -7433,8 +7058,7 @@ export const mcbbTeams: Team[] = [
     logoLight: EastTennesseeStateLogoLight,
   },
   {
-    id: 2038,
-    espnId: 2453,
+    id: 2453,
     name: "North Alabama",
     fullName: "North Alabama Lions",
     shortName: "North Alabama",
@@ -7452,8 +7076,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthAlabamaLogoLight,
   },
   {
-    id: 2379,
-    espnId: 3101,
+    id: 3101,
     name: "Utah Tech",
     fullName: "Utah Tech Trailblazers",
     shortName: "Utah Tech",
@@ -7471,8 +7094,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UtahTechLogoLight,
   },
   {
-    id: 2016,
-    espnId: 2413,
+    id: 2413,
     name: "Morehead State",
     fullName: "Morehead State Eagles",
     shortName: "Morehead State",
@@ -7490,8 +7112,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MoreheadStateLogoLight,
   },
   {
-    id: 5801,
-    espnId: 111902,
+    id: 111902,
     name: "Misericordia",
     fullName: "Misericordia Cougars",
     shortName: "Misericordia",
@@ -7509,8 +7130,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MisericordiaEspn111902LogoLight,
   },
   {
-    id: 266,
-    espnId: 2822,
+    id: 2822,
     name: "North Greenville",
     fullName: "North Greenville Crusaders",
     shortName: "N Greenvll",
@@ -7528,8 +7148,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthGreenvilleLogoLight,
   },
   {
-    id: 2011,
-    espnId: 2405,
+    id: 2405,
     name: "Monmouth",
     fullName: "Monmouth Hawks",
     shortName: "Monmouth",
@@ -7547,8 +7166,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MonmouthLogoLight,
   },
   {
-    id: 2004,
-    espnId: 2400,
+    id: 2400,
     name: "Mississippi Valley St",
     fullName: "Mississippi Valley State Delta Devils",
     shortName: "Miss Valley St",
@@ -7566,8 +7184,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MississippiValleyStLogoLight,
   },
   {
-    id: 1819,
-    espnId: 3166,
+    id: 3166,
     name: "Arlington Baptist",
     fullName: "Arlington Baptist Patriots",
     shortName: "Arlington Baptist",
@@ -7585,8 +7202,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ArlingtonBaptistLogoLight,
   },
   {
-    id: 6669,
-    espnId: 130195,
+    id: 130195,
     name: "Penn State-Shenango",
     fullName: "Penn State-Shenango Nittany Lions",
     shortName: "Penn State-She",
@@ -7604,8 +7220,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PennStateShenangoLogoLight,
   },
   {
-    id: 7599,
-    espnId: 2891,
+    id: 2891,
     name: "Ripon",
     fullName: "Ripon Red Hawks",
     shortName: "Ripon",
@@ -7623,8 +7238,7 @@ export const mcbbTeams: Team[] = [
     logoLight: RiponLogoLight,
   },
   {
-    id: 274,
-    espnId: 2848,
+    id: 2848,
     name: "Western Oregon",
     fullName: "Western Oregon Wolves",
     shortName: "Western Oregon",
@@ -7642,8 +7256,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WesternOregonLogoLight,
   },
   {
-    id: 1992,
-    espnId: 2771,
+    id: 2771,
     name: "Merrimack",
     fullName: "Merrimack Warriors",
     shortName: "Merrimack",
@@ -7661,8 +7274,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MerrimackLogoLight,
   },
   {
-    id: 184,
-    espnId: 2168,
+    id: 2168,
     name: "Dayton",
     fullName: "Dayton Flyers",
     shortName: "Dayton",
@@ -7680,8 +7292,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2125,
-    espnId: 179,
+    id: 179,
     name: "St. Bonaventure",
     fullName: "St. Bonaventure Bonnies",
     shortName: "St Bonaventure",
@@ -7699,8 +7310,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1502,
-    espnId: 82,
+    id: 82,
     name: "UIC",
     fullName: "UIC Flames",
     shortName: "UIC",
@@ -7718,8 +7328,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UICLogoLight,
   },
   {
-    id: 1839,
-    espnId: 71,
+    id: 71,
     name: "Bradley",
     fullName: "Bradley Braves",
     shortName: "Bradley",
@@ -7737,8 +7346,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BradleyLogoLight,
   },
   {
-    id: 1982,
-    espnId: 2368,
+    id: 2368,
     name: "Marist",
     fullName: "Marist Red Foxes",
     shortName: "Marist",
@@ -7756,8 +7364,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MaristLogoLight,
   },
   {
-    id: 186,
-    espnId: 46,
+    id: 46,
     name: "Georgetown",
     fullName: "Georgetown Hoyas",
     shortName: "Georgetown",
@@ -7775,8 +7382,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GeorgetownLogoLight,
   },
   {
-    id: 2102,
-    espnId: 2529,
+    id: 2529,
     name: "Sacred Heart",
     fullName: "Sacred Heart Pioneers",
     shortName: "Sacred Heart",
@@ -7794,8 +7400,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SacredHeartLogoLight,
   },
   {
-    id: 178,
-    espnId: 2086,
+    id: 2086,
     name: "Butler",
     fullName: "Butler Bulldogs",
     shortName: "Butler",
@@ -7813,8 +7418,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ButlerLogoLight,
   },
   {
-    id: 183,
-    espnId: 2166,
+    id: 2166,
     name: "Davidson",
     fullName: "Davidson Wildcats",
     shortName: "Davidson",
@@ -7832,8 +7436,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DavidsonLogoLight,
   },
   {
-    id: 1885,
-    espnId: 2169,
+    id: 2169,
     name: "Delaware State",
     fullName: "Delaware State Hornets",
     shortName: "Delaware St",
@@ -7851,8 +7454,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DelawareStateLogoLight,
   },
   {
-    id: 2212,
-    espnId: 2737,
+    id: 2737,
     name: "Winthrop",
     fullName: "Winthrop Eagles",
     shortName: "Winthrop",
@@ -7870,8 +7472,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WinthropLogoLight,
   },
   {
-    id: 5866,
-    espnId: 284,
+    id: 284,
     name: "Stonehill",
     fullName: "Stonehill Skyhawks",
     shortName: "Stonehill",
@@ -7889,8 +7490,7 @@ export const mcbbTeams: Team[] = [
     logoLight: StonehillLogoLight,
   },
   {
-    id: 2012,
-    espnId: 149,
+    id: 149,
     name: "Montana",
     fullName: "Montana Grizzlies",
     shortName: "Montana",
@@ -7908,8 +7508,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1889,
-    espnId: 2182,
+    id: 2182,
     name: "Drexel",
     fullName: "Drexel Dragons",
     shortName: "Drexel",
@@ -7927,8 +7526,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DrexelLogoLight,
   },
   {
-    id: 228,
-    espnId: 2181,
+    id: 2181,
     name: "Drake",
     fullName: "Drake Bulldogs",
     shortName: "Drake",
@@ -7946,8 +7544,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DrakeLogoLight,
   },
   {
-    id: 2135,
-    espnId: 56,
+    id: 56,
     name: "Stetson",
     fullName: "Stetson Hatters",
     shortName: "Stetson",
@@ -7965,8 +7562,7 @@ export const mcbbTeams: Team[] = [
     logoLight: StetsonLogoLight,
   },
   {
-    id: 1811,
-    espnId: 44,
+    id: 44,
     name: "American University",
     fullName: "American University Eagles",
     shortName: "American",
@@ -7984,8 +7580,7 @@ export const mcbbTeams: Team[] = [
     logoLight: AmericanUniversityLogoLight,
   },
   {
-    id: 1934,
-    espnId: 2272,
+    id: 2272,
     name: "High Point",
     fullName: "High Point Panthers",
     shortName: "High Point",
@@ -8003,8 +7598,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2114,
-    espnId: 2565,
+    id: 2565,
     name: "SIU Edwardsville",
     fullName: "SIU Edwardsville Cougars",
     shortName: "SIUE",
@@ -8022,8 +7616,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 193,
-    espnId: 2430,
+    id: 2430,
     name: "UNC Greensboro",
     fullName: "UNC Greensboro Spartans",
     shortName: "UNC Greensboro",
@@ -8041,8 +7634,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UNCGreensboroLogoLight,
   },
   {
-    id: 2080,
-    espnId: 2501,
+    id: 2501,
     name: "Portland",
     fullName: "Portland Pilots",
     shortName: "Portland",
@@ -8060,8 +7652,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PortlandLogoLight,
   },
   {
-    id: 2082,
-    espnId: 2502,
+    id: 2502,
     name: "Portland State",
     fullName: "Portland State Vikings",
     shortName: "Portland St",
@@ -8079,8 +7670,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PortlandStateLogoLight,
   },
   {
-    id: 3325,
-    espnId: 2900,
+    id: 2900,
     name: "St. Thomas-Minnesota",
     fullName: "St. Thomas-Minnesota Tommies",
     shortName: "St Thomas (MN)",
@@ -8098,8 +7688,7 @@ export const mcbbTeams: Team[] = [
     logoLight: StThomasMinnesotaLogoLight,
   },
   {
-    id: 197,
-    espnId: 2507,
+    id: 2507,
     name: "Providence",
     fullName: "Providence Friars",
     shortName: "Providence",
@@ -8117,8 +7706,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ProvidenceLogoLight,
   },
   {
-    id: 3371,
-    espnId: 112706,
+    id: 112706,
     name: "Penn State-York",
     fullName: "Penn State-York Nittany Lions",
     shortName: "PSU York",
@@ -8136,8 +7724,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PennStateYorkLogoLight,
   },
   {
-    id: 2056,
-    espnId: 2473,
+    id: 2473,
     name: "Oakland",
     fullName: "Oakland Golden Grizzlies",
     shortName: "Oakland",
@@ -8155,8 +7742,7 @@ export const mcbbTeams: Team[] = [
     logoLight: OaklandLogoLight,
   },
   {
-    id: 1886,
-    espnId: 2172,
+    id: 2172,
     name: "Denver",
     fullName: "Denver Pioneers",
     shortName: "Denver",
@@ -8174,8 +7760,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2184,
-    espnId: 2674,
+    id: 2674,
     name: "Valparaiso",
     fullName: "Valparaiso Beacons",
     code: "VAL",
@@ -8192,8 +7777,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ValparaisoLogoLight,
   },
   {
-    id: 2083,
-    espnId: 2504,
+    id: 2504,
     name: "Prairie View A&M",
     fullName: "Prairie View A&M Panthers",
     shortName: "PV A&M",
@@ -8211,8 +7795,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PrairieViewLogoLight,
   },
   {
-    id: 1882,
-    espnId: 2937,
+    id: 2937,
     name: "Dallas",
     fullName: "Dallas Crusaders",
     shortName: "Dallas",
@@ -8230,8 +7813,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DallasLogoLight,
   },
   {
-    id: 3239,
-    espnId: 3107,
+    id: 3107,
     name: "East-West University",
     fullName: "East-West University Phantoms",
     shortName: "East West",
@@ -8249,26 +7831,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 299,
-    espnId: 111756,
-    name: "Indiana Wesleyan",
-    logo: IndianaWesleyanLogo,
-    isActive: true,
-    isAllStar: false,
-    code: "",
-    color: "",
-    secondaryColor: "",
-    fullName: "",
-    city: "",
-    location: "",
-    established: 0,
-    isNational: false,
-    league: "mcbb",
-    logoLight: IndianaWesleyanLogoLight,
-  },
-  {
-    id: 199,
-    espnId: 301,
+    id: 301,
     name: "San Diego",
     fullName: "San Diego Toreros",
     code: "USD",
@@ -8286,8 +7849,7 @@ export const mcbbTeams: Team[] = [
   },
 
   {
-    id: 2026,
-    espnId: 2428,
+    id: 2428,
     name: "North Carolina Central",
     fullName: "North Carolina Central Eagles",
     shortName: "NC Central",
@@ -8305,8 +7867,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NorthCarolinaCentralLogoLight,
   },
   {
-    id: 1955,
-    espnId: 353,
+    id: 353,
     name: "Johnson & Wales (RI)",
     fullName: "Johnson & Wales (RI) Griffins",
     shortName: "Johnson Wales",
@@ -8324,8 +7885,7 @@ export const mcbbTeams: Team[] = [
     logoLight: JohnsonAndWalesRILogoLight,
   },
   {
-    id: 6661,
-    espnId: 108838,
+    id: 108838,
     name: "Mitchell College",
     fullName: "Mitchell College Mariners",
     shortName: "Mitchell",
@@ -8343,8 +7903,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MitchellCollegeLogoLight,
   },
   {
-    id: 6678,
-    espnId: 355,
+    id: 355,
     name: "SUNY-Oneonta",
     fullName: "SUNY-Oneonta Red Dragons",
     shortName: "SUNY-Oneonta",
@@ -8362,8 +7921,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SUNYOneontaLogoLight,
   },
   {
-    id: 5867,
-    espnId: 2951,
+    id: 2951,
     name: "SUNY-Maritime",
     fullName: "SUNY-Maritime Privateers",
     shortName: "SUNY-Maritime",
@@ -8381,8 +7939,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SUNYMaritimeLogoLight,
   },
   {
-    id: 210,
-    espnId: 2856,
+    id: 2856,
     name: "California Baptist",
     fullName: "California Baptist Lancers",
     shortName: "CA Baptist",
@@ -8400,8 +7957,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CaliforniaBaptistLogoLight,
   },
   {
-    id: 1497,
-    espnId: 2539,
+    id: 2539,
     name: "San Francisco",
     fullName: "San Francisco Dons",
     shortName: "San Francisco",
@@ -8419,8 +7975,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1952,
-    espnId: 2296,
+    id: 2296,
     name: "Jackson State",
     fullName: "Jackson State Tigers",
     shortName: "Jackson St",
@@ -8438,8 +7993,7 @@ export const mcbbTeams: Team[] = [
     logoLight: JacksonStateLogoLight,
   },
   {
-    id: 3332,
-    espnId: 3229,
+    id: 3229,
     name: "Virginia Lynchburg",
     fullName: "Virginia-Lynchburg Dragons",
     shortName: "VA Lynchburg",
@@ -8457,8 +8011,7 @@ export const mcbbTeams: Team[] = [
     logoLight: VirginiaLynchburgLogoLight,
   },
   {
-    id: 1973,
-    espnId: 2815,
+    id: 2815,
     name: "Lindenwood",
     fullName: "Lindenwood Lions",
     shortName: "Lindenwood",
@@ -8476,8 +8029,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LindenwoodLogoLight,
   },
   {
-    id: 2430,
-    espnId: 2511,
+    id: 2511,
     name: "Queens",
     fullName: "Queens University Royals",
     shortName: "Queens",
@@ -8495,8 +8047,7 @@ export const mcbbTeams: Team[] = [
     logoLight: QueensLogoLight,
   },
   {
-    id: 5787,
-    espnId: 2355,
+    id: 2355,
     name: "Lynchburg",
     fullName: "Lynchburg Hornets",
     shortName: "Lynchburg",
@@ -8514,26 +8065,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LynchburgLogoLight,
   },
   {
-    id: 317,
-    espnId: null,
-    name: "Barton College",
-    fullName: "Barton College",
-    logo: PlaceholderLogo,
-    location: "Wilson, NC",
-    city: "Wilson",
-    established: 1902,
-    isActive: false,
-    isAllStar: false,
-    code: "",
-    color: "",
-    secondaryColor: "",
-    isNational: false,
-    league: "mcbb",
-    logoLight: PlaceholderLogo,
-  },
-  {
-    id: 187,
-    espnId: 108,
+    id: 108,
     name: "Harvard",
     fullName: "Harvard Crimson",
     code: "HARV",
@@ -8550,8 +8082,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HarvardLogoLight,
   },
   {
-    id: 2084,
-    espnId: 163,
+    id: 163,
     name: "Princeton",
     fullName: "Princeton Tigers",
     code: "PRIN",
@@ -8568,8 +8099,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PrincetonLogoLight,
   },
   {
-    id: 2072,
-    espnId: 219,
+    id: 219,
     name: "Pennsylvania",
     fullName: "Pennsylvania Quakers",
     code: "PENN",
@@ -8586,8 +8116,7 @@ export const mcbbTeams: Team[] = [
     logoLight: PennsylvaniaLogoLight,
   },
   {
-    id: 227,
-    espnId: 172,
+    id: 172,
     name: "Cornell",
     fullName: "Cornell Big Red",
     code: "COR",
@@ -8604,8 +8133,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CornellLogoLight,
   },
   {
-    id: 1883,
-    espnId: 159,
+    id: 159,
     name: "Dartmouth",
     fullName: "Dartmouth Big Green",
     shortName: "Dartmouth",
@@ -8623,8 +8151,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DartmouthLogoLight,
   },
   {
-    id: 2217,
-    espnId: 43,
+    id: 43,
     name: "Yale",
     fullName: "Yale Bulldogs",
     shortName: "Yale",
@@ -8642,8 +8169,7 @@ export const mcbbTeams: Team[] = [
     logoLight: YaleLogoLight,
   },
   {
-    id: 1907,
-    espnId: 161,
+    id: 161,
     name: "Fairleigh Dickinson",
     fullName: "Fairleigh Dickinson Knights",
     shortName: "FDU",
@@ -8661,8 +8187,7 @@ export const mcbbTeams: Team[] = [
     logoLight: FairleighDickinsonLogoLight,
   },
   {
-    id: 1971,
-    espnId: 2329,
+    id: 2329,
     name: "Lehigh",
     fullName: "Lehigh Mountain Hawks",
     shortName: "Lehigh",
@@ -8680,8 +8205,7 @@ export const mcbbTeams: Team[] = [
     logoLight: LehighLogoLight,
   },
   {
-    id: 249,
-    espnId: 2739,
+    id: 2739,
     name: "Wisc. Green Bay",
     fullName: "Green Bay Phoenix",
     shortName: "Green Bay",
@@ -8699,7 +8223,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2017,
+    id: 60,
     name: "Morehouse College",
     fullName: "Morehouse College",
     logo: PlaceholderLogo,
@@ -8709,7 +8233,6 @@ export const mcbbTeams: Team[] = [
     established: 1867,
     isActive: false,
     isAllStar: false,
-    espnId: null,
     code: "",
     color: "",
     secondaryColor: "",
@@ -8717,8 +8240,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1871,
-    espnId: 171,
+    id: 171,
     name: "Columbia",
     fullName: "Columbia Lions",
     shortName: "Columbia",
@@ -8736,8 +8258,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ColumbiaLogoLight,
   },
   {
-    id: 2362,
-    espnId: 2627,
+    id: 2627,
     name: "Tarleton State",
     fullName: "Tarleton State Texans",
     shortName: "Tarleton St",
@@ -8755,8 +8276,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TarletonStateLogoLight,
   },
   {
-    id: 241,
-    espnId: 2514,
+    id: 2514,
     name: "Quinnipiac",
     fullName: "Quinnipiac Bobcats",
     code: "QUIN",
@@ -8773,8 +8293,7 @@ export const mcbbTeams: Team[] = [
     logoLight: QuinnipiacLogoLight,
   },
   {
-    id: 3330,
-    espnId: 2370,
+    id: 2370,
     name: "Tennessee Southern",
     fullName: "Tennessee Southern Firehawks",
     shortName: "UT Southern",
@@ -8792,8 +8311,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TennesseeSouthernLogoLight,
   },
   {
-    id: 373,
-    espnId: 2699,
+    id: 2699,
     name: "West Liberty",
     fullName: "West Liberty Hilltoppers",
     code: "WLIBST",
@@ -8810,8 +8328,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 374,
-    espnId: 2274,
+    id: 2274,
     name: "Hiram College",
     fullName: "Hiram College Terriers",
     code: "HIR",
@@ -8828,8 +8345,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HiramCollegeLogoLight,
   },
   {
-    id: 375,
-    espnId: 83,
+    id: 83,
     name: "Depauw",
     fullName: "Depauw Tigers",
     code: "DEP",
@@ -8846,8 +8362,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DepauwLogoLight,
   },
   {
-    id: 213,
-    espnId: 305,
+    id: 305,
     name: "DePaul",
     fullName: "DePaul Blue Demons",
     shortName: "DePaul",
@@ -8865,8 +8380,7 @@ export const mcbbTeams: Team[] = [
     logoLight: DePaulLogoLight,
   },
   {
-    id: 1887,
-    espnId: 2174,
+    id: 2174,
     name: "Detroit Mercy",
     fullName: "Detroit Mercy Titans",
     shortName: "Detroit Mercy",
@@ -8885,8 +8399,7 @@ export const mcbbTeams: Team[] = [
   },
 
   {
-    id: 5796,
-    espnId: 2384,
+    id: 2384,
     name: "Mercy",
     fullName: "Mercy Mavericks",
     shortName: "Mercy",
@@ -8904,8 +8417,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MercyLogoLight,
   },
   {
-    id: 2050,
-    espnId: 94,
+    id: 94,
     name: "Northern Kentucky",
     fullName: "Northern Kentucky Norse",
     shortName: "N Kentucky",
@@ -8924,8 +8436,7 @@ export const mcbbTeams: Team[] = [
   },
 
   {
-    id: 376,
-    espnId: 286,
+    id: 286,
     name: "NC Wesleyan",
     fullName: "North Carolina Wesleyan Battling Bishops",
     shortName: "NC Wesleyan",
@@ -8943,8 +8454,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NCWesleyanLogoLight,
   },
   {
-    id: 3224,
-    espnId: 2079,
+    id: 2079,
     name: "Bridgewater (VA)",
     fullName: "Bridgewater Eagles",
     shortName: "Bridgewater",
@@ -8962,8 +8472,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BridgewaterVALogoLight,
   },
   {
-    id: 7635,
-    espnId: 18,
+    id: 18,
     name: "Bridgewater State",
     fullName: "Bridgewater State Bears",
     shortName: "Bridgewater St",
@@ -8981,8 +8490,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BridgewaterStateLogoLight,
   },
   {
-    id: 393,
-    espnId: 2884,
+    id: 2884,
     name: "Nichols",
     fullName: "Nichols College Bison",
     code: "NICHOLS",
@@ -8999,27 +8507,7 @@ export const mcbbTeams: Team[] = [
     logoLight: NicholsLogoLight,
   },
   {
-    id: 609,
-    name: "Central Washington",
-    fullName: "Central Washington Wildcats",
-    shortName: "C Washington",
-    code: "CWU",
-    color: "#9b1c2c",
-    secondaryColor: "#000000",
-    logo: CentralWashingtonLogo,
-    location: "Ellensburg, WA",
-    city: "Ellensburg",
-    established: 1891,
-    isActive: true,
-    isAllStar: false,
-    espnId: null,
-    isNational: false,
-    league: "mcbb",
-    logoLight: CentralWashingtonLogoLight,
-  },
-  {
-    id: 6686,
-    espnId: 2698,
+    id: 2698,
     name: "West Georgia",
     fullName: "West Georgia Wolves",
     code: "WGA",
@@ -9036,8 +8524,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WestGeorgiaLogoLight,
   },
   {
-    id: 1827,
-    espnId: 2062,
+    id: 2062,
     name: "Bethany (WV)",
     code: "BCWV",
     fullName: "Bethany (WV) Bison",
@@ -9054,8 +8541,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BethanyWVLogoLight,
   },
   {
-    id: 6632,
-    espnId: 399,
+    id: 399,
     name: "UAlbany",
     fullName: "UAlbany Great Danes",
     shortName: "UAlbany",
@@ -9073,8 +8559,7 @@ export const mcbbTeams: Team[] = [
     logoLight: UAlbanyLogoLight,
   },
   {
-    id: 5846,
-    espnId: 126848,
+    id: 126848,
     name: "SUNY Delhi",
     fullName: "SUNY Delhi Broncos",
     shortName: "SUNY Delhi",
@@ -9092,8 +8577,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SUNYDelhiLogoLight,
   },
   {
-    id: 198,
-    espnId: 2534,
+    id: 2534,
     name: "Sam Houston",
     fullName: "Sam Houston Bearkats",
     shortName: "Sam Houston",
@@ -9111,8 +8595,7 @@ export const mcbbTeams: Team[] = [
     logoLight: SamHoustonLogoLight,
   },
   {
-    id: 207,
-    espnId: 2752,
+    id: 2752,
     name: "Xavier",
     fullName: "Xavier Musketeers",
     shortName: "Xavier",
@@ -9130,7 +8613,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 814,
+    id: 148,
     name: "Montana Tech",
     fullName: "Montana Tech Orediggers",
     shortName: "Montana Tech",
@@ -9143,14 +8626,12 @@ export const mcbbTeams: Team[] = [
     established: 1900,
     isActive: false,
     isAllStar: false,
-    espnId: null,
     isNational: false,
     league: "mcbb",
     logoLight: PlaceholderLogo,
   },
   {
-    id: 7564,
-    espnId: 2018,
+    id: 2018,
     name: "Allegheny",
     fullName: "Allegheny Gators",
     shortName: "Allegheny",
@@ -9168,8 +8649,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 2155,
-    espnId: 3174,
+    id: 3174,
     name: "Trinity College of Jacksonville",
     fullName: "Trinity College of Jacksonville Eagles",
     shortName: "Trinity Co Jax",
@@ -9187,8 +8667,7 @@ export const mcbbTeams: Team[] = [
     logoLight: TrinityCollegeOfJacksonvilleLogoLight,
   },
   {
-    id: 7806,
-    espnId: 2837,
+    id: 2837,
     name: "East Texas A&M",
     fullName: "East Texas A&M Lions",
     shortName: "East Texas A&M",
@@ -9206,8 +8685,7 @@ export const mcbbTeams: Team[] = [
     logoLight: EastTexasAAndMLogoLight,
   },
   {
-    id: 1927,
-    espnId: 2250,
+    id: 2250,
     name: "Gonzaga",
     fullName: "Gonzaga Bulldogs",
     shortName: "Gonzaga",
@@ -9225,8 +8703,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GonzagaLogoLight,
   },
   {
-    id: 1500,
-    espnId: 45,
+    id: 45,
     name: "George Washington",
     fullName: "George Washington Revolutionaries",
     shortName: "G Washington",
@@ -9244,8 +8721,7 @@ export const mcbbTeams: Team[] = [
     logoLight: GeorgeWashingtonLogoLight,
   },
   {
-    id: 2020,
-    espnId: 116,
+    id: 116,
     name: "Mount St. Mary's",
     fullName: "Mount St. Mary's Mountaineers",
     shortName: "Mount St Marys",
@@ -9263,8 +8739,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MountStMarysLogoLight,
   },
   {
-    id: 182,
-    espnId: 156,
+    id: 156,
     name: "Creighton",
     fullName: "Creighton Bluejays",
     shortName: "Creighton",
@@ -9282,8 +8757,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CreightonLogoLight,
   },
   {
-    id: 2127,
-    espnId: 2599,
+    id: 2599,
     name: "St. John's",
     fullName: "St. John's Red Storm",
     shortName: "St. John's",
@@ -9301,8 +8775,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1863,
-    espnId: 2130,
+    id: 2130,
     name: "Chicago State",
     fullName: "Chicago State Cougars",
     shortName: "Chicago State",
@@ -9320,8 +8793,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ChicagoStateLogoLight,
   },
   {
-    id: 3289,
-    espnId: 2404,
+    id: 2404,
     name: "Molloy",
     fullName: "Molloy Lions",
     shortName: "Molloy",
@@ -9339,8 +8811,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MolloyLogoLight,
   },
   {
-    id: 1867,
-    espnId: 325,
+    id: 325,
     name: "Cleveland State",
     fullName: "Cleveland State Vikings",
     shortName: "Cleveland St",
@@ -9358,8 +8829,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ClevelandStateLogoLight,
   },
   {
-    id: 1940,
-    espnId: 2758,
+    id: 2758,
     name: "Howard Payne",
     fullName: "Howard Payne Yellow Jackets",
     shortName: "Howard Payne",
@@ -9377,8 +8847,7 @@ export const mcbbTeams: Team[] = [
     logoLight: HowardPayneLogoLight,
   },
   {
-    id: 6655,
-    espnId: 130196,
+    id: 130196,
     name: "Manor College",
     fullName: "Manor College Blue Jays",
     shortName: "Manor College",
@@ -9396,8 +8865,7 @@ export const mcbbTeams: Team[] = [
     logoLight: ManorCollegeLogoLight,
   },
   {
-    id: 3336,
-    espnId: 2684,
+    id: 2684,
     name: "Warren Wilson",
     fullName: "Warren Wilson Owls",
     shortName: "Warren Wilson",
@@ -9415,8 +8883,7 @@ export const mcbbTeams: Team[] = [
     logoLight: WarrenWilsonLogoLight,
   },
   {
-    id: 7565,
-    espnId: 489,
+    id: 489,
     name: "Barber Scotia",
     fullName: "Barber-Scotia Saber-Tooth Tigers",
     shortName: "Barber Scotia",
@@ -9434,8 +8901,7 @@ export const mcbbTeams: Team[] = [
     logoLight: BarberScotiaLogoLight,
   },
   {
-    id: 0,
-    espnId: 108806,
+    id: 108806,
     name: "Mid-Atlantic Christian",
     fullName: "Mid-Atlantic Christian Mustangs",
     shortName: "MACU",
@@ -9453,8 +8919,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MidAtlanticChristianLogoLight,
   },
   {
-    id: 2472,
-    espnId: 2385,
+    id: 2385,
     name: "Mercyhurst",
     fullName: "Mercyhurst Lakers",
     shortName: "Mercyhurst",
@@ -9472,8 +8937,7 @@ export const mcbbTeams: Team[] = [
     logoLight: MercyhurstLogoLight,
   },
   {
-    id: 7569,
-    espnId: 170,
+    id: 170,
     name: "City College NY",
     fullName: "City College of New York Beavers",
     shortName: "CCNY",
@@ -9491,8 +8955,7 @@ export const mcbbTeams: Team[] = [
     logoLight: CityCollegeNYLogoLight,
   },
   {
-    id: 5837,
-    espnId: 126821,
+    id: 126821,
     name: "Pittsburgh Greensburg",
     fullName: "Pittsburgh Greensburg Bobcats",
     shortName: "Pitt Greensburg",
@@ -9510,8 +8973,7 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
   },
   {
-    id: 1923,
-    espnId: 2242,
+    id: 2242,
     name: "Geneva",
     fullName: "Geneva College Golden Tornadoes",
     shortName: "Geneva",
@@ -9528,16 +8990,66 @@ export const mcbbTeams: Team[] = [
     league: "mcbb",
     logoLight: GenevaLogoLight,
   },
+  {
+    id: 2318,
+    name: "La Verne",
+    fullName: "La Verne",
+    shortName: "La Verne",
+    code: "",
+    city: "La Verne",
+    location: "La Verne,CA",
+    established: 1891,
+    color: null,
+    secondaryColor: null,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "mcbb",
+    logo: PlaceholderLogo,
+    logoLight: PlaceholderLogo,
+  },
+  {
+    id: 42,
+    name: "Hartford",
+    fullName: "Hartford Hawks",
+    shortName: "Hartford",
+    code: "HART",
+    city: "West Hartford",
+    location: "West Hartford,CT",
+    established: 1877,
+    color: "#C8102E",
+    secondaryColor: "#FFFFFF",
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "mcbb",
+    logo: PlaceholderLogo,
+    logoLight: PlaceholderLogo,
+  },
+  {
+    id: 2542,
+    name: "Savannah State",
+    fullName: "Savannah State Tigers",
+    shortName: "Savannah State",
+    code: "SAV",
+    city: "Savannah",
+    location: "Savannah,GA",
+    established: 1890,
+    color: "#003366",
+    secondaryColor: "#FF6600",
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "mcbb",
+    logo: PlaceholderLogo,
+    logoLight: PlaceholderLogo,
+  },
 ];
 
 export const getMCBBTeam = (id: number | string | undefined) => {
   if (id == null) return undefined;
 
   return mcbbTeams.find((t) => String(t.id) === String(id));
-};
-
-export const getMCBBTeamByESPNId = (espnId: number | string) => {
-  return mcbbTeams.find((t) => String(t.espnId) === String(espnId));
 };
 
 export const getMCBBTeamLogo = (id?: number | string, isDark = false) => {
@@ -9561,133 +9073,133 @@ export const MCBB_RIVALRIES = [
   {
     id: "duke-north-carolina",
     name: "The Battle of the Blues",
-    teamIds: [1890, 2039],
+    teamIds: [150, 153],
     group: "regional",
   },
   {
     id: "kentucky-louisville",
     name: "Battle for the Bluegrass",
-    teamIds: [1964, 1977],
+    teamIds: [96, 97],
     group: "regional",
   },
   {
     id: "indiana-purdue",
     name: "Indiana–Purdue",
-    teamIds: [189, 2085],
+    teamIds: [84, 2509],
     group: "regional",
   },
   {
     id: "kansas-kansas-state",
     name: "Sunflower Showdown",
-    teamIds: [1959, 1960],
+    teamIds: [2305, 2306],
     group: "regional",
   },
   {
     id: "kansas-missouri",
     name: "Border War",
-    teamIds: [1959, 2006],
+    teamIds: [2305, 142],
     group: "regional",
   },
   {
     id: "michigan-michigan-state",
     name: "Michigan–Michigan State",
-    teamIds: [1994, 1995],
+    teamIds: [130, 127],
     group: "regional",
   },
   {
     id: "cincinnati-xavier",
     name: "Crosstown Shootout",
-    teamIds: [1865, 207],
+    teamIds: [2132, 2752],
     group: "regional",
   },
   {
     id: "georgetown-syracuse",
     name: "Georgetown–Syracuse",
-    teamIds: [186, 2137],
+    teamIds: [46, 183],
     group: "national",
   },
   {
     id: "gonzaga-saint-mary-s",
     name: "Gonzaga–Saint Mary’s",
-    teamIds: [1927, 2130],
+    teamIds: [2250, 2608],
     group: "national",
   },
   {
     id: "ucla-usc",
     name: "Crosstown Rivalry",
-    teamIds: [2166, 2172],
+    teamIds: [26, 30],
     group: "regional",
   },
   {
     id: "arizona-arizona-state",
     name: "Arizona–Arizona State",
-    teamIds: [1815, 1816],
+    teamIds: [12, 9],
     group: "regional",
   },
   {
     id: "north-carolina-nc-state",
     name: "North Carolina–NC State",
-    teamIds: [2039, 194],
+    teamIds: [153, 152],
     group: "regional",
   },
   {
     id: "duke-nc-state",
     name: "Duke–NC State",
-    teamIds: [1890, 194],
+    teamIds: [150, 152],
     group: "regional",
   },
   {
     id: "marquette-wisconsin",
     name: "Marquette–Wisconsin",
-    teamIds: [1983, 2214],
+    teamIds: [269, 275],
     group: "regional",
   },
   {
     id: "iowa-iowa-state",
     name: "Cy-Hawk Rivalry",
-    teamIds: [1950, 1951],
+    teamIds: [2294, 66],
     group: "regional",
   },
   {
     id: "oregon-oregon-state",
     name: "Oregon–Oregon State",
-    teamIds: [2065, 2066],
+    teamIds: [2483, 204],
     group: "regional",
   },
   {
     id: "washington-washington-state",
     name: "Washington–Washington State",
-    teamIds: [2193, 2195],
+    teamIds: [264, 265],
     group: "regional",
   },
   {
     id: "new-mexico-new-mexico-state",
     name: "Rio Grande Rivalry",
-    teamIds: [2034, 2035],
+    teamIds: [167, 166],
     group: "regional",
   },
   {
     id: "byu-utah",
     name: "Holy War",
-    teamIds: [1841, 2181],
+    teamIds: [252, 254],
     group: "regional",
   },
   {
     id: "unlv-nevada",
     name: "Silver State Rivalry",
-    teamIds: [2171, 2032],
+    teamIds: [2439, 2440],
     group: "regional",
   },
   {
     id: "kentucky-tennessee",
     name: "Kentucky–Tennessee",
-    teamIds: [1964, 2141],
+    teamIds: [96, 2633],
     group: "regional",
   },
   {
     id: "texas-oklahoma",
     name: "Red River Rivalry",
-    teamIds: [203, 2059],
+    teamIds: [251, 201],
     group: "regional",
   },
 ] as const satisfies readonly MCBBRivalry[];

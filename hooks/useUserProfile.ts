@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { isFavoriteSportId, type FavoriteSportId } from "constants/leagues";
 import { teams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
-import { mcbbTeams } from "constants/teamsMCBB";
 import { cfbTeams } from "constants/teamsCFB";
+import { mcbbTeams } from "constants/teamsMCBB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
@@ -14,7 +15,6 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
-import { isFavoriteSportId, type FavoriteSportId } from "constants/leagues";
 import type { FavoriteLeague, FavoriteTeamKey } from "types/favorites";
 import { isFavoriteLeague, normalizeFavoriteTeamKeys } from "types/favorites";
 import type { Team as TeamConfig } from "types/team";
@@ -189,7 +189,12 @@ function getProfileKey(userId: string, currentUserId: number | null) {
 }
 
 export type UseUserProfileOptions = {
-  initialProfile?: Partial<Pick<DisplayProfile, "username" | "fullName" | "bio" | "profileImage" | "bannerImage">>;
+  initialProfile?: Partial<
+    Pick<
+      DisplayProfile,
+      "username" | "fullName" | "bio" | "profileImage" | "bannerImage"
+    >
+  >;
   initialIsFollowing?: boolean;
   initialFollowersCount?: number;
   initialFollowingCount?: number;
@@ -210,12 +215,22 @@ export function useUserProfile(
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [hasLoadedCurrentUserId, setHasLoadedCurrentUserId] = useState(false);
 
-  const [initialProfile] = useState(() => normalizeDisplayProfile(options.initialProfile ?? {}, userId ?? ""));
-  const [username, setUsername] = useState<string | null>(initialProfile.username);
-  const [fullName, setFullName] = useState<string | null>(initialProfile.fullName);
+  const [initialProfile] = useState(() =>
+    normalizeDisplayProfile(options.initialProfile ?? {}, userId ?? ""),
+  );
+  const [username, setUsername] = useState<string | null>(
+    initialProfile.username,
+  );
+  const [fullName, setFullName] = useState<string | null>(
+    initialProfile.fullName,
+  );
   const [bio, setBio] = useState<string | null>(initialProfile.bio);
-  const [profileImage, setProfileImage] = useState<string | null>(initialProfile.profileImage);
-  const [bannerImage, setBannerImage] = useState<string | null>(initialProfile.bannerImage);
+  const [profileImage, setProfileImage] = useState<string | null>(
+    initialProfile.profileImage,
+  );
+  const [bannerImage, setBannerImage] = useState<string | null>(
+    initialProfile.bannerImage,
+  );
 
   const [followersCount, setFollowersCount] = useState(initialCounts.followers);
   const [followingCount, setFollowingCount] = useState(initialCounts.following);
@@ -272,17 +287,28 @@ export function useUserProfile(
   }, [activeProfileKey]);
 
   const resetProfileState = useCallback(() => {
-    setUsername(userId === initialFollowState.userId ? initialProfile.username : null);
-    setFullName(userId === initialFollowState.userId ? initialProfile.fullName : null);
+    setUsername(
+      userId === initialFollowState.userId ? initialProfile.username : null,
+    );
+    setFullName(
+      userId === initialFollowState.userId ? initialProfile.fullName : null,
+    );
     setBio(userId === initialFollowState.userId ? initialProfile.bio : null);
-    setProfileImage(userId === initialFollowState.userId ? initialProfile.profileImage : null);
-    setBannerImage(userId === initialFollowState.userId ? initialProfile.bannerImage : null);
+    setProfileImage(
+      userId === initialFollowState.userId ? initialProfile.profileImage : null,
+    );
+    setBannerImage(
+      userId === initialFollowState.userId ? initialProfile.bannerImage : null,
+    );
     setFollowersCount(initialCounts.followers);
     setFollowingCount(initialCounts.following);
     setFavoriteTeams([]);
     setFavoriteSports([]);
-    setIsFollowing(userId === initialFollowState.userId
-      ? initialFollowState.isFollowing : null);
+    setIsFollowing(
+      userId === initialFollowState.userId
+        ? initialFollowState.isFollowing
+        : null,
+    );
     setIsBlockedByViewer(false);
     setHasBlockedViewer(false);
   }, [initialCounts, initialFollowState, initialProfile, userId]);
@@ -342,7 +368,7 @@ export function useUserProfile(
   }, []);
 
   const fetchUserData = useCallback(
-    async (options?: { hydrateCache?: boolean; }) => {
+    async (options?: { hydrateCache?: boolean }) => {
       if (!userId) {
         requestIdRef.current += 1;
         lastLoadedProfileKeyRef.current = null;
@@ -412,7 +438,7 @@ export function useUserProfile(
         const freshProfile = normalizeDisplayProfile(data, userId);
         const displayProfile =
           cachedProfile &&
-            shouldPreferCachedDisplay(cachedProfile, freshProfile)
+          shouldPreferCachedDisplay(cachedProfile, freshProfile)
             ? cachedProfile
             : freshProfile;
 
@@ -577,12 +603,11 @@ export function useUserProfile(
           const team = teamLookups[league].get(id);
           return team
             ? {
-              ...team,
-              espnId: team.espnId ?? null,
-              city: team.city ?? undefined,
-              location: team.location ?? undefined,
-              league,
-            }
+                ...team,
+                city: team.city ?? undefined,
+                location: team.location ?? undefined,
+                league,
+              }
             : null;
         })
         .filter((team): team is Team => team !== null),

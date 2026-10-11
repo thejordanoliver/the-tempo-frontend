@@ -1,6 +1,6 @@
-import type { GameVenueInfo } from "types/gameVenue";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
+import type { GameVenueInfo } from "types/gameVenue";
 import { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { Official, TeamInjury } from "../FootballHooks/useFootballGameDetails";
@@ -282,7 +282,7 @@ export type GameStatus = {
     | "STATUS_IN_PROGRESS"
     | "STATUS_HALFTIME"
     | "STATUS_FINAL";
-  state: "pre" | "in" | "post";
+  state: string;
   completed: boolean;
   gameStatusDescription: string;
   gameStatusDetail: string;

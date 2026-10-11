@@ -37,8 +37,6 @@ export default function HeadToHeadGames({
   const homeTeamCode = homeTeam?.code;
   const awayTeamCode = awayTeam?.code;
 
-  const homeTeamEspnId = String(homeTeam?.espnId) ?? "";
-  const awayTeamEspnId = String(awayTeam?.espnId) ?? "";
 
   const { data, loading, error } = useHeadToHeadGames(homeTeamId, awayTeamId);
 
@@ -54,7 +52,7 @@ export default function HeadToHeadGames({
 
   const { series, games } = data as HeadToHead;
 
-  const isAwayTeam1 = series.team1 === awayTeamId;
+  const isAwayTeam1 = String(series.team1) === String(awayTeamId);
 
   const awayWins = isAwayTeam1 ? series.team1Wins : series.team2Wins;
   const homeWins = isAwayTeam1 ? series.team2Wins : series.team1Wins;
@@ -75,8 +73,6 @@ export default function HeadToHeadGames({
               <HeadToHeadGameRow
                 key={game.id}
                 game={game}
-                homeTeamEspnId={homeTeamEspnId}
-                awayTeamEspnId={awayTeamEspnId}
                 homeTeamId={homeTeamId}
                 awayTeamId={awayTeamId}
                 homeLogo={homeLogo}

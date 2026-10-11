@@ -1,20 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { useForumPoll } from "hooks/ForumHooks/useForumPoll";
+import type { ForumPollState } from "types/forum";
 import { Text, TouchableOpacity, View } from "react-native";
 import { PostItemStyles } from "styles/ForumStyles/PostItemStyles";
 
 export default function PollBlock({
   postId,
   isDark,
+  initialPoll,
 }: {
   postId: string;
   isDark: boolean;
+  initialPoll?: ForumPollState | null;
 }) {
   const styles = PostItemStyles(isDark);
   const borderColor = isDark ? Colors.lightGray : Colors.darkGray;
   const { poll, loading, voting, hasVoted, totalVotes, isExpired, handleVote } =
-    useForumPoll(postId);
+    useForumPoll(postId, initialPoll);
 
   if (loading || !poll) return null;
 

@@ -1,3 +1,4 @@
+import { resolveGameTeamGroups } from "utils/gameTeamIdentity";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
@@ -16,8 +17,6 @@ type BaseballCategory =
   | "wins"
   | "strikeouts";
 
-type TeamIdField = "id" | "espnId";
-
 type BaseballLeaderStatistic = {
   name: string;
   displayName?: string | null;
@@ -31,7 +30,6 @@ type BaseballLeaderAthlete = {
   id?: string | number | null;
   espnId?: string | number | null;
   teamId?: string | number | null;
-  teamEspnId?: string | number | null;
   firstName?: string | null;
   lastName?: string | null;
   fullName?: string | null;
@@ -62,7 +60,6 @@ type BaseballLeaderCategory = {
 type BaseballLeaderTeam = {
   team: {
     id: string | number;
-    espnId?: string | number | null;
     displayName?: string | null;
     abbreviation?: string | null;
     logo?: string | null;
@@ -93,10 +90,6 @@ type CategoryConfig = {
   stats: StatDefinition[];
 };
 
-type ResolvedLeaderTeams = {
-  away: BaseballLeaderTeam | undefined;
-  home: BaseballLeaderTeam | undefined;
-};
 
 type Props = {
   leaders: BaseballLeaderTeam[];
@@ -179,10 +172,6 @@ const CATEGORY_CONFIG: Record<BaseballCategory, CategoryConfig> = {
   },
 };
 
-function idsMatch(first: unknown, second: TeamId): boolean {
-  return first != null && String(first) === String(second);
-}
-
 function normalizeImageSource(
   source: ImageSourcePropType | string | null | undefined,
 ): ImageSourcePropType {
@@ -191,87 +180,6 @@ function normalizeImageSource(
   }
 
   return typeof source === "string" ? { uri: source } : source;
-}
-
-function findTeamGroup(
-  leaders: BaseballLeaderTeam[],
-  teamId: TeamId,
-  field: TeamIdField,
-): BaseballLeaderTeam | undefined {
-  return leaders.find((group) => idsMatch(group.team[field], teamId));
-}
-
-function resolveUsingField(
-  leaders: BaseballLeaderTeam[],
-  awayId: TeamId,
-  homeId: TeamId,
-  field: TeamIdField,
-): ResolvedLeaderTeams | null {
-  const away = findTeamGroup(leaders, awayId, field);
-  const home = findTeamGroup(leaders, homeId, field);
-
-  if (!away || !home || away === home) {
-    return null;
-  }
-
-  return {
-    away,
-    home,
-  };
-}
-
-function resolveLeaderTeams(
-  leaders: BaseballLeaderTeam[],
-  awayId: TeamId,
-  homeId: TeamId,
-): ResolvedLeaderTeams {
-  /*
-   * Prefer database IDs first so a database ID cannot accidentally
-   * match another team's ESPN ID.
-   */
-  const databaseIdMatch = resolveUsingField(leaders, awayId, homeId, "id");
-
-  if (databaseIdMatch) {
-    return databaseIdMatch;
-  }
-
-  /*
-   * If the caller passed ESPN IDs, resolve both teams using ESPN IDs.
-   */
-  const espnIdMatch = resolveUsingField(leaders, awayId, homeId, "espnId");
-
-  if (espnIdMatch) {
-    return espnIdMatch;
-  }
-
-  /*
-   * Fallback for mixed ID sources.
-   */
-  const awayCandidates = leaders.filter(
-    (group) =>
-      idsMatch(group.team.id, awayId) || idsMatch(group.team.espnId, awayId),
-  );
-
-  const homeCandidates = leaders.filter(
-    (group) =>
-      idsMatch(group.team.id, homeId) || idsMatch(group.team.espnId, homeId),
-  );
-
-  for (const away of awayCandidates) {
-    const home = homeCandidates.find((candidate) => candidate !== away);
-
-    if (home) {
-      return {
-        away,
-        home,
-      };
-    }
-  }
-
-  return {
-    away: awayCandidates[0],
-    home: homeCandidates.find((candidate) => candidate !== awayCandidates[0]),
-  };
 }
 
 function getStatValue(
@@ -397,7 +305,7 @@ export default function GameLeaders({
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const resolvedTeams = useMemo(
-    () => resolveLeaderTeams(leaders, awayId, homeId),
+    () => resolveGameTeamGroups(leaders, awayId, homeId),
     [leaders, awayId, homeId],
   );
 

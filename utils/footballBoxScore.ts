@@ -2,6 +2,7 @@ import type {
   BoxScorePlayerTeam,
   BoxScoreStatCategory,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { gameTeamIdsMatch } from "./gameTeamIdentity";
 
 const identifier = (value: unknown) => String(value ?? "").trim().toLowerCase();
 
@@ -13,11 +14,8 @@ export function resolveFootballBoxScoreTeams(
   homeName: string,
 ) {
   const find = (id: number | string, name: string, side: string) =>
-    blocks.find((block) =>
-      [block.team.id, block.team.espnId].some(
-        (value) => identifier(value) !== "" && identifier(value) === identifier(id),
-      ),
-    ) ?? blocks.find((block) => block.team.homeAway === side) ??
+    blocks.find((block) => gameTeamIdsMatch(block.team.id, id)) ??
+    blocks.find((block) => block.team.homeAway === side) ??
     blocks.find((block) =>
       [block.team.name, block.team.shortName, block.team.code].some(
         (value) => identifier(name) !== "" && identifier(value) === identifier(name),

@@ -29,7 +29,6 @@ export default function TeamDetailScreen() {
   const team = getNBATeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const teamName = team?.name;
-  const espnId = team?.espnId ?? 0;
   const teamLogo = getNBATeamLogo(teamIdNum, true);
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
   const screen = useTeamDetailScreen({
@@ -78,7 +77,7 @@ export default function TeamDetailScreen() {
     error: teamStatsError,
   } = useTeamStats({
     enabled: hasVisitedTab("stats"),
-    teamId: espnId,
+    teamId: teamIdNum,
     league,
   });
 

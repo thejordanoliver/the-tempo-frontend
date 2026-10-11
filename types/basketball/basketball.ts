@@ -48,7 +48,7 @@ export type BasketballGame = {
   periods: number;
   home: {
     id: number;
-    espnId: number;
+    espnId?: number;
     uid: string;
     name: string;
     shortName: string;
@@ -67,7 +67,7 @@ export type BasketballGame = {
   };
   away: {
     id: number;
-    espnId: number;
+    espnId?: number;
     uid: string;
     name: string;
     shortName: string;

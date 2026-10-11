@@ -57,6 +57,7 @@ type ExploreWidgetsContextValue = {
     pollType: ExploreCollegePollType,
   ) => void;
   setCollegePollAutoPlay: (widgetId: string, autoPlay: boolean) => void;
+  setFavoriteTeamsAutoPlay: (widgetId: string, autoPlay: boolean) => void;
   setFavoriteGameLeagues: (
     widgetId: string,
     leagues: ExploreWidgetLeague[],
@@ -124,6 +125,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
     setStandingsLeague,
     setCollegePollSelection,
     setCollegePollAutoPlay,
+    setFavoriteTeamsAutoPlay,
     setFavoriteGameLeagues,
     setFavoriteGamesAutoPlay,
     moveWidget,
@@ -411,6 +413,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       setStandingsLeague,
       setCollegePollSelection,
       setCollegePollAutoPlay,
+      setFavoriteTeamsAutoPlay,
       setFavoriteGameLeagues,
       setFavoriteGamesAutoPlay,
       moveWidget,
@@ -432,6 +435,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       resizeWidget,
       setCollegePollSelection,
       setCollegePollAutoPlay,
+      setFavoriteTeamsAutoPlay,
       setFavoriteGameLeagues,
       setFavoriteGamesAutoPlay,
       setStandingsLeague,

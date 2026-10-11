@@ -8,8 +8,6 @@ import { formatPeriod } from "utils/games";
 
 type Props = {
   game: BasketballGame;
-  homeTeamEspnId: string;
-  awayTeamEspnId: string;
   homeTeamId: number;
   awayTeamId: number;
   homeLogo: any;
@@ -22,8 +20,6 @@ type Props = {
 
 export default function HeadToHeadGameRow({
   game,
-  homeTeamEspnId,
-  awayTeamEspnId,
   homeTeamId,
   awayTeamId,
   homeLogo,
@@ -74,8 +70,8 @@ export default function HeadToHeadGameRow({
 
   // --- Corrected score mapping ---
   const getTeamScore = (teamId: number) => {
-    if (game?.home?.id === teamId) return game.home.score ?? 0;
-    if (game?.away?.id === teamId) return game.away.score ?? 0;
+    if (String(game?.home?.id) === String(teamId)) return game.home.score ?? 0;
+    if (String(game?.away?.id) === String(teamId)) return game.away.score ?? 0;
     return 0;
   };
 

@@ -208,7 +208,7 @@ export default function DraftList({
     const formatted = teamList
       .map((t) => ({
         label: t.name,
-        value: String(t.espnId),
+        value: String(t.id),
         active: t.isActive,
       }))
       .filter((t) => t.active)
@@ -221,7 +221,7 @@ export default function DraftList({
     const map: Record<string, string> = {};
 
     teamList.forEach((t) => {
-      map[String(t.espnId)] = t.name.toLowerCase();
+      map[String(t.id)] = t.name.toLowerCase();
     });
 
     return map;

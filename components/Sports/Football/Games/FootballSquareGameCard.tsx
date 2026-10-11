@@ -100,8 +100,8 @@ function FootballSquareGameCard({
     headlineMatch?.includes("super bowl") ||
     headlineMatch?.includes("national championship");
   const styles = squareGameCardStyles(isDark, isChampionship);
-  const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
-  const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
+  const homeHasPossession = inProgress && possessionTeamId === home?.id;
+  const awayHasPossession = inProgress && possessionTeamId === away?.id;
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT

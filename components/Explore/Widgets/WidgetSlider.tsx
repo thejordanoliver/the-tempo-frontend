@@ -867,7 +867,8 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
       textAlign: "center",
     },
     emptyMessage: {
-      fontSize: 13,
+      fontSize: 12,
+      fontFamily: Fonts.REGULAR,
       lineHeight: 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",

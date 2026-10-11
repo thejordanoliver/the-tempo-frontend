@@ -303,7 +303,7 @@ export const TeamRowStyles = (isDark: boolean, _isTie?: boolean) =>
 
     rank: {
       fontSize: 10,
-      color: Colors.lightGray,
+      color: Colors.midTone,
     },
 
     record: {

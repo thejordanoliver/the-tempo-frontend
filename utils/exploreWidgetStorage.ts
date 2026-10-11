@@ -233,6 +233,10 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
           type === "college_polls"
             ? widget.collegePollAutoPlay !== false
             : undefined,
+        favoriteTeamsAutoPlay:
+          type === "favorite_teams"
+            ? widget.favoriteTeamsAutoPlay !== false
+            : undefined,
         favoriteGameLeagues:
           type === "favorite_games" ? favoriteGameLeagues : undefined,
         favoriteGamesAutoPlay:

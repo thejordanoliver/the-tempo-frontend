@@ -226,7 +226,7 @@ function findTeamLeaders(
     const team = teamLeaders.team;
 
     const matchesId =
-      idsMatch(team?.id, teamId) || idsMatch(team?.espnId, teamId);
+      idsMatch(team?.id, teamId);
 
     const teamCodes = [
       normalizeValue(team?.code),

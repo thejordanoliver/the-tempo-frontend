@@ -7,9 +7,9 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
@@ -346,11 +346,11 @@ export const StandingsList = ({
     }
 
     if (league === "wnba") {
-      return getWNBATeamByESPNId(Number(item.id));
+      return getWNBATeam(Number(item.id));
     }
 
     if (league === "nfl") {
-      return getNFLTeamByESPNId(Number(item.id));
+      return getNFLTeam(Number(item.id));
     }
 
     if (league === "ufl") {

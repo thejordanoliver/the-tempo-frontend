@@ -23,6 +23,14 @@ test("a partial home payload never appears as the away box score", () => {
   assert.deepEqual(resolveFootballBoxScoreTeams([home], 1, 2, "Away", "Home"), { away: null, home });
 });
 
+test("a provider alias collision cannot swap football box score teams", () => {
+  const away = block(1, "Same");
+  const home = block(2, "Same");
+  away.team.espnId = 2;
+  home.team.espnId = 1;
+  assert.deepEqual(resolveFootballBoxScoreTeams([home, away], "1", "2", "Same", "Same"), { away, home });
+});
+
 test("side metadata resolves unmatched IDs and names", () => {
   const away = block(1, "Away", "away");
   const home = block(2, "Home", "home");

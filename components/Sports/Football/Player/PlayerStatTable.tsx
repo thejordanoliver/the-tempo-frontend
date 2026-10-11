@@ -1,6 +1,6 @@
 import PillTabs from "@/components/TabBars/PillTabs";
-import { getCFBTeamByESPNId } from "@/constants/teamsCFB";
-import { getNFLTeamByESPNId } from "@/constants/teamsNFL";
+import { getCFBTeam } from "@/constants/teamsCFB";
+import { getNFLTeam } from "@/constants/teamsNFL";
 import type {
   Category,
   FootballPlayerSeason,
@@ -548,7 +548,7 @@ function getSeasonTeamCode(
   }
 
   const team =
-    league === "nfl" ? getNFLTeamByESPNId(teamId) : getCFBTeamByESPNId(teamId);
+    league === "nfl" ? getNFLTeam(teamId) : getCFBTeam(teamId);
 
   return team?.code || "—";
 }
@@ -819,8 +819,7 @@ export default function PlayerStatTable({
       ? "No postseason stats available"
       : "No stats available";
 
-  const shouldShowCategoryDropdown =
-    availableGroups.length > 0;
+  const shouldShowCategoryDropdown = availableGroups.length > 0;
 
   const renderHeader = () => (
     <>

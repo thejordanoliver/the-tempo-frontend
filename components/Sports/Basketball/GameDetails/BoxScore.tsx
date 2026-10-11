@@ -116,7 +116,6 @@ const collectTeamIdentifiers = (team?: TeamInfo | null): string[] => {
 
   return [
     team.id,
-    team.espnId,
     team.name,
     team.fullName,
     team.code,

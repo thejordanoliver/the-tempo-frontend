@@ -34,8 +34,8 @@ export type TeamWithLeague = Team & {
 };
 
 const LEGACY_STORAGE_KEY = "favorites";
-// NFL/NBA/MLB IDs overlap the former IDs; discard old cached keys and refetch.
-const STORAGE_KEY_PREFIX = "favoriteTeams:v3";
+// Migrated pro and college IDs overlap former IDs; discard cached keys and refetch.
+const STORAGE_KEY_PREFIX = "favoriteTeams:v6";
 const FAVORITES_ENDPOINT = "/api/users/me/favorites";
 
 const getFavoritesStorageKey = (userId: number | string) =>

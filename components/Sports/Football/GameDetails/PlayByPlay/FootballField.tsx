@@ -60,7 +60,6 @@ type FootballFieldProps = {
 
 type TeamIdentity = {
   id?: string | number | null;
-  espnId?: string | number | null;
   abbreviation?: string | null;
   code?: string | null;
 };

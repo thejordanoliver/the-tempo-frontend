@@ -1,3 +1,4 @@
+import { loadPostPolls } from "services/forumApi";
 import { isAxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
@@ -74,7 +75,7 @@ export function useUserPosts({
           },
         );
 
-        const nextPosts = response.data.posts ?? [];
+        const nextPosts = await loadPostPolls(response.data.posts ?? []);
         const nextTotalPages = response.data.pagination?.totalPages ?? 1;
 
         setPosts((current) => {

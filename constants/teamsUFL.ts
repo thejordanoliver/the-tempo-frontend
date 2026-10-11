@@ -11,11 +11,9 @@ import StallionsLogo from "assets/Football/UFL_Logos/Stallions.png";
 import StormLogo from "assets/Football/UFL_Logos/Storm.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
-
 export const uflTeams: Team[] = [
   {
     id: 126073,
-    espnId: 126073,
     name: "Birmingham",
     fullName: "Birmingham Stallions",
     shortName: "Stallions",
@@ -30,11 +28,10 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "ufl"
+    league: "ufl",
   },
   {
     id: 132261,
-    espnId: 132261,
     name: "Columbus",
     fullName: "Columbus Aviators",
     shortName: "Aviators",
@@ -49,11 +46,10 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "ufl"
+    league: "ufl",
   },
   {
     id: 112646,
-    espnId: 112646,
     name: "DC",
     fullName: "DC Defenders",
     shortName: "Defenders",
@@ -68,11 +64,10 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "ufl"
+    league: "ufl",
   },
   {
     id: 112647,
-    espnId: 112647,
     name: "Dallas",
     fullName: "Dallas Renegades",
     shortName: "Renegades",
@@ -87,11 +82,10 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "ufl"
+    league: "ufl",
   },
   {
     id: 126075,
-    espnId: 126075,
     name: "Houston",
     fullName: "Houston Gamblers",
     shortName: "Gamblers",
@@ -106,11 +100,10 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "ufl"
+    league: "ufl",
   },
   {
     id: 132262,
-    espnId: 132262,
     name: "Louisville",
     fullName: "Louisville Kings",
     shortName: "Kings",
@@ -125,11 +118,10 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "ufl"
+    league: "ufl",
   },
   {
     id: 132263,
-    espnId: 132263,
     name: "Orlando",
     fullName: "Orlando Storm",
     shortName: "Storm",
@@ -144,11 +136,10 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "ufl"
+    league: "ufl",
   },
   {
     id: 112651,
-    espnId: 112651,
     name: "St. Louis",
     fullName: "St. Louis Battlehawks",
     shortName: "Battlehawks",
@@ -163,7 +154,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-   league: "ufl"
+    league: "ufl",
   },
 ];
 
@@ -190,7 +181,3 @@ export function getUFLTeamLogo(
 
   return isDark ? team.logoLight || team.logo : team.logo;
 }
-
-export const getUFLTeamByESPNId = (espnId: number | string) => {
-  return uflTeams.find((t) => t.espnId?.toString() === espnId?.toString());
-};

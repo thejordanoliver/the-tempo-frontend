@@ -1,3 +1,4 @@
+import { loadPostPolls } from "services/forumApi";
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isAxiosError } from "axios";
@@ -482,7 +483,9 @@ export function useCommentThread(postId: string | null) {
 
       if (requestId !== fetchRequestIdRef.current) return;
 
-      setPost(postRes.data.post ?? null);
+      const [postWithPoll] = await loadPostPolls(postRes.data.post ? [postRes.data.post] : []);
+      if (requestId !== fetchRequestIdRef.current) return;
+      setPost(postWithPoll ?? null);
 
       const normalizedComments = (
         commentRes.data.comments ?? []

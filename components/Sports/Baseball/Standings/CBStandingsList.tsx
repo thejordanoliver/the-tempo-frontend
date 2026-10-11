@@ -1,8 +1,6 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
-// components/CBStandingsList.tsx
 import Dropdown from "@/components/Dropdown";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
+import { StandingsStyles } from "@/styles/LeagueStyles/StandingsStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
@@ -13,23 +11,19 @@ import {
   type CBTeamRank,
   useCBRankings,
 } from "hooks/BaseballHooks/useCBRankings";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Image,
-  type ImageSourcePropType,
   RefreshControl,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 
-const ROW_HEIGHT = 60;
-const RANK_WIDTH = 40;
-const TEAM_COL_WIDTH = 100;
-const STAT_COL_WIDTH = 90;
 const SOFTBALL_TOURNAMENT_POLL_KEYS = [
   "sbTournamentPoll",
   "softballTournamentPoll",
@@ -49,31 +43,6 @@ const formatRankValue = (value?: string | number | null, fallback = "N/A") => {
 const isRankPoll = (
   poll: CBRankPoll | CBRankPoll[] | undefined,
 ): poll is CBRankPoll => Boolean(poll) && !Array.isArray(poll);
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
-
-const getApiTeamLogoSource = (
-  team?: CBTeamRank["team"],
-): ImageSourcePropType | undefined => {
-  if (!team) return undefined;
-
-  const logo = (team as { logo?: unknown }).logo;
-  if (typeof logo === "number") return logo;
-  if (typeof logo === "string" && logo.length > 0) return { uri: logo };
-  if (isRecord(logo)) return logo as ImageSourcePropType;
-
-  const logos = (team as { logos?: unknown }).logos;
-  if (!Array.isArray(logos)) return undefined;
-
-  const logoUrl = logos
-    .map((item) => (isRecord(item) ? item.href : undefined))
-    .find(
-      (href): href is string => typeof href === "string" && href.length > 0,
-    );
-
-  return logoUrl ? { uri: logoUrl } : undefined;
-};
 
 type Props = {
   league: "cb" | "sb";
@@ -194,7 +163,7 @@ export const CBStandingsList = ({ league }: Props) => {
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
-        <Text style={styles.errorText}>{error}</Text>
+        <Text style={global.errorText}>{error}</Text>
       </ScrollView>
     );
   }
@@ -250,7 +219,7 @@ export const CBStandingsList = ({ league }: Props) => {
           ? getSBTeamLogo(team.id, isDark)
           : getCBTeamLogo(team.id, isDark)
         : undefined;
-      const teamLogo = localTeamLogo ?? getApiTeamLogoSource(item.team);
+      const teamLogo = localTeamLogo;
       const teamCode =
         item.team?.abbreviation || team?.code || item.team?.name || "N/A";
       const trendNum = parseTrend(item.trend);
@@ -475,205 +444,3 @@ export const CBStandingsList = ({ league }: Props) => {
     </ScrollView>
   );
 };
-
-export const StandingsStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    contentContainer: {
-      paddingBottom: 100,
-      paddingHorizontal: 12,
-    },
-    wrapper: {
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 8,
-      overflow: "hidden",
-    },
-    center: {
-      flex: 1,
-    },
-
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      padding: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    heading: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 20,
-      color: isDark ? Colors.dark.white : Colors.light.black,
-    },
-    droppedHeading: {
-      marginBottom: 4,
-      paddingBottom: 4,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 20,
-      color: isDark ? Colors.dark.white : Colors.light.black,
-    },
-    dropdownRow: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
-      marginBottom: 12,
-    },
-    statsHeaderRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      height: ROW_HEIGHT,
-      paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      height: ROW_HEIGHT,
-      minHeight: ROW_HEIGHT,
-      maxHeight: ROW_HEIGHT,
-      paddingVertical: 10,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    rankContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: RANK_WIDTH,
-    },
-    rankText: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    text: {
-      marginVertical: 4,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    subText: {
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    teamInfo: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: TEAM_COL_WIDTH,
-    },
-    teamInfoWrapper: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    logo: {
-      width: 28,
-      height: 28,
-      marginRight: 6,
-    },
-    teamName: {
-      width: 32,
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    collegeTeamName: {
-      width: 40,
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    collegeTeamTrend: {
-      width: 40,
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 10,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    collegeDivisionHeader: {
-      marginTop: 4,
-      paddingHorizontal: 12,
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    teamHeaderText: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    statCell: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: STAT_COL_WIDTH,
-      paddingHorizontal: 5,
-    },
-    headerText: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 12,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    statText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    statusBadge: {
-      alignItems: "center",
-      justifyContent: "center",
-      marginLeft: 2,
-      paddingVertical: 2,
-      paddingHorizontal: 6,
-      borderRadius: 4,
-    },
-    statusBadgeText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 10,
-      color: Colors.white,
-    },
-    statusText: {
-      flexWrap: "wrap",
-      marginLeft: 4,
-      fontFamily: Fonts.BOLD,
-      fontSize: 10,
-      color: isDark ? Colors.dark.white : Colors.light.black,
-    },
-    legendContainer: {
-      marginTop: 10,
-      paddingTop: 10,
-    },
-
-    legendItemsContainer: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-      paddingRight: 10,
-    },
-
-    legendItem: {
-      width: "40%", // 2-column grid
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 12,
-    },
-
-    droppedoutNames: {
-      marginVertical: 2,
-      marginRight: 8,
-      fontFamily: Fonts.LIGHT,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    errorText: {
-      marginTop: 20,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
-    },
-    emptyText: {
-      marginTop: 20,
-      fontFamily: Fonts.LIGHT,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
-  });

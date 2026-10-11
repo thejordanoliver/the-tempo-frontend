@@ -121,3 +121,21 @@ test("preserves saved men's basketball widgets during the MCBB rename", () => {
   assert.equal(widgets[1].collegePollType, "coaches");
   assert.deepEqual(normalizeStoredWidgets([{ type: "cbb_games" }])[0].favoriteGameLeagues, ["mcbb"]);
 });
+
+
+test("Favorite Teams autoplay defaults on and preserves the saved preference", () => {
+  for (const autoPlay of [undefined, true, false]) {
+    const widgets = normalizeStoredWidgets([{
+      id: "favorite-teams",
+      type: "favorite_teams",
+      title: "Favorite Teams",
+      createdAt: 1,
+      size: "medium",
+      order: 0,
+      favoriteTeamsAutoPlay: autoPlay,
+    }]);
+    assert.equal(widgets[0].favoriteTeamsAutoPlay, autoPlay !== false);
+    const restored = normalizeStoredWidgets(JSON.parse(serializeExploreWidgets(widgets)));
+    assert.equal(restored[0].favoriteTeamsAutoPlay, autoPlay !== false);
+  }
+});

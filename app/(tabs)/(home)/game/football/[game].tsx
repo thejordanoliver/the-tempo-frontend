@@ -1,3 +1,4 @@
+import GameSummary from "components/Sports/Football/GameDetails/GameSummary";
 import { CustomHeader } from "@/components/CustomHeader";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
@@ -271,7 +272,6 @@ export default function GameDetailsScreen(
   const awayCoach = awayTeamDetails?.coach;
 
   const isLoading = loading || !game || !home || !away || !score || !details;
-
   const state = score?.status.state ?? "pre";
   const isFinal = isGameFinalStatus(score?.status);
   const gameNotificationsEnabled = isGameNotified(
@@ -377,7 +377,9 @@ export default function GameDetailsScreen(
 
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName ?? null;
-  const venueAddress = venue?.address.formatted ?? (formatVenueAddress(venue?.address) || baseVenueAddress);
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href ?? null;
   const venueAttendance = details?.attendance ?? null;
@@ -385,7 +387,9 @@ export default function GameDetailsScreen(
   const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
     venue?.address.state ??
-    venue?.address.country ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
@@ -631,6 +635,18 @@ export default function GameDetailsScreen(
               state={state}
             />
 
+            <GameSummary
+              gameId={gameId}
+              plays={score?.plays}
+              drives={drives}
+              homeId={homeId}
+              awayId={awayId}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              isDark={isDark}
+              state={state}
+            />
+
             <ScoringSummary
               scoringPlays={scoringPlays}
               homeId={homeId}
@@ -702,7 +718,11 @@ export default function GameDetailsScreen(
 
       {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
-          context={{ sport: "football", league: LEAGUE, date: gameDateObj?.toISOString() }}
+          context={{
+            sport: "football",
+            league: LEAGUE,
+            date: gameDateObj?.toISOString(),
+          }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}

@@ -662,35 +662,8 @@ export const teams: Team[] = [
   },
 ];
 
-export const getNBATeam = (id: number | string) => {
-  if (id == null) return undefined;
-  return teams.find((t) => String(t.id) === String(id));
-};
-
-export const getTeamBySummerId = (id?: number | string) =>
-  teams.find((t) => String(t.summerLeagueId) === String(id));
-
-export function getNBATeamLogo(
-  id: number | string | undefined,
-  isDark: boolean,
-  isSummerLeague = false,
-) {
-  if (id === undefined || id === null || id === "") {
-    return placeholderLogo;
-  }
-
-  const team = isSummerLeague ? getTeamBySummerId(id) : getNBATeam(id);
-
-  if (!team) {
-    return placeholderLogo;
-  }
-
-  return isDark
-    ? (team.logoLight ?? team.logo ?? placeholderLogo)
-    : (team.logo ?? placeholderLogo);
-}
-
 export type NBARivalryGroup = "national" | "regional";
+
 export type NBARivalry = {
   id: string;
   name: string;
@@ -819,6 +792,36 @@ const NBA_RIVALRY_MAP = new Map<string, NBARivalry>(
     rivalry,
   ]),
 );
+
+export const getNBATeam = (id: number | string) => {
+  if (id == null) return undefined;
+  return teams.find((t) => String(t.id) === String(id));
+};
+
+export const getTeamBySummerId = (id: number | string) => {
+  if (id == null) return undefined;
+  return teams.find((t) => String(t.summerLeagueId) === String(id));
+};
+
+export function getNBATeamLogo(
+  id: number | string | undefined,
+  isDark: boolean,
+  isSummerLeague = false,
+) {
+  if (id === undefined || id === null || id === "") {
+    return placeholderLogo;
+  }
+
+  const team = isSummerLeague ? getTeamBySummerId(id) : getNBATeam(id);
+
+  if (!team) {
+    return placeholderLogo;
+  }
+
+  return isDark
+    ? (team.logoLight ?? team.logo ?? placeholderLogo)
+    : (team.logo ?? placeholderLogo);
+}
 
 export function getNBARivalry(
   homeTeamId: number | string | null | undefined,

@@ -140,6 +140,7 @@ export function useExploreWidgetConfiguration(userId: number | null) {
             collegePollLeague: type === "college_polls" ? "cfb" : undefined,
             collegePollType: type === "college_polls" ? "ap" : undefined,
             collegePollAutoPlay: type === "college_polls" ? true : undefined,
+            favoriteTeamsAutoPlay: type === "favorite_teams" ? true : undefined,
             favoriteGameLeagues:
               type === "favorite_games" ? [...EXPLORE_WIDGET_LEAGUES] : undefined,
             favoriteGamesAutoPlay:
@@ -210,6 +211,19 @@ export function useExploreWidgetConfiguration(userId: number | null) {
         previous.map((widget) =>
           widget.id === widgetId && widget.type === "college_polls"
             ? { ...widget, collegePollAutoPlay: autoPlay }
+            : widget,
+        ),
+      );
+    },
+    [setWidgets],
+  );
+
+  const setFavoriteTeamsAutoPlay = useCallback(
+    (widgetId: string, autoPlay: boolean) => {
+      setWidgets((previous) =>
+        previous.map((widget) =>
+          widget.id === widgetId && widget.type === "favorite_teams"
+            ? { ...widget, favoriteTeamsAutoPlay: autoPlay }
             : widget,
         ),
       );
@@ -321,6 +335,7 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     setStandingsLeague,
     setCollegePollSelection,
     setCollegePollAutoPlay,
+    setFavoriteTeamsAutoPlay,
     setFavoriteGameLeagues,
     setFavoriteGamesAutoPlay,
     moveWidget,

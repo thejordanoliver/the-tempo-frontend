@@ -24,7 +24,7 @@ import WingsLogo from "../assets/WNBA/Logos/Wings.png";
 
 export const wnbaTeams: Team[] = [
   {
-    id: 162,
+    id: 20,
     espnId: 20,
     name: "Dream",
     shortName: "Dream",
@@ -43,7 +43,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 163,
+    id: 19,
     espnId: 19,
     name: "Sky",
     shortName: "Sky",
@@ -62,7 +62,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 164,
+    id: 18,
     espnId: 18,
     name: "Sun",
     shortName: "Sun",
@@ -81,7 +81,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 165,
+    id: 3,
     espnId: 3,
     name: "Wings",
     shortName: "Wings",
@@ -100,7 +100,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 7326,
+    id: 129689,
     espnId: 129689,
     name: "Valkyries",
     shortName: "Valkyries",
@@ -119,7 +119,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 166,
+    id: 5,
     espnId: 5,
     name: "Fever",
     shortName: "Fever",
@@ -138,7 +138,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 167,
+    id: 17,
     espnId: 17,
     name: "Aces",
     shortName: "Aces",
@@ -157,7 +157,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 168,
+    id: 6,
     espnId: 6,
     name: "Sparks",
     shortName: "Sparks",
@@ -176,7 +176,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 169,
+    id: 8,
     espnId: 8,
     name: "Lynx",
     shortName: "Lynx",
@@ -195,7 +195,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 170,
+    id: 9,
     espnId: 9,
     name: "Liberty",
     shortName: "Liberty",
@@ -214,7 +214,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 171,
+    id: 11,
     espnId: 11,
     name: "Mercury",
     shortName: "Mercury",
@@ -233,7 +233,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 7100,
+    id: 132052,
     espnId: 132052,
     name: "Fire",
     shortName: "Fire",
@@ -252,7 +252,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 172,
+    id: 14,
     espnId: 14,
     name: "Storm",
     shortName: "Storm",
@@ -271,7 +271,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 7870,
+    id: 131935,
     espnId: 131935,
     name: "Tempo",
     shortName: "Tempo",
@@ -290,7 +290,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 175,
+    id: 16,
     espnId: 16,
     name: "Mystics",
     shortName: "Mystics",
@@ -309,7 +309,7 @@ export const wnbaTeams: Team[] = [
    league: "wnba",
   },
   {
-    id: 3807,
+    id: 130927,
     espnId: 130927,
     name: "Antelopes",
     shortName: "Antelopes",
@@ -367,9 +367,6 @@ export const wnbaTeams: Team[] = [
   },
 ];
 
-export const getWNBATeamByESPNId = (espnId: number | string) => {
-  return wnbaTeams.find((t) => t.espnId?.toString() === espnId?.toString());
-};
 
 export const getWNBATeam = (id: number | string) => {
   if (id == null) return undefined;

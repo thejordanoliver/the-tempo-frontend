@@ -12,12 +12,10 @@ import Dropdown from "components/Dropdown";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import {
   getMCBBTeam,
-  getMCBBTeamByESPNId,
   getMCBBTeamLogo,
 } from "constants/teamsMCBB";
 import {
   getWCBBTeam,
-  getWCBBTeamByESPNId,
   getWCBBTeamLogo,
 } from "constants/teamsWCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -50,7 +48,7 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const isWCBB = league === "wcbb";
   const getRankedTeam = (espnId: string | number) =>
-    isWCBB ? getWCBBTeamByESPNId(espnId) : getMCBBTeamByESPNId(espnId ?? "");
+    isWCBB ? getWCBBTeam(espnId) : getMCBBTeam(espnId ?? "");
   const getRankedTeamLogo = (teamId?: string | number) =>
     isWCBB
       ? getWCBBTeamLogo(teamId, isDark)

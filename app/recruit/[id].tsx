@@ -1,7 +1,7 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import OfferList from "@/components/League/Recruiting/OfferLists";
 import RecruitHeader from "@/components/League/Recruiting/RecruitHeader";
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useRecruit } from "@/hooks/RecruitHooks/useRecruit";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";

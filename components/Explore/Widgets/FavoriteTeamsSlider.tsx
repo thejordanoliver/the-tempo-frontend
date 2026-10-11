@@ -37,6 +37,7 @@ type FavoriteTeamsSliderProps = {
   isDark: boolean;
   compact?: boolean;
   disabled?: boolean;
+  autoPlay?: boolean;
 };
 
 export default function FavoriteTeamsSlider({
@@ -46,6 +47,7 @@ export default function FavoriteTeamsSlider({
   isDark,
   compact = false,
   disabled = false,
+  autoPlay = true,
 }: FavoriteTeamsSliderProps) {
   const router = useScopedRouter();
   const styles = useMemo(
@@ -120,6 +122,7 @@ export default function FavoriteTeamsSlider({
       initialWidth={width}
       height={height}
       isDark={isDark}
+      autoPlay={autoPlay}
       disabled={disabled}
       keyExtractor={keyExtractor}
       renderItem={renderSlide}

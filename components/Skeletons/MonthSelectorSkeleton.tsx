@@ -13,7 +13,7 @@ import {
   MONTH_SELECTOR_ITEM_SPACING,
   MONTH_SELECTOR_ITEM_WIDTH,
   MONTH_SELECTOR_SIDE_PADDING,
-} from "../League/monthSelectorConstants";
+} from "../../constants/monthSelectorConstants";
 
 type Props = {
   itemCount?: number;

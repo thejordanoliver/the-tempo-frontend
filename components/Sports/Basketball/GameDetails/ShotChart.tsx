@@ -1,3 +1,4 @@
+import { gameTeamIdsMatch } from "utils/gameTeamIdentity";
 import Dropdown from "@/components/Dropdown";
 import { Play } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
@@ -5,9 +6,9 @@ import MCBBCourtImage from "assets/Placeholders/MCBBCourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getMCBBTeamByESPNId, getMCBBTeamLogo } from "constants/teamsMCBB";
-import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
-import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
+import {getMCBBTeam,  getMCBBTeamLogo } from "constants/teamsMCBB";
+import {getWCBBTeam,  getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo, useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
@@ -17,8 +18,6 @@ interface ShotChartProps {
   plays?: Play[];
   homeId: string | number;
   awayId: string | number;
-  homeEspnId: string | number;
-  awayEspnId: string | number;
   homeColor: string;
   awayColor: string;
   homeLogo: any;
@@ -42,15 +41,11 @@ const COURT_WIDTH = 50;
 const NBA_BASKET_OFFSET = 5.25;
 const SHOT_MARKER_EXTENT = 1.65;
 
-const normalizeId = (value: string | number | null | undefined) =>
-  String(value ?? "").trim();
 
 export default function ShotChart({
   plays = [],
   homeId,
   awayId,
-  homeEspnId = "0",
-  awayEspnId = "0",
   homeColor,
   awayColor,
   homeLogo,
@@ -72,11 +67,6 @@ export default function ShotChart({
   const homeColorValue = homeColor || Colors.midTone;
   const awayColorValue = awayColor || Colors.midTone;
 
-  const homeDatabaseIdString = normalizeId(homeId);
-  const awayDatabaseIdString = normalizeId(awayId);
-  const homeEspnIdString = normalizeId(homeEspnId);
-  const awayEspnIdString = normalizeId(awayEspnId);
-
   const [layout, setLayout] = useState({
     width: 0,
     height: 0,
@@ -86,35 +76,35 @@ export default function ShotChart({
 
   const homeTeam = useMemo(() => {
     if (isWCBB) {
-      return getWCBBTeamByESPNId(homeEspnId);
+      return getWCBBTeam(homeId);
     }
 
     if (isMensMCBB) {
-      return getMCBBTeamByESPNId(homeEspnId);
+      return getMCBBTeam(homeId);
     }
 
     if (isWNBA) {
-      return getWNBATeamByESPNId(homeEspnId);
+      return getWNBATeam(homeId);
     }
 
-    return getNBATeam(homeEspnId);
-  }, [homeEspnId, isMensMCBB, isWCBB, isWNBA]);
+    return getNBATeam(homeId);
+  }, [homeId, isMensMCBB, isWCBB, isWNBA]);
 
   const awayTeam = useMemo(() => {
     if (isWCBB) {
-      return getWCBBTeamByESPNId(awayEspnId);
+      return getWCBBTeam(awayId);
     }
 
     if (isMensMCBB) {
-      return getMCBBTeamByESPNId(awayEspnId);
+      return getMCBBTeam(awayId);
     }
 
     if (isWNBA) {
-      return getWNBATeamByESPNId(awayEspnId);
+      return getWNBATeam(awayId);
     }
 
-    return getNBATeam(awayEspnId);
-  }, [awayEspnId, isMensMCBB, isWCBB, isWNBA]);
+    return getNBATeam(awayId);
+  }, [awayId, isMensMCBB, isWCBB, isWNBA]);
 
   const courtLogo = useMemo(() => {
     if (isWCBB) {
@@ -181,58 +171,23 @@ export default function ShotChart({
       return null;
     }
 
-    const playTeamId = normalizeId(play.team?.id);
-    const playEspnId = normalizeId(play.team?.espnId) || playTeamId;
+    const playTeamId = play.team?.id;
 
-    /*
-     * Plays can contain either the ESPN team ID or the database team ID.
-     * Check both so away shots are properly identified and mirrored.
-     */
-    const matchesHomeEspnId =
-      playEspnId !== "" && playEspnId === homeEspnIdString;
+    const matchesHomeId = gameTeamIdsMatch(playTeamId, homeId);
+    const matchesAwayId = gameTeamIdsMatch(playTeamId, awayId);
 
-    const matchesAwayEspnId =
-      playEspnId !== "" && playEspnId === awayEspnIdString;
+    const isHomeShot = matchesHomeId;
+    const isAwayShot = matchesAwayId;
 
-    const matchesHomeDatabaseId =
-      playTeamId !== "" && playTeamId === homeDatabaseIdString;
-
-    const matchesAwayDatabaseId =
-      playTeamId !== "" && playTeamId === awayDatabaseIdString;
-
-    /*
-     * ESPN IDs take priority. The database-ID fallback is used when
-     * the play response has already been converted to internal IDs.
-     */
-    const isHomeShot =
-      matchesHomeEspnId || (!matchesAwayEspnId && matchesHomeDatabaseId);
-
-    const isAwayShot =
-      matchesAwayEspnId ||
-      (!matchesHomeEspnId && !isHomeShot && matchesAwayDatabaseId);
-
-    /*
-     * The backend supplies x across the court and y along the court.
-     * NBA y is measured from the basket, 5.25 feet inside the baseline.
-     * Translate that origin into the full-court image's baseline origin.
-     */
     const basketOffset = league === "nba" ? NBA_BASKET_OFFSET : 0;
     let svgX = COURT_LENGTH - basketOffset - rawY;
     let svgY = rawX;
 
-    /*
-     * ESPN normalizes shots toward the same basket.
-     * Mirror away shots so they appear on the opposite side.
-     */
     if (isAwayShot) {
       svgX = COURT_LENGTH - svgX;
       svgY = COURT_WIDTH - svgY;
     }
 
-    /*
-     * Include the marker radius and miss outline when keeping shots
-     * inside the court, so sideline shots do not extend off the image.
-     */
     svgX = Math.max(
       SHOT_MARKER_EXTENT,
       Math.min(COURT_LENGTH - SHOT_MARKER_EXTENT, svgX),

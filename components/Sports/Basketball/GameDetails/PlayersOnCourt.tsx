@@ -1,3 +1,4 @@
+import { gameTeamIdsMatch } from "utils/gameTeamIdentity";
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
@@ -50,8 +51,7 @@ function findTeamGroup(
 ): PlayerStatsGroup | undefined {
   return playerStats.find(
     (group) =>
-      Number(group.team.id) === Number(teamId) ||
-      Number(group.team.espnId) === Number(teamId),
+      gameTeamIdsMatch(group.team.id, teamId),
   );
 }
 

@@ -1,12 +1,12 @@
 import PillTabs from "@/components/TabBars/PillTabs";
 import { getNBATeam } from "@/constants/teams";
-import { getMCBBTeamByESPNId } from "@/constants/teamsMCBB";
-import { getWNBATeamByESPNId } from "@/constants/teamsWNBA";
+import { getMCBBTeam } from "@/constants/teamsMCBB";
+import { getWNBATeam } from "@/constants/teamsWNBA";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { globalStyles } from "constants/styles";
-import { getWCBBTeamByESPNId } from "constants/teamsWCBB";
+import { getWCBBTeam } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
   BasketballLeague,
@@ -383,10 +383,10 @@ const getTeamCodeFromSeason = (season: Season, league: BasketballLeague) => {
     league === "nba"
       ? getNBATeam(teamId)
       : league === "wnba"
-        ? getWNBATeamByESPNId(teamId)
+        ? getWNBATeam(teamId)
         : league === "wcbb"
-          ? getWCBBTeamByESPNId(teamId)
-          : getMCBBTeamByESPNId(teamId);
+          ? getWCBBTeam(teamId)
+          : getMCBBTeam(teamId);
 
   return team?.code ?? fallbackTeamCode;
 };

@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import type {
   ForumBookmarkMutationResponse,
   ForumLikeMutationResponse,
@@ -15,6 +16,22 @@ export async function getPostPoll(postId: string, signal?: AbortSignal) {
     `${postPath(postId)}/poll`, { signal },
   );
   return response.data.poll ?? null;
+}
+
+// Resolve polls before publishing posts to the UI to avoid a second layout jump.
+export async function loadPostPolls<T extends ForumPost>(posts: T[]): Promise<T[]> {
+  return Promise.all(posts.map(async (post) => {
+    if (post.poll !== undefined) return post;
+    try {
+      return { ...post, poll: await getPostPoll(post.id) };
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.status === 404) {
+        return { ...post, poll: null };
+      }
+      // Keep the post available and allow its poll hook to retry transient failures.
+      return post;
+    }
+  }));
 }
 
 export async function voteOnPostPoll(postId: string, optionId: number) {

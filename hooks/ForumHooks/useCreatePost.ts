@@ -1,3 +1,4 @@
+import { loadPostPolls } from "services/forumApi";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { isAxiosError } from "axios";
@@ -339,7 +340,8 @@ export function useCreatePost(destination: ForumPostDestination | null) {
         requestBadgeDataRefresh();
       }
 
-      prependPost(newPost);
+      const [postWithPoll] = await loadPostPolls([newPost]);
+      prependPost(postWithPoll);
       setPoll(null);
       setNewPostText("");
       setMedia([]);

@@ -1,10 +1,6 @@
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type {
-  ScheduleMonthKey,
-  ScheduleMonthOption,
-} from "types/schedule";
 import {
   Animated,
   LayoutChangeEvent,
@@ -14,13 +10,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MonthSelectorSkeleton from "../Skeletons/MonthSelectorSkeleton";
+import type { ScheduleMonthKey, ScheduleMonthOption } from "types/schedule";
 import {
   MONTH_SELECTOR_ITEM_HEIGHT,
   MONTH_SELECTOR_ITEM_SPACING,
   MONTH_SELECTOR_ITEM_WIDTH,
   MONTH_SELECTOR_SIDE_PADDING,
-} from "./monthSelectorConstants";
+} from "../../constants/monthSelectorConstants";
+import MonthSelectorSkeleton from "../Skeletons/MonthSelectorSkeleton";
 
 type Props = {
   months: ScheduleMonthOption[];
@@ -174,48 +171,44 @@ export default function MonthSelector({
           />
         )}
 
-        {months.map(
-          ({ key, label, count }, index) => {
-            const isSelected = index === selectedIndex;
-            const gameLabel = count === 1 ? "Game" : "Games";
+        {months.map(({ key, label, count }, index) => {
+          const isSelected = index === selectedIndex;
+          const gameLabel = count === 1 ? "Game" : "Games";
 
-            return (
-              <TouchableOpacity
-                key={key}
-                activeOpacity={activeOpacity}
-                onPress={() => handleSelectMonth(key)}
-                style={styles.monthButton}
-                accessibilityRole="tab"
-                accessibilityState={{ selected: isSelected }}
-                accessibilityLabel={`${label}, ${count} ${gameLabel}`}
+          return (
+            <TouchableOpacity
+              key={key}
+              activeOpacity={activeOpacity}
+              onPress={() => handleSelectMonth(key)}
+              style={styles.monthButton}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: isSelected }}
+              accessibilityLabel={`${label}, ${count} ${gameLabel}`}
+            >
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+                style={isSelected ? styles.monthTextSelected : styles.monthText}
               >
-                <Text
-                  numberOfLines={1}
-                  adjustsFontSizeToFit
-                  minimumFontScale={0.8}
-                  style={
-                    isSelected ? styles.monthTextSelected : styles.monthText
-                  }
-                >
-                  {label}
-                </Text>
+                {label}
+              </Text>
 
-                <Text
-                  numberOfLines={1}
-                  adjustsFontSizeToFit
-                  minimumFontScale={0.8}
-                  style={
-                    isSelected
-                      ? styles.gameCountTextSelected
-                      : styles.gameCountText
-                  }
-                >
-                  {count} {gameLabel}
-                </Text>
-              </TouchableOpacity>
-            );
-          },
-        )}
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+                style={
+                  isSelected
+                    ? styles.gameCountTextSelected
+                    : styles.gameCountText
+                }
+              >
+                {count} {gameLabel}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
     </View>
   );

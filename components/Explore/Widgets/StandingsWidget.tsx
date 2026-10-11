@@ -4,10 +4,10 @@ import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { getUFLTeamByESPNId, getUFLTeamLogo } from "constants/teamsUFL";
-import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
+import { getUFLTeam, getUFLTeamLogo } from "constants/teamsUFL";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -163,15 +163,15 @@ function getLocalTeamLogo(
       return localTeam ? getNBATeamLogo(localTeam.id, isDark) : undefined;
     }
     case "wnba": {
-      const localTeam = getWNBATeamByESPNId(team.id);
+      const localTeam = getWNBATeam(team.id);
       return localTeam ? getWNBATeamLogo(localTeam.id, isDark) : undefined;
     }
     case "nfl": {
-      const localTeam = getNFLTeamByESPNId(team.id);
+      const localTeam = getNFLTeam(team.id);
       return localTeam ? getNFLTeamLogo(localTeam.id, isDark) : undefined;
     }
     case "ufl": {
-      const localTeam = getUFLTeamByESPNId(team.id);
+      const localTeam = getUFLTeam(team.id);
       return localTeam ? getUFLTeamLogo(localTeam.id, isDark) : undefined;
     }
     case "mlb": {
@@ -188,9 +188,9 @@ function getLocalTeamLogo(
 function getLocalTeam(team: StandingsTeam, league: ExploreStandingsLeague) {
   const lookup = {
     nba: getNBATeam,
-    wnba: getWNBATeamByESPNId,
-    nfl: getNFLTeamByESPNId,
-    ufl: getUFLTeamByESPNId,
+    wnba: getWNBATeam,
+    nfl: getNFLTeam,
+    ufl: getUFLTeam,
     mlb: getMLBTeam,
     nhl: getNHLTeam,
   };

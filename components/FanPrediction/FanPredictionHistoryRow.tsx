@@ -137,6 +137,7 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
             </Text>
           </View>
         )}
+
         {isLive && pick.statusDescription && (
           <View style={gameStyles.infoWrapper}>
             <Text style={gameStyles.date} numberOfLines={1}>
@@ -144,6 +145,7 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
             </Text>
           </View>
         )}
+
         {isFinal && pick.statusDescription && (
           <View style={gameStyles.infoWrapper}>
             <Text style={gameStyles.finalText} numberOfLines={1}>
@@ -178,7 +180,7 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
       </View>
       <View style={styles.footer}>
         <Text style={styles.pickSummary} numberOfLines={1}>
-          Picked {pick.pickedName}
+          Picked {pick.pickedShortName}
         </Text>
         <View
           style={[

@@ -465,7 +465,7 @@ function PlayByPlay({
     null;
 
   const possessionTeamId = String(
-    possessionTeam?.id ?? possessionTeam?.espnId ?? "",
+    possessionTeam?.id ?? "",
   );
 
   const possessionCode = (

@@ -33,6 +33,7 @@ export type ForumPost = UserFollowCounts & {
   images?: string[];
   videos?: string[];
   video_thumbnails?: (string | null)[];
+  poll?: ForumPollState | null;
 };
 
 export type ForumPostAuthor = UserFollowCounts & {

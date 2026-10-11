@@ -76,6 +76,7 @@ type ExploreWidgetDashboardProps = {
     pollType: ExploreCollegePollType,
   ) => void;
   onSetCollegePollAutoPlay: (widgetId: string, autoPlay: boolean) => void;
+  onSetFavoriteTeamsAutoPlay: (widgetId: string, autoPlay: boolean) => void;
   onSetFavoriteGameLeagues: (
     widgetId: string,
     leagues: ExploreWidgetLeague[],
@@ -187,6 +188,7 @@ export default function ExploreWidgetDashboard({
   onSetStandingsLeague,
   onSetCollegePollSelection,
   onSetCollegePollAutoPlay,
+  onSetFavoriteTeamsAutoPlay,
   onSetFavoriteGameLeagues,
   onSetFavoriteGamesAutoPlay,
   onMoveWidget,
@@ -347,6 +349,10 @@ export default function ExploreWidgetDashboard({
       content = (
         <View style={dashboardStyles.section}>
           <FavoriteTeamsWidget
+            autoPlay={widget.favoriteTeamsAutoPlay !== false}
+            onChangeAutoPlay={(autoPlay) =>
+              onSetFavoriteTeamsAutoPlay(widget.id, autoPlay)
+            }
             isDark={isDark}
             size={widget.size}
             width={width}

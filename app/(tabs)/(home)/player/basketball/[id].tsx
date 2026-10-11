@@ -7,12 +7,10 @@ import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import {
   getWCBBTeam,
-  getWCBBTeamByESPNId,
   getWCBBTeamLogo,
 } from "@/constants/teamsWCBB";
 import {
   getWNBATeam,
-  getWNBATeamByESPNId,
   getWNBATeamLogo,
 } from "@/constants/teamsWNBA";
 import {
@@ -27,7 +25,6 @@ import PlayerGameLog from "components/Player/PlayerGameLog";
 import { Colors, globalStyles } from "constants/styles";
 import {
   getMCBBTeam,
-  getMCBBTeamByESPNId,
   getMCBBTeamLogo,
 } from "constants/teamsMCBB";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -132,14 +129,14 @@ export default function PlayerDetailScreen() {
     }
 
     if (isWNBA) {
-      return getWNBATeam(currentTeamId) ?? getWNBATeamByESPNId(currentTeamId);
+      return getWNBATeam(currentTeamId);
     }
 
     if (isWCBB) {
-      return getWCBBTeam(currentTeamId) ?? getWCBBTeamByESPNId(currentTeamId);
+      return getWCBBTeam(currentTeamId) ?? getWCBBTeam(currentTeamId);
     }
 
-    return getMCBBTeam(currentTeamId) ?? getMCBBTeamByESPNId(currentTeamId);
+    return getMCBBTeam(currentTeamId) ?? getMCBBTeam(currentTeamId);
   }, [currentTeamId, isNBA, isWCBB, isWNBA]);
 
   const teamLogo = useMemo(() => {

@@ -1,15 +1,15 @@
 import { getNBATeam, getTeamBySummerId } from "@/constants/teams";
 import { getCBTeam } from "@/constants/teamsCB";
-import { getCFBTeam, getCFBTeamByESPNId } from "@/constants/teamsCFB";
-import { getMCBBTeam, getMCBBTeamByESPNId } from "@/constants/teamsMCBB";
+import { getCFBTeam } from "@/constants/teamsCFB";
+import { getMCBBTeam } from "@/constants/teamsMCBB";
 import { getMLBTeam } from "@/constants/teamsMLB";
-import { getNFLTeam, getNFLTeamByESPNId } from "@/constants/teamsNFL";
+import { getNFLTeam } from "@/constants/teamsNFL";
 import { getNHLTeam } from "@/constants/teamsNHL";
 import { getSBTeam } from "@/constants/teamsSB";
 import { getSOCCTeam } from "@/constants/teamsSOCC";
-import { getUFLTeam, getUFLTeamByESPNId } from "@/constants/teamsUFL";
-import { getWCBBTeam, getWCBBTeamByESPNId } from "@/constants/teamsWCBB";
-import { getWNBATeam, getWNBATeamByESPNId } from "@/constants/teamsWNBA";
+import { getUFLTeam } from "@/constants/teamsUFL";
+import { getWCBBTeam } from "@/constants/teamsWCBB";
+import { getWNBATeam } from "@/constants/teamsWNBA";
 import type { AppNotification } from "@/types/notifications";
 import type { Team } from "@/types/team";
 import type { ImageSource } from "expo-image";
@@ -45,17 +45,17 @@ const resolveTeam = (
     case "nba":
       return getNBATeam(teamId) ?? getNBATeam(teamId);
     case "wnba":
-      return getWNBATeam(teamId) ?? getWNBATeamByESPNId(teamId);
+      return getWNBATeam(teamId);
     case "mcbb":
-      return getMCBBTeam(teamId) ?? getMCBBTeamByESPNId(teamId);
+      return getMCBBTeam(teamId) ?? getMCBBTeam(teamId);
     case "wcbb":
-      return getWCBBTeam(teamId) ?? getWCBBTeamByESPNId(teamId);
+      return getWCBBTeam(teamId) ?? getWCBBTeam(teamId);
     case "nfl":
-      return getNFLTeam(teamId) ?? getNFLTeamByESPNId(teamId);
+      return getNFLTeam(teamId) ?? getNFLTeam(teamId);
     case "cfb":
-      return getCFBTeam(teamId) ?? getCFBTeamByESPNId(teamId);
+      return getCFBTeam(teamId);
     case "ufl":
-      return getUFLTeam(teamId) ?? getUFLTeamByESPNId(teamId);
+      return getUFLTeam(teamId);
     case "mlb":
       return getMLBTeam(teamId) ?? getMLBTeam(teamId);
     case "cb":

@@ -1,3 +1,4 @@
+import { gameTeamIdsMatch } from "utils/gameTeamIdentity";
 import Dropdown from "@/components/Dropdown";
 import type { Play } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import rinkImage from "assets/Placeholders/NHLRinkPlaceholder.png";
@@ -14,8 +15,6 @@ interface ShotChartProps {
   plays?: Play[];
   homeId: string | number;
   awayId: string | number;
-  homeEspnId: string | number;
-  awayEspnId: string | number;
   homeColor: string;
   awayColor: string;
   homeLogo: any;
@@ -59,8 +58,6 @@ const RINK_VIEWBOX_LENGTH =
 const RINK_VIEWBOX_WIDTH = RINK_VIEWBOX_BOUNDS.bottom - RINK_VIEWBOX_BOUNDS.top;
 const RINK_CENTER_LOGO_SIZE = 50;
 
-const normalizeId = (value: string | number | null | undefined) =>
-  String(value ?? "").trim();
 
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
@@ -93,8 +90,6 @@ export default function ShotChart({
   plays = [],
   homeId,
   awayId,
-  homeEspnId = "0",
-  awayEspnId = "0",
   homeColor,
   awayColor,
   homeLogo,
@@ -110,11 +105,6 @@ export default function ShotChart({
 
   const homeColorValue = homeColor || Colors.midTone;
   const awayColorValue = awayColor || Colors.midTone;
-
-  const homeDatabaseIdString = normalizeId(homeId);
-  const awayDatabaseIdString = normalizeId(awayId);
-  const homeEspnIdString = normalizeId(homeEspnId);
-  const awayEspnIdString = normalizeId(awayEspnId);
 
   const [layout, setLayout] = useState({
     width: 0,
@@ -139,7 +129,7 @@ export default function ShotChart({
     value: tab,
   }));
 
-  const eventOptions: { label: ShotEventFilter; value: ShotEventFilter; }[] = [
+  const eventOptions: { label: ShotEventFilter; value: ShotEventFilter }[] = [
     {
       label: "All Events",
       value: "All Events",
@@ -185,34 +175,11 @@ export default function ShotChart({
       return null;
     }
 
-    const playTeamId = normalizeId(play.team?.id);
+    const playTeamId = play.team?.id;
 
-    /*
-     * Plays can contain either the ESPN team ID or the database team ID.
-     * Check both so team colors are applied correctly.
-     */
-    const matchesHomeEspnId =
-      playTeamId !== "" && playTeamId === homeEspnIdString;
+    const isHomeShot = gameTeamIdsMatch(playTeamId, homeId);
+    const isAwayShot = gameTeamIdsMatch(playTeamId, awayId);
 
-    const matchesAwayEspnId =
-      playTeamId !== "" && playTeamId === awayEspnIdString;
-
-    const matchesHomeDatabaseId =
-      playTeamId !== "" && playTeamId === homeDatabaseIdString;
-
-    const matchesAwayDatabaseId =
-      playTeamId !== "" && playTeamId === awayDatabaseIdString;
-
-    /*
-     * ESPN IDs take priority. The database-ID fallback is used when
-     * the play response has already been converted to internal IDs.
-     */
-    const isHomeShot =
-      matchesHomeEspnId || (!matchesAwayEspnId && matchesHomeDatabaseId);
-
-    const isAwayShot =
-      matchesAwayEspnId ||
-      (!matchesHomeEspnId && !isHomeShot && matchesAwayDatabaseId);
 
     const rinkX = clamp(rawX + RINK_HALF_LENGTH, 0, RINK_LENGTH);
     const rinkY = clamp(RINK_HALF_WIDTH - rawY, 0, RINK_WIDTH);
@@ -271,7 +238,7 @@ export default function ShotChart({
     );
   });
 
-  const MadeView = ({ color }: { color: string; }) => (
+  const MadeView = ({ color }: { color: string }) => (
     <View
       style={[
         styles.madeMarker,
@@ -282,7 +249,7 @@ export default function ShotChart({
     />
   );
 
-  const MissView = ({ color }: { color: string; }) => (
+  const MissView = ({ color }: { color: string }) => (
     <View
       style={[
         styles.missedMarker,
@@ -387,20 +354,20 @@ export default function ShotChart({
               <View style={styles.divider} />
 
               <Text style={styles.legendText}>Make</Text>
-              {MadeView({ "color": awayColorValue })}
+              {MadeView({ color: awayColorValue })}
 
               <Text style={styles.legendText}>Miss</Text>
-              {MissView({ "color": awayColorValue })}
+              {MissView({ color: awayColorValue })}
             </View>
           )}
 
           {homeTeam && (
             <View style={styles.legendItem}>
               <Text style={styles.legendText}>Make</Text>
-              {MadeView({ "color": homeColorValue })}
+              {MadeView({ color: homeColorValue })}
 
               <Text style={styles.legendText}>Miss</Text>
-              {MissView({ "color": homeColorValue })}
+              {MissView({ color: homeColorValue })}
 
               <View style={styles.divider} />
 

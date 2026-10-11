@@ -4,7 +4,7 @@ import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standing
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import { Colors } from "@/constants/styles";
-import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";

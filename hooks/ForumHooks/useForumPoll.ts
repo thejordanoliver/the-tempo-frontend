@@ -2,21 +2,32 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getPostPoll, voteOnPostPoll } from "services/forumApi";
 import type { ForumPollState } from "types/forum";
 
-export function useForumPoll(postId: string) {
+export function useForumPoll(postId: string, initialPoll?: ForumPollState | null) {
   const [state, setState] = useState<{
     postId: string;
     poll: ForumPollState | null;
     loading: boolean;
     voting: boolean;
-  }>({ postId, poll: null, loading: true, voting: false });
+  }>({ postId, poll: initialPoll ?? null, loading: initialPoll === undefined, voting: false });
+  const [inputs, setInputs] = useState({ postId, initialPoll });
   const version = useRef(0);
   const votePending = useRef(false);
+
+  // Reset prop-derived state before rendering children with a different poll.
+  if (inputs.postId !== postId || inputs.initialPoll !== initialPoll) {
+    setInputs({ postId, initialPoll });
+    setState({ postId, poll: initialPoll ?? null, loading: initialPoll === undefined, voting: false });
+  }
 
   useEffect(() => {
     const requestVersion = ++version.current;
     const controller = new AbortController();
     votePending.current = false;
     const isCurrent = () => version.current === requestVersion;
+
+    if (initialPoll !== undefined) {
+      return () => { version.current += 1; };
+    }
 
     void getPostPoll(postId, controller.signal)
       .then((poll) => {
@@ -31,7 +42,7 @@ export function useForumPoll(postId: string) {
       version.current += 1;
       controller.abort();
     };
-  }, [postId]);
+  }, [postId, initialPoll]);
 
   const poll = state.postId === postId ? state.poll : null;
   const loading = state.postId !== postId || state.loading;

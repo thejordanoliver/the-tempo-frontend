@@ -63,7 +63,7 @@ import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import SeasonLeadersList from "../../components/League/SeasonLeaderList";
 import TournamentTreeBracket from "../../components/Sports/Basketball/Playoffs/MCBBTournament/TournamentTreeBracket";
-import { MCBBStandingsList } from "../../components/Sports/Basketball/Standings/MCBBStandingsList";
+import { MCBBStandingsList } from "../../components/Sports/Basketball/Standings/CollegeStandingsList";
 import { getMCBBConferenceSelectionName } from "../../constants/conferences/mcbbConferences";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import {

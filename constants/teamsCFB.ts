@@ -14,10 +14,10 @@ import AirForceLogo from "assets/College_Logos/AirForceLogo.png";
 import AirForceLogoLight from "assets/College_Logos/AirForceLogoLight.png";
 import AkronLogo from "assets/College_Logos/AkronLogo.png";
 import AkronLogoLight from "assets/College_Logos/AkronLogoLight.png";
-import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
-import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
 import AlabamaAAndMLogo from "assets/College_Logos/AlabamaAAndMLogo.png";
 import AlabamaAAndMLogoLight from "assets/College_Logos/AlabamaAAndMLogoLight.png";
+import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
+import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
 import AlabamaStateLogo from "assets/College_Logos/AlabamaStateLogo.png";
 import AlabamaStateLogoLight from "assets/College_Logos/AlabamaStateLogoLight.png";
 import AlbionLogo from "assets/College_Logos/AlbionLogo.png";
@@ -216,16 +216,16 @@ import ColoradoStateLogo from "assets/College_Logos/ColoradoStateLogo.png";
 import ColoradoStateLogoLight from "assets/College_Logos/ColoradoStateLogoLight.png";
 import ColumbiaLogo from "assets/College_Logos/ColumbiaLogo.png";
 import ColumbiaLogoLight from "assets/College_Logos/ColumbiaLogoLight.png";
-import ConcordLogo from "assets/College_Logos/ConcordLogo.png";
-import ConcordLogoLight from "assets/College_Logos/ConcordLogoLight.png";
 import ConcordiaChicagoLogo from "assets/College_Logos/ConcordiaChicagoLogo.png";
 import ConcordiaChicagoLogoLight from "assets/College_Logos/ConcordiaChicagoLogoLight.png";
 import ConcordiaWILogo from "assets/College_Logos/ConcordiaWILogo.png";
 import ConcordiaWILogoLight from "assets/College_Logos/ConcordiaWILogoLight.png";
-import CornellLogo from "assets/College_Logos/CornellLogo.png";
-import CornellLogoLight from "assets/College_Logos/CornellLogoLight.png";
+import ConcordLogo from "assets/College_Logos/ConcordLogo.png";
+import ConcordLogoLight from "assets/College_Logos/ConcordLogoLight.png";
 import CornellIALogo from "assets/College_Logos/CornellIALogo.png";
 import CornellIALogoLight from "assets/College_Logos/CornellIALogoLight.png";
+import CornellLogo from "assets/College_Logos/CornellLogo.png";
+import CornellLogoLight from "assets/College_Logos/CornellLogoLight.png";
 import CrownLogo from "assets/College_Logos/CrownLogo.png";
 import CrownLogoLight from "assets/College_Logos/CrownLogoLight.png";
 import CSUPuebloLogo from "assets/College_Logos/CSUPuebloLogo.png";
@@ -264,12 +264,12 @@ import EastCarolinaLogo from "assets/College_Logos/EastCarolinaLogo.png";
 import EastCarolinaLogoLight from "assets/College_Logos/EastCarolinaLogoLight.png";
 import EastCentralLogo from "assets/College_Logos/EastCentralLogo.png";
 import EastCentralLogoLight from "assets/College_Logos/EastCentralLogoLight.png";
-import EasternLogo from "assets/College_Logos/EasternLogo.png";
-import EasternLogoLight from "assets/College_Logos/EasternLogoLight.png";
 import EasternIllinoisLogo from "assets/College_Logos/EasternIllinoisLogo.png";
 import EasternIllinoisLogoLight from "assets/College_Logos/EasternIllinoisLogoLight.png";
 import EasternKentuckyLogo from "assets/College_Logos/EasternKentuckyLogo.png";
 import EasternKentuckyLogoLight from "assets/College_Logos/EasternKentuckyLogoLight.png";
+import EasternLogo from "assets/College_Logos/EasternLogo.png";
+import EasternLogoLight from "assets/College_Logos/EasternLogoLight.png";
 import EasternMichiganLogo from "assets/College_Logos/EasternMichiganLogo.png";
 import EasternMichiganLogoLight from "assets/College_Logos/EasternMichiganLogoLight.png";
 import EasternNewMexicoLogo from "assets/College_Logos/EasternNewMexicoLogo.png";
@@ -310,10 +310,10 @@ import FitchburgStateLogo from "assets/College_Logos/FitchburgStateLogo.png";
 import FitchburgStateLogoLight from "assets/College_Logos/FitchburgStateLogoLight.png";
 import FIULogo from "assets/College_Logos/FIULogo.png";
 import FIULogoLight from "assets/College_Logos/FIULogoLight.png";
-import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
-import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
 import FloridaAAndMLogo from "assets/College_Logos/FloridaAAndMLogo.png";
 import FloridaAAndMLogoLight from "assets/College_Logos/FloridaAAndMLogoLight.png";
+import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
+import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
 import FloridaStateLogo from "assets/College_Logos/FloridaStateLogo.png";
 import FloridaStateLogoLight from "assets/College_Logos/FloridaStateLogoLight.png";
 import FordhamLogo from "assets/College_Logos/FordhamLogo.png";
@@ -324,10 +324,10 @@ import FortLewisLogo from "assets/College_Logos/FortLewisLogo.png";
 import FortLewisLogoLight from "assets/College_Logos/FortLewisLogoLight.png";
 import FraminghamStateLogo from "assets/College_Logos/FraminghamStateLogo.png";
 import FraminghamStateLogoLight from "assets/College_Logos/FraminghamStateLogoLight.png";
-import FranklinLogo from "assets/College_Logos/FranklinLogo.png";
-import FranklinLogoLight from "assets/College_Logos/FranklinLogoLight.png";
 import FranklinAndMarshallLogo from "assets/College_Logos/FranklinAndMarshallLogo.png";
 import FranklinAndMarshallLogoLight from "assets/College_Logos/FranklinAndMarshallLogoLight.png";
+import FranklinLogo from "assets/College_Logos/FranklinLogo.png";
+import FranklinLogoLight from "assets/College_Logos/FranklinLogoLight.png";
 import FranklinPierceLogo from "assets/College_Logos/FranklinPierceLogo.png";
 import FranklinPierceLogoLight from "assets/College_Logos/FranklinPierceLogoLight.png";
 import FresnoStateLogo from "assets/College_Logos/FresnoStateLogo.png";
@@ -404,10 +404,10 @@ import HolyCrossLogo from "assets/College_Logos/HolyCrossLogo.png";
 import HolyCrossLogoLight from "assets/College_Logos/HolyCrossLogoLight.png";
 import HopeLogo from "assets/College_Logos/HopeLogo.png";
 import HopeLogoLight from "assets/College_Logos/HopeLogoLight.png";
-import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
-import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
 import HoustonChristianLogo from "assets/College_Logos/HoustonChristianLogo.png";
 import HoustonChristianLogoLight from "assets/College_Logos/HoustonChristianLogoLight.png";
+import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
+import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
 import HowardLogo from "assets/College_Logos/HowardLogo.png";
 import HowardLogoLight from "assets/College_Logos/HowardLogoLight.png";
 import HowardPayneLogo from "assets/College_Logos/HowardPayneLogo.png";
@@ -420,10 +420,10 @@ import IdahoLogo from "assets/College_Logos/IdahoLogo.png";
 import IdahoLogoLight from "assets/College_Logos/IdahoLogoLight.png";
 import IdahoStateLogo from "assets/College_Logos/IdahoStateLogo.png";
 import IdahoStateLogoLight from "assets/College_Logos/IdahoStateLogoLight.png";
-import IllinoisLogo from "assets/College_Logos/IllinoisLogo.png";
-import IllinoisLogoLight from "assets/College_Logos/IllinoisLogoLight.png";
 import IllinoisCollegeLogo from "assets/College_Logos/IllinoisCollegeLogo.png";
 import IllinoisCollegeLogoLight from "assets/College_Logos/IllinoisCollegeLogoLight.png";
+import IllinoisLogo from "assets/College_Logos/IllinoisLogo.png";
+import IllinoisLogoLight from "assets/College_Logos/IllinoisLogoLight.png";
 import IllinoisStateLogo from "assets/College_Logos/IllinoisStateLogo.png";
 import IllinoisStateLogoLight from "assets/College_Logos/IllinoisStateLogoLight.png";
 import IllinoisWesleyanLogo from "assets/College_Logos/IllinoisWesleyanLogo.png";
@@ -606,10 +606,10 @@ import MissouriWesternLogo from "assets/College_Logos/MissouriWesternLogo.png";
 import MissouriWesternLogoLight from "assets/College_Logos/MissouriWesternLogoLight.png";
 import MITLogo from "assets/College_Logos/MITLogo.png";
 import MITLogoLight from "assets/College_Logos/MITLogoLight.png";
-import MonmouthLogo from "assets/College_Logos/MonmouthLogo.png";
-import MonmouthLogoLight from "assets/College_Logos/MonmouthLogoLight.png";
 import MonmouthILLogo from "assets/College_Logos/MonmouthILLogo.png";
 import MonmouthILLogoLight from "assets/College_Logos/MonmouthILLogoLight.png";
+import MonmouthLogo from "assets/College_Logos/MonmouthLogo.png";
+import MonmouthLogoLight from "assets/College_Logos/MonmouthLogoLight.png";
 import MontanaLogo from "assets/College_Logos/MontanaLogo.png";
 import MontanaLogoLight from "assets/College_Logos/MontanaLogoLight.png";
 import MontanaStateLogo from "assets/College_Logos/MontanaStateLogo.png";
@@ -638,10 +638,10 @@ import NCStateLogo from "assets/College_Logos/NCStateLogo.png";
 import NCStateLogoLight from "assets/College_Logos/NCStateLogoLight.png";
 import NCWesleyanLogo from "assets/College_Logos/NCWesleyanLogo.png";
 import NCWesleyanLogoLight from "assets/College_Logos/NCWesleyanLogoLight.png";
-import NebraskaLogo from "assets/College_Logos/NebraskaLogo.png";
-import NebraskaLogoLight from "assets/College_Logos/NebraskaLogoLight.png";
 import NebraskaKearneyLogo from "assets/College_Logos/NebraskaKearneyLogo.png";
 import NebraskaKearneyLogoLight from "assets/College_Logos/NebraskaKearneyLogoLight.png";
+import NebraskaLogo from "assets/College_Logos/NebraskaLogo.png";
+import NebraskaLogoLight from "assets/College_Logos/NebraskaLogoLight.png";
 import NebraskaWesleyanLogo from "assets/College_Logos/NebraskaWesleyanLogo.png";
 import NebraskaWesleyanLogoLight from "assets/College_Logos/NebraskaWesleyanLogoLight.png";
 import NevadaLogo from "assets/College_Logos/NevadaLogo.png";
@@ -654,10 +654,10 @@ import NewHampshireLogo from "assets/College_Logos/NewHampshireLogo.png";
 import NewHampshireLogoLight from "assets/College_Logos/NewHampshireLogoLight.png";
 import NewHavenLogo from "assets/College_Logos/NewHavenLogo.png";
 import NewHavenLogoLight from "assets/College_Logos/NewHavenLogoLight.png";
-import NewMexicoLogo from "assets/College_Logos/NewMexicoLogo.png";
-import NewMexicoLogoLight from "assets/College_Logos/NewMexicoLogoLight.png";
 import NewMexicoHighlandsLogo from "assets/College_Logos/NewMexicoHighlandsLogo.png";
 import NewMexicoHighlandsLogoLight from "assets/College_Logos/NewMexicoHighlandsLogoLight.png";
+import NewMexicoLogo from "assets/College_Logos/NewMexicoLogo.png";
+import NewMexicoLogoLight from "assets/College_Logos/NewMexicoLogoLight.png";
 import NewMexicoStateLogo from "assets/College_Logos/NewMexicoStateLogo.png";
 import NewMexicoStateLogoLight from "assets/College_Logos/NewMexicoStateLogoLight.png";
 import NichollsLogo from "assets/College_Logos/NichollsLogo.png";
@@ -668,12 +668,12 @@ import NorfolkStateLogo from "assets/College_Logos/NorfolkStateLogo.png";
 import NorfolkStateLogoLight from "assets/College_Logos/NorfolkStateLogoLight.png";
 import NorthAlabamaLogo from "assets/College_Logos/NorthAlabamaLogo.png";
 import NorthAlabamaLogoLight from "assets/College_Logos/NorthAlabamaLogoLight.png";
-import NorthCarolinaLogo from "assets/College_Logos/NorthCarolinaLogo.png";
-import NorthCarolinaLogoLight from "assets/College_Logos/NorthCarolinaLogoLight.png";
 import NorthCarolinaAAndTLogo from "assets/College_Logos/NorthCarolinaAAndTLogo.png";
 import NorthCarolinaAAndTLogoLight from "assets/College_Logos/NorthCarolinaAAndTLogoLight.png";
 import NorthCarolinaCentralLogo from "assets/College_Logos/NorthCarolinaCentralLogo.png";
 import NorthCarolinaCentralLogoLight from "assets/College_Logos/NorthCarolinaCentralLogoLight.png";
+import NorthCarolinaLogo from "assets/College_Logos/NorthCarolinaLogo.png";
+import NorthCarolinaLogoLight from "assets/College_Logos/NorthCarolinaLogoLight.png";
 import NorthCentralCollegeLogo from "assets/College_Logos/NorthCentralCollegeLogo.png";
 import NorthCentralCollegeLogoLight from "assets/College_Logos/NorthCentralCollegeLogoLight.png";
 import NorthDakotaLogo from "assets/College_Logos/NorthDakotaLogo.png";
@@ -714,20 +714,20 @@ import NotreDameLogo from "assets/College_Logos/NotreDameLogo.png";
 import NotreDameLogoLight from "assets/College_Logos/NotreDameLogoLight.png";
 import OberlinLogo from "assets/College_Logos/OberlinLogo.png";
 import OberlinLogoLight from "assets/College_Logos/OberlinLogoLight.png";
-import OhioLogo from "assets/College_Logos/OhioLogo.png";
-import OhioLogoLight from "assets/College_Logos/OhioLogoLight.png";
 import OhioDominicanLogo from "assets/College_Logos/OhioDominicanLogo.png";
 import OhioDominicanLogoLight from "assets/College_Logos/OhioDominicanLogoLight.png";
+import OhioLogo from "assets/College_Logos/OhioLogo.png";
+import OhioLogoLight from "assets/College_Logos/OhioLogoLight.png";
 import OhioNorthernLogo from "assets/College_Logos/OhioNorthernLogo.png";
 import OhioNorthernLogoLight from "assets/College_Logos/OhioNorthernLogoLight.png";
 import OhioStateLogo from "assets/College_Logos/OhioStateLogo.png";
 import OhioStateLogoLight from "assets/College_Logos/OhioStateLogoLight.png";
 import OhioWesleyanLogo from "assets/College_Logos/OhioWesleyanLogo.png";
 import OhioWesleyanLogoLight from "assets/College_Logos/OhioWesleyanLogoLight.png";
-import OklahomaLogo from "assets/College_Logos/OklahomaLogo.png";
-import OklahomaLogoLight from "assets/College_Logos/OklahomaLogoLight.png";
 import OklahomaBaptistLogo from "assets/College_Logos/OklahomaBaptistLogo.png";
 import OklahomaBaptistLogoLight from "assets/College_Logos/OklahomaBaptistLogoLight.png";
+import OklahomaLogo from "assets/College_Logos/OklahomaLogo.png";
+import OklahomaLogoLight from "assets/College_Logos/OklahomaLogoLight.png";
 import OklahomaStateLogo from "assets/College_Logos/OklahomaStateLogo.png";
 import OklahomaStateLogoLight from "assets/College_Logos/OklahomaStateLogoLight.png";
 import OldDominionLogo from "assets/College_Logos/OldDominionLogo.png";
@@ -864,14 +864,14 @@ import SouthDakotaStateLogo from "assets/College_Logos/SouthDakotaStateLogo.png"
 import SouthDakotaStateLogoLight from "assets/College_Logos/SouthDakotaStateLogoLight.png";
 import SoutheasternOklahomaStateLogo from "assets/College_Logos/SoutheasternOklahomaStateLogo.png";
 import SoutheasternOklahomaStateLogoLight from "assets/College_Logos/SoutheasternOklahomaStateLogoLight.png";
-import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
-import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
 import SouthernArkansasLogo from "assets/College_Logos/SouthernArkansasLogo.png";
 import SouthernArkansasLogoLight from "assets/College_Logos/SouthernArkansasLogoLight.png";
 import SouthernConnecticutStateLogo from "assets/College_Logos/SouthernConnecticutStateLogo.png";
 import SouthernConnecticutStateLogoLight from "assets/College_Logos/SouthernConnecticutStateLogoLight.png";
 import SouthernIllinoisLogo from "assets/College_Logos/SouthernIllinoisLogo.png";
 import SouthernIllinoisLogoLight from "assets/College_Logos/SouthernIllinoisLogoLight.png";
+import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
+import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
 import SouthernMissLogo from "assets/College_Logos/SouthernMissLogo.png";
 import SouthernMissLogoLight from "assets/College_Logos/SouthernMissLogoLight.png";
 import SouthernNazareneLogo from "assets/College_Logos/SouthernNazareneLogo.png";
@@ -932,12 +932,12 @@ import TennesseeStateLogo from "assets/College_Logos/TennesseeStateLogo.png";
 import TennesseeStateLogoLight from "assets/College_Logos/TennesseeStateLogoLight.png";
 import TennesseeTechLogo from "assets/College_Logos/TennesseeTechLogo.png";
 import TennesseeTechLogoLight from "assets/College_Logos/TennesseeTechLogoLight.png";
-import TexasLogo from "assets/College_Logos/TexasLogo.png";
-import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
-import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
-import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
 import TexasAAndMKingsvilleLogo from "assets/College_Logos/TexasAAndMKingsvilleLogo.png";
 import TexasAAndMKingsvilleLogoLight from "assets/College_Logos/TexasAAndMKingsvilleLogoLight.png";
+import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
+import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
+import TexasLogo from "assets/College_Logos/TexasLogo.png";
+import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
 import TexasLutheranLogo from "assets/College_Logos/TexasLutheranLogo.png";
 import TexasLutheranLogoLight from "assets/College_Logos/TexasLutheranLogoLight.png";
 import TexasSouthernLogo from "assets/College_Logos/TexasSouthernLogo.png";
@@ -990,10 +990,10 @@ import UConnLogo from "assets/College_Logos/UConnLogo.png";
 import UConnLogoLight from "assets/College_Logos/UConnLogoLight.png";
 import ULMonroeLogo from "assets/College_Logos/ULMonroeLogo.png";
 import ULMonroeLogoLight from "assets/College_Logos/ULMonroeLogoLight.png";
-import UMassLogo from "assets/College_Logos/UMassLogo.png";
-import UMassLogoLight from "assets/College_Logos/UMassLogoLight.png";
 import UMassDartmouthLogo from "assets/College_Logos/UMassDartmouthLogo.png";
 import UMassDartmouthLogoLight from "assets/College_Logos/UMassDartmouthLogoLight.png";
+import UMassLogo from "assets/College_Logos/UMassLogo.png";
+import UMassLogoLight from "assets/College_Logos/UMassLogoLight.png";
 import UnionLogo from "assets/College_Logos/UnionLogo.png";
 import UnionLogoLight from "assets/College_Logos/UnionLogoLight.png";
 import UNLVLogo from "assets/College_Logos/UNLVLogo.png";
@@ -1048,12 +1048,12 @@ import WartburgLogo from "assets/College_Logos/WartburgLogo.png";
 import WartburgLogoLight from "assets/College_Logos/WartburgLogoLight.png";
 import WashburnLogo from "assets/College_Logos/WashburnLogo.png";
 import WashburnLogoLight from "assets/College_Logos/WashburnLogoLight.png";
-import WashingtonLogo from "assets/College_Logos/WashingtonLogo.png";
-import WashingtonLogoLight from "assets/College_Logos/WashingtonLogoLight.png";
 import WashingtonAndJeffersonLogo from "assets/College_Logos/WashingtonAndJeffersonLogo.png";
 import WashingtonAndJeffersonLogoLight from "assets/College_Logos/WashingtonAndJeffersonLogoLight.png";
 import WashingtonAndLeeLogo from "assets/College_Logos/WashingtonAndLeeLogo.png";
 import WashingtonAndLeeLogoLight from "assets/College_Logos/WashingtonAndLeeLogoLight.png";
+import WashingtonLogo from "assets/College_Logos/WashingtonLogo.png";
+import WashingtonLogoLight from "assets/College_Logos/WashingtonLogoLight.png";
 import WashingtonStateLogo from "assets/College_Logos/WashingtonStateLogo.png";
 import WashingtonStateLogoLight from "assets/College_Logos/WashingtonStateLogoLight.png";
 import WaynesburgLogo from "assets/College_Logos/WaynesburgLogo.png";
@@ -1124,12 +1124,12 @@ import WilliamsLogo from "assets/College_Logos/WilliamsLogo.png";
 import WilliamsLogoLight from "assets/College_Logos/WilliamsLogoLight.png";
 import WilmingtonOHLogo from "assets/College_Logos/WilmingtonOHLogo.png";
 import WilmingtonOHLogoLight from "assets/College_Logos/WilmingtonOHLogoLight.png";
-import WisconsinLogo from "assets/College_Logos/WisconsinLogo.png";
-import WisconsinLogoLight from "assets/College_Logos/WisconsinLogoLight.png";
 import WisconsinEauClaireLogo from "assets/College_Logos/WisconsinEauClaireLogo.png";
 import WisconsinEauClaireLogoLight from "assets/College_Logos/WisconsinEauClaireLogoLight.png";
 import WisconsinLaCrosseLogo from "assets/College_Logos/WisconsinLaCrosseLogo.png";
 import WisconsinLaCrosseLogoLight from "assets/College_Logos/WisconsinLaCrosseLogoLight.png";
+import WisconsinLogo from "assets/College_Logos/WisconsinLogo.png";
+import WisconsinLogoLight from "assets/College_Logos/WisconsinLogoLight.png";
 import WisconsinLutheranLogo from "assets/College_Logos/WisconsinLutheranLogo.png";
 import WisconsinLutheranLogoLight from "assets/College_Logos/WisconsinLutheranLogoLight.png";
 import WisconsinOshkoshLogo from "assets/College_Logos/WisconsinOshkoshLogo.png";
@@ -1181,8 +1181,7 @@ export type CFBRivalry = {
 
 export const cfbTeams: Team[] = [
   {
-    id: 241,
-    espnId: 2000,
+    id: 2000,
     name: "Abilene Christian",
     shortName: "Abilene Christian",
     fullName: "Abilene Christian Wildcats",
@@ -1201,8 +1200,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 149,
-    espnId: 2005,
+    id: 2005,
     name: "Air Force",
     shortName: "Air Force",
     fullName: "Air Force Falcons",
@@ -1221,8 +1219,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 67,
-    espnId: 2006,
+    id: 2006,
     name: "Akron",
     shortName: "Akron",
     fullName: "Akron Zips",
@@ -1241,8 +1238,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 106,
-    espnId: 333,
+    id: 333,
     name: "Alabama",
     shortName: "Alabama",
     fullName: "Alabama Crimson Tide",
@@ -1261,8 +1257,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 82,
-    espnId: 2010,
+    id: 2010,
     name: "Alabama A&M",
     shortName: "Alabama A&M",
     fullName: "Alabama A&M Bulldogs",
@@ -1280,8 +1275,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 221,
-    espnId: 2011,
+    id: 2011,
     name: "Alabama State",
     shortName: "Alabama St",
     fullName: "Alabama State Hornets",
@@ -1300,8 +1294,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 228,
-    espnId: 2016,
+    id: 2016,
     name: "Alcorn State",
     shortName: "Alcorn St",
     fullName: "Alcorn State Braves",
@@ -1320,8 +1313,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 144,
-    espnId: 2026,
+    id: 2026,
     name: "App State",
     shortName: "App State",
     fullName: "App State Mountaineers",
@@ -1340,8 +1332,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 156,
-    espnId: 12,
+    id: 12,
     name: "Arizona",
     shortName: "Arizona",
     fullName: "Arizona Wildcats",
@@ -1360,8 +1351,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 86,
-    espnId: 9,
+    id: 9,
     name: "Arizona State",
     shortName: "Arizona St",
     fullName: "Arizona State Sun Devils",
@@ -1380,8 +1370,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 127,
-    espnId: 8,
+    id: 8,
     name: "Arkansas",
     shortName: "Arkansas",
     fullName: "Arkansas Razorbacks",
@@ -1400,8 +1389,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 184,
-    espnId: 2032,
+    id: 2032,
     name: "Arkansas State",
     shortName: "Arkansas St",
     fullName: "Arkansas State Red Wolves",
@@ -1420,8 +1408,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 237,
-    espnId: 2029,
+    id: 2029,
     name: "Arkansas-Pine Bluff",
     fullName: "Arkansas-Pine Bluff Golden Lions",
     shortName: "AR-Pine Bluff",
@@ -1440,8 +1427,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 177,
-    espnId: 349,
+    id: 349,
     name: "Army",
     shortName: "Army",
     fullName: "Army Black Knights",
@@ -1460,8 +1446,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 171,
-    espnId: 2,
+    id: 2,
     name: "Auburn",
     shortName: "Auburn",
     fullName: "Auburn Tigers",
@@ -1480,8 +1465,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 40,
-    espnId: 2046,
+    id: 2046,
     name: "Austin Peay",
     shortName: "Austin Peay",
     fullName: "Austin Peay Governors",
@@ -1500,8 +1484,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 136,
-    espnId: 252,
+    id: 252,
     name: "BYU",
     shortName: "BYU",
     fullName: "BYU Cougars",
@@ -1520,8 +1503,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 70,
-    espnId: 2050,
+    id: 2050,
     name: "Ball State",
     shortName: "Ball State",
     fullName: "Ball State Cardinals",
@@ -1540,8 +1522,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 118,
-    espnId: 239,
+    id: 239,
     name: "Baylor",
     shortName: "Baylor",
     fullName: "Baylor Bears",
@@ -1560,8 +1541,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 467,
-    espnId: 2757,
+    id: 2757,
     name: "Berry College",
     shortName: "Berry College",
     fullName: "Berry College Vikings",
@@ -1580,8 +1560,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 124,
-    espnId: 2065,
+    id: 2065,
     name: "Bethune-Cookman",
     fullName: "Bethune-Cookman Wildcats",
     shortName: "Bethune",
@@ -1600,8 +1579,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 204,
-    espnId: 68,
+    id: 68,
     name: "Boise State",
     shortName: "Boise St",
     fullName: "Boise State Broncos",
@@ -1620,8 +1598,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 142,
-    espnId: 103,
+    id: 103,
     name: "Boston College",
     shortName: "Boston College",
     fullName: "Boston College Eagles",
@@ -1640,8 +1617,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 154,
-    espnId: 189,
+    id: 189,
     name: "Bowling Green",
     shortName: "Bowling Green",
     fullName: "Bowling Green Falcons",
@@ -1660,7 +1636,6 @@ export const cfbTeams: Team[] = [
   },
   {
     id: 2075,
-    espnId: 2075,
     name: "Bowie State",
     fullName: "Bowie State Bulldogs",
     shortName: "Bowie St",
@@ -1678,8 +1653,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 377,
-    espnId: 2079,
+    id: 2079,
     name: "Bridgewater (VA)",
     shortName: "Bridgewater (VA)",
     fullName: "Bridgewater (VA) Eagles",
@@ -1698,8 +1672,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 74,
-    espnId: 2803,
+    id: 2803,
     name: "Bryant",
     shortName: "Bryant",
     fullName: "Bryant Bulldogs",
@@ -1718,8 +1691,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 245,
-    espnId: 2083,
+    id: 2083,
     name: "Bucknell",
     shortName: "Bucknell",
     fullName: "Bucknell Bison",
@@ -1738,8 +1710,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 141,
-    espnId: 2084,
+    id: 2084,
     name: "Buffalo",
     shortName: "Buffalo",
     fullName: "Buffalo Bulls",
@@ -1758,8 +1729,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 281,
-    espnId: 2086,
+    id: 2086,
     name: "Butler",
     shortName: "Butler",
     fullName: "Butler Bulldogs",
@@ -1778,8 +1748,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 89,
-    espnId: 13,
+    id: 13,
     name: "Cal Poly",
     shortName: "Cal Poly",
     fullName: "Cal Poly Mustangs",
@@ -1798,8 +1767,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 161,
-    espnId: 25,
+    id: 25,
     name: "California",
     shortName: "California",
     fullName: "California Golden Bears",
@@ -1818,8 +1786,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 249,
-    espnId: 2097,
+    id: 2097,
     name: "Campbell",
     shortName: "Campbell",
     fullName: "Campbell Fighting Camels",
@@ -1838,8 +1805,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 214,
-    espnId: 2110,
+    id: 2110,
     name: "Central Arkansas",
     shortName: "Central Arkansas",
     fullName: "Central Arkansas Bears",
@@ -1858,8 +1824,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 137,
-    espnId: 2115,
+    id: 2115,
     name: "Central Connecticut",
     fullName: "Central Connecticut Blue Devils",
     shortName: "C Connecticut",
@@ -1878,8 +1843,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 62,
-    espnId: 2117,
+    id: 2117,
     name: "Central Michigan",
     shortName: "Central Michigan",
     fullName: "Central Michigan Chippewas",
@@ -1898,8 +1862,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 609,
-    espnId: 2120,
+    id: 2120,
     name: "Central Washington",
     fullName: "Central Washington",
     shortName: "C Wash",
@@ -1918,8 +1881,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 213,
-    espnId: 2127,
+    id: 2127,
     name: "Charleston Southern",
     shortName: "Charleston Southern",
     fullName: "Charleston Southern Buccaneers",
@@ -1938,8 +1900,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 52,
-    espnId: 2429,
+    id: 2429,
     name: "Charlotte",
     shortName: "Charlotte",
     fullName: "Charlotte 49ers",
@@ -1958,8 +1919,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 255,
-    espnId: 236,
+    id: 236,
     name: "Chattanooga",
     shortName: "Chattanooga",
     fullName: "Chattanooga Mocs",
@@ -1978,8 +1938,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 431,
-    espnId: 80,
+    id: 80,
     name: "Chicago",
     shortName: "Chicago",
     fullName: "Chicago Maroons",
@@ -1998,8 +1957,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 710,
-    espnId: 3112,
+    id: 3112,
     name: "Christopher Newport",
     shortName: "Christopher Newport",
     fullName: "Christopher Newport Captains",
@@ -2018,8 +1976,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 128,
-    espnId: 2132,
+    id: 2132,
     name: "Cincinnati",
     shortName: "Cincinnati",
     fullName: "Cincinnati Bearcats",
@@ -2038,8 +1995,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 209,
-    espnId: 228,
+    id: 228,
     name: "Clemson",
     shortName: "Clemson",
     fullName: "Clemson Tigers",
@@ -2058,8 +2014,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 176,
-    espnId: 324,
+    id: 324,
     name: "Coastal Carolina",
     shortName: "Coastal Carolina",
     fullName: "Coastal Carolina Chanticleers",
@@ -2078,8 +2033,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 192,
-    espnId: 2142,
+    id: 2142,
     name: "Colgate",
     shortName: "Colgate",
     fullName: "Colgate Raiders",
@@ -2098,8 +2052,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 104,
-    espnId: 38,
+    id: 38,
     name: "Colorado",
     shortName: "Colorado",
     fullName: "Colorado Buffaloes",
@@ -2118,8 +2071,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 116,
-    espnId: 36,
+    id: 36,
     name: "Colorado State",
     shortName: "Colorado St",
     fullName: "Colorado State Rams",
@@ -2138,8 +2090,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 330,
-    espnId: 171,
+    id: 171,
     name: "Columbia",
     shortName: "Columbia",
     fullName: "Columbia Lions",
@@ -2158,8 +2109,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 326,
-    espnId: 172,
+    id: 172,
     name: "Cornell",
     shortName: "Cornell",
     fullName: "Cornell Big Red",
@@ -2178,8 +2128,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 327,
-    espnId: 159,
+    id: 159,
     name: "Dartmouth",
     shortName: "Dartmouth",
     fullName: "Dartmouth Big Green",
@@ -2198,8 +2147,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 283,
-    espnId: 2166,
+    id: 2166,
     name: "Davidson",
     shortName: "Davidson",
     fullName: "Davidson Wildcats",
@@ -2218,8 +2166,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 277,
-    espnId: 2168,
+    id: 2168,
     name: "Dayton",
     shortName: "Dayton",
     fullName: "Dayton Flyers",
@@ -2238,8 +2185,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 146,
-    espnId: 48,
+    id: 48,
     name: "Delaware",
     shortName: "Delaware",
     fullName: "Delaware Blue Hens",
@@ -2258,8 +2204,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 284,
-    espnId: 2169,
+    id: 2169,
     name: "Delaware State",
     shortName: "Delaware St",
     fullName: "Delaware State Hornets",
@@ -2278,8 +2223,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 375,
-    espnId: 83,
+    id: 83,
 
     name: "Depauw",
 
@@ -2300,8 +2244,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 289,
-    espnId: 2181,
+    id: 2181,
     name: "Drake",
     shortName: "Drake",
     fullName: "Drake Bulldogs",
@@ -2320,8 +2263,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 99,
-    espnId: 150,
+    id: 150,
     name: "Duke",
     shortName: "Duke",
     fullName: "Duke Blue Devils",
@@ -2340,8 +2282,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 50,
-    espnId: 2184,
+    id: 2184,
     name: "Duquesne",
     shortName: "Duquesne",
     fullName: "Duquesne Dukes",
@@ -2360,8 +2301,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 120,
-    espnId: 151,
+    id: 151,
     name: "East Carolina",
     shortName: "East Carolina",
     fullName: "East Carolina Pirates",
@@ -2380,8 +2320,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 262,
-    espnId: 2193,
+    id: 2193,
     name: "East Tennessee State",
     shortName: "East Tenn St",
     fullName: "East Tennessee State Buccaneers",
@@ -2400,8 +2339,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 272,
-    espnId: 2837,
+    id: 2837,
     name: "East Texas A&M",
     shortName: "East Texas A&M",
     fullName: "East Texas A&M Lions",
@@ -2420,8 +2358,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 80,
-    espnId: 2197,
+    id: 2197,
     name: "Eastern Illinois",
     shortName: "Eastern Illinois",
     fullName: "Eastern Illinois Panthers",
@@ -2440,8 +2377,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 95,
-    espnId: 2198,
+    id: 2198,
     name: "Eastern Kentucky",
     shortName: "Eastern Kentucky",
     fullName: "Eastern Kentucky Colonels",
@@ -2460,8 +2396,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 94,
-    espnId: 2199,
+    id: 2199,
     name: "Eastern Michigan",
     shortName: "E. Michigan",
     fullName: "Eastern Michigan Eagles",
@@ -2480,8 +2415,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 236,
-    espnId: 331,
+    id: 331,
     name: "Eastern Washington",
     fullName: "Eastern Washington Eagles",
     shortName: "E Washington",
@@ -2500,8 +2434,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 173,
-    espnId: 2210,
+    id: 2210,
     name: "Elon",
     shortName: "Elon",
     fullName: "Elon Phoenix",
@@ -2520,8 +2453,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 51,
-    espnId: 2226,
+    id: 2226,
     name: "FAU",
     shortName: "FAU",
     fullName: "Florida Atlantic Owls",
@@ -2540,8 +2472,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 73,
-    espnId: 2229,
+    id: 2229,
     name: "FIU",
     shortName: "FIU",
     fullName: "Florida International Panthers",
@@ -2560,8 +2491,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 113,
-    espnId: 57,
+    id: 57,
     name: "Florida",
     shortName: "Florida",
     fullName: "Florida Gators",
@@ -2580,8 +2510,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 54,
-    espnId: 50,
+    id: 50,
     name: "Florida A&M",
     shortName: "Florida A&M",
     fullName: "Florida A&M Rattlers",
@@ -2600,8 +2529,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 49,
-    espnId: 52,
+    id: 52,
     name: "Florida State",
     shortName: "Florida St",
     fullName: "Florida State Seminoles",
@@ -2620,8 +2548,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 257,
-    espnId: 2230,
+    id: 2230,
     name: "Fordham",
     shortName: "Fordham",
     fullName: "Fordham Rams",
@@ -2641,7 +2568,6 @@ export const cfbTeams: Team[] = [
 
   {
     id: 112334,
-    espnId: 112334,
     name: "Franklin Pierce",
     shortName: "Franklin Pierce",
     fullName: "Franklin Pierce Ravens",
@@ -2659,8 +2585,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 88,
-    espnId: 278,
+    id: 278,
     name: "Fresno State",
     shortName: "Fresno St",
     fullName: "Fresno State Bulldogs",
@@ -2679,8 +2604,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 371,
-    espnId: 341,
+    id: 341,
     name: "Frostburg State",
     shortName: "Frostburg St",
     fullName: "Frostburg State Bobcats",
@@ -2699,8 +2623,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 211,
-    espnId: 231,
+    id: 231,
     name: "Furman",
     shortName: "Furman",
     fullName: "Furman Paladins",
@@ -2719,8 +2642,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 225,
-    espnId: 2241,
+    id: 2241,
     name: "Gardner-Webb",
     shortName: "Gardner-Webb",
     fullName: "Gardner-Webb Runnin' Bulldogs",
@@ -2739,8 +2661,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 279,
-    espnId: 46,
+    id: 46,
     name: "Georgetown",
     shortName: "Georgetown",
     fullName: "Georgetown Hoyas",
@@ -2759,8 +2680,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 109,
-    espnId: 61,
+    id: 61,
     name: "Georgia",
     shortName: "Georgia",
     fullName: "Georgia Bulldogs",
@@ -2779,8 +2699,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 166,
-    espnId: 290,
+    id: 290,
     name: "Georgia Southern",
     shortName: "Georgia Southern",
     fullName: "Georgia Southern Eagles",
@@ -2799,8 +2718,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 189,
-    espnId: 2247,
+    id: 2247,
     name: "Georgia State",
     shortName: "Georgia St",
     fullName: "Georgia State Panthers",
@@ -2819,8 +2737,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 208,
-    espnId: 59,
+    id: 59,
     name: "Georgia Tech",
     shortName: "Georgia Tech",
     fullName: "Georgia Tech Yellow Jackets",
@@ -2839,8 +2756,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 185,
-    espnId: 2755,
+    id: 2755,
     name: "Grambling",
     shortName: "Grambling",
     fullName: "Grambling Tigers",
@@ -2859,7 +2775,6 @@ export const cfbTeams: Team[] = [
   },
   {
     id: 292,
-    espnId: 292,
     name: "UT Rio Grande Valley",
     shortName: "UT Rio Grande",
     fullName: "UT Rio Grande Valley Vaqueros",
@@ -2877,8 +2792,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 660,
-    espnId: 125,
+    id: 125,
     name: "Grand Valley State University",
     shortName: "GRV",
     fullName: "Grand Valley State University Lakers",
@@ -2897,8 +2811,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 293,
-    espnId: 2261,
+    id: 2261,
     name: "Hampton",
     shortName: "Hampton",
     fullName: "Hampton Pirates",
@@ -2917,8 +2830,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 321,
-    espnId: 108,
+    id: 108,
     name: "Harvard",
     shortName: "Harvard",
     fullName: "Harvard Crimson",
@@ -2937,8 +2849,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 59,
-    espnId: 62,
+    id: 62,
     name: "Hawai'i",
     shortName: "Hawai'i",
     fullName: "Hawai'i Rainbow Warriors",
@@ -2957,8 +2868,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 374,
-    espnId: 2274,
+    id: 2274,
 
     name: "Hiram College",
 
@@ -2979,8 +2889,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 223,
-    espnId: 107,
+    id: 107,
     name: "Holy Cross",
     shortName: "Holy Cross",
     fullName: "Holy Cross Crusaders",
@@ -2999,8 +2908,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 134,
-    espnId: 248,
+    id: 248,
     name: "Houston",
     shortName: "Houston",
     fullName: "Houston Cougars",
@@ -3019,8 +2927,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 259,
-    espnId: 2277,
+    id: 2277,
     name: "Houston Christian",
     shortName: "Houston Christian",
     fullName: "Houston Christian",
@@ -3039,8 +2946,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 230,
-    espnId: 47,
+    id: 47,
     name: "Howard",
     shortName: "Howard",
     fullName: "Howard Bison",
@@ -3059,8 +2965,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 202,
-    espnId: 70,
+    id: 70,
     name: "Idaho",
     shortName: "Idaho",
     fullName: "Idaho Vandals",
@@ -3079,8 +2984,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 44,
-    espnId: 304,
+    id: 304,
     name: "Idaho State",
     shortName: "Idaho State",
     fullName: "Idaho State Bengals",
@@ -3099,8 +3003,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 47,
-    espnId: 356,
+    id: 356,
     name: "Illinois",
     shortName: "Illinois",
     fullName: "Illinois Fighting Illini",
@@ -3119,8 +3022,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 126,
-    espnId: 2287,
+    id: 2287,
     name: "Illinois State",
     shortName: "Illinois St",
     fullName: "Illinois State Redbirds",
@@ -3139,8 +3041,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 222,
-    espnId: 2916,
+    id: 2916,
     name: "Incarnate Word",
     shortName: "Incarnate Word",
     fullName: "Incarnate Word Cardinals",
@@ -3159,8 +3060,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 103,
-    espnId: 84,
+    id: 84,
     name: "Indiana",
     shortName: "Indiana",
     fullName: "Indiana Hoosiers",
@@ -3179,8 +3079,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 218,
-    espnId: 282,
+    id: 282,
     name: "Indiana State",
     shortName: "Indiana State",
     fullName: "Indiana State Sycamores",
@@ -3199,8 +3098,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 138,
-    espnId: 2294,
+    id: 2294,
     name: "Iowa",
     shortName: "Iowa",
     fullName: "Iowa Hawkeyes",
@@ -3219,8 +3117,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 151,
-    espnId: 66,
+    id: 66,
     name: "Iowa State",
     shortName: "Iowa State",
     fullName: "Iowa State Cyclones",
@@ -3239,8 +3136,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 169,
-    espnId: 256,
+    id: 256,
     name: "JMU",
     shortName: "JMU",
     fullName: "James Madison Dukes",
@@ -3259,8 +3155,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 303,
-    espnId: 2296,
+    id: 2296,
     name: "Jackson State",
     shortName: "Jackson St",
     fullName: "Jackson State Tigers",
@@ -3279,8 +3174,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 250,
-    espnId: 55,
+    id: 55,
     name: "Jax State",
     shortName: "Jax State",
     fullName: "Jacksonville State Gamecocks",
@@ -3299,8 +3193,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 101,
-    espnId: 2305,
+    id: 2305,
     name: "Kansas",
     shortName: "Kansas",
     fullName: "Kansas Jayhawks",
@@ -3319,8 +3212,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 174,
-    espnId: 2306,
+    id: 2306,
     name: "Kansas State",
     shortName: "Kansas St",
     fullName: "Kansas State Wildcats",
@@ -3339,8 +3231,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 217,
-    espnId: 338,
+    id: 338,
     name: "Kennesaw State",
     shortName: "Kennesaw St",
     fullName: "Kennesaw State Owls",
@@ -3359,8 +3250,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 206,
-    espnId: 2309,
+    id: 2309,
     name: "Kent State",
     shortName: "Kent State",
     fullName: "Kent State Golden Flashes",
@@ -3379,8 +3269,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 129,
-    espnId: 96,
+    id: 96,
     name: "Kentucky",
     shortName: "Kentucky",
     fullName: "Kentucky Wildcats",
@@ -3399,8 +3288,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 325,
-    espnId: 2310,
+    id: 2310,
     name: "Kentucky State",
     shortName: "Kentucky St",
     fullName: "Kentucky State Thorobreds",
@@ -3419,8 +3307,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 382,
-    espnId: 2315,
+    id: 2315,
     name: "Kutztown",
     shortName: "Kutztown",
     fullName: "Kutztown Golden Bears",
@@ -3439,8 +3326,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 76,
-    espnId: 2341,
+    id: 2341,
     name: "LIU",
     shortName: "LIU",
     fullName: "LIU",
@@ -3459,8 +3345,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 207,
-    espnId: 99,
+    id: 99,
     name: "LSU",
     shortName: "LSU",
     fullName: "LSU Tigers",
@@ -3479,8 +3364,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 216,
-    espnId: 322,
+    id: 322,
     name: "Lafayette",
     shortName: "Lafayette",
     fullName: "Lafayette Leopards",
@@ -3499,8 +3383,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 229,
-    espnId: 2320,
+    id: 2320,
     name: "Lamar",
     shortName: "Lamar",
     fullName: "Lamar Cardinals",
@@ -3519,8 +3402,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 275,
-    espnId: 2329,
+    id: 2329,
     name: "Lehigh",
     shortName: "Lehigh",
     fullName: "Lehigh Mountain Hawks",
@@ -3539,8 +3421,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 179,
-    espnId: 2335,
+    id: 2335,
     name: "Liberty",
     shortName: "Liberty",
     fullName: "Liberty Flames",
@@ -3559,8 +3440,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 316,
-    espnId: 2815,
+    id: 2815,
     name: "Lindenwood",
     shortName: "Lindenwood",
     fullName: "Lindenwood Lions",
@@ -3579,8 +3459,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 182,
-    espnId: 309,
+    id: 309,
     name: "Louisiana",
     shortName: "Louisiana",
     fullName: "Louisiana Ragin' Cajuns",
@@ -3599,8 +3478,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 84,
-    espnId: 2348,
+    id: 2348,
     name: "Louisiana Tech",
     shortName: "Louisiana Tech",
     fullName: "Louisiana Tech Bulldogs",
@@ -3619,8 +3497,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 198,
-    espnId: 97,
+    id: 97,
     name: "Louisville",
     shortName: "Louisville",
     fullName: "Louisville Cardinals",
@@ -3639,8 +3516,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 200,
-    espnId: 311,
+    id: 311,
     name: "Maine",
     shortName: "Maine",
     fullName: "Maine Black Bears",
@@ -3659,8 +3535,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 278,
-    espnId: 2368,
+    id: 2368,
     name: "Marist",
     shortName: "Marist",
     fullName: "Marist Red Foxes",
@@ -3679,8 +3554,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 158,
-    espnId: 276,
+    id: 276,
     name: "Marshall",
     shortName: "Marshall",
     fullName: "Marshall Thundering Herd",
@@ -3699,8 +3573,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 140,
-    espnId: 120,
+    id: 120,
     name: "Maryland",
     shortName: "Maryland",
     fullName: "Maryland Terrapins",
@@ -3719,8 +3592,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 234,
-    espnId: 2377,
+    id: 2377,
     name: "McNeese",
     shortName: "McNeese",
     fullName: "McNeese Cowboys",
@@ -3739,8 +3611,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 187,
-    espnId: 235,
+    id: 235,
     name: "Memphis",
     shortName: "Memphis",
     fullName: "Memphis Tigers",
@@ -3759,8 +3630,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 172,
-    espnId: 2382,
+    id: 2382,
     name: "Mercer",
     shortName: "Mercer",
     fullName: "Mercer Bears",
@@ -3779,8 +3649,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 276,
-    espnId: 2771,
+    id: 2771,
     name: "Merrimack",
     shortName: "Merrimack",
     fullName: "Merrimack",
@@ -3799,8 +3668,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 123,
-    espnId: 2390,
+    id: 2390,
     name: "Miami",
     shortName: "Miami",
     fullName: "Miami Hurricanes",
@@ -3819,8 +3687,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 130,
-    espnId: 193,
+    id: 193,
     name: "Miami (OH)",
     shortName: "Miami (OH)",
     fullName: "Miami (OH) RedHawks",
@@ -3839,8 +3706,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 115,
-    espnId: 130,
+    id: 130,
     name: "Michigan",
     shortName: "Michigan",
     fullName: "Michigan Wolverines",
@@ -3859,8 +3725,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 92,
-    espnId: 127,
+    id: 127,
     name: "Michigan State",
     shortName: "Michigan St",
     fullName: "Michigan State Spartans",
@@ -3879,8 +3744,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 170,
-    espnId: 2393,
+    id: 2393,
     name: "Middle Tennessee",
     shortName: "Middle Tennessee",
     fullName: "Middle Tennessee Blue Raiders",
@@ -3899,8 +3763,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 85,
-    espnId: 135,
+    id: 135,
     name: "Minnesota",
     shortName: "Minnesota",
     fullName: "Minnesota Golden Gophers",
@@ -3919,8 +3782,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 186,
-    espnId: 344,
+    id: 344,
     name: "Mississippi State",
     shortName: "Miss State",
     fullName: "Mississippi State Bulldogs",
@@ -3939,8 +3801,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 271,
-    espnId: 2400,
+    id: 2400,
     name: "Mississippi Valley St",
     shortName: "Miss Valley St",
     fullName: "Mississippi Valley State Delta Devils",
@@ -3959,8 +3820,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 83,
-    espnId: 142,
+    id: 142,
     name: "Missouri",
     shortName: "Missouri",
     fullName: "Missouri Tigers",
@@ -3979,8 +3839,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 239,
-    espnId: 2623,
+    id: 2623,
     name: "Missouri State",
     shortName: "Missouri St",
     fullName: "Missouri State Bears",
@@ -3999,8 +3858,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 267,
-    espnId: 2405,
+    id: 2405,
     name: "Monmouth",
     shortName: "Monmouth",
     fullName: "Monmouth Hawks",
@@ -4019,8 +3877,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 288,
-    espnId: 149,
+    id: 149,
     name: "Montana",
     shortName: "Montana",
     fullName: "Montana Grizzlies",
@@ -4039,8 +3896,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 253,
-    espnId: 147,
+    id: 147,
     name: "Montana State",
     shortName: "Montana St",
     fullName: "Montana State Bobcats",
@@ -4059,8 +3915,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 265,
-    espnId: 2413,
+    id: 2413,
     name: "Morehead State",
     shortName: "Morehead St",
     fullName: "Morehead State Eagles",
@@ -4079,8 +3934,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 167,
-    espnId: 2415,
+    id: 2415,
     name: "Morgan State",
     shortName: "Morgan St",
     fullName: "Morgan State Bears",
@@ -4099,8 +3953,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 194,
-    espnId: 93,
+    id: 93,
     name: "Murray State",
     shortName: "Murray St",
     fullName: "Murray State Racers",
@@ -4119,8 +3972,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 121,
-    espnId: 152,
+    id: 152,
     name: "NC State",
     shortName: "NC State",
     fullName: "NC State Wolfpack",
@@ -4139,8 +3991,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 376,
-    espnId: 286,
+    id: 286,
 
     name: "NC Wesleyan",
 
@@ -4161,8 +4012,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 145,
-    espnId: 2426,
+    id: 2426,
     name: "Navy",
     shortName: "Navy",
     fullName: "Navy Midshipmen",
@@ -4181,8 +4031,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 42,
-    espnId: 158,
+    id: 158,
     name: "Nebraska",
     shortName: "Nebraska",
     fullName: "Nebraska Cornhuskers",
@@ -4201,8 +4050,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 56,
-    espnId: 2440,
+    id: 2440,
     name: "Nevada",
     shortName: "Nevada",
     fullName: "Nevada Wolf Pack",
@@ -4221,8 +4069,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 261,
-    espnId: 160,
+    id: 160,
     name: "New Hampshire",
     shortName: "New Hampshire",
     fullName: "New Hampshire Wildcats",
@@ -4241,8 +4088,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 199,
-    espnId: 167,
+    id: 167,
     name: "New Mexico",
     shortName: "New Mexico",
     fullName: "New Mexico Lobos",
@@ -4261,8 +4107,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 55,
-    espnId: 166,
+    id: 166,
     name: "New Mexico State",
     shortName: "New Mexico St",
     fullName: "New Mexico State Aggies",
@@ -4280,8 +4125,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 164,
-    espnId: 2447,
+    id: 2447,
     name: "Nicholls",
     shortName: "Nicholls",
     fullName: "Nicholls Colonels",
@@ -4299,8 +4143,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 393,
-    espnId: 2884,
+    id: 2884,
     name: "Nichols",
     shortName: "Nichols",
     fullName: "Nichols College Bison",
@@ -4319,8 +4162,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 159,
-    espnId: 2450,
+    id: 2450,
     name: "Norfolk State",
     shortName: "Norfolk St",
     fullName: "Norfolk State Spartans",
@@ -4339,8 +4181,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 263,
-    espnId: 2453,
+    id: 2453,
     name: "North Alabama",
     shortName: "North Alabama",
     fullName: "North Alabama Lions",
@@ -4359,8 +4200,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 53,
-    espnId: 153,
+    id: 153,
     name: "North Carolina",
     shortName: "North Carolina",
     fullName: "North Carolina Tar Heels",
@@ -4379,8 +4219,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 248,
-    espnId: 2448,
+    id: 2448,
     name: "North Carolina A&T",
     fullName: "North Carolina A&T Aggies",
     shortName: "NC A&T",
@@ -4399,8 +4238,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 717,
-    espnId: 2222,
+    id: 2222,
     name: "Ferris State",
     fullName: "Ferris State Bulldogs",
     shortName: "Ferris St",
@@ -4418,8 +4256,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 454,
-    espnId: 2444,
+    id: 2444,
     name: "Newberry",
     fullName: "Newberry Wolves",
     shortName: "Newberry",
@@ -4437,8 +4274,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 302,
-    espnId: 2428,
+    id: 2428,
     name: "North Carolina Central",
     fullName: "North Carolina Central Eagles",
     shortName: "NC Central",
@@ -4456,8 +4292,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 731,
-    espnId: 2627,
+    id: 2627,
     name: "Tarleton State",
     fullName: "Tarleton State Texans",
     shortName: "Tarleton St",
@@ -4475,8 +4310,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 518,
-    espnId: 2302,
+    id: 2302,
     name: "John Carroll University",
     fullName: "John Carroll University Blue Streaks",
     shortName: "John Carroll",
@@ -4494,8 +4328,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 678,
-    espnId: 2723,
+    id: 2723,
     name: "Wisconsin-River Falls",
     fullName: "Wisconsin-River Falls Falcons",
     shortName: "UW River Falls",
@@ -4513,8 +4346,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 860,
-    espnId: 3071,
+    id: 3071,
     name: "North Central College",
     fullName: "North Central College Cardinals",
     shortName: "N Central (IL)",
@@ -4533,8 +4365,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 837,
-    espnId: 118,
+    id: 118,
     name: "Johns Hopkins University",
     fullName: "Johns Hopkins University Blue Jays",
     shortName: "Johns Hopkins",
@@ -4552,8 +4383,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 157,
-    espnId: 155,
+    id: 155,
     name: "North Dakota",
     shortName: "North Dakota",
     fullName: "North Dakota Fighting Hawks",
@@ -4571,8 +4401,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 652,
-    espnId: 2264,
+    id: 2264,
     name: "Harding University",
     fullName: "Harding University Bisons",
     shortName: "Harding",
@@ -4590,8 +4419,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 254,
-    espnId: 2449,
+    id: 2449,
     name: "North Dakota State",
     shortName: "North Dakota St",
     fullName: "North Dakota State Bison",
@@ -4610,8 +4438,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 266,
-    espnId: 2822,
+    id: 2822,
     name: "North Greenville",
     shortName: "North Greenville",
     fullName: "North Greenville Crusaders",
@@ -4629,8 +4456,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 58,
-    espnId: 249,
+    id: 249,
     name: "North Texas",
     shortName: "North Texas",
     fullName: "North Texas Mean Green",
@@ -4649,8 +4475,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 87,
-    espnId: 2464,
+    id: 2464,
     name: "Northern Arizona",
     shortName: "Northern Arizona",
     fullName: "Northern Arizona Lumberjacks",
@@ -4669,8 +4494,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 220,
-    espnId: 2458,
+    id: 2458,
     name: "Northern Colorado",
     shortName: "Northern Colorado",
     fullName: "Northern Colorado Bears",
@@ -4689,8 +4513,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 79,
-    espnId: 2459,
+    id: 2459,
     name: "Northern Illinois",
     shortName: "Northern Illinois",
     fullName: "Northern Illinois Huskies",
@@ -4709,8 +4532,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 150,
-    espnId: 2460,
+    id: 2460,
     name: "Northern Iowa",
     shortName: "Northern Iowa",
     fullName: "Northern Iowa Panthers",
@@ -4729,8 +4551,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 41,
-    espnId: 77,
+    id: 77,
     name: "Northwestern",
     shortName: "Northwestern",
     fullName: "Northwestern Wildcats",
@@ -4749,8 +4570,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 251,
-    espnId: 2466,
+    id: 2466,
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
     shortName: "N'Western St",
@@ -4769,8 +4589,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 734,
-    espnId: 2886,
+    id: 2886,
 
     name: "Northwood",
 
@@ -4791,8 +4610,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 108,
-    espnId: 87,
+    id: 87,
     name: "Notre Dame",
     shortName: "Notre Dame",
     fullName: "Notre Dame Fighting Irish",
@@ -4811,8 +4629,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 168,
-    espnId: 195,
+    id: 195,
     name: "Ohio",
     shortName: "Ohio",
     fullName: "Ohio Bobcats",
@@ -4831,8 +4648,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 107,
-    espnId: 194,
+    id: 194,
     name: "Ohio State",
     shortName: "Ohio State",
     fullName: "Ohio State Buckeyes",
@@ -4851,8 +4667,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 117,
-    espnId: 201,
+    id: 201,
     name: "Oklahoma",
     shortName: "Oklahoma",
     fullName: "Oklahoma Sooners",
@@ -4871,8 +4686,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 61,
-    espnId: 197,
+    id: 197,
     name: "Oklahoma State",
     shortName: "Oklahoma St",
     fullName: "Oklahoma State Cowboys",
@@ -4891,8 +4705,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 96,
-    espnId: 295,
+    id: 295,
     name: "Old Dominion",
     shortName: "Old Dominion",
     fullName: "Old Dominion Monarchs",
@@ -4911,8 +4724,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 131,
-    espnId: 145,
+    id: 145,
     name: "Ole Miss",
     shortName: "Ole Miss",
     fullName: "Ole Miss Rebels",
@@ -4931,8 +4743,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 110,
-    espnId: 2483,
+    id: 2483,
     name: "Oregon",
     shortName: "Oregon",
     fullName: "Oregon Ducks",
@@ -4951,8 +4762,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 203,
-    espnId: 204,
+    id: 204,
     name: "Oregon State",
     shortName: "Oregon State",
     fullName: "Oregon State Beavers",
@@ -4971,8 +4781,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 78,
-    espnId: 213,
+    id: 213,
     name: "Penn State",
     shortName: "Penn State",
     fullName: "Penn State Nittany Lions",
@@ -4991,8 +4800,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 324,
-    espnId: 219,
+    id: 219,
     name: "Pennsylvania",
     shortName: "Pennsylvania",
     fullName: "Pennsylvania Quakers",
@@ -5011,8 +4819,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 2074,
-    espnId: 2492,
+    id: 2492,
 
     name: "Pepperdine",
 
@@ -5033,8 +4840,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 63,
-    espnId: 221,
+    id: 221,
     name: "Pittsburgh",
     shortName: "Pittsburgh",
     fullName: "Pittsburgh Panthers",
@@ -5053,8 +4859,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 91,
-    espnId: 2502,
+    id: 2502,
     name: "Portland State",
     shortName: "Portland State",
     fullName: "Portland State Vikings",
@@ -5073,8 +4878,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 295,
-    espnId: 2504,
+    id: 2504,
     name: "Prairie View",
     shortName: "Prairie View",
     fullName: "Prairie View A&M Panthers",
@@ -5093,8 +4897,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 294,
-    espnId: 2506,
+    id: 2506,
     name: "Presbyterian",
     shortName: "Presbyterian",
     fullName: "Presbyterian Blue Hose",
@@ -5113,8 +4916,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 323,
-    espnId: 163,
+    id: 163,
     name: "Princeton",
     shortName: "Princeton",
     fullName: "Princeton Tigers",
@@ -5133,8 +4935,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 77,
-    espnId: 2509,
+    id: 2509,
     name: "Purdue",
     shortName: "Purdue",
     fullName: "Purdue Boilermakers",
@@ -5153,8 +4954,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 256,
-    espnId: 227,
+    id: 227,
     name: "Rhode Island",
     shortName: "Rhode Island",
     fullName: "Rhode Island Rams",
@@ -5173,8 +4973,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 36,
-    espnId: 242,
+    id: 242,
     name: "Rice",
     shortName: "Rice",
     fullName: "Rice Owls",
@@ -5193,8 +4992,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 148,
-    espnId: 257,
+    id: 257,
     name: "Richmond",
     shortName: "Richmond",
     fullName: "Richmond Spiders",
@@ -5213,8 +5011,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 224,
-    espnId: 2523,
+    id: 2523,
     name: "Robert Morris",
     shortName: "Robert Morris",
     fullName: "Robert Morris Colonials",
@@ -5233,8 +5030,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 143,
-    espnId: 164,
+    id: 164,
     name: "Rutgers",
     shortName: "Rutgers",
     fullName: "Rutgers Scarlet Knights",
@@ -5253,8 +5049,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 183,
-    espnId: 2545,
+    id: 2545,
     name: "SE Louisiana",
     shortName: "SE Louisiana",
     fullName: "SE Louisiana Lions",
@@ -5273,8 +5068,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 152,
-    espnId: 2546,
+    id: 2546,
     name: "SE Missouri State",
     shortName: "SE Missouri State",
     fullName: "Southeast Missouri State Redhawks",
@@ -5293,8 +5087,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 190,
-    espnId: 2567,
+    id: 2567,
     name: "SMU",
     shortName: "SMU",
     fullName: "SMU Mustangs",
@@ -5313,8 +5106,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 258,
-    espnId: 16,
+    id: 16,
     name: "Sacramento State",
     shortName: "Sac State",
     fullName: "Sacramento State Hornets",
@@ -5333,8 +5125,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 280,
-    espnId: 2529,
+    id: 2529,
     name: "Sacred Heart",
     shortName: "Sacred Heart",
     fullName: "Sacred Heart Pioneers",
@@ -5353,8 +5144,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 884,
-    espnId: 2598,
+    id: 2598,
     name: "Saint Francis",
     shortName: "Saint Francis",
     fullName: "Saint Francis Red Flash",
@@ -5373,8 +5163,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 813,
-    espnId: 2534,
+    id: 2534,
     name: "Sam Houston",
     shortName: "Sam Houston",
     fullName: "Sam Houston Bearkats",
@@ -5393,8 +5182,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 210,
-    espnId: 2535,
+    id: 2535,
     name: "Samford",
     shortName: "Samford",
     fullName: "Samford Bulldogs",
@@ -5413,8 +5201,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 300,
-    espnId: 301,
+    id: 301,
     name: "San Diego",
     shortName: "San Diego",
     fullName: "San Diego Toreros",
@@ -5433,8 +5220,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 155,
-    espnId: 21,
+    id: 21,
     name: "San Diego State",
     fullName: "San Diego State Aztecs",
     shortName: "San Diego St",
@@ -5453,8 +5239,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 90,
-    espnId: 23,
+    id: 23,
     name: "San José State",
     shortName: "San José State",
     fullName: "San José State Spartans",
@@ -5473,8 +5258,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 163,
-    espnId: 6,
+    id: 6,
     name: "South Alabama",
     shortName: "South Alabama",
     fullName: "South Alabama Jaguars",
@@ -5493,8 +5277,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 188,
-    espnId: 2579,
+    id: 2579,
     name: "South Carolina",
     shortName: "South Carolina",
     fullName: "South Carolina Gamecocks",
@@ -5513,8 +5296,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 72,
-    espnId: 2569,
+    id: 2569,
     name: "South Carolina St",
     fullName: "South Carolina State Bulldogs",
     shortName: "SC State",
@@ -5533,8 +5315,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 175,
-    espnId: 233,
+    id: 233,
     name: "South Dakota",
     shortName: "South Dakota",
     fullName: "South Dakota Coyotes",
@@ -5552,8 +5333,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 600,
-    espnId: 613,
+    id: 613,
     name: "South Dakota Mines",
     fullName: "South Dakota Mines Hardrockers",
     shortName: "SD Mines",
@@ -5572,8 +5352,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 139,
-    espnId: 2571,
+    id: 2571,
     name: "South Dakota State",
     shortName: "South Dakota State",
     fullName: "South Dakota State Jackrabbits",
@@ -5592,8 +5371,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 135,
-    espnId: 58,
+    id: 58,
     name: "South Florida",
     shortName: "South Florida",
     fullName: "South Florida Bulls",
@@ -5612,8 +5390,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 232,
-    espnId: 2582,
+    id: 2582,
     name: "Southern",
     shortName: "Southern",
     fullName: "Southern Jaguars",
@@ -5632,8 +5409,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 243,
-    espnId: 79,
+    id: 79,
     name: "Southern Illinois",
     shortName: "Southern Illinois",
     fullName: "Southern Illinois Salukis",
@@ -5652,8 +5428,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 178,
-    espnId: 2572,
+    id: 2572,
     name: "Southern Miss",
     shortName: "Southern Miss",
     fullName: "Southern Miss Golden Eagles",
@@ -5672,8 +5447,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 212,
-    espnId: 253,
+    id: 253,
     name: "Southern Utah",
     shortName: "Southern Utah",
     fullName: "Southern Utah Thunderbirds",
@@ -5692,8 +5466,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 191,
-    espnId: 24,
+    id: 24,
     name: "Stanford",
     shortName: "Stanford",
     fullName: "Stanford Cardinal",
@@ -5712,8 +5485,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 231,
-    espnId: 2617,
+    id: 2617,
     name: "Stephen F. Austin",
     shortName: "Stephen F. Austin",
     fullName: "Stephen F. Austin Lumberjacks",
@@ -5732,8 +5504,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 290,
-    espnId: 56,
+    id: 56,
     name: "Stetson",
     shortName: "Stetson",
     fullName: "Stetson Hatters",
@@ -5752,8 +5523,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 287,
-    espnId: 284,
+    id: 284,
     name: "Stonehill",
     shortName: "Stonehill",
     fullName: "Stonehill Skyhawks",
@@ -5772,8 +5542,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 246,
-    espnId: 2619,
+    id: 2619,
     name: "Stony Brook",
     shortName: "Stony Brook",
     fullName: "Stony Brook Seawolves",
@@ -5792,8 +5561,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 833,
-    espnId: 216,
+    id: 216,
 
     name: "Susquehanna",
 
@@ -5814,8 +5582,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 197,
-    espnId: 183,
+    id: 183,
     name: "Syracuse",
     shortName: "Syracuse",
     fullName: "Syracuse Orange",
@@ -5834,8 +5601,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 105,
-    espnId: 2628,
+    id: 2628,
     name: "TCU",
     shortName: "TCU",
     fullName: "TCU Horned Frogs",
@@ -5854,8 +5620,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 100,
-    espnId: 218,
+    id: 218,
     name: "Temple",
     shortName: "Temple",
     fullName: "Temple Owls",
@@ -5874,8 +5639,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 69,
-    espnId: 2633,
+    id: 2633,
     name: "Tennessee",
     shortName: "Tennessee",
     fullName: "Tennessee Volunteers",
@@ -5894,8 +5658,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 252,
-    espnId: 2634,
+    id: 2634,
     name: "Tennessee State",
     shortName: "Tennessee State",
     fullName: "Tennessee State Tigers",
@@ -5914,8 +5677,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 102,
-    espnId: 2635,
+    id: 2635,
     name: "Tennessee Tech",
     shortName: "Tennessee Tech",
     fullName: "Tennessee Tech Golden Eagles",
@@ -5934,8 +5696,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 195,
-    espnId: 251,
+    id: 251,
     name: "Texas",
     shortName: "Texas",
     fullName: "Texas Longhorns",
@@ -5954,8 +5715,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 111,
-    espnId: 245,
+    id: 245,
     name: "Texas A&M",
     shortName: "Texas A&M",
     fullName: "Texas A&M Aggies",
@@ -5974,8 +5734,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 233,
-    espnId: 2640,
+    id: 2640,
     name: "Texas Southern",
     shortName: "Texas Southern",
     fullName: "Texas Southern Tigers",
@@ -5994,8 +5753,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 165,
-    espnId: 326,
+    id: 326,
     name: "Texas State",
     shortName: "Texas State",
     fullName: "Texas State Bobcats",
@@ -6014,8 +5772,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 193,
-    espnId: 2641,
+    id: 2641,
     name: "Texas Tech",
     shortName: "Texas Tech",
     fullName: "Texas Tech Red Raiders",
@@ -6034,8 +5791,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 260,
-    espnId: 2643,
+    id: 2643,
     name: "The Citadel",
     shortName: "The Citadel",
     fullName: "The Citadel Bulldogs",
@@ -6054,8 +5810,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 75,
-    espnId: 2649,
+    id: 2649,
     name: "Toledo",
     shortName: "Toledo",
     fullName: "Toledo Rockets",
@@ -6074,8 +5829,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 244,
-    espnId: 119,
+    id: 119,
     name: "Towson",
     shortName: "Towson",
     fullName: "Towson Tigers",
@@ -6094,8 +5848,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 847,
-    espnId: 386,
+    id: 386,
 
     name: "Trinity University TX",
 
@@ -6116,8 +5869,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 132,
-    espnId: 2653,
+    id: 2653,
     name: "Troy",
     shortName: "Troy",
     fullName: "Troy Trojans",
@@ -6136,8 +5888,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 180,
-    espnId: 2655,
+    id: 2655,
     name: "Tulane",
     shortName: "Tulane",
     fullName: "Tulane Green Wave",
@@ -6156,8 +5907,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 160,
-    espnId: 202,
+    id: 202,
     name: "Tulsa",
     shortName: "Tulsa",
     fullName: "Tulsa Golden Hurricane",
@@ -6176,8 +5926,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 81,
-    espnId: 5,
+    id: 5,
     name: "UAB",
     shortName: "UAB",
     fullName: "UAB Blazers",
@@ -6196,8 +5945,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 730,
-    espnId: 399,
+    id: 399,
     name: "UAlbany",
     shortName: "UAlbany",
     fullName: "UAlbany Great Danes",
@@ -6216,8 +5964,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 162,
-    espnId: 302,
+    id: 302,
     name: "UC Davis",
     shortName: "UC Davis",
     fullName: "UC Davis Aggies",
@@ -6236,8 +5983,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 71,
-    espnId: 2116,
+    id: 2116,
     name: "UCF",
     shortName: "UCF",
     fullName: "UCF Knights",
@@ -6256,8 +6002,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 153,
-    espnId: 26,
+    id: 26,
     name: "UCLA",
     shortName: "UCLA",
     fullName: "UCLA Bruins",
@@ -6276,8 +6021,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 46,
-    espnId: 41,
+    id: 41,
     name: "UConn",
     shortName: "UConn",
     fullName: "UConn Huskies",
@@ -6296,8 +6040,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 196,
-    espnId: 2433,
+    id: 2433,
     name: "UL Monroe",
     shortName: "UL Monroe",
     fullName: "UL Monroe Warhawks",
@@ -6316,8 +6059,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 181,
-    espnId: 113,
+    id: 113,
     name: "UMass",
     shortName: "UMass",
     fullName: "Massachusetts Minutemen",
@@ -6336,8 +6078,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 43,
-    espnId: 2439,
+    id: 2439,
     name: "UNLV",
     shortName: "UNLV",
     fullName: "UNLV Rebels",
@@ -6356,8 +6097,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 122,
-    espnId: 30,
+    id: 30,
     name: "USC",
     shortName: "USC",
     fullName: "USC Trojans",
@@ -6376,8 +6116,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 247,
-    espnId: 2630,
+    id: 2630,
     name: "UT Martin",
     shortName: "UT Martin",
     fullName: "UT Martin Skyhawks",
@@ -6396,8 +6135,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 57,
-    espnId: 2638,
+    id: 2638,
     name: "UTEP",
     shortName: "UTEP",
     fullName: "UTEP Miners",
@@ -6416,8 +6154,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 133,
-    espnId: 2636,
+    id: 2636,
     name: "UTSA",
     shortName: "UTSA",
     fullName: "UTSA Roadrunners",
@@ -6436,8 +6173,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 114,
-    espnId: 254,
+    id: 254,
     name: "Utah",
     shortName: "Utah",
     fullName: "Utah Utes",
@@ -6456,8 +6192,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 45,
-    espnId: 328,
+    id: 328,
     name: "Utah State",
     shortName: "Utah State",
     fullName: "Utah State Aggies",
@@ -6476,8 +6211,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 264,
-    espnId: 3101,
+    id: 3101,
     name: "Utah Tech",
     shortName: "Utah Tech",
     fullName: "Utah Tech Trailblazers",
@@ -6496,8 +6230,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 66,
-    espnId: 2678,
+    id: 2678,
     name: "VMI",
     shortName: "VMI",
     fullName: "VMI Keydets",
@@ -6516,8 +6249,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 298,
-    espnId: 2674,
+    id: 2674,
     name: "Valparaiso",
     shortName: "Valparaiso",
     fullName: "Valparaiso Beacons",
@@ -6536,8 +6268,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 60,
-    espnId: 238,
+    id: 238,
     name: "Vanderbilt",
     shortName: "Vanderbilt",
     fullName: "Vanderbilt Commodores",
@@ -6556,8 +6287,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 242,
-    espnId: 222,
+    id: 222,
     name: "Villanova",
     shortName: "Villanova",
     fullName: "Villanova Wildcats",
@@ -6576,8 +6306,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 147,
-    espnId: 258,
+    id: 258,
     name: "Virginia",
     shortName: "Virginia",
     fullName: "Virginia Cavaliers",
@@ -6596,8 +6325,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 97,
-    espnId: 259,
+    id: 259,
     name: "Virginia Tech",
     shortName: "Virginia Tech",
     fullName: "Virginia Tech Hokies",
@@ -6616,8 +6344,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 219,
-    espnId: 2681,
+    id: 2681,
     name: "Wagner",
     shortName: "Wagner",
     fullName: "Wagner Seahawks",
@@ -6636,8 +6363,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 65,
-    espnId: 154,
+    id: 154,
     name: "Wake Forest",
     shortName: "Wake Forest",
     fullName: "Wake Forest Demon Deacons",
@@ -6655,8 +6381,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 205,
-    espnId: 264,
+    id: 264,
     name: "Washington",
     shortName: "Washington",
     fullName: "Washington Huskies",
@@ -6674,8 +6399,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 201,
-    espnId: 265,
+    id: 265,
     name: "Washington State",
     shortName: "Washington St",
     fullName: "Washington State Cougars",
@@ -6693,8 +6417,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 227,
-    espnId: 2692,
+    id: 2692,
     name: "Weber State",
     shortName: "Weber State",
     fullName: "Weber State Wildcats",
@@ -6713,8 +6436,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 592,
-    espnId: 2695,
+    id: 2695,
     name: "West Alabama",
     shortName: "West Alabama",
     fullName: "West Alabama Tigers",
@@ -6733,8 +6455,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 716,
-    espnId: 2698,
+    id: 2698,
     name: "West Georgia",
     shortName: "West Georgia",
     fullName: "West Georgia Wolves",
@@ -6753,8 +6474,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 373,
-    espnId: 2699,
+    id: 2699,
     name: "West Liberty",
     shortName: "West Liberty",
     fullName: "West Liberty Hilltoppers",
@@ -6773,8 +6493,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 64,
-    espnId: 277,
+    id: 277,
     name: "West Virginia",
     shortName: "West Virginia",
     fullName: "West Virginia Mountaineers",
@@ -6793,8 +6512,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 226,
-    espnId: 2717,
+    id: 2717,
     name: "Western Carolina",
     shortName: "Western Carolina",
     fullName: "Western Carolina Catamounts",
@@ -6813,8 +6531,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 215,
-    espnId: 2710,
+    id: 2710,
     name: "Western Illinois",
     shortName: "Western Illinois",
     fullName: "Western Illinois Leathernecks",
@@ -6833,8 +6550,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 39,
-    espnId: 98,
+    id: 98,
     name: "Western Kentucky",
     shortName: "Western Kentucky",
     fullName: "Western Kentucky Hilltoppers",
@@ -6853,8 +6569,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 93,
-    espnId: 2711,
+    id: 2711,
     name: "Western Michigan",
     shortName: "Western Michigan",
     fullName: "Western Michigan Broncos",
@@ -6873,8 +6588,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 274,
-    espnId: 2848,
+    id: 2848,
     name: "Western Oregon",
     shortName: "Western Oregon",
     fullName: "Western Oregon Wolves",
@@ -6893,8 +6607,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 98,
-    espnId: 2729,
+    id: 2729,
     name: "William & Mary",
     shortName: "William & Mary",
     fullName: "William & Mary Tribe",
@@ -6913,8 +6626,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 125,
-    espnId: 275,
+    id: 275,
     name: "Wisconsin",
     shortName: "Wisconsin",
     fullName: "Wisconsin Badgers",
@@ -6933,8 +6645,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 240,
-    espnId: 2747,
+    id: 2747,
     name: "Wofford",
     shortName: "Wofford",
     fullName: "Wofford Terriers",
@@ -6953,8 +6664,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 48,
-    espnId: 2751,
+    id: 2751,
     name: "Wyoming",
     shortName: "Wyoming",
     fullName: "Wyoming Cowboys",
@@ -6973,8 +6683,7 @@ export const cfbTeams: Team[] = [
   },
 
   {
-    id: 328,
-    espnId: 43,
+    id: 43,
     name: "Yale",
     shortName: "Yale",
     fullName: "Yale Bulldogs",
@@ -6992,8 +6701,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 482,
-    espnId: 2441,
+    id: 2441,
     name: "New Haven",
     fullName: "New Haven Chargers",
     shortName: "New Haven",
@@ -7009,10 +6717,9 @@ export const cfbTeams: Team[] = [
     isNational: false,
     league: "cfb",
     logoLight: NewHavenLogoLight,
-},
+  },
   {
-    id: 381,
-    espnId: 2385,
+    id: 2385,
     name: "Mercyhurst",
     fullName: "Mercyhurst Lakers",
     shortName: "Mercyhurst",
@@ -7028,10 +6735,9 @@ export const cfbTeams: Team[] = [
     isNational: false,
     league: "cfb",
     logoLight: MercyhurstLogoLight,
-},
+  },
   {
-    id: 238,
-    espnId: 2754,
+    id: 2754,
     name: "Youngstown State",
     fullName: "Youngstown State Penguins",
     shortName: "Youngstown St",
@@ -7049,8 +6755,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112335,
-    espnId: 109,
+    id: 109,
     name: "MIT",
     fullName: "MIT Engineers",
     shortName: "MIT",
@@ -7068,8 +6773,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112806,
-    espnId: 129469,
+    id: 129469,
     name: "Anderson (SC)",
     shortName: "Anderson (SC)",
     fullName: "Anderson (SC) Trojans",
@@ -7087,8 +6791,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112614,
-    espnId: 2516,
+    id: 2516,
     name: "Randolph-Macon",
     shortName: "Randolph Macon",
     fullName: "Randolph-Macon Yellow Jackets",
@@ -7108,8 +6811,7 @@ export const cfbTeams: Team[] = [
 
   // NCAA Division II & III teams synced from public.cfb_teams
   {
-    id: 112480,
-    espnId: 2001,
+    id: 2001,
     name: "Adams State",
     shortName: "Adams State",
     fullName: "Adams State Grizzlies",
@@ -7127,8 +6829,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112481,
-    espnId: 2003,
+    id: 2003,
     name: "Adrian",
     shortName: "Adrian",
     fullName: "Adrian Bulldogs",
@@ -7146,8 +6847,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112686,
-    espnId: 2790,
+    id: 2790,
     name: "Albion",
     shortName: "Albion",
     fullName: "Albion Britons",
@@ -7165,8 +6865,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112483,
-    espnId: 2015,
+    id: 2015,
     name: "Albright",
     shortName: "Albright",
     fullName: "Albright Lions",
@@ -7184,8 +6883,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112424,
-    espnId: 365,
+    id: 365,
     name: "Alfred",
     shortName: "Alfred",
     fullName: "Alfred Saxons",
@@ -7203,8 +6901,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112484,
-    espnId: 2018,
+    id: 2018,
     name: "Allegheny",
     shortName: "Allegheny",
     fullName: "Allegheny Gators",
@@ -7222,8 +6919,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112687,
-    espnId: 2800,
+    id: 2800,
     name: "Alma",
     shortName: "Alma",
     fullName: "Alma Scots",
@@ -7241,8 +6937,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112788,
-    espnId: 111674,
+    id: 111674,
     name: "Alvernia",
     shortName: "Alvernia",
     fullName: "Alvernia Golden Wolves",
@@ -7260,8 +6955,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112486,
-    espnId: 2022,
+    id: 2022,
     name: "American International",
     shortName: "American International",
     fullName: "American International Yellow Jackets",
@@ -7279,8 +6973,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112336,
-    espnId: 7,
+    id: 7,
     name: "Amherst",
     shortName: "Amherst",
     fullName: "Amherst Mammoths",
@@ -7298,8 +6991,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112487,
-    espnId: 2023,
+    id: 2023,
     name: "Anderson (IN)",
     shortName: "Anderson (IN)",
     fullName: "Anderson (IN) Ravens",
@@ -7317,8 +7009,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112488,
-    espnId: 2025,
+    id: 2025,
     name: "Angelo State",
     shortName: "Angelo State",
     fullName: "Angelo State Rams",
@@ -7336,8 +7027,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112489,
-    espnId: 2028,
+    id: 2028,
     name: "Arkansas Monticello",
     shortName: "Arkansas Monticello",
     fullName: "Arkansas Monticello Boll Weevils",
@@ -7355,8 +7045,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112490,
-    espnId: 2033,
+    id: 2033,
     name: "Arkansas Tech",
     shortName: "Arkansas Tech",
     fullName: "Arkansas Tech Wonder Boys",
@@ -7374,8 +7063,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112410,
-    espnId: 308,
+    id: 308,
     name: "Ashland",
     shortName: "Ashland",
     fullName: "Ashland Eagles",
@@ -7393,8 +7081,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112491,
-    espnId: 2038,
+    id: 2038,
     name: "Assumption",
     shortName: "Assumption",
     fullName: "Assumption Greyhounds",
@@ -7412,8 +7099,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112492,
-    espnId: 2042,
+    id: 2042,
     name: "Augustana (IL)",
     shortName: "Augustana (IL)",
     fullName: "Augustana (IL) Vikings",
@@ -7431,8 +7117,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112494,
-    espnId: 2044,
+    id: 2044,
     name: "Aurora",
     shortName: "Aurora",
     fullName: "Aurora Spartans",
@@ -7450,8 +7135,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112495,
-    espnId: 2045,
+    id: 2045,
     name: "Austin",
     shortName: "Austin",
     fullName: "Austin 'Roos",
@@ -7469,8 +7153,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112496,
-    espnId: 2047,
+    id: 2047,
     name: "Averett",
     shortName: "Averett",
     fullName: "Averett Cougars",
@@ -7488,8 +7171,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112380,
-    espnId: 188,
+    id: 188,
     name: "Baldwin Wallace",
     shortName: "Baldwin Wallace",
     fullName: "Baldwin Wallace Yellow Jackets",
@@ -7507,8 +7189,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112362,
-    espnId: 121,
+    id: 121,
     name: "Bates",
     shortName: "Bates",
     fullName: "Bates Bobcats",
@@ -7526,8 +7207,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112499,
-    espnId: 2056,
+    id: 2056,
     name: "Belhaven",
     shortName: "Belhaven",
     fullName: "Belhaven Blazers",
@@ -7545,8 +7225,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112400,
-    espnId: 266,
+    id: 266,
     name: "Beloit",
     shortName: "Beloit",
     fullName: "Beloit Buccaneers",
@@ -7564,8 +7243,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112567,
-    espnId: 2283,
+    id: 2283,
     name: "Benedictine (IL)",
     shortName: "Benedictine (IL)",
     fullName: "Benedictine (IL) Eagles",
@@ -7583,8 +7261,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112500,
-    espnId: 2060,
+    id: 2060,
     name: "Bentley",
     shortName: "Bentley",
     fullName: "Bentley Falcons",
@@ -7602,8 +7279,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112501,
-    espnId: 2062,
+    id: 2062,
     name: "Bethany (WV)",
     shortName: "Bethany (WV)",
     fullName: "Bethany (WV) Bison",
@@ -7621,8 +7297,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112503,
-    espnId: 2069,
+    id: 2069,
     name: "Black Hills State",
     shortName: "Black Hills State",
     fullName: "Black Hills State Yellow Jackets",
@@ -7640,8 +7315,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112504,
-    espnId: 2071,
+    id: 2071,
     name: "Bloomsburg",
     shortName: "Bloomsburg",
     fullName: "Bloomsburg Huskies",
@@ -7659,8 +7333,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112505,
-    espnId: 2074,
+    id: 2074,
     name: "Bluffton",
     shortName: "Bluffton",
     fullName: "Bluffton Beavers",
@@ -7678,8 +7351,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112418,
-    espnId: 340,
+    id: 340,
     name: "Bowdoin",
     shortName: "Bowdoin",
     fullName: "Bowdoin Polar Bears",
@@ -7697,8 +7369,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112733,
-    espnId: 2913,
+    id: 2913,
     name: "Brevard",
     shortName: "Brevard",
     fullName: "Brevard Tornados",
@@ -7716,8 +7387,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112339,
-    espnId: 18,
+    id: 18,
     name: "Bridgewater State",
     shortName: "Bridgewater State",
     fullName: "Bridgewater State Bears",
@@ -7735,8 +7405,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112684,
-    espnId: 2781,
+    id: 2781,
     name: "Brockport",
     shortName: "Brockport",
     fullName: "Brockport Golden Eagles",
@@ -7754,8 +7423,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112346,
-    espnId: 63,
+    id: 63,
     name: "Buena Vista",
     shortName: "Buena Vista",
     fullName: "Buena Vista Beavers",
@@ -7773,8 +7441,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112507,
-    espnId: 2085,
+    id: 2085,
     name: "Buffalo State",
     shortName: "Buffalo State",
     fullName: "Buffalo State Bengals",
@@ -7792,8 +7459,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112715,
-    espnId: 2858,
+    id: 2858,
     name: "California (PA)",
     shortName: "California (PA)",
     fullName: "California (PA) Vulcans",
@@ -7811,8 +7477,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112807,
-    espnId: 129738,
+    id: 129738,
     name: "Calvin",
     shortName: "Calvin",
     fullName: "Calvin Knights",
@@ -7830,8 +7495,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112442,
-    espnId: 424,
+    id: 424,
     name: "Capital",
     shortName: "Capital",
     fullName: "Capital Comets",
@@ -7849,8 +7513,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112341,
-    espnId: 32,
+    id: 32,
     name: "Carroll (WI)",
     shortName: "Carroll (WI)",
     fullName: "Carroll (WI) Pioneers",
@@ -7868,8 +7531,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112513,
-    espnId: 2106,
+    id: 2106,
     name: "Carthage",
     shortName: "Carthage",
     fullName: "Carthage Firebirds",
@@ -7887,8 +7549,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112742,
-    espnId: 2963,
+    id: 2963,
     name: "Case Western Reserve",
     shortName: "CW Reserve",
     fullName: "Case Western Reserve Spartans",
@@ -7906,8 +7567,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112515,
-    espnId: 2108,
+    id: 2108,
     name: "Catholic",
     shortName: "Catholic",
     fullName: "Catholic Cardinals",
@@ -7925,8 +7585,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112779,
-    espnId: 101442,
+    id: 101442,
     name: "Centenary (LA)",
     shortName: "Centenary (LA)",
     fullName: "Centenary (LA) Gentlemen",
@@ -7944,8 +7603,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112743,
-    espnId: 2964,
+    id: 2964,
     name: "Central College",
     shortName: "Central College",
     fullName: "Central College Dutch",
@@ -7963,8 +7621,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112516,
-    espnId: 2118,
+    id: 2118,
     name: "Central Missouri",
     shortName: "Central Missouri",
     fullName: "Central Missouri Mules",
@@ -7982,8 +7639,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112519,
-    espnId: 2122,
+    id: 2122,
     name: "Central Oklahoma",
     shortName: "Central Oklahoma",
     fullName: "Central Oklahoma Bronchos",
@@ -8001,8 +7657,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112518,
-    espnId: 2121,
+    id: 2121,
     name: "Centre",
     shortName: "Centre",
     fullName: "Centre Colonels",
@@ -8020,8 +7675,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112520,
-    espnId: 2123,
+    id: 2123,
     name: "Chadron State",
     shortName: "Chadron State",
     fullName: "Chadron State Eagles",
@@ -8039,8 +7693,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112521,
-    espnId: 2128,
+    id: 2128,
     name: "Charleston (WV)",
     shortName: "Charleston (WV)",
     fullName: "Charleston (WV) Golden Eagles",
@@ -8058,8 +7711,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112522,
-    espnId: 2134,
+    id: 2134,
     name: "Clarion",
     shortName: "Clarion",
     fullName: "Clarion Golden Eagles",
@@ -8077,8 +7729,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112622,
-    espnId: 2557,
+    id: 2557,
     name: "Coast Guard",
     shortName: "Coast Guard",
     fullName: "Coast Guard Bears",
@@ -8096,8 +7747,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112523,
-    espnId: 2141,
+    id: 2141,
     name: "Coe",
     shortName: "Coe",
     fullName: "Coe Kohawks",
@@ -8115,8 +7765,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112342,
-    espnId: 33,
+    id: 33,
     name: "Colby",
     shortName: "Colby",
     fullName: "Colby White Mules",
@@ -8134,8 +7783,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112337,
-    espnId: 11,
+    id: 11,
     name: "Colorado Mesa",
     shortName: "Colorado Mesa",
     fullName: "Colorado Mesa Mavericks",
@@ -8153,8 +7801,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112524,
-    espnId: 2146,
+    id: 2146,
     name: "Colorado School of Mines",
     shortName: "Colorado School of Mines",
     fullName: "Colorado School of Mines Orediggers",
@@ -8172,8 +7819,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112525,
-    espnId: 2148,
+    id: 2148,
     name: "Concord",
     shortName: "Concord",
     fullName: "Concord Mountain Lions",
@@ -8191,8 +7837,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112437,
-    espnId: 409,
+    id: 409,
     name: "Concordia (WI)",
     shortName: "Concordia (WI)",
     fullName: "Concordia (WI) Falcons",
@@ -8210,8 +7855,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112526,
-    espnId: 2151,
+    id: 2151,
     name: "Concordia Chicago",
     shortName: "Concordia Chicago",
     fullName: "Concordia Chicago Cougars",
@@ -8229,8 +7873,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112528,
-    espnId: 2155,
+    id: 2155,
     name: "Cornell (IA)",
     shortName: "Cornell (IA)",
     fullName: "Cornell (IA) Rams",
@@ -8248,8 +7891,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112457,
-    espnId: 509,
+    id: 509,
     name: "Crown",
     shortName: "Crown",
     fullName: "Crown Polars",
@@ -8267,8 +7909,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112628,
-    espnId: 2570,
+    id: 2570,
     name: "CSU Pueblo",
     shortName: "CSU Pueblo",
     fullName: "CSU Pueblo ThunderWolves",
@@ -8286,8 +7927,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112343,
-    espnId: 40,
+    id: 40,
     name: "Curry",
     shortName: "Curry",
     fullName: "Curry Colonels",
@@ -8305,8 +7945,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112691,
-    espnId: 2808,
+    id: 2808,
     name: "Delaware Valley",
     shortName: "Delaware Valley",
     fullName: "Delaware Valley Aggies",
@@ -8324,8 +7963,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112530,
-    espnId: 2170,
+    id: 2170,
     name: "Delta State",
     shortName: "Delta State",
     fullName: "Delta State Statesmen",
@@ -8343,8 +7981,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112531,
-    espnId: 2171,
+    id: 2171,
     name: "Denison",
     shortName: "Denison",
     fullName: "Denison Big Red",
@@ -8362,8 +7999,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112532,
-    espnId: 2175,
+    id: 2175,
     name: "Dickinson",
     shortName: "Dickinson",
     fullName: "Dickinson Red Devils",
@@ -8381,8 +8017,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112344,
-    espnId: 49,
+    id: 49,
     name: "Dubuque",
     shortName: "Dubuque",
     fullName: "Dubuque Spartans",
@@ -8400,8 +8035,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112534,
-    espnId: 2191,
+    id: 2191,
     name: "East Central",
     shortName: "East Central",
     fullName: "East Central Tigers",
@@ -8419,8 +8053,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112533,
-    espnId: 2188,
+    id: 2188,
     name: "East Stroudsburg",
     shortName: "East Stroudsburg",
     fullName: "East Stroudsburg Warriors",
@@ -8438,8 +8071,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112535,
-    espnId: 2194,
+    id: 2194,
     name: "East Texas Baptist",
     shortName: "East Texas Baptist",
     fullName: "East Texas Baptist Tigers",
@@ -8457,8 +8089,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112804,
-    espnId: 127954,
+    id: 127954,
     name: "Eastern",
     shortName: "Eastern",
     fullName: "Eastern Eagles",
@@ -8476,8 +8107,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112536,
-    espnId: 2201,
+    id: 2201,
     name: "Eastern New Mexico",
     shortName: "Eastern New Mexico",
     fullName: "Eastern New Mexico Greyhounds",
@@ -8495,8 +8125,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112538,
-    espnId: 2205,
+    id: 2205,
     name: "Edinboro",
     shortName: "Edinboro",
     fullName: "Edinboro Fighting Scots",
@@ -8514,8 +8143,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112349,
-    espnId: 72,
+    id: 72,
     name: "Elmhurst",
     shortName: "Elmhurst",
     fullName: "Elmhurst Bluejays",
@@ -8533,8 +8161,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112542,
-    espnId: 2214,
+    id: 2214,
     name: "Emporia State",
     shortName: "Emporia State",
     fullName: "Emporia State Hornets",
@@ -8552,8 +8179,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112449,
-    espnId: 452,
+    id: 452,
     name: "Endicott",
     shortName: "Endicott",
     fullName: "Endicott Gulls",
@@ -8571,8 +8197,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112357,
-    espnId: 101,
+    id: 101,
     name: "Eureka",
     shortName: "Eureka",
     fullName: "Eureka Red Devils",
@@ -8590,8 +8215,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112753,
-    espnId: 2986,
+    id: 2986,
     name: "Fairmont State",
     shortName: "Fairmont State",
     fullName: "Fairmont State Falcons",
@@ -8609,8 +8233,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112545,
-    espnId: 2221,
+    id: 2221,
     name: "FDU Florham",
     shortName: "FDU Florham",
     fullName: "FDU Florham Devils",
@@ -8628,8 +8251,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112547,
-    espnId: 2224,
+    id: 2224,
     name: "Findlay",
     shortName: "Findlay",
     fullName: "Findlay Oilers",
@@ -8647,8 +8269,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112360,
-    espnId: 114,
+    id: 114,
     name: "Fitchburg State",
     shortName: "Fitchburg State",
     fullName: "Fitchburg State Falcons",
@@ -8666,8 +8287,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112548,
-    espnId: 2231,
+    id: 2231,
     name: "Fort Hays",
     shortName: "Fort Hays",
     fullName: "Fort Hays Tigers",
@@ -8685,8 +8305,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112552,
-    espnId: 2237,
+    id: 2237,
     name: "Fort Lewis",
     shortName: "Fort Lewis",
     fullName: "Fort Lewis Skyhawks",
@@ -8704,8 +8323,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112744,
-    espnId: 2967,
+    id: 2967,
     name: "Framingham State",
     shortName: "Framingham State",
     fullName: "Framingham State Rams",
@@ -8723,8 +8341,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112550,
-    espnId: 2233,
+    id: 2233,
     name: "Franklin",
     shortName: "Franklin",
     fullName: "Franklin Grizzlies",
@@ -8742,8 +8359,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112551,
-    espnId: 2234,
+    id: 2234,
     name: "Franklin & Marshall",
     shortName: "Franklin & Marshall",
     fullName: "Franklin & Marshall Diplomats",
@@ -8761,8 +8377,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112426,
-    espnId: 367,
+    id: 367,
     name: "Gannon",
     shortName: "Gannon",
     fullName: "Gannon Golden Knights",
@@ -8780,8 +8395,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112553,
-    espnId: 2242,
+    id: 2242,
     name: "Geneva",
     shortName: "Geneva",
     fullName: "Geneva Golden Tornadoes",
@@ -8799,8 +8413,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112439,
-    espnId: 415,
+    id: 415,
     name: "George Fox",
     shortName: "George Fox",
     fullName: "George Fox Bruins",
@@ -8818,8 +8431,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112556,
-    espnId: 2248,
+    id: 2248,
     name: "Gettysburg",
     shortName: "Gettysburg",
     fullName: "Gettysburg Bullets",
@@ -8837,8 +8449,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112557,
-    espnId: 2249,
+    id: 2249,
     name: "Glenville State",
     shortName: "Glenville State",
     fullName: "Glenville State Pioneers",
@@ -8856,8 +8467,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112559,
-    espnId: 2256,
+    id: 2256,
     name: "Greensboro",
     shortName: "Greensboro",
     fullName: "Greensboro Pride",
@@ -8875,8 +8485,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112560,
-    espnId: 2257,
+    id: 2257,
     name: "Greenville",
     shortName: "Greenville",
     fullName: "Greenville Panthers",
@@ -8894,8 +8503,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112347,
-    espnId: 65,
+    id: 65,
     name: "Grinnell",
     shortName: "Grinnell",
     fullName: "Grinnell Pioneers",
@@ -8913,8 +8521,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112374,
-    espnId: 146,
+    id: 146,
     name: "Grove City",
     shortName: "Grove City",
     fullName: "Grove City Wolverines",
@@ -8932,8 +8539,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112561,
-    espnId: 2258,
+    id: 2258,
     name: "Guilford",
     shortName: "Guilford",
     fullName: "Guilford Quakers",
@@ -8951,8 +8557,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112419,
-    espnId: 348,
+    id: 348,
     name: "Hamilton",
     shortName: "Hamilton",
     fullName: "Hamilton Continentals",
@@ -8970,8 +8575,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112408,
-    espnId: 297,
+    id: 297,
     name: "Hampden Sydney",
     shortName: "Hampden Sydney",
     fullName: "Hampden Sydney Tigers",
@@ -8989,8 +8593,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112562,
-    espnId: 2262,
+    id: 2262,
     name: "Hanover",
     shortName: "Hanover",
     fullName: "Hanover Panthers",
@@ -9008,8 +8611,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112692,
-    espnId: 2810,
+    id: 2810,
     name: "Hardin Simmons",
     shortName: "Hardin Simmons",
     fullName: "Hardin Simmons Cowboys",
@@ -9027,8 +8629,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112376,
-    espnId: 173,
+    id: 173,
     name: "Hartwick",
     shortName: "Hartwick",
     fullName: "Hartwick Hawks",
@@ -9046,8 +8647,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112382,
-    espnId: 191,
+    id: 191,
     name: "Heidelberg",
     shortName: "Heidelberg",
     fullName: "Heidelberg Student Princes",
@@ -9065,8 +8665,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112564,
-    espnId: 2271,
+    id: 2271,
     name: "Henderson State",
     shortName: "Henderson State",
     fullName: "Henderson State Reddies",
@@ -9084,8 +8683,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112565,
-    espnId: 2273,
+    id: 2273,
     name: "Hillsdale",
     shortName: "Hillsdale",
     fullName: "Hillsdale Chargers",
@@ -9103,8 +8701,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112377,
-    espnId: 174,
+    id: 174,
     name: "Hobart",
     shortName: "Hobart",
     fullName: "Hobart Statesmen",
@@ -9122,8 +8719,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112693,
-    espnId: 2812,
+    id: 2812,
     name: "Hope",
     shortName: "Hope",
     fullName: "Hope Flying Dutchmen",
@@ -9141,8 +8737,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112680,
-    espnId: 2758,
+    id: 2758,
     name: "Howard Payne",
     shortName: "Howard Payne",
     fullName: "Howard Payne Yellow Jackets",
@@ -9160,8 +8755,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112738,
-    espnId: 2938,
+    id: 2938,
     name: "Huntingdon",
     shortName: "Huntingdon",
     fullName: "Huntingdon Hawks",
@@ -9179,8 +8773,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112566,
-    espnId: 2280,
+    id: 2280,
     name: "Husson",
     shortName: "Husson",
     fullName: "Husson Eagles",
@@ -9198,8 +8791,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112568,
-    espnId: 2286,
+    id: 2286,
     name: "Illinois College",
     shortName: "Illinois College",
     fullName: "Illinois College Blueboys",
@@ -9217,8 +8809,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112409,
-    espnId: 306,
+    id: 306,
     name: "Illinois Wesleyan",
     shortName: "Illinois Wesleyan",
     fullName: "Illinois Wesleyan Titans",
@@ -9236,8 +8827,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112570,
-    espnId: 2292,
+    id: 2292,
     name: "Indianapolis",
     shortName: "Indianapolis",
     fullName: "Indianapolis Greyhounds",
@@ -9255,8 +8845,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112378,
-    espnId: 175,
+    id: 175,
     name: "Ithaca",
     shortName: "Ithaca",
     fullName: "Ithaca Bombers",
@@ -9274,8 +8863,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112569,
-    espnId: 2291,
+    id: 2291,
     name: "IU Pennsylvania",
     shortName: "IU Pennsylvania",
     fullName: "IU Pennsylvania Crimson Hawks",
@@ -9293,8 +8881,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112395,
-    espnId: 246,
+    id: 246,
     name: "Juniata",
     shortName: "Juniata",
     fullName: "Juniata Eagles",
@@ -9312,8 +8899,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112364,
-    espnId: 126,
+    id: 126,
     name: "Kalamazoo",
     shortName: "Kalamazoo",
     fullName: "Kalamazoo Hornets",
@@ -9331,8 +8917,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112718,
-    espnId: 2871,
+    id: 2871,
     name: "Kean",
     shortName: "Kean",
     fullName: "Kean Cougars",
@@ -9350,8 +8935,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112573,
-    espnId: 2316,
+    id: 2316,
     name: "Kentucky Wesleyan",
     shortName: "Kentucky Wesleyan",
     fullName: "Kentucky Wesleyan Panthers",
@@ -9369,8 +8953,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112421,
-    espnId: 352,
+    id: 352,
     name: "Kenyon",
     shortName: "Kenyon",
     fullName: "Kenyon Owls",
@@ -9388,8 +8971,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112396,
-    espnId: 247,
+    id: 247,
     name: "King's",
     shortName: "King's",
     fullName: "King's Monarchs",
@@ -9407,8 +8989,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112397,
-    espnId: 255,
+    id: 255,
     name: "Knox",
     shortName: "Knox",
     fullName: "Knox Prairie Fire",
@@ -9426,8 +9007,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112466,
-    espnId: 548,
+    id: 548,
     name: "LaGrange",
     shortName: "LaGrange",
     fullName: "LaGrange Panthers",
@@ -9445,8 +9025,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112447,
-    espnId: 437,
+    id: 437,
     name: "Lake Erie",
     shortName: "Lake Erie",
     fullName: "Lake Erie Storm",
@@ -9464,8 +9043,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112398,
-    espnId: 262,
+    id: 262,
     name: "Lake Forest",
     shortName: "Lake Forest",
     fullName: "Lake Forest Foresters",
@@ -9483,8 +9061,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112775,
-    espnId: 6353,
+    id: 6353,
     name: "Lakeland",
     shortName: "Lakeland",
     fullName: "Lakeland Muskies",
@@ -9502,8 +9079,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112402,
-    espnId: 268,
+    id: 268,
     name: "Lawrence",
     shortName: "Lawrence",
     fullName: "Lawrence Vikings",
@@ -9521,8 +9097,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112430,
-    espnId: 388,
+    id: 388,
     name: "Lebanon Valley",
     shortName: "Lebanon Valley",
     fullName: "Lebanon Valley Flying Dutchmen",
@@ -9540,8 +9115,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112578,
-    espnId: 2333,
+    id: 2333,
     name: "Lewis & Clark",
     shortName: "Lewis & Clark",
     fullName: "Lewis & Clark River Otters",
@@ -9559,8 +9133,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112719,
-    espnId: 2876,
+    id: 2876,
     name: "Lincoln (MO)",
     shortName: "Lincoln (MO)",
     fullName: "Lincoln (MO) Blue Tigers",
@@ -9578,8 +9151,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112386,
-    espnId: 203,
+    id: 203,
     name: "Linfield",
     shortName: "Linfield",
     fullName: "Linfield Wildcats",
@@ -9597,8 +9169,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112399,
-    espnId: 263,
+    id: 263,
     name: "Loras",
     shortName: "Loras",
     fullName: "Loras Duhawks",
@@ -9616,8 +9187,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112581,
-    espnId: 2354,
+    id: 2354,
     name: "Lycoming",
     shortName: "Lycoming",
     fullName: "Lycoming Warriors",
@@ -9635,8 +9205,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112778,
-    espnId: 101161,
+    id: 101161,
     name: "Lyon",
     shortName: "Lyon",
     fullName: "Lyon Scots",
@@ -9654,8 +9223,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112584,
-    espnId: 2362,
+    id: 2362,
     name: "Manchester",
     shortName: "Manchester",
     fullName: "Manchester Spartans",
@@ -9673,8 +9241,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112412,
-    espnId: 317,
+    id: 317,
     name: "Marietta",
     shortName: "Marietta",
     fullName: "Marietta Pioneers",
@@ -9692,8 +9259,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112448,
-    espnId: 446,
+    id: 446,
     name: "Martin Luther",
     shortName: "Martin Luther",
     fullName: "Martin Luther Knights",
@@ -9711,8 +9277,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112589,
-    espnId: 2371,
+    id: 2371,
     name: "Mary Hardin Baylor",
     shortName: "Mary Hardin Baylor",
     fullName: "Mary Hardin Baylor Crusaders",
@@ -9730,8 +9295,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112358,
-    espnId: 110,
+    id: 110,
     name: "Mass Maritime",
     shortName: "Mass Maritime",
     fullName: "Mass Maritime Buccaneers",
@@ -9749,8 +9313,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112657,
-    espnId: 2700,
+    id: 2700,
     name: "McDaniel",
     shortName: "McDaniel",
     fullName: "McDaniel Green Terror",
@@ -9768,8 +9331,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112694,
-    espnId: 2816,
+    id: 2816,
     name: "McKendree",
     shortName: "McKendree",
     fullName: "McKendree Bearcats",
@@ -9787,8 +9349,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112591,
-    espnId: 2383,
+    id: 2383,
     name: "Merchant Marine",
     shortName: "Merchant Marine",
     fullName: "Merchant Marine Mariners",
@@ -9806,8 +9367,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112406,
-    espnId: 291,
+    id: 291,
     name: "Methodist",
     shortName: "Methodist",
     fullName: "Methodist Monarchs",
@@ -9825,8 +9385,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112593,
-    espnId: 2392,
+    id: 2392,
     name: "Michigan Tech",
     shortName: "Michigan Tech",
     fullName: "Michigan Tech Huskies",
@@ -9844,8 +9403,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112594,
-    espnId: 2394,
+    id: 2394,
     name: "Middlebury",
     shortName: "Middlebury",
     fullName: "Middlebury Panthers",
@@ -9863,8 +9421,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112595,
-    espnId: 2395,
+    id: 2395,
     name: "Midwestern State",
     shortName: "Midwestern State",
     fullName: "Midwestern State Mustangs",
@@ -9882,8 +9439,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112389,
-    espnId: 210,
+    id: 210,
     name: "Millersville",
     shortName: "Millersville",
     fullName: "Millersville Marauders",
@@ -9901,8 +9457,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112350,
-    espnId: 74,
+    id: 74,
     name: "Millikin",
     shortName: "Millikin",
     fullName: "Millikin Big Blue",
@@ -9920,8 +9475,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112597,
-    espnId: 2398,
+    id: 2398,
     name: "Millsaps",
     shortName: "Millsaps",
     fullName: "Millsaps Majors",
@@ -9939,8 +9493,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112598,
-    espnId: 2399,
+    id: 2399,
     name: "Minnesota Morris",
     shortName: "Minnesota Morris",
     fullName: "Minnesota Morris Cougars",
@@ -9958,8 +9511,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112746,
-    espnId: 2969,
+    id: 2969,
     name: "Misericordia",
     shortName: "Misericordia",
     fullName: "Misericordia Cougars",
@@ -9977,8 +9529,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112599,
-    espnId: 2402,
+    id: 2402,
     name: "Missouri S&T",
     shortName: "Missouri S&T",
     fullName: "Missouri S&T Miners",
@@ -9996,8 +9547,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112600,
-    espnId: 2403,
+    id: 2403,
     name: "Missouri Southern State",
     shortName: "Missouri Southern State",
     fullName: "Missouri Southern State Lions",
@@ -10015,8 +9565,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112371,
-    espnId: 137,
+    id: 137,
     name: "Missouri Western",
     shortName: "Missouri Western",
     fullName: "Missouri Western Griffons",
@@ -10034,8 +9583,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112734,
-    espnId: 2919,
+    id: 2919,
     name: "Monmouth (IL)",
     shortName: "Monmouth (IL)",
     fullName: "Monmouth (IL) Fighting Scots",
@@ -10053,8 +9601,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112696,
-    espnId: 2818,
+    id: 2818,
     name: "Montclair State",
     shortName: "Montclair State",
     fullName: "Montclair State Red Hawks",
@@ -10072,8 +9619,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112414,
-    espnId: 323,
+    id: 323,
     name: "Moravian",
     shortName: "Moravian",
     fullName: "Moravian Greyhounds",
@@ -10091,8 +9637,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112602,
-    espnId: 2419,
+    id: 2419,
     name: "Mount St Joseph",
     shortName: "Mount St Joseph",
     fullName: "Mount St Joseph Lions",
@@ -10110,8 +9655,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112444,
-    espnId: 426,
+    id: 426,
     name: "Mount Union",
     shortName: "Mount Union",
     fullName: "Mount Union Purple Raiders",
@@ -10129,8 +9673,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112603,
-    espnId: 2422,
+    id: 2422,
     name: "Muhlenberg",
     shortName: "Muhlenberg",
     fullName: "Muhlenberg Mules",
@@ -10148,8 +9691,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112416,
-    espnId: 332,
+    id: 332,
     name: "Muskingum",
     shortName: "Muskingum",
     fullName: "Muskingum Fighting Muskies",
@@ -10167,8 +9709,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112605,
-    espnId: 2438,
+    id: 2438,
     name: "Nebraska Kearney",
     shortName: "Nebraska Kearney",
     fullName: "Nebraska Kearney Lopers",
@@ -10186,8 +9727,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112776,
-    espnId: 6845,
+    id: 6845,
     name: "Nebraska Wesleyan",
     shortName: "Nebraska Wesleyan",
     fullName: "Nebraska Wesleyan Prairie Wolves",
@@ -10205,8 +9745,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112789,
-    espnId: 111675,
+    id: 111675,
     name: "New England",
     shortName: "New England",
     fullName: "New England Nor'easters",
@@ -10224,8 +9763,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112604,
-    espnId: 2424,
+    id: 2424,
     name: "New Mexico Highlands",
     shortName: "New Mexico Highlands",
     fullName: "New Mexico Highlands Cowboys",
@@ -10243,8 +9781,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112351,
-    espnId: 75,
+    id: 75,
     name: "North Park",
     shortName: "North Park",
     fullName: "North Park Vikings",
@@ -10262,8 +9799,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112365,
-    espnId: 128,
+    id: 128,
     name: "Northern Michigan",
     shortName: "Northern Michigan",
     fullName: "Northern Michigan Wildcats",
@@ -10281,8 +9817,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112372,
-    espnId: 138,
+    id: 138,
     name: "Northwest Missouri State",
     shortName: "Northwest Missouri State",
     fullName: "Northwest Missouri State Bearcats",
@@ -10300,8 +9835,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112471,
-    espnId: 583,
+    id: 583,
     name: "Northwestern (MN)",
     shortName: "Northwestern (MN)",
     fullName: "Northwestern (MN) Eagles",
@@ -10319,8 +9853,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112697,
-    espnId: 2823,
+    id: 2823,
     name: "Northwestern (OK)",
     shortName: "Northwestern (OK)",
     fullName: "Northwestern (OK) Rangers",
@@ -10338,8 +9871,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112609,
-    espnId: 2467,
+    id: 2467,
     name: "Norwich",
     shortName: "Norwich",
     fullName: "Norwich Cadets",
@@ -10357,8 +9889,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112433,
-    espnId: 391,
+    id: 391,
     name: "Oberlin",
     shortName: "Oberlin",
     fullName: "Oberlin Yeomen",
@@ -10376,8 +9907,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112610,
-    espnId: 2477,
+    id: 2477,
     name: "Ohio Dominican",
     shortName: "Ohio Dominican",
     fullName: "Ohio Dominican Panthers",
@@ -10395,8 +9925,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112445,
-    espnId: 427,
+    id: 427,
     name: "Ohio Northern",
     shortName: "Ohio Northern",
     fullName: "Ohio Northern Polar Bears",
@@ -10414,8 +9943,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112751,
-    espnId: 2980,
+    id: 2980,
     name: "Ohio Wesleyan",
     shortName: "Ohio Wesleyan",
     fullName: "Ohio Wesleyan Battling Bishops",
@@ -10433,8 +9961,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112413,
-    espnId: 319,
+    id: 319,
     name: "Oklahoma Baptist",
     shortName: "Oklahoma Baptist",
     fullName: "Oklahoma Baptist Bison",
@@ -10452,8 +9979,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112422,
-    espnId: 354,
+    id: 354,
     name: "Olivet",
     shortName: "Olivet",
     fullName: "Olivet Comets",
@@ -10471,8 +9997,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112423,
-    espnId: 359,
+    id: 359,
     name: "Otterbein",
     shortName: "Otterbein",
     fullName: "Otterbein Cardinals",
@@ -10490,8 +10015,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112723,
-    espnId: 2888,
+    id: 2888,
     name: "Ouachita Baptist",
     shortName: "Ouachita Baptist",
     fullName: "Ouachita Baptist Tigers",
@@ -10509,8 +10033,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112612,
-    espnId: 2487,
+    id: 2487,
     name: "Pace",
     shortName: "Pace",
     fullName: "Pace Setters",
@@ -10528,8 +10051,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112387,
-    espnId: 205,
+    id: 205,
     name: "Pacific (OR)",
     shortName: "Pacific (OR)",
     fullName: "Pacific (OR) Boxers",
@@ -10547,8 +10069,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112611,
-    espnId: 2486,
+    id: 2486,
     name: "Pacific Lutheran",
     shortName: "Pacific Lutheran",
     fullName: "Pacific Lutheran Lutes",
@@ -10566,8 +10087,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112355,
-    espnId: 90,
+    id: 90,
     name: "Pittsburg State",
     shortName: "Pittsburg State",
     fullName: "Pittsburg State Gorillas",
@@ -10585,8 +10105,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112748,
-    espnId: 2972,
+    id: 2972,
     name: "Plymouth State",
     shortName: "Plymouth State",
     fullName: "Plymouth State Panthers",
@@ -10604,8 +10123,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112801,
-    espnId: 126086,
+    id: 126086,
     name: "Post",
     shortName: "Post",
     fullName: "Post Eagles",
@@ -10623,8 +10141,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112613,
-    espnId: 2508,
+    id: 2508,
     name: "Puget Sound",
     shortName: "Puget Sound",
     fullName: "Puget Sound Loggers",
@@ -10642,8 +10159,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112699,
-    espnId: 2825,
+    id: 2825,
     name: "Quincy",
     shortName: "Quincy",
     fullName: "Quincy Hawks",
@@ -10661,8 +10177,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112617,
-    espnId: 2528,
+    id: 2528,
     name: "Rensselaer",
     shortName: "Rensselaer",
     fullName: "Rensselaer Engineers",
@@ -10680,8 +10195,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112615,
-    espnId: 2519,
+    id: 2519,
     name: "Rhodes",
     shortName: "Rhodes",
     fullName: "Rhodes Lynx",
@@ -10699,8 +10213,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112725,
-    espnId: 2891,
+    id: 2891,
     name: "Ripon",
     shortName: "Ripon",
     fullName: "Ripon Red Hawks",
@@ -10718,8 +10231,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112379,
-    espnId: 184,
+    id: 184,
     name: "Rochester (NY)",
     shortName: "Rochester (NY)",
     fullName: "Rochester (NY) Yellow Jackets",
@@ -10737,8 +10249,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112616,
-    espnId: 2524,
+    id: 2524,
     name: "Rockford",
     shortName: "Rockford",
     fullName: "Rockford Regents",
@@ -10756,8 +10267,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112353,
-    espnId: 86,
+    id: 86,
     name: "Rose Hulman",
     shortName: "Rose Hulman",
     fullName: "Rose Hulman Fightin' Engineers",
@@ -10775,8 +10285,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112700,
-    espnId: 2827,
+    id: 2827,
     name: "Rowan",
     shortName: "Rowan",
     fullName: "Rowan Profs",
@@ -10794,8 +10303,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112366,
-    espnId: 129,
+    id: 129,
     name: "Saginaw Valley State",
     shortName: "Saginaw Valley State",
     fullName: "Saginaw Valley State Cardinals",
@@ -10813,8 +10321,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112702,
-    espnId: 2830,
+    id: 2830,
     name: "Saint Anselm",
     shortName: "Saint Anselm",
     fullName: "Saint Anselm Hawks",
@@ -10832,8 +10339,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112637,
-    espnId: 2614,
+    id: 2614,
     name: "Saint Vincent",
     shortName: "Saint Vincent",
     fullName: "Saint Vincent Bearcats",
@@ -10851,8 +10357,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112618,
-    espnId: 2532,
+    id: 2532,
     name: "Salisbury",
     shortName: "Salisbury",
     fullName: "Salisbury Sea Gulls",
@@ -10870,8 +10375,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112682,
-    espnId: 2776,
+    id: 2776,
     name: "Salve Regina",
     shortName: "Salve Regina",
     fullName: "Salve Regina Seahawks",
@@ -10889,8 +10393,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112473,
-    espnId: 611,
+    id: 611,
     name: "Seton Hill",
     shortName: "Seton Hill",
     fullName: "Seton Hill Griffins",
@@ -10908,8 +10411,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112621,
-    espnId: 2553,
+    id: 2553,
     name: "Sewanee",
     shortName: "Sewanee",
     fullName: "Sewanee Tigers",
@@ -10927,8 +10429,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112701,
-    espnId: 2828,
+    id: 2828,
     name: "Shenandoah",
     shortName: "Shenandoah",
     fullName: "Shenandoah Hornets",
@@ -10946,8 +10447,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112749,
-    espnId: 2974,
+    id: 2974,
     name: "Shepherd",
     shortName: "Shepherd",
     fullName: "Shepherd Rams",
@@ -10965,8 +10465,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112623,
-    espnId: 2559,
+    id: 2559,
     name: "Shippensburg",
     shortName: "Shippensburg",
     fullName: "Shippensburg Raiders",
@@ -10984,8 +10483,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112626,
-    espnId: 2564,
+    id: 2564,
     name: "Simpson (IA)",
     shortName: "Simpson (IA)",
     fullName: "Simpson (IA) Storm",
@@ -11003,8 +10501,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112390,
-    espnId: 215,
+    id: 215,
     name: "Slippery Rock",
     shortName: "Slippery Rock",
     fullName: "Slippery Rock The Rock",
@@ -11022,8 +10519,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112384,
-    espnId: 199,
+    id: 199,
     name: "Southeastern Oklahoma State",
     shortName: "Southeastern Oklahoma State",
     fullName: "Southeastern Oklahoma State Savage Storm",
@@ -11041,8 +10537,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112627,
-    espnId: 2568,
+    id: 2568,
     name: "Southern Arkansas",
     shortName: "Southern Arkansas",
     fullName: "Southern Arkansas Muleriders",
@@ -11060,8 +10555,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112629,
-    espnId: 2583,
+    id: 2583,
     name: "Southern Connecticut State",
     shortName: "Southern Conn St",
     fullName: "Southern Connecticut State Owls",
@@ -11079,8 +10573,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112385,
-    espnId: 200,
+    id: 200,
     name: "Southern Nazarene",
     shortName: "Southern Nazarene",
     fullName: "Southern Nazarene Crimson Storm",
@@ -11098,8 +10591,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112727,
-    espnId: 2896,
+    id: 2896,
     name: "Southern Virginia",
     shortName: "Southern Virginia",
     fullName: "Southern Virginia Knights",
@@ -11117,8 +10609,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112631,
-    espnId: 2586,
+    id: 2586,
     name: "Southwest Baptist",
     shortName: "Southwest Baptist",
     fullName: "Southwest Baptist Bearcats",
@@ -11136,8 +10627,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112736,
-    espnId: 2927,
+    id: 2927,
     name: "Southwestern Oklahoma State",
     shortName: "Southwestern Oklahoma State",
     fullName: "Southwestern Oklahoma State Bulldogs",
@@ -11155,8 +10645,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112633,
-    espnId: 2588,
+    id: 2588,
     name: "Southwestern U",
     shortName: "Southwestern U",
     fullName: "Southwestern U Pirates",
@@ -11174,8 +10663,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112352,
-    espnId: 81,
+    id: 81,
     name: "Springfield",
     shortName: "Springfield",
     fullName: "Springfield Pride",
@@ -11193,8 +10681,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112427,
-    espnId: 374,
+    id: 374,
     name: "St. John Fisher",
     shortName: "St. John Fisher",
     fullName: "St. John Fisher Cardinals",
@@ -11212,8 +10699,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112683,
-    espnId: 2779,
+    id: 2779,
     name: "St. Lawrence",
     shortName: "St. Lawrence",
     fullName: "St. Lawrence Saints",
@@ -11231,8 +10717,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112704,
-    espnId: 2832,
+    id: 2832,
     name: "St. Norbert",
     shortName: "St. Norbert",
     fullName: "St. Norbert Green Knights",
@@ -11250,8 +10735,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112451,
-    espnId: 471,
+    id: 471,
     name: "Stevenson",
     shortName: "Stevenson",
     fullName: "Stevenson Mustangs",
@@ -11269,8 +10753,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112705,
-    espnId: 2834,
+    id: 2834,
     name: "Sul Ross State",
     shortName: "Sul Ross State",
     fullName: "Sul Ross State Lobos",
@@ -11288,8 +10771,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112685,
-    espnId: 2782,
+    id: 2782,
     name: "SUNY Cortland",
     shortName: "SUNY Cortland",
     fullName: "SUNY Cortland Red Dragons",
@@ -11307,8 +10789,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112741,
-    espnId: 2951,
+    id: 2951,
     name: "SUNY Maritime",
     shortName: "SUNY Maritime",
     fullName: "SUNY Maritime Privateers",
@@ -11326,8 +10807,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112759,
-    espnId: 3110,
+    id: 3110,
     name: "SUNY Morrisville",
     shortName: "SUNY Morrisville",
     fullName: "SUNY Morrisville Mustangs",
@@ -11345,8 +10825,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112646,
-    espnId: 2658,
+    id: 2658,
     name: "Texas A&M-Kingsville",
     shortName: "Texas A&M-Kingsville",
     fullName: "Texas A&M-Kingsville Javelinas",
@@ -11364,8 +10843,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112640,
-    espnId: 2639,
+    id: 2639,
     name: "Texas Lutheran",
     shortName: "Texas Lutheran",
     fullName: "Texas Lutheran Bulldogs",
@@ -11383,8 +10861,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112607,
-    espnId: 2442,
+    id: 2442,
     name: "The College of New Jersey",
     shortName: "The College of New Jersey",
     fullName: "The College of New Jersey Lions",
@@ -11402,8 +10879,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112641,
-    espnId: 2644,
+    id: 2644,
     name: "Thiel",
     shortName: "Thiel",
     fullName: "Thiel Tomcats",
@@ -11421,8 +10897,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112642,
-    espnId: 2646,
+    id: 2646,
     name: "Thomas More",
     shortName: "Thomas More",
     fullName: "Thomas More Saints",
@@ -11440,8 +10915,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112706,
-    espnId: 2838,
+    id: 2838,
     name: "Tiffin",
     shortName: "Tiffin",
     fullName: "Tiffin Dragons",
@@ -11459,8 +10933,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112643,
-    espnId: 2651,
+    id: 2651,
     name: "Trine",
     shortName: "Trine",
     fullName: "Trine Thunder",
@@ -11478,8 +10951,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112750,
-    espnId: 2977,
+    id: 2977,
     name: "Trinity (CT)",
     shortName: "Trinity (CT)",
     fullName: "Trinity (CT) Bantams",
@@ -11497,8 +10969,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112644,
-    espnId: 2654,
+    id: 2654,
     name: "Truman State",
     shortName: "Truman State",
     fullName: "Truman State Bulldogs",
@@ -11516,8 +10987,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112359,
-    espnId: 112,
+    id: 112,
     name: "Tufts",
     shortName: "Tufts",
     fullName: "Tufts Jumbos",
@@ -11535,8 +11005,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112429,
-    espnId: 379,
+    id: 379,
     name: "UMass Dartmouth",
     shortName: "UMass Dartmouth",
     fullName: "UMass Dartmouth Corsairs",
@@ -11554,8 +11023,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112393,
-    espnId: 237,
+    id: 237,
     name: "Union",
     shortName: "Union",
     fullName: "Union Garnet Chargers",
@@ -11573,8 +11041,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112431,
-    espnId: 389,
+    id: 389,
     name: "Upper Iowa",
     shortName: "Upper Iowa",
     fullName: "Upper Iowa Peacocks",
@@ -11592,8 +11059,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112647,
-    espnId: 2667,
+    id: 2667,
     name: "Ursinus",
     shortName: "Ursinus",
     fullName: "Ursinus Bears",
@@ -11611,8 +11077,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112785,
-    espnId: 110243,
+    id: 110243,
     name: "UT Permian Basin",
     shortName: "UT Permian Basin",
     fullName: "UT Permian Basin Falcons",
@@ -11630,8 +11095,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112432,
-    espnId: 390,
+    id: 390,
     name: "Utica",
     shortName: "Utica",
     fullName: "Utica Pioneers",
@@ -11649,8 +11113,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112648,
-    espnId: 2673,
+    id: 2673,
     name: "Valdosta State",
     shortName: "Valdosta State",
     fullName: "Valdosta State Blazers",
@@ -11668,8 +11131,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112354,
-    espnId: 89,
+    id: 89,
     name: "Wabash",
     shortName: "Wabash",
     fullName: "Wabash Little Giants",
@@ -11687,8 +11149,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112650,
-    espnId: 2682,
+    id: 2682,
     name: "Walsh",
     shortName: "Walsh",
     fullName: "Walsh Cavaliers",
@@ -11706,8 +11167,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112652,
-    espnId: 2685,
+    id: 2685,
     name: "Wartburg",
     shortName: "Wartburg",
     fullName: "Wartburg Knights",
@@ -11725,8 +11185,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112654,
-    espnId: 2687,
+    id: 2687,
     name: "Washburn",
     shortName: "Washburn",
     fullName: "Washburn Ichabods",
@@ -11744,8 +11203,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112653,
-    espnId: 2686,
+    id: 2686,
     name: "Washington & Jefferson",
     shortName: "Washington & Jefferson",
     fullName: "Washington & Jefferson Presidents",
@@ -11763,8 +11221,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112655,
-    espnId: 2688,
+    id: 2688,
     name: "Washington and Lee",
     shortName: "Washington and Lee",
     fullName: "Washington and Lee Generals",
@@ -11782,8 +11239,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112367,
-    espnId: 131,
+    id: 131,
     name: "Wayne State (MI)",
     shortName: "Wayne State (MI)",
     fullName: "Wayne State (MI) Warriors",
@@ -11801,8 +11257,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112711,
-    espnId: 2845,
+    id: 2845,
     name: "Waynesburg",
     shortName: "Waynesburg",
     fullName: "Waynesburg Yellow Jackets",
@@ -11820,8 +11275,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112417,
-    espnId: 336,
+    id: 336,
     name: "Wesleyan (CT)",
     shortName: "Wesleyan (CT)",
     fullName: "Wesleyan (CT) Cardinals",
@@ -11839,8 +11293,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112391,
-    espnId: 223,
+    id: 223,
     name: "West Chester",
     shortName: "West Chester",
     fullName: "West Chester Golden Rams",
@@ -11858,8 +11311,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112661,
-    espnId: 2704,
+    id: 2704,
     name: "West Texas",
     shortName: "West Texas",
     fullName: "West Texas Buffaloes",
@@ -11877,8 +11329,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112663,
-    espnId: 2707,
+    id: 2707,
     name: "West Virginia State",
     shortName: "West Virginia State",
     fullName: "West Virginia State Yellow Jackets",
@@ -11896,8 +11347,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112450,
-    espnId: 455,
+    id: 455,
     name: "West Virginia Wesleyan",
     shortName: "West Virginia Wesleyan",
     fullName: "West Virginia Wesleyan Bobcats",
@@ -11915,8 +11365,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112664,
-    espnId: 2714,
+    id: 2714,
     name: "Western Colorado",
     shortName: "Western Colorado",
     fullName: "Western Colorado Mountaineers",
@@ -11934,8 +11383,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112659,
-    espnId: 2702,
+    id: 2702,
     name: "Western New England",
     shortName: "Western New England",
     fullName: "Western New England Golden Bears",
@@ -11953,8 +11401,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112660,
-    espnId: 2703,
+    id: 2703,
     name: "Western New Mexico",
     shortName: "Western New Mexico",
     fullName: "Western New Mexico Mustangs",
@@ -11972,8 +11419,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112730,
-    espnId: 2909,
+    id: 2909,
     name: "Westfield State",
     shortName: "Westfield State",
     fullName: "Westfield State Owls",
@@ -11991,8 +11437,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112446,
-    espnId: 433,
+    id: 433,
     name: "Westminster (MO)",
     shortName: "Westminster (MO)",
     fullName: "Westminster (MO) Blue Jays",
@@ -12010,8 +11455,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112712,
-    espnId: 2849,
+    id: 2849,
     name: "Westminster (PA)",
     shortName: "Westminster (PA)",
     fullName: "Westminster (PA) Titans",
@@ -12029,8 +11473,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112434,
-    espnId: 396,
+    id: 396,
     name: "Wheaton (IL)",
     shortName: "Wheaton (IL)",
     fullName: "Wheaton (IL) Thunder",
@@ -12048,8 +11491,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112791,
-    espnId: 112335,
+    id: 112335,
     name: "Wheeling",
     shortName: "Wheeling",
     fullName: "Wheeling Cardinals",
@@ -12067,8 +11509,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112665,
-    espnId: 2721,
+    id: 2721,
     name: "Whitworth",
     shortName: "Whitworth",
     fullName: "Whitworth Pirates",
@@ -12086,8 +11527,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112667,
-    espnId: 2725,
+    id: 2725,
     name: "Widener",
     shortName: "Widener",
     fullName: "Widener Pride",
@@ -12105,8 +11545,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112435,
-    espnId: 398,
+    id: 398,
     name: "Wilkes",
     shortName: "Wilkes",
     fullName: "Wilkes Colonels",
@@ -12124,8 +11563,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112737,
-    espnId: 2930,
+    id: 2930,
     name: "Willamette",
     shortName: "Willamette",
     fullName: "Willamette Bearcats",
@@ -12143,8 +11581,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112731,
-    espnId: 2911,
+    id: 2911,
     name: "William Jewell",
     shortName: "William Jewell",
     fullName: "William Jewell Cardinals",
@@ -12162,8 +11599,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112747,
-    espnId: 2970,
+    id: 2970,
     name: "William Paterson",
     shortName: "William Paterson",
     fullName: "William Paterson Pioneers",
@@ -12181,8 +11617,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112668,
-    espnId: 2731,
+    id: 2731,
     name: "Williams",
     shortName: "Williams",
     fullName: "Williams Ephs",
@@ -12200,8 +11635,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112669,
-    espnId: 2733,
+    id: 2733,
     name: "Wilmington (OH)",
     shortName: "Wilmington (OH)",
     fullName: "Wilmington (OH) Fightin' Quakers",
@@ -12219,8 +11653,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112671,
-    espnId: 2738,
+    id: 2738,
     name: "Wisconsin Eau Claire",
     shortName: "Wisconsin Eau Claire",
     fullName: "Wisconsin Eau Claire Blugolds",
@@ -12238,8 +11671,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112672,
-    espnId: 2740,
+    id: 2740,
     name: "Wisconsin La Crosse",
     shortName: "Wisconsin La Crosse",
     fullName: "Wisconsin La Crosse Eagles",
@@ -12257,8 +11689,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112673,
-    espnId: 2741,
+    id: 2741,
     name: "Wisconsin Lutheran",
     shortName: "Wisconsin Lutheran",
     fullName: "Wisconsin Lutheran Warriors",
@@ -12276,8 +11707,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112403,
-    espnId: 271,
+    id: 271,
     name: "Wisconsin Oshkosh",
     shortName: "Wisconsin Oshkosh",
     fullName: "Wisconsin Oshkosh Titans",
@@ -12295,8 +11725,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112404,
-    espnId: 272,
+    id: 272,
     name: "Wisconsin Platteville",
     shortName: "Wisconsin Platteville",
     fullName: "Wisconsin Platteville Pioneers",
@@ -12314,8 +11743,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112674,
-    espnId: 2743,
+    id: 2743,
     name: "Wisconsin Stevens Point",
     shortName: "Wisconsin Stevens Point",
     fullName: "Wisconsin Stevens Point Pointers",
@@ -12333,8 +11761,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112675,
-    espnId: 2744,
+    id: 2744,
     name: "Wisconsin Stout",
     shortName: "Wisconsin Stout",
     fullName: "Wisconsin Stout Blue Devils",
@@ -12352,8 +11779,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112676,
-    espnId: 2745,
+    id: 2745,
     name: "Wisconsin Whitewater",
     shortName: "Wisconsin Whitewater",
     fullName: "Wisconsin Whitewater Warhawks",
@@ -12371,8 +11797,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112677,
-    espnId: 2746,
+    id: 2746,
     name: "Wittenberg",
     shortName: "Wittenberg",
     fullName: "Wittenberg Tigers",
@@ -12390,8 +11815,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112678,
-    espnId: 2748,
+    id: 2748,
     name: "Wooster",
     shortName: "Wooster",
     fullName: "Wooster Fighting Scots",
@@ -12409,8 +11833,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112436,
-    espnId: 402,
+    id: 402,
     name: "Worcester State",
     shortName: "Worcester State",
     fullName: "Worcester State Lancers",
@@ -12428,8 +11851,7 @@ export const cfbTeams: Team[] = [
     league: "cfb",
   },
   {
-    id: 112679,
-    espnId: 2749,
+    id: 2749,
     name: "WPI",
     shortName: "WPI",
     fullName: "WPI Engineers",
@@ -12456,55 +11878,55 @@ export const CFB_RIVALRIES = [
   {
     id: "clean-old-fashioned-hate",
     name: "Clean, Old-Fashioned Hate",
-    teamIds: [208, 109],
+    teamIds: [59, 61],
     group: "acc",
   },
   {
     id: "florida-state-miami",
     name: "Florida State–Miami",
-    teamIds: [49, 123],
+    teamIds: [52, 2390],
     group: "acc",
   },
   {
     id: "florida-state-clemson",
     name: "Florida State–Clemson",
-    teamIds: [49, 209],
+    teamIds: [52, 228],
     group: "acc",
   },
   {
     id: "north-carolina-nc-state",
     name: "North Carolina–NC State",
-    teamIds: [53, 121],
+    teamIds: [153, 152],
     group: "acc",
   },
   {
     id: "sunshine-showdown",
     name: "Sunshine Showdown",
-    teamIds: [49, 113],
+    teamIds: [52, 57],
     group: "acc",
   },
   {
     id: "souths-oldest-rivalry",
     name: "South's Oldest Rivalry",
-    teamIds: [53, 147],
+    teamIds: [153, 258],
     group: "acc",
   },
   {
     id: "commonwealth-cup",
     name: "Commonwealth Cup",
-    teamIds: [147, 97],
+    teamIds: [258, 259],
     group: "acc",
   },
   {
     id: "textile-bowl",
     name: "Textile Bowl",
-    teamIds: [209, 121],
+    teamIds: [228, 152],
     group: "acc",
   },
   {
     id: "battle-for-the-victory-bell",
     name: "Battle for the Victory Bell",
-    teamIds: [99, 53],
+    teamIds: [150, 153],
     group: "acc",
   },
 
@@ -12515,85 +11937,85 @@ export const CFB_RIVALRIES = [
   {
     id: "iron-bowl",
     name: "Iron Bowl",
-    teamIds: [171, 106],
+    teamIds: [2, 333],
     group: "sec",
   },
   {
     id: "palmetto-bowl",
     name: "Palmetto Bowl",
-    teamIds: [209, 188],
+    teamIds: [228, 2579],
     group: "sec",
   },
   {
     id: "governors-cup",
     name: "Governor's Cup",
-    teamIds: [129, 198],
+    teamIds: [96, 97],
     group: "sec",
   },
   {
     id: "florida-tennessee",
     name: "Florida–Tennessee",
-    teamIds: [113, 69],
+    teamIds: [57, 2633],
     group: "sec",
   },
   {
     id: "alabama-lsu",
     name: "Alabama–LSU",
-    teamIds: [106, 207],
+    teamIds: [333, 99],
     group: "sec",
   },
   {
     id: "deep-souths-oldest-rivalry",
     name: "Deep South's Oldest Rivalry",
-    teamIds: [171, 109],
+    teamIds: [2, 61],
     group: "sec",
   },
   {
     id: "egg-bowl",
     name: "Egg Bowl",
-    teamIds: [131, 186],
+    teamIds: [145, 344],
     group: "sec",
   },
   {
     id: "third-saturday-in-october",
     name: "Third Saturday in October",
-    teamIds: [106, 69],
+    teamIds: [333, 2633],
     group: "sec",
   },
   {
     id: "worlds-largest-outdoor-cocktail-party",
     name: "World's Largest Outdoor Cocktail Party",
-    teamIds: [109, 113],
+    teamIds: [61, 57],
     group: "sec",
   },
   {
     id: "red-river-rivalry",
     name: "Red River Rivalry",
-    teamIds: [117, 195],
+    teamIds: [201, 251],
     group: "sec",
   },
   {
     id: "battle-for-the-golden-boot",
     name: "Battle for the Golden Boot",
-    teamIds: [207, 127],
+    teamIds: [99, 8],
     group: "sec",
   },
   {
     id: "battle-line-rivalry",
     name: "Battle Line Rivalry",
-    teamIds: [127, 83],
+    teamIds: [8, 142],
     group: "sec",
   },
   {
     id: "magnolia-bowl",
     name: "Magnolia Bowl",
-    teamIds: [207, 131],
+    teamIds: [99, 145],
     group: "sec",
   },
   {
     id: "lone-star-showdown",
     name: "Lone Star Showdown",
-    teamIds: [111, 195],
+    teamIds: [245, 251],
     group: "sec",
   },
 
@@ -12604,61 +12026,61 @@ export const CFB_RIVALRIES = [
   {
     id: "the-game",
     name: "The Game",
-    teamIds: [115, 107],
+    teamIds: [130, 194],
     group: "big-ten",
   },
   {
     id: "land-grant-trophy",
     name: "Land Grant Trophy",
-    teamIds: [92, 78],
+    teamIds: [127, 213],
     group: "big-ten",
   },
   {
     id: "little-brown-jug",
     name: "Little Brown Jug",
-    teamIds: [115, 85],
+    teamIds: [130, 135],
     group: "big-ten",
   },
   {
     id: "paul-bunyan-trophy",
     name: "Paul Bunyan Trophy",
-    teamIds: [115, 92],
+    teamIds: [130, 127],
     group: "big-ten",
   },
   {
     id: "paul-bunyans-axe",
     name: "Paul Bunyan's Axe",
-    teamIds: [125, 85],
+    teamIds: [275, 135],
     group: "big-ten",
   },
   {
     id: "heroes-trophy",
     name: "Heroes Trophy",
-    teamIds: [42, 138],
+    teamIds: [158, 2294],
     group: "big-ten",
   },
   {
     id: "old-oaken-bucket",
     name: "Old Oaken Bucket",
-    teamIds: [77, 103],
+    teamIds: [2509, 84],
     group: "big-ten",
   },
   {
     id: "floyd-of-rosedale",
     name: "Floyd of Rosedale",
-    teamIds: [138, 85],
+    teamIds: [2294, 135],
     group: "big-ten",
   },
   {
     id: "illibuck",
     name: "Illibuck",
-    teamIds: [107, 47],
+    teamIds: [194, 356],
     group: "big-ten",
   },
   {
     id: "land-of-lincoln-trophy",
     name: "Land of Lincoln Trophy",
-    teamIds: [47, 41],
+    teamIds: [356, 77],
     group: "big-ten",
   },
 
@@ -12669,25 +12091,25 @@ export const CFB_RIVALRIES = [
   {
     id: "bedlam",
     name: "Bedlam",
-    teamIds: [117, 61],
+    teamIds: [201, 197],
     group: "big-12",
   },
   {
     id: "revivalry",
     name: "Revivalry",
-    teamIds: [105, 118],
+    teamIds: [2628, 239],
     group: "big-12",
   },
   {
     id: "sunflower-showdown",
     name: "Sunflower Showdown",
-    teamIds: [101, 174],
+    teamIds: [2305, 2306],
     group: "big-12",
   },
   {
     id: "farmageddon",
     name: "Farmageddon",
-    teamIds: [151, 174],
+    teamIds: [66, 2306],
     group: "big-12",
   },
 
@@ -12698,31 +12120,31 @@ export const CFB_RIVALRIES = [
   {
     id: "civil-war",
     name: "Civil War",
-    teamIds: [110, 203],
+    teamIds: [2483, 204],
     group: "pac-12",
   },
   {
     id: "apple-cup",
     name: "Apple Cup",
-    teamIds: [205, 201],
+    teamIds: [264, 265],
     group: "pac-12",
   },
   {
     id: "victory-bell",
     name: "Victory Bell",
-    teamIds: [153, 122],
+    teamIds: [26, 30],
     group: "pac-12",
   },
   {
     id: "territorial-cup",
     name: "Territorial Cup",
-    teamIds: [156, 86],
+    teamIds: [12, 9],
     group: "pac-12",
   },
   {
     id: "big-game",
     name: "Big Game",
-    teamIds: [161, 191],
+    teamIds: [25, 24],
     group: "pac-12",
   },
 
@@ -12733,67 +12155,67 @@ export const CFB_RIVALRIES = [
   {
     id: "fremont-cannon",
     name: "Battle for the Fremont Cannon",
-    teamIds: [43, 56],
+    teamIds: [2439, 2440],
     group: "mountain-west",
   },
   {
     id: "battle-of-i-25",
     name: "Battle of I-25",
-    teamIds: [199, 55],
+    teamIds: [167, 166],
     group: "other",
   },
   {
     id: "cy-hawk",
     name: "Cy-Hawk",
-    teamIds: [138, 151],
+    teamIds: [2294, 66],
     group: "other",
   },
   {
     id: "backyard-brawl",
     name: "Backyard Brawl",
-    teamIds: [63, 64],
+    teamIds: [221, 277],
     group: "other",
   },
   {
     id: "river-city-rivalry",
     name: "River City Rivalry",
-    teamIds: [63, 128],
+    teamIds: [221, 2132],
     group: "other",
   },
   {
     id: "battle-for-the-iron-skillet",
     name: "Battle for the Iron Skillet",
-    teamIds: [105, 190],
+    teamIds: [2628, 2567],
     group: "other",
   },
   {
     id: "commander-in-chief-army-navy",
     name: "Commander-in-Chief's Trophy",
-    teamIds: [177, 145],
+    teamIds: [349, 2426],
     group: "independent",
   },
   {
     id: "commander-in-chief-army-air-force",
     name: "Commander-in-Chief's Trophy",
-    teamIds: [177, 149],
+    teamIds: [349, 2005],
     group: "independent",
   },
   {
     id: "commander-in-chief-air-force-navy",
     name: "Commander-in-Chief's Trophy",
-    teamIds: [149, 145],
+    teamIds: [2005, 2426],
     group: "independent",
   },
   {
     id: "hawaii-unlv",
     name: "Battle for the Golden Pineapple",
-    teamIds: [59, 43],
+    teamIds: [62, 2439],
     group: "mountain-west",
   },
   {
     id: "hawaii-fresno-state",
     name: "Hawai'i–Fresno State",
-    teamIds: [59, 88],
+    teamIds: [62, 278],
     group: "mountain-west",
   },
 
@@ -12804,37 +12226,37 @@ export const CFB_RIVALRIES = [
   {
     id: "holy-war",
     name: "Holy War",
-    teamIds: [136, 114],
+    teamIds: [252, 254],
     group: "other",
   },
   {
     id: "notre-dame-usc",
     name: "Notre Dame–USC",
-    teamIds: [108, 122],
+    teamIds: [87, 30],
     group: "independent",
   },
   {
     id: "notre-dame-stanford",
     name: "Notre Dame–Stanford",
-    teamIds: [108, 191],
+    teamIds: [87, 24],
     group: "independent",
   },
   {
     id: "catholics-vs-convicts",
     name: "Catholics vs. Convicts",
-    teamIds: [108, 123],
+    teamIds: [87, 2390],
     group: "independent",
   },
   {
     id: "war-on-i-4",
     name: "War on I-4",
-    teamIds: [71, 135],
+    teamIds: [2116, 58],
     group: "aac",
   },
   {
     id: "civil-conflict",
     name: "Civil Conflict",
-    teamIds: [71, 46],
+    teamIds: [2116, 41],
     group: "aac",
   },
 ] as const satisfies readonly CFBRivalry[];
@@ -12852,10 +12274,6 @@ export function getCFBTeamLogo(
 
   return isDark ? team.logoLight || team.logo : team.logo;
 }
-
-export const getCFBTeamByESPNId = (espnId: number | string) => {
-  return cfbTeams.find((t) => t.espnId?.toString() === espnId.toString())!;
-};
 
 function createRivalryKey(teamA: number, teamB: number): string {
   return teamA < teamB ? `${teamA}:${teamB}` : `${teamB}:${teamA}`;

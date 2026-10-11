@@ -128,9 +128,6 @@ export default function GameDetailsScreen(
   const homeTeam = getNHLTeam(homeId);
   const awayTeam = getNHLTeam(awayId);
 
-  const homeEspnId = homeTeam?.id ?? 0;
-  const awayEspnId = awayTeam?.id ?? 0;
-
   const homeLogo = getNHLTeamLogo(homeId, isDark);
   const awayLogo = getNHLTeamLogo(awayId, isDark);
   const homeHeaderLogo = getNHLTeamLogo(homeId, true);
@@ -230,7 +227,7 @@ export default function GameDetailsScreen(
       : (venueCity ?? "");
 
   useLayoutEffect(() => {
-    if (isLoading || !game || !home || !away) {
+    if (!game || !home || !away) {
       navigation.setOptions({
         header: () => null,
       });
@@ -265,7 +262,6 @@ export default function GameDetailsScreen(
     homeCode,
     awayColor,
     homeColor,
-    isLoading,
     navigation,
     neutralSite,
   ]);
@@ -378,8 +374,6 @@ export default function GameDetailsScreen(
 
             <ShotChart
               plays={plays}
-              homeEspnId={homeEspnId}
-              awayEspnId={awayEspnId}
               homeId={homeId}
               awayId={awayId}
               homeColor={homeColor}
@@ -403,7 +397,14 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
-            <GameSummary plays={plays ?? []} isDark={isDark} />
+            <GameSummary
+              plays={plays}
+              isDark={isDark}
+              homeId={homeId}
+              awayId={awayId}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+            />
 
             <LastFiveGames
               homeId={homeId}

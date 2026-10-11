@@ -5,12 +5,10 @@ import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors } from "constants/styles";
 import {
   getMCBBTeam,
-  getMCBBTeamByESPNId,
   getMCBBTeamLogo,
 } from "constants/teamsMCBB";
 import {
   getCFBTeam,
-  getCFBTeamByESPNId,
   getCFBTeamLogo,
 } from "constants/teamsCFB";
 import { BlurView } from "expo-blur";
@@ -399,7 +397,7 @@ function createCFBRow(
 ): CollegePollRow {
   const apiTeam = rank.team;
   const team = apiTeam
-    ? (getCFBTeam(apiTeam.id) ?? getCFBTeamByESPNId(apiTeam.espnId))
+    ? getCFBTeam(apiTeam.id)
     : undefined;
   const teamId = team?.id;
   const teamCode = team?.code || "N/A";
@@ -429,7 +427,7 @@ function createMCBBRow(
   const apiTeam = rank.team;
   const team = apiTeam
     ? (getMCBBTeam(apiTeam.id ?? undefined) ??
-      (apiTeam.espnId != null ? getMCBBTeamByESPNId(apiTeam.espnId) : undefined))
+      (apiTeam.espnId != null ? getMCBBTeam(apiTeam.espnId) : undefined))
     : undefined;
   const teamId = team?.id;
   const teamCode = team?.code || "N/A";

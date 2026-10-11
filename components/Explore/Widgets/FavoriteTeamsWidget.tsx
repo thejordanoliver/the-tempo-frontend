@@ -1,10 +1,12 @@
+import { Ionicons } from "@expo/vector-icons";
+import FavoriteTeamsSettingsModal from "../FavoriteTeamsSettingsModal";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { EXPLORE_WIDGET_HEIGHTS } from "constants/exploreWidgetSizes";
 import { Colors, Fonts } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { BlurView } from "expo-blur";
-import { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useMemo, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { isFavoriteLeague } from "types/favorites";
 import { ExploreWidgetSize } from "types/widgets";
 
@@ -13,6 +15,8 @@ import { WidgetEditControls } from "./WidgetSlider";
 
 type FavoriteTeamsWidgetProps = {
   isDark: boolean;
+  autoPlay: boolean;
+  onChangeAutoPlay: (autoPlay: boolean) => void;
   size?: ExploreWidgetSize;
   width?: number;
   height?: number;
@@ -35,6 +39,8 @@ const sizeFallback: Record<ExploreWidgetSize, number> = {
 
 export default function FavoriteTeamsWidget({
   isDark,
+  autoPlay,
+  onChangeAutoPlay,
   size = "medium",
   width,
   height,
@@ -50,6 +56,7 @@ export default function FavoriteTeamsWidget({
   canMoveUp,
   canMoveDown,
 }: FavoriteTeamsWidgetProps) {
+  const [settingsVisible, setSettingsVisible] = useState(false);
   const { favorites, isLoading, ready, allTeams } = useFavoriteTeamsContext();
 
   const resolvedWidth = Math.max(
@@ -156,6 +163,7 @@ export default function FavoriteTeamsWidget({
         height={resolvedHeight}
         isDark={isDark}
         compact={compact}
+        autoPlay={autoPlay}
         disabled={isEditing}
       />
     );
@@ -181,6 +189,18 @@ export default function FavoriteTeamsWidget({
     >
       {renderContent()}
 
+      {!isEditing && (
+        <Pressable
+          onPress={() => setSettingsVisible(true)}
+          style={styles.settingsButton}
+          accessibilityRole="button"
+          accessibilityLabel="Favorite teams settings"
+        >
+          <BlurView intensity={100} style={StyleSheet.absoluteFill} />
+          <Ionicons name="options-outline" size={17} color={isDark ? Colors.white : Colors.black} />
+        </Pressable>
+      )}
+
       {showActions && widgetId && (
         <WidgetEditControls
           isDark={isDark}
@@ -199,13 +219,22 @@ export default function FavoriteTeamsWidget({
   );
 
   return (
-    <BlurView
-      style={cardStyle}
-      intensity={100}
-      tint={isDark ? "dark" : "light"}
-    >
-      {widgetContent}
-    </BlurView>
+    <>
+      <BlurView
+        style={cardStyle}
+        intensity={100}
+        tint={isDark ? "dark" : "light"}
+      >
+        {widgetContent}
+      </BlurView>
+      <FavoriteTeamsSettingsModal
+        visible={settingsVisible}
+        isDark={isDark}
+        autoPlay={autoPlay}
+        onChangeAutoPlay={onChangeAutoPlay}
+        onClose={() => setSettingsVisible(false)}
+      />
+    </>
   );
 }
 
@@ -219,6 +248,20 @@ export const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
       overflow: "hidden",
     },
 
+    settingsButton: {
+      position: "absolute",
+      top: 8,
+      right: 8,
+      zIndex: 20,
+      width: 32,
+      height: 32,
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+      borderRadius: 16,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
     body: {
       flex: 1,
       minHeight: 0,

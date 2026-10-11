@@ -4,12 +4,12 @@ import {
   getNBATeamLogo,
   getTeamBySummerId,
 } from "@/constants/teams";
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getMLBTeam, getMLBTeamLogo } from "@/constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "@/constants/teamsNFL";
-import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";

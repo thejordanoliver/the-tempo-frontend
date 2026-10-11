@@ -9,7 +9,7 @@ export { default as LiveChat } from "./GameChat/LiveChat";
 export { default as GameHeader } from "./GameHeader";
 export { default as GameLeaders } from "./GameLeaders";
 export { default as GameLocation } from "./GameLocation";
-export { default as GameSummary } from "./GameSummary";
+export { default as GameSummary } from "./GameSummary/GameSummary";
 export { default as GameTeamStats } from "./GameTeamStats";
 export { default as HeadCoaches } from "./HeadCoaches";
 export { default as HeadToHeadGames } from "./HeadToHead/HeadToHeadGames";

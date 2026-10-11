@@ -1,4 +1,4 @@
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
+import { useBasketballSummary } from "hooks/BasketballHooks/useBasketballSummary";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   BoxScore,
@@ -7,6 +7,7 @@ import {
   GameLeaders,
   GameLiveChatOverlay,
   GameLocation,
+  GameSummary,
   GameTeamStats,
   HeadCoaches,
   Highlights,
@@ -22,8 +23,8 @@ import {
 } from "@/components/Sports/Basketball/GameDetails";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
-import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
@@ -37,6 +38,7 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
@@ -155,7 +157,6 @@ export default function GameDetailsScreen(
     const toGameTeam = (team: typeof score.home) => ({
       ...team,
       id: Number(team.id),
-      espnId: Number(team.id),
       name: team.fullName ?? team.name,
       shortName: team.shortName,
       city: "",
@@ -208,9 +209,6 @@ export default function GameDetailsScreen(
           ? getGLeagueTeam(awayId)
           : getNBATeam(awayId);
 
-  const homeEspnId = Number(homeTeam?.espnId) ?? 0;
-  const awayEspnId = Number(awayTeam?.espnId) ?? 0;
-
   const homeCode = useMemo(
     () => homeTeam?.code ?? home?.code ?? "",
     [homeTeam?.code, home?.code],
@@ -230,7 +228,13 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
+  const {
+    votes: liveVotes,
+    castVote: castLiveVote,
+    scoring,
+    scoringError,
+    retryScoring,
+  } = useLiveVotes(gameId, {
     sport: "basketball",
     league: LEAGUE,
     state: score?.status?.state ?? undefined,
@@ -304,7 +308,7 @@ export default function GameDetailsScreen(
   const homeTimeouts = score?.home.timeouts ?? 0;
   const awayTimeouts = score?.away.timeouts ?? 0;
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
-  const state = score?.status.state ?? null;
+  const state = score?.status.state ?? "";
   const isFinal = isGameFinalStatus(score?.status);
   const gameNotificationsEnabled = isGameNotified(
     "basketball",
@@ -328,6 +332,7 @@ export default function GameDetailsScreen(
   const homeRank = home?.rank ?? null;
   const awayRank = away?.rank ?? null;
   const plays = score?.plays ?? [];
+  const summaryModel = useBasketballSummary(plays, LEAGUE);
   const highlights = details?.highlights ?? [];
   const injuries = details?.injuries ?? [];
   const officials = details?.officials ?? [];
@@ -353,14 +358,18 @@ export default function GameDetailsScreen(
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address.formatted ?? (formatVenueAddress(venue?.address) || baseVenueAddress);
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
   const venueAttendance = details?.attendance ?? game?.attendance ?? null;
   const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
     venue?.address.state ??
-    venue?.address.country ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
@@ -553,8 +562,8 @@ export default function GameDetailsScreen(
 
               <PlayersOnCourt
                 playerStats={playerStats}
-                homeId={homeEspnId}
-                awayId={awayEspnId}
+                homeId={homeId}
+                awayId={awayId}
                 homeCode={homeCode}
                 awayCode={awayCode}
                 homeLogo={homeLogo}
@@ -592,8 +601,6 @@ export default function GameDetailsScreen(
 
               <ShotChart
                 plays={plays}
-                homeEspnId={homeEspnId}
-                awayEspnId={awayEspnId}
                 homeId={homeId}
                 awayId={awayId}
                 homeColor={homeColor}
@@ -615,6 +622,17 @@ export default function GameDetailsScreen(
                 league={LEAGUE}
                 state={state}
                 isDark={isDark}
+              />
+
+              <GameSummary
+                model={summaryModel}
+                scope={`basketball:${LEAGUE}:${gameId}`}
+                isDark={isDark}
+                homeId={homeId}
+                awayId={awayId}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
+                state={state}
               />
 
               <LastFiveGames
@@ -674,7 +692,11 @@ export default function GameDetailsScreen(
 
       {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
-          context={{ sport: "basketball", league: LEAGUE, date: gameDateObj?.toISOString() }}
+          context={{
+            sport: "basketball",
+            league: LEAGUE,
+            date: gameDateObj?.toISOString(),
+          }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}

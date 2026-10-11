@@ -70,7 +70,6 @@ const placeholderLogo =
 export const gleagueTeams: Team[] = [
   {
     id: 1,
-    espnId: 1,
     name: "Clippers",
     shortName: "Clippers",
     fullName: "San Diego Clippers",
@@ -89,7 +88,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 2,
-    espnId: 2,
     name: "Spurs",
     shortName: "Spurs",
     fullName: "Austin Spurs",
@@ -108,7 +106,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 3,
-    espnId: 3,
     name: "Charge",
     shortName: "Charge",
     fullName: "Cleveland Charge",
@@ -127,7 +124,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 4,
-    espnId: 4,
     name: "Go-Go",
     shortName: "Go-Go",
     fullName: "Capital City Go-Go",
@@ -146,7 +142,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 5,
-    espnId: 5,
     name: "Blue Coats",
     shortName: "Blue Coats",
     fullName: "Delaware Blue Coats",
@@ -165,7 +160,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 6,
-    espnId: 6,
     name: "Squadron",
     shortName: "Squadron",
     fullName: "Birmingham Squadron",
@@ -184,7 +178,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 7,
-    espnId: 7,
     name: "Boom",
     shortName: "Boom",
     fullName: "Noblesville Boom",
@@ -203,7 +196,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 8,
-    espnId: 8,
     name: "Gold",
     shortName: "Gold",
     fullName: "Grand Rapids Gold",
@@ -222,7 +214,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 9,
-    espnId: 9,
     name: "Swarm",
     shortName: "Swarm",
     fullName: "Greensboro Swarm",
@@ -241,7 +232,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 10,
-    espnId: 10,
     name: "Wolves",
     shortName: "Wolves",
     fullName: "Iowa Wolves",
@@ -260,7 +250,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 11,
-    espnId: 11,
     name: "Magic",
     shortName: "Magic",
     fullName: "Osceola Magic",
@@ -279,7 +268,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 12,
-    espnId: 12,
     name: "Nets",
     shortName: "Nets",
     fullName: "Long Island Nets",
@@ -298,7 +286,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 13,
-    espnId: 13,
     name: "Celtics",
     shortName: "Celtics",
     fullName: "Maine Celtics",
@@ -317,7 +304,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 14,
-    espnId: 14,
     name: "Hustle",
     shortName: "Hustle",
     fullName: "Memphis Hustle",
@@ -336,7 +322,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 15,
-    espnId: 15,
     name: "Cruise",
     shortName: "Cruise",
     fullName: "Motor City Cruise",
@@ -355,7 +340,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 16,
-    espnId: 16,
     name: "Blue",
     shortName: "Blue",
     fullName: "Oklahoma City Blue",
@@ -374,7 +358,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 17,
-    espnId: 17,
     name: "905",
     shortName: "905",
     fullName: "Raptors 905",
@@ -393,7 +376,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 18,
-    espnId: 18,
     name: "Vipers",
     shortName: "Vipers",
     fullName: "Rio Grande Valley Vipers",
@@ -412,7 +394,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 19,
-    espnId: 19,
     name: "Stars",
     shortName: "Stars",
     fullName: "Salt Lake City Stars",
@@ -431,7 +412,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 20,
-    espnId: 20,
     name: "Warriors",
     shortName: "Warriors",
     fullName: "Santa Cruz Warriors",
@@ -450,7 +430,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 21,
-    espnId: 21,
     name: "Skyforce",
     shortName: "Skyforce",
     fullName: "Sioux Falls Skyforce",
@@ -469,7 +448,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 22,
-    espnId: 22,
     name: "Lakers",
     shortName: "Lakers",
     fullName: "Coachella Valley Lakers",
@@ -488,7 +466,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 23,
-    espnId: 23,
     name: "Kings",
     shortName: "Kings",
     fullName: "Stockton Kings",
@@ -507,7 +484,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 24,
-    espnId: 24,
     name: "Legends",
     shortName: "Legends",
     fullName: "Texas Legends",
@@ -526,7 +502,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 25,
-    espnId: 25,
     name: "Knicks",
     shortName: "Knicks",
     fullName: "Westchester Knicks",
@@ -545,7 +520,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 26,
-    espnId: 26,
     name: "Bulls",
     shortName: "Bulls",
     fullName: "Windy City Bulls",
@@ -564,7 +538,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 27,
-    espnId: 27,
     name: "Herd",
     shortName: "Herd",
     fullName: "Wisconsin Herd",
@@ -583,7 +556,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 28,
-    espnId: 28,
     name: "Skyhawks",
     shortName: "Skyhawks",
     fullName: "College Park Skyhawks",
@@ -602,7 +574,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 123432,
-    espnId: 123432,
     name: "Ignite",
     shortName: "Ignite",
     fullName: "G League Ignite",
@@ -621,7 +592,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 124612,
-    espnId: 124612,
     name: "Capitanes",
     shortName: "Capitanes",
     fullName: "Mexico City Capitanes",
@@ -640,7 +610,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 128019,
-    espnId: 128019,
     name: "Remix",
     shortName: "Remix",
     fullName: "Rip City Remix",
@@ -659,7 +628,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 129713,
-    espnId: 129713,
     name: "Suns",
     shortName: "Suns",
     fullName: "Valley Suns",
@@ -678,7 +646,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 129829,
-    espnId: 129829,
     name: "United",
     shortName: "United",
     fullName: "G League United",
@@ -697,7 +664,6 @@ export const gleagueTeams: Team[] = [
   },
   {
     id: 129830,
-    espnId: 129830,
     name: "MIS",
     shortName: "MIS",
     fullName: "MEGA MIS",
@@ -729,13 +695,7 @@ export function getGLeagueTeamLogo(
     return placeholderLogo;
   }
 
-  const normalizedId = String(id);
-
-  const team = gleagueTeams.find(
-    (team) =>
-      String(team.id) === normalizedId ||
-      String(team.summerLeagueId) === normalizedId,
-  );
+  const team = gleagueTeams.find((team) => String(team.id) === id);
 
   if (!team) {
     return placeholderLogo;

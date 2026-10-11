@@ -25,6 +25,8 @@ export type ExploreWidgetConfig = {
   collegePollType?: ExploreCollegePollType;
   /** Defaults to true for new and legacy College Poll widgets. */
   collegePollAutoPlay?: boolean;
+  /** Defaults to true for new and legacy Favorite Teams widgets. */
+  favoriteTeamsAutoPlay?: boolean;
   /** Defaults to every supported league for new and legacy Favorite Games widgets. */
   favoriteGameLeagues?: ExploreWidgetLeague[];
   /** Defaults to true for new and legacy Favorite Games widgets. */

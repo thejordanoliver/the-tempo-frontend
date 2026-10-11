@@ -4,9 +4,9 @@ import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle
 import { useScopedRouter } from "hooks/useScopedRouter";
 
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
-import { getMCBBTeamByESPNId, getMCBBTeamLogo } from "@/constants/teamsMCBB";
-import { getCFBTeamByESPNId, getCFBTeamLogo } from "@/constants/teamsCFB";
-import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import {
   StandingConference,
   StandingTeam,
@@ -86,10 +86,10 @@ export const ConferenceStandingsList = ({
     const espnId = item.id;
     const team =
       league === "cfb"
-        ? getCFBTeamByESPNId(espnId ?? 0)
+        ? getCFBTeam(espnId ?? 0)
         : league === "mcbb"
-          ? getMCBBTeamByESPNId(espnId ?? 0)
-          : getWCBBTeamByESPNId(espnId ?? 0);
+          ? getMCBBTeam(espnId ?? 0)
+          : getWCBBTeam(espnId ?? 0);
 
     const teamId = team?.id;
 
@@ -150,10 +150,10 @@ export const ConferenceStandingsList = ({
     const espnId = item.id;
     const team =
       league === "cfb"
-        ? getCFBTeamByESPNId(espnId ?? 0)
+        ? getCFBTeam(espnId ?? 0)
         : league === "mcbb"
-          ? getMCBBTeamByESPNId(espnId ?? 0)
-          : getWCBBTeamByESPNId(espnId ?? 0);
+          ? getMCBBTeam(espnId ?? 0)
+          : getWCBBTeam(espnId ?? 0);
 
     const teamId = team?.id;
 

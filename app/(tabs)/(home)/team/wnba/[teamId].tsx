@@ -30,7 +30,6 @@ export default function TeamDetailScreen() {
   const team = getWNBATeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const teamName = team?.name;
-  const espnId = team?.espnId ?? 0;
   const teamLogo = getWNBATeamLogo(teamIdNum, true);
   const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
   const screen = useTeamDetailScreen({
@@ -79,7 +78,7 @@ export default function TeamDetailScreen() {
     error: teamStatsError,
   } = useTeamStats({
     enabled: hasVisitedTab("stats"),
-    teamId: espnId,
+    teamId: teamIdNum,
     league,
   });
 

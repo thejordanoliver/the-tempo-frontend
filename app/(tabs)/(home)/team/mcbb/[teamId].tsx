@@ -4,7 +4,7 @@ import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standing
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import { Colors } from "@/constants/styles";
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
@@ -29,7 +29,6 @@ export default function TeamDetailScreen() {
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
   const teamName = team?.name;
-  const espnId = team?.espnId ?? 0;
   const teamLogo = getMCBBTeamLogo(teamIdNum, true);
   const screen = useTeamDetailScreen({
     tabLeague: league,
@@ -113,7 +112,7 @@ export default function TeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useBasketballTeamGames(league, espnId);
+  } = useBasketballTeamGames(league, teamIdNum);
 
   const handleRefresh = async () => {
     await runRefresh(async () => {
