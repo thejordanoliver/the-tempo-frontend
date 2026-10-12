@@ -137,17 +137,11 @@ export default function ForYouFeed({
         if (item.kind === "article") {
           return (
             <View key={`article-${item.article.keyId}`} style={styles.feedItem}>
-              <View style={styles.contextRow}>
-                <Ionicons
-                  name="newspaper-outline"
-                  size={14}
-                  color={styles.contextText.color}
-                />
-                <Text style={styles.contextText}>
-                  {(item.article.sport ?? "NEWS").toUpperCase()} NEWS
-                </Text>
-              </View>
-              <NewsCard content={item.article} isDark={isDark} />
+              <NewsCard
+                content={item.article}
+                isDark={isDark}
+                contextLabel={`${(item.article.sport ?? "NEWS").toUpperCase()} NEWS`}
+              />
             </View>
           );
         }

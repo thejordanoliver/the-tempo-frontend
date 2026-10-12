@@ -4,7 +4,6 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useCallback, useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
-
 import { CustomHeader, type HomeHeaderTab } from "components/CustomHeader";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
 import ForYouFeed from "components/Home/ForYouFeed";

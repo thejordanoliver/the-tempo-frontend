@@ -2,6 +2,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors, activeOpacity } from "@/constants/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { BlurView } from "expo-blur";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import { useState } from "react";
 import {
@@ -16,9 +17,10 @@ import { NewsCardStyles } from "styles/NewsStyles/NewsCardStyles";
 type NewsCardProps = {
   content: NewsArticle;
   isDark: boolean;
+  contextLabel?: string;
 };
 
-export default function NewsCard({ content, isDark }: NewsCardProps) {
+export default function NewsCard({ content, isDark, contextLabel }: NewsCardProps) {
   const router = useScopedRouter();
   const { width } = useWindowDimensions();
   const styles = NewsCardStyles(isDark, width);
@@ -73,6 +75,21 @@ export default function NewsCard({ content, isDark }: NewsCardProps) {
             <Text style={styles.source}>{timeAgo}</Text>
           </View>
         </View>
+        {contextLabel && (
+          <BlurView
+            intensity={60}
+            tint={isDark ? "dark" : "light"}
+            pointerEvents="none"
+            style={styles.contextBadge}
+          >
+            <Ionicons
+              name="newspaper-outline"
+              size={14}
+              color={styles.contextLabel.color}
+            />
+            <Text style={styles.contextLabel}>{contextLabel}</Text>
+          </BlurView>
+        )}
       </View>
     </TouchableOpacity>
   );

@@ -28,6 +28,31 @@ export const NewsCardStyles = (isDark: boolean, screenWidth: number) => {
       overflow: "hidden",
     },
 
+    contextBadge: {
+      position: "absolute",
+      top: 12,
+      left: 12,
+      maxWidth: "90%",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 10,
+      overflow: "hidden",
+      backgroundColor: isDark
+        ? Colors.dark.transparentBackground
+        : Colors.light.transparentBackground,
+    },
+
+    contextLabel: {
+      flexShrink: 1,
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.BOLD,
+      fontSize: 11,
+      letterSpacing: 0.5,
+    },
+
     thumbnail: {
       width: "100%",
       height: isTablet ? 480 : 400,
