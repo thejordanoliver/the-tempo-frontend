@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   getCFBRivalry,
   getCFBTeam,
@@ -52,18 +53,26 @@ function FootballSquareGameCard({
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
 
-  const home = isNFL ? getNFLTeam(homeId) : getCFBTeam(homeId);
-  const away = isNFL ? getNFLTeam(awayId) : getCFBTeam(awayId);
+  const home = (isNFL ? getNFLTeam(homeId) : getCFBTeam(homeId)) ?? emptyHomeTeam;
+  const away = (isNFL ? getNFLTeam(awayId) : getCFBTeam(awayId)) ?? emptyAwayTeam;
 
   const homeName = home?.code ?? game.home.name;
   const awayName = away?.code ?? game.away.name;
 
-  const homeLogo = isNFL
-    ? getNFLTeamLogo(homeId, isDark)
-    : getCFBTeamLogo(homeId, isDark);
-  const awayLogo = isNFL
-    ? getNFLTeamLogo(awayId, isDark)
-    : getCFBTeamLogo(awayId, isDark);
+  const homeLogo = home.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(homeId, isDark)
+        : getCFBTeamLogo(homeId, isDark)
+    );
+  const awayLogo = away.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(awayId, isDark)
+        : getCFBTeamLogo(awayId, isDark)
+    );
 
   const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
   const headline = game.headline ?? rivalry ?? holidayLabel;

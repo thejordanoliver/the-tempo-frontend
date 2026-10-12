@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const PlayerOnCourtStyles = (isDark: boolean) =>
+export const OnTheCourtStyles = (isDark: boolean) =>
   StyleSheet.create({
     loading: {
       padding: 20,

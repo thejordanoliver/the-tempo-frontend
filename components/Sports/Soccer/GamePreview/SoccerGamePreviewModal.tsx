@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
@@ -67,40 +68,44 @@ export default function SoccerGamePreviewModal({
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
 
-  const homeTeam = getSOCCTeam(homeId);
-  const awayTeam = getSOCCTeam(awayId);
+  const homeTeam = getSOCCTeam(homeId) ?? emptyHomeTeam;
+  const awayTeam = getSOCCTeam(awayId) ?? emptyAwayTeam;
 
-  const awayCode = useMemo(() => awayTeam?.code ?? "TBD", [awayTeam?.code]);
-  const homeCode = useMemo(() => homeTeam?.code ?? "TBD", [homeTeam?.code]);
-  const awayName = useMemo(() => awayTeam?.name ?? "TBD", [awayTeam?.name]);
-  const homeName = useMemo(() => homeTeam?.name ?? "TBD", [homeTeam?.name]);
+  const awayCode = awayTeam.code ?? "TBD";
+  const homeCode = homeTeam.code ?? "TBD";
+  const awayName = awayTeam.name ?? "TBD";
+  const homeName = homeTeam.name ?? "TBD";
 
   const isHomeNational = useMemo(
-    () => homeTeam?.isNational,
-    [homeTeam?.isNational],
+    () => homeTeam.isNational,
+    [homeTeam.isNational],
   );
   const isHomeAllStar = useMemo(
-    () => homeTeam?.isAllStar,
-    [homeTeam?.isAllStar],
+    () => homeTeam.isAllStar,
+    [homeTeam.isAllStar],
   );
 
   const isAwayNational = useMemo(
-    () => awayTeam?.isNational,
-    [awayTeam?.isNational],
+    () => awayTeam.isNational,
+    [awayTeam.isNational],
   );
   const isAwayAllStar = useMemo(
-    () => awayTeam?.isAllStar,
-    [awayTeam?.isAllStar],
+    () => awayTeam.isAllStar,
+    [awayTeam.isAllStar],
   );
 
-  const homeLogo = getSOCCTeamLogo(homeId, true);
-  const awayLogo = getSOCCTeamLogo(awayId, true);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getSOCCTeamLogo(homeId, true);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getSOCCTeamLogo(awayId, true);
 
   const headline = game.headline || holidayLabel;
   const isChampionship = headline?.includes("Final");
 
-  const homeColor = homeTeam?.color ?? Colors.midTone;
-  const awayColor = awayTeam?.color ?? Colors.midTone;
+  const homeColor = homeTeam.color ?? Colors.midTone;
+  const awayColor = awayTeam.color ?? Colors.midTone;
 
   const styles = GamePreviewModalStyles({
     isDark: isDark,
@@ -209,6 +214,7 @@ export default function SoccerGamePreviewModal({
               <View style={styles.gameHeaderContainer}>
                 <TeamRow
                   id={awayId}
+                  isActive={awayTeam.isActive}
                   logo={awayLogo}
                   name={awayCode}
                   rank={null}
@@ -238,6 +244,7 @@ export default function SoccerGamePreviewModal({
 
                 <TeamRow
                   id={homeId}
+                  isActive={homeTeam.isActive}
                   logo={homeLogo}
                   name={homeCode}
                   rank={null}

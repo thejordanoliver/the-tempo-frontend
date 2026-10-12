@@ -9,7 +9,7 @@ for (const [file,minimum] of [['teams',30],['teamsNFL',32]] as const) {
   const teams=[...source.matchAll(/\bid: (\d+),/g)];
   assert.ok(teams.length>=minimum);
   assert.equal(new Set(teams.map(t=>t[1])).size,teams.length);
-  const allowed = file === "teams" ? [...Array.from({length:30},(_,i)=>i+1),132761] : Array.from({length:34},(_,i)=>i+1);
+  const allowed = file === "teams" ? [...Array.from({length:30},(_,i)=>i+1),132761,134478] : Array.from({length:34},(_,i)=>i+1);
   for (const team of teams) assert.ok(allowed.includes(Number(team[1])));
   const ids=new Set(teams.map(t=>Number(t[1])));
   for(const pair of source.matchAll(/teamIds: \[(\d+), (\d+)\]/g)) {

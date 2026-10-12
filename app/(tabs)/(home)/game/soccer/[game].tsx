@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
@@ -124,43 +125,51 @@ export default function GameDetailsScreen(
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
 
-  const homeTeam = getSOCCTeam(homeId);
-  const awayTeam = getSOCCTeam(awayId);
+  const homeTeam = getSOCCTeam(homeId) ?? emptyHomeTeam;
+  const awayTeam = getSOCCTeam(awayId) ?? emptyAwayTeam;
 
-  const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
-  const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
+  const awayCode = awayTeam.code ?? "";
+  const homeCode = homeTeam.code ?? "";
   const awayColor = useMemo(
-    () => awayTeam?.color ?? Colors.midTone,
-    [awayTeam?.color],
+    () => awayTeam.color ?? Colors.midTone,
+    [awayTeam.color],
   );
   const homeColor = useMemo(
-    () => homeTeam?.color ?? Colors.midTone,
-    [homeTeam?.color],
+    () => homeTeam.color ?? Colors.midTone,
+    [homeTeam.color],
   );
 
   const isHomeNational = useMemo(
-    () => homeTeam?.isNational,
-    [homeTeam?.isNational],
+    () => homeTeam.isNational,
+    [homeTeam.isNational],
   );
   const isHomeAllStar = useMemo(
-    () => homeTeam?.isAllStar,
-    [homeTeam?.isAllStar],
+    () => homeTeam.isAllStar,
+    [homeTeam.isAllStar],
   );
 
   const isAwayNational = useMemo(
-    () => awayTeam?.isNational,
-    [awayTeam?.isNational],
+    () => awayTeam.isNational,
+    [awayTeam.isNational],
   );
   const isAwayAllStar = useMemo(
-    () => awayTeam?.isAllStar,
-    [awayTeam?.isAllStar],
+    () => awayTeam.isAllStar,
+    [awayTeam.isAllStar],
   );
 
-  const homeLogo = getSOCCTeamLogo(homeId, isDark);
-  const awayLogo = getSOCCTeamLogo(awayId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getSOCCTeamLogo(homeId, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getSOCCTeamLogo(awayId, isDark);
 
-  const homeHeaderLogo = getSOCCTeamLogo(homeId, true);
-  const awayHeaderLogo = getSOCCTeamLogo(awayId, true);
+  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getSOCCTeamLogo(homeId, true);
+  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getSOCCTeamLogo(awayId, true);
 
   const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
     sport: "soccer",
@@ -204,8 +213,8 @@ export default function GameDetailsScreen(
   const highlights = details?.highlights ?? [];
   const shotMap = score?.shotMap ?? [];
   const keyEvents = score?.keyEvents ?? [];
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
   const neutralSite = details?.neutralSite;
   const venue = details?.venueInfo;
   const { weather } = useWeather({
@@ -293,6 +302,8 @@ export default function GameDetailsScreen(
         onMomentumScrollEnd={handleScrollEnd}
       >
         <GameHeader
+          isHomeActive={homeTeam.isActive}
+          isAwayActive={awayTeam.isActive}
           // Game details
           headline={headline}
           league={LEAGUE}

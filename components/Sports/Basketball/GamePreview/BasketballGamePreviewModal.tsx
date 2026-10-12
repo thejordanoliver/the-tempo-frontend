@@ -22,8 +22,9 @@ import {
   getWCBBTeamLogo,
 } from "constants/teamsWCBB";
 import { BlurView } from "expo-blur";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatDate,
   formatTime,
@@ -88,73 +89,90 @@ export default function GamePreviewModal({
   const homeId = home?.id ?? 0;
   const awayId = away?.id ?? 0;
 
-  const homeTeam = isWNBA
-    ? getWNBATeam(homeId)
-    : isWCBB
-      ? getWCBBTeam(homeId)
+  const homeTeam =
+    (isWNBA
+      ? getWNBATeam(homeId)
+      : isWCBB
+        ? getWCBBTeam(homeId)
+        : isMCBB
+          ? getMCBBTeam(homeId)
+          : isSL
+            ? getTeamBySummerId(homeId)
+            : isGLEAGUE
+              ? getGLeagueTeam(homeId)
+              : getNBATeam(homeId)) ?? emptyHomeTeam;
+
+  const awayTeam =
+    (isWNBA
+      ? getWNBATeam(awayId)
+      : isWCBB
+        ? getWCBBTeam(awayId)
+        : isMCBB
+          ? getMCBBTeam(awayId)
+          : isSL
+            ? getTeamBySummerId(awayId)
+            : isGLEAGUE
+              ? getGLeagueTeam(awayId)
+              : getNBATeam(awayId)) ?? emptyAwayTeam;
+
+  const awayCode = awayTeam.code ?? "TBD";
+  const homeCode = homeTeam.code ?? "TBD";
+  const awayName = awayTeam.name ?? "TBD";
+  const homeName = homeTeam.name ?? "TBD";
+
+  const isHomeActive = homeTeam.isActive;
+  const isAwayActive = awayTeam.isActive;
+
+  const homeColor = homeTeam.color ?? Colors.midTone;
+  const awayColor = awayTeam.color ?? Colors.midTone;
+
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
       : isMCBB
-        ? getMCBBTeam(homeId)
-        : isSL
-          ? getTeamBySummerId(homeId)
-          : isGLEAGUE
-            ? getGLeagueTeam(homeId)
-            : getNBATeam(homeId);
+        ? getMCBBTeamLogo(homeId, isDark)
+        : isWCBB
+          ? getWCBBTeamLogo(homeId, isDark)
+          : isWNBA
+            ? getWNBATeamLogo(homeId, isDark)
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(homeId, isDark)
+              : getNBATeamLogo(homeId, isDark, isSL);
 
-  const awayTeam = isWNBA
-    ? getWNBATeam(awayId)
-    : isWCBB
-      ? getWCBBTeam(awayId)
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
       : isMCBB
-        ? getMCBBTeam(awayId)
-        : isSL
-          ? getTeamBySummerId(awayId)
-          : isGLEAGUE
-            ? getGLeagueTeam(awayId)
-            : getNBATeam(awayId);
+        ? getMCBBTeamLogo(awayId, isDark)
+        : isWCBB
+          ? getWCBBTeamLogo(awayId, isDark)
+          : isWNBA
+            ? getWNBATeamLogo(awayId, isDark)
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(awayId, isDark)
+              : getNBATeamLogo(awayId, isDark, isSL);
 
-  const awayCode = useMemo(() => awayTeam?.code ?? "TBD", [awayTeam?.code]);
-  const homeCode = useMemo(() => homeTeam?.code ?? "TBD", [homeTeam?.code]);
-  const awayName = useMemo(() => awayTeam?.name ?? "TBD", [awayTeam?.name]);
-  const homeName = useMemo(() => homeTeam?.name ?? "TBD", [homeTeam?.name]);
+  const homeHeaderLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isMCBB
+        ? getMCBBTeamLogo(homeId, true)
+        : isWCBB
+          ? getWCBBTeamLogo(homeId, true)
+          : isWNBA
+            ? getWNBATeamLogo(homeId, true)
+            : getNBATeamLogo(homeId, true, isSL);
 
-  const homeColor = homeTeam?.color ?? Colors.midTone;
-  const awayColor = awayTeam?.color ?? Colors.midTone;
-
-  const homeLogo = isMCBB
-    ? getMCBBTeamLogo(homeId, isDark)
-    : isWCBB
-      ? getWCBBTeamLogo(homeId, isDark)
-      : isWNBA
-        ? getWNBATeamLogo(homeId, isDark)
-        : isGLEAGUE
-          ? getGLeagueTeamLogo(homeId, isDark)
-          : getNBATeamLogo(homeId, isDark, isSL);
-
-  const awayLogo = isMCBB
-    ? getMCBBTeamLogo(awayId, isDark)
-    : isWCBB
-      ? getWCBBTeamLogo(awayId, isDark)
-      : isWNBA
-        ? getWNBATeamLogo(awayId, isDark)
-        : isGLEAGUE
-          ? getGLeagueTeamLogo(awayId, isDark)
-          : getNBATeamLogo(awayId, isDark, isSL);
-
-  const homeHeaderLogo = isMCBB
-    ? getMCBBTeamLogo(homeId, true)
-    : isWCBB
-      ? getWCBBTeamLogo(homeId, true)
-      : isWNBA
-        ? getWNBATeamLogo(homeId, true)
-        : getNBATeamLogo(homeId, true, isSL);
-
-  const awayHeaderLogo = isMCBB
-    ? getMCBBTeamLogo(awayId, true)
-    : isWCBB
-      ? getWCBBTeamLogo(awayId, true)
-      : isWNBA
-        ? getWNBATeamLogo(awayId, true)
-        : getNBATeamLogo(awayId, true, isSL);
+  const awayHeaderLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isMCBB
+        ? getMCBBTeamLogo(awayId, true)
+        : isWCBB
+          ? getWCBBTeamLogo(awayId, true)
+          : isWNBA
+            ? getWNBATeamLogo(awayId, true)
+            : getNBATeamLogo(awayId, true, isSL);
 
   const holidayLabel = getHolidayLabel(gameDate);
   const rivalry = isMCBB
@@ -313,6 +331,7 @@ export default function GamePreviewModal({
                   gameStatusDescription={gameStatusDescription}
                   isHome={false}
                   league={LEAGUE}
+                  isActive={isAwayActive}
                   isDark={isDark}
                 />
 
@@ -344,6 +363,7 @@ export default function GamePreviewModal({
                   gameStatusDescription={gameStatusDescription}
                   isHome={true}
                   league={LEAGUE}
+                  isActive={isHomeActive}
                   isDark={isDark}
                 />
               </View>

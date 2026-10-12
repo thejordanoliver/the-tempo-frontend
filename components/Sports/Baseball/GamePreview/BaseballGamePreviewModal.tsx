@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -70,51 +71,73 @@ export default function BaseballGamePreviewModal({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = isSB
-    ? getSBTeam(home?.id)
-    : isCB
-      ? getCBTeam(home?.id)
-      : getMLBTeam(home?.id);
+  const homeTeam =
+    (
+      isSB
+      ? getSBTeam(home?.id)
+      : isCB
+        ? getCBTeam(home?.id)
+        : getMLBTeam(home?.id)
+    ) ?? emptyHomeTeam;
 
-  const awayTeam = isSB
-    ? getSBTeam(away?.id)
-    : isCB
-      ? getCBTeam(away?.id)
-      : getMLBTeam(away?.id);
+  const awayTeam =
+    (
+      isSB
+      ? getSBTeam(away?.id)
+      : isCB
+        ? getCBTeam(away?.id)
+        : getMLBTeam(away?.id)
+    ) ?? emptyAwayTeam;
 
-  const homeTeamId = homeTeam?.id ?? 0;
-  const awayTeamId = awayTeam?.id ?? 0;
+  const homeTeamId = homeTeam.id ?? 0;
+  const awayTeamId = awayTeam.id ?? 0;
 
-  const awayCode = awayTeam?.code ?? "TBD";
-  const homeCode = homeTeam?.code ?? "TBD";
-  const awayName = awayTeam?.name ?? "TBD";
-  const homeName = homeTeam?.name ?? "TBD";
+  const awayCode = awayTeam.code ?? "TBD";
+  const homeCode = homeTeam.code ?? "TBD";
+  const awayName = awayTeam.name ?? "TBD";
+  const homeName = homeTeam.name ?? "TBD";
 
-  const homeLogo = isSB
-    ? getSBTeamLogo(homeId, isDark)
-    : isCB
-      ? getCBTeamLogo(homeId, isDark)
-      : getMLBTeamLogo(homeTeamId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(homeId, isDark)
+        : isCB
+          ? getCBTeamLogo(homeId, isDark)
+          : getMLBTeamLogo(homeTeamId, isDark)
+    );
 
-  const awayLogo = isSB
-    ? getSBTeamLogo(awayId, isDark)
-    : isCB
-      ? getCBTeamLogo(awayId, isDark)
-      : getMLBTeamLogo(awayTeamId, isDark);
-  const homeHeaderLogo = isSB
-    ? getSBTeamLogo(homeId, true)
-    : isCB
-      ? getCBTeamLogo(homeId, true)
-      : getMLBTeamLogo(homeTeamId, true);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(awayId, isDark)
+        : isCB
+          ? getCBTeamLogo(awayId, isDark)
+          : getMLBTeamLogo(awayTeamId, isDark)
+    );
+  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(homeId, true)
+        : isCB
+          ? getCBTeamLogo(homeId, true)
+          : getMLBTeamLogo(homeTeamId, true)
+    );
 
-  const awayHeaderLogo = isSB
-    ? getSBTeamLogo(awayId, true)
-    : isCB
-      ? getCBTeamLogo(awayId, true)
-      : getMLBTeamLogo(awayTeamId, true);
+  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(awayId, true)
+        : isCB
+          ? getCBTeamLogo(awayId, true)
+          : getMLBTeamLogo(awayTeamId, true)
+    );
 
-  const homeColor = homeTeam?.color ?? Colors.midTone;
-  const awayColor = awayTeam?.color ?? Colors.midTone;
+  const homeColor = homeTeam.color ?? Colors.midTone;
+  const awayColor = awayTeam.color ?? Colors.midTone;
 
   const styles = GamePreviewModalStyles({
     isDark: isDark,
@@ -156,8 +179,8 @@ export default function BaseballGamePreviewModal({
   const dontShowDetails =
     isCanceled || isPostponed || isSuspended || isForfeited;
 
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
 
   const lineScore = score?.periodScores?.length
     ? {
@@ -253,6 +276,7 @@ export default function BaseballGamePreviewModal({
                 <TeamRow
                   state={state}
                   id={awayId}
+                  isActive={awayTeam.isActive}
                   logo={awayLogo}
                   name={awayCode}
                   score={awayScore}
@@ -284,6 +308,7 @@ export default function BaseballGamePreviewModal({
                 <TeamRow
                   state={state}
                   id={homeId}
+                  isActive={homeTeam.isActive}
                   logo={homeLogo}
                   name={homeCode}
                   rank={homeRank}

@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
@@ -42,14 +43,18 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = getNHLTeam(homeId);
-  const awayTeam = getNHLTeam(awayId);
+  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
+  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
 
   const homeName = homeTeam?.code;
   const awayName = awayTeam?.code;
 
-  const homeLogo = getNHLTeamLogo(homeId, isDark);
-  const awayLogo = getNHLTeamLogo(awayId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getNHLTeamLogo(homeId, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getNHLTeamLogo(awayId, isDark);
 
   const headlineText = game?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(game?.broadcasts);

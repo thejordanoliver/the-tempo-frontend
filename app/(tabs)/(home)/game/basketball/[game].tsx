@@ -1,4 +1,3 @@
-import { useBasketballSummary } from "hooks/BasketballHooks/useBasketballSummary";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   BoxScore,
@@ -23,8 +22,8 @@ import {
 } from "@/components/Sports/Basketball/GameDetails";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
-import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
-import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
@@ -38,12 +37,14 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useBasketballSummary } from "hooks/BasketballHooks/useBasketballSummary";
 import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatDate,
   formatTime,
@@ -189,42 +190,99 @@ export default function GameDetailsScreen(
   const homeId = home?.id ?? 0;
   const awayId = away?.id ?? 0;
 
-  const homeTeam = isWNBA
-    ? getWNBATeam(homeId)
-    : isWCBB
-      ? getWCBBTeam(homeId)
-      : isMCBB
-        ? getMCBBTeam(homeId)
-        : isGLEAGUE
-          ? getGLeagueTeam(homeId)
-          : getNBATeam(homeId);
+  const homeTeam =
+    (isWNBA
+      ? getWNBATeam(homeId)
+      : isWCBB
+        ? getWCBBTeam(homeId)
+        : isMCBB
+          ? getMCBBTeam(homeId)
+          : isGLEAGUE
+            ? getGLeagueTeam(homeId)
+            : getNBATeam(homeId)) ?? emptyHomeTeam;
 
-  const awayTeam = isWNBA
-    ? getWNBATeam(awayId)
-    : isWCBB
-      ? getWCBBTeam(awayId)
-      : isMCBB
-        ? getMCBBTeam(awayId)
-        : isGLEAGUE
-          ? getGLeagueTeam(awayId)
-          : getNBATeam(awayId);
+  const awayTeam =
+    (isWNBA
+      ? getWNBATeam(awayId)
+      : isWCBB
+        ? getWCBBTeam(awayId)
+        : isMCBB
+          ? getMCBBTeam(awayId)
+          : isGLEAGUE
+            ? getGLeagueTeam(awayId)
+            : getNBATeam(awayId)) ?? emptyAwayTeam;
 
-  const homeCode = useMemo(
-    () => homeTeam?.code ?? home?.code ?? "",
-    [homeTeam?.code, home?.code],
-  );
-  const awayCode = useMemo(
-    () => awayTeam?.code ?? away?.code ?? "",
-    [awayTeam?.code, away?.code],
-  );
-  const homeName = useMemo(
-    () => homeTeam?.fullName ?? home?.name ?? "",
-    [homeTeam?.fullName, home?.name],
-  );
-  const awayName = useMemo(
-    () => awayTeam?.fullName ?? away?.name ?? "",
-    [awayTeam?.fullName, away?.name],
-  );
+  const homeCode = homeTeam.code ?? home?.code ?? "";
+  const awayCode = awayTeam.code ?? away?.code ?? "";
+  const homeName = homeTeam.fullName ?? home?.name ?? "";
+  const awayName = awayTeam.fullName ?? away?.name ?? "";
+
+  const isHomeActive = homeTeam.isActive
+  const isAwayActive = awayTeam.isActive
+
+  const awayColor =
+    awayTeam.color ??
+    away?.primaryColor ??
+    away?.secondaryColor ??
+    Colors.midTone;
+
+  const homeColor =
+    homeTeam.color ??
+    home?.primaryColor ??
+    home?.secondaryColor ??
+    Colors.midTone;
+
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isMCBB
+        ? getMCBBTeamLogo(homeId, isDark)
+        : isWCBB
+          ? getWCBBTeamLogo(homeId, isDark)
+          : isWNBA
+            ? getWNBATeamLogo(homeId, isDark)
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(homeId, isDark)
+              : getNBATeamLogo(homeId, isDark);
+
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isMCBB
+        ? getMCBBTeamLogo(awayId, isDark)
+        : isWCBB
+          ? getWCBBTeamLogo(awayId, isDark)
+          : isWNBA
+            ? getWNBATeamLogo(awayId, isDark)
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(awayId, isDark)
+              : getNBATeamLogo(awayId, isDark);
+
+  const homeHeaderLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isMCBB
+        ? getMCBBTeamLogo(homeId, true)
+        : isWCBB
+          ? getWCBBTeamLogo(homeId, true)
+          : isWNBA
+            ? getWNBATeamLogo(homeId, true)
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(homeId, true)
+              : getNBATeamLogo(homeId, true);
+
+  const awayHeaderLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isMCBB
+        ? getMCBBTeamLogo(awayId, true)
+        : isWCBB
+          ? getWCBBTeamLogo(awayId, true)
+          : isWNBA
+            ? getWNBATeamLogo(awayId, true)
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(awayId, true)
+              : getNBATeamLogo(awayId, true);
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
@@ -244,57 +302,6 @@ export default function GameDetailsScreen(
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const awayColor =
-    awayTeam?.color ??
-    away?.primaryColor ??
-    away?.secondaryColor ??
-    Colors.midTone;
-
-  const homeColor =
-    homeTeam?.color ??
-    home?.primaryColor ??
-    home?.secondaryColor ??
-    Colors.midTone;
-
-  const homeLogo = isMCBB
-    ? getMCBBTeamLogo(homeId, isDark)
-    : isWCBB
-      ? getWCBBTeamLogo(homeId, isDark)
-      : isWNBA
-        ? getWNBATeamLogo(homeId, isDark)
-        : isGLEAGUE
-          ? getGLeagueTeamLogo(homeId, isDark)
-          : getNBATeamLogo(homeId, isDark);
-
-  const awayLogo = isMCBB
-    ? getMCBBTeamLogo(awayId, isDark)
-    : isWCBB
-      ? getWCBBTeamLogo(awayId, isDark)
-      : isWNBA
-        ? getWNBATeamLogo(awayId, isDark)
-        : isGLEAGUE
-          ? getGLeagueTeamLogo(awayId, isDark)
-          : getNBATeamLogo(awayId, isDark);
-
-  const homeHeaderLogo = isMCBB
-    ? getMCBBTeamLogo(homeId, true)
-    : isWCBB
-      ? getWCBBTeamLogo(homeId, true)
-      : isWNBA
-        ? getWNBATeamLogo(homeId, true)
-        : isGLEAGUE
-          ? getGLeagueTeamLogo(homeId, true)
-          : getNBATeamLogo(homeId, true);
-
-  const awayHeaderLogo = isMCBB
-    ? getMCBBTeamLogo(awayId, true)
-    : isWCBB
-      ? getWCBBTeamLogo(awayId, true)
-      : isWNBA
-        ? getWNBATeamLogo(awayId, true)
-        : isGLEAGUE
-          ? getGLeagueTeamLogo(awayId, true)
-          : getNBATeamLogo(awayId, true);
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE).games;
@@ -342,8 +349,8 @@ export default function GameDetailsScreen(
   const lastPlay = score?.lastPlay;
   const headline = details?.headline ?? holidayLabel ?? "";
   const broadcast = getBroadcastDisplay(details?.broadcasts);
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) ?? 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) ?? 0;
   const foulTrouble = score?.foulTrouble ?? [];
   const homeBonus = score?.home?.fouls?.bonusState ?? null;
   const awayBonus = score?.away?.fouls?.bonusState ?? null;
@@ -477,6 +484,7 @@ export default function GameDetailsScreen(
           awayWins={awayWins}
           awayBonusState={awayBonus}
           awayTimeouts={awayTimeouts}
+          isAwayActive={isAwayActive}
           // Home team
           homeId={homeId}
           homeName={homeCode}
@@ -487,6 +495,7 @@ export default function GameDetailsScreen(
           homeWins={homeWins}
           homeBonusState={homeBonus}
           homeTimeouts={homeTimeouts}
+          isHomeActive={isHomeActive}
           // Live game state
           clock={clock}
           period={period}

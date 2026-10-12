@@ -20,7 +20,7 @@ export { default as LineScore } from "./LineScore";
 export { default as MatchupPredictor } from "./MatchupPredictor";
 export { default as Officials } from "./Officials";
 export { default as PlayersInFoulTrouble } from "./PlayersInFoulTrouble";
-export { default as PlayersOnCourt } from "./PlayersOnCourt";
+export { default as PlayersOnCourt } from "./OnTheCourt";
 export { default as ShotChart } from "./ShotChart";
 export { TeamRow } from "./TeamRow";
 export { default as Weather } from "./Weather";

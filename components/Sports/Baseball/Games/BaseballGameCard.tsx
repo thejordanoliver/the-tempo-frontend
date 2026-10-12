@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
@@ -45,31 +46,45 @@ function BaseballGameCard({ game, isCB, isSB, onNavigate }: BaseballGameCardProp
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = isSB
-    ? getSBTeam(homeId)
-    : isCB
-      ? getCBTeam(homeId)
-      : getMLBTeam(homeId);
-  const awayTeam = isSB
-    ? getSBTeam(awayId)
-    : isCB
-      ? getCBTeam(awayId)
-      : getMLBTeam(awayId);
+  const homeTeam =
+    (
+      isSB
+      ? getSBTeam(homeId)
+      : isCB
+        ? getCBTeam(homeId)
+        : getMLBTeam(homeId)
+    ) ?? emptyHomeTeam;
+  const awayTeam =
+    (
+      isSB
+      ? getSBTeam(awayId)
+      : isCB
+        ? getCBTeam(awayId)
+        : getMLBTeam(awayId)
+    ) ?? emptyAwayTeam;
 
   const homeName = homeTeam?.shortName ?? homeTeam?.name ?? "TBD";
   const awayName = awayTeam?.shortName ?? awayTeam?.name ?? "TBD";
 
-  const homeLogo = isSB
-    ? getSBTeamLogo(homeId, isDark)
-    : isCB
-      ? getCBTeamLogo(homeId, isDark)
-      : getMLBTeamLogo(homeId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(homeId, isDark)
+        : isCB
+          ? getCBTeamLogo(homeId, isDark)
+          : getMLBTeamLogo(homeId, isDark)
+    );
 
-  const awayLogo = isSB
-    ? getSBTeamLogo(awayId, isDark)
-    : isCB
-      ? getCBTeamLogo(awayId, isDark)
-      : getMLBTeamLogo(awayId, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(awayId, isDark)
+        : isCB
+          ? getCBTeamLogo(awayId, isDark)
+          : getMLBTeamLogo(awayId, isDark)
+    );
 
   const league = game?.league?.code ?? "mlb";
 

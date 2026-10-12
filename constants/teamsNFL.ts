@@ -36,8 +36,8 @@ import SteelersLogo from "assets/Football/NFL_Logos/Steelers.png";
 import TexansLogo from "assets/Football/NFL_Logos/Texans.png";
 import TitansLogo from "assets/Football/NFL_Logos/Titans.png";
 import VikingsLogo from "assets/Football/NFL_Logos/Vikings.png";
-const placeholderLogo =
-  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+const placeholderLogo = PlaceholderLogo;
 
 export const nflTeams: Team[] = [
   {

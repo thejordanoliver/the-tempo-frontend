@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 // ./NFL/GamePreview/NFLGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors } from "@/constants/styles";
@@ -22,7 +23,7 @@ import {
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import {
   formatDate,
@@ -74,47 +75,69 @@ export default function FootballGamePreviewModal({
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
 
-  const homeTeam = isNFL
-    ? getNFLTeam(homeId)
-    : isCFB
-      ? getCFBTeam(homeId)
-      : getUFLTeam(homeId);
-  const awayTeam = isNFL
-    ? getNFLTeam(awayId)
-    : isCFB
-      ? getCFBTeam(awayId)
-      : getUFLTeam(awayId);
+  const homeTeam =
+    (
+      isNFL
+      ? getNFLTeam(homeId)
+      : isCFB
+        ? getCFBTeam(homeId)
+        : getUFLTeam(homeId)
+    ) ?? emptyHomeTeam;
+  const awayTeam =
+    (
+      isNFL
+      ? getNFLTeam(awayId)
+      : isCFB
+        ? getCFBTeam(awayId)
+        : getUFLTeam(awayId)
+    ) ?? emptyAwayTeam;
 
-  const awayCode = useMemo(() => awayTeam?.code ?? "TBD", [awayTeam?.code]);
-  const homeCode = useMemo(() => homeTeam?.code ?? "TBD", [homeTeam?.code]);
-  const awayName = useMemo(() => awayTeam?.name ?? "TBD", [awayTeam?.name]);
-  const homeName = useMemo(() => homeTeam?.name ?? "TBD", [homeTeam?.name]);
+  const awayCode = awayTeam.code ?? "TBD";
+  const homeCode = homeTeam.code ?? "TBD";
+  const awayName = awayTeam.name ?? "TBD";
+  const homeName = homeTeam.name ?? "TBD";
 
-  const homeLogo = isNFL
-    ? getNFLTeamLogo(homeId, isDark)
-    : isCFB
-      ? getCFBTeamLogo(homeId, isDark)
-      : getUFLTeamLogo(homeId, isDark);
-  const awayLogo = isNFL
-    ? getNFLTeamLogo(awayId, isDark)
-    : isCFB
-      ? getCFBTeamLogo(awayId, isDark)
-      : getUFLTeamLogo(awayId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(homeId, isDark)
+        : isCFB
+          ? getCFBTeamLogo(homeId, isDark)
+          : getUFLTeamLogo(homeId, isDark)
+    );
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(awayId, isDark)
+        : isCFB
+          ? getCFBTeamLogo(awayId, isDark)
+          : getUFLTeamLogo(awayId, isDark)
+    );
 
-  const homeHeaderLogo = isNFL
-    ? getNFLTeamLogo(homeId, true)
-    : isCFB
-      ? getCFBTeamLogo(homeId, true)
-      : getUFLTeamLogo(homeId, true);
+  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(homeId, true)
+        : isCFB
+          ? getCFBTeamLogo(homeId, true)
+          : getUFLTeamLogo(homeId, true)
+    );
 
-  const awayHeaderLogo = isNFL
-    ? getNFLTeamLogo(awayId, true)
-    : isCFB
-      ? getCFBTeamLogo(awayId, true)
-      : getUFLTeamLogo(awayId, true);
+  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(awayId, true)
+        : isCFB
+          ? getCFBTeamLogo(awayId, true)
+          : getUFLTeamLogo(awayId, true)
+    );
 
-  const homeColor = homeTeam?.color ?? Colors.midTone;
-  const awayColor = awayTeam?.color ?? Colors.midTone;
+  const homeColor = homeTeam.color ?? Colors.midTone;
+  const awayColor = awayTeam.color ?? Colors.midTone;
 
   const holidayLabel = getHolidayLabel(gameDate);
   const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
@@ -161,8 +184,8 @@ export default function FootballGamePreviewModal({
   const awayTimeouts = score?.away?.timeouts ?? 0;
   const homeRecord = score?.home.record;
   const awayRecord = score?.away.record;
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
   const homeWins = homeScore > awayScore;
@@ -289,6 +312,7 @@ export default function FootballGamePreviewModal({
               <View style={styles.gameHeaderContainer}>
                 <TeamRow
                   id={awayId}
+                  isActive={awayTeam.isActive}
                   name={awayCode}
                   logo={awayLogo}
                   rank={awayRank}
@@ -322,6 +346,7 @@ export default function FootballGamePreviewModal({
 
                 <TeamRow
                   id={homeId}
+                  isActive={homeTeam.isActive}
                   name={homeCode}
                   logo={homeLogo}
                   rank={homeRank}

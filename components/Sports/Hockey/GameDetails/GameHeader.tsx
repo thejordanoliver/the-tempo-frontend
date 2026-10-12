@@ -20,6 +20,8 @@ type Props = {
   awayWins: boolean;
   period: string | number;
   clock: string;
+  isAwayActive: boolean;
+  isHomeActive: boolean;
   isDark: boolean;
   date: string | undefined;
   time: string | undefined;
@@ -50,6 +52,8 @@ export default function GameHeader({
   awayTimeouts = 0,
   period,
   clock,
+  isAwayActive,
+  isHomeActive,
   isDark,
   date = "",
   time = "",
@@ -76,6 +80,7 @@ export default function GameHeader({
         {/* Away Team Row */}
         <TeamRow
           id={awayId}
+          isActive={isAwayActive}
           name={awayName}
           logo={awayLogo}
           rank={awayRank}
@@ -103,6 +108,7 @@ export default function GameHeader({
 
         <TeamRow
           id={homeId}
+          isActive={isHomeActive}
           name={homeName}
           logo={homeLogo}
           rank={homeRank}

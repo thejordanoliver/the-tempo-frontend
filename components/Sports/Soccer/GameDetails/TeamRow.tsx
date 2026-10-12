@@ -12,6 +12,7 @@ export const TeamRow = ({
   logo,
   record,
   name,
+  isActive,
   isDark,
   isHome = false,
   score,
@@ -61,6 +62,7 @@ export const TeamRow = ({
   };
 
   const handleTeamPress = () => {
+    if (!isActive) return;
     if (!id || isNational || isAllStar) return;
 
     router.push({

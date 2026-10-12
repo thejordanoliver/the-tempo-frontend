@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import {
@@ -42,12 +43,16 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const away = game.away;
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
-  const homeTeam = getSOCCTeam(homeId);
-  const awayTeam = getSOCCTeam(awayId);
+  const homeTeam = getSOCCTeam(homeId) ?? emptyHomeTeam;
+  const awayTeam = getSOCCTeam(awayId) ?? emptyAwayTeam;
   const homeName = homeTeam?.shortName || homeTeam?.name || home?.name || "TBD";
   const awayName = awayTeam?.shortName || awayTeam?.name || away?.name || "TBD";
-  const homeLogo = getSOCCTeamLogo(homeId, isDark);
-  const awayLogo = getSOCCTeamLogo(awayId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getSOCCTeamLogo(homeId, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getSOCCTeamLogo(awayId, isDark);
   const homeScore = Number(game?.home?.score ?? 0);
   const awayScore = Number(game?.away?.score ?? 0);
   const homeRecord = game?.home?.record ?? "0-0-0";

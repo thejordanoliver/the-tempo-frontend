@@ -1,8 +1,8 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
 import {
-  NHLProps,
+  HockeyProps,
   TeamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
@@ -16,6 +16,7 @@ export const TeamRow = ({
   rank,
   logo,
   record,
+  isActive,
   isDark,
   isHome = false,
   score,
@@ -23,7 +24,7 @@ export const TeamRow = ({
   gameStatusDescription,
   timeouts,
   league,
-}: NHLProps) => {
+}: HockeyProps) => {
   const router = useScopedRouter();
   const styles = TeamRowStyles(isDark);
 
@@ -46,6 +47,7 @@ export const TeamRow = ({
    * Routing
    * --------------------------------------------------- */
   const handleTeamPress = () => {
+    if (!isActive) return;
     if (league === "NHL") {
       router.push(`/team/nhl/${id}`);
     }

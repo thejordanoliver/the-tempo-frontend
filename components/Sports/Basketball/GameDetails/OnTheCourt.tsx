@@ -21,7 +21,7 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { PlayerOnCourtStyles } from "styles/GameDetailStyles/PlayerOnCourtStyles";
+import { OnTheCourtStyles } from "@/styles/GameDetailStyles/OnTheCourtStyles";
 
 if (
   Platform.OS === "android" &&
@@ -55,7 +55,7 @@ function findTeamGroup(
   );
 }
 
-export default function PlayersOnCourt({
+export default function OnTheCourt({
   homeId,
   awayId,
   awayLogo,
@@ -69,7 +69,7 @@ export default function PlayersOnCourt({
   league,
   state,
 }: Props) {
-  const styles = PlayerOnCourtStyles(isDark);
+  const styles = OnTheCourtStyles(isDark);
   const router = useScopedRouter();
   const leagueId = league.toUpperCase();
 

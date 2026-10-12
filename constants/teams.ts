@@ -34,8 +34,8 @@ import TimberwolvesLogo from "../assets/NBA/Logos/Timberwolves.png";
 import TrailBlazersLogo from "../assets/NBA/Logos/TrailBlazers.png";
 import WarriorsLogo from "../assets/NBA/Logos/Warriors.png";
 import WizardsLogo from "../assets/NBA/Logos/Wizards.png";
-const placeholderLogo =
-  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+const placeholderLogo = PlaceholderLogo;
 
 export const teams: Team[] = [
   {
@@ -657,6 +657,24 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "nba",
+  },
+  {
+    id: 134478,
+    name: "Lions",
+    shortName: "Lions",
+    fullName: "London Lions",
+    code: "LON",
+    location: "London",
+    city: "London",
+    logo: placeholderLogo,
+    logoLight: placeholderLogo,
+    color: null,
+    secondaryColor: null,
+    established: 0,
+    isAllStar: false,
+    isActive: false,
     isNational: false,
     league: "nba",
   },

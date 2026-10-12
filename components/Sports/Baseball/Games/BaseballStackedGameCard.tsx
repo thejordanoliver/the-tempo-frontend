@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -43,34 +44,48 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const away = game?.away;
   const homeId = home?.id;
   const awayId = away?.id;
-  const homeTeam = isSB
-    ? getSBTeam(home?.id)
-    : isCB
-      ? getCBTeam(home?.id)
-      : getMLBTeam(home?.id);
+  const homeTeam =
+    (
+      isSB
+      ? getSBTeam(home?.id)
+      : isCB
+        ? getCBTeam(home?.id)
+        : getMLBTeam(home?.id)
+    ) ?? emptyHomeTeam;
 
-  const awayTeam = isSB
-    ? getSBTeam(away?.id)
-    : isCB
-      ? getCBTeam(away?.id)
-      : getMLBTeam(away?.id);
+  const awayTeam =
+    (
+      isSB
+      ? getSBTeam(away?.id)
+      : isCB
+        ? getCBTeam(away?.id)
+        : getMLBTeam(away?.id)
+    ) ?? emptyAwayTeam;
 
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
   const homeName = homeTeam?.fullName ?? "TBD";
   const awayName = awayTeam?.fullName ?? "TBD";
 
-  const homeLogo = isSB
-    ? getSBTeamLogo(homeId, isDark)
-    : isCB
-      ? getCBTeamLogo(homeId, isDark)
-      : getMLBTeamLogo(homeTeamId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(homeId, isDark)
+        : isCB
+          ? getCBTeamLogo(homeId, isDark)
+          : getMLBTeamLogo(homeTeamId, isDark)
+    );
 
-  const awayLogo = isSB
-    ? getSBTeamLogo(awayId, isDark)
-    : isCB
-      ? getCBTeamLogo(awayId, isDark)
-      : getMLBTeamLogo(awayTeamId, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(awayId, isDark)
+        : isCB
+          ? getCBTeamLogo(awayId, isDark)
+          : getMLBTeamLogo(awayTeamId, isDark)
+    );
 
   const league = game?.league?.code ?? "mlb";
 

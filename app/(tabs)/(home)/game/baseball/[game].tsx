@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
@@ -132,67 +133,77 @@ export default function GameDetailsScreen(
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
 
-  const homeTeam = isSB
-    ? getSBTeam(homeId)
-    : isCB
-      ? getCBTeam(homeId)
-      : getMLBTeam(homeId);
+  const homeTeam =
+    (
+      isSB
+      ? getSBTeam(homeId)
+      : isCB
+        ? getCBTeam(homeId)
+        : getMLBTeam(homeId)
+    ) ?? emptyHomeTeam;
 
-  const awayTeam = isSB
-    ? getSBTeam(awayId)
-    : isCB
-      ? getCBTeam(awayId)
-      : getMLBTeam(awayId);
+  const awayTeam =
+    (
+      isSB
+      ? getSBTeam(awayId)
+      : isCB
+        ? getCBTeam(awayId)
+        : getMLBTeam(awayId)
+    ) ?? emptyAwayTeam;
 
-  const homeCode = useMemo(
-    () => homeTeam?.code ?? home?.code ?? "",
-    [homeTeam?.code, home?.code],
-  );
-  const awayCode = useMemo(
-    () => awayTeam?.code ?? away?.code ?? "",
-    [awayTeam?.code, away?.code],
-  );
-  const homeName = useMemo(
-    () => homeTeam?.fullName ?? home?.name ?? "",
-    [homeTeam?.fullName, home?.name],
-  );
-  const awayName = useMemo(
-    () => awayTeam?.fullName ?? away?.name ?? "",
-    [awayTeam?.fullName, away?.name],
-  );
+  const homeCode = homeTeam.code ?? home?.code ?? "";
+  const awayCode = awayTeam.code ?? away?.code ?? "";
+  const homeName = homeTeam.fullName ?? home?.name ?? "";
+  const awayName = awayTeam.fullName ?? away?.name ?? "";
 
-  const homeLogo = isSB
-    ? getSBTeamLogo(homeId, isDark)
-    : isCB
-      ? getCBTeamLogo(homeId, isDark)
-      : getMLBTeamLogo(homeId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(homeId, isDark)
+        : isCB
+          ? getCBTeamLogo(homeId, isDark)
+          : getMLBTeamLogo(homeId, isDark)
+    );
 
-  const awayLogo = isSB
-    ? getSBTeamLogo(awayId, isDark)
-    : isCB
-      ? getCBTeamLogo(awayId, isDark)
-      : getMLBTeamLogo(awayId, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(awayId, isDark)
+        : isCB
+          ? getCBTeamLogo(awayId, isDark)
+          : getMLBTeamLogo(awayId, isDark)
+    );
 
-  const homeHeaderLogo = isSB
-    ? getSBTeamLogo(homeId, true)
-    : isCB
-      ? getCBTeamLogo(homeId, true)
-      : getMLBTeamLogo(homeId, true);
+  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(homeId, true)
+        : isCB
+          ? getCBTeamLogo(homeId, true)
+          : getMLBTeamLogo(homeId, true)
+    );
 
-  const awayHeaderLogo = isSB
-    ? getSBTeamLogo(awayId, isDark)
-    : isCB
-      ? getCBTeamLogo(awayId, true)
-      : getMLBTeamLogo(awayId, true);
+  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isSB
+        ? getSBTeamLogo(awayId, isDark)
+        : isCB
+          ? getCBTeamLogo(awayId, true)
+          : getMLBTeamLogo(awayId, true)
+    );
 
   const awayColor =
-    awayTeam?.color ??
+    awayTeam.color ??
     away?.primaryColor ??
     away?.secondaryColor ??
     Colors.midTone;
 
   const homeColor =
-    homeTeam?.color ??
+    homeTeam.color ??
     home?.primaryColor ??
     home?.secondaryColor ??
     Colors.midTone;
@@ -245,8 +256,8 @@ export default function GameDetailsScreen(
   const dontShowDetails =
     isCanceled || isPostponed || isSuspended || isForfeited;
 
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
 
   const lineScore = score?.periodScores?.length
     ? {
@@ -343,18 +354,20 @@ export default function GameDetailsScreen(
           onToggleNotifications={
             isFinal
               ? undefined
-              : () =>
-                  openGameNotificationSettings(
-                    "baseball",
-                    LEAGUE,
-                    gameId,
-                    homeId,
-                    awayId,
-                  )
-          }
-        />
-      ),
-    });
+              : (
+      ) =>
+                      openGameNotificationSettings(
+                        "baseball",
+                        LEAGUE,
+                        gameId,
+                        homeId,
+                        awayId,
+                      )
+              }
+            />
+          ),
+        }
+    );
   }, [
     LEAGUE,
     awayCode,
@@ -395,6 +408,8 @@ export default function GameDetailsScreen(
         onMomentumScrollEnd={handleScrollEnd}
       >
         <GameHeader
+          isHomeActive={homeTeam.isActive}
+          isAwayActive={awayTeam.isActive}
           // Game details
           headline={headline}
           league={LEAGUE}

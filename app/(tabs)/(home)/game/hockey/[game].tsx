@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
@@ -125,18 +126,26 @@ export default function GameDetailsScreen(
 
   const homeId = home?.id ?? 0;
   const awayId = away?.id ?? 0;
-  const homeTeam = getNHLTeam(homeId);
-  const awayTeam = getNHLTeam(awayId);
+  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
+  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
 
-  const homeLogo = getNHLTeamLogo(homeId, isDark);
-  const awayLogo = getNHLTeamLogo(awayId, isDark);
-  const homeHeaderLogo = getNHLTeamLogo(homeId, true);
-  const awayHeaderLogo = getNHLTeamLogo(awayId, true);
-  const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
-  const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getNHLTeamLogo(homeId, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getNHLTeamLogo(awayId, isDark);
+  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getNHLTeamLogo(homeId, true);
+  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getNHLTeamLogo(awayId, true);
+  const awayCode = awayTeam.code ?? "";
+  const homeCode = homeTeam.code ?? "";
 
-  const awayColor = awayTeam?.color ?? Colors.midTone;
-  const homeColor = homeTeam?.color ?? Colors.midTone;
+  const awayColor = awayTeam.color ?? Colors.midTone;
+  const homeColor = homeTeam.color ?? Colors.midTone;
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
@@ -177,8 +186,8 @@ export default function GameDetailsScreen(
   const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts);
   const period = formatPeriod({ period: score?.status.period, isNHL: true });
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
   const clock = score?.status.displayClock ?? "0:00";
   const homeScore = score?.home?.score ?? 0;
   const awayScore = score?.away?.score ?? 0;
@@ -286,6 +295,8 @@ export default function GameDetailsScreen(
         onMomentumScrollEnd={handleScrollEnd}
       >
         <GameHeader
+          isHomeActive={homeTeam.isActive}
+          isAwayActive={awayTeam.isActive}
           // Game details
           headline={headline}
           league={LEAGUE}

@@ -92,7 +92,7 @@ export function useFavoriteTeams() {
       const isEligible =
         team.isAllStar !== true &&
         team.isNational !== true &&
-        team.isActive !== false;
+        team.isActive === true;
 
       if (!isEligible) {
         return false;

@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import {
   getMCBBRivalry,
@@ -61,56 +62,70 @@ export default function BasketballGameCard({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = isMCBB
-    ? getMCBBTeam(homeId)
-    : isWCBB
-      ? getWCBBTeam(homeId)
-      : isWNBA
-        ? getWNBATeam(homeId)
-        : isSL
-          ? getTeamBySummerId(homeId)
-          : isGLEAGUE
-            ? getGLeagueTeam(homeId)
-            : getNBATeam(homeId);
+  const homeTeam =
+    (
+      isMCBB
+      ? getMCBBTeam(homeId)
+      : isWCBB
+        ? getWCBBTeam(homeId)
+        : isWNBA
+          ? getWNBATeam(homeId)
+          : isSL
+            ? getTeamBySummerId(homeId)
+            : isGLEAGUE
+              ? getGLeagueTeam(homeId)
+              : getNBATeam(homeId)
+    ) ?? emptyHomeTeam;
 
-  const awayTeam = isMCBB
-    ? getMCBBTeam(awayId)
-    : isWCBB
-      ? getWCBBTeam(awayId)
-      : isWNBA
-        ? getWNBATeam(awayId)
-        : isSL
-          ? getTeamBySummerId(awayId)
-          : isGLEAGUE
-            ? getGLeagueTeam(awayId)
-            : getNBATeam(awayId);
+  const awayTeam =
+    (
+      isMCBB
+      ? getMCBBTeam(awayId)
+      : isWCBB
+        ? getWCBBTeam(awayId)
+        : isWNBA
+          ? getWNBATeam(awayId)
+          : isSL
+            ? getTeamBySummerId(awayId)
+            : isGLEAGUE
+              ? getGLeagueTeam(awayId)
+              : getNBATeam(awayId)
+    ) ?? emptyAwayTeam;
 
   const homeName = homeTeam?.shortName || homeTeam?.name || game.home?.name;
   const awayName = awayTeam?.shortName || awayTeam?.name || game.away?.name;
 
-  const homeLogo = isMCBB
-    ? getMCBBTeamLogo(homeId, isDark)
-    : isWCBB
-      ? getWCBBTeamLogo(homeId, isDark)
-      : isWNBA
-        ? getWNBATeamLogo(homeId, isDark)
-        : isWNBA
-          ? getWNBATeamLogo(homeId, isDark)
-          : isGLEAGUE
-            ? getGLeagueTeamLogo(homeId, isDark)
-            : getNBATeamLogo(homeId, isDark, isSL);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isMCBB
+        ? getMCBBTeamLogo(homeId, isDark)
+        : isWCBB
+          ? getWCBBTeamLogo(homeId, isDark)
+          : isWNBA
+            ? getWNBATeamLogo(homeId, isDark)
+            : isWNBA
+              ? getWNBATeamLogo(homeId, isDark)
+              : isGLEAGUE
+                ? getGLeagueTeamLogo(homeId, isDark)
+                : getNBATeamLogo(homeId, isDark, isSL)
+    );
 
 
 
-  const awayLogo = isMCBB
-    ? getMCBBTeamLogo(awayId, isDark)
-    : isWCBB
-      ? getWCBBTeamLogo(awayId, isDark)
-      : isWNBA
-        ? getWNBATeamLogo(awayId, isDark)
-        : isGLEAGUE
-          ? getGLeagueTeamLogo(awayId, isDark)
-          : getNBATeamLogo(awayId, isDark, isSL);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isMCBB
+        ? getMCBBTeamLogo(awayId, isDark)
+        : isWCBB
+          ? getWCBBTeamLogo(awayId, isDark)
+          : isWNBA
+            ? getWNBATeamLogo(awayId, isDark)
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(awayId, isDark)
+              : getNBATeamLogo(awayId, isDark, isSL)
+    );
 
   const rivalry = isMCBB
     ? getMCBBRivalry(homeId, awayId)?.name

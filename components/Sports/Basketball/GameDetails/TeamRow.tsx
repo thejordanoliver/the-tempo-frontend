@@ -16,6 +16,7 @@ export const TeamRow = ({
   rank,
   logo,
   record,
+  isActive,
   isDark,
   isHome = false,
   score,
@@ -41,20 +42,18 @@ export const TeamRow = ({
    * Routing
    * --------------------------------------------------- */
   const handleTeamPress = () => {
-    if (id === null || id === undefined) return;
+    if (id === null || id === undefined || !isActive) return;
 
-    const normalizedLeague = String(league ?? "").toLowerCase();
-
-    if (normalizedLeague === "nba") {
+    if (league === "nba") {
       router.push(`/team/${id}`);
     }
-    if (normalizedLeague === "wnba") {
+    if (league === "wnba") {
       router.push(`/team/wnba/${id}`);
     }
-    if (normalizedLeague === "mcbb") {
+    if (league === "mcbb") {
       router.push(`/team/mcbb/${id}`);
     }
-    if (normalizedLeague === "wcbb") {
+    if (league === "wcbb") {
       router.push(`/team/wcbb/${id}`);
     }
   };

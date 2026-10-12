@@ -29,6 +29,19 @@ test('every NBA ID selects its own logo in both themes, even when a summer ID co
  for (const team of teams) assert.equal(getNBATeamLogo(team.summerLeagueId, false, true), team.logo);
 });
 
+test('missing and unbranded teams use the bundled placeholder image', () => {
+ for (const [file, helper] of [['teams', 'getNBATeamLogo'], ['teamsNFL', 'getNFLTeamLogo'], ['teamsGLeague', 'getGLeagueTeamLogo']]) {
+  const catalog = loadCatalog(file);
+  for (const isDark of [false, true]) {
+   assert.equal(catalog[helper](undefined, isDark), 'assets/Placeholders/teamPlaceholder.png');
+   assert.equal(catalog[helper]('missing-team', isDark), 'assets/Placeholders/teamPlaceholder.png');
+  }
+ }
+ const nba = loadCatalog('teams');
+ assert.equal(nba.getNBATeamLogo(134478, false), 'assets/Placeholders/teamPlaceholder.png');
+ assert.equal(nba.getNBATeamLogo(134478, true), 'assets/Placeholders/teamPlaceholder.png');
+});
+
 test('NFL, MLB and NHL IDs select their own logos in both themes', () => {
  for (const [file,list,helper] of [['teamsNFL','nflTeams','getNFLTeamLogo'],['teamsMLB','mlbTeams','getMLBTeamLogo'],['teamsNHL','nhlTeams','getNHLTeamLogo']]) {
   const catalog = loadCatalog(file);

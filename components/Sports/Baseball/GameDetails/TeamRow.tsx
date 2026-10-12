@@ -12,6 +12,7 @@ export const TeamRow = ({
   logo,
   record,
   name,
+  isActive,
   isDark,
   isHome = false,
   score,
@@ -28,6 +29,7 @@ export const TeamRow = ({
   const isFinal = state === "post";
 
   const handleTeamPress = () => {
+    if (!isActive) return;
     if (id && league === "mlb") router.push(`/team/mlb/${id}`);
     if (id && league === "cb") router.push(`/team/cb/${id}`);
     if (id && league === "sb") router.push(`/team/sb/${id}`);

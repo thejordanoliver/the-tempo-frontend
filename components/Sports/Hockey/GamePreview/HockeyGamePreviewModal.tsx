@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -17,7 +18,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { BlurView } from "expo-blur";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import {
   formatPeriod,
@@ -62,10 +63,14 @@ export default function HockeyGamePreviewModal({
   const away = game.away;
   const awayId = away.id;
   const homeId = home.id;
-  const homeTeam = getNHLTeam(homeId);
-  const awayTeam = getNHLTeam(awayId);
-  const homeLogo = getNHLTeamLogo(homeId, true);
-  const awayLogo = getNHLTeamLogo(awayId, true);
+  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
+  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getNHLTeamLogo(homeId, true);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getNHLTeamLogo(awayId, true);
 
   // Modal open/close
   useEffect(() => {
@@ -73,13 +78,13 @@ export default function HockeyGamePreviewModal({
     else sheetRef.current?.dismiss();
   }, [visible]);
 
-  const awayCode = useMemo(() => awayTeam?.code ?? "TBD", [awayTeam?.code]);
-  const homeCode = useMemo(() => homeTeam?.code ?? "TBD", [homeTeam?.code]);
-  const awayName = useMemo(() => awayTeam?.name ?? "TBD", [awayTeam?.name]);
-  const homeName = useMemo(() => homeTeam?.name ?? "TBD", [homeTeam?.name]);
+  const awayCode = awayTeam.code ?? "TBD";
+  const homeCode = homeTeam.code ?? "TBD";
+  const awayName = awayTeam.name ?? "TBD";
+  const homeName = homeTeam.name ?? "TBD";
 
-  const homeColor = homeTeam?.color ?? Colors.midTone;
-  const awayColor = awayTeam?.color ?? Colors.midTone;
+  const homeColor = homeTeam.color ?? Colors.midTone;
+  const awayColor = awayTeam.color ?? Colors.midTone;
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
@@ -197,6 +202,7 @@ export default function HockeyGamePreviewModal({
                 {/* Away Team Row */}
                 <TeamRow
                   id={awayId}
+                  isActive={awayTeam.isActive}
                   name={awayCode}
                   logo={awayLogo}
                   rank={awayRank}
@@ -225,6 +231,7 @@ export default function HockeyGamePreviewModal({
                 {/* Home Team Row */}
                 <TeamRow
                   id={homeId}
+                  isActive={homeTeam.isActive}
                   name={homeCode}
                   logo={homeLogo}
                   rank={homeRank}

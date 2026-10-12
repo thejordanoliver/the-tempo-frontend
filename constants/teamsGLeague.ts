@@ -64,8 +64,8 @@ import WESLogo from "../assets/GLeague/Logos/wes.png";
 import WESLogoLight from "../assets/GLeague/Logos/wesLight.png";
 import WISLogo from "../assets/GLeague/Logos/wis.png";
 import WISLogoLight from "../assets/GLeague/Logos/wisLight.png";
-const placeholderLogo =
-  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+const placeholderLogo = PlaceholderLogo;
 
 export const gleagueTeams: Team[] = [
   {

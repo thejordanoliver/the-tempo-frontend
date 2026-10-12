@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
@@ -37,12 +38,16 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const league = game?.league?.id;
   const home = game.home;
   const away = game.away;
-  const homeTeam = getSOCCTeam(home.id);
-  const awayTeam = getSOCCTeam(away.id);
+  const homeTeam = getSOCCTeam(home.id) ?? emptyHomeTeam;
+  const awayTeam = getSOCCTeam(away.id) ?? emptyAwayTeam;
   const homeName = homeTeam?.fullName || homeTeam?.name || "TBD";
   const awayName = awayTeam?.fullName || awayTeam?.name || "TBD";
-  const homeLogo = getSOCCTeamLogo(home.id, isDark);
-  const awayLogo = getSOCCTeamLogo(away.id, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getSOCCTeamLogo(home.id, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getSOCCTeamLogo(away.id, isDark);
   const homeScore = Number(game?.home?.score ?? 0);
   const awayScore = Number(game?.away?.score ?? 0);
   const homeRecord = game?.home?.record ?? "0-0-0";

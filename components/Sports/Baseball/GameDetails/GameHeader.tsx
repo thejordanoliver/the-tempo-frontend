@@ -15,6 +15,8 @@ type Props = {
   awayLogo: any;
   homeScore: number;
   awayScore: number;
+  isAwayActive: boolean;
+  isHomeActive: boolean;
   isDark: boolean;
   isTopInning: boolean;
   isBottomInning: boolean;
@@ -58,6 +60,8 @@ export default function GameHeader({
   awayRecord,
   gameStatusDetail,
   gameStatusDescription,
+  isAwayActive,
+  isHomeActive,
   isDark,
   date,
   time,
@@ -79,6 +83,7 @@ export default function GameHeader({
         <TeamRow
           state={state}
           id={awayId}
+          isActive={isAwayActive}
           logo={awayLogo}
           name={awayName}
           score={awayScore}
@@ -108,6 +113,7 @@ export default function GameHeader({
         <TeamRow
           state={state}
           id={homeId}
+          isActive={isHomeActive}
           logo={homeLogo}
           name={homeName}
           rank={homeRank}

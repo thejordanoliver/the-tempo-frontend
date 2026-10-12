@@ -14,6 +14,7 @@ export const TeamRow = ({
   rank,
   logo,
   record,
+  isActive,
   isDark,
   isHome = false,
   score,
@@ -34,6 +35,7 @@ export const TeamRow = ({
   const showRecordInsteadOfScore = isScheduled || score == null;
 
   const handleTeamPress = () => {
+    if (!isActive) return;
     if (!id || league === "ufl") return;
 
     if (league === "nfl") {

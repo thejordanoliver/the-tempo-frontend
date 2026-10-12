@@ -1,12 +1,8 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
-// components/Favorites/FavoritesSection.tsx
-
 import Button from "@/components/Buttons/Button";
 import { LEAGUE_CONFIG, type FavoriteSportId } from "@/constants/leagues";
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import { isFavoriteLeague } from "@/types/favorites";
-import { Ionicons } from "@expo/vector-icons";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import PreviewModal, {
   type PreviewItem,
@@ -14,8 +10,8 @@ import PreviewModal, {
 import { Colors } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
-import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
@@ -24,6 +20,7 @@ import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useSegments } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -372,7 +369,9 @@ export default function FavoritesSection({
 
     const teamBackgroundColor = team.color ?? Colors.midTone;
 
-    const showLeagueBadge = ["cfb", "mcbb", "wcbb", "cb", "sb"].includes(league);
+    const showLeagueBadge = ["cfb", "mcbb", "wcbb", "cb", "sb"].includes(
+      league,
+    );
 
     const teamName = team.name ?? team.shortName ?? String(id);
 
@@ -528,12 +527,6 @@ export default function FavoritesSection({
                   isDark={isDark}
                 >
                   Edit Favorites
-                  <Ionicons
-                    style={styles.editIcon}
-                    name="create"
-                    size={20}
-                    color={isDark ? Colors.black : Colors.white}
-                  />
                 </Button>
               </View>
             ) : null

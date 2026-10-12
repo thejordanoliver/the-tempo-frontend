@@ -14,6 +14,8 @@ type Props = {
   awayLogo: ImageSourcePropType;
   homeScore: number;
   awayScore: number;
+  isAwayActive: boolean;
+  isHomeActive: boolean;
   isDark: boolean;
   isTie: boolean | undefined | null;
   homeWins: boolean | undefined | null;
@@ -60,6 +62,8 @@ export default function GameHeader({
   gameStatusDetail,
   state,
   gameStatusDescription,
+  isAwayActive,
+  isHomeActive,
   isDark,
   date,
   time,
@@ -80,6 +84,7 @@ export default function GameHeader({
         {/* Away Team Row */}
         <TeamRow
           id={awayId}
+          isActive={isAwayActive}
           logo={awayLogo}
           name={awayName}
           score={awayScore}
@@ -110,6 +115,7 @@ export default function GameHeader({
 
         <TeamRow
           id={homeId}
+          isActive={isHomeActive}
           logo={homeLogo}
           name={homeName}
           rank={homeRank}

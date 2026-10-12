@@ -23,7 +23,7 @@ type Props = {
   state: string | null;
 };
 
-export default function PlayersInFoulTrouble({
+export default function InFoulTrouble({
   homeId,
   awayId,
   homeCode,
@@ -35,8 +35,7 @@ export default function PlayersInFoulTrouble({
   league = "NBA",
   state,
 }: Props) {
-  const styles = foulTroubleStyles(isDark);
-
+  const styles = InFoulTroubleStyles(isDark);
   const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
 
   const awayPlayers = useMemo(
@@ -107,6 +106,8 @@ export default function PlayersInFoulTrouble({
     return null;
   }
 
+  if (awayPlayers.length === 0 && homePlayers.length === 0) return null;
+
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>In Foul Trouble</HeadingTwo>
@@ -143,7 +144,7 @@ export default function PlayersInFoulTrouble({
   );
 }
 
-const foulTroubleStyles = (isDark: boolean) =>
+const InFoulTroubleStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {},
     wrapper: {

@@ -29,7 +29,7 @@ export function buildLeagueTeams<T>({
     .filter(
       (t: any) =>
         !t.isAllStar &&
-        t.isActive !== false &&
+        t.isActive === true &&
         (extraFilter ? extraFilter(t) : true),
     )
     .map((t: any) => ({

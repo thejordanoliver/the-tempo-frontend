@@ -1,7 +1,7 @@
 // styles/GameDetailStyles/TeamRow.styles.ts
 
 import { Colors, Fonts } from "constants/styles";
-import { StyleSheet } from "react-native";
+import { ImageSourcePropType, StyleSheet } from "react-native";
 
 /* ============================================================
  * Types
@@ -20,22 +20,17 @@ export type FootballProps = {
   record: string | null | undefined;
   timeouts: number | null;
   rank: number | null | undefined;
-
+  isActive: boolean;
   isDark: boolean;
   isHome?: boolean;
   isWinner: boolean | null;
   isTie: boolean | null;
-
   score?: number | null;
   opponentScore?: number | null;
-
   state?: string;
   gameStatusDescription?: string;
-
   size?: SizeType;
-
   hasPossession: boolean | null;
-
   league: string;
 };
 
@@ -45,13 +40,14 @@ export type FootballProps = {
 
 export type BasketballProps = {
   id: number | null;
-  logo: any;
+  logo: ImageSourcePropType;
   name: string;
   record: string;
   timeouts?: number;
   bonusState: string | undefined | null;
   rank: number | null;
   score?: number;
+  isActive: boolean;
   isDark: boolean;
   isHome?: boolean;
   isWinner?: boolean;
@@ -73,20 +69,17 @@ export type BasketballProps = {
 
 export type MMAProps = {
   id?: number;
-
   headshot: string;
   name: string;
   flag: string | undefined;
   record: string | undefined;
   rank?: string;
-
+  isActive: boolean;
   isDark: boolean;
   isFirstFighter?: boolean;
   isWinner?: boolean;
   hideRecord?: boolean;
-
   size?: SizeType;
-
   gameStatusDescription?: string;
 };
 
@@ -96,22 +89,17 @@ export type MMAProps = {
 
 export type TennisProps = {
   id: string | null;
-
   name: string;
-
   flag: string | null;
   flags: string[];
   country: string | null;
-
   rank: number | null;
   score: number | null;
-
   isHome?: boolean;
   isWinner: boolean | null;
   serving: boolean;
-
   state?: string | null;
-
+  isActive: boolean;
   isDark: boolean;
 };
 
@@ -121,20 +109,16 @@ export type TennisProps = {
 
 export type RacingProps = {
   id?: number;
-
   name: string;
   headshot: string | null | undefined;
   flag: string | null | undefined;
-
   laps: string | null | undefined;
   time: string | null | undefined;
   rank?: string;
-
+  isActive: boolean;
   isDark: boolean;
   isWinner: boolean | null | undefined;
-
   size?: SizeType;
-
   gameStatusDescription: string | null | undefined;
 };
 
@@ -144,24 +128,19 @@ export type RacingProps = {
 
 export type BaseballProps = {
   id: number;
-
   name: string;
   logo: any;
   record: string;
-
   rank: number | undefined | null;
   score?: number;
-
+  isActive: boolean;
   isDark: boolean;
   isHome?: boolean;
   isWinner: boolean;
   hideRecord?: boolean;
-
   state?: string | null;
   gameStatusDescription?: string;
-
   size?: SizeType;
-
   league: string;
 };
 
@@ -171,29 +150,22 @@ export type BaseballProps = {
 
 export type SoccerProps = {
   id: number;
-
   name: string;
   logo: any;
   record: string;
-
   rank: number | undefined | null;
   score?: number;
-
+  isActive: boolean;
+  isAllStar: boolean | undefined | null;
   isHome?: boolean;
   isDark: boolean;
-
   isTie?: boolean | undefined | null;
   isWinner?: boolean | undefined | null;
   hideRecord?: boolean;
-
   isNational: boolean | undefined | null;
-  isAllStar: boolean | undefined | null;
-
   state?: string | null;
   gameStatusDescription?: string;
-
   size?: SizeType;
-
   league: string;
 };
 
@@ -201,7 +173,7 @@ export type SoccerProps = {
  * NHL
  * ========================================================== */
 
-export type NHLProps = {
+export type HockeyProps = {
   id: number | null;
   logo: any;
   name: string;
@@ -209,6 +181,7 @@ export type NHLProps = {
   timeouts?: number | null;
   rank?: number | null;
   score?: number;
+  isActive: boolean;
   isDark: boolean;
   isHome?: boolean;
   isWinner?: boolean;

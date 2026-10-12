@@ -9,7 +9,7 @@ import FanPredictionRankingsSkeleton from "components/Skeletons/FanPredictionRan
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useFanPredictionAnalytics } from "hooks/useFanPredictionAnalytics";
 import { useFanPredictionRankings } from "hooks/useFanPredictionRankings";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
@@ -30,7 +30,10 @@ export default function FanPredictionRankingsScreen() {
   const navigation = useNavigation();
   const router = useScopedRouter();
   const contentStyle = useNavigationBarContentStyle();
-  const [selectedTab, setSelectedTab] = useState<FanPredictionTab>("Rankings");
+  const { tab } = useLocalSearchParams<{ tab?: string }>();
+  const [selectedTab, setSelectedTab] = useState<FanPredictionTab>(
+    tab === "Analysis" ? "Analysis" : "Rankings",
+  );
   const { data, loading, refreshing, error, refresh } =
     useFanPredictionRankings();
   const analytics = useFanPredictionAnalytics();
@@ -68,9 +71,11 @@ export default function FanPredictionRankingsScreen() {
       header: () => (
         <CustomHeader
           title={
-            selectedTab === "Rankings" ? "Fan Rankings" : "Prediction Analysis"
+            selectedTab === "Rankings"
+              ? "Prediction Rankings"
+              : "Prediction Analysis"
           }
-          tabName="Fan Rankings"
+          tabName="Prediction Rankings"
           onBack={() => navigation.goBack()}
         />
       ),
@@ -104,25 +109,6 @@ export default function FanPredictionRankingsScreen() {
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
         <View key="Rankings" style={{ flex: 1 }}>
-          <ScrollView
-            contentContainerStyle={contentStyle(styles.content)}
-            contentInsetAdjustmentBehavior="automatic"
-            showsVerticalScrollIndicator={false}
-            refreshControl={refreshControl}
-          >
-            <FanPredictionAnalysis
-              isDark={isDark}
-              data={analytics.data}
-              loading={analytics.loading}
-              error={analytics.error}
-              onRetry={() => {
-                void analytics.refresh();
-              }}
-            />
-          </ScrollView>
-        </View>
-
-        <View key="Analysis" style={{ flex: 1 }}>
           <FlatList
             style={styles.screen}
             contentContainerStyle={contentStyle(styles.content)}
@@ -189,6 +175,25 @@ export default function FanPredictionRankingsScreen() {
               ) : null
             }
           />
+        </View>
+
+        <View key="Analysis" style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={contentStyle(styles.content)}
+            contentInsetAdjustmentBehavior="automatic"
+            showsVerticalScrollIndicator={false}
+            refreshControl={refreshControl}
+          >
+            <FanPredictionAnalysis
+              isDark={isDark}
+              data={analytics.data}
+              loading={analytics.loading}
+              error={analytics.error}
+              onRetry={() => {
+                void analytics.refresh();
+              }}
+            />
+          </ScrollView>
         </View>
       </PagerView>
     </View>

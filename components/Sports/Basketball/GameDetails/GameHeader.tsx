@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { ImageSourcePropType, Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
 import { CenterInfo } from "./CenterInfo";
 import { TeamRow } from "./TeamRow";
@@ -8,8 +8,8 @@ type Props = {
   awayId: number | null;
   homeName: string;
   awayName: string;
-  awayLogo: any;
-  homeLogo: any;
+  awayLogo: ImageSourcePropType;
+  homeLogo: ImageSourcePropType;
   homeRank: number | null;
   awayRank: number | null;
   homeScore: number;
@@ -20,6 +20,8 @@ type Props = {
   awayTimeouts?: number;
   homeWins: boolean;
   awayWins: boolean;
+  isAwayActive: boolean;
+  isHomeActive: boolean;
   period: string | number;
   clock: string;
   isDark: boolean;
@@ -49,6 +51,8 @@ export default function GameHeader({
   awayScore,
   homeWins,
   awayWins,
+  isAwayActive,
+  isHomeActive,
   homeBonusState,
   awayBonusState,
   homeTimeouts = 0,
@@ -92,6 +96,7 @@ export default function GameHeader({
           timeouts={awayTimeouts}
           state={state}
           gameStatusDescription={gameStatusDescription}
+          isActive={isAwayActive}
           isDark={isDark}
           league={league}
           isHome={false}
@@ -122,6 +127,7 @@ export default function GameHeader({
           timeouts={homeTimeouts}
           state={state}
           gameStatusDescription={gameStatusDescription}
+          isActive={isHomeActive}
           isDark={isDark}
           league={league}
           isHome={true}

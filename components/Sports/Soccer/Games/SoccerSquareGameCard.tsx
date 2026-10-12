@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
@@ -40,14 +41,18 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const home = game.home;
   const away = game.away;
 
-  const homeTeam = getSOCCTeam(home.id);
-  const awayTeam = getSOCCTeam(away.id);
+  const homeTeam = getSOCCTeam(home.id) ?? emptyHomeTeam;
+  const awayTeam = getSOCCTeam(away.id) ?? emptyAwayTeam;
 
   const homeName = homeTeam?.code || "TBD";
   const awayName = awayTeam?.code || "TBD";
 
-  const homeLogo = getSOCCTeamLogo(home.id, isDark);
-  const awayLogo = getSOCCTeamLogo(away.id, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : getSOCCTeamLogo(home.id, isDark);
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : getSOCCTeamLogo(away.id, isDark);
 
   const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));

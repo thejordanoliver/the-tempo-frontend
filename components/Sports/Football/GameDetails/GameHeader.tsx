@@ -24,6 +24,8 @@ type GameHeaderProps = {
   homeWins: boolean | null;
   awayWins: boolean | null;
   isTie: boolean | null;
+  isAwayActive: boolean;
+  isHomeActive: boolean;
   isDark: boolean;
   homeRecord: string | undefined;
   awayRecord: string | undefined;
@@ -60,6 +62,8 @@ export default function GameHeader({
   homeWins,
   awayWins,
   isTie,
+  isAwayActive,
+  isHomeActive,
   isDark,
   homeRecord,
   awayRecord,
@@ -88,6 +92,7 @@ export default function GameHeader({
       <View style={styles.teamsContainer}>
         <TeamRow
           id={awayId}
+          isActive={isAwayActive}
           name={awayName}
           logo={awayLogo}
           rank={awayRank}
@@ -121,6 +126,7 @@ export default function GameHeader({
 
         <TeamRow
           id={homeId}
+          isActive={isHomeActive}
           name={homeName}
           logo={homeLogo}
           rank={homeRank}

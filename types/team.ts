@@ -1,13 +1,10 @@
-
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/styles";
-import type { ImageSourcePropType } from "react-native";
 
 export type Team = {
   id: number;
-  league: string
-  espnId?: number | null;
   summerLeagueId?: number;
+  league: string;
   name: string;
   shortName?: string;
   fullName: string;
@@ -18,29 +15,24 @@ export type Team = {
   conference?: string;
   conferenceShortName?: string;
   owner?: string;
-  established: number;
   logo: any;
   logoLight?: any;
   color: string | null;
   secondaryColor: string | null;
-  championships?: number[];
-  uniforms?: {
-    home?: ImageSourcePropType;
-    away?: ImageSourcePropType;
-  };
+  established: number;
   isAllStar: boolean;
   isNational: boolean;
   isActive: boolean;
 };
 
-
-
 export const emptyAwayTeam = {
-  id: 0,
-  espnId: -2,
+  id: -2,
+  league: "",
+  isNational: false,
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
   name: "TBD",
+  shortName: "TBD",
   fullName: "TBD",
   code: "TBD",
   city: "Unknown",
@@ -60,11 +52,13 @@ export const emptyAwayTeam = {
 };
 
 export const emptyHomeTeam = {
-  id: 0,
-  espnId: -1,
+  id: -1,
+  league: "",
+  isNational: false,
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
   name: "TBD",
+  shortName: "TBD",
   fullName: "TBD",
   code: "TBD",
   city: "Unknown",

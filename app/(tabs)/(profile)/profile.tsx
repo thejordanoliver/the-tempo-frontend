@@ -1,4 +1,6 @@
+import ProfilePredictions from "components/Profile/ProfilePredictions";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useProfilePredictions } from "hooks/useProfilePredictions";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // profile.tsx
 import FavoritesSection from "@/components/Favorites/FavoritesSection";
@@ -37,7 +39,12 @@ type CachedUser = {
   profileImage?: string;
 };
 
-export type ProfileTab = "favorites" | "badges" | "posts" | "bookmarks";
+export type ProfileTab =
+  | "favorites"
+  | "badges"
+  | "posts"
+  | "bookmarks"
+  | "predictions";
 
 const normalizeCachedString = (value?: string | null) => {
   const trimmed = value?.trim() ?? "";
@@ -147,6 +154,8 @@ export default function ProfileScreen() {
   } = useBookmarkedPosts({
     enabled: selectedTab === "bookmarks" && Boolean(currentUserId),
   });
+
+  const predictions = useProfilePredictions(currentUserId);
 
   const handleTabPress = useCallback((tab: ProfileTab) => {
     setSelectedTab(tab);
@@ -454,12 +463,41 @@ export default function ProfileScreen() {
 
         <BioSection bio={bio} isDark={isDark} />
 
-        <TabBar
-          tabs={["favorites", "badges", "posts", "bookmarks"] as const}
-          selected={selectedTab}
-          onTabPress={handleTabPress}
-          isDark={isDark}
-        />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <TabBar
+            tabs={
+              [
+                "favorites",
+                "badges",
+                "predictions",
+                "posts",
+                "bookmarks",
+              ] as const
+            }
+            selected={selectedTab}
+            onTabPress={handleTabPress}
+            isDark={isDark}
+          />
+        </ScrollView>
+
+        {selectedTab === "predictions" && Boolean(currentUserId) && (
+          <View style={styles.contentContainer}>
+            <ProfilePredictions
+              isDark={isDark}
+              itemWidth={itemWidth}
+              record={predictions.record}
+              picks={predictions.picks}
+              onPick={(pick) => router.push({
+                pathname: "/game/[sport]/[game]",
+                params: { sport: pick.sport, game: pick.gameId, league: pick.league, date: pick.startsAt },
+              })}
+              loading={predictions.loading}
+              error={predictions.error}
+              onRetry={predictions.refresh}
+              onPredictions={() => router.push("/fan-prediction-rankings")}
+            />
+          </View>
+        )}
 
         {selectedTab === "favorites" && (
           <View style={styles.contentContainer}>

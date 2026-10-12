@@ -172,7 +172,7 @@ export default function EditFavoritesScreen() {
       const isEligible =
         team.isAllStar !== true &&
         team.isNational !== true &&
-        team.isActive !== false;
+        team.isActive === true;
 
       if (!isEligible) {
         return false;

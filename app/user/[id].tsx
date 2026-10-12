@@ -1,3 +1,5 @@
+import ProfilePredictions from "components/Profile/ProfilePredictions";
+import { useProfilePredictions } from "hooks/useProfilePredictions";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { parseProfileCountParam } from "utils/userProfileCounts";
 import { CustomHeader } from "@/components/CustomHeader";
@@ -143,6 +145,8 @@ function UserProfileContent() {
     userId,
     enabled: selectedTab === "posts" && Boolean(userId),
   });
+
+  const predictions = useProfilePredictions(Number(userId));
 
   const currentUserIdString = useMemo(
     () => (currentUserId ? String(currentUserId) : ""),
@@ -318,12 +322,30 @@ function UserProfileContent() {
 
         <BioSection bio={bio} isDark={isDark} />
 
-        <TabBar
-          tabs={["favorites", "badges", "posts"]}
-          selected={selectedTab}
-          onTabPress={handleTabPress}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <TabBar
+            tabs={["favorites", "badges", "predictions", "posts"]}
+            selected={selectedTab}
+            onTabPress={handleTabPress}
+            isDark={isDark}
+          />
+        </ScrollView>
+
+        {selectedTab === "predictions" && Boolean(Number(userId)) && <ProfilePredictions
           isDark={isDark}
-        />
+          itemWidth={itemWidth}
+          record={predictions.record}
+              picks={predictions.picks}
+              onPick={(pick) => router.push({
+                pathname: "/game/[sport]/[game]",
+                params: { sport: pick.sport, game: pick.gameId, league: pick.league, date: pick.startsAt },
+              })}
+          loading={predictions.loading}
+          error={predictions.error}
+          onRetry={predictions.refresh}
+          onPredictions={() => router.push({ pathname: "/fan-prediction-picks", params: { userId: String(Number(userId)) } })}
+          onAnalysis={isCurrentUser ? () => router.push({ pathname: "/fan-prediction-rankings", params: { tab: "Analysis" } }) : undefined}
+        />}
 
         <View
           style={[

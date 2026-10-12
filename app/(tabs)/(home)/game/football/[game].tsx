@@ -1,3 +1,4 @@
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import GameSummary from "components/Sports/Football/GameDetails/GameSummary";
 import { CustomHeader } from "@/components/CustomHeader";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
@@ -188,65 +189,75 @@ export default function GameDetailsScreen(
   const homeId = home?.id ?? 0;
   const awayId = away?.id ?? 0;
 
-  const homeTeam = isNFL
-    ? getNFLTeam(homeId)
-    : isCFB
-      ? getCFBTeam(homeId)
-      : getUFLTeam(homeId);
+  const homeTeam =
+    (
+      isNFL
+      ? getNFLTeam(homeId)
+      : isCFB
+        ? getCFBTeam(homeId)
+        : getUFLTeam(homeId)
+    ) ?? emptyHomeTeam;
 
-  const awayTeam = isNFL
-    ? getNFLTeam(awayId)
-    : isCFB
-      ? getCFBTeam(awayId)
-      : getUFLTeam(awayId);
+  const awayTeam =
+    (
+      isNFL
+      ? getNFLTeam(awayId)
+      : isCFB
+        ? getCFBTeam(awayId)
+        : getUFLTeam(awayId)
+    ) ?? emptyAwayTeam;
 
-  const homeLogo = isNFL
-    ? getNFLTeamLogo(homeId, isDark)
-    : isCFB
-      ? getCFBTeamLogo(homeId, isDark)
-      : getUFLTeamLogo(homeId, isDark);
-  const awayLogo = isNFL
-    ? getNFLTeamLogo(awayId, isDark)
-    : isCFB
-      ? getCFBTeamLogo(awayId, isDark)
-      : getUFLTeamLogo(awayId, isDark);
+  const homeLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(homeId, isDark)
+        : isCFB
+          ? getCFBTeamLogo(homeId, isDark)
+          : getUFLTeamLogo(homeId, isDark)
+    );
+  const awayLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(awayId, isDark)
+        : isCFB
+          ? getCFBTeamLogo(awayId, isDark)
+          : getUFLTeamLogo(awayId, isDark)
+    );
 
-  const homeHeaderLogo = isNFL
-    ? getNFLTeamLogo(homeId, true)
-    : isCFB
-      ? getCFBTeamLogo(homeId, true)
-      : getUFLTeamLogo(homeId, true);
-  const awayHeaderLogo = isNFL
-    ? getNFLTeamLogo(awayId, true)
-    : isCFB
-      ? getCFBTeamLogo(awayId, true)
-      : getUFLTeamLogo(awayId, true);
+  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
+    ? emptyHomeTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(homeId, true)
+        : isCFB
+          ? getCFBTeamLogo(homeId, true)
+          : getUFLTeamLogo(homeId, true)
+    );
+  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
+    ? emptyAwayTeam.logo
+    : (
+      isNFL
+        ? getNFLTeamLogo(awayId, true)
+        : isCFB
+          ? getCFBTeamLogo(awayId, true)
+          : getUFLTeamLogo(awayId, true)
+    );
 
-  const homeCode = useMemo(
-    () => homeTeam?.code ?? home?.code ?? "",
-    [homeTeam?.code, home?.code],
-  );
-  const awayCode = useMemo(
-    () => awayTeam?.code ?? away?.code ?? "",
-    [awayTeam?.code, away?.code],
-  );
-  const homeName = useMemo(
-    () => homeTeam?.fullName ?? home?.name ?? "",
-    [homeTeam?.fullName, home?.name],
-  );
-  const awayName = useMemo(
-    () => awayTeam?.fullName ?? away?.name ?? "",
-    [awayTeam?.fullName, away?.name],
-  );
+  const homeCode = homeTeam.code ?? home?.code ?? "";
+  const awayCode = awayTeam.code ?? away?.code ?? "";
+  const homeName = homeTeam.fullName ?? home?.name ?? "";
+  const awayName = awayTeam.fullName ?? away?.name ?? "";
 
   const awayColor =
-    awayTeam?.color ??
+    awayTeam.color ??
     away?.primaryColor ??
     away?.secondaryColor ??
     Colors.midTone;
 
   const homeColor =
-    homeTeam?.color ??
+    homeTeam.color ??
     home?.primaryColor ??
     home?.secondaryColor ??
     Colors.midTone;
@@ -342,8 +353,8 @@ export default function GameDetailsScreen(
   const awayTimeouts = score?.away?.timeouts;
   const homeRecord = score?.home.record;
   const awayRecord = score?.away.record;
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
 
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
@@ -420,18 +431,20 @@ export default function GameDetailsScreen(
           onToggleNotifications={
             isFinal
               ? undefined
-              : () =>
-                  openGameNotificationSettings(
-                    "football",
-                    LEAGUE,
-                    gameId,
-                    homeId,
-                    awayId,
-                  )
-          }
-        />
-      ),
-    });
+              : (
+      ) =>
+                      openGameNotificationSettings(
+                        "football",
+                        LEAGUE,
+                        gameId,
+                        homeId,
+                        awayId,
+                      )
+              }
+            />
+          ),
+        }
+    );
   }, [
     LEAGUE,
     away,
@@ -473,6 +486,8 @@ export default function GameDetailsScreen(
         stickyHeaderIndices={[0]}
       >
         <GameHeader
+          isHomeActive={homeTeam.isActive}
+          isAwayActive={awayTeam.isActive}
           // Game details
           headline={headline}
           league={LEAGUE}
