@@ -29,7 +29,7 @@ import { useNotifications } from "@/contexts/NotificationContext";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
-import useTeamDetails from "@/hooks/useTeams";
+import useTeams from "@/hooks/useTeams";
 import { useWeather } from "@/hooks/useWeather";
 import type { BasketballGameCardProps } from "@/types/basketball/basketball";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -221,13 +221,13 @@ export default function GameDetailsScreen(
   const isAwayActive = awayTeam.isActive
 
   const awayColor =
-    awayTeam.color ??
+    awayTeam.primaryColor ??
     away?.primaryColor ??
     away?.secondaryColor ??
     Colors.midTone;
 
   const homeColor =
-    homeTeam.color ??
+    homeTeam.primaryColor ??
     home?.primaryColor ??
     home?.secondaryColor ??
     Colors.midTone;
@@ -284,8 +284,8 @@ export default function GameDetailsScreen(
               ? getGLeagueTeamLogo(awayId, true)
               : getNBATeamLogo(awayId, true);
 
-  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
-  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
   const {
     votes: liveVotes,
     castVote: castLiveVote,

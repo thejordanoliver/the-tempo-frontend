@@ -9,7 +9,7 @@ import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useMemo, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
@@ -51,7 +51,7 @@ export default function PlayerDetailScreen() {
   const headerTeamId = playerTeamId ?? routeTeamId;
   const team = headerTeamId ? getSOCCTeam(headerTeamId) : undefined;
   const teamLogo = getSOCCTeamLogo(headerTeamId ?? undefined, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
 
   const {
     seasons,
@@ -102,9 +102,7 @@ export default function PlayerDetailScreen() {
   if (error)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>
-          {error || "Failed to load player"}
-        </Text>
+        <Text style={global.errorText}>{error || "Couldn’t load player"}</Text>
       </View>
     );
 
@@ -125,14 +123,20 @@ export default function PlayerDetailScreen() {
 
       <PlayerStatTable
         seasons={seasons}
-        teamOptions={teamOptions.length || !headerTeamId ? teamOptions : [{
-          value: headerTeamId,
-          label: team?.name ?? headerTeamId,
-          teamId: headerTeamId,
-          teamName: team?.name ?? null,
-          teamSlug: null,
-          competitions: [],
-        }]}
+        teamOptions={
+          teamOptions.length || !headerTeamId
+            ? teamOptions
+            : [
+                {
+                  value: headerTeamId,
+                  label: team?.name ?? headerTeamId,
+                  teamId: headerTeamId,
+                  teamName: team?.name ?? null,
+                  teamSlug: null,
+                  competitions: [],
+                },
+              ]
+        }
         selectedTeamId={effectiveSelectedTeamId}
         selectedCompetition={selectedCompetition}
         onTeamChange={handleTeamChange}

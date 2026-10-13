@@ -1,3 +1,4 @@
+import F1StandingsList from "components/Sports/Racing/Standings/F1StandingsList";
 import EventSelector, {
   getDefaultUFCEventIndex,
 } from "@/components/Sports/MMA/EventSelector";
@@ -233,7 +234,11 @@ export default function RacingLeagueScreen() {
             ) : null}
           </View>
 
-          <View key="standings" />
+          <View key="standings" style={styles.contentArea}>
+            {league.toLowerCase() === "f1" && hasVisitedTab("standings") ? (
+              <F1StandingsList />
+            ) : null}
+          </View>
 
           <View key="forum" style={styles.contentArea}>
             {hasVisitedTab("forum") ? <ForumFeed league={league} /> : null}

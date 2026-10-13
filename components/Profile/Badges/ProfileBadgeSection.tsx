@@ -1,13 +1,12 @@
 import Button from "@/components/Buttons/Button";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
-import HeadingTwo from "@/components/Headings/HeadingTwo";
 import Subheading from "@/components/Headings/Subheading";
 import { globalStyles } from "@/constants/styles";
-import { BadgePreviewSectionStyles } from "@/styles/ProfileStyles/BadgePreviewSectionStyles";
+import { ProfileBadgeSectionStyles } from "@/styles/ProfileStyles/ProfileBadgeSectionStyles";
 import { BadgeProgress } from "@/types/badges";
+import { useMemo } from "react";
 import { Text, View } from "react-native";
 import BadgePreviewCard from "./BadgePreviewCard";
-import { useMemo } from "react";
 
 const BADGE_GRID_COLUMNS = 3;
 
@@ -21,7 +20,7 @@ const chunkBadges = (badges: BadgeProgress[]) => {
   return rows;
 };
 
-type BadgePreviewSectionProps = {
+type ProfileBadgeSectionProps = {
   badges: BadgeProgress[];
   earnedCount: number;
   totalCount: number;
@@ -33,7 +32,7 @@ type BadgePreviewSectionProps = {
   onRetry?: () => void;
 };
 
-export default function BadgePreviewSection({
+export default function ProfileBadgeSection({
   badges,
   earnedCount,
   totalCount,
@@ -43,44 +42,38 @@ export default function BadgePreviewSection({
   loading = false,
   error = null,
   onRetry,
-}: BadgePreviewSectionProps) {
-  const styles = BadgePreviewSectionStyles(isDark);
+}: ProfileBadgeSectionProps) {
+  const styles = ProfileBadgeSectionStyles(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const earnedSummary = `${earnedCount} of ${totalCount} earned`;
   const badgeRows = chunkBadges(badges);
 
   if (loading)
     return (
-      <>
-        <HeadingTwo isDark={isDark}>Badges</HeadingTwo>
-        <View style={global.emptyContainer}>
-          <CustomActivityIndicator />
-        </View>
-      </>
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
+      </View>
     );
 
   if (error)
     return (
-      <>
-        <HeadingTwo isDark={isDark}>Badges</HeadingTwo>
-        <View style={global.emptyContainer}>
-          <Text selectable style={global.errorText}>
-            {error}
-          </Text>
+      <View style={global.emptyContainer}>
+        <Text selectable style={global.errorText}>
+          {error}
+        </Text>
 
-          {!!onRetry && (
-            <View style={styles.buttonContainer}>
-              <Button
-                onPress={onRetry}
-                style={styles.retryButton}
-                isDark={isDark}
-              >
-                <Text style={styles.retryText}>Retry</Text>
-              </Button>
-            </View>
-          )}
-        </View>
-      </>
+        {!!onRetry && (
+          <View style={styles.buttonContainer}>
+            <Button
+              onPress={onRetry}
+              style={styles.retryButton}
+              isDark={isDark}
+            >
+              <Text style={styles.retryText}>Retry</Text>
+            </Button>
+          </View>
+        )}
+      </View>
     );
 
   if (badges.length < 0)
@@ -97,7 +90,6 @@ export default function BadgePreviewSection({
 
   return (
     <View>
-      <HeadingTwo isDark={isDark}>Badges</HeadingTwo>
       <Subheading>{earnedSummary}</Subheading>
       {badgeRows.map((row) => (
         <View key={row.map((badge) => badge.id).join("|")} style={styles.grid}>

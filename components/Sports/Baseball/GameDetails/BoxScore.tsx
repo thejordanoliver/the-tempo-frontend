@@ -1,5 +1,6 @@
 import { BoxScoreStyles } from "@/styles/GameDetailStyles/BoxScoreStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import BoxScoreSkeleton from "components/Skeletons/GameDetails/BoxScoreSkeleton";
 import { activeOpacity, globalStyles } from "constants/styles";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -848,10 +849,10 @@ const StatSectionTable = memo(function StatSectionTable({
 
   const emptyText =
     sectionType === "pitching"
-      ? "No pitching stats available."
+      ? "No pitching stats available"
       : sectionType === "fielding"
-        ? "No fielding stats available."
-        : "No batting stats available.";
+        ? "No fielding stats available"
+        : "No batting stats available";
 
   const shouldRenderTotals = hasSectionTotals(section) && showTotals;
   const animatedStyle = { maxHeight: heightAnim, overflow: "hidden" as const };
@@ -1333,7 +1334,7 @@ export default function BoxScore({
     return (
       <ScrollView contentContainerStyle={navigationContentStyle()}>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
-        <Text style={global.errorText}>Loading box score...</Text>
+        <BoxScoreSkeleton isDark={isDark} />
       </ScrollView>
     );
   }
@@ -1342,7 +1343,7 @@ export default function BoxScore({
     return (
       <ScrollView contentContainerStyle={navigationContentStyle()}>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
-        <Text style={global.errorText}>Failed to load box score.</Text>
+        <Text style={global.errorText}>Couldn’t load box score</Text>
       </ScrollView>
     );
   }

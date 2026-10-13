@@ -50,7 +50,7 @@ export default function TennisGamesList({
   error,
   scrollEnabled = true,
 }: Props) {
-  const { viewMode, resolvedColorScheme } = usePreferences();
+  const { viewMode, viewModeReady, resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";
 
@@ -108,6 +108,9 @@ export default function TennisGamesList({
     return `${item.id ?? "tennis-match"}-${index}`;
   }, []);
 
+  // Wait for the saved layout before mounting cards in the wrong layout.
+  if (!viewModeReady) return null;
+
   if (loading && matches.length === 0) {
     if (viewMode === "grid") {
       return (
@@ -149,7 +152,7 @@ export default function TennisGamesList({
         }
       >
         <Text selectable style={global.errorText}>
-          Unable to load tennis matches.
+          Couldn’t load tennis matches
         </Text>
 
         <Text selectable style={global.emptySubText}>
@@ -174,12 +177,9 @@ export default function TennisGamesList({
         }
       >
         <Text selectable style={global.emptyTitle}>
-          No matches on court today.
+          No matches scheduled
         </Text>
 
-        <Text selectable style={global.emptyText}>
-          Comeback later to see the next serve.
-        </Text>
       </ScrollView>
     );
   }

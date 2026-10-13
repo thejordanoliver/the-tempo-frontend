@@ -1,7 +1,7 @@
 import { formatDate } from "@/utils/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import PredictionCard from "components/FanPrediction/PredictionCard";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
@@ -18,9 +18,10 @@ import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFeedPrediction } from "hooks/useFeedPrediction";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import type { FeedPrediction } from "types/fanPredictions";
 import { formatPercentage, isSameTeamId } from "utils/fanPredictionVotes";
+import Button from "../Buttons/Button";
 
 const teamLogoHelpers: Record<string, typeof getNBATeamLogo> = {
   nba: getNBATeamLogo,
@@ -46,6 +47,7 @@ export default function PredictionFeedCard({
 }) {
   const router = useScopedRouter();
   const styles = useMemo(() => cardStyles(isDark), [isDark]);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const prediction = useFeedPrediction(game);
   const open = prediction.open;
   const disabled =
@@ -53,6 +55,7 @@ export default function PredictionFeedCard({
     prediction.userVote != null ||
     prediction.submittingTeamId != null ||
     prediction.phase !== "ready";
+
   const openGame = () =>
     router.push({
       pathname: "/game/[sport]/[game]",
@@ -73,14 +76,20 @@ export default function PredictionFeedCard({
         ),
       },
     });
+
+  const openPredictions = () => router.push("/fan-prediction-rankings");
+
   const picked = isSameTeamId(prediction.userVote, game.home.id)
     ? game.home.name
     : game.away.name;
+
   const date = formatDate(game.startsAt, false, true);
+
   const getTeamLogo =
     game.sport === "soccer"
       ? getSOCCTeamLogo
       : teamLogoHelpers[game.league.toLowerCase()];
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -151,20 +160,26 @@ export default function PredictionFeedCard({
         </Text>
       )}
       <View style={styles.row}>
-        <TouchableOpacity
+        <Button
           accessibilityRole="button"
           onPress={openGame}
+          isDark={isDark}
+          variant="text"
           hitSlop={8}
+          style={styles.button}
         >
-          <Text style={styles.link}>Game details →</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+          <Text style={global.secondaryText}>Game details</Text>
+        </Button>
+        <Button
           accessibilityRole="button"
-          onPress={() => router.push("/fan-prediction-rankings")}
+          isDark={isDark}
+          variant="text"
           hitSlop={8}
+          style={styles.button}
+          onPress={openPredictions}
         >
-          <Text style={styles.link}>View your predictions</Text>
-        </TouchableOpacity>
+          <Text style={global.secondaryText}>View your predictions</Text>
+        </Button>
       </View>
     </View>
   );
@@ -199,6 +214,9 @@ const cardStyles = (isDark: boolean) => {
     meta: { fontFamily: Fonts.REGULAR, fontSize: 14, color: theme.text },
     teams: { flexDirection: "row", gap: 8, minHeight: 120, marginVertical: 4 },
     team: { flex: 1 },
+    button: {
+      padding: 0,
+    },
     link: {
       fontFamily: Fonts.BOLD,
       fontSize: 13,

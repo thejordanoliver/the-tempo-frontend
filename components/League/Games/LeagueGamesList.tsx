@@ -1,3 +1,4 @@
+import { usePreferences } from "contexts/PreferencesContext";
 import BasketballGameCard from "@/components/Sports/Basketball/Games/BasketballGameCard";
 import BasketballSquareGameCard from "@/components/Sports/Basketball/Games/BasketballSquareGameCard";
 import BasketballStackedGameCard from "@/components/Sports/Basketball/Games/BasketballStackedGameCard";
@@ -167,6 +168,7 @@ export default function LeagueGamesList({
   viewMode,
   isDark,
 }: LeagueGamesListProps) {
+  const { viewModeReady } = usePreferences();
   const styles = leagueGamesListStyles(isDark);
   const [previewItem, setPreviewItem] = useState<HomeGameItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -382,6 +384,8 @@ export default function LeagueGamesList({
       </View>
     );
   };
+
+  if (!viewModeReady) return null;
 
   if (loading) {
     const skeletonCount = expectedCount ?? 4;

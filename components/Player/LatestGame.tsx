@@ -4,6 +4,7 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey/hockey";
 import type { MMAFight } from "types/mma/mma";
+import { getPlayerGameHeading } from "utils/playerClosestGame";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
@@ -283,7 +284,7 @@ export default function LatestGame(props: Props) {
   }
 
   if (error) {
-    return <Text style={global.errorText}>{error}</Text>;
+    return <Text style={global.errorText}>Couldn’t load recent game</Text>;
   }
 
   if (!props.game) {
@@ -293,7 +294,7 @@ export default function LatestGame(props: Props) {
   return (
     <>
       <View>
-        <HeadingTwo isDark={isDark}>{league === "mma" || league === "ufc" ? "Latest Fight" : "Latest Game"}</HeadingTwo>
+        <HeadingTwo isDark={isDark}>{league === "mma" || league === "ufc" ? "Latest Fight" : getPlayerGameHeading(props.game)}</HeadingTwo>
 
         <LongPressGestureHandler
           onHandlerStateChange={handleLongPress}

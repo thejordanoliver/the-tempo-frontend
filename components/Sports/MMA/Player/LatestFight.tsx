@@ -13,7 +13,7 @@ export default function LatestFight({ fight, loading, error, isDark }: Props) {
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Latest Fight</HeadingTwo>
       {loading ? <GameCardSkeleton /> : error || !fight ? (
-        <Text style={global.emptyText}>{error ?? "No recent fight available."}</Text>
+        <Text style={global.emptyText}>{error ?? "No recent fight available"}</Text>
       ) : (
         <View style={[styles.card, { borderColor: isDark ? Colors.darkGray : Colors.lightGray, backgroundColor: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground }]}>
           <Text style={[global.text, styles.event]}>{fight.eventName || "—"}</Text>

@@ -37,9 +37,7 @@ export default function ConversationEmptyState({
           color={isDark ? Colors.white : Colors.black}
         />
 
-        <Text style={styles.emptyTitle}>Conversation unavailable</Text>
-
-        <Text style={styles.emptyText}>{error}</Text>
+        <Text style={styles.emptyTitle}>Couldn’t load messages</Text>
 
         <TouchableOpacity
           activeOpacity={activeOpacity}
@@ -62,7 +60,7 @@ export default function ConversationEmptyState({
 
       <Text style={styles.emptyTitle}>Start the conversation</Text>
 
-      <Text style={styles.emptyText}>Send a message to begin this chat.</Text>
+      <Text style={styles.emptyText}>Say hello.</Text>
     </View>
   );
 }

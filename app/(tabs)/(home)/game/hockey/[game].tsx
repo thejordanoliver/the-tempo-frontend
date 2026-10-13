@@ -1,4 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
@@ -21,7 +20,7 @@ import { Colors } from "@/constants/styles";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
-import useTeamDetails from "@/hooks/useTeams";
+import useTeams from "@/hooks/useTeams";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
   formatDate,
@@ -41,6 +40,7 @@ import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -129,26 +129,30 @@ export default function GameDetailsScreen(
   const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
   const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getNHLTeamLogo(homeId, isDark);
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getNHLTeamLogo(awayId, isDark);
-  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getNHLTeamLogo(homeId, true);
-  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getNHLTeamLogo(awayId, true);
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getNHLTeamLogo(homeId, isDark);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getNHLTeamLogo(awayId, isDark);
+  const homeHeaderLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getNHLTeamLogo(homeId, true);
+  const awayHeaderLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getNHLTeamLogo(awayId, true);
   const awayCode = awayTeam.code ?? "";
   const homeCode = homeTeam.code ?? "";
 
-  const awayColor = awayTeam.color ?? Colors.midTone;
-  const homeColor = homeTeam.color ?? Colors.midTone;
+  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
+  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
 
-  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
-  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
 
@@ -186,8 +190,8 @@ export default function GameDetailsScreen(
   const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts);
   const period = formatPeriod({ period: score?.status.period, isNHL: true });
-  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const clock = score?.status.displayClock ?? "0:00";
   const homeScore = score?.home?.score ?? 0;
   const awayScore = score?.away?.score ?? 0;

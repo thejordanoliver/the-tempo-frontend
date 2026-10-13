@@ -203,11 +203,11 @@ export const GiphySearchModal: React.FC<Props> = ({
         ListHeaderComponent={listHeader}
         ListEmptyComponent={() =>
           !loading && debouncedQuery.length >= 3 ? (
-            <Text style={styles.emptyText}>No GIFs found.</Text>
+            <Text style={styles.emptyText}>No GIFs found</Text>
           ) : null
         }
         ListFooterComponent={() =>
-          loading ? <Text style={styles.loadingText}>Loading...</Text> : null
+          loading ? <Text style={styles.loadingText}>Loading…</Text> : null
         }
       />
     </BottomSheetModal>

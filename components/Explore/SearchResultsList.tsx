@@ -126,7 +126,7 @@ export default function SearchResultsList({
     }
 
     if (showEmptyState) {
-      return <Text style={global.emptyText}>No results found.</Text>;
+      return <Text style={global.emptyText}>No results found</Text>;
     }
 
     return (

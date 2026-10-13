@@ -1,3 +1,4 @@
+import { isEligibleFavoriteTeam } from "utils/favoriteTeamEligibility";
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
@@ -15,7 +16,6 @@ import type { ImageSourcePropType } from "react-native";
 import { FlatList, StyleSheet, View } from "react-native";
 import { buildFavoriteTeamKey } from "types/favorites";
 import type { Team } from "types/team";
-
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import SelectionCard from "./SelectionCard";
 
@@ -83,6 +83,7 @@ const FavoriteTeamsSelector = ({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => FavoritesSelectorStyles(itemWidth), [itemWidth]);
+  const eligibleTeams = useMemo(() => teams.filter(isEligibleFavoriteTeam), [teams]);
   const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
 
   const handleToggle = useCallback(
@@ -126,7 +127,7 @@ const FavoriteTeamsSelector = ({
     <View style={styles.container}>
       <FlatList
         key={"teams-grid"}
-        data={teams}
+        data={eligibleTeams}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         numColumns={3}

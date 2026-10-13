@@ -1,10 +1,7 @@
-import ProfilePredictions from "components/Profile/ProfilePredictions";
-import { useProfilePredictions } from "hooks/useProfilePredictions";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { parseProfileCountParam } from "utils/userProfileCounts";
 import { CustomHeader } from "@/components/CustomHeader";
-import FavoritesSection from "@/components/Favorites/FavoritesSection";
 import Forum from "@/components/Forum/Forum";
+import BadgePreviewSection from "@/components/Profile/Badges/ProfileBadgeSection";
+import FavoritesSection from "@/components/Profile/ProfileFavoritesSection";
 import SafetyActionsModal from "@/components/SafetyActionsModal";
 import TabBar from "@/components/TabBars/TabBar";
 import { Colors, globalStyles } from "@/constants/styles";
@@ -12,14 +9,16 @@ import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { useUserPosts } from "@/hooks/UserHooks/useUserPosts";
 import { Ionicons } from "@expo/vector-icons";
 import type { ProfileTab } from "app/(tabs)/(profile)/profile";
-import BadgePreviewSection from "components/Profile/Badges/BadgePreviewSection";
 import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
+import ProfilePredictions from "components/Profile/ProfilePredictions";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useProfilePredictions } from "hooks/useProfilePredictions";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useUserProfile } from "hooks/useUserProfile";
@@ -33,6 +32,7 @@ import {
 } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 import type { ForumPost } from "types/forum";
+import { parseProfileCountParam } from "utils/userProfileCounts";
 
 type RouteParam = string | string[] | undefined;
 
@@ -115,8 +115,12 @@ function UserProfileContent() {
       profileImage: normalizeRouteParam(params.profileImage),
       bannerImage: normalizeRouteParam(params.bannerImage),
     },
-    initialIsFollowing: normalizeRouteParam(params.isFollowing) === "true" ? true
-      : normalizeRouteParam(params.isFollowing) === "false" ? false : undefined,
+    initialIsFollowing:
+      normalizeRouteParam(params.isFollowing) === "true"
+        ? true
+        : normalizeRouteParam(params.isFollowing) === "false"
+          ? false
+          : undefined,
   });
 
   const {
@@ -289,7 +293,8 @@ function UserProfileContent() {
 
   return (
     <>
-      <ScrollView contentContainerStyle={navigationContentStyle()}
+      <ScrollView
+        contentContainerStyle={navigationContentStyle()}
         style={styles.container}
         contentInsetAdjustmentBehavior="never"
       >
@@ -331,21 +336,43 @@ function UserProfileContent() {
           />
         </ScrollView>
 
-        {selectedTab === "predictions" && Boolean(Number(userId)) && <ProfilePredictions
-          isDark={isDark}
-          itemWidth={itemWidth}
-          record={predictions.record}
-              picks={predictions.picks}
-              onPick={(pick) => router.push({
+        {selectedTab === "predictions" && Boolean(Number(userId)) && (
+          <ProfilePredictions
+            isDark={isDark}
+            itemWidth={itemWidth}
+            record={predictions.record}
+            picks={predictions.picks}
+            onPick={(pick) =>
+              router.push({
                 pathname: "/game/[sport]/[game]",
-                params: { sport: pick.sport, game: pick.gameId, league: pick.league, date: pick.startsAt },
-              })}
-          loading={predictions.loading}
-          error={predictions.error}
-          onRetry={predictions.refresh}
-          onPredictions={() => router.push({ pathname: "/fan-prediction-picks", params: { userId: String(Number(userId)) } })}
-          onAnalysis={isCurrentUser ? () => router.push({ pathname: "/fan-prediction-rankings", params: { tab: "Analysis" } }) : undefined}
-        />}
+                params: {
+                  sport: pick.sport,
+                  game: pick.gameId,
+                  league: pick.league,
+                  date: pick.startsAt,
+                },
+              })
+            }
+            loading={predictions.loading}
+            error={predictions.error}
+            onRetry={predictions.refresh}
+            onPredictions={() =>
+              router.push({
+                pathname: "/fan-prediction-picks",
+                params: { userId: String(Number(userId)) },
+              })
+            }
+            onAnalysis={
+              isCurrentUser
+                ? () =>
+                    router.push({
+                      pathname: "/fan-prediction-rankings",
+                      params: { tab: "Analysis" },
+                    })
+                : undefined
+            }
+          />
+        )}
 
         <View
           style={[

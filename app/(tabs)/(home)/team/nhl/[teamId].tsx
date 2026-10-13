@@ -25,7 +25,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number(teamIdStr);
   const team = getNHLTeam(teamIdNum);
   const teamLogo = getNHLTeamLogo(teamIdNum, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const currentSeason = getNHLSeason();
@@ -42,14 +42,7 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
-  const {
-    runRefresh,
-    selectedTab,
-    hasVisitedTab,
-    refreshing,
-    isDark,
-  } = screen;
-
+  const { runRefresh, selectedTab, hasVisitedTab, refreshing, isDark } = screen;
 
   const {
     articles,
@@ -98,10 +91,7 @@ export default function TeamDetailScreen() {
     });
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       <View key="schedule" style={styles.contentArea}>
         <View style={styles.monthSelector}>
           <MonthSelector
@@ -153,8 +143,12 @@ export default function TeamDetailScreen() {
       </View>
 
       <View key="stats" style={globalStyles(isDark).emptyContainer}>
-        <Text style={globalStyles(isDark).emptyTitle}>Team stats unavailable</Text>
-        <Text style={globalStyles(isDark).emptySubText}>Stats are not available for this team yet.</Text>
+        <Text style={globalStyles(isDark).emptyTitle}>
+          Team stats unavailable
+        </Text>
+        <Text style={globalStyles(isDark).emptySubText}>
+          Stats are not available for this team yet.
+        </Text>
       </View>
 
       <View key="standings" style={styles.contentArea}>

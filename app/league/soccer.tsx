@@ -12,6 +12,7 @@ import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
+import { StandingsList } from "../../components/League/Standings/StandingsList";
 import ForumFeed from "../../components/Forum/ForumFeed";
 
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
@@ -61,6 +62,8 @@ export default function SoccerLeagueScreen() {
     syncPageScrollProgress(index);
     setSelectedTab(indexToTab(index));
   };
+
+  const [standingsYears, setStandingsYears] = useState<Record<string, string>>({});
 
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -183,7 +186,19 @@ export default function SoccerLeagueScreen() {
             ) : null}
           </View>
 
-          <View key="standings" />
+          <View key="standings" style={styles.contentArea}>
+            {hasVisitedTab("standings") ? (
+              <StandingsList
+                key={league}
+                league={league}
+                soccer
+                year={standingsYears[league]}
+                onYearChange={(year) =>
+                  setStandingsYears((years) => ({ ...years, [league]: year }))
+                }
+              />
+            ) : null}
+          </View>
 
           <View key="forum">
             {hasVisitedTab("forum") ? <ForumFeed league={league} /> : null}

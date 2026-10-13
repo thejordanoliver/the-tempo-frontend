@@ -5,7 +5,6 @@ import {
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
 import { FlatList, View } from "react-native";
-
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import { FavoritesSelectorStyles } from "./FavoriteTeamsSelector";
 import SelectionCard from "./SelectionCard";
@@ -102,7 +101,7 @@ export default function FavoriteSportsSelector({
             league: item.id,
             name: item.label,
             fullName: item.label,
-            color: item.color,
+            primaryColor: item.color,
           }}
           logo={logo}
           isSelected={isSelected}

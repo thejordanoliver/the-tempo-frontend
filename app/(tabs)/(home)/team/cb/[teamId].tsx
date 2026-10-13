@@ -22,7 +22,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number(teamIdStr);
   const team = getCBTeam(teamIdNum);
   const teamLogo = getCBTeamLogo(teamIdNum, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const screen = useTeamDetailScreen({
     tabLeague: league,
     header: {
@@ -36,7 +36,6 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
-
 
   const {
     articles,
@@ -74,10 +73,7 @@ export default function TeamDetailScreen() {
     });
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector

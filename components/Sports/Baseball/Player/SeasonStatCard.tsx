@@ -216,7 +216,7 @@ export default function SeasonStatCard({
   const stats = getAllStats(season);
 
   if (error) {
-    return <Text style={global.errorText}>Failed to load stats</Text>;
+    return <Text style={global.errorText}>Couldn’t load stats</Text>;
   }
 
   if (!season || !hasAnyStats(stats)) {

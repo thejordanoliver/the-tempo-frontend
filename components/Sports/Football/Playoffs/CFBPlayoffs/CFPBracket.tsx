@@ -46,7 +46,7 @@ export function CFPBracket({
     return (
       <View style={global.emptyContainer}>
         <Text style={global.emptyText}>
-          No College Football Playoff games available
+          No playoff games available
         </Text>
       </View>
     );

@@ -227,11 +227,13 @@ export default function NotificationsCenter() {
                   color={isDark ? Colors.lightGray : Colors.darkGray}
                 />
 
-                <Text style={styles.emptyTitle}>No notifications yet</Text>
+                <Text style={styles.emptyTitle}>
+                  {error ? "Notifications unavailable" : "No notifications yet"}
+                </Text>
                 <Text style={styles.emptyText}>
                   {error
-                    ? "Notifications could not be loaded. Pull down to try again."
-                    : "New messages, likes, comments, and other activity will appear here."}
+                    ? "Couldn’t load notifications. Pull down to retry."
+                    : "Your activity will appear here."}
                 </Text>
               </>
             </View>

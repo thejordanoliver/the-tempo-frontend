@@ -4,7 +4,7 @@ import {
   BADGE_TIER_COLORS,
 } from "@/constants/badges";
 import { Colors } from "@/constants/styles";
-import { BadgeCardStyles } from "@/styles/ProfileStyles/BadgePreviewSectionStyles";
+import { BadgeCardStyles } from "@/styles/ProfileStyles/ProfileBadgeSectionStyles";
 import { BadgeProgress } from "@/types/badges";
 import { capitalizeBadgeTier, formatBadgeNumber } from "@/utils/badgeUtils";
 import { Text, View } from "react-native";

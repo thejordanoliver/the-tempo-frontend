@@ -23,7 +23,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number(teamIdStr);
   const team = getUFLTeam(teamIdNum);
   const teamLogo = getUFLTeamLogo(teamIdNum, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const screen = useTeamDetailScreen({
     tabLeague: league,
@@ -37,16 +37,10 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
-  const {
-    selectedTab,
-    hasVisitedTab,
-    refreshing,
-    isDark,
-  } = screen;
+  const { selectedTab, hasVisitedTab, refreshing, isDark } = screen;
   const [standingsYear, setStandingsYear] = useState(
     getFootballSeason(undefined, league).toString(),
   );
-
 
   const {
     articles,
@@ -87,10 +81,7 @@ export default function TeamDetailScreen() {
   };
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
         <GamesList

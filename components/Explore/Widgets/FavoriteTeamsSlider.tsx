@@ -25,7 +25,7 @@ export type FavoriteTeamSlide = {
   name: string;
   fullName?: string;
   logo?: ImageSourcePropType;
-  color?: string;
+  primaryColor?: string;
   secondaryColor?: string;
   code?: string;
 };
@@ -61,6 +61,7 @@ export default function FavoriteTeamsSlider({
 
   const renderSlide = useCallback(
     (item: FavoriteTeamSlide) => {
+
       return (
         <Pressable
           disabled={disabled}
@@ -84,7 +85,7 @@ export default function FavoriteTeamsSlider({
         >
           <LinearGradient
             colors={[
-              item.color ?? Colors.midTone,
+              item.primaryColor ?? Colors.midTone,
               isDark ? Colors.black : Colors.white,
             ]}
             locations={[0, 0.8]}

@@ -54,7 +54,7 @@ export function MLBPlayoffBracket({
         }
       >
         <Text style={styles.empty}>
-          {error ?? "No MLB playoff bracket available."}
+          {error ?? "No MLB playoff bracket available"}
         </Text>
       </ScrollView>
     );

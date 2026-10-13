@@ -105,7 +105,7 @@ export default function BasketballStackedGameCard({
       : isMCBB
         ? getWCBBRivalry(homeId, awayId)?.name
         : null;
-  
+
     const headline = game?.headline || rivalry || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||

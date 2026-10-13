@@ -1,5 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
@@ -32,12 +30,14 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -131,47 +131,51 @@ export default function GameDetailsScreen(
   const awayCode = awayTeam.code ?? "";
   const homeCode = homeTeam.code ?? "";
   const awayColor = useMemo(
-    () => awayTeam.color ?? Colors.midTone,
-    [awayTeam.color],
+    () => awayTeam.primaryColor ?? Colors.midTone,
+    [awayTeam.primaryColor],
   );
   const homeColor = useMemo(
-    () => homeTeam.color ?? Colors.midTone,
-    [homeTeam.color],
+    () => homeTeam.primaryColor ?? Colors.midTone,
+    [homeTeam.primaryColor],
   );
 
   const isHomeNational = useMemo(
     () => homeTeam.isNational,
     [homeTeam.isNational],
   );
-  const isHomeAllStar = useMemo(
-    () => homeTeam.isAllStar,
-    [homeTeam.isAllStar],
-  );
+  const isHomeAllStar = useMemo(() => homeTeam.isAllStar, [homeTeam.isAllStar]);
 
   const isAwayNational = useMemo(
     () => awayTeam.isNational,
     [awayTeam.isNational],
   );
-  const isAwayAllStar = useMemo(
-    () => awayTeam.isAllStar,
-    [awayTeam.isAllStar],
-  );
+  const isAwayAllStar = useMemo(() => awayTeam.isAllStar, [awayTeam.isAllStar]);
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getSOCCTeamLogo(homeId, isDark);
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getSOCCTeamLogo(awayId, isDark);
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getSOCCTeamLogo(homeId, isDark);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getSOCCTeamLogo(awayId, isDark);
 
-  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getSOCCTeamLogo(homeId, true);
-  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getSOCCTeamLogo(awayId, true);
+  const homeHeaderLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getSOCCTeamLogo(homeId, true);
+  const awayHeaderLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getSOCCTeamLogo(awayId, true);
 
-  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
+  const {
+    votes: liveVotes,
+    castVote: castLiveVote,
+    scoring,
+    scoringError,
+    retryScoring,
+  } = useLiveVotes(gameId, {
     sport: "soccer",
     league: LEAGUE,
     state: score?.status?.state ?? undefined,
@@ -213,8 +217,8 @@ export default function GameDetailsScreen(
   const highlights = details?.highlights ?? [];
   const shotMap = score?.shotMap ?? [];
   const keyEvents = score?.keyEvents ?? [];
-  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const neutralSite = details?.neutralSite;
   const venue = details?.venueInfo;
   const { weather } = useWeather({
@@ -227,14 +231,18 @@ export default function GameDetailsScreen(
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address.formatted ?? (formatVenueAddress(venue?.address) || baseVenueAddress);
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
   const venueAttendance = details?.attendance ?? null;
   const venueCity = venue?.address.city ?? baseVenue?.address?.city;
   const venueRegion =
     venue?.address.state ??
-    venue?.address.country ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
@@ -471,7 +479,11 @@ export default function GameDetailsScreen(
 
       {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
-          context={{ sport: "soccer", league: LEAGUE, date: gameDateObj?.toISOString() }}
+          context={{
+            sport: "soccer",
+            league: LEAGUE,
+            date: gameDateObj?.toISOString(),
+          }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}

@@ -21,7 +21,22 @@ export function basketballSummaryModel(input: readonly BasketballPlay[], league:
   const halves = league.toLowerCase() === "mcbb";
   const labels = halves ? ["1st Half", "2nd Half"] : ["1st", "2nd", "3rd", "4th"];
   const sorted = input.filter(play => Number.isInteger(Number(play.period?.number)) && Number(play.period?.number) > 0)
-    .sort((a, b) => Number(a.sequenceNumber ?? 0) - Number(b.sequenceNumber ?? 0)).reverse();
+    .map((play, index) => ({ play, index }))
+    .sort((a, b) => {
+      const period = Number(b.play.period.number) - Number(a.play.period.number);
+      if (period) return period;
+      const sequence = Number(b.play.sequenceNumber) - Number(a.play.sequenceNumber);
+      if (Number.isFinite(sequence) && sequence !== 0) return sequence;
+      const seconds = (clock: string) => {
+        const [minutes, seconds] = clock.split(":").map(Number);
+        return Number.isFinite(minutes) && Number.isFinite(seconds)
+          ? minutes * 60 + seconds
+          : NaN;
+      };
+      const clock = seconds(a.play.clock?.displayValue ?? "") - seconds(b.play.clock?.displayValue ?? "");
+      return Number.isFinite(clock) && clock !== 0 ? clock : b.index - a.index;
+    })
+    .map(({ play }) => play);
   const periods = getGameSummaryPeriods(sorted, labels);
   return { periods, plays: sorted.map(play => row(play,
     periods.find(tab => tab.number === Number(play.period.number))?.label ?? "–",

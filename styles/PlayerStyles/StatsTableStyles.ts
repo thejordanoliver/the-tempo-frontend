@@ -41,6 +41,7 @@ export const statsTableStyles = (isDark: boolean) => {
       alignItems: "center",
       flexWrap: "wrap",
       gap: 8,
+      
     },
 
     filterDropdown: {

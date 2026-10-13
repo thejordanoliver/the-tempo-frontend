@@ -17,12 +17,112 @@ export type Team = {
   owner?: string;
   logo: any;
   logoLight?: any;
-  color: string | null;
+  primaryColor: string | null;
   secondaryColor: string | null;
   established: number;
   isAllStar: boolean;
   isNational: boolean;
   isActive: boolean;
+};
+
+export type TeamVenue = {
+  id: number;
+  city: string | null;
+  guid: string | null;
+  name: string;
+  slug: string | null;
+  grass: boolean | null;
+  image: string | null;
+  sport: string | null;
+  state: string | null;
+  indoor: boolean | null;
+  address: string | null;
+  apiRef: string | null;
+  country: string | null;
+  capacity: number | null;
+  latitude: number | null;
+  zipCode: string | null;
+  longitude: number | null;
+  venueKey: string | null;
+  createdAt: string | null;
+  leagueKey: string | null;
+  sourceRef: string | null;
+  updatedAt: string | null;
+  geocodedAt: string | null;
+  leagueSlug: string | null;
+  sourceType: string | null;
+  sourceTeamId: number | null;
+  geocodingQuery: string | null;
+  sourceImageUrl: string | null;
+  geocodingProvider: string | null;
+  geocodingConfidence: number | null;
+  geocodingNeedsReview: boolean | null;
+};
+
+export type Conference = {
+  id: number;
+  uid: string;
+  logo: string | null;
+  name: string | null;
+  groupId: number;
+  createdAt: string | null;
+  shortName: string | null;
+  updatedAt: string | null;
+  parentGroupId: number;
+};
+
+export type Coach = {
+  id: string | number;
+  firstName: string;
+  lastName: string;
+  image: string | null;
+  role: string;
+  season: number;
+  teamId: number;
+  isActive: boolean;
+  experience: number | null;
+  record: string | null;
+  birthDate: string | null;
+};
+
+export type Championships = {
+  id: number;
+  notes: string | null;
+  league?: string | null;
+  season: number | string;
+  teamId: number;
+  teamName: string;
+  champion?: string;
+  mop?: string | null;
+
+  // Some championship records include these fields.
+  era?: string | null;
+  selector?: string | null;
+};
+
+export type TeamDetails = {
+  id: number;
+  shortName: string;
+  name: string;
+  code: string;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  location: string | null;
+  city: string | null;
+  state?: string | null;
+  established: number | null;
+  conferenceId?: number | null;
+  venueId: string | number | null;
+  venueLeagueKey: string | null;
+  venue: TeamVenue | null;
+  league: string;
+  isActive: boolean;
+  isAllStar: boolean;
+  isNational: boolean;
+  coach: Coach | null;
+  conference: Conference | null;
+  championships: Championships[];
+  [key: string]: unknown;
 };
 
 export const emptyAwayTeam = {
@@ -41,7 +141,7 @@ export const emptyAwayTeam = {
   owner: "Unknown",
   venueName: "Unknown",
   established: 0,
-  color: Colors.darkGray,
+  primaryColor: Colors.darkGray,
   secondaryColor: Colors.black,
   latitude: 0,
   longitude: 0,
@@ -67,7 +167,7 @@ export const emptyHomeTeam = {
   owner: "Unknown",
   venueName: "Unknown",
   established: 0,
-  color: Colors.lightGray,
+  primaryColor: Colors.lightGray,
   secondaryColor: Colors.black,
   latitude: 0,
   longitude: 0,

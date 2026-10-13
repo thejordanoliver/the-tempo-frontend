@@ -54,7 +54,7 @@ export default function GamesList({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const { viewMode } = usePreferences();
+  const { viewMode, viewModeReady } = usePreferences();
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
@@ -84,7 +84,7 @@ export default function GamesList({
       return <View style={styles.gridItem} />;
     }
 
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    const wrapper = (children: React.ReactNode) => (
       <LongPressGestureHandler
         key={game?.game?.id ?? game?.id}
         minDurationMs={300}
@@ -99,25 +99,19 @@ export default function GamesList({
     );
 
     if (viewMode === "list") {
-      return (
-        <Wrapper>
-          <SoccerGameCard game={game} />
-        </Wrapper>
+      return wrapper(
+        <SoccerGameCard game={game} />,
       );
     }
 
     if (viewMode === "grid") {
-      return (
-        <Wrapper>
-          <SoccerSquareGameCard game={game} />
-        </Wrapper>
+      return wrapper(
+        <SoccerSquareGameCard game={game} />,
       );
     }
 
-    return (
-      <Wrapper>
-        <SoccerStackedGameCard game={game} />
-      </Wrapper>
+    return wrapper(
+      <SoccerStackedGameCard game={game} />,
     );
   };
 
@@ -188,7 +182,10 @@ export default function GamesList({
 
   /* ----------------------------- LOADING ------------------------------ */
 
-  if (loading) {
+  // Wait for the saved layout before mounting cards in the wrong layout.
+  if (!viewModeReady) return null;
+
+  if (loading && !(refreshing && games.length > 0)) {
     const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
@@ -208,7 +205,7 @@ export default function GamesList({
         }
       >
         <Text style={global.errorText}>
-          {typeof error === "string" ? error : error.message}
+          Couldn’t load matches
         </Text>
       </ScrollView>
     );
@@ -228,7 +225,7 @@ export default function GamesList({
           keyExtractor={(item, index) =>
             (item as any)?._isPlaceholder
               ? `placeholder-${index}`
-              : `game-${item?.game?.id ?? index}`
+              : `game-${item?.game?.id ?? item?.id ?? index}`
           }
           numColumns={2}
           columnWrapperStyle={styles.gridRow}
@@ -242,18 +239,16 @@ export default function GamesList({
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
-                No matches on the pitch today...
+                No matches scheduled
               </Text>
-              <Text style={global.emptyText}>
-                More goals and matchday action are coming.
-              </Text>
+
             </View>
           }
         />
       ) : (
         <SectionList
           sections={sections as SectionListData<any, GameSection>[]}
-          keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
+          keyExtractor={(item, index) => `game-${item?.game?.id ?? item?.id ?? index}`}
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
@@ -265,10 +260,8 @@ export default function GamesList({
           scrollEnabled={scrollEnabled}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
-              <Text style={global.emptyTitle}>No matches on the pitch...</Text>
-              <Text style={global.emptyText}>
-                More goals and matchday action are coming.
-              </Text>
+              <Text style={global.emptyTitle}>No matches scheduled</Text>
+
             </View>
           }
         />

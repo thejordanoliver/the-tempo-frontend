@@ -307,7 +307,7 @@ export default function EditProfileScreen() {
 
         showAlert({
           title: "Error",
-          message: "Failed to load your cached profile data.",
+          message: "Couldn’t load your cached profile data",
         });
       }
     };

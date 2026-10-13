@@ -1,7 +1,7 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import OfferList from "@/components/League/Recruiting/OfferLists";
 import RecruitHeader from "@/components/League/Recruiting/RecruitHeader";
-import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useRecruit } from "@/hooks/RecruitHooks/useRecruit";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
@@ -31,7 +31,7 @@ export default function RecruitDetailScreen() {
   const { data: player, loading, error } = useRecruit(recruitId, league);
   const team = league === "cfb" ? getCFBTeam(teamId) : getMCBBTeam(teamId);
   const teamCode = team?.code;
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamLogo =
     league === "cfb"
       ? getCFBTeamLogo(teamId, true)

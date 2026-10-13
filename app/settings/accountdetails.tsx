@@ -108,7 +108,7 @@ export default function AccountDetailsScreen() {
     return (
       <View style={global.emptyContainer}>
         <Text style={{ color: isDark ? Colors.white : Colors.black }}>
-          Unable to load account details.
+          Couldn’t load account details
         </Text>
       </View>
     );

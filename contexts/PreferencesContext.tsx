@@ -20,6 +20,7 @@ type PreferencesContextType = ReturnType<typeof useLeagueLayoutPreference> & {
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => Promise<void>;
   viewModeLoading: boolean;
+  viewModeReady: boolean;
   viewModeSaving: boolean;
   viewModeError: string | null;
   toggleViewMode: () => void;
@@ -47,6 +48,11 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
     gameCardLayoutSaving: viewModeSaving,
     gameCardLayoutError: viewModeError,
   } = useGameCardLayoutPreference();
+  const [viewModeReady, setViewModeReady] = useState(false);
+
+  // Latch hydration once; token refreshes must not hide mounted game lists.
+  if (!viewModeLoading && !viewModeReady) setViewModeReady(true);
+
   const [colorScheme, setColorSchemeState] =
     useState<ColorSchemePreference>("system");
 
@@ -136,6 +142,7 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
       ...leaguePreference,
       viewMode,
       viewModeLoading,
+      viewModeReady,
       viewModeSaving,
       viewModeError,
       setViewMode,
@@ -155,6 +162,7 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
       toggleViewMode,
       viewMode,
       viewModeLoading,
+      viewModeReady,
       viewModeSaving,
       viewModeError,
     ],

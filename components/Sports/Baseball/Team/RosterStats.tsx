@@ -293,7 +293,7 @@ export default function RosterStats({
     if (!playerRows.length) {
       return (
         <View style={styles.center}>
-          <Text style={global.emptyText}>No player stats available.</Text>
+          <Text style={global.emptyText}>No player stats available</Text>
         </View>
       );
     }
@@ -371,7 +371,7 @@ export default function RosterStats({
     if (!teamStats) {
       return (
         <View style={styles.center}>
-          <Text style={global.emptyText}>No team stats available.</Text>
+          <Text style={global.emptyText}>No team stats available</Text>
         </View>
       );
     }
@@ -450,11 +450,11 @@ export default function RosterStats({
   }
 
   if (error) {
-    return <Text style={global.errorText}>{error.message}</Text>;
+    return <Text style={global.errorText}>Couldn’t load stats</Text>;
   }
 
   if (!playerRows.length && !teamStats) {
-    return <Text style={global.emptyText}>No player stats available.</Text>;
+    return <Text style={global.emptyText}>No player stats available</Text>;
   }
 
   return (

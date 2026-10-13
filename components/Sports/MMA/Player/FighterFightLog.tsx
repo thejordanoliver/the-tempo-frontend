@@ -48,7 +48,7 @@ export default function FighterFightLog({ data, loading, error, onRetry }: Props
   if (error) return (
     <View style={styles.container}>
       {header}
-      <Text style={global.errorText}>{error}</Text>
+      <Text style={global.errorText}>Couldn’t load fight history</Text>
       <Pressable accessibilityRole="button" onPress={onRetry}>
         <Text style={[global.text, layout.retry]}>Retry</Text>
       </Pressable>
@@ -59,7 +59,7 @@ export default function FighterFightLog({ data, loading, error, onRetry }: Props
     <View style={styles.container}>
       {header}
       {!fights.length ? (
-        <Text style={global.emptyText}>No fight history available.</Text>
+        <Text style={global.emptyText}>No fight history available</Text>
       ) : (
         <View style={styles.tableWrapper}>
           <View style={[styles.fixedSection, styles.seasonColumn]}>

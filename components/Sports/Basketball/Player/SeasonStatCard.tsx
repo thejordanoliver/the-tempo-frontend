@@ -134,7 +134,7 @@ export default function SeasonStatCard({
   if (error) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>Failed to load stats</Text>
+        <Text style={global.errorText}>Couldn’t load stats</Text>
       </View>
     );
   }

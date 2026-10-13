@@ -1,4 +1,4 @@
-import { Team } from "@/types/football/football";
+import type { StandingsTeamInfo } from "types/standings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
@@ -7,7 +7,7 @@ import { apiClient } from "utils/apiClient";
    TYPES
 ===================================================== */
 
-export type CBTeamWithGroups = Team & {
+export type CBTeamWithGroups = StandingsTeamInfo & {
   abbreviation?: string | null;
   groups?: {
     id: string;
@@ -204,8 +204,8 @@ const getErrorMessage = (err: unknown) => {
 ===================================================== */
 
 export const useCBRankings = (league: "cb" | "sb") => {
-  const CACHE_KEY = `rankings_cache_${league}`;
-  const LAST_REFRESH_KEY = `rankings_last_refresh_${league}`;
+  const CACHE_KEY = `rankings_cache_${league}_v2`;
+  const LAST_REFRESH_KEY = `rankings_last_refresh_${league}_v2`;
 
   const [rankingsResponse, setRankingsResponse] = useState<CBRankingsResponse>(
     createEmptyRankingsResponse,

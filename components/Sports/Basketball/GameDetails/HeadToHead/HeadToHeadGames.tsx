@@ -41,12 +41,12 @@ export default function HeadToHeadGames({
   const { data, loading, error } = useHeadToHeadGames(homeTeamId, awayTeamId);
 
   if (loading) return <HeadToHeadSkeleton />;
-  if (error) return <Text style={global.errorText}>Error loading games</Text>;
+  if (error) return <Text style={global.errorText}>Couldn’t load games</Text>;
 
   if (!data)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>Series Not Available</Text>
+        <Text style={global.emptyText}>Series unavailable</Text>
       </View>
     );
 

@@ -21,6 +21,17 @@ test("basketball adapter preserves newest-first ordering, zero scores, and point
   assert.equal(input[0].id, "old");
 });
 
+test("basketball orders live plays by period and clock when sequences are unavailable", () => {
+  const input = [
+    { ...play("previous-period", 1, 99) },
+    { ...play("older", 2, 0), sequenceNumber: "", clock: { displayValue: "5:00" } },
+    { ...play("latest", 2, 0), sequenceNumber: "", clock: { displayValue: "4:30" } },
+  ] as BasketballPlay[];
+  assert.deepEqual(basketballSummaryModel(input, "nba").plays.map(p => p.id),
+    ["latest", "older", "previous-period"]);
+  assert.deepEqual(input.map(p => p.id), ["previous-period", "older", "latest"]);
+});
+
 test("women's basketball uses quarters and extra periods remain independently selectable", () => {
   const model = basketballSummaryModel([play("ot", 5, 1), play("2ot", 6, 2)] as BasketballPlay[], "wcbb");
   assert.deepEqual(model.periods.map(p => p.label), ["All", "OT", "2OT"]);

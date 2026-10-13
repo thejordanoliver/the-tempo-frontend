@@ -8,8 +8,8 @@ export const EditFavoritesStyles = StyleSheet.create({
     padding: SPACING,
   },
 
-  tabs: {
-    marginBottom: SPACING,
+  pager: {
+    flex: 1,
   },
 
   selectorContainer: {},

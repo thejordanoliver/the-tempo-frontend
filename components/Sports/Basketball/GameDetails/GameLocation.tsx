@@ -157,7 +157,7 @@ export default function GameLocation({
       if (supported) {
         await Linking.openURL(url);
       } else {
-        console.warn("Maps app is not available.");
+        console.warn("Maps app is not available");
       }
     } catch (err) {
       console.error("Failed to open maps:", err);

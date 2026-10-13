@@ -28,7 +28,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number(teamIdStr);
   const team = getNFLTeam(teamIdNum);
   const teamLogo = getNFLTeamLogo(teamIdNum, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const screen = useTeamDetailScreen({
@@ -44,18 +44,11 @@ export default function TeamDetailScreen() {
     },
   });
 
-  const {
-    runRefresh,
-    selectedTab,
-    hasVisitedTab,
-    refreshing,
-    isDark,
-  } = screen;
+  const { runRefresh, selectedTab, hasVisitedTab, refreshing, isDark } = screen;
 
   const [standingsYear, setStandingsYear] = useState(
     getFootballSeason().toString(),
   );
-
 
   const {
     articles,
@@ -117,10 +110,7 @@ export default function TeamDetailScreen() {
   };
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
         <GamesList

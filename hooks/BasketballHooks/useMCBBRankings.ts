@@ -1,4 +1,4 @@
-import { Team } from "@/types/types";
+import type { StandingsTeamInfo } from "types/standings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -7,7 +7,7 @@ import { apiClient } from "utils/apiClient";
    TYPES
 ===================================================== */
 
-export type TeamWithGroups = Team & {
+export type TeamWithGroups = StandingsTeamInfo & {
   groups?: {
     id: string;
     shortName: string;
@@ -52,8 +52,8 @@ const CACHE_TTL = 6 * 60 * 60 * 1000;
 ===================================================== */
 
 export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
-  const CACHE_KEY = `mcbb_rankings_cache_${league}`;
-  const LAST_REFRESH_KEY = `mcbb_rankings_last_refresh_${league}`;
+  const CACHE_KEY = `mcbb_rankings_cache_${league}_v2`;
+  const LAST_REFRESH_KEY = `mcbb_rankings_last_refresh_${league}_v2`;
 
   const [rankings, setRankings] = useState<RankPoll[]>([]);
   const [loading, setLoading] = useState(true);

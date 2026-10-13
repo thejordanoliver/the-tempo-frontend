@@ -295,7 +295,7 @@ export default function KeyEvents({
           })}
 
           {filteredEvents.length === 0 && !loading && (
-            <Text style={global.emptyText}>No key events for this team.</Text>
+            <Text style={global.emptyText}>No key events for this team</Text>
           )}
         </View>
       </View>

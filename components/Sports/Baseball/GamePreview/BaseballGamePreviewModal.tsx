@@ -1,9 +1,8 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import useTeamDetails from "@/hooks/useTeams";
+import useTeams from "@/hooks/useTeams";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BaseballGame } from "@/types/baseball/baseball";
@@ -21,6 +20,7 @@ import { BlurView } from "expo-blur";
 import { useBaseballGameDetails } from "hooks/BaseballHooks/useBaseballGameDetails";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo } from "../GameDetails/CenterInfo";
@@ -72,22 +72,18 @@ export default function BaseballGamePreviewModal({
   const awayId = away?.id;
 
   const homeTeam =
-    (
-      isSB
+    (isSB
       ? getSBTeam(home?.id)
       : isCB
         ? getCBTeam(home?.id)
-        : getMLBTeam(home?.id)
-    ) ?? emptyHomeTeam;
+        : getMLBTeam(home?.id)) ?? emptyHomeTeam;
 
   const awayTeam =
-    (
-      isSB
+    (isSB
       ? getSBTeam(away?.id)
       : isCB
         ? getCBTeam(away?.id)
-        : getMLBTeam(away?.id)
-    ) ?? emptyAwayTeam;
+        : getMLBTeam(away?.id)) ?? emptyAwayTeam;
 
   const homeTeamId = homeTeam.id ?? 0;
   const awayTeamId = awayTeam.id ?? 0;
@@ -97,47 +93,43 @@ export default function BaseballGamePreviewModal({
   const awayName = awayTeam.name ?? "TBD";
   const homeName = homeTeam.name ?? "TBD";
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isSB
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isSB
         ? getSBTeamLogo(homeId, isDark)
         : isCB
           ? getCBTeamLogo(homeId, isDark)
-          : getMLBTeamLogo(homeTeamId, isDark)
-    );
+          : getMLBTeamLogo(homeTeamId, isDark);
 
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isSB
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isSB
         ? getSBTeamLogo(awayId, isDark)
         : isCB
           ? getCBTeamLogo(awayId, isDark)
-          : getMLBTeamLogo(awayTeamId, isDark)
-    );
-  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isSB
+          : getMLBTeamLogo(awayTeamId, isDark);
+  const homeHeaderLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isSB
         ? getSBTeamLogo(homeId, true)
         : isCB
           ? getCBTeamLogo(homeId, true)
-          : getMLBTeamLogo(homeTeamId, true)
-    );
+          : getMLBTeamLogo(homeTeamId, true);
 
-  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isSB
+  const awayHeaderLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isSB
         ? getSBTeamLogo(awayId, true)
         : isCB
           ? getCBTeamLogo(awayId, true)
-          : getMLBTeamLogo(awayTeamId, true)
-    );
+          : getMLBTeamLogo(awayTeamId, true);
 
-  const homeColor = homeTeam.color ?? Colors.midTone;
-  const awayColor = awayTeam.color ?? Colors.midTone;
+  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
+  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
 
   const styles = GamePreviewModalStyles({
     isDark: isDark,
@@ -149,8 +141,8 @@ export default function BaseballGamePreviewModal({
   const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE).games;
 
-  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
-  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
 
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
@@ -179,8 +171,8 @@ export default function BaseballGamePreviewModal({
   const dontShowDetails =
     isCanceled || isPostponed || isSuspended || isForfeited;
 
-  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
 
   const lineScore = score?.periodScores?.length
     ? {

@@ -23,7 +23,7 @@ export default function AuthorizedMessageImage({
   contentFit = "cover",
   style,
 }: Props) {
-  const [url, setUrl] = useState<string | null>(attachment.uri ?? null);
+  const [url, setUrl] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
   const [loading, setLoading] = useState(Boolean(attachment.id));
   const didRetryExpiredUrlRef = useRef(false);
@@ -34,8 +34,8 @@ export default function AuthorizedMessageImage({
       const requestId = ++loadRequestIdRef.current;
 
       if (!attachment.id) {
-        setUrl(attachment.uri ?? null);
-        setFailed(!attachment.uri);
+        setUrl(null);
+        setFailed(true);
         setLoading(false);
         return;
       }
@@ -58,7 +58,7 @@ export default function AuthorizedMessageImage({
         }
       }
     },
-    [attachment.id, attachment.uri],
+    [attachment.id],
   );
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function AuthorizedMessageImage({
     void Promise.resolve().then(() => {
       if (cancelled) return;
       didRetryExpiredUrlRef.current = false;
-      setUrl(attachment.uri ?? null);
+      setUrl(null);
       setFailed(false);
       void loadSignedUrl(false);
     });
@@ -75,7 +75,7 @@ export default function AuthorizedMessageImage({
       cancelled = true;
       loadRequestIdRef.current += 1;
     };
-  }, [attachment.id, attachment.uri, loadSignedUrl]);
+  }, [attachment.id, loadSignedUrl]);
 
   const handleImageError = useCallback(() => {
     if (attachment.id && !didRetryExpiredUrlRef.current) {

@@ -10,24 +10,26 @@ interface Props {
 }
 
 export default function CustomActivityIndicator({
-  size = 48,
-  thickness = 4,
+  size = 28,
+  thickness = 3,
 }: Props) {
   const [rotateAnim] = useState(() => new Animated.Value(0));
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const gradientStart = isDark ? Colors.white : Colors.white;
-  const gradientEnd = isDark ? "transparent" : "transparent";
+  const gradientStart = isDark ? Colors.white : Colors.black;
+  const gradientEnd = gradientStart;
 
   useEffect(() => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.timing(rotateAnim, {
         toValue: 1,
         duration: 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
-    ).start();
+    );
+    animation.start();
+    return () => animation.stop();
   }, [rotateAnim]);
 
   const spin = rotateAnim.interpolate({
@@ -39,7 +41,11 @@ export default function CustomActivityIndicator({
   const center = size / 2;
 
   return (
-    <View style={[styles.container, { width: size, height: size }]}>
+    <View
+      accessibilityLabel="Loading"
+      accessibilityState={{ busy: true }}
+      style={[styles.container, { width: size, height: size }]}
+    >
       <Animated.View style={{ transform: [{ rotate: spin }] }}>
         <Svg width={size} height={size}>
           <Defs>

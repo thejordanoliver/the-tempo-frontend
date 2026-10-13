@@ -4,7 +4,7 @@ import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import useTeamDetails from "@/hooks/useTeams";
+import useTeams from "@/hooks/useTeams";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { HockeyGame } from "@/types/hockey/hockey";
@@ -65,12 +65,14 @@ export default function HockeyGamePreviewModal({
   const homeId = home.id;
   const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
   const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getNHLTeamLogo(homeId, true);
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getNHLTeamLogo(awayId, true);
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getNHLTeamLogo(homeId, true);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getNHLTeamLogo(awayId, true);
 
   // Modal open/close
   useEffect(() => {
@@ -83,13 +85,13 @@ export default function HockeyGamePreviewModal({
   const awayName = awayTeam.name ?? "TBD";
   const homeName = homeTeam.name ?? "TBD";
 
-  const homeColor = homeTeam.color ?? Colors.midTone;
-  const awayColor = awayTeam.color ?? Colors.midTone;
+  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
+  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
-  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
-  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
   const homeCoach = homeTeamDetails?.coach;

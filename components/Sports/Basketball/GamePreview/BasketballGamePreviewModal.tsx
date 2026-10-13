@@ -8,7 +8,7 @@ import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import useTeamDetails from "@/hooks/useTeams";
+import useTeams from "@/hooks/useTeams";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BasketballGame } from "@/types/basketball/basketball";
@@ -123,8 +123,8 @@ export default function GamePreviewModal({
   const isHomeActive = homeTeam.isActive;
   const isAwayActive = awayTeam.isActive;
 
-  const homeColor = homeTeam.color ?? Colors.midTone;
-  const awayColor = awayTeam.color ?? Colors.midTone;
+  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
+  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id
@@ -248,8 +248,8 @@ export default function GamePreviewModal({
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE).games;
 
-  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
-  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
 
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;

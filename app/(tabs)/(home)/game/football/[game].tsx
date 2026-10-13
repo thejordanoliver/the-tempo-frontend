@@ -1,5 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import GameSummary from "components/Sports/Football/GameDetails/GameSummary";
 import { CustomHeader } from "@/components/CustomHeader";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
@@ -17,7 +15,7 @@ import { useNotifications } from "@/contexts/NotificationContext";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
-import useTeamDetails from "@/hooks/useTeams";
+import useTeams from "@/hooks/useTeams";
 import { FootballGameCardProps } from "@/types/football/football";
 import {
   formatPeriod,
@@ -40,6 +38,7 @@ import {
   TeamInjuries,
 } from "components/Sports/Basketball/GameDetails";
 import GameHeader from "components/Sports/Football/GameDetails/GameHeader";
+import GameSummary from "components/Sports/Football/GameDetails/GameSummary";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -51,6 +50,7 @@ import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatDate,
   formatTime,
@@ -190,60 +190,52 @@ export default function GameDetailsScreen(
   const awayId = away?.id ?? 0;
 
   const homeTeam =
-    (
-      isNFL
+    (isNFL
       ? getNFLTeam(homeId)
       : isCFB
         ? getCFBTeam(homeId)
-        : getUFLTeam(homeId)
-    ) ?? emptyHomeTeam;
+        : getUFLTeam(homeId)) ?? emptyHomeTeam;
 
   const awayTeam =
-    (
-      isNFL
+    (isNFL
       ? getNFLTeam(awayId)
       : isCFB
         ? getCFBTeam(awayId)
-        : getUFLTeam(awayId)
-    ) ?? emptyAwayTeam;
+        : getUFLTeam(awayId)) ?? emptyAwayTeam;
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isNFL
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isNFL
         ? getNFLTeamLogo(homeId, isDark)
         : isCFB
           ? getCFBTeamLogo(homeId, isDark)
-          : getUFLTeamLogo(homeId, isDark)
-    );
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isNFL
+          : getUFLTeamLogo(homeId, isDark);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isNFL
         ? getNFLTeamLogo(awayId, isDark)
         : isCFB
           ? getCFBTeamLogo(awayId, isDark)
-          : getUFLTeamLogo(awayId, isDark)
-    );
+          : getUFLTeamLogo(awayId, isDark);
 
-  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isNFL
+  const homeHeaderLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isNFL
         ? getNFLTeamLogo(homeId, true)
         : isCFB
           ? getCFBTeamLogo(homeId, true)
-          : getUFLTeamLogo(homeId, true)
-    );
-  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isNFL
+          : getUFLTeamLogo(homeId, true);
+  const awayHeaderLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isNFL
         ? getNFLTeamLogo(awayId, true)
         : isCFB
           ? getCFBTeamLogo(awayId, true)
-          : getUFLTeamLogo(awayId, true)
-    );
+          : getUFLTeamLogo(awayId, true);
 
   const homeCode = homeTeam.code ?? home?.code ?? "";
   const awayCode = awayTeam.code ?? away?.code ?? "";
@@ -251,19 +243,20 @@ export default function GameDetailsScreen(
   const awayName = awayTeam.fullName ?? away?.name ?? "";
 
   const awayColor =
-    awayTeam.color ??
+    awayTeam.primaryColor ??
     away?.primaryColor ??
     away?.secondaryColor ??
     Colors.midTone;
 
   const homeColor =
-    homeTeam.color ??
+    homeTeam.primaryColor ??
     home?.primaryColor ??
     home?.secondaryColor ??
     Colors.midTone;
 
-  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
-  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
+
   const {
     votes: liveVotes,
     castVote: castLiveVote,
@@ -353,8 +346,8 @@ export default function GameDetailsScreen(
   const awayTimeouts = score?.away?.timeouts;
   const homeRecord = score?.home.record;
   const awayRecord = score?.away.record;
-  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
 
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
@@ -431,20 +424,18 @@ export default function GameDetailsScreen(
           onToggleNotifications={
             isFinal
               ? undefined
-              : (
-      ) =>
-                      openGameNotificationSettings(
-                        "football",
-                        LEAGUE,
-                        gameId,
-                        homeId,
-                        awayId,
-                      )
-              }
-            />
-          ),
-        }
-    );
+              : () =>
+                  openGameNotificationSettings(
+                    "football",
+                    LEAGUE,
+                    gameId,
+                    homeId,
+                    awayId,
+                  )
+          }
+        />
+      ),
+    });
   }, [
     LEAGUE,
     away,

@@ -1,16 +1,8 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
+import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors } from "constants/styles";
-import {
-  getMCBBTeam,
-  getMCBBTeamLogo,
-} from "constants/teamsMCBB";
-import {
-  getCFBTeam,
-  getCFBTeamLogo,
-} from "constants/teamsCFB";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -22,6 +14,7 @@ import {
   type CFBTeamRank,
   useCFBRankings,
 } from "hooks/FootballHooks/useCFBRankings";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo, useCallback, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { collegePollWidgetStyles } from "styles/ExploreStyles/CollegePollWidgetStyles";
@@ -132,7 +125,7 @@ const CollegePollTable = memo(function CollegePollTable({
         accessibilityState={{ disabled: isEditing }}
       >
         <Ionicons name="refresh" size={22} color={Colors.midTone} />
-        <Text style={styles.stateTitle}>Unable to load poll</Text>
+        <Text style={styles.stateTitle}>Couldn’t load poll</Text>
         <Text style={styles.stateText}>Tap to try again.</Text>
       </Pressable>
     );
@@ -395,23 +388,20 @@ function createCFBRow(
   index: number,
   isDark: boolean,
 ): CollegePollRow {
-  const apiTeam = rank.team;
-  const team = apiTeam
-    ? getCFBTeam(apiTeam.id)
-    : undefined;
+  const team = rank.team;
   const teamId = team?.id;
   const teamCode = team?.code || "N/A";
-  const teamName = team?.fullName || "N/A";
-  const teamColor = team?.color || Colors.midTone;
-  const teamLogo = getCFBTeamLogo(teamId, isDark);
+  const teamName = team?.name || "N/A";
+  const teamColor = team?.primaryColor || Colors.midTone;
+  const teamLogo = getStandingsTeamLogo(team, isDark);
 
   return {
-    key: `cfb:${teamId ?? apiTeam?.id ?? index}:${rank.current}`,
+    key: `cfb:${teamId ?? index}:${rank.current}`,
     rank: rank.current,
     trend: Number(rank.trend) || 0,
     points: rank.points ?? 0,
     record: rank.recordSummary,
-    teamId: teamId,
+    teamId: teamId ?? undefined,
     teamCode: teamCode,
     teamName: teamName,
     color: teamColor,
@@ -424,24 +414,20 @@ function createMCBBRow(
   index: number,
   isDark: boolean,
 ): CollegePollRow {
-  const apiTeam = rank.team;
-  const team = apiTeam
-    ? (getMCBBTeam(apiTeam.id ?? undefined) ??
-      (apiTeam.espnId != null ? getMCBBTeam(apiTeam.espnId) : undefined))
-    : undefined;
-  const teamId = team?.id;
+  const team = rank.team;
+  const teamId = team?.id ?? 0;
   const teamCode = team?.code || "N/A";
-  const teamName = team?.fullName || "N/A";
-  const teamColor = team?.color || apiTeam?.color || Colors.midTone;
-  const teamLogo = getMCBBTeamLogo(teamId, isDark);
+  const teamName = team?.name || "N/A";
+  const teamColor = team?.primaryColor || Colors.midTone;
+  const teamLogo = getStandingsTeamLogo(team, isDark);
 
   return {
-    key: `mcbb:${teamId ?? apiTeam?.id ?? index}:${rank.current}`,
+    key: `mcbb:${teamId ?? index}:${rank.current}`,
     rank: rank.current,
     trend: Number(rank.trend) || 0,
     points: rank.points ?? 0,
     record: rank.recordSummary,
-    teamId: teamId,
+    teamId: teamId ?? undefined,
     teamCode: teamCode,
     teamName: teamName,
     color: teamColor,

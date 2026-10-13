@@ -11,7 +11,7 @@ import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import useTeamDetails from "@/hooks/useTeams";
+import useTeams from "@/hooks/useTeams";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { FootballGame } from "@/types/football/football";
@@ -76,68 +76,60 @@ export default function FootballGamePreviewModal({
   const awayId = game?.away?.id ?? 0;
 
   const homeTeam =
-    (
-      isNFL
+    (isNFL
       ? getNFLTeam(homeId)
       : isCFB
         ? getCFBTeam(homeId)
-        : getUFLTeam(homeId)
-    ) ?? emptyHomeTeam;
+        : getUFLTeam(homeId)) ?? emptyHomeTeam;
   const awayTeam =
-    (
-      isNFL
+    (isNFL
       ? getNFLTeam(awayId)
       : isCFB
         ? getCFBTeam(awayId)
-        : getUFLTeam(awayId)
-    ) ?? emptyAwayTeam;
+        : getUFLTeam(awayId)) ?? emptyAwayTeam;
 
   const awayCode = awayTeam.code ?? "TBD";
   const homeCode = homeTeam.code ?? "TBD";
   const awayName = awayTeam.name ?? "TBD";
   const homeName = homeTeam.name ?? "TBD";
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isNFL
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isNFL
         ? getNFLTeamLogo(homeId, isDark)
         : isCFB
           ? getCFBTeamLogo(homeId, isDark)
-          : getUFLTeamLogo(homeId, isDark)
-    );
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isNFL
+          : getUFLTeamLogo(homeId, isDark);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isNFL
         ? getNFLTeamLogo(awayId, isDark)
         : isCFB
           ? getCFBTeamLogo(awayId, isDark)
-          : getUFLTeamLogo(awayId, isDark)
-    );
+          : getUFLTeamLogo(awayId, isDark);
 
-  const homeHeaderLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isNFL
+  const homeHeaderLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isNFL
         ? getNFLTeamLogo(homeId, true)
         : isCFB
           ? getCFBTeamLogo(homeId, true)
-          : getUFLTeamLogo(homeId, true)
-    );
+          : getUFLTeamLogo(homeId, true);
 
-  const awayHeaderLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isNFL
+  const awayHeaderLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isNFL
         ? getNFLTeamLogo(awayId, true)
         : isCFB
           ? getCFBTeamLogo(awayId, true)
-          : getUFLTeamLogo(awayId, true)
-    );
+          : getUFLTeamLogo(awayId, true);
 
-  const homeColor = homeTeam.color ?? Colors.midTone;
-  const awayColor = awayTeam.color ?? Colors.midTone;
+  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
+  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
 
   const holidayLabel = getHolidayLabel(gameDate);
   const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
@@ -157,8 +149,8 @@ export default function FootballGamePreviewModal({
   const homeLastGames = useLastFiveGames(homeId, "football", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "football", LEAGUE).games;
 
-  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
-  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
 
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
@@ -184,8 +176,8 @@ export default function FootballGamePreviewModal({
   const awayTimeouts = score?.away?.timeouts ?? 0;
   const homeRecord = score?.home.record;
   const awayRecord = score?.away.record;
-  const homeChance = Number(details?.predictor?.homeTeam.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam.gameProjection) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
   const homeWins = homeScore > awayScore;

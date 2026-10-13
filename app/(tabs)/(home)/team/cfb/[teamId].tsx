@@ -27,7 +27,7 @@ export default function TeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
   const team = getCFBTeam(teamIdNum);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const teamLogo = getCFBTeamLogo(teamIdNum, true);

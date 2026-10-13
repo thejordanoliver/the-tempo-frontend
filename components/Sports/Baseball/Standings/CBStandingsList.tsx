@@ -1,10 +1,9 @@
+import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
 import Dropdown from "@/components/Dropdown";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { StandingsStyles } from "@/styles/LeagueStyles/StandingsStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
   type CBRankPoll,
@@ -163,7 +162,7 @@ export const CBStandingsList = ({ league }: Props) => {
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load standings</Text>
       </ScrollView>
     );
   }
@@ -208,20 +207,11 @@ export const CBStandingsList = ({ league }: Props) => {
         item.team?.id !== null && item.team?.id !== undefined
           ? String(item.team.id)
           : undefined;
-      const team = apiTeamId
-        ? league === "sb"
-          ? getSBTeam(apiTeamId)
-          : getCBTeam(apiTeamId)
-        : undefined;
-      const teamId = team?.id ?? apiTeamId;
-      const localTeamLogo = team
-        ? league === "sb"
-          ? getSBTeamLogo(team.id, isDark)
-          : getCBTeamLogo(team.id, isDark)
-        : undefined;
-      const teamLogo = localTeamLogo;
+      const team = item.team;
+      const teamId = apiTeamId;
+      const teamLogo = getStandingsTeamLogo(team, isDark);
       const teamCode =
-        item.team?.abbreviation || team?.code || item.team?.name || "N/A";
+        team?.code || item.team?.name || "N/A";
       const trendNum = parseTrend(item.trend);
       const isUp = trendNum > 0;
 
@@ -246,10 +236,9 @@ export const CBStandingsList = ({ league }: Props) => {
               style={styles.teamInfoWrapper}
               onPress={() => {
                 if (!teamId) return;
-                // TODO: Replace with the college baseball/softball team route when one exists.
                 router.push({
-                  pathname: "/team/cb/[teamId]",
-                  params: { teamId: String(teamId), league: "cb" },
+                  pathname: league === "sb" ? "/team/sb/[teamId]" : "/team/cb/[teamId]",
+                  params: { teamId: String(teamId), league },
                 });
               }}
             >
@@ -338,10 +327,7 @@ export const CBStandingsList = ({ league }: Props) => {
 
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {droppedOutTeams.map((item) => {
-            const team =
-              league === "sb"
-                ? getSBTeam(item.team?.id ?? "")
-                : getCBTeam(item.team?.id ?? 0);
+            const team = item.team;
             const teamName = team?.shortName || team?.name || "N/A";
             return (
               <Text
@@ -415,7 +401,7 @@ export const CBStandingsList = ({ league }: Props) => {
       >
         <Text style={global.emptyText}>
           {activePoll
-            ? "No rankings are available for this poll."
+            ? "No rankings are available for this poll"
             : "Rankings are not available for the selected poll."}
         </Text>
       </ScrollView>

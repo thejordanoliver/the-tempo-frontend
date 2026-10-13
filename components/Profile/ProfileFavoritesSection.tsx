@@ -33,7 +33,6 @@ import {
 } from "react-native";
 import type { Team } from "types/types";
 import { getFavoriteTeamRoute } from "utils/favoriteTeams";
-import HeadingTwo from "../Headings/HeadingTwo";
 import Subheading from "../Headings/Subheading";
 
 type Props = {
@@ -132,7 +131,7 @@ const getTeamLogo = (team: Team) => {
   }
 };
 
-export default function FavoritesSection({
+export default function ProfileFavoritesSection({
   favoriteTeams,
   favoriteSports,
   favoriteSportsLoading = false,
@@ -367,7 +366,7 @@ export default function FavoritesSection({
 
     const logo = getTeamLogo(team);
 
-    const teamBackgroundColor = team.color ?? Colors.midTone;
+    const teamBackgroundColor = team.primaryColor ?? Colors.midTone;
 
     const showLeagueBadge = ["cfb", "mcbb", "wcbb", "cb", "sb"].includes(
       league,
@@ -474,8 +473,6 @@ export default function FavoritesSection({
         }}
         currentUser={isCurrentUser}
       />
-
-      <HeadingTwo isDark={isDark}>Favorites</HeadingTwo>
 
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <SectionList

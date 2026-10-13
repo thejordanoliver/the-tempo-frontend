@@ -27,7 +27,7 @@ export default function TeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getNBATeam(teamIdNum);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const teamLogo = getNBATeamLogo(teamIdNum, true);
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
@@ -43,13 +43,7 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
-  const {
-    hasVisitedTab,
-    selectedTab,
-    refreshing,
-    isDark,
-  } = screen;
-
+  const { hasVisitedTab, selectedTab, refreshing, isDark } = screen;
 
   const {
     articles,
@@ -122,10 +116,7 @@ export default function TeamDetailScreen() {
   };
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector
           months={months}

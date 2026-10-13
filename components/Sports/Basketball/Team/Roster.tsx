@@ -38,7 +38,7 @@ export default function Roster({
   if (error)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load roster</Text>
       </View>
     );
 
@@ -61,7 +61,7 @@ export default function Roster({
       )}
       ListEmptyComponent={
         <View style={global.emptyContainer}>
-          <Text style={global.emptyTitle}>No players found.</Text>
+          <Text style={global.emptyTitle}>No players found</Text>
         </View>
       }
       refreshControl={

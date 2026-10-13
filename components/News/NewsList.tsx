@@ -43,7 +43,7 @@ export default function NewsList({
   if (error) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>Failed to load news</Text>
+        <Text style={global.errorText}>Couldn’t load news</Text>
       </View>
     );
   }
@@ -52,7 +52,7 @@ export default function NewsList({
    if (items.length === 0) {
      return (
        <View style={global.emptyContainer}>
-         <Text style={global.emptyTitle}>No news available.</Text>
+         <Text style={global.emptyTitle}>No news available</Text>
        </View>
      );
    }
@@ -79,7 +79,7 @@ export default function NewsList({
       renderItem={({ item }) => <NewsCard content={item} isDark={isDark} />}
       ListEmptyComponent={
         <View style={global.emptyContainer}>
-          <Text style={global.emptyTitle}>No news available.</Text>
+          <Text style={global.emptyTitle}>No news available</Text>
         </View>
       }
       ListFooterComponent={loadingMore ? <NewsCardSkeleton /> : null}

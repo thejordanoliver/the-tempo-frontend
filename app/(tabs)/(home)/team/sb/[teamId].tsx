@@ -21,7 +21,7 @@ export default function SoftballTeamDetailScreen() {
   const teamIdNum = Number(teamIdStr);
   const team = getSBTeam(teamIdNum);
   const teamLogo = getSBTeamLogo(teamIdNum, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const screen = useTeamDetailScreen({
     tabLeague: league,
@@ -36,7 +36,6 @@ export default function SoftballTeamDetailScreen() {
       infoEnabled: true,
     },
   });
-
 
   const {
     articles,
@@ -74,10 +73,7 @@ export default function SoftballTeamDetailScreen() {
     });
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector
           months={months}

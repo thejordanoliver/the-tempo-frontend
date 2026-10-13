@@ -1,15 +1,20 @@
-import GameSummaryPlayRow from "./GameSummaryPlayRow";
-import { filterGameSummaryPeriod } from "utils/gameSummaryPeriods";
-import type { GameSummaryModel } from "types/gameSummary";
-import { GameSummaryStyles } from "styles/GameDetailStyles/GameSummaryStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { globalStyles } from "constants/styles";
 import { useNewSummaryPlays } from "hooks/useNewSummaryPlays";
 import { memo, useMemo, useRef, useState } from "react";
-import { Image, ScrollView, Text, View, type ImageSourcePropType } from "react-native";
+import {
+  Image,
+  ScrollView,
+  Text,
+  View,
+  type ImageSourcePropType,
+} from "react-native";
+import { GameSummaryStyles } from "styles/GameDetailStyles/GameSummaryStyles";
+import type { GameSummaryModel } from "types/gameSummary";
+import { filterGameSummaryPeriod } from "utils/gameSummaryPeriods";
 import { gameTeamIdsMatch } from "utils/gameTeamIdentity";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import GameSummaryPlayRow from "./GameSummaryPlayRow";
 
 type Props = {
   model: GameSummaryModel;
@@ -25,30 +30,35 @@ type Props = {
 
 const PLAY_BATCH_SIZE = 30;
 
-function GameSummary({ model, scope, state, loading = false, isDark, homeId, awayId, homeLogo, awayLogo }: Props) {
-  const navigationContentStyle = useNavigationBarContentStyle();
+function GameSummary({
+  model,
+  scope,
+  state,
+  loading = false,
+  isDark,
+  homeId,
+  awayId,
+  homeLogo,
+  awayLogo,
+}: Props) {
   const styles = useMemo(() => GameSummaryStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
-  const [selectedPeriod, setSelectedPeriod] =
-    useState("All");
+  const [selectedPeriod, setSelectedPeriod] = useState("All");
 
   const [visibleCount, setVisibleCount] = useState(PLAY_BATCH_SIZE);
   const listRef = useRef<ScrollView>(null);
 
   const { plays: sortedPlays, periods: availablePeriods } = model;
-  const periodTabs = availablePeriods.map(tab => tab.label);
+  const periodTabs = availablePeriods.map((tab) => tab.label);
   if (!periodTabs.includes(selectedPeriod)) setSelectedPeriod("All");
   const filteredPlays = useMemo(
-    () => filterGameSummaryPeriod(sortedPlays, selectedPeriod, availablePeriods),
+    () =>
+      filterGameSummaryPeriod(sortedPlays, selectedPeriod, availablePeriods),
     [sortedPlays, selectedPeriod, availablePeriods],
   );
 
-  const enteringPlays = useNewSummaryPlays(
-    sortedPlays,
-    scope,
-    selectedPeriod,
-  );
+  const enteringPlays = useNewSummaryPlays(sortedPlays, scope, selectedPeriod);
 
   if (state === "pre" || (!loading && sortedPlays.length === 0)) return null;
 
@@ -68,11 +78,8 @@ function GameSummary({ model, scope, state, loading = false, isDark, homeId, awa
           isDark={isDark}
         />
 
-
-
         <ScrollView
           ref={listRef}
-          contentContainerStyle={navigationContentStyle({ paddingBottom: 20 })}
           style={styles.listContainer}
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled
@@ -114,9 +121,7 @@ function GameSummary({ model, scope, state, loading = false, isDark, homeId, awa
                 style={[styles.playRow, scoring && styles.scoringRow]}
               >
                 <View style={styles.timeColumn}>
-                  <Text style={styles.clockText}>
-                    {play.clock}
-                  </Text>
+                  <Text style={styles.clockText}>{play.clock}</Text>
                   <Text style={styles.periodText}>{play.periodLabel}</Text>
                 </View>
                 <View style={styles.timelineColumn}>

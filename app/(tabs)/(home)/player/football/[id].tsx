@@ -17,7 +17,8 @@ import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { usePlayerLatestGame } from "hooks/FootballHooks/usePlayerLatestGame";
+import { usePlayerClosestGame } from "hooks/LeagueHooks/usePlayerClosestGame";
+import type { FootballGame } from "types/football/football";
 import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
@@ -228,7 +229,7 @@ export default function PlayerDetailScreen() {
     return isNFL ? getNFLTeam(currentTeamId) : getCFBTeam(currentTeamId);
   }, [currentTeamId, isNFL]);
 
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamId = team?.id != null ? String(team.id) : currentTeamId;
 
   const teamLogo = useMemo(() => {
@@ -259,9 +260,9 @@ export default function PlayerDetailScreen() {
     game,
     loading: latestGameLoading,
     error: latestGameError,
-  } = usePlayerLatestGame(latestGameLog.data, canonicalLeague);
-  const gameLoading = latestGameLog.loading || latestGameLoading;
-  const gameError = latestGameLog.error || latestGameError;
+  } = usePlayerClosestGame<FootballGame>("football", canonicalLeague, teamId);
+  const gameLoading = latestGameLoading;
+  const gameError = latestGameError;
 
   /**
    * =========================================
@@ -338,7 +339,7 @@ export default function PlayerDetailScreen() {
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>
-          {seasonsError || error || "Failed to load player"}
+          {seasonsError || error || "Couldn’t load player"}
         </Text>
       </View>
     );

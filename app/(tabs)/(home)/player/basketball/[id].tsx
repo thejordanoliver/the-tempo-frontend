@@ -5,31 +5,22 @@ import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
-import {
-  getWCBBTeam,
-  getWCBBTeamLogo,
-} from "@/constants/teamsWCBB";
-import {
-  getWNBATeam,
-  getWNBATeamLogo,
-} from "@/constants/teamsWNBA";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import {
   BasketballLeague,
   usePlayerSeasons,
 } from "@/hooks/BasketballHooks/usePlayerSeasons";
-import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 import PlayerGameLog from "components/Player/PlayerGameLog";
 import { Colors, globalStyles } from "constants/styles";
-import {
-  getMCBBTeam,
-  getMCBBTeamLogo,
-} from "constants/teamsMCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { usePlayerLatestGame } from "hooks/BasketballHooks/usePlayerLatestGame";
+import { usePlayerClosestGame } from "hooks/LeagueHooks/usePlayerClosestGame";
+import type { BasketballGame } from "types/basketball/basketball";
 import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
@@ -150,18 +141,9 @@ export default function PlayerDetailScreen() {
     return getMCBBTeamLogo(logoTeamId, isDark);
   }, [currentTeamId, isDark, isNBA, isWCBB, isWNBA, team?.id]);
 
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const isActive = player?.active === true;
   const resolvedTeamId = team?.id != null ? String(team.id) : currentTeamId;
-
-  const {
-    game: teamGame,
-    loading: teamGameLoading,
-    error: teamGameError,
-  } = useTeamLatestGame(
-    canonicalLeague,
-    hasPlayerGameLog ? null : resolvedTeamId,
-  );
 
   const gameLogPlayerId = hasPlayerGameLog ? (canonicalPlayerId ?? "") : "";
   const gameLogPlayerKey = `${canonicalLeague}:${gameLogPlayerId}`;
@@ -189,15 +171,11 @@ export default function PlayerDetailScreen() {
     game: playerGame,
     loading: playerGameLoading,
     error: playerGameError,
-  } = usePlayerLatestGame(latestGameLog.data, canonicalLeague);
+  } = usePlayerClosestGame<BasketballGame>("basketball", canonicalLeague, resolvedTeamId);
 
-  const game = hasPlayerGameLog ? playerGame : teamGame;
-  const gameLoading = hasPlayerGameLog
-    ? latestGameLog.loading || playerGameLoading
-    : teamGameLoading;
-  const gameError = hasPlayerGameLog
-    ? latestGameLog.error || playerGameError
-    : teamGameError;
+  const game = playerGame;
+  const gameLoading = playerGameLoading;
+  const gameError = playerGameError;
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
@@ -225,7 +203,7 @@ export default function PlayerDetailScreen() {
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>
-          {seasonsError || error || "Failed to load player"}
+          {seasonsError || error || "Couldn’t load player"}
         </Text>
       </View>
     );

@@ -55,7 +55,6 @@ export default function Subheading({
 const SubheadingStyles = (isDark: boolean) =>
   StyleSheet.create({
     heading: {
-      marginBottom: 8,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -64,6 +63,7 @@ const SubheadingStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      marginBottom: 12,
     },
     collapsibleHeading: {
       flex: 1,

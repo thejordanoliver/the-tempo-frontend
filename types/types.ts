@@ -16,7 +16,7 @@ export type Team = {
   established?: number;
   logo: any;
   logoLight?: any;
-  color: string | null;
+  primaryColor: string | null;
   secondaryColor: string | null;
   isAllStar: boolean;
   isActive: boolean;

@@ -20,7 +20,7 @@ export default function GLeagueTeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getGLeagueTeam(teamIdNum);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamLogo = getGLeagueTeamLogo(teamIdNum, true);
   const screen = useTeamDetailScreen({
     tabLeague: league,
@@ -36,12 +36,7 @@ export default function GLeagueTeamDetailScreen() {
       infoEnabled: true,
     },
   });
-  const {
-    hasVisitedTab,
-    selectedTab,
-    refreshing,
-    isDark,
-  } = screen;
+  const { hasVisitedTab, selectedTab, refreshing, isDark } = screen;
   const {
     articles,
     loading: newsLoading,
@@ -78,10 +73,7 @@ export default function GLeagueTeamDetailScreen() {
   };
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       <View key="schedule" style={TeamDetailStyles.contentArea}>
         <MonthSelector
           months={months}

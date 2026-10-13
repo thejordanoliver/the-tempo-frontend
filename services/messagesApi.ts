@@ -175,15 +175,13 @@ const normalizeAttachment = (
   if (!raw) return null;
 
   const id = String(raw.id ?? raw.attachmentId ?? raw.attachment_id ?? "").trim();
-  const uri = raw.uri ?? raw.url ?? raw.imageUrl ?? raw.gifUrl;
   const type = raw.type;
 
-  if ((!id && !uri) || (type !== "image" && type !== "gif")) return null;
+  if (!id || (type !== "image" && type !== "gif")) return null;
 
   return {
-    ...(id ? { id } : {}),
+    id,
     type,
-    ...(uri ? { uri: String(uri) } : {}),
     mimeType: raw.mimeType ?? raw.mime_type ?? null,
     sizeBytes: raw.sizeBytes ?? raw.size_bytes ?? null,
     width: raw.width ?? null,

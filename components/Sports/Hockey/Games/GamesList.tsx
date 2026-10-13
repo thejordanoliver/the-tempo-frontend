@@ -69,7 +69,7 @@ export default function GamesList({
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-  const { viewMode } = usePreferences();
+  const { viewMode, viewModeReady } = usePreferences();
 
   const [previewGame, setPreviewGame] = useState<HockeyGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -169,7 +169,10 @@ export default function GamesList({
     [games, viewMode],
   );
 
-  if (loading) {
+  // Wait for the saved layout before mounting cards in the wrong layout.
+  if (!viewModeReady) return null;
+
+  if (loading && !(refreshing && games.length > 0)) {
     const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
@@ -188,7 +191,7 @@ export default function GamesList({
           />
         }
       >
-        <Text style={global.errorText}>{error.message}</Text>
+        <Text style={global.errorText}>Couldn’t load games</Text>
       </ScrollView>
     );
   }
@@ -226,8 +229,8 @@ export default function GamesList({
         scrollEnabled={scrollEnabled}
         ListEmptyComponent={
           <View style={global.emptyContainer}>
-            <Text style={global.emptyTitle}>The ice is quiet...</Text>
-            <Text style={global.emptyText}>The puck will drop again soon.</Text>
+            <Text style={global.emptyTitle}>No games scheduled</Text>
+
           </View>
         }
       />

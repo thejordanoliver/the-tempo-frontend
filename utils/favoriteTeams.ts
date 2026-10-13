@@ -29,7 +29,7 @@ export type FavoriteBaseTeam = {
   name: string;
   code?: string;
   logo?: ImageSourcePropType | null;
-  color?: string | null;
+  primaryColor?: string | null;
 };
 
 export function getFavoriteBaseTeam(

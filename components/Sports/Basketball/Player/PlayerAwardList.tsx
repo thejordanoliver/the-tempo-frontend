@@ -1,6 +1,6 @@
+import { PlayerAwardListStyles } from "@/styles/PlayerStyles/PlayerAwardListStyles";
 import { Ionicons } from "@expo/vector-icons";
-import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { StyleSheet, Text, View } from "react-native";
 import { Player } from "types/types";
@@ -12,7 +12,7 @@ type Props = {
 export default function PlayerAwardList(player: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = playerAwardListStyles(isDark);
+  const styles = PlayerAwardListStyles(isDark);
 
   const playerAwardsArray = player.player?.awards;
   if (!playerAwardsArray || playerAwardsArray.length === 0) return null;
@@ -48,38 +48,7 @@ export default function PlayerAwardList(player: Props) {
 
   return (
     <View>
-      <HeadingTwo isDark={isDark}>Awards</HeadingTwo>
       <View style={styles.wrapper}>{playerAwards}</View>
     </View>
   );
 }
-
-export const playerAwardListStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    wrapper: {
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      borderRadius: 8,
-      overflow: "hidden",
-    },
-    awardItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-      paddingHorizontal: 12,
-      paddingVertical: 12,
-      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    awardText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    rowAltLight: {
-      backgroundColor: Colors.light.itemBackground,
-    },
-
-    rowAltDark: {
-      backgroundColor: Colors.dark.itemBackground,
-    },
-  });

@@ -458,7 +458,7 @@ export default function ExploreWidgetDashboard({
         <Text style={dashboardStyles.placeholderTitle}>
           {games.length > 0
             ? "Some favorite games may be missing"
-            : "Unable to load widget games"}
+            : "Couldn’t load widget games"}
         </Text>
         <Text style={dashboardStyles.placeholderText}>{error}</Text>
       </TouchableOpacity>

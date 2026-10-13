@@ -1,6 +1,4 @@
 import { Team } from "@/types/team";
-
-//Logos
 import AviatorsLogo from "assets/Football/UFL_Logos/Aviators.png";
 import BattlehawksLogo from "assets/Football/UFL_Logos/Battlehawks.png";
 import DefendersLogo from "assets/Football/UFL_Logos/Defenders.png";
@@ -18,7 +16,7 @@ export const uflTeams: Team[] = [
     fullName: "Birmingham Stallions",
     shortName: "Stallions",
     code: "BHAM",
-    color: "#a32035",
+    primaryColor: "#a32035",
     secondaryColor: "#c6b784",
     logo: StallionsLogo,
     logoLight: StallionsLogo,
@@ -36,7 +34,7 @@ export const uflTeams: Team[] = [
     fullName: "Columbus Aviators",
     shortName: "Aviators",
     code: "CLB",
-    color: "#0c2340",
+    primaryColor: "#0c2340",
     secondaryColor: "#69b3e7",
     logo: AviatorsLogo,
     logoLight: AviatorsLogo,
@@ -54,7 +52,7 @@ export const uflTeams: Team[] = [
     fullName: "DC Defenders",
     shortName: "Defenders",
     code: "DC",
-    color: "#c8102e",
+    primaryColor: "#c8102e",
     secondaryColor: "#ffffff",
     logo: DefendersLogo,
     logoLight: DefendersLogo,
@@ -72,7 +70,7 @@ export const uflTeams: Team[] = [
     fullName: "Dallas Renegades",
     shortName: "Renegades",
     code: "DAL",
-    color: "#69b3e7",
+    primaryColor: "#69b3e7",
     secondaryColor: "#000000",
     logo: RenegadesLogo,
     logoLight: RenegadesLogo,
@@ -90,7 +88,7 @@ export const uflTeams: Team[] = [
     fullName: "Houston Gamblers",
     shortName: "Gamblers",
     code: "HOU",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#e4002b",
     logo: GamblersLogo,
     logoLight: GamblersLogo,
@@ -108,7 +106,7 @@ export const uflTeams: Team[] = [
     fullName: "Louisville Kings",
     shortName: "Kings",
     code: "LOU",
-    color: "#06190a",
+    primaryColor: "#06190a",
     secondaryColor: "#97d700",
     logo: KingsLogo,
     logoLight: KingsLogo,
@@ -126,7 +124,7 @@ export const uflTeams: Team[] = [
     fullName: "Orlando Storm",
     shortName: "Storm",
     code: "ORL",
-    color: "#fe5000",
+    primaryColor: "#fe5000",
     secondaryColor: "#252a36",
     logo: StormLogo,
     logoLight: StormLogo,
@@ -144,7 +142,7 @@ export const uflTeams: Team[] = [
     fullName: "St. Louis Battlehawks",
     shortName: "Battlehawks",
     code: "STL",
-    color: "#002677",
+    primaryColor: "#002677",
     secondaryColor: "#a2aaad",
     logo: BattlehawksLogo,
     logoLight: BattlehawksLogo,

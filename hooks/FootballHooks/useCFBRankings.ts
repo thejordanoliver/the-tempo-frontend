@@ -1,3 +1,4 @@
+import type { StandingsTeamInfo } from "types/standings";
 import { useCallback, useEffect, useState } from "react";
 
 import { apiClient } from "utils/apiClient";
@@ -12,22 +13,7 @@ export type CFBTeamRank = {
   trend: string;
   recordSummary: string;
 
-  team: {
-    id: number;
-    espnId: number;
-    name: string;
-    shortName: string;
-    code: string;
-    location: string;
-    conferenceId: number;
-    conference: {
-      id: number;
-      logo: string;
-      name: string;
-      groupId: number;
-      shortName: string;
-    };
-
+  team: (StandingsTeamInfo & {
     groups?: {
       id: string;
       shortName: string;
@@ -40,7 +26,7 @@ export type CFBTeamRank = {
 
       isConference: boolean;
     };
-  } | null;
+  }) | null;
 
   date: string;
   lastUpdated: string;

@@ -615,7 +615,7 @@ export default function PlayerStatTable({
       <View style={styles.container}>
         {renderHeader()}
         <Text style={global.errorText}>
-          {error || "Failed to load soccer stats"}
+          {error || "Couldn’t load soccer stats"}
         </Text>
       </View>
     );
@@ -629,7 +629,7 @@ export default function PlayerStatTable({
     Boolean(selectedTeamId || selectedCompetition) ||
     teamDropdownOptions.length > 0;
   const emptyStatsText = selectedFilterHasNoStats
-    ? "No stats for the selected team/competition/category"
+    ? "No stats for these filters"
     : "No soccer stats available";
 
   if (seasons.length === 0) {
@@ -645,7 +645,7 @@ export default function PlayerStatTable({
       <View style={styles.container}>
         {renderHeader()}
         <Text style={[global.emptyText, styles.emptyText]}>
-          No stats for the selected team/competition/category
+          No stats for these filters
         </Text>
       </View>
     );

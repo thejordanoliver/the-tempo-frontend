@@ -133,12 +133,12 @@ export const resolveMessageAccent = (value?: unknown): MessageAccent => {
 
   const team = findThemeTeam(preference.league, preference.teamId);
 
-  if (!team?.color) {
+  if (!team?.primaryColor) {
     return DEFAULT_MESSAGE_ACCENT;
   }
 
   return {
-    primary: normalizeColor(team.color, DEFAULT_MESSAGE_ACCENT.primary),
+    primary: normalizeColor(team.primaryColor, DEFAULT_MESSAGE_ACCENT.primary),
     secondary: normalizeColor(
       team.secondaryColor,
       DEFAULT_MESSAGE_ACCENT.secondary,

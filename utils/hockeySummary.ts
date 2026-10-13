@@ -7,7 +7,7 @@ function clockSeconds(clock?: string) {
   const [minutes, seconds] = (clock ?? "").split(":").map(Number);
   return Number.isFinite(minutes) && Number.isFinite(seconds)
     ? minutes * 60 + seconds
-    : 0;
+    : NaN;
 }
 
 export function sortHockeySummaryPlays(plays: readonly Play[]) {
@@ -17,10 +17,10 @@ export function sortHockeySummaryPlays(plays: readonly Play[]) {
     .sort((a, b) => {
       const period = b.play.period.number - a.play.period.number;
       if (period) return period;
-      const clock = a.seconds - b.seconds;
-      if (clock) return clock;
       const sequence = Number(b.play.sequenceNumber) - Number(a.play.sequenceNumber);
-      return Number.isFinite(sequence) && sequence !== 0 ? sequence : b.index - a.index;
+      if (Number.isFinite(sequence) && sequence !== 0) return sequence;
+      const clock = a.seconds - b.seconds;
+      return Number.isFinite(clock) && clock !== 0 ? clock : b.index - a.index;
     })
     .map(({ play }) => play);
 }

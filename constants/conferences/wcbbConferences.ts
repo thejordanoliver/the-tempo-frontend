@@ -49,6 +49,18 @@ export const wcbbConferences: Conference[] = [
     secondaryColor: "#000000",
   },
   {
+    id: 50,
+    uid: "s:40~l:42~g:50",
+    groupId: 50,
+    name: "Division I",
+    shortName: "DIV I",
+    parentGroupId: 50,
+    logo: WCBBLogo,
+    logoLight: WCBBLogo,
+    color: "#009CDE",
+    secondaryColor: "#000000",
+  },
+  {
     id: 1,
     uid: "s:40~l:41~g:3",
     groupId: 3,
@@ -451,7 +463,7 @@ export const resolveWCBBConferenceselection = (
 
   const lowerSelection = normalizedSelection.toLowerCase();
 
-  if (lowerSelection === "DIV I") {
+  if (lowerSelection === "div i") {
     return getCFBConference(50);
   }
 

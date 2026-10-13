@@ -196,7 +196,7 @@ export default function GamesList({
           />
         }
       >
-        <Text style={global.errorText}>Unable to load racing events.</Text>
+        <Text style={global.errorText}>Couldn’t load racing events</Text>
       </ScrollView>
     );
   }
@@ -235,10 +235,8 @@ export default function GamesList({
         scrollEnabled={scrollEnabled}
         ListEmptyComponent={
           <View style={global.emptyContainer}>
-            <Text style={global.emptyTitle}>No engines firing up today...</Text>
-            <Text style={global.emptyText}>
-              The next green flag is coming up.
-            </Text>
+            <Text style={global.emptyTitle}>No races scheduled</Text>
+
           </View>
         }
       />
@@ -258,10 +256,8 @@ export default function GamesList({
       scrollEnabled={scrollEnabled}
       ListEmptyComponent={
         <View style={global.emptyContainer}>
-          <Text style={global.emptyTitle}>No engines firing up today...</Text>
-          <Text style={global.emptyText}>
-            The next green flag is coming up.
-          </Text>
+          <Text style={global.emptyTitle}>No races scheduled</Text>
+
         </View>
       }
     />

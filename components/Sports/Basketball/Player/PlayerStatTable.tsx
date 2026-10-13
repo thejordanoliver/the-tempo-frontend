@@ -3,7 +3,6 @@ import { getNBATeam } from "@/constants/teams";
 import { getMCBBTeam } from "@/constants/teamsMCBB";
 import { getWNBATeam } from "@/constants/teamsWNBA";
 import Dropdown from "components/Dropdown";
-import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { globalStyles } from "constants/styles";
 import { getWCBBTeam } from "constants/teamsWCBB";
@@ -1108,8 +1107,13 @@ export default function PlayerStatTable({
   const renderHeader = () => (
     <>
       <View style={styles.statsHeader}>
-        <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
-
+        {showSeasonTypeTabs ? (
+          <PillTabs
+            tabs={SEASON_TYPE_OPTIONS}
+            selectedValue={selectedSeasonType}
+            onChange={setSelectedSeasonType}
+          />
+        ) : null}
         <View style={styles.filtersRow}>
           {showCareerViewTabs ? (
             <Dropdown
@@ -1131,14 +1135,6 @@ export default function PlayerStatTable({
           />
         </View>
       </View>
-
-      {showSeasonTypeTabs ? (
-        <PillTabs
-          tabs={SEASON_TYPE_OPTIONS}
-          selectedValue={selectedSeasonType}
-          onChange={setSelectedSeasonType}
-        />
-      ) : null}
     </>
   );
 
@@ -1155,7 +1151,7 @@ export default function PlayerStatTable({
     return (
       <View style={styles.container}>
         {renderHeader()}
-        <Text style={global.errorText}>Failed to load stats</Text>
+        <Text style={global.errorText}>Couldn’t load stats</Text>
       </View>
     );
   }

@@ -213,7 +213,7 @@ export default function AwardSchoolsTable({
           scrollEnabled={false}
           removeClippedSubviews={false}
           ListEmptyComponent={
-            <Text style={styles.muted}>No award schools found.</Text>
+            <Text style={styles.muted}>No award schools found</Text>
           }
         />
 

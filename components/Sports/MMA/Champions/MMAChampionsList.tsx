@@ -125,7 +125,7 @@ export default function MMAChampionsList() {
   if (error) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load champions</Text>
       </View>
     );
   }
@@ -133,7 +133,7 @@ export default function MMAChampionsList() {
   if (!data || champions.length === 0) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>No champions available.</Text>
+        <Text style={global.emptyText}>No champions available</Text>
       </View>
     );
   }

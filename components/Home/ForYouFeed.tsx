@@ -95,7 +95,7 @@ export default function ForYouFeed({
           size={38}
           color={isDark ? Colors.dark.lightRed : Colors.light.red}
         />
-        <Text style={global.errorText}>Failed to load your For You feed.</Text>
+        <Text style={global.errorText}>Couldn’t load feed</Text>
       </View>
     );
   }
@@ -115,8 +115,8 @@ export default function ForYouFeed({
 
         <Text style={global.emptyText}>
           {hasFavoriteLeagues
-            ? "Follow people to see their posts here. New stories from your favorite leagues will appear as they publish."
-            : "New sports stories and community posts will appear here as they publish."}
+            ? "Follow people to see their posts here."
+            : "No stories or posts yet"}
         </Text>
       </View>
     );

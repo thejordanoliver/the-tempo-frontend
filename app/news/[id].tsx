@@ -190,7 +190,7 @@ export default function ArticleScreen() {
   if (error)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>Failed to load article</Text>
+        <Text style={global.errorText}>Couldn’t load article</Text>
       </View>
     );
 

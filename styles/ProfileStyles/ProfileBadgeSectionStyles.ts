@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 const GRID_GAP = 8;
 
 /* ---------------- Badge Preview Section Styles ---------------- */
-export const BadgePreviewSectionStyles = (isDark: boolean) =>
+export const ProfileBadgeSectionStyles = (isDark: boolean) =>
   StyleSheet.create({
     grid: {
       flexDirection: "row",
@@ -46,7 +46,7 @@ export const BadgePreviewSectionStyles = (isDark: boolean) =>
 
     retryButton: {
       width: "100%",
-      
+
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
 

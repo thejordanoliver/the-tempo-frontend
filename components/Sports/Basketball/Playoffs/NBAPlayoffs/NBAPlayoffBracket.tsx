@@ -741,7 +741,7 @@ export function NBAPlayoffBracket({
   if (!bracket) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>No playoff bracket available.</Text>
+        <Text style={global.emptyText}>No playoff bracket available</Text>
         <Text style={global.emptySubText}>
           Playoff series will appear here once the postseason data is available.
         </Text>

@@ -1,13 +1,8 @@
+import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
-import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { getUFLTeam, getUFLTeamLogo } from "constants/teamsUFL";
-import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -99,7 +94,7 @@ function StandingsConference({
       ) : null}
 
       {group.rows.map(({ conference, position, team }) => {
-        const logo = getLocalTeamLogo(team, league, isDark);
+        const logo = getStandingsTeamLogo(team, isDark);
 
         return (
           <Pressable
@@ -152,51 +147,6 @@ function StandingsConference({
   );
 }
 
-function getLocalTeamLogo(
-  team: StandingsTeam,
-  league: ExploreStandingsLeague,
-  isDark: boolean,
-) {
-  switch (league) {
-    case "nba": {
-      const localTeam = getNBATeam(team.id);
-      return localTeam ? getNBATeamLogo(localTeam.id, isDark) : undefined;
-    }
-    case "wnba": {
-      const localTeam = getWNBATeam(team.id);
-      return localTeam ? getWNBATeamLogo(localTeam.id, isDark) : undefined;
-    }
-    case "nfl": {
-      const localTeam = getNFLTeam(team.id);
-      return localTeam ? getNFLTeamLogo(localTeam.id, isDark) : undefined;
-    }
-    case "ufl": {
-      const localTeam = getUFLTeam(team.id);
-      return localTeam ? getUFLTeamLogo(localTeam.id, isDark) : undefined;
-    }
-    case "mlb": {
-      const localTeam = getMLBTeam(team.id);
-      return localTeam ? getMLBTeamLogo(localTeam.id, isDark) : undefined;
-    }
-    case "nhl": {
-      const localTeam = getNHLTeam(team.id);
-      return localTeam ? getNHLTeamLogo(localTeam.id, isDark) : undefined;
-    }
-  }
-}
-
-function getLocalTeam(team: StandingsTeam, league: ExploreStandingsLeague) {
-  const lookup = {
-    nba: getNBATeam,
-    wnba: getWNBATeam,
-    nfl: getNFLTeam,
-    ufl: getUFLTeam,
-    mlb: getMLBTeam,
-    nhl: getNHLTeam,
-  };
-  return lookup[league](team.id);
-}
-
 function StandingsTable({
   height,
   isDark,
@@ -208,7 +158,7 @@ function StandingsTable({
   const router = useScopedRouter();
   const openTeam = useCallback(
     (team: StandingsTeam) => {
-      const teamId = getLocalTeam(team, league)?.id ?? team.id;
+      const teamId = team.id;
       router.push({
         pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
         params: { teamType: league, teamId: String(teamId), league },
@@ -265,7 +215,7 @@ function StandingsTable({
         accessibilityState={{ disabled: isEditing }}
       >
         <Ionicons name="refresh" size={22} color={Colors.midTone} />
-        <Text style={styles.stateTitle}>Unable to load standings</Text>
+        <Text style={styles.stateTitle}>Couldn’t load standings</Text>
         <Text style={styles.stateText} numberOfLines={2}>
           Tap to try again.
         </Text>
@@ -313,7 +263,7 @@ function StandingsTable({
             }
 
             const { team, position } = slide.row;
-            const logo = getLocalTeamLogo(team, league, isDark);
+            const logo = getStandingsTeamLogo(team, isDark);
             return (
               <Pressable
                 disabled={isEditing}
@@ -328,7 +278,7 @@ function StandingsTable({
               >
                 <LinearGradient
                   colors={[
-                    getLocalTeam(team, league)?.color || Colors.midTone,
+                    Colors.midTone,
                     isDark ? Colors.black : Colors.white,
                   ]}
                   locations={[0, 0.8]}

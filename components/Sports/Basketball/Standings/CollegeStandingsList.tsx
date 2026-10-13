@@ -1,3 +1,4 @@
+import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/MCBBStandingsList.tsx
@@ -10,14 +11,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import {
-  getMCBBTeam,
-  getMCBBTeamLogo,
-} from "constants/teamsMCBB";
-import {
-  getWCBBTeam,
-  getWCBBTeamLogo,
-} from "constants/teamsWCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo, useState } from "react";
@@ -47,12 +40,6 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
   const { isFavorite } = useFavoriteTeamsContext();
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const isWCBB = league === "wcbb";
-  const getRankedTeam = (espnId: string | number) =>
-    isWCBB ? getWCBBTeam(espnId) : getMCBBTeam(espnId ?? "");
-  const getRankedTeamLogo = (teamId?: string | number) =>
-    isWCBB
-      ? getWCBBTeamLogo(teamId, isDark)
-      : getMCBBTeamLogo(teamId ?? undefined, isDark);
 
   if (loading) {
     return <StandingsSkeleton variant="rankings" />;
@@ -67,7 +54,7 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load standings</Text>
       </ScrollView>
     );
 
@@ -89,9 +76,9 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getRankedTeam(item.team?.espnId ?? item.team?.id ?? "");
+    const team = item.team;
     const teamId = team?.id;
-    const teamLogo = getRankedTeamLogo(teamId);
+    const teamLogo = getStandingsTeamLogo(team, isDark);
     const teamcode = team?.code || "N/A";
     const trendNum = Number(item.trend);
     const isUp = trendNum > 0;
@@ -184,7 +171,7 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getRankedTeam(item.team?.espnId ?? item.team?.id ?? "");
+    const team = item.team;
     const favorited = team?.id != null ? isFavorite(league, team.id) : false;
     return (
       <View
@@ -212,7 +199,7 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
         </View>
         <View style={styles.statCell}>
           <Text style={styles.statText}>
-            {item.team?.groups?.shortName || "N/A"}
+            {item.team?.conference?.shortName || item.team?.groups?.shortName || "N/A"}
           </Text>
         </View>
       </View>
@@ -256,12 +243,9 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
 
         <View style={styles.droppedoutWrapper}>
           {droppedOutTeams.map((item, index) => {
-            const teamId = item.team?.id ?? 0;
-            const team = isWCBB ? getWCBBTeam(teamId) : getMCBBTeam(teamId);
+            const team = item.team;
             const teamName = team?.shortName || team?.name || "N/A";
-            const teamLogo = isWCBB
-              ? getWCBBTeamLogo(teamId, isDark)
-              : getMCBBTeamLogo(teamId, isDark);
+            const teamLogo = getStandingsTeamLogo(team, isDark);
             return (
               <View key={item.team?.id} style={styles.droppedoutRow}>
                 {teamLogo && (

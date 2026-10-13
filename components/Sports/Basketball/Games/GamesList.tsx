@@ -75,7 +75,7 @@ export default function GamesList({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const { viewMode } = usePreferences();
+  const { viewMode, viewModeReady } = usePreferences();
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
@@ -126,7 +126,7 @@ export default function GamesList({
       return <View style={styles.gridItem} />;
     }
 
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    const wrapper = (children: React.ReactNode) => (
       <LongPressGestureHandler
         key={game.id}
         minDurationMs={300}
@@ -141,46 +141,40 @@ export default function GamesList({
     );
 
     if (viewMode === "list") {
-      return (
-        <Wrapper>
-          <BasketballGameCard
-            game={game}
-            isSL={isSLGame(game)}
-            isMCBB={isMCBBGame(game)}
-            isWNBA={isWNBAGame(game)}
-            isWCBB={isWCBBGame(game)}
-            isGLEAGUE={isGLEAGUEGame(game)}
-          />
-        </Wrapper>
-      );
-    }
-
-    if (viewMode === "grid") {
-      return (
-        <Wrapper>
-          <BasketballSquareGameCard
-            game={game}
-            isSL={isSLGame(game)}
-            isMCBB={isMCBBGame(game)}
-            isWNBA={isWNBAGame(game)}
-            isWCBB={isWCBBGame(game)}
-            isGLEAGUE={isGLEAGUEGame(game)}
-          />
-        </Wrapper>
-      );
-    }
-
-    return (
-      <Wrapper>
-        <BasketballStackedGameCard
+      return wrapper(
+        <BasketballGameCard
           game={game}
           isSL={isSLGame(game)}
           isMCBB={isMCBBGame(game)}
           isWNBA={isWNBAGame(game)}
           isWCBB={isWCBBGame(game)}
           isGLEAGUE={isGLEAGUEGame(game)}
-        />
-      </Wrapper>
+        />,
+      );
+    }
+
+    if (viewMode === "grid") {
+      return wrapper(
+        <BasketballSquareGameCard
+          game={game}
+          isSL={isSLGame(game)}
+          isMCBB={isMCBBGame(game)}
+          isWNBA={isWNBAGame(game)}
+          isWCBB={isWCBBGame(game)}
+          isGLEAGUE={isGLEAGUEGame(game)}
+        />,
+      );
+    }
+
+    return wrapper(
+      <BasketballStackedGameCard
+        game={game}
+        isSL={isSLGame(game)}
+        isMCBB={isMCBBGame(game)}
+        isWNBA={isWNBAGame(game)}
+        isWCBB={isWCBBGame(game)}
+        isGLEAGUE={isGLEAGUEGame(game)}
+      />,
     );
   };
 
@@ -233,7 +227,10 @@ export default function GamesList({
 
   /* ----------------------------- LOADING ------------------------------ */
 
-  if (loading) {
+  // Wait for the saved layout before mounting cards in the wrong layout.
+  if (!viewModeReady) return null;
+
+  if (loading && !(refreshing && games.length > 0)) {
     const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
@@ -252,7 +249,7 @@ export default function GamesList({
           />
         }
       >
-        <Text style={global.errorText}>{error.message}</Text>
+        <Text style={global.errorText}>Couldn’t load games</Text>
       </ScrollView>
     );
 
@@ -292,18 +289,16 @@ export default function GamesList({
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
-                No games hitting the hardwood today..
+                No games scheduled
               </Text>
-              <Text style={global.emptyText}>
-                The next tipoff won’t be far away.
-              </Text>
+
             </View>
           }
         />
       ) : (
         <SectionList
           sections={sections as SectionListData<BasketballGame, GameSection>[]}
-          keyExtractor={(item, index) => `${item.id ?? "game"}-${index}`}
+          keyExtractor={(item, index) => `game-${item.id ?? index}`}
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
@@ -327,10 +322,8 @@ export default function GamesList({
           scrollEnabled={scrollEnabled}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
-              <Text style={global.emptyTitle}>The court is quiet...</Text>
-              <Text style={global.emptyText}>
-                The next tipoff won’t be far away.
-              </Text>
+              <Text style={global.emptyTitle}>No games scheduled</Text>
+
             </View>
           }
         />

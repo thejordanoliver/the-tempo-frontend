@@ -7,7 +7,7 @@ import { useNavigation } from "expo-router";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
-import useTeamDetails from "hooks/useTeams";
+import useTeams from "hooks/useTeams";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 
 type TeamHeaderConfig = {
@@ -51,7 +51,7 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
     loading: teamDetailsLoading,
     error: teamDetailsError,
     refetch: refreshTeamDetails,
-  } = useTeamDetails(detailsLeague, header.teamId);
+  } = useTeams(detailsLeague, header.teamId);
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } = useTeamTabs(tabLeague);
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
     usePagerTabScrollProgress();

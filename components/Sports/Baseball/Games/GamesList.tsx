@@ -77,7 +77,7 @@ export default function GamesList({
   teamSecondaryColor,
   error,
 }: GamesListProps) {
-  const { viewMode } = usePreferences();
+  const { viewMode, viewModeReady } = usePreferences();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
@@ -196,7 +196,10 @@ export default function GamesList({
     [viewMode, styles],
   );
 
-  if (loading) {
+  // Wait for the saved layout before mounting cards in the wrong layout.
+  if (!viewModeReady) return null;
+
+  if (loading && !(refreshing && games.length > 0)) {
     const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
@@ -215,7 +218,7 @@ export default function GamesList({
           />
         }
       >
-        <Text style={global.errorText}>{error.message}</Text>
+        <Text style={global.errorText}>Couldn’t load games</Text>
       </ScrollView>
     );
   }
@@ -253,17 +256,17 @@ export default function GamesList({
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
                 {day === "todayTomorrow"
-                  ? "No games at the ballpark today."
-                  : "The bases were empty on this date."}
+                  ? "No games scheduled"
+                  : "No games on this date"}
               </Text>
-              <Text style={global.emptyText}>More first pitches are on deck.</Text>
+
             </View>
           }
         />
       ) : (
         <SectionList
           sections={sections as SectionListData<BaseballGame, GameSection>[]}
-          keyExtractor={(item, index) => `${item.id ?? "game"}-${index}`}
+          keyExtractor={(item, index) => `game-${item.id ?? index}`}
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
@@ -287,10 +290,10 @@ export default function GamesList({
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
                 {day === "todayTomorrow"
-                  ? "No games at the ballpark today."
-                  : "The bases were empty on this date."}
+                  ? "No games scheduled"
+                  : "No games on this date"}
               </Text>
-              <Text style={global.emptyText}>More first pitches are on deck.</Text>
+
             </View>
           }
         />

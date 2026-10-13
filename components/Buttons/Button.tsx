@@ -18,8 +18,9 @@ type ButtonProps = {
   isDark: boolean;
   variant?: ButtonVariant;
   children?: ReactNode;
-  accessibilityRole?: AccessibilityRole | undefined;
-  accessibilityLabel?: string | undefined;
+  accessibilityRole?: AccessibilityRole;
+  accessibilityLabel?: string;
+  hitSlop?: number;
 };
 
 export default function Button({
@@ -31,6 +32,7 @@ export default function Button({
   children,
   accessibilityRole,
   accessibilityLabel = "Button",
+  hitSlop,
 }: ButtonProps) {
   const styles = buttonStyles(isDark, variant);
 
@@ -40,6 +42,7 @@ export default function Button({
       disabled={disabled}
       accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
+      hitSlop={hitSlop}
       style={({ pressed }) => [
         styles.button,
         {
@@ -70,9 +73,7 @@ const buttonStyles = (isDark: boolean, variant: ButtonVariant) => {
       justifyContent: "center",
       padding: 12,
       borderRadius: 12,
-
       backgroundColor: variant === "filled" ? primary : "transparent",
-
       borderWidth: variant === "outline" ? 1 : 0,
       borderColor: primary,
     },

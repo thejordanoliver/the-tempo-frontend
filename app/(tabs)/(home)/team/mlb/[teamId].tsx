@@ -29,7 +29,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number(teamIdStr);
   const team = getMLBTeam(teamIdNum);
   const teamLogo = getMLBTeamLogo(teamIdNum, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
@@ -47,14 +47,7 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
-  const {
-    runRefresh,
-    hasVisitedTab,
-    selectedTab,
-    refreshing,
-    isDark,
-  } = screen;
-
+  const { runRefresh, hasVisitedTab, selectedTab, refreshing, isDark } = screen;
 
   const {
     articles,
@@ -128,10 +121,7 @@ export default function TeamDetailScreen() {
     });
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector

@@ -324,7 +324,7 @@ export default function LastFiveGames({
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.empty}>No recent games.</Text>
+              <Text style={styles.empty}>No recent games</Text>
             </View>
           }
         />

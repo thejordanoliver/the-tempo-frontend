@@ -42,7 +42,7 @@ export default function Roster({
   if (error) {
     return (
       <View style={styles.contentContainer}>
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load roster</Text>
       </View>
     );
   }
@@ -50,7 +50,7 @@ export default function Roster({
   if (sections.length === 0) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>No players found.</Text>
+        <Text style={global.emptyTitle}>No players found</Text>
       </View>
     );
   }

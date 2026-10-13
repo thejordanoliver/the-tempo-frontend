@@ -15,7 +15,8 @@ import { Colors, globalStyles } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { usePlayerLatestGame } from "hooks/BaseballHooks/usePlayerLatestGame";
+import { usePlayerClosestGame } from "hooks/LeagueHooks/usePlayerClosestGame";
+import type { BaseballGame } from "types/baseball/baseball";
 import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
@@ -89,7 +90,7 @@ export default function PlayerDetailScreen() {
         : undefined;
   const team = currentTeamId ? getMLBTeam(currentTeamId) : undefined;
   const teamLogo = getMLBTeamLogo(currentTeamId, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
 
   const {
     data: seasons,
@@ -130,9 +131,9 @@ export default function PlayerDetailScreen() {
     game,
     loading: latestGameLoading,
     error: latestGameError,
-  } = usePlayerLatestGame(latestGameLog.data, league);
-  const gameLoading = latestGameLog.loading || latestGameLoading;
-  const gameError = latestGameLog.error || latestGameError;
+  } = usePlayerClosestGame<BaseballGame>("baseball", league, currentTeamId);
+  const gameLoading = latestGameLoading;
+  const gameError = latestGameError;
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {

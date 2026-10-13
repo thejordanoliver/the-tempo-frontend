@@ -54,7 +54,7 @@ export default function DrivesList({
     return true;
   });
 
-  if (loading && drives.length === 0) return <Text style={styles.emptyText}>Loading drives...</Text>;
+  if (loading && drives.length === 0) return <Text style={styles.emptyText}>Loading drives…</Text>;
   if (error && drives.length === 0) return <Text style={styles.emptyText}>{error}</Text>;
   if (drives.length === 0)
     return (

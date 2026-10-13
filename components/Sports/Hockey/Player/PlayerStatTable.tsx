@@ -1089,7 +1089,7 @@ export default function PlayerStatTable({ seasons, loading, error }: Props) {
     return (
       <View style={styles.container}>
         {renderHeader()}
-        <Text style={global.errorText}>Failed to load stats</Text>
+        <Text style={global.errorText}>Couldn’t load stats</Text>
       </View>
     );
   }

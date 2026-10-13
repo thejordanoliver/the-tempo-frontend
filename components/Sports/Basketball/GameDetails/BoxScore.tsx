@@ -564,7 +564,7 @@ export default function BoxScore({
     return (
       <ScrollView>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
-        <Text style={global.errorText}>Failed to load box score.</Text>
+        <Text style={global.errorText}>Couldn’t load box score</Text>
       </ScrollView>
     );
   }
@@ -583,7 +583,7 @@ export default function BoxScore({
             },
           ]}
         >
-          No box score available.
+          No box score available
         </Text>
       ) : (
         <>

@@ -92,8 +92,8 @@ export default function ScoringSummary({
           <View style={[global.emptyContainer, styles.emptyContainer]}>
             <Text style={global.emptyText}>
               {plays.length === 0
-                ? "No scoring plays available."
-                : "No scoring plays for this team."}
+                ? "No scoring plays available"
+                : "No scoring plays for this team"}
             </Text>
           </View>
         ) : (

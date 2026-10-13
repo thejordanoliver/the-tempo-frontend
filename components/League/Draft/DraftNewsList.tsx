@@ -62,7 +62,7 @@ export default function DraftNewsList({ year, league }: Props) {
   if (error)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>Error: {String(error)}</Text>
+        <Text style={global.errorText}>Couldn’t load draft news</Text>
       </View>
     );
 

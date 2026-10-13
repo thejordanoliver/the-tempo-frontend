@@ -1,4 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
@@ -12,6 +11,7 @@ import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
 import React, { useEffect, useMemo, useRef } from "react";
 import { Text, View } from "react-native";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatDate,
   formatTime,
@@ -80,32 +80,28 @@ export default function SoccerGamePreviewModal({
     () => homeTeam.isNational,
     [homeTeam.isNational],
   );
-  const isHomeAllStar = useMemo(
-    () => homeTeam.isAllStar,
-    [homeTeam.isAllStar],
-  );
+  const isHomeAllStar = useMemo(() => homeTeam.isAllStar, [homeTeam.isAllStar]);
 
   const isAwayNational = useMemo(
     () => awayTeam.isNational,
     [awayTeam.isNational],
   );
-  const isAwayAllStar = useMemo(
-    () => awayTeam.isAllStar,
-    [awayTeam.isAllStar],
-  );
+  const isAwayAllStar = useMemo(() => awayTeam.isAllStar, [awayTeam.isAllStar]);
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getSOCCTeamLogo(homeId, true);
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getSOCCTeamLogo(awayId, true);
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getSOCCTeamLogo(homeId, true);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getSOCCTeamLogo(awayId, true);
 
   const headline = game.headline || holidayLabel;
   const isChampionship = headline?.includes("Final");
 
-  const homeColor = homeTeam.color ?? Colors.midTone;
-  const awayColor = awayTeam.color ?? Colors.midTone;
+  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
+  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
 
   const styles = GamePreviewModalStyles({
     isDark: isDark,

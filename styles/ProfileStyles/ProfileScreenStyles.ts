@@ -156,8 +156,8 @@ export const profileStyles = (
       paddingHorizontal: 12,
       paddingBottom: 20,
     },
-    bookmarkContainer: {
-      marginTop: 20,
+    forumContainer: {
+      marginTop: 8,
       paddingBottom: 20,
     },
     favoritesHeader: {

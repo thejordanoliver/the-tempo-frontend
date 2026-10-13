@@ -1,17 +1,15 @@
-//Logos
 import { Team } from "@/types/team";
 import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
-
 import AbileneChristianLogo from "assets/College_Logos/AbileneChristianLogo.png";
 import AbileneChristianLogoLight from "assets/College_Logos/AbileneChristianLogoLight.png";
 import AirForceLogo from "assets/College_Logos/AirForceLogo.png";
 import AirForceLogoLight from "assets/College_Logos/AirForceLogoLight.png";
 import AkronLogo from "assets/College_Logos/AkronLogo.png";
 import AkronLogoLight from "assets/College_Logos/AkronLogoLight.png";
-import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
-import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
 import AlabamaAAndMLogo from "assets/College_Logos/AlabamaAAndMLogo.png";
 import AlabamaAAndMLogoLight from "assets/College_Logos/AlabamaAAndMLogoLight.png";
+import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
+import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
 import AlabamaStateLogo from "assets/College_Logos/AlabamaStateLogo.png";
 import AlabamaStateLogoLight from "assets/College_Logos/AlabamaStateLogoLight.png";
 import AlcornStateLogo from "assets/College_Logos/AlcornStateLogo.png";
@@ -70,10 +68,10 @@ import ButlerLogo from "assets/College_Logos/ButlerLogo.png";
 import ButlerLogoLight from "assets/College_Logos/ButlerLogoLight.png";
 import BYULogo from "assets/College_Logos/BYULogo.png";
 import BYULogoLight from "assets/College_Logos/BYULogoLight.png";
-import CaliforniaLogo from "assets/College_Logos/CaliforniaLogo.png";
-import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLogoLight.png";
 import CaliforniaBaptistLogo from "assets/College_Logos/CaliforniaBaptistLogo.png";
 import CaliforniaBaptistLogoLight from "assets/College_Logos/CaliforniaBaptistLogoLight.png";
+import CaliforniaLogo from "assets/College_Logos/CaliforniaLogo.png";
+import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLogoLight.png";
 import CalPolyLogo from "assets/College_Logos/CalPolyLogo.png";
 import CalPolyLogoLight from "assets/College_Logos/CalPolyLogoLight.png";
 import CalStateBakersfieldLogo from "assets/College_Logos/CalStateBakersfieldLogo.png";
@@ -174,12 +172,12 @@ import FAULogo from "assets/College_Logos/FAULogo.png";
 import FAULogoLight from "assets/College_Logos/FAULogoLight.png";
 import FIULogo from "assets/College_Logos/FIULogo.png";
 import FIULogoLight from "assets/College_Logos/FIULogoLight.png";
-import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
-import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
 import FloridaAAndMLogo from "assets/College_Logos/FloridaAAndMLogo.png";
 import FloridaAAndMLogoLight from "assets/College_Logos/FloridaAAndMLogoLight.png";
 import FloridaGulfCoastLogo from "assets/College_Logos/FloridaGulfCoastLogo.png";
 import FloridaGulfCoastLogoLight from "assets/College_Logos/FloridaGulfCoastLogoLight.png";
+import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
+import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
 import FloridaStateLogo from "assets/College_Logos/FloridaStateLogo.png";
 import FloridaStateLogoLight from "assets/College_Logos/FloridaStateLogoLight.png";
 import FordhamLogo from "assets/College_Logos/FordhamLogo.png";
@@ -224,10 +222,10 @@ import HofstraLogo from "assets/College_Logos/HofstraLogo.png";
 import HofstraLogoLight from "assets/College_Logos/HofstraLogoLight.png";
 import HolyCrossLogo from "assets/College_Logos/HolyCrossLogo.png";
 import HolyCrossLogoLight from "assets/College_Logos/HolyCrossLogoLight.png";
-import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
-import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
 import HoustonChristianLogo from "assets/College_Logos/HoustonChristianLogo.png";
 import HoustonChristianLogoLight from "assets/College_Logos/HoustonChristianLogoLight.png";
+import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
+import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
 import HowardLogo from "assets/College_Logos/HowardLogo.png";
 import HowardLogoLight from "assets/College_Logos/HowardLogoLight.png";
 import IdahoLogo from "assets/College_Logos/IdahoLogo.png";
@@ -260,10 +258,10 @@ import JaxStateLogo from "assets/College_Logos/JaxStateLogo.png";
 import JaxStateLogoLight from "assets/College_Logos/JaxStateLogoLight.png";
 import JMULogo from "assets/College_Logos/JMULogo.png";
 import JMULogoLight from "assets/College_Logos/JMULogoLight.png";
-import KansasLogo from "assets/College_Logos/KansasLogo.png";
-import KansasLogoLight from "assets/College_Logos/KansasLogoLight.png";
 import KansasCityLogo from "assets/College_Logos/KansasCityLogo.png";
 import KansasCityLogoLight from "assets/College_Logos/KansasCityLogoLight.png";
+import KansasLogo from "assets/College_Logos/KansasLogo.png";
+import KansasLogoLight from "assets/College_Logos/KansasLogoLight.png";
 import KansasStateLogo from "assets/College_Logos/KansasStateLogo.png";
 import KansasStateLogoLight from "assets/College_Logos/KansasStateLogoLight.png";
 import KennesawStateLogo from "assets/College_Logos/KennesawStateLogo.png";
@@ -400,12 +398,12 @@ import NorfolkStateLogo from "assets/College_Logos/NorfolkStateLogo.png";
 import NorfolkStateLogoLight from "assets/College_Logos/NorfolkStateLogoLight.png";
 import NorthAlabamaLogo from "assets/College_Logos/NorthAlabamaLogo.png";
 import NorthAlabamaLogoLight from "assets/College_Logos/NorthAlabamaLogoLight.png";
-import NorthCarolinaLogo from "assets/College_Logos/NorthCarolinaLogo.png";
-import NorthCarolinaLogoLight from "assets/College_Logos/NorthCarolinaLogoLight.png";
 import NorthCarolinaAAndTLogo from "assets/College_Logos/NorthCarolinaAAndTLogo.png";
 import NorthCarolinaAAndTLogoLight from "assets/College_Logos/NorthCarolinaAAndTLogoLight.png";
 import NorthCarolinaCentralLogo from "assets/College_Logos/NorthCarolinaCentralLogo.png";
 import NorthCarolinaCentralLogoLight from "assets/College_Logos/NorthCarolinaCentralLogoLight.png";
+import NorthCarolinaLogo from "assets/College_Logos/NorthCarolinaLogo.png";
+import NorthCarolinaLogoLight from "assets/College_Logos/NorthCarolinaLogoLight.png";
 import NorthDakotaLogo from "assets/College_Logos/NorthDakotaLogo.png";
 import NorthDakotaLogoLight from "assets/College_Logos/NorthDakotaLogoLight.png";
 import NorthDakotaStateLogo from "assets/College_Logos/NorthDakotaStateLogo.png";
@@ -472,10 +470,10 @@ import PrincetonLogo from "assets/College_Logos/PrincetonLogo.png";
 import PrincetonLogoLight from "assets/College_Logos/PrincetonLogoLight.png";
 import ProvidenceLogo from "assets/College_Logos/ProvidenceLogo.png";
 import ProvidenceLogoLight from "assets/College_Logos/ProvidenceLogoLight.png";
-import PurdueLogo from "assets/College_Logos/PurdueLogo.png";
-import PurdueLogoLight from "assets/College_Logos/PurdueLogoLight.png";
 import PurdueFortWayneLogo from "assets/College_Logos/PurdueFortWayneLogo.png";
 import PurdueFortWayneLogoLight from "assets/College_Logos/PurdueFortWayneLogoLight.png";
+import PurdueLogo from "assets/College_Logos/PurdueLogo.png";
+import PurdueLogoLight from "assets/College_Logos/PurdueLogoLight.png";
 import QueensLogo from "assets/College_Logos/QueensLogo.png";
 import QueensLogoLight from "assets/College_Logos/QueensLogoLight.png";
 import QuinnipiacLogo from "assets/College_Logos/QuinnipiacLogo.png";
@@ -548,10 +546,10 @@ import SouthDakotaLogo from "assets/College_Logos/SouthDakotaLogo.png";
 import SouthDakotaLogoLight from "assets/College_Logos/SouthDakotaLogoLight.png";
 import SouthDakotaStateLogo from "assets/College_Logos/SouthDakotaStateLogo.png";
 import SouthDakotaStateLogoLight from "assets/College_Logos/SouthDakotaStateLogoLight.png";
-import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
-import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
 import SouthernIllinoisLogo from "assets/College_Logos/SouthernIllinoisLogo.png";
 import SouthernIllinoisLogoLight from "assets/College_Logos/SouthernIllinoisLogoLight.png";
+import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
+import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
 import SouthernMissLogo from "assets/College_Logos/SouthernMissLogo.png";
 import SouthernMissLogoLight from "assets/College_Logos/SouthernMissLogoLight.png";
 import SouthernUtahLogo from "assets/College_Logos/SouthernUtahLogo.png";
@@ -586,12 +584,12 @@ import TennesseeStateLogo from "assets/College_Logos/TennesseeStateLogo.png";
 import TennesseeStateLogoLight from "assets/College_Logos/TennesseeStateLogoLight.png";
 import TennesseeTechLogo from "assets/College_Logos/TennesseeTechLogo.png";
 import TennesseeTechLogoLight from "assets/College_Logos/TennesseeTechLogoLight.png";
-import TexasLogo from "assets/College_Logos/TexasLogo.png";
-import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
-import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
-import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
 import TexasAAndMCorpusChristiLogo from "assets/College_Logos/TexasAAndMCorpusChristiLogo.png";
 import TexasAAndMCorpusChristiLogoLight from "assets/College_Logos/TexasAAndMCorpusChristiLogoLight.png";
+import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
+import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
+import TexasLogo from "assets/College_Logos/TexasLogo.png";
+import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
 import TexasSouthernLogo from "assets/College_Logos/TexasSouthernLogo.png";
 import TexasSouthernLogoLight from "assets/College_Logos/TexasSouthernLogoLight.png";
 import TexasStateLogo from "assets/College_Logos/TexasStateLogo.png";
@@ -732,7 +730,7 @@ export const cbTeams: Team[] = [
     fullName: "Arizona State Sun Devils",
     shortName: "Arizona St",
     code: "ASU",
-    color: "#8e0c3a",
+    primaryColor: "#8e0c3a",
     secondaryColor: "#ffc72c",
     logo: ArizonaStateLogo,
     logoLight: ArizonaStateLogoLight,
@@ -742,7 +740,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 60,
@@ -750,7 +748,7 @@ export const cbTeams: Team[] = [
     fullName: "Arizona Wildcats",
     shortName: "Arizona",
     code: "ARIZ",
-    color: "#0c234b",
+    primaryColor: "#0c234b",
     secondaryColor: "#ab0520",
     logo: ArizonaLogo,
     logoLight: ArizonaLogoLight,
@@ -760,7 +758,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 58,
@@ -768,7 +766,7 @@ export const cbTeams: Team[] = [
     fullName: "Arkansas Razorbacks",
     shortName: "Arkansas",
     code: "ARK",
-    color: "#a41f35",
+    primaryColor: "#a41f35",
     secondaryColor: "#ffffff",
     logo: ArkansasLogo,
     logoLight: ArkansasLogoLight,
@@ -778,7 +776,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 55,
@@ -786,7 +784,7 @@ export const cbTeams: Team[] = [
     fullName: "Auburn Tigers",
     shortName: "Auburn",
     code: "AUB",
-    color: "#002b5c",
+    primaryColor: "#002b5c",
     secondaryColor: "#f26522",
     logo: AuburnLogo,
     logoLight: AuburnLogoLight,
@@ -796,7 +794,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 56,
@@ -804,7 +802,7 @@ export const cbTeams: Team[] = [
     fullName: "Birmingham Southern Panthers",
     shortName: "Birmingham-So.",
     code: "BSC",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "",
     logo: 0,
     logoLight: 0,
@@ -814,7 +812,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 86,
@@ -822,7 +820,7 @@ export const cbTeams: Team[] = [
     fullName: "Boston College Eagles",
     shortName: "Boston College",
     code: "BC",
-    color: "#8c2232",
+    primaryColor: "#8c2232",
     secondaryColor: "#dbcca6",
     logo: BostonCollegeLogo,
     logoLight: BostonCollegeLogoLight,
@@ -832,7 +830,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 61,
@@ -840,7 +838,7 @@ export const cbTeams: Team[] = [
     fullName: "Cal Poly Mustangs",
     shortName: "Cal Poly",
     code: "CP",
-    color: "#1E4D2B",
+    primaryColor: "#1E4D2B",
     secondaryColor: "#eed897",
     logo: CalPolyLogo,
     logoLight: CalPolyLogoLight,
@@ -850,7 +848,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 65,
@@ -858,7 +856,7 @@ export const cbTeams: Team[] = [
     fullName: "California Golden Bears",
     shortName: "California",
     code: "CAL",
-    color: "#031522",
+    primaryColor: "#031522",
     secondaryColor: "#ffc423",
     logo: CaliforniaLogo,
     logoLight: CaliforniaLogoLight,
@@ -868,7 +866,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 98,
@@ -877,7 +875,7 @@ export const cbTeams: Team[] = [
     shortName: "Creighton",
     code: "CREI",
     secondaryColor: "#6cadde",
-    color: "#005ca9",
+    primaryColor: "#005ca9",
     logo: CreightonLogo,
     logoLight: CreightonLogoLight,
     established: 0,
@@ -886,7 +884,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 100,
@@ -894,7 +892,7 @@ export const cbTeams: Team[] = [
     fullName: "Dartmouth Big Green",
     shortName: "Dartmouth",
     code: "DART",
-    color: "#005730",
+    primaryColor: "#005730",
     secondaryColor: "#000000",
     logo: DartmouthLogo,
     logoLight: DartmouthLogoLight,
@@ -904,7 +902,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 93,
@@ -912,7 +910,7 @@ export const cbTeams: Team[] = [
     fullName: "Duke Blue Devils",
     shortName: "Duke",
     code: "DUKE",
-    color: "#013088",
+    primaryColor: "#013088",
     secondaryColor: "#ffffff",
     logo: DukeLogo,
     logoLight: DukeLogoLight,
@@ -922,7 +920,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 94,
@@ -930,7 +928,7 @@ export const cbTeams: Team[] = [
     fullName: "East Carolina Pirates",
     shortName: "East Carolina",
     code: "ECU",
-    color: "#4b1869",
+    primaryColor: "#4b1869",
     secondaryColor: "#f0907b",
     logo: EastCarolinaLogo,
     logoLight: EastCarolinaLogoLight,
@@ -940,7 +938,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 75,
@@ -948,7 +946,7 @@ export const cbTeams: Team[] = [
     fullName: "Florida Gators",
     shortName: "Florida",
     code: "FLA",
-    color: "#0021a5",
+    primaryColor: "#0021a5",
     secondaryColor: "#fa4616",
     logo: FloridaLogo,
     logoLight: FloridaLogoLight,
@@ -958,7 +956,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 72,
@@ -966,7 +964,7 @@ export const cbTeams: Team[] = [
     fullName: "Florida State Seminoles",
     shortName: "Florida St",
     code: "FSU",
-    color: "#782f40",
+    primaryColor: "#782f40",
     secondaryColor: "#ceb888",
     logo: FloridaStateLogo,
     logoLight: FloridaStateLogoLight,
@@ -976,7 +974,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 71,
@@ -984,7 +982,7 @@ export const cbTeams: Team[] = [
     fullName: "George Washington Revolutionaries",
     shortName: "G Washington",
     code: "GW",
-    color: "#002843",
+    primaryColor: "#002843",
     secondaryColor: "#e8d2a1",
     logo: GeorgeWashingtonLogo,
     logoLight: GeorgeWashingtonLogoLight,
@@ -994,7 +992,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 78,
@@ -1002,7 +1000,7 @@ export const cbTeams: Team[] = [
     fullName: "Georgia Bulldogs",
     shortName: "Georgia",
     code: "UGA",
-    color: "#ba0c2f",
+    primaryColor: "#ba0c2f",
     secondaryColor: "#ffffff",
     logo: GeorgiaLogo,
     logoLight: GeorgiaLogoLight,
@@ -1012,7 +1010,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 77,
@@ -1020,7 +1018,7 @@ export const cbTeams: Team[] = [
     fullName: "Georgia Tech Yellow Jackets",
     shortName: "Georgia Tech",
     code: "GT",
-    color: "#003057",
+    primaryColor: "#003057",
     secondaryColor: "#b3a369",
     logo: GeorgiaTechLogo,
     logoLight: GeorgiaTechLogoLight,
@@ -1030,7 +1028,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 70,
@@ -1038,7 +1036,7 @@ export const cbTeams: Team[] = [
     fullName: "Hartford Hawks",
     shortName: "Hartford",
     code: "HART",
-    color: "#D60008",
+    primaryColor: "#D60008",
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -1048,7 +1046,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 79,
@@ -1056,7 +1054,7 @@ export const cbTeams: Team[] = [
     fullName: "Hawai'i Rainbow Warriors",
     shortName: "Hawai'i",
     code: "HAW",
-    color: "#003420",
+    primaryColor: "#003420",
     secondaryColor: "#ffffff",
     logo: HawaiiLogo,
     logoLight: HawaiiLogoLight,
@@ -1066,7 +1064,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 73,
@@ -1074,7 +1072,7 @@ export const cbTeams: Team[] = [
     fullName: "Jacksonville State Gamecocks",
     shortName: "Jax State",
     code: "JVST",
-    color: "#b50500",
+    primaryColor: "#b50500",
     secondaryColor: "#b5b7ba",
     logo: JaxStateLogo,
     logoLight: JaxStateLogoLight,
@@ -1084,7 +1082,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 82,
@@ -1092,7 +1090,7 @@ export const cbTeams: Team[] = [
     fullName: "Kentucky Wildcats",
     shortName: "Kentucky",
     code: "UK",
-    color: "#0033a0",
+    primaryColor: "#0033a0",
     secondaryColor: "#ffffff",
     logo: KentuckyLogo,
     logoLight: KentuckyLogoLight,
@@ -1102,7 +1100,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 85,
@@ -1110,7 +1108,7 @@ export const cbTeams: Team[] = [
     fullName: "LSU Tigers",
     shortName: "LSU",
     code: "LSU",
-    color: "#461d7c",
+    primaryColor: "#461d7c",
     secondaryColor: "#fdd023",
     logo: LSULogo,
     logoLight: LSULogoLight,
@@ -1120,7 +1118,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 83,
@@ -1128,7 +1126,7 @@ export const cbTeams: Team[] = [
     fullName: "Louisville Cardinals",
     shortName: "Louisville",
     code: "LOU",
-    color: "#c9001f",
+    primaryColor: "#c9001f",
     secondaryColor: "#000000",
     logo: LouisvilleLogo,
     logoLight: LouisvilleLogoLight,
@@ -1138,7 +1136,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 87,
@@ -1146,7 +1144,7 @@ export const cbTeams: Team[] = [
     fullName: "Maryland Terrapins",
     shortName: "Maryland",
     code: "MD",
-    color: "#D5002B",
+    primaryColor: "#D5002B",
     secondaryColor: "#ffcd00",
     logo: MarylandLogo,
     logoLight: MarylandLogoLight,
@@ -1156,7 +1154,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 88,
@@ -1164,7 +1162,7 @@ export const cbTeams: Team[] = [
     fullName: "Michigan State Spartans",
     shortName: "Michigan St",
     code: "MSU",
-    color: "#18453b",
+    primaryColor: "#18453b",
     secondaryColor: "#ffffff",
     logo: MichiganStateLogo,
     logoLight: MichiganStateLogoLight,
@@ -1174,7 +1172,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 89,
@@ -1182,7 +1180,7 @@ export const cbTeams: Team[] = [
     fullName: "Michigan Wolverines",
     shortName: "Michigan",
     code: "MICH",
-    color: "#00274c",
+    primaryColor: "#00274c",
     secondaryColor: "#ffcb05",
     logo: MichiganLogo,
     logoLight: MichiganLogoLight,
@@ -1192,7 +1190,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 90,
@@ -1200,7 +1198,7 @@ export const cbTeams: Team[] = [
     fullName: "Minnesota Golden Gophers",
     shortName: "Minnesota",
     code: "MINN",
-    color: "#5e0a2f",
+    primaryColor: "#5e0a2f",
     secondaryColor: "#fab41c",
     logo: MinnesotaLogo,
     logoLight: MinnesotaLogoLight,
@@ -1210,7 +1208,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 91,
@@ -1218,7 +1216,7 @@ export const cbTeams: Team[] = [
     fullName: "Missouri Tigers",
     shortName: "Missouri",
     code: "MIZZ",
-    color: "#f1b82d",
+    primaryColor: "#f1b82d",
     secondaryColor: "#000000",
     logo: MissouriLogo,
     logoLight: MissouriLogoLight,
@@ -1228,7 +1226,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 95,
@@ -1236,7 +1234,7 @@ export const cbTeams: Team[] = [
     fullName: "NC State Wolfpack",
     shortName: "NC State",
     code: "NCST",
-    color: "#cc0000",
+    primaryColor: "#cc0000",
     secondaryColor: "#ffffff",
     logo: NCStateLogo,
     logoLight: NCStateLogoLight,
@@ -1246,7 +1244,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 99,
@@ -1254,7 +1252,7 @@ export const cbTeams: Team[] = [
     fullName: "Nebraska Cornhuskers",
     shortName: "Nebraska",
     code: "NEB",
-    color: "#d00000",
+    primaryColor: "#d00000",
     secondaryColor: "#ffffff",
     logo: NebraskaLogo,
     logoLight: NebraskaLogoLight,
@@ -1264,7 +1262,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 104,
@@ -1272,7 +1270,7 @@ export const cbTeams: Team[] = [
     fullName: "New Mexico Lobos",
     shortName: "New Mexico",
     code: "UNM",
-    color: "#891216",
+    primaryColor: "#891216",
     secondaryColor: "#000000",
     logo: NewMexicoLogo,
     logoLight: NewMexicoLogoLight,
@@ -1282,7 +1280,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 103,
@@ -1290,7 +1288,7 @@ export const cbTeams: Team[] = [
     fullName: "New Mexico State Aggies",
     shortName: "New Mexico St",
     code: "NMSU",
-    color: "#891216",
+    primaryColor: "#891216",
     secondaryColor: "#000000",
     logo: NewMexicoStateLogo,
     logoLight: NewMexicoStateLogoLight,
@@ -1300,7 +1298,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 96,
@@ -1308,7 +1306,7 @@ export const cbTeams: Team[] = [
     fullName: "North Carolina Tar Heels",
     shortName: "North Carolina",
     code: "UNC",
-    color: "#7bafd4",
+    primaryColor: "#7bafd4",
     secondaryColor: "#13294b",
     logo: NorthCarolinaLogo,
     logoLight: NorthCarolinaLogoLight,
@@ -1318,7 +1316,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 81,
@@ -1326,7 +1324,7 @@ export const cbTeams: Team[] = [
     fullName: "Notre Dame Fighting Irish",
     shortName: "Notre Dame",
     code: "ND",
-    color: "#0c2340",
+    primaryColor: "#0c2340",
     secondaryColor: "#c99700",
     logo: NotreDameLogo,
     logoLight: NotreDameLogoLight,
@@ -1336,7 +1334,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 92,
@@ -1344,7 +1342,7 @@ export const cbTeams: Team[] = [
     fullName: "Ole Miss Rebels",
     shortName: "Ole Miss",
     code: "MISS",
-    color: "#13294b",
+    primaryColor: "#13294b",
     secondaryColor: "#c8102e",
     logo: OleMissLogo,
     logoLight: OleMissLogoLight,
@@ -1354,7 +1352,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 101,
@@ -1362,7 +1360,7 @@ export const cbTeams: Team[] = [
     fullName: "Princeton Tigers",
     shortName: "Princeton",
     code: "PRIN",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#ff6000",
     logo: PrincetonLogo,
     logoLight: PrincetonLogoLight,
@@ -1372,7 +1370,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 102,
@@ -1380,7 +1378,7 @@ export const cbTeams: Team[] = [
     fullName: "Rutgers Scarlet Knights",
     shortName: "Rutgers",
     code: "RUTG",
-    color: "#d21034",
+    primaryColor: "#d21034",
     secondaryColor: "#ffffff",
     logo: RutgersLogo,
     logoLight: RutgersLogoLight,
@@ -1390,7 +1388,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 62,
@@ -1398,7 +1396,7 @@ export const cbTeams: Team[] = [
     fullName: "San Diego State Aztecs",
     shortName: "San Diego St",
     code: "SDSU",
-    color: "#c41230",
+    primaryColor: "#c41230",
     secondaryColor: "#000000",
     logo: SanDiegoStateLogo,
     logoLight: SanDiegoStateLogoLight,
@@ -1408,7 +1406,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 63,
@@ -1416,7 +1414,7 @@ export const cbTeams: Team[] = [
     fullName: "San José State Spartans",
     shortName: "San José St",
     code: "SJSU",
-    color: "#005893",
+    primaryColor: "#005893",
     secondaryColor: "#fdba31",
     logo: SanJoseStateLogo,
     logoLight: SanJoseStateLogoLight,
@@ -1426,7 +1424,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 57,
@@ -1434,7 +1432,7 @@ export const cbTeams: Team[] = [
     fullName: "South Alabama Jaguars",
     shortName: "South Alabama",
     code: "S ALA",
-    color: "#003E7E",
+    primaryColor: "#003E7E",
     secondaryColor: "#fff",
     logo: SouthAlabamaLogo,
     logoLight: SouthAlabamaLogoLight,
@@ -1444,7 +1442,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 76,
@@ -1452,7 +1450,7 @@ export const cbTeams: Team[] = [
     fullName: "South Florida Bulls",
     shortName: "South Florida",
     code: "USF",
-    color: "#004A36",
+    primaryColor: "#004A36",
     secondaryColor: "#231f20",
     logo: SouthFloridaLogo,
     logoLight: SouthFloridaLogoLight,
@@ -1462,7 +1460,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 64,
@@ -1470,7 +1468,7 @@ export const cbTeams: Team[] = [
     fullName: "Stanford Cardinal",
     shortName: "Stanford",
     code: "STAN",
-    color: "#8c1515",
+    primaryColor: "#8c1515",
     secondaryColor: "#ffffff",
     logo: StanfordLogo,
     logoLight: StanfordLogoLight,
@@ -1480,7 +1478,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 74,
@@ -1488,7 +1486,7 @@ export const cbTeams: Team[] = [
     fullName: "Stetson Hatters",
     shortName: "Stetson",
     code: "STET",
-    color: "#0a5640",
+    primaryColor: "#0a5640",
     secondaryColor: "#56854e",
     logo: StetsonLogo,
     logoLight: StetsonLogoLight,
@@ -1498,7 +1496,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 67,
@@ -1506,7 +1504,7 @@ export const cbTeams: Team[] = [
     fullName: "UC Riverside Highlanders",
     shortName: "UC Riverside",
     code: "UCRV",
-    color: "#14234F",
+    primaryColor: "#14234F",
     secondaryColor: "",
     logo: UCRiversideLogo,
     logoLight: UCRiversideLogoLight,
@@ -1516,7 +1514,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 66,
@@ -1524,7 +1522,7 @@ export const cbTeams: Team[] = [
     fullName: "UCLA Bruins",
     shortName: "UCLA",
     code: "UCLA",
-    color: "#2774ae",
+    primaryColor: "#2774ae",
     secondaryColor: "#f2a900",
     logo: UCLALogo,
     logoLight: UCLALogoLight,
@@ -1534,7 +1532,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 69,
@@ -1542,7 +1540,7 @@ export const cbTeams: Team[] = [
     fullName: "UConn Huskies",
     shortName: "UConn",
     code: "CONN",
-    color: "#0c2340",
+    primaryColor: "#0c2340",
     secondaryColor: "#f1f2f3",
     logo: UConnLogo,
     logoLight: UConnLogoLight,
@@ -1552,7 +1550,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 80,
@@ -1560,7 +1558,7 @@ export const cbTeams: Team[] = [
     fullName: "UIC Flames",
     shortName: "UIC",
     code: "UIC",
-    color: "#001e62",
+    primaryColor: "#001e62",
     secondaryColor: "#d50032",
     logo: null,
     logoLight: null,
@@ -1570,7 +1568,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 68,
@@ -1578,7 +1576,7 @@ export const cbTeams: Team[] = [
     fullName: "USC Trojans",
     shortName: "USC",
     code: "USC",
-    color: "#9e2237",
+    primaryColor: "#9e2237",
     secondaryColor: "#ffcc00",
     logo: USCLogo,
     logoLight: USCLogoLight,
@@ -1588,7 +1586,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 97,
@@ -1596,7 +1594,7 @@ export const cbTeams: Team[] = [
     fullName: "Wake Forest Demon Deacons",
     shortName: "Wake Forest",
     code: "WAKE",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#ceb888",
     logo: WakeForestLogo,
     logoLight: WakeForestLogoLight,
@@ -1606,7 +1604,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 84,
@@ -1614,7 +1612,7 @@ export const cbTeams: Team[] = [
     fullName: "Western Kentucky Hilltoppers",
     shortName: "Western KY",
     code: "WKU",
-    color: "#F32026",
+    primaryColor: "#F32026",
     secondaryColor: "#b3b5b8",
     logo: WesternKentuckyLogo,
     logoLight: WesternKentuckyLogoLight,
@@ -1624,7 +1622,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 148,
@@ -1632,7 +1630,7 @@ export const cbTeams: Team[] = [
     fullName: "Alabama Crimson Tide",
     shortName: "Alabama",
     code: "ALA",
-    color: "#9e1632",
+    primaryColor: "#9e1632",
     secondaryColor: "#ffffff",
     logo: AlabamaLogo,
     logoLight: AlabamaLogoLight,
@@ -1642,7 +1640,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 151,
@@ -1650,7 +1648,7 @@ export const cbTeams: Team[] = [
     fullName: "Army Black Knights",
     shortName: "Army",
     code: "ARMY",
-    color: "#D4BF91",
+    primaryColor: "#D4BF91",
     secondaryColor: "#B2B4B3",
     logo: ArmyLogo,
     logoLight: ArmyLogoLight,
@@ -1660,7 +1658,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 127,
@@ -1668,7 +1666,7 @@ export const cbTeams: Team[] = [
     fullName: "BYU Cougars",
     shortName: "BYU",
     code: "BYU",
-    color: "#003da5",
+    primaryColor: "#003da5",
     secondaryColor: "#ffffff",
     logo: BYULogo,
     logoLight: BYULogoLight,
@@ -1678,7 +1676,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 121,
@@ -1686,7 +1684,7 @@ export const cbTeams: Team[] = [
     fullName: "Baylor Bears",
     shortName: "Baylor",
     code: "BAY",
-    color: "#154734",
+    primaryColor: "#154734",
     secondaryColor: "#ffb81c",
     logo: BaylorLogo,
     logoLight: BaylorLogoLight,
@@ -1696,7 +1694,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 106,
@@ -1704,7 +1702,7 @@ export const cbTeams: Team[] = [
     fullName: "Bowling Green Falcons",
     shortName: "Bowling Green",
     code: "BGSU",
-    color: "#2b1000",
+    primaryColor: "#2b1000",
     secondaryColor: "#492000",
     logo: BowlingGreenLogo,
     logoLight: BowlingGreenLogoLight,
@@ -1714,7 +1712,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 116,
@@ -1722,7 +1720,7 @@ export const cbTeams: Team[] = [
     fullName: "Brown Bears",
     shortName: "Brown",
     code: "BRWN",
-    color: "#411e09",
+    primaryColor: "#411e09",
     secondaryColor: "#949300",
     logo: BrownLogo,
     logoLight: BrownLogoLight,
@@ -1732,7 +1730,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 118,
@@ -1740,7 +1738,7 @@ export const cbTeams: Team[] = [
     fullName: "Charleston Cougars",
     shortName: "Charleston",
     code: "CofC",
-    color: "#7a2531",
+    primaryColor: "#7a2531",
     secondaryColor: "#9e8959",
     logo: CharlestonLogo,
     logoLight: CharlestonLogoLight,
@@ -1750,7 +1748,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 117,
@@ -1758,7 +1756,7 @@ export const cbTeams: Team[] = [
     fullName: "Clemson Tigers",
     shortName: "Clemson",
     code: "CLEM",
-    color: "#f56600",
+    primaryColor: "#f56600",
     secondaryColor: "#522d80",
     logo: ClemsonLogo,
     logoLight: ClemsonLogoLight,
@@ -1768,7 +1766,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 146,
@@ -1776,7 +1774,7 @@ export const cbTeams: Team[] = [
     fullName: "Coastal Carolina Chanticleers",
     shortName: "Coastal",
     code: "CCU",
-    color: "#007073",
+    primaryColor: "#007073",
     secondaryColor: "#876447",
     logo: CoastalCarolinaLogo,
     logoLight: CoastalCarolinaLogoLight,
@@ -1786,7 +1784,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 149,
@@ -1794,7 +1792,7 @@ export const cbTeams: Team[] = [
     fullName: "Evansville Purple Aces",
     shortName: "Evansville",
     code: "EVAN",
-    color: "#663399",
+    primaryColor: "#663399",
     secondaryColor: "#ef6f00",
     logo: EvansvilleLogo,
     logoLight: EvansvilleLogoLight,
@@ -1804,7 +1802,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 137,
@@ -1812,7 +1810,7 @@ export const cbTeams: Team[] = [
     fullName: "Fresno State Bulldogs",
     shortName: "Fresno St",
     code: "FRES",
-    color: "#c41230",
+    primaryColor: "#c41230",
     secondaryColor: "#13284c",
     logo: FresnoStateLogo,
     logoLight: FresnoStateLogoLight,
@@ -1822,7 +1820,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 138,
@@ -1830,7 +1828,7 @@ export const cbTeams: Team[] = [
     fullName: "Georgia Southern Eagles",
     shortName: "GA Southern",
     code: "GASO",
-    color: "#003775",
+    primaryColor: "#003775",
     secondaryColor: "#f0f0f0",
     logo: GeorgiaSouthernLogo,
     logoLight: GeorgiaSouthernLogoLight,
@@ -1840,7 +1838,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 124,
@@ -1848,7 +1846,7 @@ export const cbTeams: Team[] = [
     fullName: "Houston Cougars",
     shortName: "Houston",
     code: "HOU",
-    color: "#c92a39",
+    primaryColor: "#c92a39",
     secondaryColor: "#ffffff",
     logo: HoustonLogo,
     logoLight: HoustonLogoLight,
@@ -1858,7 +1856,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 153,
@@ -1866,7 +1864,7 @@ export const cbTeams: Team[] = [
     fullName: "Illinois Fighting Illini",
     shortName: "Illinois",
     code: "ILL",
-    color: "#ff5f05",
+    primaryColor: "#ff5f05",
     secondaryColor: "#13294b",
     logo: IllinoisLogo,
     logoLight: IllinoisLogoLight,
@@ -1876,7 +1874,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 139,
@@ -1884,7 +1882,7 @@ export const cbTeams: Team[] = [
     fullName: "Jacksonville Dolphins",
     shortName: "Jacksonville",
     code: "JAX",
-    color: "#00523e",
+    primaryColor: "#00523e",
     secondaryColor: "#ffffff",
     logo: JacksonvilleLogo,
     logoLight: JacksonvilleLogoLight,
@@ -1894,7 +1892,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129,
@@ -1902,7 +1900,7 @@ export const cbTeams: Team[] = [
     fullName: "James Madison Dukes",
     shortName: "James Madison",
     code: "JMU",
-    color: "#450084",
+    primaryColor: "#450084",
     secondaryColor: "#b5a068",
     logo: JMULogo,
     logoLight: JMULogoLight,
@@ -1912,7 +1910,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 145,
@@ -1920,7 +1918,7 @@ export const cbTeams: Team[] = [
     fullName: "Lafayette Leopards",
     shortName: "Lafayette",
     code: "LAF",
-    color: "#790000",
+    primaryColor: "#790000",
     secondaryColor: "#a59474",
     logo: LafayetteLogo,
     logoLight: LafayetteLogoLight,
@@ -1930,7 +1928,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 141,
@@ -1938,7 +1936,7 @@ export const cbTeams: Team[] = [
     fullName: "Long Beach State Beach",
     shortName: "Long Beach St",
     code: "LBSU",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#f1f2f3",
     logo: LongBeachStateLogo,
     logoLight: LongBeachStateLogoLight,
@@ -1948,7 +1946,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 144,
@@ -1956,7 +1954,7 @@ export const cbTeams: Team[] = [
     fullName: "Louisiana Ragin' Cajuns",
     shortName: "Louisiana",
     code: "UL",
-    color: "#ce181e",
+    primaryColor: "#ce181e",
     secondaryColor: "#ffffff",
     logo: LouisianaLogo,
     logoLight: LouisianaLogoLight,
@@ -1966,7 +1964,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 119,
@@ -1974,7 +1972,7 @@ export const cbTeams: Team[] = [
     fullName: "Memphis Tigers",
     shortName: "Memphis",
     code: "MEM",
-    color: "#004991",
+    primaryColor: "#004991",
     secondaryColor: "#8e908f",
     logo: MemphisLogo,
     logoLight: MemphisLogoLight,
@@ -1984,7 +1982,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 107,
@@ -1992,7 +1990,7 @@ export const cbTeams: Team[] = [
     fullName: "Miami (OH) RedHawks",
     shortName: "Miami OH",
     code: "M-OH",
-    color: "#a4000c",
+    primaryColor: "#a4000c",
     secondaryColor: "#f0f0f0",
     logo: MiamiOHLogo,
     logoLight: MiamiOHLogoLight,
@@ -2002,7 +2000,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 135,
@@ -2010,7 +2008,7 @@ export const cbTeams: Team[] = [
     fullName: "Milwaukee Panthers",
     shortName: "Milwaukee",
     code: "MILW",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#ffc20e",
     logo: MilwaukeeLogo,
     logoLight: MilwaukeeLogoLight,
@@ -2020,7 +2018,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 150,
@@ -2028,7 +2026,7 @@ export const cbTeams: Team[] = [
     fullName: "Mississippi State Bulldogs",
     shortName: "Miss State",
     code: "MSST",
-    color: "#5d1725",
+    primaryColor: "#5d1725",
     secondaryColor: "#c1c6c8",
     logo: MississippiStateLogo,
     logoLight: MississippiStateLogoLight,
@@ -2038,7 +2036,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 109,
@@ -2046,7 +2044,7 @@ export const cbTeams: Team[] = [
     fullName: "Ohio Bobcats",
     shortName: "Ohio",
     code: "OHIO",
-    color: "#295A29",
+    primaryColor: "#295A29",
     secondaryColor: "#e4bb85",
     logo: OhioLogo,
     logoLight: OhioLogoLight,
@@ -2056,7 +2054,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 108,
@@ -2064,7 +2062,7 @@ export const cbTeams: Team[] = [
     fullName: "Ohio State Buckeyes",
     shortName: "Ohio State",
     code: "OSU",
-    color: "#ce1141",
+    primaryColor: "#ce1141",
     secondaryColor: "#505056",
     logo: OhioStateLogo,
     logoLight: OhioStateLogoLight,
@@ -2074,7 +2072,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 112,
@@ -2082,7 +2080,7 @@ export const cbTeams: Team[] = [
     fullName: "Oklahoma Sooners",
     shortName: "Oklahoma",
     code: "OU",
-    color: "#a32036",
+    primaryColor: "#a32036",
     secondaryColor: "#ffffff",
     logo: OklahomaLogo,
     logoLight: OklahomaLogoLight,
@@ -2092,7 +2090,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 110,
@@ -2100,7 +2098,7 @@ export const cbTeams: Team[] = [
     fullName: "Oklahoma State Cowboys",
     shortName: "Oklahoma St",
     code: "OKST",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#dddddd",
     logo: OklahomaStateLogo,
     logoLight: OklahomaStateLogoLight,
@@ -2110,7 +2108,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 140,
@@ -2118,7 +2116,7 @@ export const cbTeams: Team[] = [
     fullName: "Old Dominion Monarchs",
     shortName: "Old Dominion",
     code: "ODU",
-    color: "#00507d",
+    primaryColor: "#00507d",
     secondaryColor: "#a1d2f1",
     logo: OldDominionLogo,
     logoLight: OldDominionLogoLight,
@@ -2128,7 +2126,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 111,
@@ -2136,7 +2134,7 @@ export const cbTeams: Team[] = [
     fullName: "Oral Roberts Golden Eagles",
     shortName: "Oral Roberts",
     code: "ORU",
-    color: "#002462",
+    primaryColor: "#002462",
     secondaryColor: "#dac792",
     logo: OralRobertsLogo,
     logoLight: OralRobertsLogoLight,
@@ -2146,7 +2144,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 113,
@@ -2154,7 +2152,7 @@ export const cbTeams: Team[] = [
     fullName: "Oregon State Beavers",
     shortName: "Oregon St",
     code: "ORST",
-    color: "#231f20",
+    primaryColor: "#231f20",
     secondaryColor: "#d73f09",
     logo: OregonStateLogo,
     logoLight: OregonStateLogoLight,
@@ -2164,7 +2162,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 115,
@@ -2172,7 +2170,7 @@ export const cbTeams: Team[] = [
     fullName: "Pittsburgh Panthers",
     shortName: "Pitt",
     code: "PITT",
-    color: "#003263",
+    primaryColor: "#003263",
     secondaryColor: "#231f20",
     logo: PittsburghLogo,
     logoLight: PittsburghLogoLight,
@@ -2182,7 +2180,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 122,
@@ -2190,7 +2188,7 @@ export const cbTeams: Team[] = [
     fullName: "Rice Owls",
     shortName: "Rice",
     code: "RICE",
-    color: "#003d7d",
+    primaryColor: "#003d7d",
     secondaryColor: "#d1d5d8",
     logo: RiceLogo,
     logoLight: RiceLogoLight,
@@ -2200,7 +2198,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 130,
@@ -2208,7 +2206,7 @@ export const cbTeams: Team[] = [
     fullName: "Richmond Spiders",
     shortName: "Richmond",
     code: "RICH",
-    color: "#9e0712",
+    primaryColor: "#9e0712",
     secondaryColor: "#b90b2e",
     logo: RichmondLogo,
     logoLight: RichmondLogoLight,
@@ -2218,7 +2216,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 143,
@@ -2226,7 +2224,7 @@ export const cbTeams: Team[] = [
     fullName: "San Diego Toreros",
     shortName: "San Diego",
     code: "USD",
-    color: "#2f99d4",
+    primaryColor: "#2f99d4",
     secondaryColor: "#2f99d4",
     logo: SanDiegoLogo,
     logoLight: SanDiegoLogoLight,
@@ -2236,7 +2234,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 105,
@@ -2244,7 +2242,7 @@ export const cbTeams: Team[] = [
     fullName: "St. Bonaventure Bonnies",
     shortName: "St Bonaventure",
     code: "SBON",
-    color: "#70261D",
+    primaryColor: "#70261D",
     secondaryColor: "#ffffff",
     logo: StBonaventureLogo,
     logoLight: StBonaventureLogoLight,
@@ -2254,7 +2252,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 114,
@@ -2262,7 +2260,7 @@ export const cbTeams: Team[] = [
     fullName: "Temple Owls",
     shortName: "Temple",
     code: "TEM",
-    color: "#A80532",
+    primaryColor: "#A80532",
     secondaryColor: "#a7a9ac",
     logo: TempleLogo,
     logoLight: TempleLogoLight,
@@ -2272,7 +2270,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 123,
@@ -2280,7 +2278,7 @@ export const cbTeams: Team[] = [
     fullName: "Texas A&M Aggies",
     shortName: "Texas A&M",
     code: "TA&M",
-    color: "#500000",
+    primaryColor: "#500000",
     secondaryColor: "#ffffff",
     logo: TexasAAndMLogo,
     logoLight: TexasAAndMLogoLight,
@@ -2290,7 +2288,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 126,
@@ -2298,7 +2296,7 @@ export const cbTeams: Team[] = [
     fullName: "Texas Longhorns",
     shortName: "Texas",
     code: "TEX",
-    color: "#c15d26",
+    primaryColor: "#c15d26",
     secondaryColor: "#ffffff",
     logo: TexasLogo,
     logoLight: TexasLogoLight,
@@ -2308,7 +2306,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 147,
@@ -2316,7 +2314,7 @@ export const cbTeams: Team[] = [
     fullName: "Texas State Bobcats",
     shortName: "Texas St",
     code: "TXST",
-    color: "#4e1719",
+    primaryColor: "#4e1719",
     secondaryColor: "#b4975a",
     logo: TexasStateLogo,
     logoLight: TexasStateLogoLight,
@@ -2326,7 +2324,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 154,
@@ -2334,7 +2332,7 @@ export const cbTeams: Team[] = [
     fullName: "UAlbany Great Danes",
     shortName: "UAlbany",
     code: "ALB",
-    color: "#3D2777",
+    primaryColor: "#3D2777",
     secondaryColor: "#ffffff",
     logo: UAlbanyLogo,
     logoLight: UAlbanyLogoLight,
@@ -2344,7 +2342,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 142,
@@ -2352,7 +2350,7 @@ export const cbTeams: Team[] = [
     fullName: "UC Irvine Anteaters",
     shortName: "UC Irvine",
     code: "UCI",
-    color: "#002B5C",
+    primaryColor: "#002B5C",
     secondaryColor: "#fec52e",
     logo: UCIrvineLogo,
     logoLight: UCIrvineLogoLight,
@@ -2362,7 +2360,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 152,
@@ -2370,7 +2368,7 @@ export const cbTeams: Team[] = [
     fullName: "UNC Wilmington Seahawks",
     shortName: "UNC Wilmington",
     code: "UNCW",
-    color: "#00665e",
+    primaryColor: "#00665e",
     secondaryColor: "#ffda00",
     logo: UNCWilmingtonLogo,
     logoLight: UNCWilmingtonLogoLight,
@@ -2380,7 +2378,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 125,
@@ -2388,7 +2386,7 @@ export const cbTeams: Team[] = [
     fullName: "UT Arlington Mavericks",
     shortName: "UT Arlington",
     code: "UTA",
-    color: "#004b7c",
+    primaryColor: "#004b7c",
     secondaryColor: "#f58024",
     logo: UTArlingtonLogo,
     logoLight: UTArlingtonLogoLight,
@@ -2398,7 +2396,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 128,
@@ -2406,7 +2404,7 @@ export const cbTeams: Team[] = [
     fullName: "Utah Utes",
     shortName: "Utah",
     code: "UTAH",
-    color: "#ea002a",
+    primaryColor: "#ea002a",
     secondaryColor: "#ffffff",
     logo: UtahLogo,
     logoLight: UtahLogoLight,
@@ -2416,7 +2414,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 120,
@@ -2424,7 +2422,7 @@ export const cbTeams: Team[] = [
     fullName: "Vanderbilt Commodores",
     shortName: "Vanderbilt",
     code: "VAN",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#CFAE70",
     logo: VanderbiltLogo,
     logoLight: VanderbiltLogoLight,
@@ -2434,7 +2432,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 131,
@@ -2442,7 +2440,7 @@ export const cbTeams: Team[] = [
     fullName: "Virginia Cavaliers",
     shortName: "Virginia",
     code: "UVA",
-    color: "#232d4b",
+    primaryColor: "#232d4b",
     secondaryColor: "#f84c1e",
     logo: VirginiaLogo,
     logoLight: VirginiaLogoLight,
@@ -2452,7 +2450,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 132,
@@ -2460,7 +2458,7 @@ export const cbTeams: Team[] = [
     fullName: "Virginia Tech Hokies",
     shortName: "Virginia Tech",
     code: "VT",
-    color: "#630031",
+    primaryColor: "#630031",
     secondaryColor: "#cf4520",
     logo: VirginiaTechLogo,
     logoLight: VirginiaTechLogoLight,
@@ -2470,7 +2468,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 133,
@@ -2478,7 +2476,7 @@ export const cbTeams: Team[] = [
     fullName: "Washington Huskies",
     shortName: "Washington",
     code: "WASH",
-    color: "#33006f",
+    primaryColor: "#33006f",
     secondaryColor: "#e8d3a2",
     logo: WashingtonLogo,
     logoLight: WashingtonLogoLight,
@@ -2488,7 +2486,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 134,
@@ -2496,7 +2494,7 @@ export const cbTeams: Team[] = [
     fullName: "Washington State Cougars",
     shortName: "Washington St",
     code: "WSU",
-    color: "#981e32",
+    primaryColor: "#981e32",
     secondaryColor: "#ffffff",
     logo: WashingtonStateLogo,
     logoLight: WashingtonStateLogoLight,
@@ -2506,7 +2504,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 136,
@@ -2514,7 +2512,7 @@ export const cbTeams: Team[] = [
     fullName: "West Virginia Mountaineers",
     shortName: "West Virginia",
     code: "WVU",
-    color: "#002855",
+    primaryColor: "#002855",
     secondaryColor: "#eaaa00",
     logo: WestVirginiaLogo,
     logoLight: WestVirginiaLogoLight,
@@ -2524,7 +2522,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 155,
@@ -2532,7 +2530,7 @@ export const cbTeams: Team[] = [
     fullName: "Air Force Falcons",
     shortName: "Air Force",
     code: "AFA",
-    color: "#003594",
+    primaryColor: "#003594",
     secondaryColor: "#ffffff",
     logo: AirForceLogo,
     logoLight: AirForceLogoLight,
@@ -2542,7 +2540,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 156,
@@ -2550,7 +2548,7 @@ export const cbTeams: Team[] = [
     fullName: "Austin Peay Governors",
     shortName: "Austin Peay",
     code: "APSU",
-    color: "#8e0b0b",
+    primaryColor: "#8e0b0b",
     secondaryColor: "#ffffff",
     logo: AustinPeayLogo,
     logoLight: AustinPeayLogoLight,
@@ -2560,7 +2558,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 157,
@@ -2568,7 +2566,7 @@ export const cbTeams: Team[] = [
     fullName: "Ball State Cardinals",
     shortName: "Ball State",
     code: "BALL",
-    color: "#DE0000",
+    primaryColor: "#DE0000",
     secondaryColor: "#000000",
     logo: BallStateLogo,
     logoLight: BallStateLogoLight,
@@ -2578,7 +2576,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 158,
@@ -2586,7 +2584,7 @@ export const cbTeams: Team[] = [
     fullName: "Bethune-Cookman Wildcats",
     shortName: "Bethune",
     code: "BCU",
-    color: "#7b1831",
+    primaryColor: "#7b1831",
     secondaryColor: "#e9aa12",
     logo: BethuneCookmanLogo,
     logoLight: BethuneCookmanLogoLight,
@@ -2596,7 +2594,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 165,
@@ -2604,7 +2602,7 @@ export const cbTeams: Team[] = [
     fullName: "Cal State Fullerton Titans",
     shortName: "Fullerton",
     code: "CSUF",
-    color: "#003767",
+    primaryColor: "#003767",
     secondaryColor: "#ff8300",
     logo: CalStateFullertonLogo,
     logoLight: CalStateFullertonLogoLight,
@@ -2614,7 +2612,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 185,
@@ -2622,7 +2620,7 @@ export const cbTeams: Team[] = [
     fullName: "Cal State Northridge Matadors",
     shortName: "CSU Northridge",
     code: "CSUN",
-    color: "#b50000",
+    primaryColor: "#b50000",
     secondaryColor: "",
     logo: CalStateNorthridgeLogo,
     logoLight: CalStateNorthridgeLogoLight,
@@ -2632,7 +2630,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 159,
@@ -2640,7 +2638,7 @@ export const cbTeams: Team[] = [
     fullName: "Central Connecticut Blue Devils",
     shortName: "C Connecticut",
     code: "CCSU",
-    color: "#1B49A2",
+    primaryColor: "#1B49A2",
     secondaryColor: "#d1d5d8",
     logo: CentralConnecticutLogo,
     logoLight: CentralConnecticutLogoLight,
@@ -2650,7 +2648,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 180,
@@ -2658,7 +2656,7 @@ export const cbTeams: Team[] = [
     fullName: "Charlotte 49ers",
     shortName: "Charlotte",
     code: "CLT",
-    color: "#005035",
+    primaryColor: "#005035",
     secondaryColor: "#cfab7a",
     logo: CharlotteLogo,
     logoLight: CharlotteLogoLight,
@@ -2668,7 +2666,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 161,
@@ -2676,7 +2674,7 @@ export const cbTeams: Team[] = [
     fullName: "Cincinnati Bearcats",
     shortName: "Cincinnati",
     code: "CIN",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#717073",
     logo: CincinnatiLogo,
     logoLight: CincinnatiLogoLight,
@@ -2686,7 +2684,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 162,
@@ -2694,7 +2692,7 @@ export const cbTeams: Team[] = [
     fullName: "Coppin State Eagles",
     shortName: "Coppin St",
     code: "COPP",
-    color: "#2e3192",
+    primaryColor: "#2e3192",
     secondaryColor: "#ffd204",
     logo: CoppinStateLogo,
     logoLight: CoppinStateLogoLight,
@@ -2704,7 +2702,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 163,
@@ -2712,7 +2710,7 @@ export const cbTeams: Team[] = [
     fullName: "Florida Atlantic Owls",
     shortName: "FAU",
     code: "FAU",
-    color: "#00447c",
+    primaryColor: "#00447c",
     secondaryColor: "#d31245",
     logo: FAULogo,
     logoLight: FAULogoLight,
@@ -2722,7 +2720,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 164,
@@ -2730,7 +2728,7 @@ export const cbTeams: Team[] = [
     fullName: "Florida International Panthers",
     shortName: "FIU",
     code: "FIU",
-    color: "#001538",
+    primaryColor: "#001538",
     secondaryColor: "#c5960c",
     logo: FIULogo,
     logoLight: FIULogoLight,
@@ -2740,7 +2738,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 166,
@@ -2748,7 +2746,7 @@ export const cbTeams: Team[] = [
     fullName: "George Mason Patriots",
     shortName: "George Mason",
     code: "GMU",
-    color: "#016600",
+    primaryColor: "#016600",
     secondaryColor: "#ecb010",
     logo: GeorgeMasonLogo,
     logoLight: GeorgeMasonLogoLight,
@@ -2758,7 +2756,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 167,
@@ -2766,7 +2764,7 @@ export const cbTeams: Team[] = [
     fullName: "Iowa Hawkeyes",
     shortName: "Iowa",
     code: "IOWA",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#fcd116",
     logo: IowaLogo,
     logoLight: IowaLogoLight,
@@ -2776,7 +2774,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 168,
@@ -2784,7 +2782,7 @@ export const cbTeams: Team[] = [
     fullName: "Kansas Jayhawks",
     shortName: "Kansas",
     code: "KU",
-    color: "#0051ba",
+    primaryColor: "#0051ba",
     secondaryColor: "#e8000d",
     logo: KansasLogo,
     logoLight: KansasLogoLight,
@@ -2794,7 +2792,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 169,
@@ -2803,7 +2801,7 @@ export const cbTeams: Team[] = [
     shortName: "Kent State",
     code: "KENT",
     secondaryColor: "#efab00",
-    color: "#003976",
+    primaryColor: "#003976",
     logo: KentStateLogo,
     logoLight: KentStateLogoLight,
     established: 1920,
@@ -2812,7 +2810,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Kent",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 170,
@@ -2821,7 +2819,7 @@ export const cbTeams: Team[] = [
     shortName: "Lamar",
     code: "LAM",
     secondaryColor: "#ebebeb",
-    color: "#dc0032",
+    primaryColor: "#dc0032",
     logo: LamarLogo,
     logoLight: LamarLogoLight,
     established: 1923,
@@ -2830,7 +2828,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Beaumont",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 171,
@@ -2839,7 +2837,7 @@ export const cbTeams: Team[] = [
     shortName: "Le Moyne",
     code: "LEM",
     secondaryColor: "#FCE300",
-    color: "#00452A",
+    primaryColor: "#00452A",
     logo: LeMoyneLogo,
     logoLight: LeMoyneLogoLight,
     established: 0,
@@ -2848,7 +2846,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 172,
@@ -2857,7 +2855,7 @@ export const cbTeams: Team[] = [
     shortName: "Liberty",
     code: "LIB",
     secondaryColor: "#a61f21",
-    color: "#071740",
+    primaryColor: "#071740",
     logo: LibertyLogo,
     logoLight: LibertyLogoLight,
     established: 1973,
@@ -2866,7 +2864,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Lynchburg",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 173,
@@ -2875,7 +2873,7 @@ export const cbTeams: Team[] = [
     shortName: "Louisiana Tech",
     code: "LT",
     secondaryColor: "#d3313a",
-    color: "#002d65",
+    primaryColor: "#002d65",
     logo: LouisianaTechLogo,
     logoLight: LouisianaTechLogoLight,
     established: 1901,
@@ -2884,7 +2882,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Ruston",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 174,
@@ -2892,7 +2890,7 @@ export const cbTeams: Team[] = [
     fullName: "Loyola Marymount Lions",
     shortName: "LMU",
     code: "LMU",
-    color: "#880029",
+    primaryColor: "#880029",
     secondaryColor: "#00345b",
     logo: LoyolaMarymountLogo,
     logoLight: LoyolaMarymountLogoLight,
@@ -2902,7 +2900,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 175,
@@ -2910,7 +2908,7 @@ export const cbTeams: Team[] = [
     fullName: "Marist Red Foxes",
     shortName: "Marist",
     code: "MRST",
-    color: "#e53730",
+    primaryColor: "#e53730",
     secondaryColor: "#f0f0f0",
     logo: MaristLogo,
     logoLight: MaristLogoLight,
@@ -2920,7 +2918,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 176,
@@ -2928,7 +2926,7 @@ export const cbTeams: Team[] = [
     fullName: "Miami Hurricanes",
     shortName: "Miami",
     code: "MIA",
-    color: "#005030",
+    primaryColor: "#005030",
     secondaryColor: "#f47321",
     logo: MiamiLogo,
     logoLight: MiamiLogoLight,
@@ -2938,7 +2936,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 177,
@@ -2946,7 +2944,7 @@ export const cbTeams: Team[] = [
     fullName: "Middle Tennessee Blue Raiders",
     shortName: "MTSU",
     code: "MTSU",
-    color: "#006db6",
+    primaryColor: "#006db6",
     secondaryColor: "#ffffff",
     logo: MiddleTennesseeLogo,
     logoLight: MiddleTennesseeLogoLight,
@@ -2956,7 +2954,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 197,
@@ -2964,7 +2962,7 @@ export const cbTeams: Team[] = [
     fullName: "Missouri State Bears",
     shortName: "Missouri St",
     code: "MOST",
-    color: "#5F0000",
+    primaryColor: "#5F0000",
     secondaryColor: "#e8e8e8",
     logo: MissouriStateLogo,
     logoLight: MissouriStateLogoLight,
@@ -2974,7 +2972,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 178,
@@ -2982,7 +2980,7 @@ export const cbTeams: Team[] = [
     fullName: "Monmouth Hawks",
     shortName: "Monmouth",
     code: "MONM",
-    color: "#051844",
+    primaryColor: "#051844",
     secondaryColor: "#53565A",
     logo: MonmouthLogo,
     logoLight: MonmouthLogoLight,
@@ -2992,7 +2990,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 179,
@@ -3000,7 +2998,7 @@ export const cbTeams: Team[] = [
     fullName: "Navy Midshipmen",
     shortName: "Navy",
     code: "NAVY",
-    color: "#00225b",
+    primaryColor: "#00225b",
     secondaryColor: "#b5a67c",
     logo: NavyLogo,
     logoLight: NavyLogoLight,
@@ -3010,7 +3008,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 183,
@@ -3018,7 +3016,7 @@ export const cbTeams: Team[] = [
     fullName: "Nevada Wolf Pack",
     shortName: "Nevada",
     code: "NEV",
-    color: "#002d62",
+    primaryColor: "#002d62",
     secondaryColor: "#ffffff",
     logo: NevadaLogo,
     logoLight: NevadaLogoLight,
@@ -3028,7 +3026,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 184,
@@ -3036,7 +3034,7 @@ export const cbTeams: Team[] = [
     fullName: "New Orleans Privateers",
     shortName: "New Orleans",
     code: "UNO",
-    color: "#005da6",
+    primaryColor: "#005da6",
     secondaryColor: "#a2a9ae",
     logo: NewOrleansLogo,
     logoLight: NewOrleansLogoLight,
@@ -3046,7 +3044,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 186,
@@ -3054,7 +3052,7 @@ export const cbTeams: Team[] = [
     fullName: "Northwestern State Demons",
     shortName: "N'Western St",
     code: "NWST",
-    color: "#492F91",
+    primaryColor: "#492F91",
     secondaryColor: "#ed6118",
     logo: NorthwesternLogo,
     logoLight: NorthwesternLogoLight,
@@ -3064,7 +3062,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 187,
@@ -3072,7 +3070,7 @@ export const cbTeams: Team[] = [
     fullName: "Pepperdine Waves",
     shortName: "Pepperdine",
     code: "PEPP",
-    color: "#003A72",
+    primaryColor: "#003A72",
     secondaryColor: "#dc762f",
     logo: PepperdineLogo,
     logoLight: PepperdineLogoLight,
@@ -3082,7 +3080,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 188,
@@ -3090,7 +3088,7 @@ export const cbTeams: Team[] = [
     fullName: "Prairie View A&M Panthers",
     shortName: "Prairie View",
     code: "PV",
-    color: "#4d0960",
+    primaryColor: "#4d0960",
     secondaryColor: "#000000",
     logo: PrairieViewLogo,
     logoLight: PrairieViewLogoLight,
@@ -3100,7 +3098,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 189,
@@ -3108,7 +3106,7 @@ export const cbTeams: Team[] = [
     fullName: "Purdue Boilermakers",
     shortName: "Purdue",
     code: "PUR",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#cfb991",
     logo: PurdueLogo,
     logoLight: PurdueLogoLight,
@@ -3118,7 +3116,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 190,
@@ -3126,7 +3124,7 @@ export const cbTeams: Team[] = [
     fullName: "Sam Houston Bearkats",
     shortName: "Sam Houston",
     code: "SHSU",
-    color: "#fe5000",
+    primaryColor: "#fe5000",
     secondaryColor: "#000000",
     logo: SamHoustonLogo,
     logoLight: SamHoustonLogoLight,
@@ -3136,7 +3134,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 193,
@@ -3144,7 +3142,7 @@ export const cbTeams: Team[] = [
     fullName: "South Carolina Gamecocks",
     shortName: "South Carolina",
     code: "SC",
-    color: "#73000a",
+    primaryColor: "#73000a",
     secondaryColor: "#ffffff",
     logo: SouthCarolinaLogo,
     logoLight: SouthCarolinaLogoLight,
@@ -3154,7 +3152,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 191,
@@ -3162,7 +3160,7 @@ export const cbTeams: Team[] = [
     fullName: "Southeast Missouri State Redhawks",
     shortName: "SE Missouri",
     code: "SEMO",
-    color: "#c8102e",
+    primaryColor: "#c8102e",
     secondaryColor: "#000000",
     logo: SEMissouriStateLogo,
 
@@ -3173,7 +3171,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Cape Girardeau",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 194,
@@ -3181,7 +3179,7 @@ export const cbTeams: Team[] = [
     fullName: "Southern Jaguars",
     shortName: "Southern",
     code: "SOU",
-    color: "#004B97",
+    primaryColor: "#004B97",
     secondaryColor: "#ffc82d",
     logo: SouthernLogo,
 
@@ -3192,7 +3190,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Baton Rouge",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 192,
@@ -3201,7 +3199,7 @@ export const cbTeams: Team[] = [
     shortName: "Southern Miss",
     code: "USM",
     secondaryColor: "#ffc423",
-    color: "#FFAA3C",
+    primaryColor: "#FFAA3C",
     logo: SouthernMissLogo,
     logoLight: SouthernMissLogoLight,
     established: 1912,
@@ -3210,7 +3208,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Hattiesburg",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 195,
@@ -3218,7 +3216,7 @@ export const cbTeams: Team[] = [
     fullName: "St. John's Red Storm",
     shortName: "St John's",
     code: "SJU",
-    color: "#d10000",
+    primaryColor: "#d10000",
     secondaryColor: "#101010",
     logo: StJohnsLogo,
     logoLight: StJohnsLogoLight,
@@ -3228,7 +3226,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 196,
@@ -3237,7 +3235,7 @@ export const cbTeams: Team[] = [
     shortName: "Stony Brook",
     code: "STBK",
     secondaryColor: "#16243e",
-    color: "#990000",
+    primaryColor: "#990000",
     logo: StonyBrookLogo,
     logoLight: StonyBrookLogoLight,
     established: 1984,
@@ -3246,7 +3244,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Stony Brook",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 198,
@@ -3254,7 +3252,7 @@ export const cbTeams: Team[] = [
     fullName: "TCU Horned Frogs",
     shortName: "TCU",
     code: "TCU",
-    color: "#4d1979",
+    primaryColor: "#4d1979",
     secondaryColor: "#f1f2f3",
     logo: TCULogo,
     logoLight: TCULogoLight,
@@ -3264,7 +3262,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 199,
@@ -3272,7 +3270,7 @@ export const cbTeams: Team[] = [
     fullName: "Tennessee Volunteers",
     shortName: "Tennessee",
     code: "TENN",
-    color: "#ff8200",
+    primaryColor: "#ff8200",
     secondaryColor: "#58595b",
     logo: TennesseeLogo,
     logoLight: TennesseeLogoLight,
@@ -3282,7 +3280,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 200,
@@ -3291,7 +3289,7 @@ export const cbTeams: Team[] = [
     shortName: "Texas Southern",
     code: "TXSO",
     secondaryColor: "#ffffff",
-    color: "#860038",
+    primaryColor: "#860038",
     logo: TexasSouthernLogo,
     logoLight: TexasSouthernLogoLight,
     established: 1947,
@@ -3300,7 +3298,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Houston",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 201,
@@ -3309,7 +3307,7 @@ export const cbTeams: Team[] = [
     shortName: "Texas Tech",
     code: "TTU",
     secondaryColor: "#da291c",
-    color: "#000000",
+    primaryColor: "#000000",
     logo: TexasTechLogo,
     logoLight: TexasTechLogoLight,
     established: 1925,
@@ -3318,7 +3316,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Lubbock",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 202,
@@ -3326,7 +3324,7 @@ export const cbTeams: Team[] = [
     fullName: "The Citadel Bulldogs",
     shortName: "The Citadel",
     code: "CIT",
-    color: "#7badd3",
+    primaryColor: "#7badd3",
     secondaryColor: "#002856",
     logo: TheCitadelLogo,
     logoLight: TheCitadelLogoLight,
@@ -3336,7 +3334,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 203,
@@ -3345,7 +3343,7 @@ export const cbTeams: Team[] = [
     shortName: "Tulane",
     code: "TULN",
     secondaryColor: "#468ac9",
-    color: "#006547",
+    primaryColor: "#006547",
     logo: TulaneLogo,
     logoLight: TulaneLogoLight,
     established: 1893,
@@ -3354,7 +3352,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "New Orleans",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 160,
@@ -3363,7 +3361,7 @@ export const cbTeams: Team[] = [
     shortName: "UCF",
     code: "UCF",
     secondaryColor: "#b4a269",
-    color: "#000000",
+    primaryColor: "#000000",
     logo: UCFLogo,
     logoLight: UCFLogoLight,
     established: 1979,
@@ -3372,7 +3370,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Orlando",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 181,
@@ -3381,7 +3379,7 @@ export const cbTeams: Team[] = [
     shortName: "UNC Greensboro",
     code: "UNCG",
     secondaryColor: "#ffd90a",
-    color: "#003559",
+    primaryColor: "#003559",
     logo: UNCGreensboroLogo,
     logoLight: UNCGreensboroLogoLight,
     established: 0,
@@ -3390,7 +3388,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 182,
@@ -3398,7 +3396,7 @@ export const cbTeams: Team[] = [
     fullName: "UNLV Rebels",
     shortName: "UNLV",
     code: "UNLV",
-    color: "#b10202",
+    primaryColor: "#b10202",
     secondaryColor: "#ffffff",
     logo: UNLVLogo,
     logoLight: UNLVLogoLight,
@@ -3408,7 +3406,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 204,
@@ -3416,7 +3414,7 @@ export const cbTeams: Team[] = [
     fullName: "VCU Rams",
     shortName: "VCU",
     code: "VCU",
-    color: "#ffaf00",
+    primaryColor: "#ffaf00",
     secondaryColor: "#000000",
     logo: VCULogo,
     logoLight: VCULogoLight,
@@ -3426,7 +3424,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 260,
@@ -3434,7 +3432,7 @@ export const cbTeams: Team[] = [
     fullName: "Alcorn State Braves",
     shortName: "Alcorn St",
     code: "ALCN",
-    color: "#4b0058",
+    primaryColor: "#4b0058",
     secondaryColor: "#46166a",
     logo: AlcornStateLogo,
     logoLight: AlcornStateLogoLight,
@@ -3444,7 +3442,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 271,
@@ -3452,7 +3450,7 @@ export const cbTeams: Team[] = [
     fullName: "App State Mountaineers",
     shortName: "App State",
     code: "APP",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#ffcd00",
     logo: AppStateLogo,
     logoLight: AppStateLogoLight,
@@ -3462,7 +3460,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 262,
@@ -3470,7 +3468,7 @@ export const cbTeams: Team[] = [
     fullName: "Belmont Bruins",
     shortName: "Belmont",
     code: "BEL",
-    color: "#182142",
+    primaryColor: "#182142",
     secondaryColor: "#c9262d",
     logo: BelmontLogo,
     logoLight: BelmontLogoLight,
@@ -3480,7 +3478,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 292,
@@ -3488,7 +3486,7 @@ export const cbTeams: Team[] = [
     fullName: "Binghamton Bearcats",
     shortName: "Binghamton",
     code: "BING",
-    color: "#00614A",
+    primaryColor: "#00614A",
     secondaryColor: "#f0f0f0",
     logo: BinghamtonLogo,
     logoLight: BinghamtonLogoLight,
@@ -3498,7 +3496,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 299,
@@ -3506,7 +3504,7 @@ export const cbTeams: Team[] = [
     fullName: "Bryant Bulldogs",
     shortName: "Bryant",
     code: "BRY",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#9f8343",
     logo: BryantLogo,
     logoLight: BryantLogoLight,
@@ -3516,7 +3514,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 293,
@@ -3524,7 +3522,7 @@ export const cbTeams: Team[] = [
     fullName: "Campbell Fighting Camels",
     shortName: "Campbell",
     code: "CAM",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#231f20",
     logo: CampbellLogo,
     logoLight: CampbellLogoLight,
@@ -3534,7 +3532,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 298,
@@ -3542,7 +3540,7 @@ export const cbTeams: Team[] = [
     fullName: "Canisius Golden Griffins",
     shortName: "Canisius",
     code: "CAN",
-    color: "#004a81",
+    primaryColor: "#004a81",
     secondaryColor: "#dda50f",
     logo: CanisiusLogo,
     logoLight: CanisiusLogoLight,
@@ -3552,7 +3550,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 306,
@@ -3560,7 +3558,7 @@ export const cbTeams: Team[] = [
     fullName: "Central Arkansas Bears",
     shortName: "C Arkansas",
     code: "CARK",
-    color: "#4f2d7f",
+    primaryColor: "#4f2d7f",
     secondaryColor: "#8e959a",
     logo: CentralArkansasLogo,
     logoLight: CentralArkansasLogoLight,
@@ -3570,7 +3568,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 284,
@@ -3578,7 +3576,7 @@ export const cbTeams: Team[] = [
     fullName: "Columbia Lions",
     shortName: "Columbia",
     code: "CLMB",
-    color: "#7ba4db",
+    primaryColor: "#7ba4db",
     secondaryColor: "#183863",
     logo: ColumbiaLogo,
     logoLight: ColumbiaLogoLight,
@@ -3588,7 +3586,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 263,
@@ -3596,7 +3594,7 @@ export const cbTeams: Team[] = [
     fullName: "Dallas Baptist Patriots",
     shortName: "Dallas Baptist",
     code: "DBU",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -3606,7 +3604,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 304,
@@ -3614,7 +3612,7 @@ export const cbTeams: Team[] = [
     fullName: "East Tennessee State Buccaneers",
     shortName: "ETSU",
     code: "ETSU",
-    color: "#002d61",
+    primaryColor: "#002d61",
     secondaryColor: "#ffc423",
     logo: EastTennesseeStateLogo,
     logoLight: EastTennesseeStateLogoLight,
@@ -3624,7 +3622,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 303,
@@ -3632,7 +3630,7 @@ export const cbTeams: Team[] = [
     fullName: "Elon Phoenix",
     shortName: "Elon",
     code: "ELON",
-    color: "#020303",
+    primaryColor: "#020303",
     secondaryColor: "#b59a57",
     logo: ElonLogo,
     logoLight: ElonLogoLight,
@@ -3642,7 +3640,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 291,
@@ -3650,7 +3648,7 @@ export const cbTeams: Team[] = [
     fullName: "Florida Gulf Coast Eagles",
     shortName: "FGCU",
     code: "FGCU",
-    color: "#00885a",
+    primaryColor: "#00885a",
     secondaryColor: "#076c3b",
     logo: FloridaGulfCoastLogo,
     logoLight: FloridaGulfCoastLogoLight,
@@ -3660,7 +3658,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 287,
@@ -3668,7 +3666,7 @@ export const cbTeams: Team[] = [
     fullName: "Gonzaga Bulldogs",
     shortName: "Gonzaga",
     code: "GONZ",
-    color: "#041e42",
+    primaryColor: "#041e42",
     secondaryColor: "#c8102e",
     logo: GonzagaLogo,
     logoLight: GonzagaLogoLight,
@@ -3678,7 +3676,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 288,
@@ -3686,7 +3684,7 @@ export const cbTeams: Team[] = [
     fullName: "Illinois State Redbirds",
     shortName: "Illinois St",
     code: "ILST",
-    color: "#CE1126",
+    primaryColor: "#CE1126",
     secondaryColor: "#ffe716",
     logo: IllinoisStateLogo,
     logoLight: IllinoisStateLogoLight,
@@ -3696,7 +3694,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 294,
@@ -3704,7 +3702,7 @@ export const cbTeams: Team[] = [
     fullName: "Indiana Hoosiers",
     shortName: "Indiana",
     code: "IU",
-    color: "#990000",
+    primaryColor: "#990000",
     secondaryColor: "#edebeb",
     logo: IndianaLogo,
     logoLight: IndianaLogoLight,
@@ -3714,7 +3712,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 308,
@@ -3722,7 +3720,7 @@ export const cbTeams: Team[] = [
     fullName: "Indiana State Sycamores",
     shortName: "Indiana St",
     code: "ISA",
-    color: "#00669a",
+    primaryColor: "#00669a",
     secondaryColor: "#f0f0f0",
     logo: IndianaStateLogo,
     logoLight: IndianaStateLogoLight,
@@ -3732,7 +3730,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 285,
@@ -3740,7 +3738,7 @@ export const cbTeams: Team[] = [
     fullName: "Jackson State Tigers",
     shortName: "Jackson St",
     code: "JACS",
-    color: "#123297",
+    primaryColor: "#123297",
     secondaryColor: "#b5b7ba",
     logo: JacksonStateLogo,
     logoLight: JacksonStateLogoLight,
@@ -3750,7 +3748,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 264,
@@ -3758,7 +3756,7 @@ export const cbTeams: Team[] = [
     fullName: "Kansas State Wildcats",
     shortName: "Kansas St",
     code: "KSU",
-    color: "#3c0969",
+    primaryColor: "#3c0969",
     secondaryColor: "#e2e3e4",
     logo: KansasStateLogo,
     logoLight: KansasStateLogoLight,
@@ -3768,7 +3766,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 307,
@@ -3776,7 +3774,7 @@ export const cbTeams: Team[] = [
     fullName: "Kennesaw State Owls",
     shortName: "Kennesaw St",
     code: "KSU",
-    color: "#fdbb30",
+    primaryColor: "#fdbb30",
     secondaryColor: "#000000",
     logo: KennesawStateLogo,
     logoLight: KennesawStateLogoLight,
@@ -3786,7 +3784,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 261,
@@ -3794,7 +3792,7 @@ export const cbTeams: Team[] = [
     fullName: "Little Rock Trojans",
     shortName: "Little Rock",
     code: "UALR",
-    color: "#AD0000",
+    primaryColor: "#AD0000",
     secondaryColor: "#898d8f",
     logo: LittleRockLogo,
     logoLight: LittleRockLogoLight,
@@ -3804,7 +3802,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 259,
@@ -3812,7 +3810,7 @@ export const cbTeams: Team[] = [
     fullName: "Maine Black Bears",
     shortName: "Maine",
     code: "ME",
-    color: "#003263",
+    primaryColor: "#003263",
     secondaryColor: "#B0D7FF",
     logo: MaineLogo,
     logoLight: MaineLogoLight,
@@ -3822,7 +3820,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 265,
@@ -3830,7 +3828,7 @@ export const cbTeams: Team[] = [
     fullName: "Manhattan Jaspers",
     shortName: "Manhattan",
     code: "MAN",
-    color: "#4f8537",
+    primaryColor: "#4f8537",
     secondaryColor: "#b5b7ba",
     logo: ManhattanLogo,
     logoLight: ManhattanLogoLight,
@@ -3840,7 +3838,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 295,
@@ -3848,7 +3846,7 @@ export const cbTeams: Team[] = [
     fullName: "Mercer Bears",
     shortName: "Mercer",
     code: "MERC",
-    color: "#ff7f29",
+    primaryColor: "#ff7f29",
     secondaryColor: "#080808",
     logo: MercerLogo,
     logoLight: MercerLogoLight,
@@ -3858,7 +3856,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 310,
@@ -3866,7 +3864,7 @@ export const cbTeams: Team[] = [
     fullName: "North Dakota State Bison",
     shortName: "N Dakota St",
     code: "NDST",
-    color: "#01402A",
+    primaryColor: "#01402A",
     secondaryColor: "#ffffff",
     logo: NorthDakotaStateLogo,
     logoLight: NorthDakotaStateLogoLight,
@@ -3876,7 +3874,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 296,
@@ -3884,7 +3882,7 @@ export const cbTeams: Team[] = [
     fullName: "North Florida Ospreys",
     shortName: "North Florida",
     code: "NFLA",
-    color: "#004B8D",
+    primaryColor: "#004B8D",
     secondaryColor: "#babcbe",
     logo: NorthFloridaLogo,
     logoLight: NorthFloridaLogoLight,
@@ -3894,7 +3892,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 273,
@@ -3902,7 +3900,7 @@ export const cbTeams: Team[] = [
     fullName: "Oregon Ducks",
     shortName: "Oregon",
     code: "ORE",
-    color: "#007030",
+    primaryColor: "#007030",
     secondaryColor: "#fee11a",
     logo: OregonLogo,
     logoLight: OregonLogoLight,
@@ -3912,7 +3910,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 309,
@@ -3920,7 +3918,7 @@ export const cbTeams: Team[] = [
     fullName: "SE Louisiana Lions",
     shortName: "SE Louisiana",
     code: "SELA",
-    color: "#215732",
+    primaryColor: "#215732",
     secondaryColor: "#ffc72c",
     logo: SELouisianaLogo,
     logoLight: SELouisianaLogoLight,
@@ -3930,7 +3928,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 266,
@@ -3938,7 +3936,7 @@ export const cbTeams: Team[] = [
     fullName: "Sacred Heart Pioneers",
     shortName: "Sacred Heart",
     code: "SHU",
-    color: "#a40012",
+    primaryColor: "#a40012",
     secondaryColor: "#c29472",
     logo: SacredHeartLogo,
     logoLight: SacredHeartLogoLight,
@@ -3948,7 +3946,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 300,
@@ -3956,7 +3954,7 @@ export const cbTeams: Team[] = [
     fullName: "Saint Louis Billikens",
     shortName: "Saint Louis",
     code: "SLU",
-    color: "#00539C",
+    primaryColor: "#00539C",
     secondaryColor: "#ebebeb",
     logo: SaintLouisLogo,
     logoLight: SaintLouisLogoLight,
@@ -3966,7 +3964,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 274,
@@ -3974,7 +3972,7 @@ export const cbTeams: Team[] = [
     fullName: "Samford Bulldogs",
     shortName: "Samford",
     code: "SAM",
-    color: "#005485",
+    primaryColor: "#005485",
     secondaryColor: "#bc0023",
     logo: SamfordLogo,
     logoLight: SamfordLogoLight,
@@ -3984,7 +3982,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 267,
@@ -3992,7 +3990,7 @@ export const cbTeams: Team[] = [
     fullName: "San Francisco Dons",
     shortName: "San Francisco",
     code: "SF",
-    color: "#005a36",
+    primaryColor: "#005a36",
     secondaryColor: "#ffffff",
     logo: SanFranciscoLogo,
     logoLight: SanFranciscoLogoLight,
@@ -4002,7 +4000,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 286,
@@ -4010,7 +4008,7 @@ export const cbTeams: Team[] = [
     fullName: "Savannah State Tigers",
     shortName: "Savannah St",
     code: "SAVS",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -4020,7 +4018,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 268,
@@ -4028,7 +4026,7 @@ export const cbTeams: Team[] = [
     fullName: "Seton Hall Pirates",
     shortName: "Seton Hall",
     code: "HALL",
-    color: "#0857B1",
+    primaryColor: "#0857B1",
     secondaryColor: "#8a8d8f",
     logo: SetonHallLogo,
     logoLight: SetonHallLogoLight,
@@ -4038,7 +4036,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 311,
@@ -4046,7 +4044,7 @@ export const cbTeams: Team[] = [
     fullName: "Siena Saints",
     shortName: "Siena",
     code: "SU",
-    color: "#037961",
+    primaryColor: "#037961",
     secondaryColor: "#eea60f",
     logo: SienaLogo,
     logoLight: SienaLogoLight,
@@ -4056,7 +4054,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 301,
@@ -4064,7 +4062,7 @@ export const cbTeams: Team[] = [
     fullName: "South Dakota State Jackrabbits",
     shortName: "S Dakota St",
     code: "SDST",
-    color: "#0033a0",
+    primaryColor: "#0033a0",
     secondaryColor: "#ffd100",
     logo: SouthDakotaStateLogo,
     logoLight: SouthDakotaStateLogoLight,
@@ -4074,7 +4072,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 305,
@@ -4082,7 +4080,7 @@ export const cbTeams: Team[] = [
     fullName: "Towson Tigers",
     shortName: "Towson",
     code: "TOWU",
-    color: "#FFC229",
+    primaryColor: "#FFC229",
     secondaryColor: "#000",
     logo: TowsonLogo,
     logoLight: TowsonLogoLight,
@@ -4092,7 +4090,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 269,
@@ -4100,7 +4098,7 @@ export const cbTeams: Team[] = [
     fullName: "Troy Trojans",
     shortName: "Troy",
     code: "TROY",
-    color: "#AE0210",
+    primaryColor: "#AE0210",
     secondaryColor: "#88898c",
     logo: TroyLogo,
     logoLight: TroyLogoLight,
@@ -4110,7 +4108,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 290,
@@ -4118,7 +4116,7 @@ export const cbTeams: Team[] = [
     fullName: "UC Santa Barbara Gauchos",
     shortName: "Santa Barbara",
     code: "UCSB",
-    color: "#1e1840",
+    primaryColor: "#1e1840",
     secondaryColor: "#febc11",
     logo: UCSantaBarbaraLogo,
     logoLight: UCSantaBarbaraLogoLight,
@@ -4128,7 +4126,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 272,
@@ -4136,7 +4134,7 @@ export const cbTeams: Team[] = [
     fullName: "UL Monroe Warhawks",
     shortName: "UL Monroe",
     code: "ULM",
-    color: "#231F20",
+    primaryColor: "#231F20",
     secondaryColor: "#b18445",
     logo: ULMonroeLogo,
     logoLight: ULMonroeLogoLight,
@@ -4146,7 +4144,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 297,
@@ -4154,7 +4152,7 @@ export const cbTeams: Team[] = [
     fullName: "UTSA Roadrunners",
     shortName: "UTSA",
     code: "UTSA",
-    color: "#002A5C",
+    primaryColor: "#002A5C",
     secondaryColor: "#f47321",
     logo: UTSALogo,
     logoLight: UTSALogoLight,
@@ -4164,7 +4162,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 302,
@@ -4172,7 +4170,7 @@ export const cbTeams: Team[] = [
     fullName: "Valparaiso Beacons",
     shortName: "Valparaiso",
     code: "VALP",
-    color: "#381e0e",
+    primaryColor: "#381e0e",
     secondaryColor: "#613318",
     logo: ValparaisoLogo,
     logoLight: ValparaisoLogoLight,
@@ -4182,7 +4180,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 205,
@@ -4190,7 +4188,7 @@ export const cbTeams: Team[] = [
     fullName: "Western Carolina Catamounts",
     shortName: "W Carolina",
     code: "WCU",
-    color: "#492F91",
+    primaryColor: "#492F91",
     secondaryColor: "#bf9e70",
     logo: WesternCarolinaLogo,
     logoLight: WesternCarolinaLogoLight,
@@ -4200,7 +4198,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 206,
@@ -4208,7 +4206,7 @@ export const cbTeams: Team[] = [
     fullName: "Wichita State Shockers",
     shortName: "Wichita St",
     code: "WICH",
-    color: "#0d0a03",
+    primaryColor: "#0d0a03",
     secondaryColor: "#ffc41e",
     logo: WichitaStateLogo,
     logoLight: WichitaStateLogoLight,
@@ -4218,7 +4216,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 289,
@@ -4226,7 +4224,7 @@ export const cbTeams: Team[] = [
     fullName: "William & Mary Tribe",
     shortName: "William & Mary",
     code: "WMMY",
-    color: "#103217",
+    primaryColor: "#103217",
     secondaryColor: "#f6b220",
     logo: WilliamAndMaryLogo,
     logoLight: WilliamAndMaryLogoLight,
@@ -4236,7 +4234,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 207,
@@ -4244,7 +4242,7 @@ export const cbTeams: Team[] = [
     fullName: "Winthrop Eagles",
     shortName: "Winthrop",
     code: "WIN",
-    color: "#9e0b0e",
+    primaryColor: "#9e0b0e",
     secondaryColor: "#fdb41e",
     logo: WinthropLogo,
     logoLight: WinthropLogoLight,
@@ -4254,7 +4252,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 208,
@@ -4262,7 +4260,7 @@ export const cbTeams: Team[] = [
     fullName: "Wofford Terriers",
     shortName: "Wofford",
     code: "WOF",
-    color: "#533B23",
+    primaryColor: "#533B23",
     secondaryColor: "#f0f0f0",
     logo: WoffordLogo,
     logoLight: WoffordLogoLight,
@@ -4272,7 +4270,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 270,
@@ -4280,7 +4278,7 @@ export const cbTeams: Team[] = [
     fullName: "Wright State Raiders",
     shortName: "Wright St",
     code: "WRST",
-    color: "#cba052",
+    primaryColor: "#cba052",
     secondaryColor: "#cba052",
     logo: WrightStateLogo,
     logoLight: WrightStateLogoLight,
@@ -4290,7 +4288,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 312,
@@ -4298,7 +4296,7 @@ export const cbTeams: Team[] = [
     fullName: "Xavier Musketeers",
     shortName: "Xavier",
     code: "XU",
-    color: "#21304e",
+    primaryColor: "#21304e",
     secondaryColor: "#a5a7a8",
     logo: XavierLogo,
     logoLight: XavierLogoLight,
@@ -4308,7 +4306,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 209,
@@ -4316,7 +4314,7 @@ export const cbTeams: Team[] = [
     fullName: "Youngstown State Penguins",
     shortName: "Youngstown St",
     code: "YSU",
-    color: "#E51936",
+    primaryColor: "#E51936",
     secondaryColor: "#690717",
     logo: YoungstownStateLogo,
     logoLight: YoungstownStateLogoLight,
@@ -4326,7 +4324,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 315,
@@ -4334,7 +4332,7 @@ export const cbTeams: Team[] = [
     fullName: "Abilene Christian Wildcats",
     shortName: "Abilene Chrstn",
     code: "ACU",
-    color: "#592d82",
+    primaryColor: "#592d82",
     secondaryColor: "#b1b3b3",
     logo: AbileneChristianLogo,
     logoLight: AbileneChristianLogoLight,
@@ -4344,7 +4342,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 316,
@@ -4352,7 +4350,7 @@ export const cbTeams: Team[] = [
     fullName: "Akron Zips",
     shortName: "Akron",
     code: "AKR",
-    color: "#00285e",
+    primaryColor: "#00285e",
     secondaryColor: "#84754e",
     logo: AkronLogo,
     logoLight: AkronLogoLight,
@@ -4362,7 +4360,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 317,
@@ -4370,7 +4368,7 @@ export const cbTeams: Team[] = [
     fullName: "Alabama A&M Bulldogs",
     shortName: "Alabama A&M",
     code: "AAMU",
-    color: "#790000",
+    primaryColor: "#790000",
     secondaryColor: "#ffffff",
     logo: AlabamaAAndMLogo,
     logoLight: AlabamaAAndMLogoLight,
@@ -4380,7 +4378,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 318,
@@ -4388,7 +4386,7 @@ export const cbTeams: Team[] = [
     fullName: "Alabama State Hornets",
     shortName: "Alabama St",
     code: "ALST",
-    color: "#e9a900",
+    primaryColor: "#e9a900",
     secondaryColor: "#0a0a0a",
     logo: AlabamaStateLogo,
     logoLight: AlabamaStateLogoLight,
@@ -4398,7 +4396,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 319,
@@ -4406,7 +4404,7 @@ export const cbTeams: Team[] = [
     fullName: "American University Eagles",
     shortName: "American",
     code: "AMER",
-    color: "#c41130",
+    primaryColor: "#c41130",
     secondaryColor: "#c8102e",
     logo: AmericanUniversityLogo,
     logoLight: AmericanUniversityLogoLight,
@@ -4416,7 +4414,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 320,
@@ -4424,7 +4422,7 @@ export const cbTeams: Team[] = [
     fullName: "Arkansas State Red Wolves",
     shortName: "Arkansas St",
     code: "ARST",
-    color: "#e81018",
+    primaryColor: "#e81018",
     secondaryColor: "#000000",
     logo: ArkansasStateLogo,
     logoLight: ArkansasStateLogoLight,
@@ -4434,7 +4432,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 321,
@@ -4442,7 +4440,7 @@ export const cbTeams: Team[] = [
     fullName: "Arkansas-Pine Bluff Golden Lions",
     shortName: "AR-Pine Bluff",
     code: "UAPB",
-    color: "#e0aa0f",
+    primaryColor: "#e0aa0f",
     secondaryColor: "#eaaa00",
     logo: ArkansasPineBluffLogo,
     logoLight: ArkansasPineBluffLogoLight,
@@ -4452,7 +4450,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 322,
@@ -4460,7 +4458,7 @@ export const cbTeams: Team[] = [
     fullName: "Boise State Broncos",
     shortName: "Boise St",
     code: "BSU",
-    color: "#0033a0",
+    primaryColor: "#0033a0",
     secondaryColor: "#fa4616",
     logo: BoiseStateLogo,
     logoLight: BoiseStateLogoLight,
@@ -4470,7 +4468,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 323,
@@ -4478,7 +4476,7 @@ export const cbTeams: Team[] = [
     fullName: "Boston University Terriers",
     shortName: "Boston U",
     code: "BU",
-    color: "#cc0000",
+    primaryColor: "#cc0000",
     secondaryColor: "#ffffff",
     logo: BostonUniversityLogo,
     logoLight: BostonUniversityLogoLight,
@@ -4488,7 +4486,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 324,
@@ -4496,7 +4494,7 @@ export const cbTeams: Team[] = [
     fullName: "Bradley Braves",
     shortName: "Bradley",
     code: "BRAD",
-    color: "#b70002",
+    primaryColor: "#b70002",
     secondaryColor: "#c0c0c0",
     logo: BradleyLogo,
     logoLight: BradleyLogoLight,
@@ -4506,7 +4504,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 313,
@@ -4515,7 +4513,7 @@ export const cbTeams: Team[] = [
     shortName: "Bucknell",
     code: "BUCK",
     secondaryColor: "#00316e",
-    color: "#000060",
+    primaryColor: "#000060",
     logo: BucknellLogo,
     logoLight: BucknellLogoLight,
     established: 1883,
@@ -4524,7 +4522,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Lewisburg",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 325,
@@ -4532,7 +4530,7 @@ export const cbTeams: Team[] = [
     fullName: "Buffalo Bulls",
     shortName: "Buffalo",
     code: "BUFF",
-    color: "#041A9B",
+    primaryColor: "#041A9B",
     secondaryColor: "#ebebeb",
     logo: BuffaloLogo,
     logoLight: BuffaloLogoLight,
@@ -4542,7 +4540,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 326,
@@ -4550,7 +4548,7 @@ export const cbTeams: Team[] = [
     fullName: "Butler Bulldogs",
     shortName: "Butler",
     code: "BUT",
-    color: "#0d1361",
+    primaryColor: "#0d1361",
     secondaryColor: "#00a3e0",
     logo: ButlerLogo,
     logoLight: ButlerLogoLight,
@@ -4560,7 +4558,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 327,
@@ -4569,7 +4567,7 @@ export const cbTeams: Team[] = [
     shortName: "Bakersfield",
     code: "CSUB",
     secondaryColor: "#FFC72C",
-    color: "#003594",
+    primaryColor: "#003594",
     logo: CalStateBakersfieldLogo,
     logoLight: CalStateBakersfieldLogoLight,
     established: 0,
@@ -4578,7 +4576,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 328,
@@ -4586,7 +4584,7 @@ export const cbTeams: Team[] = [
     fullName: "Central Michigan Chippewas",
     shortName: "C Michigan",
     code: "CMU",
-    color: "#6a0032",
+    primaryColor: "#6a0032",
     secondaryColor: "#ffc82e",
     logo: CentralMichiganLogo,
     logoLight: CentralMichiganLogoLight,
@@ -4596,7 +4594,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 329,
@@ -4604,7 +4602,7 @@ export const cbTeams: Team[] = [
     fullName: "Charleston Southern Buccaneers",
     shortName: "Charleston So",
     code: "CHSO",
-    color: "#2e3192",
+    primaryColor: "#2e3192",
     secondaryColor: "#ded090",
     logo: CharlestonSouthernLogo,
     logoLight: CharlestonSouthernLogoLight,
@@ -4614,7 +4612,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 330,
@@ -4622,7 +4620,7 @@ export const cbTeams: Team[] = [
     fullName: "Chattanooga Mocs",
     shortName: "Chattanooga",
     code: "UTC",
-    color: "#00386b",
+    primaryColor: "#00386b",
     secondaryColor: "#dca71d",
     logo: ChattanoogaLogo,
     logoLight: ChattanoogaLogoLight,
@@ -4632,7 +4630,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 331,
@@ -4640,7 +4638,7 @@ export const cbTeams: Team[] = [
     fullName: "Chicago St Cougars",
     shortName: "Chicago St",
     code: "CHIC",
-    color: "#006700",
+    primaryColor: "#006700",
     secondaryColor: "",
     logo: ChicagoStateLogo,
     logoLight: ChicagoStateLogoLight,
@@ -4650,7 +4648,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 332,
@@ -4658,7 +4656,7 @@ export const cbTeams: Team[] = [
     fullName: "Cleveland State Vikings",
     shortName: "Cleveland St",
     code: "CLEV",
-    color: "#006633",
+    primaryColor: "#006633",
     secondaryColor: "#231f20",
     logo: ClevelandStateLogo,
     logoLight: ClevelandStateLogoLight,
@@ -4668,7 +4666,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 333,
@@ -4676,7 +4674,7 @@ export const cbTeams: Team[] = [
     fullName: "Colgate Raiders",
     shortName: "Colgate",
     code: "COLG",
-    color: "#821019",
+    primaryColor: "#821019",
     secondaryColor: "#ffffff",
     logo: ColgateLogo,
     logoLight: ColgateLogoLight,
@@ -4686,7 +4684,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 334,
@@ -4694,7 +4692,7 @@ export const cbTeams: Team[] = [
     fullName: "Colorado Buffaloes",
     shortName: "Colorado",
     code: "COLO",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#cfb87c",
     logo: ColoradoLogo,
     logoLight: ColoradoLogoLight,
@@ -4704,7 +4702,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 335,
@@ -4712,7 +4710,7 @@ export const cbTeams: Team[] = [
     fullName: "Colorado State Rams",
     shortName: "Colorado St",
     code: "CSU",
-    color: "#1e4d2b",
+    primaryColor: "#1e4d2b",
     secondaryColor: "#c8c372",
     logo: ColoradoStateLogo,
     logoLight: ColoradoStateLogoLight,
@@ -4722,7 +4720,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 336,
@@ -4730,7 +4728,7 @@ export const cbTeams: Team[] = [
     fullName: "Cornell Big Red",
     shortName: "Cornell",
     code: "COR",
-    color: "#d60027",
+    primaryColor: "#d60027",
     secondaryColor: "#101010",
     logo: CornellLogo,
     logoLight: CornellLogoLight,
@@ -4740,7 +4738,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 337,
@@ -4748,7 +4746,7 @@ export const cbTeams: Team[] = [
     fullName: "Davidson Wildcats",
     shortName: "Davidson",
     code: "DAV",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#e51837",
     logo: DavidsonLogo,
     logoLight: DavidsonLogoLight,
@@ -4758,7 +4756,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 338,
@@ -4766,7 +4764,7 @@ export const cbTeams: Team[] = [
     fullName: "Dayton Flyers",
     shortName: "Dayton",
     code: "DAY",
-    color: "#004B8D",
+    primaryColor: "#004B8D",
     secondaryColor: "#ffffff",
     logo: DaytonLogo,
     logoLight: DaytonLogoLight,
@@ -4776,7 +4774,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 342,
@@ -4784,7 +4782,7 @@ export const cbTeams: Team[] = [
     fullName: "DePaul Blue Demons",
     shortName: "DePaul",
     code: "DEP",
-    color: "#2d649c",
+    primaryColor: "#2d649c",
     secondaryColor: "#ce1125",
     logo: DePaulLogo,
     logoLight: DePaulLogoLight,
@@ -4794,7 +4792,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 339,
@@ -4802,7 +4800,7 @@ export const cbTeams: Team[] = [
     fullName: "Delaware Blue Hens",
     shortName: "Delaware",
     code: "DEL",
-    color: "#033594",
+    primaryColor: "#033594",
     secondaryColor: "#e8ce31",
     logo: DelawareLogo,
     logoLight: DelawareLogoLight,
@@ -4812,7 +4810,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 340,
@@ -4820,7 +4818,7 @@ export const cbTeams: Team[] = [
     fullName: "Delaware State Hornets",
     shortName: "Delaware St",
     code: "DSU",
-    color: "#FF3630",
+    primaryColor: "#FF3630",
     secondaryColor: "#009cdd",
     logo: DelawareStateLogo,
     logoLight: DelawareStateLogoLight,
@@ -4830,7 +4828,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 341,
@@ -4838,7 +4836,7 @@ export const cbTeams: Team[] = [
     fullName: "Denver Pioneers",
     shortName: "Denver",
     code: "DEN",
-    color: "#98002e",
+    primaryColor: "#98002e",
     secondaryColor: "#a8996e",
     logo: DenverLogo,
     logoLight: DenverLogoLight,
@@ -4848,7 +4846,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 343,
@@ -4856,7 +4854,7 @@ export const cbTeams: Team[] = [
     fullName: "Detroit Mercy Titans",
     shortName: "Detroit Mercy",
     code: "DET",
-    color: "#165b9e",
+    primaryColor: "#165b9e",
     secondaryColor: "#d31733",
     logo: DetroitMercyLogo,
     logoLight: DetroitMercyLogoLight,
@@ -4866,7 +4864,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 344,
@@ -4874,7 +4872,7 @@ export const cbTeams: Team[] = [
     fullName: "Drake Bulldogs",
     shortName: "Drake",
     code: "DRKE",
-    color: "#005596",
+    primaryColor: "#005596",
     secondaryColor: "#bec0c2",
     logo: DrakeLogo,
     logoLight: DrakeLogoLight,
@@ -4884,7 +4882,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 345,
@@ -4892,7 +4890,7 @@ export const cbTeams: Team[] = [
     fullName: "Drexel Dragons",
     shortName: "Drexel",
     code: "DREX",
-    color: "#020260",
+    primaryColor: "#020260",
     secondaryColor: "#ffd65a",
     logo: DrexelLogo,
     logoLight: DrexelLogoLight,
@@ -4902,7 +4900,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 346,
@@ -4910,7 +4908,7 @@ export const cbTeams: Team[] = [
     fullName: "Duquesne Dukes",
     shortName: "Duquesne",
     code: "DUQ",
-    color: "#002D62",
+    primaryColor: "#002D62",
     secondaryColor: "#b90b2e",
     logo: DuquesneLogo,
     logoLight: DuquesneLogoLight,
@@ -4920,7 +4918,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 347,
@@ -4928,7 +4926,7 @@ export const cbTeams: Team[] = [
     fullName: "Eastern Illinois Panthers",
     shortName: "E Illinois",
     code: "EIU",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#bebab9",
     logo: EasternIllinoisLogo,
     logoLight: EasternIllinoisLogoLight,
@@ -4938,7 +4936,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 348,
@@ -4946,7 +4944,7 @@ export const cbTeams: Team[] = [
     fullName: "Eastern Kentucky Colonels",
     shortName: "E Kentucky",
     code: "EKU",
-    color: "#660819",
+    primaryColor: "#660819",
     secondaryColor: "#f0f0f0",
     logo: EasternKentuckyLogo,
     logoLight: EasternKentuckyLogoLight,
@@ -4956,7 +4954,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 349,
@@ -4964,7 +4962,7 @@ export const cbTeams: Team[] = [
     fullName: "Eastern Michigan Eagles",
     shortName: "E Michigan",
     code: "EMU",
-    color: "#00331b",
+    primaryColor: "#00331b",
     secondaryColor: "#f0f0f0",
     logo: EasternMichiganLogo,
     logoLight: EasternMichiganLogoLight,
@@ -4974,7 +4972,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 350,
@@ -4982,7 +4980,7 @@ export const cbTeams: Team[] = [
     fullName: "Eastern Washington Eagles",
     shortName: "E Washington",
     code: "EWU",
-    color: "#a10022",
+    primaryColor: "#a10022",
     secondaryColor: "#abb4bc",
     logo: EasternWashingtonLogo,
     logoLight: EasternWashingtonLogoLight,
@@ -4992,7 +4990,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 351,
@@ -5000,7 +4998,7 @@ export const cbTeams: Team[] = [
     fullName: "Fairfield Stags",
     shortName: "Fairfield",
     code: "FAIR",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#ebebeb",
     logo: FairfieldLogo,
     logoLight: FairfieldLogoLight,
@@ -5010,7 +5008,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 352,
@@ -5018,7 +5016,7 @@ export const cbTeams: Team[] = [
     fullName: "Fairleigh Dickinson Knights",
     shortName: "FDU",
     code: "FDU",
-    color: "#72293c",
+    primaryColor: "#72293c",
     secondaryColor: "#28334a",
     logo: FairleighDickinsonLogo,
     logoLight: FairleighDickinsonLogoLight,
@@ -5028,7 +5026,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 353,
@@ -5036,7 +5034,7 @@ export const cbTeams: Team[] = [
     fullName: "Florida A&M Rattlers",
     shortName: "Florida A&M",
     code: "FAMU",
-    color: "#F89728",
+    primaryColor: "#F89728",
     secondaryColor: "#00843d",
     logo: FloridaAAndMLogo,
     logoLight: FloridaAAndMLogoLight,
@@ -5046,7 +5044,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 354,
@@ -5054,7 +5052,7 @@ export const cbTeams: Team[] = [
     fullName: "Fordham Rams",
     shortName: "Fordham",
     code: "FOR",
-    color: "#830032",
+    primaryColor: "#830032",
     secondaryColor: "#909090",
     logo: FordhamLogo,
     logoLight: FordhamLogoLight,
@@ -5064,7 +5062,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 355,
@@ -5072,7 +5070,7 @@ export const cbTeams: Team[] = [
     fullName: "Furman Paladins",
     shortName: "Furman",
     code: "FUR",
-    color: "#582c83",
+    primaryColor: "#582c83",
     secondaryColor: "#ffffff",
     logo: FurmanLogo,
     logoLight: FurmanLogoLight,
@@ -5082,7 +5080,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 356,
@@ -5090,7 +5088,7 @@ export const cbTeams: Team[] = [
     fullName: "Gardner-Webb Runnin' Bulldogs",
     shortName: "Gardner-Webb",
     code: "GWEB",
-    color: "#c12535",
+    primaryColor: "#c12535",
     secondaryColor: "#909090",
     logo: GardnerWebbLogo,
     logoLight: GardnerWebbLogoLight,
@@ -5100,7 +5098,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 357,
@@ -5108,7 +5106,7 @@ export const cbTeams: Team[] = [
     fullName: "Georgetown Hoyas",
     shortName: "Georgetown",
     code: "GTWN",
-    color: "#110E42",
+    primaryColor: "#110E42",
     secondaryColor: "#001c58",
     logo: GeorgetownLogo,
     logoLight: GeorgetownLogoLight,
@@ -5118,7 +5116,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 358,
@@ -5126,7 +5124,7 @@ export const cbTeams: Team[] = [
     fullName: "Georgia State Panthers",
     shortName: "Georgia St",
     code: "GAST",
-    color: "#1e539a",
+    primaryColor: "#1e539a",
     secondaryColor: "#ebebeb",
     logo: GeorgiaStateLogo,
     logoLight: GeorgiaStateLogoLight,
@@ -5136,7 +5134,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 359,
@@ -5144,7 +5142,7 @@ export const cbTeams: Team[] = [
     fullName: "Grambling Tigers",
     shortName: "Grambling",
     code: "GRAM",
-    color: "#ee8601",
+    primaryColor: "#ee8601",
     secondaryColor: "#ffd10a",
     logo: GramblingLogo,
     logoLight: GramblingLogoLight,
@@ -5154,7 +5152,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 360,
@@ -5162,7 +5160,7 @@ export const cbTeams: Team[] = [
     fullName: "Grand Canyon Lopes",
     shortName: "Grand Canyon",
     code: "GCU",
-    color: "#522398",
+    primaryColor: "#522398",
     secondaryColor: "#ffffff",
     logo: GrandCanyonLogo,
     logoLight: GrandCanyonLogoLight,
@@ -5172,7 +5170,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 361,
@@ -5180,7 +5178,7 @@ export const cbTeams: Team[] = [
     fullName: "Green Bay Phoenix",
     shortName: "Green Bay",
     code: "GB",
-    color: "#006633",
+    primaryColor: "#006633",
     secondaryColor: "#ffffff",
     logo: WiscGreenBayLogo,
     logoLight: WiscGreenBayLogoLight,
@@ -5190,7 +5188,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 362,
@@ -5198,7 +5196,7 @@ export const cbTeams: Team[] = [
     fullName: "Hampton Pirates",
     shortName: "Hampton",
     code: "HAMP",
-    color: "#0067AC",
+    primaryColor: "#0067AC",
     secondaryColor: "#ffffff",
     logo: HamptonLogo,
     logoLight: HamptonLogoLight,
@@ -5208,7 +5206,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 314,
@@ -5216,7 +5214,7 @@ export const cbTeams: Team[] = [
     fullName: "Sacramento State Hornets",
     shortName: "Sacramento St",
     code: "SAC",
-    color: "#00573C",
+    primaryColor: "#00573C",
     secondaryColor: "#cdb97d",
     logo: SacramentoStateLogo,
     logoLight: SacramentoStateLogoLight,
@@ -5226,7 +5224,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 363,
@@ -5234,7 +5232,7 @@ export const cbTeams: Team[] = [
     fullName: "Harvard Crimson",
     shortName: "Harvard",
     code: "HARV",
-    color: "#990000",
+    primaryColor: "#990000",
     secondaryColor: "#dbdbdb",
     logo: HarvardLogo,
     logoLight: HarvardLogoLight,
@@ -5244,7 +5242,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 364,
@@ -5252,7 +5250,7 @@ export const cbTeams: Team[] = [
     fullName: "High Point Panthers",
     shortName: "High Point",
     code: "HP",
-    color: "#b0b7bc",
+    primaryColor: "#b0b7bc",
     secondaryColor: "#ebebeb",
     logo: HighPointLogo,
     logoLight: HighPointLogoLight,
@@ -5262,7 +5260,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 365,
@@ -5270,7 +5268,7 @@ export const cbTeams: Team[] = [
     fullName: "Hofstra Pride",
     shortName: "Hofstra",
     code: "HOF",
-    color: "#00337c",
+    primaryColor: "#00337c",
     secondaryColor: "#f6c934",
     logo: HofstraLogo,
     logoLight: HofstraLogoLight,
@@ -5280,7 +5278,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 366,
@@ -5288,7 +5286,7 @@ export const cbTeams: Team[] = [
     fullName: "Holy Cross Crusaders",
     shortName: "Holy Cross",
     code: "HC",
-    color: "#0a0a0a",
+    primaryColor: "#0a0a0a",
     secondaryColor: "#080808",
     logo: HolyCrossLogo,
     logoLight: HolyCrossLogoLight,
@@ -5298,7 +5296,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 367,
@@ -5306,7 +5304,7 @@ export const cbTeams: Team[] = [
     fullName: "Houston Christian Huskies",
     shortName: "Hou Christian",
     code: "HBU",
-    color: "#00539c",
+    primaryColor: "#00539c",
     secondaryColor: "#F05123",
     logo: HoustonChristianLogo,
     logoLight: HoustonChristianLogoLight,
@@ -5316,7 +5314,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 368,
@@ -5324,7 +5322,7 @@ export const cbTeams: Team[] = [
     fullName: "Howard Bison",
     shortName: "Howard",
     code: "HOW",
-    color: "#003a63",
+    primaryColor: "#003a63",
     secondaryColor: "#e51937",
     logo: HowardLogo,
     logoLight: HowardLogoLight,
@@ -5334,7 +5332,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 375,
@@ -5342,7 +5340,7 @@ export const cbTeams: Team[] = [
     fullName: "IU Indianapolis Jaguars",
     shortName: "IU Indy",
     code: "IUPU",
-    color: "#A81F30",
+    primaryColor: "#A81F30",
     secondaryColor: "#d59f0f",
     logo: IUIndianapolisLogo,
     logoLight: IUIndianapolisLogoLight,
@@ -5352,7 +5350,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 370,
@@ -5360,7 +5358,7 @@ export const cbTeams: Team[] = [
     fullName: "Idaho State Bengals",
     shortName: "Idaho St",
     code: "IDST",
-    color: "#ef8c00",
+    primaryColor: "#ef8c00",
     secondaryColor: "#e9a126",
     logo: IdahoStateLogo,
     logoLight: IdahoStateLogoLight,
@@ -5370,7 +5368,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 369,
@@ -5378,7 +5376,7 @@ export const cbTeams: Team[] = [
     fullName: "Idaho Vandals",
     shortName: "Idaho",
     code: "IDHO",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#8c6e4a",
     logo: IdahoLogo,
     logoLight: IdahoLogoLight,
@@ -5388,7 +5386,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 371,
@@ -5396,7 +5394,7 @@ export const cbTeams: Team[] = [
     fullName: "Incarnate Word Cardinals",
     shortName: "Incarnate Word",
     code: "IW",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#080808",
     logo: IncarnateWordLogo,
     logoLight: IncarnateWordLogoLight,
@@ -5406,7 +5404,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 372,
@@ -5414,7 +5412,7 @@ export const cbTeams: Team[] = [
     fullName: "Iona Gaels",
     shortName: "Iona",
     code: "IONA",
-    color: "#6f2c3e",
+    primaryColor: "#6f2c3e",
     secondaryColor: "#f0ab00",
     logo: IonaLogo,
     logoLight: IonaLogoLight,
@@ -5424,7 +5422,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 373,
@@ -5432,7 +5430,7 @@ export const cbTeams: Team[] = [
     fullName: "Iowa State Cyclones",
     shortName: "Iowa St",
     code: "ISU",
-    color: "#822433",
+    primaryColor: "#822433",
     secondaryColor: "#fdca2f",
     logo: IowaStateLogo,
     logoLight: IowaStateLogoLight,
@@ -5442,7 +5440,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 376,
@@ -5450,7 +5448,7 @@ export const cbTeams: Team[] = [
     fullName: "La Salle Explorers",
     shortName: "La Salle",
     code: "LAS",
-    color: "#003356",
+    primaryColor: "#003356",
     secondaryColor: "#ffce00",
     logo: LaSalleLogo,
     logoLight: LaSalleLogoLight,
@@ -5460,7 +5458,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 377,
@@ -5468,7 +5466,7 @@ export const cbTeams: Team[] = [
     fullName: "Lehigh Mountain Hawks",
     shortName: "Lehigh",
     code: "LEH",
-    color: "#6c2b2a",
+    primaryColor: "#6c2b2a",
     secondaryColor: "#b69e70",
     logo: LehighLogo,
     logoLight: LehighLogoLight,
@@ -5478,7 +5476,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 378,
@@ -5486,7 +5484,7 @@ export const cbTeams: Team[] = [
     fullName: "Lipscomb Bisons",
     shortName: "Lipscomb",
     code: "LIP",
-    color: "#20366C",
+    primaryColor: "#20366C",
     secondaryColor: "#f6b734",
     logo: LipscombLogo,
     logoLight: LipscombLogoLight,
@@ -5496,7 +5494,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 379,
@@ -5504,7 +5502,7 @@ export const cbTeams: Team[] = [
     fullName: "Long Island University Sharks",
     shortName: "Long Island",
     code: "LIU",
-    color: "#69B3E7",
+    primaryColor: "#69B3E7",
     secondaryColor: "#FFC72C",
     logo: LongIslandLogo,
     logoLight: LongIslandLogoLight,
@@ -5514,7 +5512,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 380,
@@ -5522,7 +5520,7 @@ export const cbTeams: Team[] = [
     fullName: "Longwood Lancers",
     shortName: "Longwood",
     code: "LONG",
-    color: "#003273",
+    primaryColor: "#003273",
     secondaryColor: "#9ea2a3",
     logo: LongwoodLogo,
     logoLight: LongwoodLogoLight,
@@ -5532,7 +5530,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 381,
@@ -5540,7 +5538,7 @@ export const cbTeams: Team[] = [
     fullName: "Loyola Chicago Ramblers",
     shortName: "Loyola Chicago",
     code: "LUC",
-    color: "#9d1244",
+    primaryColor: "#9d1244",
     secondaryColor: "#eaaa00",
     logo: LoyolaChicagoLogo,
     logoLight: LoyolaChicagoLogoLight,
@@ -5550,7 +5548,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 382,
@@ -5558,7 +5556,7 @@ export const cbTeams: Team[] = [
     fullName: "Loyola Maryland Greyhounds",
     shortName: "Loyola MD",
     code: "L-MD",
-    color: "#76a7a0",
+    primaryColor: "#76a7a0",
     secondaryColor: "#c9cbca",
     logo: LoyolaMarylandLogo,
     logoLight: LoyolaMarylandLogoLight,
@@ -5568,7 +5566,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 383,
@@ -5576,7 +5574,7 @@ export const cbTeams: Team[] = [
     fullName: "Marquette Golden Eagles",
     shortName: "Marquette",
     code: "MARQ",
-    color: "#003366",
+    primaryColor: "#003366",
     secondaryColor: "#ffcc00",
     logo: MarquetteLogo,
     logoLight: MarquetteLogoLight,
@@ -5586,7 +5584,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 384,
@@ -5594,7 +5592,7 @@ export const cbTeams: Team[] = [
     fullName: "Marshall Thundering Herd",
     shortName: "Marshall",
     code: "MRSH",
-    color: "#00ae42",
+    primaryColor: "#00ae42",
     secondaryColor: "#be854c",
     logo: MarshallLogo,
     logoLight: MarshallLogoLight,
@@ -5604,7 +5602,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 385,
@@ -5612,7 +5610,7 @@ export const cbTeams: Team[] = [
     fullName: "Maryland Eastern Shore Hawks",
     shortName: "MD Eastern",
     code: "UMES",
-    color: "#5c2301",
+    primaryColor: "#5c2301",
     secondaryColor: "#b5b7ba",
     logo: MdEastShoreLogo,
     logoLight: MdEastShoreLogoLight,
@@ -5622,7 +5620,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 386,
@@ -5630,7 +5628,7 @@ export const cbTeams: Team[] = [
     fullName: "Massachusetts Minutemen",
     shortName: "UMass",
     code: "MASS",
-    color: "#971B2F",
+    primaryColor: "#971B2F",
     secondaryColor: "#572932",
     logo: UMassLogo,
     logoLight: UMassLogoLight,
@@ -5640,7 +5638,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 387,
@@ -5648,7 +5646,7 @@ export const cbTeams: Team[] = [
     fullName: "McNeese Cowboys",
     shortName: "McNeese",
     code: "MCN",
-    color: "#00529C",
+    primaryColor: "#00529C",
     secondaryColor: "#ffd204",
     logo: McNeeseLogo,
     logoLight: McNeeseLogoLight,
@@ -5658,7 +5656,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 388,
@@ -5666,7 +5664,7 @@ export const cbTeams: Team[] = [
     fullName: "Mississippi Valley State Delta Devils",
     shortName: "Miss Valley St",
     code: "MVSU",
-    color: "#005328",
+    primaryColor: "#005328",
     secondaryColor: "#cf2d34",
     logo: MississippiValleyStLogo,
     logoLight: MississippiValleyStLogoLight,
@@ -5676,7 +5674,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 389,
@@ -5684,7 +5682,7 @@ export const cbTeams: Team[] = [
     fullName: "Montana Grizzlies",
     shortName: "Montana",
     code: "MONT",
-    color: "#751D4A",
+    primaryColor: "#751D4A",
     secondaryColor: "#666666",
     logo: MontanaLogo,
     logoLight: MontanaLogoLight,
@@ -5694,7 +5692,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 390,
@@ -5702,7 +5700,7 @@ export const cbTeams: Team[] = [
     fullName: "Montana State Bobcats",
     shortName: "Montana St",
     code: "MTST",
-    color: "#00205c",
+    primaryColor: "#00205c",
     secondaryColor: "#bc955c",
     logo: MontanaStateLogo,
     logoLight: MontanaStateLogoLight,
@@ -5712,7 +5710,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 391,
@@ -5720,7 +5718,7 @@ export const cbTeams: Team[] = [
     fullName: "Morehead State Eagles",
     shortName: "Morehead St",
     code: "MORE",
-    color: "#094FA3",
+    primaryColor: "#094FA3",
     secondaryColor: "#fed91a",
     logo: MoreheadStateLogo,
     logoLight: MoreheadStateLogoLight,
@@ -5730,7 +5728,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 392,
@@ -5738,7 +5736,7 @@ export const cbTeams: Team[] = [
     fullName: "Morgan State Bears",
     shortName: "Morgan St",
     code: "MORG",
-    color: "#014786",
+    primaryColor: "#014786",
     secondaryColor: "#f47937",
     logo: MorganStateLogo,
     logoLight: MorganStateLogoLight,
@@ -5748,7 +5746,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 393,
@@ -5756,7 +5754,7 @@ export const cbTeams: Team[] = [
     fullName: "Mount St. Mary's Mountaineers",
     shortName: "Mount St Marys",
     code: "MSM",
-    color: "#005596",
+    primaryColor: "#005596",
     secondaryColor: "#ebebeb",
     logo: MountStMarysLogo,
     logoLight: MountStMarysLogoLight,
@@ -5766,7 +5764,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 394,
@@ -5774,7 +5772,7 @@ export const cbTeams: Team[] = [
     fullName: "Murray State Racers",
     shortName: "Murray St",
     code: "MUR",
-    color: "#002148",
+    primaryColor: "#002148",
     secondaryColor: "#000e00",
     logo: MurrayStateLogo,
     logoLight: MurrayStateLogoLight,
@@ -5784,7 +5782,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 395,
@@ -5792,7 +5790,7 @@ export const cbTeams: Team[] = [
     fullName: "NJIT Highlanders",
     shortName: "NJIT",
     code: "NJIT",
-    color: "#EE3024",
+    primaryColor: "#EE3024",
     secondaryColor: "#df3e2e",
     logo: NJITLogo,
     logoLight: NJITLogoLight,
@@ -5802,7 +5800,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 397,
@@ -5810,7 +5808,7 @@ export const cbTeams: Team[] = [
     fullName: "New Hampshire Wildcats",
     shortName: "New Hampshire",
     code: "UNH",
-    color: "#004990",
+    primaryColor: "#004990",
     secondaryColor: "#c3c4c6",
     logo: NewHampshireLogo,
     logoLight: NewHampshireLogoLight,
@@ -5820,7 +5818,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 398,
@@ -5828,7 +5826,7 @@ export const cbTeams: Team[] = [
     fullName: "Niagara Purple Eagles",
     shortName: "Niagara",
     code: "NIAG",
-    color: "#69207E",
+    primaryColor: "#69207E",
     secondaryColor: "#f0f0f0",
     logo: NiagaraLogo,
     logoLight: NiagaraLogoLight,
@@ -5838,7 +5836,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 399,
@@ -5846,7 +5844,7 @@ export const cbTeams: Team[] = [
     fullName: "Nicholls Colonels",
     shortName: "Nicholls",
     code: "NICH",
-    color: "#C41230",
+    primaryColor: "#C41230",
     secondaryColor: "#f0f0f0",
     logo: NichollsLogo,
     logoLight: NichollsLogoLight,
@@ -5856,7 +5854,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 400,
@@ -5864,7 +5862,7 @@ export const cbTeams: Team[] = [
     fullName: "Norfolk State Spartans",
     shortName: "Norfolk St",
     code: "NORF",
-    color: "#0c8968",
+    primaryColor: "#0c8968",
     secondaryColor: "#fdb813",
     logo: NorfolkStateLogo,
     logoLight: NorfolkStateLogoLight,
@@ -5874,7 +5872,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 401,
@@ -5882,7 +5880,7 @@ export const cbTeams: Team[] = [
     fullName: "North Carolina A&T Aggies",
     shortName: "NC A&T",
     code: "NCAT",
-    color: "#0505aa",
+    primaryColor: "#0505aa",
     secondaryColor: "#004684",
     logo: NorthCarolinaAAndTLogo,
     logoLight: NorthCarolinaAAndTLogoLight,
@@ -5892,7 +5890,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 402,
@@ -5900,7 +5898,7 @@ export const cbTeams: Team[] = [
     fullName: "North Carolina Central Eagles",
     shortName: "NC Central",
     code: "NCCU",
-    color: "#880023",
+    primaryColor: "#880023",
     secondaryColor: "#c2c3c0",
     logo: NorthCarolinaCentralLogo,
     logoLight: NorthCarolinaCentralLogoLight,
@@ -5910,7 +5908,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 403,
@@ -5918,7 +5916,7 @@ export const cbTeams: Team[] = [
     fullName: "North Dakota Fighting Hawks",
     shortName: "North Dakota",
     code: "UND",
-    color: "#00A26B",
+    primaryColor: "#00A26B",
     secondaryColor: "#c2c3c0",
     logo: NorthDakotaLogo,
     logoLight: NorthDakotaLogoLight,
@@ -5928,7 +5926,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 404,
@@ -5936,7 +5934,7 @@ export const cbTeams: Team[] = [
     fullName: "North Texas Mean Green",
     shortName: "North Texas",
     code: "UNT",
-    color: "#000",
+    primaryColor: "#000",
     secondaryColor: "#00853E",
     logo: NorthTexasLogo,
     logoLight: NorthTexasLogoLight,
@@ -5946,7 +5944,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 405,
@@ -5954,7 +5952,7 @@ export const cbTeams: Team[] = [
     fullName: "Northeastern Huskies",
     shortName: "Northeastern",
     code: "NE",
-    color: "#CC0001",
+    primaryColor: "#CC0001",
     secondaryColor: "#c2c3c0",
     logo: NortheasternLogo,
     logoLight: NortheasternLogoLight,
@@ -5964,7 +5962,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 406,
@@ -5972,7 +5970,7 @@ export const cbTeams: Team[] = [
     fullName: "Northern Arizona Lumberjacks",
     shortName: "N Arizona",
     code: "NAU",
-    color: "#003976",
+    primaryColor: "#003976",
     secondaryColor: "#1b3069",
     logo: NorthernArizonaLogo,
     logoLight: NorthernArizonaLogoLight,
@@ -5982,7 +5980,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 407,
@@ -5990,7 +5988,7 @@ export const cbTeams: Team[] = [
     fullName: "Northern Colorado Bears",
     shortName: "N Colorado",
     code: "UNCO",
-    color: "#13558D",
+    primaryColor: "#13558D",
     secondaryColor: "#ffc533",
     logo: NorthernColoradoLogo,
     logoLight: NorthernColoradoLogoLight,
@@ -6000,7 +5998,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 408,
@@ -6008,7 +6006,7 @@ export const cbTeams: Team[] = [
     fullName: "Northern Illinois Huskies",
     shortName: "N Illinois",
     code: "NIU",
-    color: "#F1122C",
+    primaryColor: "#F1122C",
     secondaryColor: "#cc0000",
     logo: NorthernIllinoisLogo,
     logoLight: NorthernIllinoisLogoLight,
@@ -6018,7 +6016,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 409,
@@ -6026,7 +6024,7 @@ export const cbTeams: Team[] = [
     fullName: "Northern Iowa Panthers",
     shortName: "Northern Iowa",
     code: "UNI",
-    color: "#473282",
+    primaryColor: "#473282",
     secondaryColor: "#ffffff",
     logo: NorthernIowaLogo,
     logoLight: NorthernIowaLogoLight,
@@ -6036,7 +6034,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 410,
@@ -6044,7 +6042,7 @@ export const cbTeams: Team[] = [
     fullName: "Northern Kentucky Norse",
     shortName: "N Kentucky",
     code: "NKU",
-    color: "#ffc82e",
+    primaryColor: "#ffc82e",
     secondaryColor: "#000000",
     logo: NorthernKentuckyLogo,
     logoLight: NorthernKentuckyLogoLight,
@@ -6054,7 +6052,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 411,
@@ -6062,7 +6060,7 @@ export const cbTeams: Team[] = [
     fullName: "Northwestern Wildcats",
     shortName: "Northwestern",
     code: "NU",
-    color: "#582c83",
+    primaryColor: "#582c83",
     secondaryColor: "#ffffff",
     logo: NorthwesternLogo,
     logoLight: NorthwesternLogoLight,
@@ -6072,7 +6070,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 412,
@@ -6080,7 +6078,7 @@ export const cbTeams: Team[] = [
     fullName: "Oakland Golden Grizzlies",
     shortName: "Oakland",
     code: "OAK",
-    color: "#04091c",
+    primaryColor: "#04091c",
     secondaryColor: "#bc955c",
     logo: OaklandLogo,
     logoLight: OaklandLogoLight,
@@ -6090,7 +6088,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 396,
@@ -6098,7 +6096,7 @@ export const cbTeams: Team[] = [
     fullName: "Omaha Mavericks",
     shortName: "Omaha",
     code: "OMA",
-    color: "#e3193e",
+    primaryColor: "#e3193e",
     secondaryColor: "#474648",
     logo: NebraskaOLogo,
     logoLight: NebraskaOLogoLight,
@@ -6108,7 +6106,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 374,
@@ -6116,7 +6114,7 @@ export const cbTeams: Team[] = [
     fullName: "Purdue Fort Wayne Mastodons",
     shortName: "Purdue FW",
     code: "PFW",
-    color: "#cfb991",
+    primaryColor: "#cfb991",
     secondaryColor: "#000000",
     logo: PurdueFortWayneLogo,
     logoLight: PurdueFortWayneLogoLight,
@@ -6126,7 +6124,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 451,
@@ -6134,7 +6132,7 @@ export const cbTeams: Team[] = [
     fullName: "Kansas City Roos",
     shortName: "Kansas City",
     code: "KC",
-    color: "#004b87",
+    primaryColor: "#004b87",
     secondaryColor: "#ffc72c",
     logo: KansasCityLogo,
     logoLight: KansasCityLogoLight,
@@ -6144,7 +6142,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 413,
@@ -6152,7 +6150,7 @@ export const cbTeams: Team[] = [
     fullName: "Pacific Tigers",
     shortName: "Pacific",
     code: "PAC",
-    color: "#F47820",
+    primaryColor: "#F47820",
     secondaryColor: "#c2c3c0",
     logo: PacificLogo,
     logoLight: PacificLogoLight,
@@ -6162,7 +6160,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 414,
@@ -6170,7 +6168,7 @@ export const cbTeams: Team[] = [
     fullName: "Penn State Nittany Lions",
     shortName: "Penn State",
     code: "PSU",
-    color: "#00265D",
+    primaryColor: "#00265D",
     secondaryColor: "#002e5c",
     logo: PennStateLogo,
     logoLight: PennStateLogoLight,
@@ -6180,7 +6178,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 415,
@@ -6188,7 +6186,7 @@ export const cbTeams: Team[] = [
     fullName: "Pennsylvania Quakers",
     shortName: "Penn",
     code: "PENN",
-    color: "#082A74",
+    primaryColor: "#082A74",
     secondaryColor: "#a6163d",
     logo: PennsylvaniaLogo,
     logoLight: PennsylvaniaLogoLight,
@@ -6198,7 +6196,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 416,
@@ -6206,7 +6204,7 @@ export const cbTeams: Team[] = [
     fullName: "Portland Pilots",
     shortName: "Portland",
     code: "PORT",
-    color: "#330072",
+    primaryColor: "#330072",
     secondaryColor: "#a8b3ba",
     logo: PortlandLogo,
     logoLight: PortlandLogoLight,
@@ -6216,7 +6214,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 417,
@@ -6224,7 +6222,7 @@ export const cbTeams: Team[] = [
     fullName: "Portland State Vikings",
     shortName: "Portland St",
     code: "PRST",
-    color: "#00311e",
+    primaryColor: "#00311e",
     secondaryColor: "#ebebeb",
     logo: PortlandStateLogo,
     logoLight: PortlandStateLogoLight,
@@ -6234,7 +6232,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 418,
@@ -6242,7 +6240,7 @@ export const cbTeams: Team[] = [
     fullName: "Presbyterian Blue Hose",
     shortName: "Presbyterian",
     code: "PRES",
-    color: "#194896",
+    primaryColor: "#194896",
     secondaryColor: "#990134",
     logo: PresbyterianLogo,
     logoLight: PresbyterianLogoLight,
@@ -6252,7 +6250,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 419,
@@ -6260,7 +6258,7 @@ export const cbTeams: Team[] = [
     fullName: "Providence Friars",
     shortName: "Providence",
     code: "PROV",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#a3a19e",
     logo: ProvidenceLogo,
     logoLight: ProvidenceLogoLight,
@@ -6270,7 +6268,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 420,
@@ -6278,7 +6276,7 @@ export const cbTeams: Team[] = [
     fullName: "Quinnipiac Bobcats",
     shortName: "Quinnipiac",
     code: "QUIN",
-    color: "#041B43",
+    primaryColor: "#041B43",
     secondaryColor: "",
     logo: QuinnipiacLogo,
     logoLight: QuinnipiacLogoLight,
@@ -6288,7 +6286,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 421,
@@ -6296,7 +6294,7 @@ export const cbTeams: Team[] = [
     fullName: "Radford Highlanders",
     shortName: "Radford",
     code: "RAD",
-    color: "#BC1515",
+    primaryColor: "#BC1515",
     secondaryColor: "#c2c3c0",
     logo: RadfordLogo,
     logoLight: RadfordLogoLight,
@@ -6306,7 +6304,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 422,
@@ -6314,7 +6312,7 @@ export const cbTeams: Team[] = [
     fullName: "Rhode Island Rams",
     shortName: "Rhode Island",
     code: "URI",
-    color: "#091f3f",
+    primaryColor: "#091f3f",
     secondaryColor: "#5ab3e8",
     logo: RhodeIslandLogo,
     logoLight: RhodeIslandLogoLight,
@@ -6324,7 +6322,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 423,
@@ -6332,7 +6330,7 @@ export const cbTeams: Team[] = [
     fullName: "Rider Broncs",
     shortName: "Rider",
     code: "RID",
-    color: "#a80532",
+    primaryColor: "#a80532",
     secondaryColor: "#ebebeb",
     logo: RiderLogo,
     logoLight: RiderLogoLight,
@@ -6342,7 +6340,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 424,
@@ -6350,7 +6348,7 @@ export const cbTeams: Team[] = [
     fullName: "Robert Morris Colonials",
     shortName: "Robert Morris",
     code: "RMU",
-    color: "#00214D",
+    primaryColor: "#00214D",
     secondaryColor: "#a21d2b",
     logo: RobertMorrisLogo,
     logoLight: RobertMorrisLogoLight,
@@ -6360,7 +6358,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 429,
@@ -6368,7 +6366,7 @@ export const cbTeams: Team[] = [
     fullName: "SIU Edwardsville Cougars",
     shortName: "SIUE",
     code: "SIUE",
-    color: "#eb1c23",
+    primaryColor: "#eb1c23",
     secondaryColor: "#080808",
     logo: SIUEdwardsvilleLogo,
     logoLight: SIUEdwardsvilleLogoLight,
@@ -6378,7 +6376,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 433,
@@ -6386,7 +6384,7 @@ export const cbTeams: Team[] = [
     fullName: "SMU Mustangs",
     shortName: "SMU",
     code: "SMU",
-    color: "#354ca1",
+    primaryColor: "#354ca1",
     secondaryColor: "#cc0035",
     logo: SMULogo,
     logoLight: SMULogoLight,
@@ -6396,7 +6394,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 436,
@@ -6404,7 +6402,7 @@ export const cbTeams: Team[] = [
     fullName: "Saint Francis Red Flash",
     shortName: "Saint Francis",
     code: "SFPA",
-    color: "#a20012",
+    primaryColor: "#a20012",
     secondaryColor: "#000000",
     logo: SaintFrancisLogo,
     logoLight: SaintFrancisLogoLight,
@@ -6414,7 +6412,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 425,
@@ -6422,7 +6420,7 @@ export const cbTeams: Team[] = [
     fullName: "Saint Joseph's Hawks",
     shortName: "Saint Joseph's",
     code: "JOES",
-    color: "#9e1b32",
+    primaryColor: "#9e1b32",
     secondaryColor: "#6c6f70",
     logo: SaintJosephsLogo,
     logoLight: SaintJosephsLogoLight,
@@ -6432,7 +6430,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 426,
@@ -6440,7 +6438,7 @@ export const cbTeams: Team[] = [
     fullName: "Saint Mary's Gaels",
     shortName: "Saint Mary's",
     code: "SMC",
-    color: "#d80024",
+    primaryColor: "#d80024",
     secondaryColor: "#003057",
     logo: SaintMarysLogo,
     logoLight: SaintMarysLogoLight,
@@ -6450,7 +6448,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 437,
@@ -6458,7 +6456,7 @@ export const cbTeams: Team[] = [
     fullName: "Saint Peter's Peacocks",
     shortName: "Saint Peter's",
     code: "SPU",
-    color: "#004CC2",
+    primaryColor: "#004CC2",
     secondaryColor: "",
     logo: SaintPetersLogo,
     logoLight: SaintPetersLogoLight,
@@ -6468,7 +6466,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 427,
@@ -6476,7 +6474,7 @@ export const cbTeams: Team[] = [
     fullName: "Santa Clara Broncos",
     shortName: "Santa Clara",
     code: "SCU",
-    color: "#690b0b",
+    primaryColor: "#690b0b",
     secondaryColor: "#101010",
     logo: SantaClaraLogo,
     logoLight: SantaClaraLogoLight,
@@ -6486,7 +6484,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 428,
@@ -6494,7 +6492,7 @@ export const cbTeams: Team[] = [
     fullName: "Seattle U Redhawks",
     shortName: "Seattle U",
     code: "SEA",
-    color: "#BF2E1A",
+    primaryColor: "#BF2E1A",
     secondaryColor: "#c2c3c0",
     logo: SeattleULogo,
     logoLight: SeattleULogoLight,
@@ -6504,7 +6502,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 430,
@@ -6512,7 +6510,7 @@ export const cbTeams: Team[] = [
     fullName: "South Carolina State Bulldogs",
     shortName: "SC State",
     code: "SCST",
-    color: "#7d1315",
+    primaryColor: "#7d1315",
     secondaryColor: "#104897",
     logo: SouthCarolinaStLogo,
     logoLight: SouthCarolinaStLogoLight,
@@ -6522,7 +6520,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 453,
@@ -6530,7 +6528,7 @@ export const cbTeams: Team[] = [
     fullName: "South Carolina Upstate Spartans",
     shortName: "SC Upstate",
     code: "SCUP",
-    color: "#008545",
+    primaryColor: "#008545",
     secondaryColor: "#000000",
     logo: SouthCarolinaUpstateLogo,
     logoLight: SouthCarolinaUpstateLogoLight,
@@ -6540,7 +6538,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 431,
@@ -6548,7 +6546,7 @@ export const cbTeams: Team[] = [
     fullName: "South Dakota Coyotes",
     shortName: "South Dakota",
     code: "SDAK",
-    color: "#CD1241",
+    primaryColor: "#CD1241",
     secondaryColor: "#f0f0f0",
     logo: SouthDakotaLogo,
     logoLight: SouthDakotaLogoLight,
@@ -6558,7 +6556,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 432,
@@ -6566,7 +6564,7 @@ export const cbTeams: Team[] = [
     fullName: "Southern Illinois Salukis",
     shortName: "S Illinois",
     code: "SIU",
-    color: "#85283D",
+    primaryColor: "#85283D",
     secondaryColor: "#c2c3c0",
     logo: SouthernIllinoisLogo,
     logoLight: SouthernIllinoisLogoLight,
@@ -6576,7 +6574,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 434,
@@ -6584,7 +6582,7 @@ export const cbTeams: Team[] = [
     fullName: "Southern Utah Thunderbirds",
     shortName: "Southern Utah",
     code: "SUU",
-    color: "#c72026",
+    primaryColor: "#c72026",
     secondaryColor: "#000000",
     logo: SouthernUtahLogo,
     logoLight: SouthernUtahLogoLight,
@@ -6594,7 +6592,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 435,
@@ -6602,7 +6600,7 @@ export const cbTeams: Team[] = [
     fullName: "St. Francis (BKN) Terriers",
     shortName: "St Francis BK",
     code: "SFBK",
-    color: "#00158c",
+    primaryColor: "#00158c",
     secondaryColor: "",
     logo: SaintFrancisLogo,
     logoLight: SaintFrancisLogoLight,
@@ -6612,7 +6610,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 438,
@@ -6620,7 +6618,7 @@ export const cbTeams: Team[] = [
     fullName: "Stephen F. Austin Lumberjacks",
     shortName: "SF Austin",
     code: "SFA",
-    color: "#393996",
+    primaryColor: "#393996",
     secondaryColor: "#bec0c2",
     logo: StephenFAustinLogo,
     logoLight: StephenFAustinLogoLight,
@@ -6630,7 +6628,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 439,
@@ -6638,7 +6636,7 @@ export const cbTeams: Team[] = [
     fullName: "Syracuse Orange",
     shortName: "Syracuse",
     code: "SYR",
-    color: "#ff6500",
+    primaryColor: "#ff6500",
     secondaryColor: "#000e54",
     logo: SyracuseLogo,
     logoLight: SyracuseLogoLight,
@@ -6648,7 +6646,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 440,
@@ -6656,7 +6654,7 @@ export const cbTeams: Team[] = [
     fullName: "Tennessee State Tigers",
     shortName: "Tennessee St",
     code: "TNST",
-    color: "#171796",
+    primaryColor: "#171796",
     secondaryColor: "#f0f0f0",
     logo: TennesseeStateLogo,
     logoLight: TennesseeStateLogoLight,
@@ -6666,7 +6664,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 441,
@@ -6675,7 +6673,7 @@ export const cbTeams: Team[] = [
     shortName: "Tennessee Tech",
     code: "TNTC",
     secondaryColor: "#ffde00",
-    color: "#5A4099",
+    primaryColor: "#5A4099",
     logo: TennesseeTechLogo,
     logoLight: TennesseeTechLogoLight,
     established: 1922,
@@ -6684,7 +6682,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Cookeville",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 443,
@@ -6692,7 +6690,7 @@ export const cbTeams: Team[] = [
     fullName: "Texas A&M-Corpus Christi Islanders",
     shortName: "Texas A&M-CC",
     code: "AMCC",
-    color: "#0067c5",
+    primaryColor: "#0067c5",
     secondaryColor: "#007f3e",
     logo: TexasAAndMCorpusChristiLogo,
     logoLight: TexasAAndMCorpusChristiLogoLight,
@@ -6702,7 +6700,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 444,
@@ -6710,7 +6708,7 @@ export const cbTeams: Team[] = [
     fullName: "Texas-Pan American Broncs",
     shortName: "TX-Pan American",
     code: "UTPA",
-    color: "#dc6000",
+    primaryColor: "#dc6000",
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -6720,7 +6718,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 445,
@@ -6728,7 +6726,7 @@ export const cbTeams: Team[] = [
     fullName: "Toledo Rockets",
     shortName: "Toledo",
     code: "TOL",
-    color: "#0a2240",
+    primaryColor: "#0a2240",
     secondaryColor: "#ffcd00",
     logo: ToledoLogo,
     logoLight: ToledoLogoLight,
@@ -6738,7 +6736,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 446,
@@ -6746,7 +6744,7 @@ export const cbTeams: Team[] = [
     fullName: "Tulsa Golden Hurricane",
     shortName: "Tulsa",
     code: "TLSA",
-    color: "#003595",
+    primaryColor: "#003595",
     secondaryColor: "#d0b787",
     logo: TulsaLogo,
     logoLight: TulsaLogoLight,
@@ -6756,7 +6754,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 447,
@@ -6765,7 +6763,7 @@ export const cbTeams: Team[] = [
     shortName: "UAB",
     code: "UAB",
     secondaryColor: "#ffc845",
-    color: "#003b28",
+    primaryColor: "#003b28",
     logo: UABLogo,
     logoLight: UABLogoLight,
     established: 1991,
@@ -6774,7 +6772,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Birmingham",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 448,
@@ -6782,7 +6780,7 @@ export const cbTeams: Team[] = [
     fullName: "UC Davis Aggies",
     shortName: "UC Davis",
     code: "UCD",
-    color: "#002855",
+    primaryColor: "#002855",
     secondaryColor: "#c3c4c6",
     logo: UCDavisLogo,
     logoLight: UCDavisLogoLight,
@@ -6792,7 +6790,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 450,
@@ -6800,7 +6798,7 @@ export const cbTeams: Team[] = [
     fullName: "UMBC Retrievers",
     shortName: "UMBC",
     code: "UMBC",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#ad860a",
     logo: UMBCLogo,
     logoLight: UMBCLogoLight,
@@ -6810,7 +6808,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 449,
@@ -6818,7 +6816,7 @@ export const cbTeams: Team[] = [
     fullName: "UMass Lowell River Hawks",
     shortName: "UMass Lowell",
     code: "UML",
-    color: "#00529C",
+    primaryColor: "#00529C",
     secondaryColor: "#cf1f2f",
     logo: UMassLowellLogo,
     logoLight: UMassLowellLogoLight,
@@ -6828,7 +6826,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 452,
@@ -6836,7 +6834,7 @@ export const cbTeams: Team[] = [
     fullName: "UNC Asheville Bulldogs",
     shortName: "UNC Asheville",
     code: "UNCA",
-    color: "#003da5",
+    primaryColor: "#003da5",
     secondaryColor: "#ffffff",
     logo: UNCAshevilleLogo,
     logoLight: UNCAshevilleLogoLight,
@@ -6846,7 +6844,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 442,
@@ -6854,7 +6852,7 @@ export const cbTeams: Team[] = [
     fullName: "UT Martin Skyhawks",
     shortName: "UT Martin",
     code: "UTM",
-    color: "#FF6700",
+    primaryColor: "#FF6700",
     secondaryColor: "#102a5c",
     logo: UTMartinLogo,
     logoLight: UTMartinLogoLight,
@@ -6864,7 +6862,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 456,
@@ -6872,7 +6870,7 @@ export const cbTeams: Team[] = [
     fullName: "UTEP Miners",
     shortName: "UTEP",
     code: "UTEP",
-    color: "#ff8200",
+    primaryColor: "#ff8200",
     secondaryColor: "#041e42",
     logo: UTEPLogo,
     logoLight: UTEPLogoLight,
@@ -6882,7 +6880,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 454,
@@ -6890,7 +6888,7 @@ export const cbTeams: Team[] = [
     fullName: "Utah State Aggies",
     shortName: "Utah State",
     code: "USU",
-    color: "#00263a",
+    primaryColor: "#00263a",
     secondaryColor: "#949ca1",
     logo: UtahStateLogo,
     logoLight: UtahStateLogoLight,
@@ -6900,7 +6898,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 455,
@@ -6908,7 +6906,7 @@ export const cbTeams: Team[] = [
     fullName: "Utah Valley Wolverines",
     shortName: "Utah Valley",
     code: "UVU",
-    color: "#004812",
+    primaryColor: "#004812",
     secondaryColor: "#e1c736",
     logo: UtahValleyLogo,
     logoLight: UtahValleyLogoLight,
@@ -6918,7 +6916,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 459,
@@ -6926,7 +6924,7 @@ export const cbTeams: Team[] = [
     fullName: "VMI Keydets",
     shortName: "VMI",
     code: "VMI",
-    color: "#ae122a",
+    primaryColor: "#ae122a",
     secondaryColor: "#ffd619",
     logo: VMILogo,
     logoLight: VMILogoLight,
@@ -6936,7 +6934,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 457,
@@ -6944,7 +6942,7 @@ export const cbTeams: Team[] = [
     fullName: "Vermont Catamounts",
     shortName: "Vermont",
     code: "UVM",
-    color: "#154734",
+    primaryColor: "#154734",
     secondaryColor: "#ffc72c",
     logo: VermontLogo,
     logoLight: VermontLogoLight,
@@ -6954,7 +6952,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 458,
@@ -6962,7 +6960,7 @@ export const cbTeams: Team[] = [
     fullName: "Villanova Wildcats",
     shortName: "Villanova",
     code: "VILL",
-    color: "#00205b",
+    primaryColor: "#00205b",
     secondaryColor: "#13b5ea",
     logo: VillanovaLogo,
     logoLight: VillanovaLogoLight,
@@ -6972,7 +6970,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 460,
@@ -6980,7 +6978,7 @@ export const cbTeams: Team[] = [
     fullName: "Wagner Seahawks",
     shortName: "Wagner",
     code: "WAG",
-    color: "#00483A",
+    primaryColor: "#00483A",
     secondaryColor: "#ffffff",
     logo: WagnerLogo,
     logoLight: WagnerLogoLight,
@@ -6990,7 +6988,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 461,
@@ -6998,7 +6996,7 @@ export const cbTeams: Team[] = [
     fullName: "Weber State Wildcats",
     shortName: "Weber St",
     code: "WEB",
-    color: "#18005a",
+    primaryColor: "#18005a",
     secondaryColor: "#ebebeb",
     logo: WeberStateLogo,
     logoLight: WeberStateLogoLight,
@@ -7008,7 +7006,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 462,
@@ -7016,7 +7014,7 @@ export const cbTeams: Team[] = [
     fullName: "Western Illinois Leathernecks",
     shortName: "W Illinois",
     code: "WIU",
-    color: "#4e1e8a",
+    primaryColor: "#4e1e8a",
     secondaryColor: "#ffc90a",
     logo: null,
     logoLight: null,
@@ -7026,7 +7024,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 821,
@@ -7034,7 +7032,7 @@ export const cbTeams: Team[] = [
     fullName: "Alma Scots",
     shortName: "Alma",
     code: "ALMA",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7044,7 +7042,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 822,
@@ -7052,7 +7050,7 @@ export const cbTeams: Team[] = [
     fullName: "Anderson (IN) Ravens",
     shortName: "Anderson IND",
     code: "ANDC",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7062,7 +7060,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 824,
@@ -7070,7 +7068,7 @@ export const cbTeams: Team[] = [
     fullName: "Baker University",
     shortName: "Baker U",
     code: "BAKE",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7080,7 +7078,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 825,
@@ -7088,7 +7086,7 @@ export const cbTeams: Team[] = [
     fullName: "Barry Buccaneers",
     shortName: "Barry",
     code: "BARR",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7098,7 +7096,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 833,
@@ -7106,7 +7104,7 @@ export const cbTeams: Team[] = [
     fullName: "Bears",
     shortName: "LENRHYNE",
     code: "LENR",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7116,7 +7114,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1143,
@@ -7124,7 +7122,7 @@ export const cbTeams: Team[] = [
     fullName: "Bellarmine Knights",
     shortName: "Bellarmine",
     code: "BELL",
-    color: "#752936",
+    primaryColor: "#752936",
     secondaryColor: "#C8C8C8",
     logo: BellarmineLogo,
     logoLight: BellarmineLogoLight,
@@ -7134,7 +7132,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 826,
@@ -7142,7 +7140,7 @@ export const cbTeams: Team[] = [
     fullName: "Bethany (KS) BETHANY (KS)",
     shortName: "Bethany (KS)",
     code: "BETH",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7152,7 +7150,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1139,
@@ -7160,7 +7158,7 @@ export const cbTeams: Team[] = [
     fullName: "Boise State Broncos",
     shortName: "Boise St",
     code: "BOIS",
-    color: "#0033a0",
+    primaryColor: "#0033a0",
     secondaryColor: "#fa4616",
     logo: BoiseStateLogo,
     logoLight: BoiseStateLogoLight,
@@ -7170,7 +7168,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 827,
@@ -7178,7 +7176,7 @@ export const cbTeams: Team[] = [
     fullName: "Cal Poly Pomona Broncos",
     shortName: "Cal Poly Pom",
     code: "CPPM",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7188,7 +7186,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1105,
@@ -7196,7 +7194,7 @@ export const cbTeams: Team[] = [
     fullName: "California Baptist Lancers",
     shortName: "CA Baptist",
     code: "CBU",
-    color: "#002554",
+    primaryColor: "#002554",
     secondaryColor: "#A37400",
     logo: CaliforniaBaptistLogo,
     logoLight: CaliforniaBaptistLogoLight,
@@ -7206,7 +7204,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 828,
@@ -7214,7 +7212,7 @@ export const cbTeams: Team[] = [
     fullName: "Centenary (LA) Gentlemen",
     shortName: "Centenary (LA)",
     code: "CENT",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7224,7 +7222,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 829,
@@ -7232,7 +7230,7 @@ export const cbTeams: Team[] = [
     fullName: "Central Missouri Mules",
     shortName: "C Missouri",
     code: "CMST",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7242,7 +7240,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 836,
@@ -7250,7 +7248,7 @@ export const cbTeams: Team[] = [
     fullName: "Chaparrals",
     shortName: "LUBBCHRIST",
     code: "LUBC",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7260,7 +7258,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1067,
@@ -7268,7 +7266,7 @@ export const cbTeams: Team[] = [
     fullName: "Concordia St. Paul Golden Bears",
     shortName: "Concordia St P",
     code: "CONC",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7278,7 +7276,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 928,
@@ -7286,7 +7284,7 @@ export const cbTeams: Team[] = [
     fullName: "Cornell (IA) Rams",
     shortName: "Cornell (IA)",
     code: "CNIA",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7296,7 +7294,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 830,
@@ -7304,7 +7302,7 @@ export const cbTeams: Team[] = [
     fullName: "Emporia State Hornets",
     shortName: "Emporia St",
     code: "EMPO",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7314,7 +7312,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 935,
@@ -7322,7 +7320,7 @@ export const cbTeams: Team[] = [
     fullName: "Fort Lauderdale Sharks",
     shortName: "NOVASE",
     code: "NOV",
-    color: "#8e183c",
+    primaryColor: "#8e183c",
     secondaryColor: "#ffc82b",
     logo: FortLauderdaleLogo,
     logoLight: FortLauderdaleLogoLight,
@@ -7332,7 +7330,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 831,
@@ -7340,7 +7338,7 @@ export const cbTeams: Team[] = [
     fullName: "Francis Marion Patriots",
     shortName: "Francis Marion",
     code: "FRMN",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7350,7 +7348,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 847,
@@ -7358,7 +7356,7 @@ export const cbTeams: Team[] = [
     fullName: "Hawaiʻi Hilo Vulcans",
     shortName: "Hawaiʻi Hilo",
     code: "HILO",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7368,7 +7366,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 832,
@@ -7376,7 +7374,7 @@ export const cbTeams: Team[] = [
     fullName: "Hawaiʻi Pacific Sea Warriors",
     shortName: "HI Pacific",
     code: "HPAC",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7386,7 +7384,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 834,
@@ -7394,7 +7392,7 @@ export const cbTeams: Team[] = [
     fullName: "Lincoln Lions",
     shortName: "LINCOLN",
     code: "LINC",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7404,7 +7402,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 926,
@@ -7412,7 +7410,7 @@ export const cbTeams: Team[] = [
     fullName: "Lindenwood Lions",
     shortName: "Lindenwood",
     code: "LIN",
-    color: "#B5A36A",
+    primaryColor: "#B5A36A",
     secondaryColor: "#101820",
     logo: LindenwoodLogo,
     logoLight: LindenwoodLogoLight,
@@ -7422,7 +7420,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 929,
@@ -7430,7 +7428,7 @@ export const cbTeams: Team[] = [
     fullName: "Miami Gardens Bobcats",
     shortName: "STTHOM(FL)",
     code: "STFL",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7440,7 +7438,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 823,
@@ -7448,7 +7446,7 @@ export const cbTeams: Team[] = [
     fullName: "Muskogee Bacone",
     shortName: "BACONECG",
     code: "BACN",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7458,7 +7456,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 837,
@@ -7466,7 +7464,7 @@ export const cbTeams: Team[] = [
     fullName: "Mid-America Christian Evangels",
     shortName: "MCA",
     code: "MACU",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7476,7 +7474,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 838,
@@ -7484,7 +7482,7 @@ export const cbTeams: Team[] = [
     fullName: "NY Institute of Technology Yellow Jackets",
     shortName: "NYIT",
     code: "NYIT",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7494,7 +7492,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 849,
@@ -7502,7 +7500,7 @@ export const cbTeams: Team[] = [
     fullName: "Nebraska-Kearney Lopers",
     shortName: "Neb Kearney",
     code: "NBKE",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7512,7 +7510,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1103,
@@ -7520,7 +7518,7 @@ export const cbTeams: Team[] = [
     fullName: "North Alabama Lions",
     shortName: "North Alabama",
     code: "UNA",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#DB9F11",
     logo: NorthAlabamaLogo,
     logoLight: NorthAlabamaLogoLight,
@@ -7530,7 +7528,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 839,
@@ -7538,7 +7536,7 @@ export const cbTeams: Team[] = [
     fullName: "North Georgia Saints",
     shortName: "NORGE",
     code: "NTGA",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7548,7 +7546,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 840,
@@ -7556,7 +7554,7 @@ export const cbTeams: Team[] = [
     fullName: "Northwestern College (IA) Northwestern College (Ia)",
     shortName: "NWCOLLIOWA",
     code: "NWIA",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7566,7 +7564,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 835,
@@ -7574,7 +7572,7 @@ export const cbTeams: Team[] = [
     fullName: "PINEVILLE Wildcats",
     shortName: "LACOLLEGE",
     code: "LOUC",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7584,7 +7582,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 842,
@@ -7592,7 +7590,7 @@ export const cbTeams: Team[] = [
     fullName: "SW Oklahoma State Bulldogs",
     shortName: "SWOKLAST",
     code: "SWOS",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7602,7 +7600,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 841,
@@ -7610,7 +7608,7 @@ export const cbTeams: Team[] = [
     fullName: "Salisbury Sea Gulls",
     shortName: "SALISBURY",
     code: "SALB",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7620,7 +7618,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 843,
@@ -7628,7 +7626,7 @@ export const cbTeams: Team[] = [
     fullName: "St. Gregory Cavaliers",
     shortName: "St Gregorys",
     code: "STGR",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7638,7 +7636,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 844,
@@ -7646,7 +7644,7 @@ export const cbTeams: Team[] = [
     fullName: "St. Martins Saints",
     shortName: "STMARTINS",
     code: "STMT",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7656,7 +7654,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 850,
@@ -7664,7 +7662,7 @@ export const cbTeams: Team[] = [
     fullName: "St. Thomas-Minnesota Tommies",
     shortName: "St Thomas (MN)",
     code: "STMN",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7674,7 +7672,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 845,
@@ -7682,7 +7680,7 @@ export const cbTeams: Team[] = [
     fullName: "Tabor",
     shortName: "Tabor",
     code: "TABR",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7692,7 +7690,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1145,
@@ -7700,7 +7698,7 @@ export const cbTeams: Team[] = [
     fullName: "Tarleton State Texans",
     shortName: "Tarleton St",
     code: "TaSt",
-    color: "#4f2d7f",
+    primaryColor: "#4f2d7f",
     secondaryColor: "#ffffff",
     logo: TarletonStateLogo,
     logoLight: TarletonStateLogoLight,
@@ -7710,7 +7708,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 846,
@@ -7718,7 +7716,7 @@ export const cbTeams: Team[] = [
     fullName: "Texas Lutheran Bulldogs",
     shortName: "Texas Lutheran",
     code: "TXLU",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7728,7 +7726,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 924,
@@ -7736,7 +7734,7 @@ export const cbTeams: Team[] = [
     fullName: "Truman State Bulldogs",
     shortName: "Truman St",
     code: "TRST",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7746,7 +7744,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1147,
@@ -7754,7 +7752,7 @@ export const cbTeams: Team[] = [
     fullName: "UC San Diego Tritons",
     shortName: "UC San Diego",
     code: "UCSD",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#ffcd00",
     logo: UCSanDiegoLogo,
     logoLight: UCSanDiegoLogoLight,
@@ -7764,7 +7762,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 932,
@@ -7772,7 +7770,7 @@ export const cbTeams: Team[] = [
     fullName: "UT Rio Grande Valley Vaqueros",
     shortName: "UT Rio Grande",
     code: "RGV",
-    color: "#dc6000",
+    primaryColor: "#dc6000",
     secondaryColor: "#e1732d",
     logo: UTRioGrandeValleyLogo,
     logoLight: UTRioGrandeValleyLogoLight,
@@ -7782,7 +7780,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1146,
@@ -7790,7 +7788,7 @@ export const cbTeams: Team[] = [
     fullName: "Utah Tech Trailblazers",
     shortName: "Utah Tech",
     code: "UTU",
-    color: "#BA1C21",
+    primaryColor: "#BA1C21",
     secondaryColor: "#FFFFFF",
     logo: UtahTechLogo,
     logoLight: UtahTechLogoLight,
@@ -7800,7 +7798,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 851,
@@ -7808,7 +7806,7 @@ export const cbTeams: Team[] = [
     fullName: "Valdosta Blazers",
     shortName: "Valdosta",
     code: "VALD",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7818,7 +7816,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 852,
@@ -7826,7 +7824,7 @@ export const cbTeams: Team[] = [
     fullName: "Wayne State (NE) Wildcats",
     shortName: "WAYNESTNE",
     code: "WNST",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7836,7 +7834,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 463,
@@ -7844,7 +7842,7 @@ export const cbTeams: Team[] = [
     fullName: "Western Michigan Broncos",
     shortName: "W Michigan",
     code: "WMU",
-    color: "#532e1f",
+    primaryColor: "#532e1f",
     secondaryColor: "#8b7f79",
     logo: WesternMichiganLogo,
     logoLight: WesternMichiganLogoLight,
@@ -7854,7 +7852,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 853,
@@ -7862,7 +7860,7 @@ export const cbTeams: Team[] = [
     fullName: "William Woods",
     shortName: "WILLIAMWDS",
     code: "WILL",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7872,7 +7870,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 464,
@@ -7880,7 +7878,7 @@ export const cbTeams: Team[] = [
     fullName: "Wisconsin Badgers",
     shortName: "Wisconsin",
     code: "WISC",
-    color: "#c4012f",
+    primaryColor: "#c4012f",
     secondaryColor: "#ffffff",
     logo: WisconsinLogo,
     logoLight: WisconsinLogoLight,
@@ -7890,7 +7888,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 465,
@@ -7898,7 +7896,7 @@ export const cbTeams: Team[] = [
     fullName: "Wyoming Cowboys",
     shortName: "Wyoming",
     code: "WYO",
-    color: "#492f24",
+    primaryColor: "#492f24",
     secondaryColor: "#ffc425",
     logo: WyomingLogo,
     logoLight: WyomingLogoLight,
@@ -7908,7 +7906,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 466,
@@ -7917,7 +7915,7 @@ export const cbTeams: Team[] = [
     shortName: "Yale",
     code: "YALE",
     secondaryColor: "#286dc0",
-    color: "#004a81",
+    primaryColor: "#004a81",
     logo: YaleLogo,
     logoLight: YaleLogoLight,
     established: 1872,
@@ -7926,7 +7924,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "New Haven",
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129701,
@@ -7934,7 +7932,7 @@ export const cbTeams: Team[] = [
     fullName: "Augustana (IL) Vikings",
     shortName: "Augustana (IL)",
     code: "AUG",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7944,7 +7942,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129702,
@@ -7952,7 +7950,7 @@ export const cbTeams: Team[] = [
     fullName: "Aurora Spartans",
     shortName: "Aurora",
     code: "AUR",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7962,7 +7960,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1281,
@@ -7970,7 +7968,7 @@ export const cbTeams: Team[] = [
     fullName: "COSN Coyotes",
     shortName: "COSN",
     code: "SOU",
-    color: "#004B97",
+    primaryColor: "#004B97",
     secondaryColor: "#ffc82d",
     logo: null,
     logoLight: null,
@@ -7980,7 +7978,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129760,
@@ -7988,7 +7986,7 @@ export const cbTeams: Team[] = [
     fullName: "Cal State Los Angeles Golden Eagles",
     shortName: "Cal State LA",
     code: "CSLA",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -7998,7 +7996,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1248,
@@ -8006,7 +8004,7 @@ export const cbTeams: Team[] = [
     fullName: "Coe Kohawks",
     shortName: "Coe",
     code: "COE",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8016,7 +8014,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1280,
@@ -8024,7 +8022,7 @@ export const cbTeams: Team[] = [
     fullName: "Copiah Lincoln CLCC",
     shortName: "Copiah Lincoln",
     code: "COP",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8034,7 +8032,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1286,
@@ -8042,7 +8040,7 @@ export const cbTeams: Team[] = [
     fullName: "DePauw Tigers",
     shortName: "DePauw",
     code: "DEP",
-    color: "#000000",
+    primaryColor: "#000000",
     secondaryColor: "#231F20",
     logo: DepauwLogo,
     logoLight: DepauwLogoLight,
@@ -8052,7 +8050,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1282,
@@ -8060,7 +8058,7 @@ export const cbTeams: Team[] = [
     fullName: "Florence Darlington Tech FDTC",
     shortName: "Florence Tech",
     code: "FLO",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8070,7 +8068,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1274,
@@ -8078,7 +8076,7 @@ export const cbTeams: Team[] = [
     fullName: "Florida Southern Moccasins",
     shortName: "FL Southern",
     code: "FSC",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8088,7 +8086,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1190,
@@ -8096,7 +8094,7 @@ export const cbTeams: Team[] = [
     fullName: "Grand View Vikings",
     shortName: "Grand View",
     code: "GV",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8106,7 +8104,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1276,
@@ -8114,7 +8112,7 @@ export const cbTeams: Team[] = [
     fullName: "John A. Logan JALC",
     shortName: "John A. Logan",
     code: "JALC",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8124,7 +8122,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1247,
@@ -8132,7 +8130,7 @@ export const cbTeams: Team[] = [
     fullName: "Linfield Wildcats",
     shortName: "Linfield",
     code: "LIN",
-    color: "#B5A36A",
+    primaryColor: "#B5A36A",
     secondaryColor: "#101820",
     logo: null,
     logoLight: null,
@@ -8142,7 +8140,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1189,
@@ -8150,7 +8148,7 @@ export const cbTeams: Team[] = [
     fullName: "Loras College Duhawks",
     shortName: "Loras College",
     code: "",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8160,7 +8158,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129698,
@@ -8168,7 +8166,7 @@ export const cbTeams: Team[] = [
     fullName: "Mercyhurst Lakers",
     shortName: "Mercyhurst",
     code: "MER",
-    color: "#07594D",
+    primaryColor: "#07594D",
     secondaryColor: "#182752",
     logo: MercyhurstLogo,
     logoLight: MercyhurstLogoLight,
@@ -8178,7 +8176,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1148,
@@ -8186,7 +8184,7 @@ export const cbTeams: Team[] = [
     fullName: "Merrimack Warriors",
     shortName: "Merrimack",
     code: "MRMK",
-    color: "#2f4f93",
+    primaryColor: "#2f4f93",
     secondaryColor: "#e8c535",
     logo: MerrimackLogo,
     logoLight: MerrimackLogoLight,
@@ -8196,7 +8194,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1277,
@@ -8204,7 +8202,7 @@ export const cbTeams: Team[] = [
     fullName: "NMCC Nmcc",
     shortName: "NMCC",
     code: "NOR",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8214,7 +8212,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129706,
@@ -8222,7 +8220,7 @@ export const cbTeams: Team[] = [
     fullName: "New Haven Chargers",
     shortName: "New Haven",
     code: "NHVN",
-    color: "#041e42",
+    primaryColor: "#041e42",
     secondaryColor: "#ffc425",
     logo: NewHavenLogo,
     logoLight: NewHavenLogoLight,
@@ -8232,7 +8230,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129700,
@@ -8240,7 +8238,7 @@ export const cbTeams: Team[] = [
     fullName: "Pacific Lutheran Lutes",
     shortName: "Pac Lutheran",
     code: "PAC",
-    color: "#F47820",
+    primaryColor: "#F47820",
     secondaryColor: "#c2c3c0",
     logo: null,
     logoLight: null,
@@ -8250,7 +8248,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1279,
@@ -8258,7 +8256,7 @@ export const cbTeams: Team[] = [
     fullName: "Pearl River PEARL",
     shortName: "Pearl River",
     code: "PEA",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8268,7 +8266,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1238,
@@ -8276,7 +8274,7 @@ export const cbTeams: Team[] = [
     fullName: "Queens University Royals",
     shortName: "Queens",
     code: "QUOC",
-    color: "#192C66",
+    primaryColor: "#192C66",
     secondaryColor: "",
     logo: QueensLogo,
     logoLight: QueensLogoLight,
@@ -8286,7 +8284,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1191,
@@ -8294,7 +8292,7 @@ export const cbTeams: Team[] = [
     fullName: "ROOSEVELT Lakers",
     shortName: "ROOSEVELT",
     code: "ROO",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8304,7 +8302,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1275,
@@ -8312,7 +8310,7 @@ export const cbTeams: Team[] = [
     fullName: "SANJACJC Sanjacjc",
     shortName: "SANJACJC",
     code: "SAN",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8322,7 +8320,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1278,
@@ -8330,7 +8328,7 @@ export const cbTeams: Team[] = [
     fullName: "SCOF Scof",
     shortName: "SCOF",
     code: "STA",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8340,7 +8338,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1197,
@@ -8348,7 +8346,7 @@ export const cbTeams: Team[] = [
     fullName: "SEUNIV Fires",
     shortName: "Southeastern",
     code: "SOU",
-    color: "#004B97",
+    primaryColor: "#004B97",
     secondaryColor: "#ffc82d",
     logo: null,
     logoLight: null,
@@ -8358,7 +8356,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1246,
@@ -8366,7 +8364,7 @@ export const cbTeams: Team[] = [
     fullName: "Southern Indiana Screaming Eagles",
     shortName: "So Indiana",
     code: "USI",
-    color: "#CF102D",
+    primaryColor: "#CF102D",
     secondaryColor: "#002D5D",
     logo: null,
     logoLight: null,
@@ -8376,7 +8374,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129762,
@@ -8384,7 +8382,7 @@ export const cbTeams: Team[] = [
     fullName: "Southwest Mustangs",
     shortName: "Southwest",
     code: "SOU",
-    color: "#004B97",
+    primaryColor: "#004B97",
     secondaryColor: "#ffc82d",
     logo: null,
     logoLight: null,
@@ -8394,7 +8392,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1273,
@@ -8402,7 +8400,7 @@ export const cbTeams: Team[] = [
     fullName: "Spartans",
     shortName: "UNIVTAMPA",
     code: "TAM",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8412,7 +8410,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1287,
@@ -8420,7 +8418,7 @@ export const cbTeams: Team[] = [
     fullName: "St. Olaf Oles",
     shortName: "St. Olaf",
     code: "ST.",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8430,7 +8428,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1245,
@@ -8438,7 +8436,7 @@ export const cbTeams: Team[] = [
     fullName: "Stonehill Skyhawks",
     shortName: "Stonehill",
     code: "STO",
-    color: "#2F2975",
+    primaryColor: "#2F2975",
     secondaryColor: "#FFFFFF",
     logo: StonehillLogo,
     logoLight: StonehillLogoLight,
@@ -8448,7 +8446,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1153,
@@ -8456,7 +8454,7 @@ export const cbTeams: Team[] = [
     fullName: "TBD",
     shortName: "TBD",
     code: "",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8466,7 +8464,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1154,
@@ -8474,7 +8472,7 @@ export const cbTeams: Team[] = [
     fullName: "TBD",
     shortName: "TBD",
     code: "TBD",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8484,7 +8482,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 1239,
@@ -8492,7 +8490,7 @@ export const cbTeams: Team[] = [
     fullName: "Upper Iowa Peacocks",
     shortName: "Upper Iowa",
     code: "UPP",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8502,7 +8500,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129756,
@@ -8510,7 +8508,7 @@ export const cbTeams: Team[] = [
     fullName: "Wartburg Knights",
     shortName: "Wartburg",
     code: "WAR",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8520,7 +8518,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129773,
@@ -8528,7 +8526,7 @@ export const cbTeams: Team[] = [
     fullName: "Washburn Ichabods",
     shortName: "Washburn",
     code: "WAS",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8538,7 +8536,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129699,
@@ -8546,7 +8544,7 @@ export const cbTeams: Team[] = [
     fullName: "West Georgia Wolves",
     shortName: "West Georgia",
     code: "WES",
-    color: "#0033a1",
+    primaryColor: "#0033a1",
     secondaryColor: "#db1a21",
     logo: WestGeorgiaLogo,
     logoLight: WestGeorgiaLogoLight,
@@ -8556,7 +8554,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
   {
     id: 129763,
@@ -8564,7 +8562,7 @@ export const cbTeams: Team[] = [
     fullName: "Wisconsin Platteville Pioneers",
     shortName: "UW-Platteville",
     code: "UWP",
-    color: null,
+    primaryColor: null,
     secondaryColor: "",
     logo: null,
     logoLight: null,
@@ -8574,7 +8572,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "cb"
+    league: "cb",
   },
 ];
 

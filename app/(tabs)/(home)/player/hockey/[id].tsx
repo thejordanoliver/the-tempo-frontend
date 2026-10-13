@@ -11,7 +11,8 @@ import { Colors, globalStyles } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { usePlayerLatestGame } from "hooks/HockeyHooks/usePlayerLatestGame";
+import { usePlayerClosestGame } from "hooks/LeagueHooks/usePlayerClosestGame";
+import type { HockeyGame } from "types/hockey/hockey";
 import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
@@ -67,13 +68,13 @@ export default function PlayerDetailScreen() {
     game,
     loading: latestGameLoading,
     error: latestGameError,
-  } = usePlayerLatestGame(latestGameLog.data, league);
-  const gameLoading = latestGameLog.loading || latestGameLoading;
-  const gameError = latestGameLog.error || latestGameError;
+  } = usePlayerClosestGame<HockeyGame>("hockey", league, currentTeamId);
+  const gameLoading = latestGameLoading;
+  const gameError = latestGameError;
 
   const team = currentTeamId ? getNHLTeam(currentTeamId) : undefined;
   const teamLogo = getNHLTeamLogo(currentTeamId, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {

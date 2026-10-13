@@ -1,5 +1,4 @@
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { usePreferences } from "contexts/PreferencesContext";
+import PillTabs from "components/TabBars/PillTabs";
 import React, { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import DraftBoardTab from "./DraftBoardTab";
@@ -11,6 +10,11 @@ export { getDefaultDraftYear } from "./DraftList";
 const DRAFT_TABS = ["Draft List", "Draft Board", "Draft News"] as const;
 
 type DraftTab = (typeof DRAFT_TABS)[number];
+
+const DRAFT_TAB_OPTIONS = DRAFT_TABS.map((tab) => ({
+  label: tab,
+  value: tab,
+}));
 
 type Props = {
   year: string;
@@ -31,8 +35,6 @@ export default function Draft({
   onTeamChange,
   onRoundChange,
 }: Props) {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
   const styles = DraftStyles;
 
   const [selectedTab, setSelectedTab] = useState<DraftTab>(DRAFT_TABS[0]);
@@ -59,12 +61,11 @@ export default function Draft({
 
   return (
     <View style={styles.container}>
-      <MainScrollTabBar
-        tabs={DRAFT_TABS}
-        selected={selectedTab}
-        onTabPress={handleTabPress}
-        isDark={isDark}
-        style={styles.tabBar}
+      <PillTabs
+        tabs={DRAFT_TAB_OPTIONS}
+        selectedValue={selectedTab}
+        onChange={handleTabPress}
+        containerStyle={styles.tabBar}
       />
 
       <View style={styles.content}>
@@ -119,7 +120,7 @@ export const DraftStyles = StyleSheet.create({
     flex: 1,
   },
   tabBar: {
-    paddingHorizontal: 12,
+    marginHorizontal: 12,
   },
   content: {
     flex: 1,

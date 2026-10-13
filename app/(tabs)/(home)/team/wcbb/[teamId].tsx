@@ -4,7 +4,7 @@ import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standing
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import { Colors } from "@/constants/styles";
-import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
@@ -26,7 +26,7 @@ export default function TeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getWCBBTeam(teamIdNum);
-  const teamColor = team?.color ?? Colors.midTone;
+  const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const teamLogo = getWCBBTeamLogo(teamIdNum, true);
@@ -46,12 +46,7 @@ export default function TeamDetailScreen() {
   });
   const { teamDetails, teamDetailsLoading, teamDetailsError } = screen;
   const conferenceId = teamDetails?.conferenceId;
-  const {
-    hasVisitedTab,
-    selectedTab,
-    refreshing,
-    isDark,
-  } = screen;
+  const { hasVisitedTab, selectedTab, refreshing, isDark } = screen;
 
   const {
     conferences,
@@ -134,10 +129,7 @@ export default function TeamDetailScreen() {
   };
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector
           months={months}

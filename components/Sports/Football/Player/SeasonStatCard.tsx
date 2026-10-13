@@ -396,7 +396,7 @@ export default function SeasonStatCard({
         <CenteredHeader isDark={isDark}>
           {getFootballSeason()} Season
         </CenteredHeader>
-        <Text style={global.errorText}>Failed to load stats</Text>
+        <Text style={global.errorText}>Couldn’t load stats</Text>
       </View>
     );
   }

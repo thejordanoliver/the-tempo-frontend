@@ -96,16 +96,26 @@ export default function OnTheCourt({
     const activePlayers = players.filter(
       (player) => player.active && !player.didNotPlay,
     );
+    const keyOccurrences = new Map<string, number>();
 
     return (
       <View>
         {activePlayers.map((player, index) => {
           const playerId = player.id;
           const teamId = team?.id;
+          // Some live-game rows have no ID. Use roster details as a fallback,
+          // and distinguish repeated identities without dropping any rows.
+          const identity = JSON.stringify(
+            playerId != null
+              ? ["id", playerId]
+              : ["roster", player.jersey, player.shortName, player.position],
+          );
+          const occurrence = keyOccurrences.get(identity) ?? 0;
+          keyOccurrences.set(identity, occurrence + 1);
 
           return (
             <View
-              key={`${teamCode}-row-${player.id}`}
+              key={`${teamCode}-row-${identity}-${occurrence}`}
               style={[
                 styles.tableRow,
                 index === activePlayers.length - 1 && {

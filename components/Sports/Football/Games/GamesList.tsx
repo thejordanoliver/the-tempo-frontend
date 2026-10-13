@@ -75,7 +75,7 @@ export default function GamesList({
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-  const { viewMode } = usePreferences();
+  const { viewMode, viewModeReady } = usePreferences();
   const [previewGame, setPreviewGame] = useState<FootballGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const PAGE_SIZE = 20;
@@ -245,7 +245,10 @@ export default function GamesList({
     [viewMode, styles],
   );
 
-  if (loading) {
+  // Wait for the saved layout before mounting cards in the wrong layout.
+  if (!viewModeReady) return null;
+
+  if (loading && !(refreshing && games.length > 0)) {
     const totalSkeletonCount = expectedCount ?? 4;
 
     // When we already have games, preserve their real season sections.
@@ -313,7 +316,7 @@ export default function GamesList({
           />
         }
       >
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load games</Text>
       </ScrollView>
     );
 
@@ -353,11 +356,9 @@ export default function GamesList({
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
-                No kickoffs on the schedule...
+                No games scheduled
               </Text>
-              <Text style={global.emptyText}>
-                The next drive is just downfield.
-              </Text>
+
             </View>
           }
         />
@@ -366,7 +367,7 @@ export default function GamesList({
           sections={
             sections as SectionListData<FootballGame, FootballGameSection>[]
           }
-          keyExtractor={(item, index) => `${item.id ?? "game"}-${index}`}
+          keyExtractor={(item, index) => `game-${item.id ?? index}`}
           renderItem={({ item, index }) => renderGameCard(item, index)}
           ListHeaderComponent={
             showHeaders && showCountdown && countdownGame ? (
@@ -414,12 +415,10 @@ export default function GamesList({
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
                 {day === "todayTomorrow"
-                  ? "No kickoffs on the schedule today."
-                  : "No football was played on this date."}
+                  ? "No games scheduled"
+                  : "No games on this date"}
               </Text>
-              <Text style={global.emptyText}>
-                The next drive is just downfield.
-              </Text>
+
             </View>
           }
         />

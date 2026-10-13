@@ -1,12 +1,10 @@
+import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
 import { useMemo } from "react";
 import { Colors, globalStyles } from "constants/styles";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
-import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
-import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
-import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import {
   StandingConference,
   StandingTeam,
@@ -83,22 +81,9 @@ export const ConferenceStandingsList = ({
     index: number;
     isLastRow: boolean;
   }) => {
-    const espnId = item.id;
-    const team =
-      league === "cfb"
-        ? getCFBTeam(espnId ?? 0)
-        : league === "mcbb"
-          ? getMCBBTeam(espnId ?? 0)
-          : getWCBBTeam(espnId ?? 0);
+    const teamId = item.id;
 
-    const teamId = team?.id;
-
-    const teamLogo =
-      teamId && league === "cfb"
-        ? getCFBTeamLogo(teamId ?? 0, isDark)
-        : teamId && league === "mcbb"
-          ? getMCBBTeamLogo(teamId ?? 0, isDark)
-          : getWCBBTeamLogo(teamId ?? 0, isDark);
+    const teamLogo = getStandingsTeamLogo(item, isDark);
 
     const teamCode = item.code || "-";
     const favorited = teamId ? isFavorite(league, String(teamId)) : false;
@@ -147,15 +132,7 @@ export const ConferenceStandingsList = ({
     isLastRow: boolean;
     showDivision: boolean;
   }) => {
-    const espnId = item.id;
-    const team =
-      league === "cfb"
-        ? getCFBTeam(espnId ?? 0)
-        : league === "mcbb"
-          ? getMCBBTeam(espnId ?? 0)
-          : getWCBBTeam(espnId ?? 0);
-
-    const teamId = team?.id;
+    const teamId = item.id;
 
     const favorited = teamId ? isFavorite(league, String(teamId)) : false;
     const streakText = getStreakText(item.streak);
@@ -363,7 +340,7 @@ export const ConferenceStandingsList = ({
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load standings</Text>
       </ScrollView>
     );
   }
@@ -377,7 +354,7 @@ export const ConferenceStandingsList = ({
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <Text style={global.emptyText}>No standings found.</Text>
+        <Text style={global.emptyText}>No standings found</Text>
       </ScrollView>
     );
   }

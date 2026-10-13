@@ -1,3 +1,4 @@
+import { isEligibleFavoriteTeam } from "utils/favoriteTeamEligibility";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { wcbbTeams } from "@/constants/teamsWCBB";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -89,12 +90,7 @@ export function useFavoriteTeams() {
     const query = search.trim().toLowerCase();
 
     return allTeams.filter((team) => {
-      const isEligible =
-        team.isAllStar !== true &&
-        team.isNational !== true &&
-        team.isActive === true;
-
-      if (!isEligible) {
+      if (!isEligibleFavoriteTeam(team)) {
         return false;
       }
 

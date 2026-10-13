@@ -87,7 +87,6 @@ export default function ProfilePredictions({
 
   return (
     <View>
-      <HeadingTwo isDark={isDark}>Prediction Stats</HeadingTwo>
       <Subheading
         collapsible
         collapsed={isCollapsed}
@@ -144,7 +143,7 @@ export default function ProfilePredictions({
             />
           ))}
           {picks.length === 0 && (
-            <Text style={global.emptyText}>No recent predictions yet.</Text>
+            <Text style={global.emptyText}>No recent predictions yet</Text>
           )}
         </View>
       )}

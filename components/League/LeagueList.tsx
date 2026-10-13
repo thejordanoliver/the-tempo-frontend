@@ -31,7 +31,7 @@ export default function LeagueList({ isDark, searchQuery, onSelect, contentConta
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
-      ListEmptyComponent={<View style={typography.emptyContainer}><Text style={typography.emptySubText}>No leagues found.</Text></View>}
+      ListEmptyComponent={<View style={typography.emptyContainer}><Text style={typography.emptySubText}>No leagues found</Text></View>}
       renderItem={({ item: league, index }) => {
         const config = LEAGUE_CONFIG[league];
         return (

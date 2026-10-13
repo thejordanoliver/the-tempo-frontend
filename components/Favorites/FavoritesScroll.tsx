@@ -232,7 +232,7 @@ export default function FavoritesScroll({
         code: baseTeam.code ?? "",
         league,
         key: `${league}:${favoriteId}`,
-        color: baseTeam.color ?? undefined,
+        color: baseTeam.primaryColor ?? undefined,
       });
 
       return teams;

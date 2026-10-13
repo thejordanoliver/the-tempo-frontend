@@ -1,15 +1,10 @@
+import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
-import { getUFLTeam } from "@/constants/teamsUFL";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
-import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
@@ -39,7 +34,8 @@ type SectionType = {
 type Props = {
   year?: string;
   onYearChange?: (year: string) => void;
-  league: PlayoffLeague;
+  league: string;
+  soccer?: boolean;
   isGameDetailScreen?: boolean;
 };
 
@@ -75,10 +71,21 @@ const columnKeyMap: Record<string, keyof StandingsTeam> = {
   PPG: "avgPointsFor",
   "OPP PPG": "avgPointsAgainst",
   POFF: "playoffPercent",
+  GP: "gamesPlayed",
+  W: "wins",
+  D: "ties",
+  L: "losses",
+  Pts: "points",
+  GF: "pointsFor",
+  GA: "pointsAgainst",
+  GD: "pointDifferential",
 };
 
-const getActiveColumns = (data: StandingsTeam[]) => {
-  return standingLabels.filter((label) =>
+const getActiveColumns = (data: StandingsTeam[], soccer: boolean) => {
+  const labels = soccer
+    ? ["GP", "W", "D", "L", "GF", "GA", "GD", "Pts"]
+    : standingLabels;
+  return labels.filter((label) =>
     data.some((team) => {
       const key = columnKeyMap[label];
 
@@ -187,6 +194,7 @@ export const StandingsList = ({
   onYearChange,
   league,
   isGameDetailScreen,
+  soccer = false,
 }: Props) => {
   const {
     standings: conferences,
@@ -195,7 +203,7 @@ export const StandingsList = ({
     refreshing,
     error,
     refresh,
-  } = useLeagueStandings(league, year);
+  } = useLeagueStandings(league, year, { soccer });
 
   const { resolvedColorScheme } = usePreferences();
   const { isFavorite } = useFavoriteTeamsContext();
@@ -321,7 +329,7 @@ export const StandingsList = ({
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load standings</Text>
       </ScrollView>
     );
   }
@@ -335,36 +343,13 @@ export const StandingsList = ({
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
-        <Text style={global.emptyText}>No standings found.</Text>
+        <Text style={global.emptyText}>No standings found</Text>
       </ScrollView>
     );
   }
 
-  const getTeam = (item: StandingsTeam) => {
-    if (league === "nba") {
-      return getNBATeam(Number(item.id));
-    }
-
-    if (league === "wnba") {
-      return getWNBATeam(Number(item.id));
-    }
-
-    if (league === "nfl") {
-      return getNFLTeam(Number(item.id));
-    }
-
-    if (league === "ufl") {
-      return getUFLTeam(Number(item.id));
-    }
-
-    if (league === "mlb") {
-      return getMLBTeam(item.id);
-    }
-
-    return getNHLTeam(Number(item.id));
-  };
-
   const getTeamRoute = () => {
+    if (soccer) return "/team/soccer/[teamId]" as const;
     if (league === "nba") {
       return "/team/[teamId]" as const;
     }
@@ -397,21 +382,10 @@ export const StandingsList = ({
     index: number;
     data: StandingsTeam[];
   }) => {
-    const team = getTeam(item);
+    const team = item;
     const route = getTeamRoute();
 
-    const teamLogo =
-      league === "nba"
-        ? getNBATeamLogo(team?.id, isDark)
-        : league === "wnba"
-          ? getWNBATeamLogo(team?.id, isDark)
-          : league === "nfl"
-            ? getNFLTeamLogo(team?.id, isDark)
-            : league === "mlb"
-              ? getMLBTeamLogo(team?.id, isDark)
-              : league === "nhl"
-                ? getNHLTeamLogo(team?.id, isDark)
-                : null;
+    const teamLogo = getStandingsTeamLogo(team, isDark);
     const id = team?.id ?? item.id;
     const teamCode = team?.code;
 
@@ -435,7 +409,9 @@ export const StandingsList = ({
         ]}
       >
         <View style={styles.rankContainer}>
-          <Text style={styles.rankText}>{index + 1}</Text>
+          <Text style={styles.rankText}>
+            {soccer ? (item.rank ?? index + 1) : index + 1}
+          </Text>
         </View>
 
         <TouchableOpacity
@@ -445,6 +421,7 @@ export const StandingsList = ({
               pathname: route,
               params: {
                 teamId: String(id),
+                ...(soccer ? { league } : {}),
               },
             })
           }
@@ -464,7 +441,7 @@ export const StandingsList = ({
             {teamCode}
           </Text>
 
-          <StatusBadge code={item.clincher} league={league} />
+          {!soccer && <StatusBadge code={item.clincher} league={league} />}
         </TouchableOpacity>
       </View>
     );
@@ -480,7 +457,7 @@ export const StandingsList = ({
       index: number;
       data: StandingsTeam[];
     }) {
-      const team = getTeam(item);
+      const team = item;
 
       const favorited = team ? isFavorite(league, team.id) : false;
 
@@ -598,7 +575,7 @@ export const StandingsList = ({
     data: StandingsTeam[];
     isLast?: boolean;
   }) {
-    const activeColumns = getActiveColumns(data);
+    const activeColumns = getActiveColumns(data, soccer);
 
     return (
       <View
@@ -652,9 +629,17 @@ export const StandingsList = ({
     );
   }
 
-  const conferenceConfig = leagueConferences[league].conferences;
+  const conferenceConfig =
+    leagueConferences[league as PlayoffLeague]?.conferences ?? {};
 
-  const conferenceSections = Object.values(conferenceConfig)
+  const conferenceSections = soccer
+    ? conferences
+        .filter((conference) => conference.standings.length > 0)
+        .map((conference) => ({
+          title: conference.name,
+          data: conference.standings,
+        }))
+    : Object.values(conferenceConfig)
     .map((conference) => {
       const data =
         conferences?.find(
@@ -682,7 +667,7 @@ export const StandingsList = ({
     );
 
   const displayedSections =
-    sortMode === "conference" ? conferenceSections : divisionStandings;
+    soccer || sortMode === "conference" ? conferenceSections : divisionStandings;
 
   return (
     <ScrollView
@@ -695,7 +680,7 @@ export const StandingsList = ({
       {isGameDetailScreen && <HeadingTwo isDark={isDark}>Standings</HeadingTwo>}
 
       <View style={styles.dropdownRow}>
-        {league !== "wnba" && (
+        {!soccer && league !== "wnba" && (
           <Dropdown
             options={viewOptions}
             selectedValue={sortMode}
@@ -727,7 +712,7 @@ export const StandingsList = ({
         />
       ))}
 
-      <StatusLegend league={league} />
+      {!soccer && <StatusLegend league={league as PlayoffLeague} />}
     </ScrollView>
   );
 };

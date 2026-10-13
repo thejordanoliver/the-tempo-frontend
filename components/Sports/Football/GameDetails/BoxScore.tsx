@@ -379,7 +379,7 @@ export default function BoxScore({
       <View>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
         <Text selectable style={global.errorText}>
-          Failed to load box score.
+          Couldn’t load box score
         </Text>
       </View>
     );

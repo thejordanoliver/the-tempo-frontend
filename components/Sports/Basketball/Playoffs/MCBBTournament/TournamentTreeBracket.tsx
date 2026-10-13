@@ -1343,7 +1343,7 @@ export default function TournamentTreeBracket({
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyTitle}>No bracket data</Text>
         <Text style={styles.emptyBody}>
-          No regional tournament games are available.
+          No tournament games available
         </Text>
       </View>
     );

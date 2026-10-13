@@ -54,7 +54,7 @@ render-performance problem. Profile consumers before changing subscriptions.
 The scan counted 402 component files, 135 hooks, 71 utilities, 18 services,
 and 40 type files. Messaging, forums, and explore each span several roots.
 Hooks mix folders such as `BasketballHooks`, `NBAHooks`, `LeagueHooks`, and
-root-level feature hooks. `useTeams.ts` exports `useTeamDetails` and contains
+root-level feature hooks. `useTeams.ts` exports `useTeams` and contains
 a stale comment referring to a different path.
 
 Group one feature at a time when touching it. Use lowercase feature names and

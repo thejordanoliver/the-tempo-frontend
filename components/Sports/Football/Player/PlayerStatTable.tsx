@@ -877,7 +877,7 @@ export default function PlayerStatTable({
     return (
       <View style={styles.container}>
         {renderHeader()}
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load stats</Text>
       </View>
     );
   }

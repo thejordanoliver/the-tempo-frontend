@@ -31,7 +31,7 @@ export default function TeamInjuriesList({ injuries, isDark }: Props) {
       ListEmptyComponent={
         <View style={global.emptyContainer}>
           <Text style={global.emptyText}>
-            No injuries reported for this team.
+            No injuries reported
           </Text>
         </View>
       }

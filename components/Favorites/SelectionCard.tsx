@@ -17,7 +17,7 @@ export type SelectionCardItem = {
   fullName?: string | null;
   shortName?: string | null;
   code?: string | null;
-  color?: string | null;
+  primaryColor?: string | null;
 };
 
 type Props = {
@@ -45,8 +45,8 @@ function SelectionCard({
   const styles = SelectionCardStyles;
 
   const selectedColor =
-    typeof item.color === "string" && item.color.startsWith("#")
-      ? item.color
+    typeof item.primaryColor === "string" && item.primaryColor.startsWith("#")
+      ? item.primaryColor
       : Colors.midTone;
 
   const handlePress = useCallback(() => {
@@ -161,7 +161,7 @@ export default React.memo(
     prevProps.item.league === nextProps.item.league &&
     prevProps.item.name === nextProps.item.name &&
     prevProps.item.fullName === nextProps.item.fullName &&
-    prevProps.item.color === nextProps.item.color &&
+    prevProps.item.primaryColor === nextProps.item.primaryColor &&
     prevProps.logo === nextProps.logo &&
     prevProps.isSelected === nextProps.isSelected &&
     prevProps.itemWidth === nextProps.itemWidth &&

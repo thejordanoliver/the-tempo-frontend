@@ -105,7 +105,7 @@ export default function PreviewModal({
     : null;
   const primaryColor = isDark
     ? (team?.secondaryColor ?? sport?.color ?? Colors.midTone)
-    : (team?.color ?? sport?.color ?? Colors.midTone);
+    : (team?.primaryColor ?? sport?.color ?? Colors.midTone);
 
   const destinationLabel = isTeam ? "Team" : "Sport";
 

@@ -58,7 +58,7 @@ export function NFLPlayoffBracket({
   if (error) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load playoffs</Text>
       </View>
     );
   }
@@ -70,7 +70,7 @@ export function NFLPlayoffBracket({
   if (!hasPlayoffGames) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>No NFL playoff bracket available.</Text>
+        <Text style={global.emptyText}>No NFL playoff bracket available</Text>
       </View>
     );
   }

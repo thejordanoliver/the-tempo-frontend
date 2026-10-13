@@ -5,6 +5,8 @@ import { apiClient } from "utils/apiClient";
 
 export interface StandingTeam {
   id: string;
+  logo?: string | null;
+  logoDark?: string | null;
   name: string;
   code: string | null;
   rank: string | number | null;

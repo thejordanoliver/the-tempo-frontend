@@ -3,11 +3,14 @@ import { apiClient } from "utils/apiClient";
 
 export type StandingsTeam = {
   id: string;
+  logo?: string | null;
+  logoDark?: string | null;
   name: string;
   shortName: string | null;
   code: string;
   conference: string;
   division: string;
+  gamesPlayed?: number | null;
   wins: number;
   losses: number;
   ties: number;
@@ -47,7 +50,8 @@ export type ConferenceStandings = {
 export type SeasonType = {
   id: string;
   name: string;
-  abbreviation: string;
+  abbreviation?: string;
+  code?: string;
   startDate: string | null;
   endDate: string | null;
   hasStandings: boolean;
@@ -71,7 +75,8 @@ export type LeagueStandingsData = {
 };
 
 type UseLeagueStandingsOptions = {
-  seasonType?: string;
+  seasonType?: string | null;
+  soccer?: boolean;
 };
 
 export function useLeagueStandings(
@@ -85,7 +90,8 @@ export function useLeagueStandings(
   const [error, setError] = useState<string | null>(null);
   const requestIdRef = useRef(0);
 
-  const seasonType = options?.seasonType ?? "2";
+  const soccer = options?.soccer ?? false;
+  const seasonType = soccer ? options?.seasonType : (options?.seasonType ?? "2");
 
   const fetchStandings = useCallback(async (isRefresh = false) => {
     const requestId = ++requestIdRef.current;
@@ -98,7 +104,7 @@ export function useLeagueStandings(
       setError(null);
 
       const res = await apiClient.get<LeagueStandingsData>(
-        `/api/standings/${league.toLowerCase()}`,
+        `/api/standings/${soccer ? "soccer/" : ""}${league.toLowerCase()}`,
         {
           params: {
             ...(year ? { season: year } : {}),
@@ -131,7 +137,7 @@ export function useLeagueStandings(
         setRefreshing(false);
       }
     }
-  }, [league, year, seasonType]);
+  }, [league, year, seasonType, soccer]);
 
   useEffect(() => {
     let cancelled = false;
@@ -153,14 +159,17 @@ export function useLeagueStandings(
       .filter((season) =>
         season.types.some(
           (type) =>
-            type.id === "2" && type.abbreviation === "reg" && type.hasStandings,
+            type.hasStandings &&
+            (soccer ||
+              (String(type.id) === "2" &&
+                (type.abbreviation === "reg" || type.code === "reg"))),
         ),
       )
       .map((season) => ({
         label: season.displayName,
         value: String(season.year),
       }));
-  }, [availableSeasons]);
+  }, [availableSeasons, soccer]);
 
   return {
     standings: data?.conferences ?? [],

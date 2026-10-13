@@ -13,7 +13,7 @@ export default function FighterCareerStats({ data, loading, error, isDark }: Pro
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
       {error || !data?.careerStats.length ? (
-        <Text style={styles.emptyText}>{error ?? "Career stats not available."}</Text>
+        <Text style={styles.emptyText}>{error ?? "Career stats not available"}</Text>
       ) : (
         <View style={styles.glossaryContainer}>
           <View style={[styles.row, styles.headerRow]}>

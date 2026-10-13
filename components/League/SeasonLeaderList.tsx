@@ -67,7 +67,7 @@ export default function SeasonLeadersList({
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text style={global.errorText}>Failed to load stats: {error}</Text>
+        <Text style={global.errorText}>Couldn’t load stats</Text>
       </View>
     );
   }

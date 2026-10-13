@@ -1,10 +1,5 @@
-import ProfilePredictions from "components/Profile/ProfilePredictions";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useProfilePredictions } from "hooks/useProfilePredictions";
-import { useScopedRouter } from "hooks/useScopedRouter";
-// profile.tsx
-import FavoritesSection from "@/components/Favorites/FavoritesSection";
-import BadgePreviewSection from "@/components/Profile/Badges/BadgePreviewSection";
+import BadgePreviewSection from "@/components/Profile/Badges/ProfileBadgeSection";
+import ProfileFavoritesSection from "@/components/Profile/ProfileFavoritesSection";
 import TabBar from "@/components/TabBars/TabBar";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { useBookmarkedPosts } from "@/hooks/ForumHooks/useBookmarkedPosts";
@@ -17,12 +12,16 @@ import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
+import ProfilePredictions from "components/Profile/ProfilePredictions";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useFocusEffect, useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useProfilePredictions } from "hooks/useProfilePredictions";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useProfile } from "hooks/UserHooks/useProfile";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Animated, ScrollView, useWindowDimensions, View } from "react-native";
 import { useFollowersStore } from "store/followersStore";
@@ -487,10 +486,17 @@ export default function ProfileScreen() {
               itemWidth={itemWidth}
               record={predictions.record}
               picks={predictions.picks}
-              onPick={(pick) => router.push({
-                pathname: "/game/[sport]/[game]",
-                params: { sport: pick.sport, game: pick.gameId, league: pick.league, date: pick.startsAt },
-              })}
+              onPick={(pick) =>
+                router.push({
+                  pathname: "/game/[sport]/[game]",
+                  params: {
+                    sport: pick.sport,
+                    game: pick.gameId,
+                    league: pick.league,
+                    date: pick.startsAt,
+                  },
+                })
+              }
               loading={predictions.loading}
               error={predictions.error}
               onRetry={predictions.refresh}
@@ -501,7 +507,7 @@ export default function ProfileScreen() {
 
         {selectedTab === "favorites" && (
           <View style={styles.contentContainer}>
-            <FavoritesSection
+            <ProfileFavoritesSection
               favoriteTeams={favoriteTeamsWithLeague}
               favoriteSports={favoriteSports}
               favoriteSportsLoading={favoriteSportsLoading}
@@ -530,7 +536,7 @@ export default function ProfileScreen() {
           </View>
         )}
         {selectedTab === "posts" && (
-          <View style={styles.bookmarkContainer}>
+          <View style={styles.forumContainer}>
             <Forum
               posts={userPosts}
               currentUserId={currentUserId}
@@ -557,7 +563,7 @@ export default function ProfileScreen() {
         )}
 
         {selectedTab === "bookmarks" && (
-          <View style={styles.bookmarkContainer}>
+          <View style={styles.forumContainer}>
             <Forum
               posts={bookmarkedPosts}
               currentUserId={currentUserId}

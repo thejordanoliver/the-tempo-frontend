@@ -46,7 +46,7 @@ export default function DraftBoardTab({ safeYear, league }: Props) {
   if (error)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>Error: {error}</Text>
+        <Text style={global.errorText}>Couldn’t load draft</Text>
       </View>
     );
 

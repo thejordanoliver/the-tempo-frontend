@@ -128,7 +128,7 @@ export default function SeasonLeadersTable({
     return (
       <View style={global.emptyContainer}>
         <Text selectable style={global.emptyTitle}>
-          No season leaders are available.
+          No season leaders available
         </Text>
       </View>
     );

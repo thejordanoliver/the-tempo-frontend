@@ -498,7 +498,7 @@ export default function GameLeaders({
 
         <View style={styles.wrapper}>
           <View style={global.emptyContainer}>
-            <Text style={global.errorText}>Failed to load leaders</Text>
+            <Text style={global.errorText}>Couldn’t load leaders</Text>
           </View>
         </View>
       </View>

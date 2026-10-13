@@ -43,7 +43,7 @@ export function RoundLabel({
           styles.roundTitle,
           {
             top: LABEL_TOP,
-      
+
             width: LABEL_WIDTH,
             textAlign: "center",
           },

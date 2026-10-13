@@ -18,9 +18,9 @@ import FloatingButton from "../Buttons/FloatingButton";
 import { PostItem } from "./PostItem/PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 
-const DEFAULT_EMPTY_TITLE = "It's Quiet Here";
+const DEFAULT_EMPTY_TITLE = "No posts yet";
 const DEFAULT_EMPTY_MESSAGE =
-  "No posts yet. Be the first to start the conversation.";
+  "Start the conversation.";
 const DEFAULT_EMPTY_ICON = "chatbubble-outline";
 const DEFAULT_SKELETON_COUNT = 5;
 
@@ -144,7 +144,7 @@ export default function Forum({
         )}
 
         <Text style={styles.actionButtonText}>
-          {refreshing ? "Loading..." : "Load more"}
+          {refreshing ? "Loading…" : "Load more"}
         </Text>
       </TouchableOpacity>
     );

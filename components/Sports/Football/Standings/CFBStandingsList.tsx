@@ -1,3 +1,4 @@
+import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CFBStandingsList.tsx
@@ -6,7 +7,6 @@ import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
@@ -67,7 +67,7 @@ export const CFBStandingsList = () => {
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>Couldn’t load standings</Text>
       </ScrollView>
     );
   }
@@ -86,15 +86,15 @@ export const CFBStandingsList = () => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getCFBTeam(item.team?.id ?? "");
+    const team = item.team;
     const teamId = team?.id ?? 0;
-    const teamLogo = getCFBTeamLogo(teamId, isDark);
+    const teamLogo = getStandingsTeamLogo(team, isDark);
     const teamCode = team?.code || "N/A";
 
     const trendNum = Number(item.trend);
     const hasTrend = Number.isFinite(trendNum) && trendNum !== 0;
     const isUp = trendNum > 0;
-    const favorited = team ? isFavorite("cfb", team.id) : false;
+    const favorited = team?.id != null ? isFavorite("cfb", team.id) : false;
 
     const trendColor = isUp
       ? isDark
@@ -180,8 +180,8 @@ export const CFBStandingsList = () => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getCFBTeam(item.team?.id ?? "");
-    const favorited = team ? isFavorite("cfb", team.id) : false;
+    const team = item.team;
+    const favorited = team?.id != null ? isFavorite("cfb", team.id) : false;
 
     return (
       <View
@@ -212,7 +212,7 @@ export const CFBStandingsList = () => {
 
         <View style={styles.statCell}>
           <Text style={styles.statText}>
-            {item.team?.groups?.shortName ||
+            {item.team?.conference?.shortName || item.team?.groups?.shortName ||
               item.team?.groups?.parent?.shortName ||
               "N/A"}
           </Text>
@@ -271,10 +271,9 @@ export const CFBStandingsList = () => {
 
         <View style={styles.droppedoutWrapper}>
           {droppedOutTeams.map((item, index) => {
-            const team = getCFBTeam(item.team?.id ?? "");
-            const teamId = item.team?.id;
+            const team = item.team;
             const teamName = team?.shortName || team?.name || "N/A";
-            const teamLogo = getCFBTeamLogo(teamId, isDark);
+            const teamLogo = getStandingsTeamLogo(team, isDark);
             return (
               <View key={item.team?.id} style={styles.droppedoutRow}>
                 {teamLogo && (
