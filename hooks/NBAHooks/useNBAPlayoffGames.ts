@@ -7,8 +7,8 @@ import {
   RoundDefinition,
   UseNBAPlayoffGamesOptions,
 } from "@/types/basketball/basketball";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 import { resolvePlayoffSeason } from "utils/brackets/playoffSeasonFallback";
 
@@ -147,13 +147,7 @@ const getRoundFromText = (
 };
 
 const inferRoundDefinition = (game: NBAPlayoffGame): RoundDefinition => {
-  /**
-   * Important:
-   * Use headline/name first because your API can return:
-   * headline: "East Semifinals - Game 3"
-   * playoff.roundKey: "finals"
-   * playoff.roundLabel: "NBA Finals"
-   */
+  // Headlines can identify a round more accurately than playoff metadata.
   const primaryText = [
     game.headline,
     game.name,
@@ -210,12 +204,12 @@ const getAllGamesFromResponse = (data: any): NBAPlayoffGame[] => {
 
   const nestedRoundGames = Array.isArray(data?.rounds)
     ? data.rounds.flatMap((round: NBAPlayoffRound) =>
-      Array.isArray(round?.series)
-        ? round.series.flatMap((series) =>
-          Array.isArray(series?.games) ? series.games : [],
-        )
-        : [],
-    )
+        Array.isArray(round?.series)
+          ? round.series.flatMap((series) =>
+              Array.isArray(series?.games) ? series.games : [],
+            )
+          : [],
+      )
     : [];
 
   const map = new Map<string, NBAPlayoffGame>();
@@ -238,8 +232,8 @@ const getAllGamesFromResponse = (data: any): NBAPlayoffGame[] => {
 const getSeriesKey = (game: NBAPlayoffGame) => {
   if (game.playoff?.seriesKey) return String(game.playoff.seriesKey);
 
-  const homeId = game.home?.id ?? game.home?.espnId ?? game.home?.code;
-  const awayId = game.away?.id ?? game.away?.espnId ?? game.away?.code;
+  const homeId = game.home?.id ?? game.home?.code;
+  const awayId = game.away?.id ?? game.away?.code;
 
   if (homeId != null && awayId != null) {
     return [String(homeId), String(awayId)].sort().join("-");
@@ -266,8 +260,8 @@ const getSeriesLabel = (game: NBAPlayoffGame) => {
 };
 
 const getTeamIds = (game: NBAPlayoffGame): (string | number)[] => {
-  const awayId = game.away?.id ?? game.away?.espnId;
-  const homeId = game.home?.id ?? game.home?.espnId;
+  const awayId = game.away?.id;
+  const homeId = game.home?.id;
 
   return [awayId, homeId].filter(
     (value): value is string | number =>
@@ -473,7 +467,10 @@ export function useNBAPlayoffGames({
           ? { data: await fetchSeason(Number(season)), season }
           : await resolvePlayoffSeason(Number(season), fetchSeason, (data) => {
               const games = getAllGamesFromResponse(data);
-              return games.length > 0 || getRoundsFromResponse(data, games).length > 0;
+              return (
+                games.length > 0 ||
+                getRoundsFromResponse(data, games).length > 0
+              );
             });
         const { data } = result;
 

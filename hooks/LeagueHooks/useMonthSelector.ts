@@ -20,8 +20,7 @@ export function useTeamMonthSelector({
   });
 
   const resolvedSelection = useMemo(
-    () =>
-      resolveScheduleMonthSelection(selection, scheduleIdentity, months),
+    () => resolveScheduleMonthSelection(selection, scheduleIdentity, months),
     [months, scheduleIdentity, selection],
   );
 

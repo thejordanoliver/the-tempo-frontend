@@ -1,3 +1,4 @@
+import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { FootballGame } from "@/types/football/football";
 import Football from "assets/icons/Football.png";
@@ -122,8 +123,8 @@ export default function FootballGameWidget({
   const awayRank = game.away.rank ?? null;
   const football = isDark ? FootballLight : Football;
 
-  const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
-  const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
+  const homeHasPossession = inProgress && gameTeamIdsMatch(possessionTeamId, home?.id);
+  const awayHasPossession = inProgress && gameTeamIdsMatch(possessionTeamId, away?.id);
 
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;

@@ -34,7 +34,6 @@ export function useAwardSeasons(options: Options = {}) {
         type: category,
       };
 
-      // NBA-only filter
       if (league === "nba" && playerId) {
         params.player_id = playerId;
       }

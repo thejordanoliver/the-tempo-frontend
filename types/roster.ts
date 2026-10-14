@@ -24,7 +24,6 @@ export interface RosterPlayer {
   draft_round: number | null;
   draft_year: number | null;
   draft_number: number | null;
-  espn_id: number | null;
 }
 
 export type SupportedRosterLeague =

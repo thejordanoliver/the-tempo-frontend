@@ -69,9 +69,7 @@ function isValidCompetition(
   );
 
   const hasDate = Boolean(
-    competition.startDate ||
-    competition.date ||
-    competition.timestamp,
+    competition.startDate || competition.date || competition.timestamp,
   );
 
   const hasStatus = Boolean(
@@ -81,27 +79,17 @@ function isValidCompetition(
   );
 
   const hasDrivers =
-    Array.isArray(competition.drivers) &&
-    competition.drivers.length > 0;
+    Array.isArray(competition.drivers) && competition.drivers.length > 0;
 
   const hasBroadcasts =
-    Array.isArray(competition.broadcasts) &&
-    competition.broadcasts.length > 0;
+    Array.isArray(competition.broadcasts) && competition.broadcasts.length > 0;
 
   return (
-    hasId ||
-    hasType ||
-    hasDate ||
-    hasStatus ||
-    hasDrivers ||
-    hasBroadcasts
+    hasId || hasType || hasDate || hasStatus || hasDrivers || hasBroadcasts
   );
 }
 
-function getSessionName(
-  competition: RacingCompetition,
-  index: number,
-) {
+function getSessionName(competition: RacingCompetition, index: number) {
   return (
     competition.type?.text ||
     competition.type?.abbreviation ||
@@ -115,18 +103,14 @@ function createSessionEvent(
   competition: RacingCompetition,
   competitionIndex: number,
 ): RacingEvent {
-  const sessionName = getSessionName(
-    competition,
-    competitionIndex,
-  );
+  const sessionName = getSessionName(competition, competitionIndex);
 
   const sessionDrivers = Array.isArray(competition.drivers)
     ? competition.drivers
     : [];
 
   const sessionId =
-    competition.id ||
-    `${event.id || "racing-event"}-${competitionIndex}`;
+    competition.id || `${event.id || "racing-event"}-${competitionIndex}`;
 
   const sessionUid =
     competition.uid ||
@@ -145,15 +129,11 @@ function createSessionEvent(
     event.timestamp ??
     null;
 
-  const sessionBroadcasts = Array.isArray(
-    competition.broadcasts,
-  )
+  const sessionBroadcasts = Array.isArray(competition.broadcasts)
     ? competition.broadcasts
     : [];
 
-  const sessionGeoBroadcasts = Array.isArray(
-    competition.geoBroadcasts,
-  )
+  const sessionGeoBroadcasts = Array.isArray(competition.geoBroadcasts)
     ? competition.geoBroadcasts
     : [];
 
@@ -161,9 +141,7 @@ function createSessionEvent(
     ? event.broadcasts
     : [];
 
-  const eventGeoBroadcasts = Array.isArray(
-    event.geoBroadcasts,
-  )
+  const eventGeoBroadcasts = Array.isArray(event.geoBroadcasts)
     ? event.geoBroadcasts
     : [];
 
@@ -176,35 +154,19 @@ function createSessionEvent(
     type: competition.type,
     status: competition.status,
     broadcasts: sessionBroadcasts,
-    broadcast:
-      competition.broadcast ||
-      sessionBroadcasts.join("/") ||
-      null,
+    broadcast: competition.broadcast || sessionBroadcasts.join("/") || null,
     driverCount: sessionDrivers.length,
   };
 
   return {
     ...event,
 
-    /*
-     * Each session needs its own identity so FlatList renders every
-     * F1 or NASCAR session as a separate card.
-     */
+    // Give each session a distinct list key.
     id: sessionId,
     uid: sessionUid,
 
-    /*
-     * Keep the full weekend/race name in `name`.
-     * Use the competition type for the individual session label.
-     *
-     * Example:
-     * name: "Moët & Chandon Belgian Grand Prix"
-     * shortName: "Race"
-     */
-    name:
-      event.name ||
-      event.shortName ||
-      sessionName,
+    // Keep the weekend name and use the competition type as the session label.
+    name: event.name || event.shortName || sessionName,
 
     shortName: sessionName,
 
@@ -212,33 +174,21 @@ function createSessionEvent(
     startDate: sessionDate,
     timestamp: sessionTimestamp,
 
-    /*
-     * Each flattened event represents one competition/session.
-     */
     competitions: [competition],
 
-    /*
-     * Use the individual session status rather than the overall
-     * racing-weekend status.
-     */
+    // Session status can differ from the weekend status.
     status: competition.status ?? event.status,
 
     primaryCompetition: competitionSummary,
     driverCompetition: competitionSummary,
 
-    /*
-     * Drivers may be empty for upcoming practice, qualifying,
-     * or race sessions. The session is still preserved as long
-     * as the competition contains other valid data.
-     */
+    // Upcoming sessions can be valid before drivers are available.
     drivers: sessionDrivers,
 
     winner: competition.winner ?? null,
 
     broadcasts:
-      sessionBroadcasts.length > 0
-        ? sessionBroadcasts
-        : eventBroadcasts,
+      sessionBroadcasts.length > 0 ? sessionBroadcasts : eventBroadcasts,
 
     broadcast:
       competition.broadcast ||
@@ -260,30 +210,19 @@ function flattenRacingSessions(events: RacingEvent[]) {
       ? event.competitions.filter(isValidCompetition)
       : [];
 
-    /*
-     * Keep the original event when ESPN does not provide any
-     * usable competition/session objects.
-     */
+    // Retain weekend events with no usable sessions.
     if (competitions.length === 0) {
       return [event];
     }
 
-    return competitions.map(
-      (competition, competitionIndex) =>
-        createSessionEvent(
-          event,
-          competition,
-          competitionIndex,
-        ),
+    return competitions.map((competition, competitionIndex) =>
+      createSessionEvent(event, competition, competitionIndex),
     );
   });
 }
 
 function getEventSortTimestamp(event: RacingEvent) {
-  if (
-    typeof event.timestamp === "number" &&
-    Number.isFinite(event.timestamp)
-  ) {
+  if (typeof event.timestamp === "number" && Number.isFinite(event.timestamp)) {
     return event.timestamp;
   }
 
@@ -296,10 +235,7 @@ function getEventSortTimestamp(event: RacingEvent) {
 
 function sortSessions(events: RacingEvent[]) {
   return [...events].sort((first, second) => {
-    return (
-      getEventSortTimestamp(first) -
-      getEventSortTimestamp(second)
-    );
+    return getEventSortTimestamp(first) - getEventSortTimestamp(second);
   });
 }
 
@@ -310,41 +246,17 @@ export function useRacingEvents({
   pollLiveEvents = true,
   pollIntervalMs = 90_000,
 }: UseRacingEventsOptions = {}) {
-  /*
-   * Individual sessions displayed in the UI.
-   *
-   * F1 examples:
-   * - Practice 1
-   * - Practice 2
-   * - Practice 3
-   * - Qualifying
-   * - Race
-   *
-   * NASCAR normally provides fewer session objects.
-   */
   const [games, setGames] = useState<RacingEvent[]>([]);
 
-  /*
-   * Preserve the original weekend-level events from the API.
-   */
-  const [weekendEvents, setWeekendEvents] = useState<
-    RacingEvent[]
-  >([]);
+  const [weekendEvents, setWeekendEvents] = useState<RacingEvent[]>([]);
 
-  /*
-   * Preserve the complete backend response.
-   */
-  const [response, setResponse] =
-    useState<RacingEventsResponse | null>(null);
+  const [response, setResponse] = useState<RacingEventsResponse | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  /*
-   * Prevent an older request from replacing data from a newer
-   * request when the selected date or league changes quickly.
-   */
+  // Ignore responses from superseded requests.
   const latestRequestIdRef = useRef(0);
 
   const normalizedLeague = normalizeLeague(league);
@@ -355,16 +267,14 @@ export function useRacingEvents({
 
   const endpoint = getEndpoint(normalizedLeague);
 
-  const canFetch =
-    enabled && Boolean(formattedDate);
+  const canFetch = enabled && Boolean(formattedDate);
 
   const fetchEvents = useCallback(
     async ({
       forceRefresh = false,
       silent = false,
     }: FetchRacingEventsOptions = {}) => {
-      const requestId =
-        latestRequestIdRef.current + 1;
+      const requestId = latestRequestIdRef.current + 1;
 
       latestRequestIdRef.current = requestId;
 
@@ -386,57 +296,40 @@ export function useRacingEvents({
         } else if (!silent) {
           setLoading(true);
 
-          /*
-           * Clear the previous date's data while the selected
-           * racing date is loading.
-           */
           setGames([]);
           setWeekendEvents([]);
         }
 
-        const apiResponse =
-          await apiClient.get<RacingEventsResponse>(
-            endpoint,
-            {
-              params: {
-                date: formattedDate,
-              },
+        const apiResponse = await apiClient.get<RacingEventsResponse>(
+          endpoint,
+          {
+            params: {
+              date: formattedDate,
             },
-          );
+          },
+        );
 
         /*
          * Ignore the response if a newer request was started
          * before this one finished.
          */
-        if (
-          requestId !== latestRequestIdRef.current
-        ) {
+        if (requestId !== latestRequestIdRef.current) {
           return;
         }
 
         const nextResponse = apiResponse.data;
 
-        const rawEvents = Array.isArray(
-          nextResponse?.events,
-        )
+        const rawEvents = Array.isArray(nextResponse?.events)
           ? nextResponse.events
           : [];
 
-        /*
-         * Remove ESPN's empty competition objects and convert
-         * valid competitions into individual session cards.
-         */
-        const sessionEvents = sortSessions(
-          flattenRacingSessions(rawEvents),
-        );
+        const sessionEvents = sortSessions(flattenRacingSessions(rawEvents));
 
         setResponse(nextResponse);
         setWeekendEvents(rawEvents);
         setGames(sessionEvents);
       } catch (requestError: unknown) {
-        if (
-          requestId !== latestRequestIdRef.current
-        ) {
+        if (requestId !== latestRequestIdRef.current) {
           return;
         }
 
@@ -458,9 +351,9 @@ export function useRacingEvents({
         setError(
           new Error(
             normalizedError.response?.data?.error ||
-            normalizedError.response?.data?.message ||
-            normalizedError.message ||
-            `Failed to fetch ${normalizedLeague.toUpperCase()} events`,
+              normalizedError.response?.data?.message ||
+              normalizedError.message ||
+              `Failed to fetch ${normalizedLeague.toUpperCase()} events`,
           ),
         );
 
@@ -468,13 +361,7 @@ export function useRacingEvents({
         setWeekendEvents([]);
         setResponse(null);
       } finally {
-        /*
-         * An outdated request must not modify loading state
-         * belonging to the most recent request.
-         */
-        if (
-          requestId === latestRequestIdRef.current
-        ) {
+        if (requestId === latestRequestIdRef.current) {
           if (!silent) {
             setLoading(false);
           }
@@ -483,12 +370,7 @@ export function useRacingEvents({
         }
       }
     },
-    [
-      canFetch,
-      endpoint,
-      formattedDate,
-      normalizedLeague,
-    ],
+    [canFetch, endpoint, formattedDate, normalizedLeague],
   );
 
   const refreshEvents = useCallback(async () => {
@@ -526,20 +408,11 @@ export function useRacingEvents({
   });
 
   return {
-    /*
-     * Individual competition/session events used by the UI.
-     */
     games,
     events: games,
 
-    /*
-     * Original weekend-level events.
-     */
     weekendEvents,
 
-    /*
-     * Complete backend response.
-     */
     response,
 
     loading,

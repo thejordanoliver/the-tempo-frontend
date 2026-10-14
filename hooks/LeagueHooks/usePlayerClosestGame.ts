@@ -1,6 +1,9 @@
 import { useTeamSchedule } from "hooks/Sports/useTeamSchedule";
 import type { PlayerGameLogSport } from "types/playerGameLog";
-import { getClosestPlayerGame, type PlayerScheduleGame } from "utils/players/playerClosestGame";
+import {
+  getClosestPlayerGame,
+  type PlayerScheduleGame,
+} from "utils/players/playerClosestGame";
 
 type ScheduleResponse<Game> = { games?: Game[] };
 function normalize<Game>(response: ScheduleResponse<Game>): { games: Game[] } {
@@ -15,10 +18,18 @@ export function usePlayerClosestGame<Game extends PlayerScheduleGame>(
   league: string,
   teamId: string | number | null | undefined,
 ) {
-  const schedule = useTeamSchedule<Game, ScheduleResponse<Game>, { games: Game[] }, string>({
-    sport, league, teamId: teamId ?? null,
+  const schedule = useTeamSchedule<
+    Game,
+    ScheduleResponse<Game>,
+    { games: Game[] },
+    string
+  >({
+    sport,
+    league,
+    teamId: teamId ?? null,
     endpoint: `/api/games/${sport}/team/${league}/${teamId}`,
-    normalize, errorFrom,
+    normalize,
+    errorFrom,
   });
   return {
     game: getClosestPlayerGame(schedule.data?.games ?? []),

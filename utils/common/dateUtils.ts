@@ -1,5 +1,4 @@
 // utils/common/dateUtils.ts
-
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -126,14 +125,6 @@ export function getNHLSeason(date: Date = new Date()): string {
 
   // September–December belong to the season starting this year.
   return String(year);
-}
-
-export function getNBACalendarSeason(): string {
-  const today = dayjs();
-  const year = today.year();
-  const month = today.month() + 1; // 1–12
-
-  return String(month >= 10 ? year + 1 : year);
 }
 
 export function getFootballSeason(date = new Date(), league = "nfl") {

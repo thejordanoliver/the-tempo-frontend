@@ -48,7 +48,6 @@ export type SoccerGame = {
   ];
   home: {
     id: number;
-    espnId: number;
     uid: string;
     name: string;
     code: string;
@@ -62,7 +61,6 @@ export type SoccerGame = {
   };
   away: {
     id: number;
-    espnId: number;
     uid: string;
     name: string;
     code: string;
@@ -93,7 +91,6 @@ export type SoccerGameCardProps = {
 
 export type SoccerTeam = {
   id: number;
-  espnId: number;
   name: string;
   code: string;
   fullName: string;

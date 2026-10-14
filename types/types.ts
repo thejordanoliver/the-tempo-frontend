@@ -1,7 +1,6 @@
 export type Team = {
   id: number | null;
   league: string;
-  espnId?: number | null;
   summerLeagueId?: number | null;
   name: string;
   shortName?: string;

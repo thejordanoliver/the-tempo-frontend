@@ -88,7 +88,7 @@ export interface Season {
 
 export type PlayerSeason = Season;
 
-export interface BasketballCanonicalProfile {
+export interface BasketballResolvedProfile {
   league: BasketballLeague;
   playerId: string;
   redirected: boolean;
@@ -110,7 +110,7 @@ interface ApiResponse {
   league?: BasketballLeague;
   playerId?: StatValue;
   player?: Player | null;
-  canonicalProfile?: BasketballCanonicalProfile | null;
+  resolvedProfile?: BasketballResolvedProfile | null;
   seasons?: Season[] | null;
   collegeStats?: CollegeStatsResponse | null;
   currentSeasonRankings?: PlayerSeasonRankings;
@@ -124,16 +124,15 @@ const normalizeApiSeason = (season: Season): Season => ({
 });
 
 const isBasketballLeague = (value: unknown): value is BasketballLeague =>
-  value === "nba" ||
-  value === "wnba" ||
-  value === "mcbb" ||
-  value === "wcbb";
+  value === "nba" || value === "wnba" || value === "mcbb" || value === "wcbb";
 
 const normalizeLeague = (
   value: unknown,
   fallback: BasketballLeague,
 ): BasketballLeague => {
-  const normalized = String(value ?? "").trim().toLowerCase();
+  const normalized = String(value ?? "")
+    .trim()
+    .toLowerCase();
   return isBasketballLeague(normalized) ? normalized : fallback;
 };
 
@@ -168,8 +167,8 @@ export function usePlayerSeasons(
     useState<PlayerSeasonRankings>({});
   const [resolvedLeague, setResolvedLeague] =
     useState<BasketballLeague>(league);
-  const [canonicalProfile, setCanonicalProfile] =
-    useState<BasketballCanonicalProfile | null>(null);
+  const [resolvedProfile, setResolvedProfile] =
+    useState<BasketballResolvedProfile | null>(null);
   const [seasonsLoading, setSeasonsLoading] = useState(true);
   const [seasonsError, setSeasonsError] = useState<string | null>(null);
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
@@ -185,91 +184,94 @@ export function usePlayerSeasons(
     ? `${league}:${normalizedPlayerId}`
     : null;
 
-  const fetchSeasons = useCallback(async (signal?: AbortSignal) => {
-    if (!hasValidPlayerId) {
-      setPlayer(null);
-      setSeasons([]);
-      setCollegeSeasons([]);
-      setCurrentSeasonRankings({});
-      setCanonicalProfile(null);
-      setResolvedLeague(league);
-      setSeasonsError("Invalid player ID");
-      setSeasonsLoading(false);
-      return;
-    }
-
-    try {
-      setSeasonsLoading(true);
-      setSeasonsError(null);
-      setCanonicalProfile(null);
-      setResolvedRequestKey(null);
-
-      const res = await apiClient.get<ApiResponse>(
-        `/api/player/stats/${league}/${normalizedPlayerId}`,
-        { signal },
-      );
-
-      if (signal?.aborted) return;
-
-      const effectiveLeague = normalizeLeague(res.data.league, league);
-      const canonicalPlayerId = normalizePlayerId(
-        res.data.canonicalProfile?.playerId ?? res.data.playerId,
-        normalizedPlayerId,
-      );
-      const redirectedFrom = res.data.canonicalProfile?.redirectedFrom;
-
-      setResolvedLeague(effectiveLeague);
-      setCanonicalProfile({
-        league: effectiveLeague,
-        playerId: canonicalPlayerId,
-        redirected:
-          res.data.canonicalProfile?.redirected ?? effectiveLeague !== league,
-        redirectedFrom: redirectedFrom
-          ? {
-              league: normalizeLeague(redirectedFrom.league, league),
-              playerId: normalizePlayerId(
-                redirectedFrom.playerId,
-                normalizedPlayerId,
-              ),
-            }
-          : effectiveLeague !== league
-            ? { league, playerId: normalizedPlayerId }
-            : null,
-      });
-      setPlayer(res.data.player ?? null);
-      setSeasons(
-        Array.isArray(res.data.seasons)
-          ? res.data.seasons.map(normalizeApiSeason)
-          : [],
-      );
-      setCollegeSeasons(
-        (res.data.collegeStats?.league === "mcbb" ||
-          res.data.collegeStats?.league === "wcbb") &&
-          Array.isArray(res.data.collegeStats.seasons)
-          ? res.data.collegeStats.seasons.map(normalizeApiSeason)
-          : [],
-      );
-      setCurrentSeasonRankings(res.data.currentSeasonRankings ?? {});
-      setResolvedRequestKey(requestKey);
-    } catch (err: unknown) {
-      if (isCancel(err)) return;
-
-      const message = getRequestErrorMessage(err);
-      console.error("Failed to fetch player seasons:", message);
-      setSeasonsError(message);
-      setPlayer(null);
-      setSeasons([]);
-      setCollegeSeasons([]);
-      setCurrentSeasonRankings({});
-      setCanonicalProfile(null);
-      setResolvedLeague(league);
-      setResolvedRequestKey(requestKey);
-    } finally {
-      if (!signal?.aborted) {
+  const fetchSeasons = useCallback(
+    async (signal?: AbortSignal) => {
+      if (!hasValidPlayerId) {
+        setPlayer(null);
+        setSeasons([]);
+        setCollegeSeasons([]);
+        setCurrentSeasonRankings({});
+        setResolvedProfile(null);
+        setResolvedLeague(league);
+        setSeasonsError("Invalid player ID");
         setSeasonsLoading(false);
+        return;
       }
-    }
-  }, [hasValidPlayerId, league, normalizedPlayerId, requestKey]);
+
+      try {
+        setSeasonsLoading(true);
+        setSeasonsError(null);
+        setResolvedProfile(null);
+        setResolvedRequestKey(null);
+
+        const res = await apiClient.get<ApiResponse>(
+          `/api/player/stats/${league}/${normalizedPlayerId}`,
+          { signal },
+        );
+
+        if (signal?.aborted) return;
+
+        const effectiveLeague = normalizeLeague(res.data.league, league);
+        const id = normalizePlayerId(
+          res.data.resolvedProfile?.playerId ?? res.data.playerId,
+          normalizedPlayerId,
+        );
+        const redirectedFrom = res.data.resolvedProfile?.redirectedFrom;
+
+        setResolvedLeague(effectiveLeague);
+        setResolvedProfile({
+          league: effectiveLeague,
+          playerId: id,
+          redirected:
+            res.data.resolvedProfile?.redirected ?? effectiveLeague !== league,
+          redirectedFrom: redirectedFrom
+            ? {
+                league: normalizeLeague(redirectedFrom.league, league),
+                playerId: normalizePlayerId(
+                  redirectedFrom.playerId,
+                  normalizedPlayerId,
+                ),
+              }
+            : effectiveLeague !== league
+              ? { league, playerId: normalizedPlayerId }
+              : null,
+        });
+        setPlayer(res.data.player ?? null);
+        setSeasons(
+          Array.isArray(res.data.seasons)
+            ? res.data.seasons.map(normalizeApiSeason)
+            : [],
+        );
+        setCollegeSeasons(
+          (res.data.collegeStats?.league === "mcbb" ||
+            res.data.collegeStats?.league === "wcbb") &&
+            Array.isArray(res.data.collegeStats.seasons)
+            ? res.data.collegeStats.seasons.map(normalizeApiSeason)
+            : [],
+        );
+        setCurrentSeasonRankings(res.data.currentSeasonRankings ?? {});
+        setResolvedRequestKey(requestKey);
+      } catch (err: unknown) {
+        if (isCancel(err)) return;
+
+        const message = getRequestErrorMessage(err);
+        console.error("Failed to fetch player seasons:", message);
+        setSeasonsError(message);
+        setPlayer(null);
+        setSeasons([]);
+        setCollegeSeasons([]);
+        setCurrentSeasonRankings({});
+        setResolvedProfile(null);
+        setResolvedLeague(league);
+        setResolvedRequestKey(requestKey);
+      } finally {
+        if (!signal?.aborted) {
+          setSeasonsLoading(false);
+        }
+      }
+    },
+    [hasValidPlayerId, league, normalizedPlayerId, requestKey],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -290,7 +292,7 @@ export function usePlayerSeasons(
     collegeSeasons: currentCollegeSeasons,
     currentSeasonRankings: hasCurrentResult ? currentSeasonRankings : {},
     resolvedLeague: hasCurrentResult ? resolvedLeague : league,
-    canonicalProfile: hasCurrentResult ? canonicalProfile : null,
+    resolvedProfile: hasCurrentResult ? resolvedProfile : null,
     hasCollegeStats: currentCollegeSeasons.length > 0,
     seasonsLoading: hasValidPlayerId
       ? seasonsLoading || !hasCurrentResult

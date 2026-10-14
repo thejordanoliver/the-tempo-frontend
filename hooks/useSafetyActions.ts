@@ -113,7 +113,19 @@ export function useSafetyActions(options: {
       onSubmitReport: submitReport,
       onConfirmBlock: confirmBlock,
     }),
-    [back, close, confirmBlock, options.isBlocked, options.userId, options.username, pending, status, step, submitReport, visible],
+    [
+      back,
+      close,
+      confirmBlock,
+      options.isBlocked,
+      options.userId,
+      options.username,
+      pending,
+      status,
+      step,
+      submitReport,
+      visible,
+    ],
   );
 
   return { open, pending, modalProps };

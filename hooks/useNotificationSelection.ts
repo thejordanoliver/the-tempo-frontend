@@ -73,7 +73,9 @@ export function useNotificationSelection({
   const idsToDelete = useMemo(
     () =>
       visibleNotifications
-        .filter((notification) => isAllSelected || selectedIds.has(notification.id))
+        .filter(
+          (notification) => isAllSelected || selectedIds.has(notification.id),
+        )
         .map((notification) => notification.id),
     [isAllSelected, selectedIds, visibleNotifications],
   );

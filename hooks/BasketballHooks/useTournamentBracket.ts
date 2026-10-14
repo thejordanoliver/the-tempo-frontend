@@ -1,11 +1,5 @@
-// hooks/BasketballHooks/useTournamentBracket.ts
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
-
-/* -------------------------------------------------------------------------- */
-/*                                    Types                                   */
-/* -------------------------------------------------------------------------- */
 
 export type TournamentLeagueInfo = {
   id: number;
@@ -150,10 +144,6 @@ export type UseTournamentBracketResult = {
   refresh: () => Promise<void>;
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                  Constants                                 */
-/* -------------------------------------------------------------------------- */
-
 const EMPTY_ROUNDS: TournamentRound[] = [];
 const EMPTY_GAMES: TournamentGame[] = [];
 const EMPTY_REGIONS: TournamentRegion[] = [];
@@ -165,10 +155,6 @@ const REGION_ORDER = new Map<string, number>([
   ["west", 2],
   ["midwest", 3],
 ]);
-
-/* -------------------------------------------------------------------------- */
-/*                                   Helpers                                  */
-/* -------------------------------------------------------------------------- */
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
@@ -268,10 +254,6 @@ const buildRegions = (games: readonly TournamentGame[]): TournamentRegion[] => {
     return a.name.localeCompare(b.name);
   });
 };
-
-/* -------------------------------------------------------------------------- */
-/*                                    Hook                                    */
-/* -------------------------------------------------------------------------- */
 
 export function useTournamentBracket(
   league: string,

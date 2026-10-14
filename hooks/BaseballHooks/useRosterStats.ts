@@ -24,10 +24,7 @@ const EMPTY_ROSTER_STATS = (teamId: string): BaseballRosterStats => ({
 
 const normalizeRosterStatsResponse = (
   data:
-    | Partial<BaseballRosterStats>
-    | BaseballRosterPlayer[]
-    | null
-    | undefined,
+    Partial<BaseballRosterStats> | BaseballRosterPlayer[] | null | undefined,
   teamId: string,
 ): BaseballRosterStats => {
   const players = Array.isArray(data)

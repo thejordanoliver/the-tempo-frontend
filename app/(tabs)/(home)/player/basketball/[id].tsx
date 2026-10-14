@@ -63,37 +63,37 @@ export default function PlayerDetailScreen() {
     seasons,
     collegeSeasons,
     resolvedLeague,
-    canonicalProfile,
+    resolvedProfile,
     seasonsLoading,
     seasonsError,
     currentSeasonRankings,
   } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
-  const canonicalPlayerId = useMemo(() => {
+  const playerId = useMemo(() => {
     const isCollegeRequest =
       requestedLeague === "mcbb" || requestedLeague === "wcbb";
     const resolvedId =
-      canonicalProfile?.playerId ??
+      resolvedProfile?.playerId ??
       (!isCollegeRequest ? requestedPlayerId : undefined);
 
     if (resolvedId === undefined) return undefined;
 
     const parsed = Number(resolvedId);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
-  }, [canonicalProfile?.playerId, requestedLeague, requestedPlayerId]);
+  }, [resolvedProfile?.playerId, requestedLeague, requestedPlayerId]);
 
-  const canonicalLeague = canonicalProfile?.league ?? resolvedLeague;
-  const isNBA = canonicalLeague === "nba";
-  const isWNBA = canonicalLeague === "wnba";
-  const isMCBB = canonicalLeague === "mcbb";
-  const isWCBB = canonicalLeague === "wcbb";
+  const playerLeague = resolvedProfile?.league ?? resolvedLeague;
+  const isNBA = playerLeague === "nba";
+  const isWNBA = playerLeague === "wnba";
+  const isMCBB = playerLeague === "mcbb";
+  const isWCBB = playerLeague === "wcbb";
   const hasPlayerGameLog = isNBA || isMCBB || isWCBB;
 
   const { player, loading, error } = usePlayerById(
-    canonicalPlayerId,
-    canonicalLeague,
+    playerId,
+    playerLeague,
     (requestedLeague !== "mcbb" && requestedLeague !== "wcbb") ||
-      Boolean(canonicalProfile),
+      Boolean(resolvedProfile),
   );
 
   const currentTeamId = useMemo(() => {
@@ -145,8 +145,8 @@ export default function PlayerDetailScreen() {
   const isActive = player?.active === true;
   const resolvedTeamId = team?.id != null ? String(team.id) : currentTeamId;
 
-  const gameLogPlayerId = hasPlayerGameLog ? (canonicalPlayerId ?? "") : "";
-  const gameLogPlayerKey = `${canonicalLeague}:${gameLogPlayerId}`;
+  const gameLogPlayerId = hasPlayerGameLog ? (playerId ?? "") : "";
+  const gameLogPlayerKey = `${playerLeague}:${gameLogPlayerId}`;
   const [gameLogSelection, setGameLogSelection] = useState<{
     playerKey: string;
     season: string;
@@ -155,14 +155,14 @@ export default function PlayerDetailScreen() {
     gameLogSelection?.playerKey === gameLogPlayerKey
       ? gameLogSelection.season
       : null;
-  const latestGameLog = usePlayerGameLog(gameLogPlayerId, canonicalLeague);
+  const latestGameLog = usePlayerGameLog(gameLogPlayerId, playerLeague);
   // Share the initial log; request another season only when the dropdown changes.
   const needsSeasonLog =
     selectedGameLogSeason !== null &&
     selectedGameLogSeason !== String(latestGameLog.data?.season);
   const seasonGameLog = usePlayerGameLog(
     needsSeasonLog ? gameLogPlayerId : "",
-    canonicalLeague,
+    playerLeague,
     selectedGameLogSeason,
   );
   const tableGameLog = needsSeasonLog ? seasonGameLog : latestGameLog;
@@ -173,7 +173,7 @@ export default function PlayerDetailScreen() {
     error: playerGameError,
   } = usePlayerClosestGame<BasketballGame>(
     "basketball",
-    canonicalLeague,
+    playerLeague,
     resolvedTeamId,
   );
 
@@ -183,6 +183,11 @@ export default function PlayerDetailScreen() {
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
+    if (seasonsLoading || loading) {
+      navigation.setOptions({ header: () => null });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -194,7 +199,7 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, teamLogo, teamColor]);
+  }, [navigation, teamLogo, teamColor, seasonsLoading, loading]);
 
   if (seasonsLoading || loading)
     return (
@@ -228,17 +233,17 @@ export default function PlayerDetailScreen() {
           collegeSeasons={collegeSeasons}
           loading={seasonsLoading}
           error={seasonsError}
-          league={canonicalLeague}
+          league={playerLeague}
         />
       ),
     },
-    ...(hasPlayerGameLog && canonicalPlayerId
+    ...(hasPlayerGameLog && playerId
       ? [
           {
             label: "Game Log",
             content: (
               <PlayerGameLog
-                league={canonicalLeague}
+                league={playerLeague}
                 data={tableGameLog.data}
                 filterData={latestGameLog.data}
                 selectedSeason={selectedGameLogSeason}
@@ -271,7 +276,7 @@ export default function PlayerDetailScreen() {
 
   return (
     <PlayerDetailsPager
-      key={`${canonicalLeague}:${canonicalPlayerId}`}
+      key={`${playerLeague}:${playerId}`}
       pages={pages}
       isDark={isDark}
       overview={
@@ -280,25 +285,25 @@ export default function PlayerDetailScreen() {
             sport="basketball"
             player={player}
             isDark={isDark}
-            league={canonicalLeague}
+            league={playerLeague}
           />
           <SeasonStatCard
             seasons={seasons}
             loading={seasonsLoading}
             error={seasonsError}
-            league={canonicalLeague}
+            league={playerLeague}
             isActive={isActive}
             rankings={currentSeasonRankings}
             teamColor={teamColor}
           />
-          {(hasPlayerGameLog && canonicalPlayerId) ||
+          {(hasPlayerGameLog && playerId) ||
           (isActive && resolvedTeamId) ? (
             <LatestGame
               game={game}
               loading={gameLoading}
               error={gameError}
               isDark={isDark}
-              league={canonicalLeague}
+              league={playerLeague}
               isNBA={isNBA}
               isMCBB={isMCBB}
               isWCBB={isWCBB}

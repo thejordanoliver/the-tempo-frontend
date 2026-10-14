@@ -65,7 +65,7 @@ export default function PredictionFeedCard({
         league: game.league,
         leagueId: game.league,
         data: encodeURIComponent(
-          JSON.stringify({
+          JSON.stringify(game.game ?? {
             id: game.gameId,
             league: { code: game.league },
             date: game.startsAt,
@@ -122,7 +122,7 @@ export default function PredictionFeedCard({
                     ? { uri: team.logo }
                     : undefined
               }
-              color={team.color}
+              color={team.primaryColor}
               fillPercentage={prediction.resultsRevealed ? percent : 0}
               percentText={formatPercentage(percent)}
               onPress={

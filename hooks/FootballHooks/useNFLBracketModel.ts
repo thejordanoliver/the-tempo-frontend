@@ -37,8 +37,6 @@ export function useNFLBracketModel(bracket: BracketApiResponse | null) {
 
   const superBowlGame = useMemo(() => selectNFLSuperBowl(bracket), [bracket]);
 
-  /* ---------------- AFC DATA ---------------- */
-
   const rawAfcWildCard = useMemo(
     () => getRoundConferenceGames(wildCardGames, "AFC", 3),
     [wildCardGames],
@@ -59,8 +57,6 @@ export function useNFLBracketModel(bracket: BracketApiResponse | null) {
     [conferenceGames],
   );
 
-  /* ---------------- NFC DATA ---------------- */
-
   const rawNfcWildCard = useMemo(
     () => getRoundConferenceGames(wildCardGames, "NFC", 3),
     [wildCardGames],
@@ -80,8 +76,6 @@ export function useNFLBracketModel(bracket: BracketApiResponse | null) {
     () => conferenceGames.find((game) => getConference(game) === "NFC") ?? null,
     [conferenceGames],
   );
-
-  /* ---------------- CARD LAYOUTS ---------------- */
 
   const afcByeTeam = selectNFLByeTeam(rawAfcWildCard, afcDivisional);
   const nfcByeTeam = selectNFLByeTeam(rawNfcWildCard, nfcDivisional);
@@ -174,8 +168,6 @@ export function useNFLBracketModel(bracket: BracketApiResponse | null) {
     [AFC_R3, NFC_R3],
   );
 
-  /* ---------------- AFC CONNECTIONS ---------------- */
-
   const afcConnections = useMemo(() => {
     const connections: ConnectorTarget[] = [];
 
@@ -225,8 +217,6 @@ export function useNFLBracketModel(bracket: BracketApiResponse | null) {
     AFC_R3,
     FINALS_LAYOUT,
   ]);
-
-  /* ---------------- NFC CONNECTIONS ---------------- */
 
   const nfcConnections = useMemo(() => {
     const connections: ConnectorTarget[] = [];

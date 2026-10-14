@@ -1,5 +1,5 @@
 import { loadPostPolls } from "services/forumApi";
-// hooks/useForum.ts
+
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
@@ -50,7 +50,9 @@ export function useForum({ teamId, league }: UseForumOptions) {
         });
 
         const data = res.data;
-        const nextPosts = await loadPostPolls(Array.isArray(data?.posts) ? data.posts : []);
+        const nextPosts = await loadPostPolls(
+          Array.isArray(data?.posts) ? data.posts : [],
+        );
         const nextTotalPages = Number(data?.pagination?.totalPages) || 1;
 
         setPosts((prev) =>

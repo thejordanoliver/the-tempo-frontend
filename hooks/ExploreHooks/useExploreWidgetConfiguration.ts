@@ -1,8 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { subscribeAuthSession } from "utils/apiClient";
 import { AppState } from "react-native";
-import { getExploreWidgetSettings, saveExploreWidgetSettings } from "services/exploreWidgetsApi";
-import { ExploreWidgetSync, type WidgetSyncState } from "utils/widgets/exploreWidgetSync";
+import {
+  getExploreWidgetSettings,
+  saveExploreWidgetSettings,
+} from "services/exploreWidgetsApi";
+import {
+  ExploreWidgetSync,
+  type WidgetSyncState,
+} from "utils/widgets/exploreWidgetSync";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   getWidgetTitle,
@@ -30,8 +36,16 @@ const applyVisibleOrder = (widgets: ExploreWidgetConfig[]) =>
   widgets.map((widget, index) => ({ ...widget, order: index }));
 
 export function useExploreWidgetConfiguration(userId: number | null) {
-  const [state, setState] = useState<WidgetSyncState>({ widgets: [], ready: false, pending: false, error: null, conflict: false });
-  const [configurationUserId, setConfigurationUserId] = useState<number | null>(null);
+  const [state, setState] = useState<WidgetSyncState>({
+    widgets: [],
+    ready: false,
+    pending: false,
+    error: null,
+    conflict: false,
+  });
+  const [configurationUserId, setConfigurationUserId] = useState<number | null>(
+    null,
+  );
   const syncRef = useRef<ExploreWidgetSync | null>(null);
   const stopSyncRef = useRef<(() => void) | null>(null);
   const [sessionIdentity, setSessionIdentity] = useState<{
@@ -39,10 +53,10 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     ready: boolean;
     generation: number;
   }>({ userId: null, ready: false, generation: 0 });
-  const activeUserId = sessionIdentity.ready && sessionIdentity.userId === userId
-    ? userId
-    : null;
-  const identityMatches = sessionIdentity.ready && sessionIdentity.userId === userId;
+  const activeUserId =
+    sessionIdentity.ready && sessionIdentity.userId === userId ? userId : null;
+  const identityMatches =
+    sessionIdentity.ready && sessionIdentity.userId === userId;
 
   useEffect(() => {
     let generation = 0;
@@ -54,17 +68,33 @@ export function useExploreWidgetConfiguration(userId: number | null) {
       stopSyncRef.current?.();
       setSessionIdentity({ userId: null, ready: false, generation: request });
       try {
-        const storedUserId = signedOut ? null : await AsyncStorage.getItem("userId");
+        const storedUserId = signedOut
+          ? null
+          : await AsyncStorage.getItem("userId");
         if (disposed || request !== generation) return;
-        const parsedUserId = storedUserId === null ? null : Number(storedUserId);
-        const nextUserId = parsedUserId !== null && Number.isSafeInteger(parsedUserId) && parsedUserId > 0
-          ? parsedUserId
-          : null;
-        setSessionIdentity({ userId: nextUserId, ready: true, generation: request });
+        const parsedUserId =
+          storedUserId === null ? null : Number(storedUserId);
+        const nextUserId =
+          parsedUserId !== null &&
+          Number.isSafeInteger(parsedUserId) &&
+          parsedUserId > 0
+            ? parsedUserId
+            : null;
+        setSessionIdentity({
+          userId: nextUserId,
+          ready: true,
+          generation: request,
+        });
       } catch {
         if (!disposed && request === generation) {
-          setState({ widgets: [], ready: false, pending: false, conflict: false,
-            error: "Unable to read the signed-in account. Please sign in again." });
+          setState({
+            widgets: [],
+            ready: false,
+            pending: false,
+            conflict: false,
+            error:
+              "Unable to read the signed-in account. Please sign in again.",
+          });
         }
       }
     };
@@ -72,28 +102,60 @@ export function useExploreWidgetConfiguration(userId: number | null) {
       void readIdentity(!accessToken);
     });
     void readIdentity();
-    return () => { disposed = true; generation += 1; unsubscribe(); };
+    return () => {
+      disposed = true;
+      generation += 1;
+      unsubscribe();
+    };
   }, []);
-  const currentWidgets = useMemo(() => identityMatches && configurationUserId === activeUserId ? state.widgets : [], [configurationUserId, activeUserId, identityMatches, state.widgets]);
-  const currentReady = identityMatches && configurationUserId === activeUserId && state.ready;
+  const currentWidgets = useMemo(
+    () =>
+      identityMatches && configurationUserId === activeUserId
+        ? state.widgets
+        : [],
+    [configurationUserId, activeUserId, identityMatches, state.widgets],
+  );
+  const currentReady =
+    identityMatches && configurationUserId === activeUserId && state.ready;
 
   useEffect(() => {
     let disposed = false;
     const controller = new AbortController();
-    const sync = activeUserId ? new ExploreWidgetSync({
-      load: () => loadExploreWidgetSettingsCache(String(activeUserId)),
-      persist: (cache) => saveExploreWidgetSettingsCache(String(activeUserId), cache),
-      get: () => getExploreWidgetSettings(activeUserId, controller.signal),
-      put: (widgets, revision) => saveExploreWidgetSettings(activeUserId, widgets, revision, controller.signal),
-      onChange: (next) => { if (!disposed) setState(next); },
-    }) : null;
-    const stop = () => { disposed = true; sync?.stop(); controller.abort(); };
+    const sync = activeUserId
+      ? new ExploreWidgetSync({
+          load: () => loadExploreWidgetSettingsCache(String(activeUserId)),
+          persist: (cache) =>
+            saveExploreWidgetSettingsCache(String(activeUserId), cache),
+          get: () => getExploreWidgetSettings(activeUserId, controller.signal),
+          put: (widgets, revision) =>
+            saveExploreWidgetSettings(
+              activeUserId,
+              widgets,
+              revision,
+              controller.signal,
+            ),
+          onChange: (next) => {
+            if (!disposed) setState(next);
+          },
+        })
+      : null;
+    const stop = () => {
+      disposed = true;
+      sync?.stop();
+      controller.abort();
+    };
     stopSyncRef.current = stop;
     syncRef.current = sync;
     void Promise.resolve().then(() => {
       if (disposed) return;
       setConfigurationUserId(activeUserId);
-      setState({ widgets: [], ready: !activeUserId, pending: false, error: null, conflict: false });
+      setState({
+        widgets: [],
+        ready: !activeUserId,
+        pending: false,
+        error: null,
+        conflict: false,
+      });
       void sync?.start();
     });
     const subscription = AppState.addEventListener("change", (next) => {
@@ -106,18 +168,21 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     };
   }, [activeUserId, sessionIdentity.generation]);
 
-  const setWidgets = useCallback((update: (previous: ExploreWidgetConfig[]) => ExploreWidgetConfig[]) => {
-    syncRef.current?.edit(update);
+  const setWidgets = useCallback(
+    (update: (previous: ExploreWidgetConfig[]) => ExploreWidgetConfig[]) => {
+      syncRef.current?.edit(update);
+    },
+    [],
+  );
+  const refreshSettings = useCallback(async () => {
+    await syncRef.current?.refresh();
   }, []);
-  const refreshSettings = useCallback(async () => { await syncRef.current?.refresh(); }, []);
-  const reloadAccountSettings = useCallback(async () => { await syncRef.current?.reloadAccountSettings(); }, []);
+  const reloadAccountSettings = useCallback(async () => {
+    await syncRef.current?.reloadAccountSettings();
+  }, []);
 
   const addWidget = useCallback(
-    (
-      type: ExploreWidgetType,
-      title: string,
-      size: ExploreWidgetSize,
-    ) => {
+    (type: ExploreWidgetType, title: string, size: ExploreWidgetSize) => {
       setWidgets((previous) => {
         if (
           !widgetAllowsDuplicates(type) &&
@@ -142,9 +207,10 @@ export function useExploreWidgetConfiguration(userId: number | null) {
             collegePollAutoPlay: type === "college_polls" ? true : undefined,
             favoriteTeamsAutoPlay: type === "favorite_teams" ? true : undefined,
             favoriteGameLeagues:
-              type === "favorite_games" ? [...EXPLORE_WIDGET_LEAGUES] : undefined,
-            favoriteGamesAutoPlay:
-              type === "favorite_games" ? true : undefined,
+              type === "favorite_games"
+                ? [...EXPLORE_WIDGET_LEAGUES]
+                : undefined,
+            favoriteGamesAutoPlay: type === "favorite_games" ? true : undefined,
           },
         ];
       });
@@ -152,11 +218,16 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     [setWidgets],
   );
 
-  const removeWidget = useCallback((widgetId: string) => {
-    setWidgets((previous) =>
-      withSequentialOrder(previous.filter((widget) => widget.id !== widgetId)),
-    );
-  }, [setWidgets]);
+  const removeWidget = useCallback(
+    (widgetId: string) => {
+      setWidgets((previous) =>
+        withSequentialOrder(
+          previous.filter((widget) => widget.id !== widgetId),
+        ),
+      );
+    },
+    [setWidgets],
+  );
 
   const resizeWidget = useCallback(
     (widgetId: string, size: ExploreWidgetSize) => {
@@ -194,10 +265,10 @@ export function useExploreWidgetConfiguration(userId: number | null) {
         previous.map((widget) =>
           widget.id === widgetId && widget.type === "college_polls"
             ? {
-              ...widget,
-              collegePollLeague: league,
-              collegePollType: normalizedPollType,
-            }
+                ...widget,
+                collegePollLeague: league,
+                collegePollType: normalizedPollType,
+              }
             : widget,
         ),
       );
@@ -277,56 +348,69 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     [setWidgets],
   );
 
-  const moveWidget = useCallback((widgetId: string, direction: -1 | 1) => {
-    setWidgets((previous) => {
-      const ordered = withSequentialOrder(previous);
-      const currentIndex = ordered.findIndex((widget) => widget.id === widgetId);
-      const nextIndex = currentIndex + direction;
+  const moveWidget = useCallback(
+    (widgetId: string, direction: -1 | 1) => {
+      setWidgets((previous) => {
+        const ordered = withSequentialOrder(previous);
+        const currentIndex = ordered.findIndex(
+          (widget) => widget.id === widgetId,
+        );
+        const nextIndex = currentIndex + direction;
 
-      if (currentIndex < 0 || nextIndex < 0 || nextIndex >= ordered.length) {
-        return ordered;
-      }
+        if (currentIndex < 0 || nextIndex < 0 || nextIndex >= ordered.length) {
+          return ordered;
+        }
 
-      const next = ordered.slice();
-      [next[currentIndex], next[nextIndex]] = [
-        next[nextIndex],
-        next[currentIndex],
-      ];
+        const next = ordered.slice();
+        [next[currentIndex], next[nextIndex]] = [
+          next[nextIndex],
+          next[currentIndex],
+        ];
 
-      return applyVisibleOrder(next);
-    });
-  }, [setWidgets]);
-
-  const reorderWidgets = useCallback((nextWidgets: ExploreWidgetConfig[]) => {
-    setWidgets((previous) => {
-      const orderedPrevious = withSequentialOrder(previous);
-      const widgetsById = new Map(
-        orderedPrevious.map((widget) => [widget.id, widget]),
-      );
-      const seenIds = new Set<string>();
-      const nextOrderedWidgets = nextWidgets.flatMap((widget) => {
-        if (seenIds.has(widget.id)) return [];
-
-        const existing = widgetsById.get(widget.id);
-        if (!existing) return [];
-
-        seenIds.add(widget.id);
-        return [existing];
+        return applyVisibleOrder(next);
       });
-      const missingWidgets = orderedPrevious.filter(
-        (widget) => !seenIds.has(widget.id),
-      );
+    },
+    [setWidgets],
+  );
 
-      return applyVisibleOrder([...nextOrderedWidgets, ...missingWidgets]);
-    });
-  }, [setWidgets]);
+  const reorderWidgets = useCallback(
+    (nextWidgets: ExploreWidgetConfig[]) => {
+      setWidgets((previous) => {
+        const orderedPrevious = withSequentialOrder(previous);
+        const widgetsById = new Map(
+          orderedPrevious.map((widget) => [widget.id, widget]),
+        );
+        const seenIds = new Set<string>();
+        const nextOrderedWidgets = nextWidgets.flatMap((widget) => {
+          if (seenIds.has(widget.id)) return [];
+
+          const existing = widgetsById.get(widget.id);
+          if (!existing) return [];
+
+          seenIds.add(widget.id);
+          return [existing];
+        });
+        const missingWidgets = orderedPrevious.filter(
+          (widget) => !seenIds.has(widget.id),
+        );
+
+        return applyVisibleOrder([...nextOrderedWidgets, ...missingWidgets]);
+      });
+    },
+    [setWidgets],
+  );
 
   return {
     widgets: currentWidgets,
     ready: currentReady,
-    settingsError: identityMatches && configurationUserId === activeUserId ? state.error : null,
-    settingsPending: identityMatches && configurationUserId === activeUserId && state.pending,
-    settingsConflict: identityMatches && configurationUserId === activeUserId && state.conflict,
+    settingsError:
+      identityMatches && configurationUserId === activeUserId
+        ? state.error
+        : null,
+    settingsPending:
+      identityMatches && configurationUserId === activeUserId && state.pending,
+    settingsConflict:
+      identityMatches && configurationUserId === activeUserId && state.conflict,
     refreshSettings,
     reloadAccountSettings,
     addWidget,

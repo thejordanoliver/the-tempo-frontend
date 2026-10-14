@@ -1,6 +1,9 @@
 import { useRouter as useExpoRouter, useSegments } from "expo-router";
 import { useMemo } from "react";
-import { getTabGroup, scopeHrefToTab } from "utils/navigation/tabStackNavigation";
+import {
+  getTabGroup,
+  scopeHrefToTab,
+} from "utils/navigation/tabStackNavigation";
 
 type ExpoRouter = ReturnType<typeof useExpoRouter>;
 
@@ -13,16 +16,24 @@ export function useScopedRouter(): ExpoRouter {
     () => ({
       ...router,
       push: ((href, options) =>
-        router.push(scopeHrefToTab(href, tabGroup), options)) as ExpoRouter["push"],
+        router.push(
+          scopeHrefToTab(href, tabGroup),
+          options,
+        )) as ExpoRouter["push"],
       navigate: ((href, options) =>
         router.navigate(
           scopeHrefToTab(href, tabGroup),
           options,
         )) as ExpoRouter["navigate"],
       dismissTo: ((href, options) =>
-        router.dismissTo(scopeHrefToTab(href, tabGroup), options)) as ExpoRouter["dismissTo"],
+        router.dismissTo(
+          scopeHrefToTab(href, tabGroup),
+          options,
+        )) as ExpoRouter["dismissTo"],
       prefetch: ((href) =>
-        router.prefetch(scopeHrefToTab(href, tabGroup))) as ExpoRouter["prefetch"],
+        router.prefetch(
+          scopeHrefToTab(href, tabGroup),
+        )) as ExpoRouter["prefetch"],
       replace: ((href, options) =>
         router.replace(
           scopeHrefToTab(href, tabGroup),

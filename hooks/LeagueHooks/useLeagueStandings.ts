@@ -91,53 +91,58 @@ export function useLeagueStandings(
   const requestIdRef = useRef(0);
 
   const soccer = options?.soccer ?? false;
-  const seasonType = soccer ? options?.seasonType : (options?.seasonType ?? "2");
+  const seasonType = soccer
+    ? options?.seasonType
+    : (options?.seasonType ?? "2");
 
-  const fetchStandings = useCallback(async (isRefresh = false) => {
-    const requestId = ++requestIdRef.current;
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
+  const fetchStandings = useCallback(
+    async (isRefresh = false) => {
+      const requestId = ++requestIdRef.current;
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
 
-      const res = await apiClient.get<LeagueStandingsData>(
-        `/api/standings/${soccer ? "soccer/" : ""}${league.toLowerCase()}`,
-        {
-          params: {
-            ...(year ? { season: year } : {}),
-            seasontype: seasonType,
+        const res = await apiClient.get<LeagueStandingsData>(
+          `/api/standings/${soccer ? "soccer/" : ""}${league.toLowerCase()}`,
+          {
+            params: {
+              ...(year ? { season: year } : {}),
+              seasontype: seasonType,
+            },
           },
-        },
-      );
+        );
 
-      if (requestId !== requestIdRef.current) return;
-      setData({
-        ...res.data,
-        availableSeasons: res.data.availableSeasons ?? [],
-        conferences: res.data.conferences ?? [],
-        divisions: res.data.divisions ?? {},
-      });
-    } catch (err: any) {
-      if (requestId !== requestIdRef.current) return;
-      console.error(`Failed to fetch ${league} standings:`, err);
+        if (requestId !== requestIdRef.current) return;
+        setData({
+          ...res.data,
+          availableSeasons: res.data.availableSeasons ?? [],
+          conferences: res.data.conferences ?? [],
+          divisions: res.data.divisions ?? {},
+        });
+      } catch (err: any) {
+        if (requestId !== requestIdRef.current) return;
+        console.error(`Failed to fetch ${league} standings:`, err);
 
-      setError(
-        err?.response?.data?.error ||
-        err?.message ||
-        `Failed to fetch ${league} standings`,
-      );
+        setError(
+          err?.response?.data?.error ||
+            err?.message ||
+            `Failed to fetch ${league} standings`,
+        );
 
-      setData(null);
-    } finally {
-      if (requestId === requestIdRef.current) {
-        setLoading(false);
-        setRefreshing(false);
+        setData(null);
+      } finally {
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
-    }
-  }, [league, year, seasonType, soccer]);
+    },
+    [league, year, seasonType, soccer],
+  );
 
   useEffect(() => {
     let cancelled = false;

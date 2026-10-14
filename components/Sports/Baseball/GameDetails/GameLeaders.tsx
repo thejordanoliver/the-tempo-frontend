@@ -28,7 +28,6 @@ type BaseballLeaderStatistic = {
 
 type BaseballLeaderAthlete = {
   id?: string | number | null;
-  espnId?: string | number | null;
   teamId?: string | number | null;
   firstName?: string | null;
   lastName?: string | null;

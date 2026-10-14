@@ -100,9 +100,8 @@ export function useDraft(league: string, year: number | string | undefined) {
     [league, year],
   );
 
-  // ---------------------------
   // INITIAL LOAD
-  // ---------------------------
+
   useEffect(() => {
     let cancelled = false;
     void Promise.resolve().then(() => {
@@ -114,9 +113,8 @@ export function useDraft(league: string, year: number | string | undefined) {
     };
   }, [fetchDraft]);
 
-  // ---------------------------
   // LIVE POLLING (SILENT ONLY)
-  // ---------------------------
+
   useEffect(() => {
     const state = draft?.status?.state;
 
@@ -154,9 +152,8 @@ export function useDraft(league: string, year: number | string | undefined) {
     };
   }, [draft?.status?.state, fetchDraft]);
 
-  // ---------------------------
   // MANUAL REFRESH
-  // ---------------------------
+
   const onRefresh = useCallback(() => {
     fetchDraft("refresh");
   }, [fetchDraft]);

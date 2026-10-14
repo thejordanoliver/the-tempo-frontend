@@ -372,8 +372,8 @@ export function useMMAEvents({
         setError(
           new Error(
             err?.response?.data?.error ||
-            err?.message ||
-            `Failed to fetch ${league.toUpperCase()} events`,
+              err?.message ||
+              `Failed to fetch ${league.toUpperCase()} events`,
           ),
         );
 
@@ -419,11 +419,9 @@ export function useMMAEvents({
     data,
     response: data,
 
-    // Raw event-level API response.
     rawEvents,
     events: rawEvents,
 
-    // Flattened fight-level list for MMAGamesList.
     games,
     flatGames: games,
 

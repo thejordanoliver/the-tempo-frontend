@@ -19,7 +19,6 @@ type FetchLastGameOptions = {
   silent?: boolean;
 };
 
-
 export function useTeamLatestGame(
   league: BaseballLeague,
   teamId: number | string | null | undefined,

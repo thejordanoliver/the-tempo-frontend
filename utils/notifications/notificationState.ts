@@ -1,6 +1,6 @@
 import type { AppNotification } from "@/types/notifications";
 
-const compareCanonicalIdsDescending = (first: string, second: string) => {
+const compareIdsDescending = (first: string, second: string) => {
   if (/^\d+$/.test(first) && /^\d+$/.test(second)) {
     if (first.length !== second.length) return second.length - first.length;
     if (first === second) return 0;
@@ -13,7 +13,7 @@ const compareCanonicalIdsDescending = (first: string, second: string) => {
 const sortNotifications = (notifications: AppNotification[]) =>
   [...notifications].sort((first, second) => {
     const timeDifference = Date.parse(second.createdAt) - Date.parse(first.createdAt);
-    return timeDifference || compareCanonicalIdsDescending(first.id, second.id);
+    return timeDifference || compareIdsDescending(first.id, second.id);
   });
 
 export const mergeNotifications = (

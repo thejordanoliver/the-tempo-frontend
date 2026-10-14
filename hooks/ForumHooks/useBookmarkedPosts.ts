@@ -10,7 +10,7 @@ import type {
 import { apiClient } from "utils/apiClient";
 
 const getErrorMessage = (error: unknown, fallback: string) => {
-  if (isAxiosError<{ error?: string; message?: string; }>(error)) {
+  if (isAxiosError<{ error?: string; message?: string }>(error)) {
     return (
       error.response?.data?.error ||
       error.response?.data?.message ||

@@ -360,16 +360,6 @@ function getMadeAttemptedDisplay(
   return `${made}${separator}${attempted}`;
 }
 
-function hasAnyStats(stats: Stat[]) {
-  return stats.some((stat) => {
-    const value = stat.displayValue ?? stat.value;
-
-    return (
-      value !== null && value !== undefined && value !== "" && value !== "-"
-    );
-  });
-}
-
 export default function SeasonStatCard({
   player,
   season,
@@ -397,18 +387,6 @@ export default function SeasonStatCard({
           {getFootballSeason()} Season
         </CenteredHeader>
         <Text style={global.errorText}>Couldn’t load stats</Text>
-      </View>
-    );
-  }
-
-  if (!season || !hasAnyStats(allStats)) {
-    return (
-      <View>
-        <CenteredHeader isDark={isDark}>
-          {getFootballSeason()} Season
-        </CenteredHeader>
-
-        <Text style={global.emptyText}>No season stats available</Text>
       </View>
     );
   }

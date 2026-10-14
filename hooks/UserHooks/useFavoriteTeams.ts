@@ -57,17 +57,14 @@ export function useFavoriteTeams() {
   const hasLoadedFavoritesRef = useRef(false);
   const savedFavoritesRef = useRef<FavoriteTeamKey[]>([]);
   const router = useScopedRouter();
-  const { refreshTeamSubscriptions, removeUnfavoritedTeamSubscriptions } = useNotifications();
+  const { refreshTeamSubscriptions, removeUnfavoritedTeamSubscriptions } =
+    useNotifications();
   const favoriteSportsState = useFavoriteSports(userId);
   const { clearFavoriteSports } = favoriteSportsState;
-
-  /* ---------------- TEAM ID HELPER ---------------- */
 
   const getTeamId = (team: TeamWithLeague) => {
     return team.id;
   };
-
-  /* ---------------- ALL TEAMS ---------------- */
 
   const allTeams = useMemo(
     () => [
@@ -101,10 +98,12 @@ export function useFavoriteTeams() {
       const teamName = team.fullName ?? team.name ?? "";
       const teamLeague = team.league;
 
-      return teamName.toLowerCase().includes(query) || teamLeague.toLowerCase().includes(query);
+      return (
+        teamName.toLowerCase().includes(query) ||
+        teamLeague.toLowerCase().includes(query)
+      );
     });
   }, [allTeams, search]);
-  /* ---------------- CLEAR FAVORITES ---------------- */
 
   const clearFavorites = useCallback(() => {
     loadRequestId.current += 1;
@@ -120,8 +119,6 @@ export function useFavoriteTeams() {
     setModalVisible(false);
     clearFavoriteSports();
   }, [clearFavoriteSports]);
-
-  /* ---------------- LOAD FAVORITES ---------------- */
 
   const loadFavorites = useCallback(
     async (targetUserId?: number | string | null) => {
@@ -275,8 +272,6 @@ export function useFavoriteTeams() {
     });
   }, [clearFavorites, loadFavorites]);
 
-  /* ---------------- FAVORITE HELPERS ---------------- */
-
   const isFavorite = useCallback(
     (league: string, id: string | number) => {
       const key = buildFavoriteTeamKey(league, id);
@@ -285,12 +280,7 @@ export function useFavoriteTeams() {
     [favorites],
   );
 
-  /**
-   * Sends the current favorite IDs to the authenticated user's endpoint.
-   *
-   * The backend determines the user from the access token, so the user ID
-   * should not be included in the URL.
-   */
+  // The access token identifies the user for this endpoint.
   const syncFavoritesToServer = useCallback(
     async (
       nextFavorites: readonly string[],
@@ -309,7 +299,9 @@ export function useFavoriteTeams() {
         if (currentUserIdRef.current !== userId) return false;
 
         removeUnfavoritedTeamSubscriptions(
-          savedFavoritesRef.current.filter((favorite) => !savedFavorites.includes(favorite)),
+          savedFavoritesRef.current.filter(
+            (favorite) => !savedFavorites.includes(favorite),
+          ),
         );
         savedFavoritesRef.current = savedFavorites;
         setFavorites(savedFavorites);
@@ -335,8 +327,6 @@ export function useFavoriteTeams() {
     },
     [refreshTeamSubscriptions, removeUnfavoritedTeamSubscriptions, userId],
   );
-
-  /* ---------------- TOGGLE FAVORITE ---------------- */
 
   const toggleFavorite = useCallback(
     (league: string, id: string | number) => {
@@ -372,8 +362,6 @@ export function useFavoriteTeams() {
     [syncFavoritesToServer, userId],
   );
 
-  /* ---------------- GRID / LIST TOGGLE ---------------- */
-
   const toggleLayout = useCallback(() => {
     Animated.timing(fadeAnim, {
       toValue: 0,
@@ -389,8 +377,6 @@ export function useFavoriteTeams() {
       }).start();
     });
   }, [fadeAnim]);
-
-  /* ---------------- SAVE FAVORITES ---------------- */
 
   const saveFavorites = useCallback(async (): Promise<boolean> => {
     if (!ready || !userId) {
@@ -421,8 +407,6 @@ export function useFavoriteTeams() {
     }
   }, [favorites, ready, syncFavoritesToServer, userId]);
 
-  /* ---------------- SYNC FAVORITES ---------------- */
-
   const syncFavorites = useCallback(
     async (orderedIds: string[]) => {
       if (!userId) {
@@ -446,8 +430,6 @@ export function useFavoriteTeams() {
     [syncFavoritesToServer, userId],
   );
 
-  /* ---------------- TEAM PREVIEW ---------------- */
-
   const handleLongPress = useCallback((team: TeamWithLeague) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch((error) => {
       console.warn("Failed to trigger haptic feedback:", error);
@@ -456,8 +438,6 @@ export function useFavoriteTeams() {
     setPreviewTeam(team);
     setModalVisible(true);
   }, []);
-
-  /* ---------------- NAVIGATION ---------------- */
 
   const handleGoToTeam = useCallback(() => {
     if (!previewTeam) {
@@ -491,11 +471,11 @@ export function useFavoriteTeams() {
                     ? "/team/mlb/[teamId]"
                     : league === "cb"
                       ? "/team/cb/[teamId]"
-                    : league === "sb"
-                      ? "/team/sb/[teamId]"
-                      : league === "socc"
-                        ? "/team/soccer/[teamId]"
-                        : "/team/nhl/[teamId]";
+                      : league === "sb"
+                        ? "/team/sb/[teamId]"
+                        : league === "socc"
+                          ? "/team/soccer/[teamId]"
+                          : "/team/nhl/[teamId]";
 
     router.push({
       pathname: route,
@@ -507,8 +487,6 @@ export function useFavoriteTeams() {
 
     setModalVisible(false);
   }, [previewTeam, router]);
-
-  /* ---------------- REMOVE FAVORITE ---------------- */
 
   const handleRemoveFavorite = useCallback(
     async (team: Team) => {
@@ -561,8 +539,6 @@ export function useFavoriteTeams() {
     },
     [favorites, syncFavoritesToServer, userId],
   );
-
-  /* ---------------- RETURN ---------------- */
 
   return {
     search,

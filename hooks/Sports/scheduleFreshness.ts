@@ -22,7 +22,9 @@ export class ScheduleFreshness {
   }
 
   canApplyResponse(request: ScheduleRequest): boolean {
-    return this.canComplete(request) &&
-      request.socketRevision === this.socketRevision;
+    return (
+      this.canComplete(request) &&
+      request.socketRevision === this.socketRevision
+    );
   }
 }

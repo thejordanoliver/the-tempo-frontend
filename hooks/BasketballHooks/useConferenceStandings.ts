@@ -1,5 +1,3 @@
-// hooks//useConferenceStandings.ts
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -48,16 +46,16 @@ interface ConferenceStandingsResponse {
 export const useConferenceStandings = (
   league: string,
   group?: number | string | null,
-  { enabled = true }: { enabled?: boolean; } = {},
+  { enabled = true }: { enabled?: boolean } = {},
 ) => {
-  const [conference, setConference] = useState<StandingConference | null>(
-    null,
-  );
+  const [conference, setConference] = useState<StandingConference | null>(null);
   const [conferences, setConferences] = useState<StandingConference[]>([]);
   const [conferencesLoading, setConferencesLoading] = useState(false);
   const [ConferencesRefreshing, setConferencesRefreshing] = useState(false);
   const [conferencesError, setConferencesError] = useState<string | null>(null);
-  const [completedRequestKey, setCompletedRequestKey] = useState<string | null>(null);
+  const [completedRequestKey, setCompletedRequestKey] = useState<string | null>(
+    null,
+  );
   const requestVersion = useRef(0);
 
   const normalizedGroup = String(group ?? "").trim();
@@ -166,7 +164,8 @@ export const useConferenceStandings = (
     conferences,
     standings: conference?.divisions ?? [],
     conferencesLoading:
-      enabled && canFetch &&
+      enabled &&
+      canFetch &&
       (conferencesLoading || completedRequestKey !== requestKey),
     ConferencesRefreshing,
     conferencesError,

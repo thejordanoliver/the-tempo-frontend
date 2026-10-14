@@ -39,14 +39,16 @@ function pad(value: number) {
   return String(value).padStart(2, "0");
 }
 
-function formatDateForWeatherRoute(date: string | Date | number | null | undefined) {
+function formatDateForWeatherRoute(
+  date: string | Date | number | null | undefined,
+) {
   if (!date) return null;
 
   if (date instanceof Date) {
     if (Number.isNaN(date.getTime())) return null;
 
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-      date.getDate()
+      date.getDate(),
     )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
@@ -56,7 +58,7 @@ function formatDateForWeatherRoute(date: string | Date | number | null | undefin
     if (Number.isNaN(parsedDate.getTime())) return null;
 
     return `${parsedDate.getFullYear()}-${pad(parsedDate.getMonth() + 1)}-${pad(
-      parsedDate.getDate()
+      parsedDate.getDate(),
     )}T${pad(parsedDate.getHours())}:${pad(parsedDate.getMinutes())}`;
   }
 
@@ -65,7 +67,7 @@ function formatDateForWeatherRoute(date: string | Date | number | null | undefin
   // Handles malformed value like 2026-06-1507:25
   normalized = normalized.replace(
     /^(\d{4}-\d{2}-\d{2})(\d{2}:\d{2})$/,
-    "$1T$2"
+    "$1T$2",
   );
 
   // Handles ISO strings like 2026-06-15T07:25:00Z
@@ -74,7 +76,10 @@ function formatDateForWeatherRoute(date: string | Date | number | null | undefin
   return match ? match[1] : normalized;
 }
 
-function hasValidLatLon(lat?: number | string | null, lon?: number | string | null) {
+function hasValidLatLon(
+  lat?: number | string | null,
+  lon?: number | string | null,
+) {
   if (lat === null || lat === undefined || lon === null || lon === undefined) {
     return false;
   }
@@ -134,9 +139,12 @@ export function useWeather({
         params.location = String(location).trim();
       }
 
-      const response = await apiClient.get<WeatherData>("api/weather/forecast", {
-        params,
-      });
+      const response = await apiClient.get<WeatherData>(
+        "api/weather/forecast",
+        {
+          params,
+        },
+      );
 
       if (requestId !== requestIdRef.current) return null;
       setWeather(response.data);

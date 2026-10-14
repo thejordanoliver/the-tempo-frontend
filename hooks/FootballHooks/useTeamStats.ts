@@ -179,7 +179,7 @@ const getStatPair = (
   maps: BuiltStatMaps,
   aliases: string[],
   groups?: string[],
-): { first: number; second: number; } | null => {
+): { first: number; second: number } | null => {
   const displayValue = getStatDisplay(maps, aliases, groups);
   if (!displayValue) return null;
 
@@ -439,7 +439,6 @@ export function useTeamStats(
           displayName: response.data.season?.displayName ?? "",
         },
 
-        // ================= Passing =================
         completionPct:
           normalizePercent(
             get(
@@ -490,7 +489,6 @@ export function useTeamStats(
         sacksYardsLost:
           get(["sacksYardsLost", "sackYardsLost"], ["off"]) || sackYardsLost,
 
-        // ================= Rushing =================
         rushingAttempts,
         rushingYards,
         yardsPerRushAttempt:
@@ -516,7 +514,6 @@ export function useTeamStats(
           ["off", "gen"],
         ),
 
-        // ================= Receiving =================
         receptions,
         receivingTargets,
         receivingYards,
@@ -545,7 +542,6 @@ export function useTeamStats(
           format(get(["yardsPerReception", "yardsPerCatch", "ypr"], ["off"])) ||
           format(safeDivide(receivingYards, receptions)),
 
-        // ================= First Downs / Efficiency =================
         firstDowns,
         firstDownsRushing,
         firstDownsPassing,
@@ -588,7 +584,6 @@ export function useTeamStats(
           get(["totalPenaltiesYards", "penaltiesYards"], ["gen", "off"]) ||
           totalPenaltyYards,
 
-        // ================= Defensive =================
         soloTackles: get(["soloTackles", "solo"], ["def"]),
         assistTackles: get(
           ["assistTackles", "assistedTackles", "assists"],
@@ -613,7 +608,6 @@ export function useTeamStats(
         kicksBlocked: get(["kicksBlocked", "blockedKicks"], ["def", "gen"]),
         tacklesForLoss: get(["tacklesForLoss", "tfl"], ["def"]),
 
-        // ================= Interceptions =================
         interceptionYards,
         interceptionTouchdowns: get(
           ["interceptionTouchdowns", "interceptionTD", "interceptionTDs"],
@@ -623,7 +617,6 @@ export function useTeamStats(
           get(["totalInterceptionsYards", "interceptionYards"], ["def"]) ||
           interceptionYards,
 
-        // ================= Fumbles =================
         fumbles,
         fumblesForced: get(["fumblesForced", "forcedFumbles"], ["def"]),
         fumblesRecovered: get(
@@ -637,7 +630,6 @@ export function useTeamStats(
         gamesPlayed,
         fumblesAndLost: get(["fumblesAndLost"], ["gen", "off"]) || fumblesLost,
 
-        // ================= Returns =================
         kickReturns: get(["kickReturns", "kickoffReturns"], ["gen", "off"]),
         kickReturnYards: get(
           ["kickReturnYards", "kickoffReturnYards"],
@@ -683,7 +675,6 @@ export function useTeamStats(
           get(["totalPuntReturnsYards"], ["gen", "off"]) ||
           get(["puntReturnYards"], ["gen", "off"]),
 
-        // ================= Kicking =================
         fieldGoalsMade,
         fieldGoalAttempts,
         fieldGoalPct:
@@ -765,7 +756,6 @@ export function useTeamStats(
             ["gen", "off"],
           ) || fieldGoalAttempts,
 
-        // ================= Punting =================
         punts: get(["punts"], ["gen", "off"]),
         puntYards: get(["puntYards", "puntingYards"], ["gen", "off"]),
         longPunt: get(["longPunt"], ["gen", "off"]),
@@ -786,7 +776,6 @@ export function useTeamStats(
           get(["totalPuntsYards"], ["gen", "off"]) ||
           get(["puntYards", "puntingYards"], ["gen", "off"]),
 
-        // ================= Scoring / Totals =================
         teamGamesPlayed:
           get(["teamGamesPlayed", "gamesPlayed"], ["gen", "off"]) ||
           gamesPlayed,
@@ -833,7 +822,9 @@ export function useTeamStats(
     void Promise.resolve().then(() => {
       if (!cancelled) void fetchTeamStats();
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [enabled, fetchTeamStats]);
 
   return {

@@ -7,51 +7,78 @@ import {
   resolveFootballBoxScoreTeams,
 } from "../utils/sports/football/footballBoxScore";
 
-const block = (id: number, name: string, side = "") => ({
-  team: { id, espnId: id + 100, name, homeAway: side },
-  statistics: [],
-}) as unknown as BoxScorePlayerTeam;
+const block = (id: number, name: string, side = "") =>
+  ({
+    team: { id, name, homeAway: side },
+    statistics: [],
+  }) as unknown as BoxScorePlayerTeam;
 
 test("reversed payload order resolves by team ID before names", () => {
   const away = block(1, "Same");
   const home = block(2, "Same");
-  assert.deepEqual(resolveFootballBoxScoreTeams([home, away], 1, 2, "Same", "Same"), { away, home });
+  assert.deepEqual(
+    resolveFootballBoxScoreTeams([home, away], 1, 2, "Same", "Same"),
+    { away, home },
+  );
 });
 
 test("a partial home payload never appears as the away box score", () => {
   const home = block(2, "Home");
-  assert.deepEqual(resolveFootballBoxScoreTeams([home], 1, 2, "Away", "Home"), { away: null, home });
+  assert.deepEqual(resolveFootballBoxScoreTeams([home], 1, 2, "Away", "Home"), {
+    away: null,
+    home,
+  });
 });
 
 test("a provider alias collision cannot swap football box score teams", () => {
   const away = block(1, "Same");
   const home = block(2, "Same");
-  away.team.espnId = 2;
-  home.team.espnId = 1;
-  assert.deepEqual(resolveFootballBoxScoreTeams([home, away], "1", "2", "Same", "Same"), { away, home });
+  Object.assign(away.team, { espnId: 2 });
+  Object.assign(home.team, { espnId: 1 });
+  assert.deepEqual(
+    resolveFootballBoxScoreTeams([home, away], "1", "2", "Same", "Same"),
+    { away, home },
+  );
 });
 
 test("side metadata resolves unmatched IDs and names", () => {
   const away = block(1, "Away", "away");
   const home = block(2, "Home", "home");
-  assert.deepEqual(resolveFootballBoxScoreTeams([home, away], 9, 10, "X", "Y"), { away, home });
+  assert.deepEqual(
+    resolveFootballBoxScoreTeams([home, away], 9, 10, "X", "Y"),
+    { away, home },
+  );
 });
 
 test("positional fallback excludes the already matched team", () => {
   const away = block(1, "Away");
   const home = block(2, "Home");
-  assert.deepEqual(resolveFootballBoxScoreTeams([home, away], 1, 99, "Away", "Unknown"), { away, home });
+  assert.deepEqual(
+    resolveFootballBoxScoreTeams([home, away], 1, 99, "Away", "Unknown"),
+    { away, home },
+  );
 });
 
 test("missing and partial labels preserve all athlete and totals columns", () => {
-  assert.deepEqual(getFootballBoxScoreLabels({
-    name: "passing", labels: ["C/ATT", ""], keys: ["completions", "yards"],
-    athletes: [{ athlete: { id: 1 }, stats: ["10/12", "150", "2", "0"] }],
-    totals: ["10/12", "150", "2", "0", "98.4"],
-  }), ["C/ATT", "yards", "Stat 3", "Stat 4", "Stat 5"]);
+  assert.deepEqual(
+    getFootballBoxScoreLabels({
+      name: "passing",
+      labels: ["C/ATT", ""],
+      keys: ["completions", "yards"],
+      athletes: [{ athlete: { id: 1 }, stats: ["10/12", "150", "2", "0"] }],
+      totals: ["10/12", "150", "2", "0", "98.4"],
+    }),
+    ["C/ATT", "yards", "Stat 3", "Stat 4", "Stat 5"],
+  );
 });
 
 test("empty categories are hidden while totals-only categories remain", () => {
-  assert.equal(hasFootballBoxScoreData({ name: "passing", athletes: [], totals: [] }), false);
-  assert.equal(hasFootballBoxScoreData({ name: "passing", totals: ["0"] }), true);
+  assert.equal(
+    hasFootballBoxScoreData({ name: "passing", athletes: [], totals: [] }),
+    false,
+  );
+  assert.equal(
+    hasFootballBoxScoreData({ name: "passing", totals: ["0"] }),
+    true,
+  );
 });

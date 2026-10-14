@@ -251,8 +251,8 @@ const normalizeRosterStatsResponse = (
   const response = isRecord(data) ? data : {};
   const players = Array.isArray(response.players)
     ? response.players
-      .filter(isRecord)
-      .map((player) => normalizePlayer(player as FootballRosterApiPlayer))
+        .filter(isRecord)
+        .map((player) => normalizePlayer(player as FootballRosterApiPlayer))
     : [];
 
   return {
@@ -330,7 +330,9 @@ export function useRosterStats(
     void Promise.resolve().then(() => {
       if (!cancelled) void fetchRoster();
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [enabled, fetchRoster]);
 
   const refresh = useCallback(() => fetchRoster(true), [fetchRoster]);

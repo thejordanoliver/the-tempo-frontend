@@ -1,4 +1,3 @@
-// hooks/LeagueHooks/useTeams.ts
 import { TeamDetails } from "@/types/team";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
@@ -32,16 +31,10 @@ export default function useTeams(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /*
-   * Used to prevent an older request from overwriting the result
-   * of a newer request when the route/team changes quickly.
-   */
+  // Ignore responses from superseded requests.
   const requestIdRef = useRef(0);
 
   const fetchTeamDetails = useCallback(async () => {
-    /*
-     * Invalidate any request that may currently be running.
-     */
     const requestId = ++requestIdRef.current;
 
     if (!league || !teamId) {
@@ -60,9 +53,6 @@ export default function useTeams(
         `api/teams/${encodeURIComponent(league)}/${encodeURIComponent(teamId)}`,
       );
 
-      /*
-       * Ignore the response if another request began after this one.
-       */
       if (requestId !== requestIdRef.current) {
         return;
       }

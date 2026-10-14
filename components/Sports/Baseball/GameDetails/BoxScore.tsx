@@ -42,9 +42,6 @@ type TeamInfo = {
 
 type MlbAthleteInfo = {
   id?: number | string | null;
-  playerId?: number | string | null;
-  espnId?: number | string | null;
-  espn_id?: number | string | null;
   teamId?: number | string | null;
   team_id?: number | string | null;
   team?: TeamInfo | null;
@@ -338,9 +335,7 @@ const getPlayerStatsArray = (input: unknown): TeamBlock[] => {
 };
 
 const getAthleteId = (athlete?: MlbAthleteInfo | null) => {
-  return (
-    athlete?.playerId ?? athlete?.id ?? athlete?.espnId ?? athlete?.espn_id
-  );
+  return athlete?.id;
 };
 
 const getPlayerId = (player: MlbPlayerStat) => {

@@ -11,9 +11,11 @@ import {
 
 function getFavoriteSportsErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "response" in error) {
-    const response = (error as {
-      response?: { data?: { error?: unknown; }; };
-    }).response;
+    const response = (
+      error as {
+        response?: { data?: { error?: unknown } };
+      }
+    ).response;
     const apiError = response?.data?.error;
 
     if (typeof apiError === "string" && apiError.trim()) {

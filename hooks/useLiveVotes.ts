@@ -1,5 +1,5 @@
 import { usePredictionScoring } from "./usePredictionScoring";
-// hooks/useLiveVotes.ts
+
 import { castRankedPrediction } from "services/fanPredictionsApi";
 import type { RankedPredictionContext } from "types/fanPredictions";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -17,8 +17,7 @@ type VoteUpdatePayload = {
 };
 
 type JoinGameAck =
-  | ({ ok: true } & VoteUpdatePayload)
-  | { ok: false; error: string };
+  ({ ok: true } & VoteUpdatePayload) | { ok: false; error: string };
 
 type CastVotePayload = {
   gameId: number;
@@ -67,8 +66,14 @@ function getVoteErrorMessage(error: unknown): string {
   return "Your vote didn't go through. Try again.";
 }
 
-export function useLiveVotes(gameId: number, predictionContext?: RankedPredictionContext) {
-  const { scoring, scoringError, retryScoring } = usePredictionScoring(gameId, predictionContext);
+export function useLiveVotes(
+  gameId: number,
+  predictionContext?: RankedPredictionContext,
+) {
+  const { scoring, scoringError, retryScoring } = usePredictionScoring(
+    gameId,
+    predictionContext,
+  );
   const [votes, setVotes] = useState<PollResult[] | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef<Socket<
@@ -184,14 +189,22 @@ export function useLiveVotes(gameId: number, predictionContext?: RankedPredictio
   const castVote = useCallback(
     async (teamId: string | number): Promise<CastVoteAck> => {
       if (sport && league && state === "pre") {
-        if (!scoring) return { ok: false, error: "Wait for prediction points to load before picking." };
+        if (!scoring)
+          return {
+            ok: false,
+            error: "Wait for prediction points to load before picking.",
+          };
         try {
           await castRankedPrediction(gameId, teamId, { sport, league, date });
           try {
             setVotes((await fetchVoteResults(gameId)).votes);
-          } catch (error) { console.warn("Vote result refresh error", error); }
+          } catch (error) {
+            console.warn("Vote result refresh error", error);
+          }
           return { ok: true };
-        } catch (error) { return { ok: false, error: getVoteErrorMessage(error) }; }
+        } catch (error) {
+          return { ok: false, error: getVoteErrorMessage(error) };
+        }
       }
       const socket = socketRef.current;
 

@@ -16,7 +16,9 @@ type SoccerGamesResponse = {
 const LIVE_STATES = new Set(["in"]);
 
 function isLiveSoccerGame(game: any) {
-  const state = String(game?.status?.state || "").trim().toLowerCase();
+  const state = String(game?.status?.state || "")
+    .trim()
+    .toLowerCase();
   return LIVE_STATES.has(state);
 }
 

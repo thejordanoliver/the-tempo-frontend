@@ -1,13 +1,12 @@
-import type { GameVenueInfo } from "types/gameVenue";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
+import type { GameVenueInfo } from "types/gameVenue";
 import type { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
 import type { Predictor } from "../BasketballHooks/useBasketballGameDetails";
 
 export type Athlete = {
   id?: string | number | null;
-  espnId?: string | number | null;
   uid?: string;
   guid?: string;
   firstName?: string | null;
@@ -31,7 +30,6 @@ export type TeamRecord = {
 
 export type Team = {
   id: number;
-  espnId: number;
   guid: string;
   uid: string;
   location: string;
@@ -83,7 +81,6 @@ export type TeamInjury = {
 
 export type FootballTeamReference = {
   id?: FootballId;
-  espnId?: FootballId;
   uid?: string | null;
   guid?: string | null;
   location?: string | null;
@@ -103,10 +100,6 @@ export type FootballPlayTeamParticipant = FootballTeamReference & {
   type?: string | null;
   order?: number | string | null;
 };
-
-/* ---------------------------------- */
-/* LEADER TYPES                       */
-/* ---------------------------------- */
 
 export type LeaderMainStat = {
   value?: string | number | null;
@@ -134,10 +127,6 @@ export type TeamLeaders = {
   team: Team;
   leaders: LeaderCategory[];
 };
-
-/* ---------------------------------- */
-/* PLAY TYPES                         */
-/* ---------------------------------- */
 
 export type FootballClock = {
   value?: number | string | null;
@@ -218,7 +207,6 @@ export type PlayObject = {
 
   statYardage?: number | string | null;
 
-  // Add these:
   yardsAfterCatch?: number | string | null;
   isTurnover?: boolean | null;
   isPenalty?: boolean | null;
@@ -258,10 +246,6 @@ export type FootballDrive = {
   plays?: PlayObject[] | null;
 };
 
-/* ---------------------------------- */
-/* SCORING PLAY TYPES                 */
-/* ---------------------------------- */
-
 export type ScoringPlay = {
   id: string;
   type: {
@@ -294,10 +278,6 @@ export type ScoringPlay = {
 };
 
 export type ScoringPlays = ScoringPlay[];
-
-/* ---------------------------------- */
-/* BOX SCORE TYPES                    */
-/* ---------------------------------- */
 
 export type TeamBoxScoreStat = {
   name: string;
@@ -338,10 +318,6 @@ export type BoxScore = {
   teams: BoxScoreTeam[];
   players: BoxScorePlayerTeam[];
 };
-
-/* ---------------------------------- */
-/* SCORE TYPES                        */
-/* ---------------------------------- */
 
 export type GameStatus = {
   id: string;
@@ -448,10 +424,6 @@ export type FootballGameDetailsResponse = {
   details: Details;
 };
 
-/* ---------------------------------- */
-/* Hook                               */
-/* ---------------------------------- */
-
 export const useFootballGameDetails = (
   league: string | undefined,
   gameId?: string | number | null,
@@ -463,10 +435,6 @@ export const useFootballGameDetails = (
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
   const skipFetch = !league || !gameId;
-
-  /* ---------------------------------- */
-  /* Request game details               */
-  /* ---------------------------------- */
 
   const requestDetails = useCallback(async () => {
     if (!league || !gameId) {
@@ -487,10 +455,6 @@ export const useFootballGameDetails = (
 
     return data;
   }, [gameId, league]);
-
-  /* ---------------------------------- */
-  /* Initial fetch                      */
-  /* ---------------------------------- */
 
   useEffect(() => {
     if (skipFetch) {
@@ -535,10 +499,6 @@ export const useFootballGameDetails = (
     };
   }, [league, requestDetails, skipFetch]);
 
-  /* ---------------------------------- */
-  /* Live updates                       */
-  /* ---------------------------------- */
-
   useLiveSportsSubscription<FootballGameDetailsResponse>({
     enabled: !skipFetch && score?.status?.state === "in",
     kind: "game",
@@ -558,10 +518,6 @@ export const useFootballGameDetails = (
       setLastRefresh(new Date());
     },
   });
-
-  /* ---------------------------------- */
-  /* Manual refresh                     */
-  /* ---------------------------------- */
 
   const refresh = useCallback(() => {
     if (skipFetch) {

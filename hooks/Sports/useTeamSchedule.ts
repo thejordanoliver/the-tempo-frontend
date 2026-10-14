@@ -15,7 +15,12 @@ import { ScheduleFreshness } from "./scheduleFreshness";
 type ScheduleData<TGame> = { games: TGame[] };
 type RequestMode = "initial" | "refresh" | "silent";
 
-export type TeamScheduleConfig<TGame, TResponse, TData extends ScheduleData<TGame>, TError> = {
+export type TeamScheduleConfig<
+  TGame,
+  TResponse,
+  TData extends ScheduleData<TGame>,
+  TError,
+> = {
   sport: LiveSport;
   league: string;
   teamId: string | number | null;
@@ -27,7 +32,12 @@ export type TeamScheduleConfig<TGame, TResponse, TData extends ScheduleData<TGam
   clearOnRefreshError?: boolean;
 };
 
-export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGame>, TError>({
+export function useTeamSchedule<
+  TGame,
+  TResponse,
+  TData extends ScheduleData<TGame>,
+  TError,
+>({
   sport,
   league,
   teamId,
@@ -40,7 +50,9 @@ export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGa
 }: TeamScheduleConfig<TGame, TResponse, TData, TError>) {
   const validTeam = teamId != null && teamId !== "";
   const validSeason = season !== null && season !== undefined && season !== "";
-  const enabled = Boolean(league && validTeam && (!requireSeason || validSeason));
+  const enabled = Boolean(
+    league && validTeam && (!requireSeason || validSeason),
+  );
   const identity = `${sport}:${league}:${String(teamId ?? "")}:${String(season ?? "")}`;
   const mountedRef = useRef(false);
   const freshnessRef = useRef(new ScheduleFreshness());
@@ -50,57 +62,99 @@ export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGa
     loading: boolean;
     refreshing: boolean;
     error: TError | null;
-  }>(() => ({ identity, data: null, loading: enabled, refreshing: false, error: null }));
+  }>(() => ({
+    identity,
+    data: null,
+    loading: enabled,
+    refreshing: false,
+    error: null,
+  }));
 
   // A changed identity must never expose the previous team's schedule for a render.
-  const current = state.identity === identity
-    ? state
-    : { identity, data: null, loading: enabled, refreshing: false, error: null };
+  const current =
+    state.identity === identity
+      ? state
+      : {
+          identity,
+          data: null,
+          loading: enabled,
+          refreshing: false,
+          error: null,
+        };
 
-  const fetchSchedule = useCallback(async (mode: RequestMode = "initial") => {
-    const freshness = freshnessRef.current;
-    const request = freshness.startRequest();
-    const isCurrent = () => mountedRef.current && freshnessRef.current === freshness &&
-      freshness.canComplete(request);
+  const fetchSchedule = useCallback(
+    async (mode: RequestMode = "initial") => {
+      const freshness = freshnessRef.current;
+      const request = freshness.startRequest();
+      const isCurrent = () =>
+        mountedRef.current &&
+        freshnessRef.current === freshness &&
+        freshness.canComplete(request);
 
-    if (!enabled) {
-      setState({ identity, data: null, loading: false, refreshing: false, error: null });
-      return;
-    }
-
-    setState((previous) => ({
-      ...(previous.identity === identity ? previous : { identity, data: null, loading: true, refreshing: false, error: null }),
-      loading: mode === "initial" && previous.identity !== identity ? true : previous.loading,
-      refreshing: mode === "refresh",
-      error: null,
-    }));
-
-    try {
-      const response = await apiClient.get<TResponse>(endpoint);
-      // A newer socket update makes the REST snapshot obsolete, but does not
-      // prevent this request from completing its loading lifecycle.
-      if (isCurrent() && freshness.canApplyResponse(request)) {
-        const data = normalize(response.data);
-        setState((previous) => ({ ...previous, data, error: null }));
+      if (!enabled) {
+        setState({
+          identity,
+          data: null,
+          loading: false,
+          refreshing: false,
+          error: null,
+        });
+        return;
       }
-    } catch (error: unknown) {
-      if (isCurrent() && freshness.canApplyResponse(request)) {
-        const nextError = errorFrom(error, mode);
-        if (mode !== "silent") {
+
+      setState((previous) => ({
+        ...(previous.identity === identity
+          ? previous
+          : {
+              identity,
+              data: null,
+              loading: true,
+              refreshing: false,
+              error: null,
+            }),
+        loading:
+          mode === "initial" && previous.identity !== identity
+            ? true
+            : previous.loading,
+        refreshing: mode === "refresh",
+        error: null,
+      }));
+
+      try {
+        const response = await apiClient.get<TResponse>(endpoint);
+        // A newer socket update makes the REST snapshot obsolete, but does not
+        // prevent this request from completing its loading lifecycle.
+        if (isCurrent() && freshness.canApplyResponse(request)) {
+          const data = normalize(response.data);
+          setState((previous) => ({ ...previous, data, error: null }));
+        }
+      } catch (error: unknown) {
+        if (isCurrent() && freshness.canApplyResponse(request)) {
+          const nextError = errorFrom(error, mode);
+          if (mode !== "silent") {
+            setState((previous) => ({
+              ...previous,
+              error: nextError,
+              data:
+                mode === "initial" ||
+                (mode === "refresh" && clearOnRefreshError)
+                  ? null
+                  : previous.data,
+            }));
+          }
+        }
+      } finally {
+        if (isCurrent()) {
           setState((previous) => ({
             ...previous,
-            error: nextError,
-            data: mode === "initial" || (mode === "refresh" && clearOnRefreshError)
-              ? null : previous.data,
+            loading: false,
+            refreshing: false,
           }));
         }
       }
-    } finally {
-      if (isCurrent()) {
-        setState((previous) => ({ ...previous, loading: false, refreshing: false }));
-      }
-    }
-  }, [clearOnRefreshError, enabled, endpoint, errorFrom, identity, normalize]);
+    },
+    [clearOnRefreshError, enabled, endpoint, errorFrom, identity, normalize],
+  );
 
   useEffect(() => {
     mountedRef.current = true;
@@ -119,13 +173,24 @@ export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGa
   useLiveSportsSubscription<TResponse>({
     enabled,
     kind: "scoreboard",
-    payload: { sport, league, feed: "teamSchedule", teamId: teamId ?? "", season },
+    payload: {
+      sport,
+      league,
+      feed: "teamSchedule",
+      teamId: teamId ?? "",
+      season,
+    },
     onUpdate: (payload, envelope) => {
       const expectedSeason = validSeason ? String(season) : undefined;
-      if (!mountedRef.current || envelope.sport !== sport || envelope.league !== league ||
-          envelope.feed !== "teamSchedule" ||
-          envelope.params?.teamId !== String(teamId) ||
-          envelope.params?.season !== expectedSeason) return;
+      if (
+        !mountedRef.current ||
+        envelope.sport !== sport ||
+        envelope.league !== league ||
+        envelope.feed !== "teamSchedule" ||
+        envelope.params?.teamId !== String(teamId) ||
+        envelope.params?.season !== expectedSeason
+      )
+        return;
 
       const data = normalize(payload);
       freshnessRef.current.recordSocketUpdate();
@@ -141,23 +206,56 @@ export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGa
   });
 
   const refresh = useCallback(() => fetchSchedule("refresh"), [fetchSchedule]);
-  const silentRefresh = useCallback(() => fetchSchedule("silent"), [fetchSchedule]);
+  const silentRefresh = useCallback(
+    () => fetchSchedule("silent"),
+    [fetchSchedule],
+  );
 
   return { ...current, refresh, silentRefresh };
 }
 
-export function useMonthlyTeamSchedule<TGame extends { date?: string | null },
+export function useMonthlyTeamSchedule<
+  TGame extends { date?: string | null },
   TResponse,
   TData extends ScheduleData<TGame> & { months: ScheduleMonthGroup<TGame>[] },
-  TError>(config: TeamScheduleConfig<TGame, TResponse, TData, TError>) {
+  TError,
+>(config: TeamScheduleConfig<TGame, TResponse, TData, TError>) {
   const schedule = useTeamSchedule(config);
-  const monthGroups = useMemo(() => schedule.data?.months ?? [], [schedule.data?.months]);
-  const months = useMemo(() => buildScheduleMonthOptions(monthGroups), [monthGroups]);
+  const monthGroups = useMemo(
+    () => schedule.data?.months ?? [],
+    [schedule.data?.months],
+  );
+  const months = useMemo(
+    () => buildScheduleMonthOptions(monthGroups),
+    [monthGroups],
+  );
   const scheduleIdentity = `${config.league}:${String(config.teamId ?? "")}:${String(config.season ?? "")}`;
-  const { selectedMonthKey, selectMonth } = useTeamMonthSelector({ months, scheduleIdentity });
-  const games = useMemo(() => getScheduleGamesForMonth(monthGroups, selectedMonthKey), [monthGroups, selectedMonthKey]);
-  const firstSeasonGame = useMemo(() => getFirstSeasonGame(schedule.data?.games ?? []), [schedule.data?.games]);
-  const showCountdown = isScheduleOpeningMonth(firstSeasonGame, selectedMonthKey);
-  return { games, months, selectedMonthKey, selectMonth, firstSeasonGame, showCountdown,
-    loading: schedule.loading, refreshing: schedule.refreshing, error: schedule.error, refresh: schedule.refresh };
+  const { selectedMonthKey, selectMonth } = useTeamMonthSelector({
+    months,
+    scheduleIdentity,
+  });
+  const games = useMemo(
+    () => getScheduleGamesForMonth(monthGroups, selectedMonthKey),
+    [monthGroups, selectedMonthKey],
+  );
+  const firstSeasonGame = useMemo(
+    () => getFirstSeasonGame(schedule.data?.games ?? []),
+    [schedule.data?.games],
+  );
+  const showCountdown = isScheduleOpeningMonth(
+    firstSeasonGame,
+    selectedMonthKey,
+  );
+  return {
+    games,
+    months,
+    selectedMonthKey,
+    selectMonth,
+    firstSeasonGame,
+    showCountdown,
+    loading: schedule.loading,
+    refreshing: schedule.refreshing,
+    error: schedule.error,
+    refresh: schedule.refresh,
+  };
 }

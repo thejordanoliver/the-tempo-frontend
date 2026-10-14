@@ -19,7 +19,7 @@ import {
 
 export const useDirectMessages = (
   conversationId: string,
-  options: { isVisible?: boolean; } = {},
+  options: { isVisible?: boolean } = {},
 ) => {
   const { token } = useAuth();
   const isVisible = options.isVisible ?? true;
@@ -62,7 +62,8 @@ export const useDirectMessages = (
       if (cancelled) return;
 
       setMessageThemePreference(
-        conversation?.messageThemePreference ?? DEFAULT_MESSAGE_THEME_PREFERENCE,
+        conversation?.messageThemePreference ??
+          DEFAULT_MESSAGE_THEME_PREFERENCE,
       );
     });
 
@@ -81,7 +82,9 @@ export const useDirectMessages = (
     // foregrounding while the socket is still reconnecting.
     resync();
     socket?.on("connect", resync);
-    return () => { socket?.off("connect", resync); };
+    return () => {
+      socket?.off("connect", resync);
+    };
   }, [conversationId, isVisible, loadConversationMessages, socket, token]);
 
   useEffect(() => {

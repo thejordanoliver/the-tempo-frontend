@@ -3,8 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 
 import { apiClient } from "utils/apiClient";
 
-/* ----------------------------- Types ----------------------------- */
-
 export type CFBTeamRank = {
   current: number;
   previous: number;
@@ -13,20 +11,22 @@ export type CFBTeamRank = {
   trend: string;
   recordSummary: string;
 
-  team: (StandingsTeamInfo & {
-    groups?: {
-      id: string;
-      shortName: string;
+  team:
+    | (StandingsTeamInfo & {
+        groups?: {
+          id: string;
+          shortName: string;
 
-      parent?: {
-        id: string;
-        shortName: string;
-        isConference: boolean;
-      };
+          parent?: {
+            id: string;
+            shortName: string;
+            isConference: boolean;
+          };
 
-      isConference: boolean;
-    };
-  }) | null;
+          isConference: boolean;
+        };
+      })
+    | null;
 
   date: string;
   lastUpdated: string;
@@ -60,8 +60,6 @@ type RawRankingsResponse = {
   rankings?: unknown;
 };
 
-/* ----------------------------- Config ----------------------------- */
-
 const RANKINGS_ENDPOINT = "/api/standings/cfb/rankings";
 
 const POLL_NAMES: Record<PollType, string> = {
@@ -72,8 +70,6 @@ const POLL_NAMES: Record<PollType, string> = {
 };
 
 const POLL_TYPES: PollType[] = ["ap", "coaches", "cfp", "fcs"];
-
-/* ----------------------------- Helpers ----------------------------- */
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -108,13 +104,7 @@ const getPollSearchText = (poll: RawPoll): string => {
     .toLowerCase();
 };
 
-/**
- * ESPN can currently return the FCS Coaches Poll with
- * a misleading poll type such as "ap".
- *
- * Because of that, detecting FCS from the teams themselves
- * is more reliable than trusting poll.type.
- */
+// Identify FCS by its teams because the returned poll type can be misleading.
 const containsFCSTeams = (poll: RawPoll): boolean => {
   const ranks = toTeamRanks(poll.ranks);
 
@@ -179,16 +169,6 @@ const matchesPollType = (poll: RawPoll, type: PollType): boolean => {
   }
 };
 
-/**
- * Extract ranking poll objects from the backend response.
- *
- * Expected backend shape:
- *
- * {
- *   league: "CFB",
- *   rankings: [...]
- * }
- */
 const getPollCandidates = (rawValue: unknown): RawPoll[] => {
   if (Array.isArray(rawValue)) {
     return rawValue.filter(isRecord) as RawPoll[];
@@ -242,15 +222,11 @@ const normalizeRankings = (rawValue: unknown): CFBRankPoll[] => {
   });
 };
 
-/* ----------------------------- Hook ----------------------------- */
-
 export const useCFBRankings = () => {
   const [rankings, setRankings] = useState<CFBRankPoll[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  /* ---------------- Request ---------------- */
 
   const requestRankings = useCallback(async (): Promise<CFBRankPoll[]> => {
     const response =
@@ -260,8 +236,6 @@ export const useCFBRankings = () => {
 
     return normalized;
   }, []);
-
-  /* ---------------- Fetch Latest ---------------- */
 
   const fetchLatest = useCallback(async () => {
     setRefreshing(true);
@@ -279,8 +253,6 @@ export const useCFBRankings = () => {
       setRefreshing(false);
     }
   }, [requestRankings]);
-
-  /* ---------------- Initial Fetch ---------------- */
 
   useEffect(() => {
     let isMounted = true;

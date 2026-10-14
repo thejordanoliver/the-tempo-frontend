@@ -21,7 +21,6 @@ import {
   View,
 } from "react-native";
 import { newsArticleStyles } from "styles/NewsStyles/NewsArticleStyle";
-import { getNewsGameTarget, getNewsPlayerTarget } from "utils/news/newsArticleLinks";
 
 export default function ArticleScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();
@@ -75,13 +74,10 @@ export default function ArticleScreen() {
     setIsPlaying(true);
   };
 
-  const handleOpenLink = (link: string | null | undefined) => {
-    if (!link) return;
-
-    const gameTarget = getNewsGameTarget(link);
-    if (gameTarget) {
-      const params = { game: gameTarget.gameId, league: gameTarget.league };
-      if (gameTarget.screen === "football") {
+  const handleOpenTarget = (target: ArticleStoryLinkTarget) => {
+    if (target.kind === "game") {
+      const params = { game: target.gameId, league: target.league };
+      if (target.screen === "football") {
         router.push({ pathname: "/game/football/[game]", params });
       } else {
         router.push({ pathname: "/game/basketball/[game]", params });
@@ -89,15 +85,13 @@ export default function ArticleScreen() {
       return;
     }
 
-    const playerTarget = getNewsPlayerTarget(link);
-
-    if (playerTarget) {
+    if (target.kind === "player") {
       const params = {
-        id: playerTarget.playerId,
-        league: playerTarget.league,
+        id: target.playerId,
+        league: target.league,
       };
 
-      switch (playerTarget.screen) {
+      switch (target.screen) {
         case "baseball":
           router.push({ pathname: "/player/baseball/[id]", params });
           return;
@@ -118,9 +112,7 @@ export default function ArticleScreen() {
           return;
       }
     }
-  };
 
-  const handleOpenTarget = (target: ArticleStoryLinkTarget) => {
     if (target.kind === "article") {
       router.push({
         pathname: "/news/[id]",
@@ -265,10 +257,7 @@ export default function ArticleScreen() {
           {storyParagraphs.map((paragraph, paragraphIndex) => (
             <Text key={paragraphIndex} style={styles.content}>
               {paragraph.segments.map((segment, segmentIndex) =>
-                segment.target ||
-                (segment.link &&
-                  (getNewsGameTarget(segment.link) ||
-                    getNewsPlayerTarget(segment.link))) ? (
+                segment.target ? (
                   <Text
                     key={segmentIndex}
                     accessibilityRole="link"
@@ -277,7 +266,6 @@ export default function ArticleScreen() {
                         handleOpenTarget(segment.target);
                         return;
                       }
-                      handleOpenLink(segment.link);
                     }}
                     style={styles.inlineLink}
                   >

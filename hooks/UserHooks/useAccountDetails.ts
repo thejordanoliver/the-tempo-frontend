@@ -1,4 +1,3 @@
-// hooks/useAccountDetails.ts
 import { isAxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 
@@ -96,10 +95,7 @@ export function useAccountDetails() {
         },
       );
 
-      await saveTokens(
-        response.data.accessToken,
-        response.data.refreshToken,
-      );
+      await saveTokens(response.data.accessToken, response.data.refreshToken);
 
       return response.data;
     } catch (err: unknown) {

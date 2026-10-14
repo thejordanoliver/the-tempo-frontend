@@ -6,7 +6,11 @@ export type PredictionAnalytics = {
   recent: PredictionSample;
   previous: PredictionSample;
   weekly: (PredictionSample & { week: string })[];
-  leagues: (PredictionSample & { sport: string; league: string; pending: number })[];
+  leagues: (PredictionSample & {
+    sport: string;
+    league: string;
+    pending: number;
+  })[];
 };
 
 export function useFanPredictionAnalytics() {
@@ -18,18 +22,25 @@ export function useFanPredictionAnalytics() {
     controller.current?.abort();
     const request = new AbortController();
     controller.current = request;
-    return apiClient.get<PredictionAnalytics>("/api/predictions/analytics", { signal: request.signal })
+    return apiClient
+      .get<PredictionAnalytics>("/api/predictions/analytics", {
+        signal: request.signal,
+      })
       .then((response) => {
         if (!request.signal.aborted) setData(response.data);
       })
       .catch(() => {
-        if (!request.signal.aborted) setError("We couldn’t load your prediction analysis.");
+        if (!request.signal.aborted)
+          setError("We couldn’t load your prediction analysis.");
       })
       .finally(() => {
         if (!request.signal.aborted) setLoading(false);
       });
   }, []);
-  useEffect(() => { void load(); return () => controller.current?.abort(); }, [load]);
+  useEffect(() => {
+    void load();
+    return () => controller.current?.abort();
+  }, [load]);
   const refresh = useCallback(() => {
     setLoading(true);
     setError(null);

@@ -3,11 +3,7 @@ import type { ImageSourcePropType } from "react-native";
 import { apiClient } from "utils/apiClient";
 
 export type LastFiveGamesSport =
-  | "basketball"
-  | "baseball"
-  | "football"
-  | "hockey"
-  | "soccer";
+  "basketball" | "baseball" | "football" | "hockey" | "soccer";
 
 export type LastFiveGameResult = {
   id: number;
@@ -75,7 +71,8 @@ export function useLastFiveGames(
     };
   }, [teamId, sport, league, requestKey]);
 
-  const isCurrentResult = requestKey !== null && result?.requestKey === requestKey;
+  const isCurrentResult =
+    requestKey !== null && result?.requestKey === requestKey;
   const games = isCurrentResult ? result.games : [];
   const loading = requestKey !== null && !isCurrentResult;
   const error = isCurrentResult ? result.error : null;

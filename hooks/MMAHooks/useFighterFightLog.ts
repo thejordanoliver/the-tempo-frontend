@@ -7,7 +7,8 @@ type Result = { key: string; data: MMAFightLog | null; error: string | null };
 
 export function useFighterFightLog(fighterId: number | string) {
   const id = String(fighterId ?? "").trim();
-  const validId = /^\d+$/.test(id) && Number(id) > 0 && Number(id) <= 2147483647;
+  const validId =
+    /^\d+$/.test(id) && Number(id) > 0 && Number(id) <= 2147483647;
   const requestKey = validId ? String(Number(id)) : null;
   const [result, setResult] = useState<Result | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
@@ -53,7 +54,7 @@ export function useFighterFightLog(fighterId: number | string) {
   return {
     data: currentResult?.data ?? null,
     loading: requestKey !== null && currentResult === null,
-    error: validId ? currentResult?.error ?? null : "Invalid fighter ID",
+    error: validId ? (currentResult?.error ?? null) : "Invalid fighter ID",
     refetch: fetchFightLog,
   };
 }

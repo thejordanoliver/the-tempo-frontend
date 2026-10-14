@@ -104,7 +104,7 @@ export default function PlayerDetailScreen() {
 
   /**
    * =========================================
-   * PLAYER STATS + CANONICAL RESOLUTION
+   * PLAYER STATS + PROFILE RESOLUTION
    * =========================================
    *
    * This request happens first because the backend
@@ -117,7 +117,7 @@ export default function PlayerDetailScreen() {
     collegeData,
     player: statsPlayer,
     resolvedLeague,
-    canonicalProfile,
+    resolvedProfile,
     loading: seasonsLoading,
     error: seasonsError,
     currentSeasonRankings,
@@ -125,7 +125,7 @@ export default function PlayerDetailScreen() {
 
   /**
    * =========================================
-   * CANONICAL PLAYER ID
+   * PLAYER ID
    * =========================================
    *
    * Example:
@@ -137,9 +137,9 @@ export default function PlayerDetailScreen() {
    * NFL Carson Beck
    */
 
-  const canonicalPlayerId = useMemo(() => {
+  const playerId = useMemo(() => {
     const resolvedId =
-      canonicalProfile?.playerId ??
+      resolvedProfile?.playerId ??
       (requestedLeague === "nfl" ? requestedPlayerId : undefined);
 
     if (resolvedId === undefined) {
@@ -149,39 +149,39 @@ export default function PlayerDetailScreen() {
     const parsed = Number(resolvedId);
 
     return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
-  }, [canonicalProfile?.playerId, requestedLeague, requestedPlayerId]);
+  }, [resolvedProfile?.playerId, requestedLeague, requestedPlayerId]);
 
   /**
    * =========================================
-   * CANONICAL LEAGUE
+   * PLAYER LEAGUE
    * =========================================
    */
 
-  const canonicalLeague: FootballRouteLeague = canonicalProfile
-    ? canonicalProfile.league
+  const playerLeague: FootballRouteLeague = resolvedProfile
+    ? resolvedProfile.league
     : resolvedLeague;
 
-  const isNFL = canonicalLeague === "nfl";
+  const isNFL = playerLeague === "nfl";
 
-  const isCFB = canonicalLeague === "cfb";
+  const isCFB = playerLeague === "cfb";
 
   /**
    * =========================================
-   * CANONICAL PLAYER PROFILE
+   * PLAYER PROFILE
    * =========================================
    *
    * IMPORTANT:
    *
-   * We fetch the player AFTER canonical resolution.
+   * We fetch the player AFTER profile resolution.
    *
    * That means a player who has become an NFL player
    * will use nfl_players rather than cfb_players.
    */
 
   const { player, loading, error } = usePlayerById(
-    canonicalPlayerId,
-    canonicalLeague,
-    requestedLeague === "nfl" || Boolean(canonicalProfile),
+    playerId,
+    playerLeague,
+    requestedLeague === "nfl" || Boolean(resolvedProfile),
   );
 
   /**
@@ -189,7 +189,7 @@ export default function PlayerDetailScreen() {
    * CURRENT TEAM
    * =========================================
    *
-   * Prefer the canonical pro player's current team.
+   * Prefer the pro player's current team.
    *
    * Fall back to:
    *
@@ -236,8 +236,8 @@ export default function PlayerDetailScreen() {
     return isNFL ? getNFLTeamLogo(teamId, true) : getCFBTeamLogo(teamId, true);
   }, [teamId, isNFL]);
 
-  const gameLogPlayerId = canonicalPlayerId ?? "";
-  const gameLogPlayerKey = `${canonicalLeague}:${gameLogPlayerId}`;
+  const gameLogPlayerId = playerId ?? "";
+  const gameLogPlayerKey = `${playerLeague}:${gameLogPlayerId}`;
   const [gameLogSelection, setGameLogSelection] = useState<{
     playerKey: string;
     season: string;
@@ -246,13 +246,13 @@ export default function PlayerDetailScreen() {
     gameLogSelection?.playerKey === gameLogPlayerKey
       ? gameLogSelection.season
       : null;
-  const latestGameLog = usePlayerGameLog(gameLogPlayerId, canonicalLeague);
+  const latestGameLog = usePlayerGameLog(gameLogPlayerId, playerLeague);
   const needsSeasonLog =
     selectedGameLogSeason !== null &&
     selectedGameLogSeason !== String(latestGameLog.data?.season);
   const seasonGameLog = usePlayerGameLog(
     needsSeasonLog ? gameLogPlayerId : "",
-    canonicalLeague,
+    playerLeague,
     selectedGameLogSeason,
   );
   const tableGameLog = needsSeasonLog ? seasonGameLog : latestGameLog;
@@ -260,7 +260,7 @@ export default function PlayerDetailScreen() {
     game,
     loading: latestGameLoading,
     error: latestGameError,
-  } = usePlayerClosestGame<FootballGame>("football", canonicalLeague, teamId);
+  } = usePlayerClosestGame<FootballGame>("football", playerLeague, teamId);
   const gameLoading = latestGameLoading;
   const gameError = latestGameError;
 
@@ -296,6 +296,11 @@ export default function PlayerDetailScreen() {
    */
 
   useLayoutEffect(() => {
+    if (seasonsLoading || loading) {
+      navigation.setOptions({ header: () => null });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -307,14 +312,14 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, teamLogo, teamColor]);
+  }, [navigation, teamLogo, teamColor, seasonsLoading, loading]);
 
   /**
    * =========================================
    * LOADING
    * =========================================
    *
-   * Wait for canonical resolution before rendering
+   * Wait for profile resolution before rendering
    * the profile.
    *
    * This avoids briefly showing the CFB profile
@@ -369,7 +374,7 @@ export default function PlayerDetailScreen() {
           loading={seasonsLoading}
           error={seasonsError}
           position={player.position}
-          league={canonicalLeague}
+          league={playerLeague}
         />
       ),
     },
@@ -378,7 +383,7 @@ export default function PlayerDetailScreen() {
       content: (
         <PlayerGameLog
           sport="football"
-          league={canonicalLeague}
+          league={playerLeague}
           data={tableGameLog.data}
           filterData={latestGameLog.data}
           selectedSeason={selectedGameLogSeason}
@@ -414,7 +419,7 @@ export default function PlayerDetailScreen() {
       isDark={isDark}
       overview={
         <>
-          <PlayerHeader sport="football" player={player} isDark={isDark} league={canonicalLeague} />
+          <PlayerHeader sport="football" player={player} isDark={isDark} league={playerLeague} />
           <SeasonStatCard
             season={latestSeason}
             loading={seasonsLoading}
@@ -424,13 +429,13 @@ export default function PlayerDetailScreen() {
             rankings={currentSeasonRankings}
             teamColor={teamColor}
           />
-          {canonicalPlayerId ? (
+          {playerId ? (
             <LatestGame
               game={game}
               loading={gameLoading}
               error={gameError}
               isDark={isDark}
-              league={canonicalLeague}
+              league={playerLeague}
               isNFL={isNFL}
               isCFB={isCFB}
             />

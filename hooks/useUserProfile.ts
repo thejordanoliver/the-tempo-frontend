@@ -643,7 +643,6 @@ export function useUserProfile(
     fadeAnim,
     currentUserId,
 
-    // Actions
     toggleFollow,
     refreshProfile,
     fetchUserData,

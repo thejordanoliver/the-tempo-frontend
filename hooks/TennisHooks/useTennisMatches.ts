@@ -27,14 +27,11 @@ const EMPTY_RESPONSE: Pick<
 function isCanceledRequest(error: unknown) {
   if (!error || typeof error !== "object") return false;
 
-  const value = error as { name?: string; code?: string; };
+  const value = error as { name?: string; code?: string };
   return value.name === "CanceledError" || value.code === "ERR_CANCELED";
 }
 
-export function useTennisMatches(
-  date?: Date,
-  league: TennisLeague = "atp",
-) {
+export function useTennisMatches(date?: Date, league: TennisLeague = "atp") {
   const [matches, setMatches] = useState<TennisMatch[]>([]);
   const [tournaments, setTournaments] = useState<TennisTournament[]>([]);
   const [availableDivisions, setAvailableDivisions] = useState<

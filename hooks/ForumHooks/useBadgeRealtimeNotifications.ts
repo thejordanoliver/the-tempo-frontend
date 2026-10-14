@@ -46,12 +46,12 @@ export const isBadgeEarnedPayloadForUser = (
   const normalizedUserId = normalizeAuthenticatedUserId(userId);
   return Boolean(
     normalizedUserId &&
-      payload &&
-      typeof payload === "object" &&
-      "recipientUserId" in payload &&
-      Number(payload.recipientUserId) === normalizedUserId &&
-      "notifications" in payload &&
-      Array.isArray(payload.notifications),
+    payload &&
+    typeof payload === "object" &&
+    "recipientUserId" in payload &&
+    Number(payload.recipientUserId) === normalizedUserId &&
+    "notifications" in payload &&
+    Array.isArray(payload.notifications),
   );
 };
 
@@ -99,13 +99,13 @@ const isCanonicalNotificationForUser = (
 ): payload is AppNotification =>
   Boolean(
     payload &&
-      typeof payload === "object" &&
-      "id" in payload &&
-      typeof payload.id === "string" &&
-      "recipientUserId" in payload &&
-      Number(payload.recipientUserId) === userId &&
-      "type" in payload &&
-      typeof payload.type === "string",
+    typeof payload === "object" &&
+    "id" in payload &&
+    typeof payload.id === "string" &&
+    "recipientUserId" in payload &&
+    Number(payload.recipientUserId) === userId &&
+    "type" in payload &&
+    typeof payload.type === "string",
   );
 
 const activeConversationFromPath = (pathname: string | null) => {
@@ -161,7 +161,8 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
         queueNotificationReadRetry: store.queueNotificationReadRetry,
       });
       await loadPendingBadgeNotifications((pending) => {
-        if (active) useBadgeNotificationStore.getState().enqueueNotifications(pending);
+        if (active)
+          useBadgeNotificationStore.getState().enqueueNotifications(pending);
       });
     };
 
@@ -175,7 +176,9 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
 
     const handleNew = (payload: AppNotification) => {
       if (!isCanonicalNotificationForUser(payload, normalizedUserId)) return;
-      const activeConversationId = activeConversationFromPath(pathnameRef.current);
+      const activeConversationId = activeConversationFromPath(
+        pathnameRef.current,
+      );
       const conversationId = String(payload.data?.conversationId ?? "");
       const isOpenConversation =
         payload.type === "message" &&
@@ -202,7 +205,8 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
       applyRealtimeUnreadCount(Number(payload?.unreadCount));
     };
     const handlePicksChanged = (payload: { userId: number }) => {
-      if (active && payload?.userId === normalizedUserId) notifyPredictionPicksChanged(payload.userId);
+      if (active && payload?.userId === normalizedUserId)
+        notifyPredictionPicksChanged(payload.userId);
     };
 
     const handleConnect = () => {
@@ -234,7 +238,10 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
         })
         .catch((error) => {
           if (__DEV__) {
-            console.warn("[Notifications] Realtime synchronization failed", error);
+            console.warn(
+              "[Notifications] Realtime synchronization failed",
+              error,
+            );
           }
         });
     };
@@ -264,7 +271,8 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
 
     const handleAppState = (nextState: AppStateStatus) => {
       const returning =
-        (appState === "inactive" || appState === "background") && nextState === "active";
+        (appState === "inactive" || appState === "background") &&
+        nextState === "active";
       appState = nextState;
       if (!returning) return;
       void Promise.allSettled([refreshNotifications(), recoverBadges()]).then(
@@ -282,7 +290,10 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
       );
     };
 
-    const appStateSubscription = AppState.addEventListener("change", handleAppState);
+    const appStateSubscription = AppState.addEventListener(
+      "change",
+      handleAppState,
+    );
     void connect();
 
     return () => {

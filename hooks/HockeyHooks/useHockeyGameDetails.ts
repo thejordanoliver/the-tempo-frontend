@@ -117,7 +117,6 @@ export type Predictor = {
 
 export type StatsTeam = {
   id: number;
-  espnId: number;
   name: string;
   fullName: string;
   code: string;
@@ -153,15 +152,9 @@ export type TeamStatsGroup = {
 
 export type TeamStats = TeamStatsGroup[];
 
-/* ---------------------------------- */
-/* Play participant types             */
-/* ---------------------------------- */
-
 export type PlayParticipantAthlete = {
   id: number | null;
-  espnId: number | null;
   teamId: number | null;
-  teamEspnId: number | null;
   name: string | null;
   displayName: string | null;
   firstName: string | null;
@@ -175,7 +168,6 @@ export type PlayParticipantAthlete = {
 
 export type PlayParticipant = {
   teamId: number | null;
-  teamEspnId: number | null;
   athlete: PlayParticipantAthlete;
 };
 
@@ -200,7 +192,6 @@ export type Play = {
   scoreValue: number;
   team: {
     id: number;
-    espnId: number;
   };
   participants?: PlayParticipant[];
   wallclock: string;
@@ -212,10 +203,6 @@ export type Play = {
   pointsAttempted: number;
   shortDescription: string;
 };
-
-/* ---------------------------------- */
-/* Leader types                       */
-/* ---------------------------------- */
 
 export type Statistics = {
   name: string;
@@ -229,7 +216,6 @@ export type Statistics = {
 
 export type LeaderAthlete = {
   id: number;
-  espnId: number;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -261,10 +247,6 @@ export type Leaders = {
   team: StatsTeam;
   leaders: PlayerLeaders[];
 };
-
-/* ---------------------------------- */
-/* Score and details                  */
-/* ---------------------------------- */
 
 export type GameStatus = {
   id: string;
@@ -335,10 +317,6 @@ type HockeyGameDetailsResponse = {
   details: GameDetails;
 };
 
-/* ---------------------------------- */
-/* Hook                               */
-/* ---------------------------------- */
-
 export const useHockeyGameDetails = (
   league: string | undefined,
   gameId?: string | number | null,
@@ -351,9 +329,6 @@ export const useHockeyGameDetails = (
 
   const skipFetch = !league || !gameId;
 
-  /* ---------------------------------- */
-  /* Fetch from /api/details             */
-  /* ---------------------------------- */
   const fetchDetails = useCallback(
     async (silent = false) => {
       if (skipFetch) return;
@@ -388,9 +363,6 @@ export const useHockeyGameDetails = (
     [league, gameId, skipFetch],
   );
 
-  /* ---------------------------------- */
-  /* Initial fetch                      */
-  /* ---------------------------------- */
   useEffect(() => {
     if (skipFetch) return;
     void Promise.resolve().then(() => fetchDetails(true));

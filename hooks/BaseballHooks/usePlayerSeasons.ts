@@ -358,9 +358,9 @@ export function useBaseballPlayerSeasons(
 
         setError(
           err?.response?.data?.error ||
-          err?.response?.data?.message ||
-          err?.message ||
-          "Failed to fetch player seasons",
+            err?.response?.data?.message ||
+            err?.message ||
+            "Failed to fetch player seasons",
         );
 
         setData([]);

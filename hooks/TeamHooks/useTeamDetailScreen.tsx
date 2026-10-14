@@ -41,9 +41,13 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
     void Promise.resolve().then(() => {
       if (!cancelled) setModalVisible(false);
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [header.league, header.teamId]);
-  const detailsLeague = ["socc", "msoc", "wsoc"].includes(tabLeague.trim().toLowerCase())
+  const detailsLeague = ["socc", "msoc", "wsoc"].includes(
+    tabLeague.trim().toLowerCase(),
+  )
     ? "socc"
     : header.league;
   const {
@@ -52,22 +56,29 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
     error: teamDetailsError,
     refetch: refreshTeamDetails,
   } = useTeams(detailsLeague, header.teamId);
-  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } = useTeamTabs(tabLeague);
+  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
+    useTeamTabs(tabLeague);
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
     usePagerTabScrollProgress();
 
-  const handleTabPress = useCallback((tab: string) => {
-    const index = tabs.indexOf(tab);
-    if (index < 0) return;
-    setSelectedTab(tab);
-  }, [setSelectedTab, tabs]);
+  const handleTabPress = useCallback(
+    (tab: string) => {
+      const index = tabs.indexOf(tab);
+      if (index < 0) return;
+      setSelectedTab(tab);
+    },
+    [setSelectedTab, tabs],
+  );
 
-  const handlePageChange = useCallback((index: number) => {
-    const tab = tabs[index];
-    if (!tab) return;
-    syncPageScrollProgress(index);
-    setSelectedTab(tab);
-  }, [setSelectedTab, syncPageScrollProgress, tabs]);
+  const handlePageChange = useCallback(
+    (index: number) => {
+      const tab = tabs[index];
+      if (!tab) return;
+      syncPageScrollProgress(index);
+      setSelectedTab(tab);
+    },
+    [setSelectedTab, syncPageScrollProgress, tabs],
+  );
 
   const runRefresh = useCallback(async (refresh: () => Promise<void>) => {
     setRefreshing(true);
@@ -82,9 +93,10 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
   const favoriteToggleId = header.favorite?.toggleId;
   const notificationTeamId = header.notificationTeamId ?? header.teamId;
   const favoriteLeague = header.favoriteLeague ?? header.league;
-  const favorited = favoriteLookupId !== undefined
-    ? isFavorite(favoriteLeague, favoriteLookupId)
-    : false;
+  const favorited =
+    favoriteLookupId !== undefined
+      ? isFavorite(favoriteLeague, favoriteLookupId)
+      : false;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -97,22 +109,46 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
           onBack={router.back}
           isTeamScreen
           isFavorite={favorited}
-          onToggleFavorite={favoriteToggleId === undefined ? undefined :
-            () => toggleFavorite(favoriteLeague, favoriteToggleId)}
+          onToggleFavorite={
+            favoriteToggleId === undefined
+              ? undefined
+              : () => toggleFavorite(favoriteLeague, favoriteToggleId)
+          }
           onToggleNotifications={() =>
-            void toggleNotifications(header.league, notificationTeamId)}
+            void toggleNotifications(header.league, notificationTeamId)
+          }
           isNotified={isNotified(header.league, notificationTeamId)}
-          onOpenInfo={header.infoEnabled ? () => setModalVisible(true) : undefined}
+          onOpenInfo={
+            header.infoEnabled ? () => setModalVisible(true) : undefined
+          }
           league={header.league}
         />
       ),
     });
-  }, [navigation, router, isDark, header.league, header.teamId, notificationTeamId, header.logo,
-    header.teamName, header.teamColor, header.infoEnabled,
-    favoriteLeague, favoriteToggleId, favorited, toggleFavorite, toggleNotifications, isNotified]);
+  }, [
+    navigation,
+    router,
+    isDark,
+    header.league,
+    header.teamId,
+    notificationTeamId,
+    header.logo,
+    header.teamName,
+    header.teamColor,
+    header.infoEnabled,
+    favoriteLeague,
+    favoriteToggleId,
+    favorited,
+    toggleFavorite,
+    toggleNotifications,
+    isNotified,
+  ]);
 
   return {
-    teamDetails, teamDetailsLoading, teamDetailsError, refreshTeamDetails,
+    teamDetails,
+    teamDetailsLoading,
+    teamDetailsError,
+    refreshTeamDetails,
     teamInfo: {
       enabled: header.infoEnabled,
       league: detailsLeague,
@@ -120,8 +156,17 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
       teamLogo: header.logo,
       teamColor: header.teamColor,
     },
-    isDark, tabs, selectedTab, hasVisitedTab,
-    scrollProgress, handlePageScroll, handleTabPress, handlePageChange,
-    refreshing, runRefresh, modalVisible, setModalVisible,
+    isDark,
+    tabs,
+    selectedTab,
+    hasVisitedTab,
+    scrollProgress,
+    handlePageScroll,
+    handleTabPress,
+    handlePageChange,
+    refreshing,
+    runRefresh,
+    modalVisible,
+    setModalVisible,
   };
 }

@@ -116,16 +116,8 @@ export type KeyEvent = {
   [key: string]: any;
 };
 
-/* -------------------------------------------------------------------------- */
-/* Shot map                                                                   */
-/* -------------------------------------------------------------------------- */
-
 export type ShotOutcome =
-  | "goal"
-  | "saved"
-  | "off-target"
-  | "blocked"
-  | "unknown";
+  "goal" | "saved" | "off-target" | "blocked" | "unknown";
 
 export type ShotTeam = {
   id: string | number | null;
@@ -143,22 +135,15 @@ export type ShotPlayer = {
 };
 
 export type ShotCoordinates = {
-  /**
-   * Position where the shot originated.
-   * ESPN normally provides these values on a 0–100 scale.
-   */
+  /** Shot origin, usually on a 0–100 scale. */
   x: number | null;
   y: number | null;
 
-  /**
-   * Position where the shot ended or traveled toward.
-   */
+  /** Shot endpoint or target. */
   endX: number | null;
   endY: number | null;
 
-  /**
-   * Horizontal position across the goal mouth.
-   */
+  /** Horizontal position across the goal mouth. */
   goalY: number | null;
 };
 
@@ -196,10 +181,6 @@ export type Predictor = {
     teamChanceLoss: string;
   };
 };
-
-/* -------------------------------------------------------------------------- */
-/* Score                                                                      */
-/* -------------------------------------------------------------------------- */
 
 export type Score = {
   gameId: string;
@@ -277,10 +258,6 @@ export type Score = {
   resultCount?: null;
 };
 
-/* -------------------------------------------------------------------------- */
-/* Details                                                                    */
-/* -------------------------------------------------------------------------- */
-
 export type TeamRecord = {
   overall: string | null;
   home?: string | null;
@@ -341,10 +318,6 @@ export type GameDetailsResponse = {
   details: Details;
 };
 
-/* -------------------------------------------------------------------------- */
-/* Hook options                                                               */
-/* -------------------------------------------------------------------------- */
-
 type UseSoccerGameDetailsOptions = {
   enabled?: boolean;
   pollLiveGames?: boolean;
@@ -358,10 +331,6 @@ type FetchDetailsOptions = {
 function isLiveScore(score?: Score) {
   return score?.status.state === "in";
 }
-
-/* -------------------------------------------------------------------------- */
-/* Hook                                                                       */
-/* -------------------------------------------------------------------------- */
 
 export const useSoccerGameDetails = (
   league: string | undefined,
@@ -505,9 +474,6 @@ export const useSoccerGameDetails = (
     isLive: isLiveScore(score),
     lastRefresh,
 
-    /**
-     * Convenience values for shot-map components.
-     */
     shotMapAvailable: score?.shotMapAvailable === true,
     shotMap: score?.shotMap ?? [],
   };

@@ -1,6 +1,5 @@
 export interface NHLTeam {
   id: number;
-  espnId: number;
   name: string;
   fullName: string;
   code: string;
@@ -65,7 +64,6 @@ export type HockeyGame = {
   innings: number;
   home: {
     id: number;
-    espnId: number;
     name: string;
     code: string;
     primaryColor: string;
@@ -79,7 +77,6 @@ export type HockeyGame = {
   };
   away: {
     id: number;
-    espnId: number;
     name: string;
     fullName: string;
     code: string;

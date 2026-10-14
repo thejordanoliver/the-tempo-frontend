@@ -56,7 +56,6 @@ type TeamBlock = PlayerStats[number];
 type TeamInfo = TeamBlock["team"];
 
 type AthleteRecord = Athlete & {
-  espnId?: number | string | null;
   firstName?: string | null;
   lastName?: string | null;
   fullName?: string | null;
@@ -67,7 +66,6 @@ type AthleteRecord = Athlete & {
   } | null;
   athlete?: {
     id?: number | string | null;
-    espnId?: number | string | null;
     firstName?: string | null;
     lastName?: string | null;
     fullName?: string | null;

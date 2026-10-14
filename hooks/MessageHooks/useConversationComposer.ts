@@ -163,7 +163,8 @@ export function useConversationComposer({
       sendInFlightRef.current ||
       isUploadingImage ||
       (!trimmedMessage && !selectedAttachment)
-    ) return;
+    )
+      return;
 
     sendInFlightRef.current = true;
     setIsSending(true);
@@ -186,7 +187,14 @@ export function useConversationComposer({
       sendInFlightRef.current = false;
       setIsSending(false);
     }
-  }, [draftMessage, isUploadingImage, notifyTyping, scrollToBottom, selectedAttachment, sendMessage]);
+  }, [
+    draftMessage,
+    isUploadingImage,
+    notifyTyping,
+    scrollToBottom,
+    selectedAttachment,
+    sendMessage,
+  ]);
 
   return {
     inputRef,

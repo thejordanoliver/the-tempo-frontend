@@ -15,7 +15,7 @@ type UseUserPostsOptions = {
 };
 
 const getErrorMessage = (error: unknown, fallback: string) => {
-  if (isAxiosError<{ error?: string; message?: string; }>(error)) {
+  if (isAxiosError<{ error?: string; message?: string }>(error)) {
     return (
       error.response?.data?.error ||
       error.response?.data?.message ||
@@ -169,9 +169,9 @@ export function useUserPosts({
       current.map((post) =>
         String(post.id) === String(updatedPost.id)
           ? {
-            ...post,
-            ...updatedPost,
-          }
+              ...post,
+              ...updatedPost,
+            }
           : post,
       ),
     );

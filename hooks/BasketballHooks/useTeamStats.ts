@@ -287,7 +287,9 @@ export function useTeamStats({
     void Promise.resolve().then(() => {
       if (!cancelled) void fetchTeamStats();
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [enabled, fetchTeamStats]);
 
   return {

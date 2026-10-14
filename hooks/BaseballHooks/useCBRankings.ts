@@ -3,10 +3,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-/* =====================================================
-   TYPES
-===================================================== */
-
 export type CBTeamWithGroups = StandingsTeamInfo & {
   abbreviation?: string | null;
   groups?: {
@@ -55,16 +51,8 @@ export type CBRankingsResponse = {
   };
 };
 
-/* =====================================================
-   CONFIG
-===================================================== */
-
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 const EMPTY_ALL_RANKINGS: CBRankPoll[] = [];
-
-/* =====================================================
-   NORMALIZATION
-===================================================== */
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -199,10 +187,6 @@ const getErrorMessage = (err: unknown) => {
   return "Failed to fetch rankings";
 };
 
-/* =====================================================
-   HOOK
-===================================================== */
-
 export const useCBRankings = (league: "cb" | "sb") => {
   const CACHE_KEY = `rankings_cache_${league}_v2`;
   const LAST_REFRESH_KEY = `rankings_last_refresh_${league}_v2`;
@@ -213,10 +197,6 @@ export const useCBRankings = (league: "cb" | "sb") => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  /* --------------------------------------------------
-     CACHE HELPERS
-  -------------------------------------------------- */
 
   const saveCache = useCallback(
     async (data: CBRankingsResponse) => {
@@ -257,10 +237,6 @@ export const useCBRankings = (league: "cb" | "sb") => {
       }
     }, [CACHE_KEY]);
 
-  /* --------------------------------------------------
-     FETCH
-  -------------------------------------------------- */
-
   const fetchLatest = useCallback(async () => {
     try {
       const res = await apiClient.get<unknown>(
@@ -279,10 +255,6 @@ export const useCBRankings = (league: "cb" | "sb") => {
     }
   }, [LAST_REFRESH_KEY, league, saveCache]);
 
-  /* --------------------------------------------------
-     BACKGROUND REFRESH
-  -------------------------------------------------- */
-
   const fetchLatestInBackground = useCallback(async () => {
     try {
       const last = await AsyncStorage.getItem(LAST_REFRESH_KEY);
@@ -290,12 +262,8 @@ export const useCBRankings = (league: "cb" | "sb") => {
       if (last && Date.now() - parseInt(last, 10) < 5 * 60 * 1000) return;
 
       await fetchLatest();
-    } catch { }
+    } catch {}
   }, [LAST_REFRESH_KEY, fetchLatest]);
-
-  /* --------------------------------------------------
-     INITIAL LOAD
-  -------------------------------------------------- */
 
   const fetchRankings = useCallback(async () => {
     setLoading(true);
@@ -318,10 +286,6 @@ export const useCBRankings = (league: "cb" | "sb") => {
     void Promise.resolve().then(() => fetchRankings());
   }, [fetchRankings]);
 
-  /* --------------------------------------------------
-     MANUAL REFRESH
-  -------------------------------------------------- */
-
   const refresh = useCallback(async () => {
     try {
       setRefreshing(true);
@@ -334,10 +298,6 @@ export const useCBRankings = (league: "cb" | "sb") => {
       setRefreshing(false);
     }
   }, [CACHE_KEY, fetchLatest]);
-
-  /* --------------------------------------------------
-     RANKED TEAM SET
-  -------------------------------------------------- */
 
   const rankingsByKey = rankingsResponse.rankings;
 

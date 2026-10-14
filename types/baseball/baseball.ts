@@ -54,7 +54,6 @@ export type BaseballGame = {
   innings: number;
   home: {
     id: number;
-    espnId: number;
     name: string;
     code: string;
     primaryColor: string;
@@ -68,7 +67,6 @@ export type BaseballGame = {
   };
   away: {
     id: number;
-    espnId: number;
     name: string;
     fullName: string;
     code: string;

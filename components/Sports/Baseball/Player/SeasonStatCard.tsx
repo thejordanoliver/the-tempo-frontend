@@ -1,16 +1,15 @@
-import { useMemo } from "react";
 import SeasonStatCardLayout, {
   type SeasonStatItem,
 } from "@/components/Player/SeasonStatCardLayout";
 import type { BaseballPlayerSeason } from "@/hooks/BaseballHooks/usePlayerSeasons";
 import type { Stat } from "@/hooks/FootballHooks/usePlayerSeasons";
-import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Text, View } from "react-native";
+import { useMemo } from "react";
+import { Text } from "react-native";
 import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
-import { getFootballSeason } from "utils/common/dateUtils";
+import { getMLBSeason } from "utils/common/dateUtils";
 
 type Props = {
   position: string;
@@ -49,10 +48,7 @@ function normalizeText(value?: string | number | null) {
 
 function getSeasonDisplayYear(season?: BaseballPlayerSeason | null) {
   return String(
-    season?.displaySeason ??
-      season?.year ??
-      season?.season ??
-      getFootballSeason(),
+    season?.displaySeason ?? season?.year ?? season?.season ?? getMLBSeason(),
   );
 }
 
@@ -156,15 +152,6 @@ function getStatDisplay(stats: Stat[], aliases: string[]) {
   return findStat(stats, aliases).displayValue;
 }
 
-function hasAnyStats(stats: Stat[]) {
-  return stats.some((stat) => {
-    const value = stat.displayValue ?? stat.value;
-    return (
-      value !== null && value !== undefined && value !== "" && value !== "-"
-    );
-  });
-}
-
 function getDisplayStats(
   stats: Stat[],
   position: string,
@@ -209,25 +196,14 @@ export default function SeasonStatCard({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const global = useMemo(() => globalStyles(isDark), [isDark]);
+  const stats = getAllStats(season);
 
   if (!isActive) return null;
 
   if (loading) return <SeasonStatCardSkeleton />;
-  const stats = getAllStats(season);
 
   if (error) {
     return <Text style={global.errorText}>Couldn’t load stats</Text>;
-  }
-
-  if (!season || !hasAnyStats(stats)) {
-    return (
-      <View>
-        <CenteredHeader isDark={isDark}>
-          {getFootballSeason()} Season
-        </CenteredHeader>
-        <Text style={global.emptyText}>No season stats available</Text>
-      </View>
-    );
   }
 
   return (

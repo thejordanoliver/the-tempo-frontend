@@ -1,5 +1,5 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-// hooks/useAuth.ts
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -60,9 +60,7 @@ const loadStoredAuthSnapshot = async (): Promise<{
   ]);
 
   const stored: Record<string, string | null> = Object.fromEntries(values);
-  const parsedUserId = stored.userId
-    ? Number.parseInt(stored.userId, 10)
-    : NaN;
+  const parsedUserId = stored.userId ? Number.parseInt(stored.userId, 10) : NaN;
 
   if (
     !accessToken ||
@@ -252,10 +250,9 @@ export function useAuth() {
     try {
       if (refreshToken) {
         try {
-          await axios.post(
-            `${apiClient.defaults.baseURL}/api/logout`,
-            { refreshToken },
-          );
+          await axios.post(`${apiClient.defaults.baseURL}/api/logout`, {
+            refreshToken,
+          });
         } catch (err) {
           console.warn("Failed to revoke refresh token on server:", err);
         }

@@ -6,7 +6,7 @@ import {
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useCallback, useMemo } from "react";
 
-export function resolveCanonicalFavoriteSportId(
+export function resolveFavoriteSportId(
   league: unknown,
 ): FavoriteSportId | null {
   if (!isFavoriteSportId(league)) {
@@ -26,13 +26,11 @@ export function useLeagueFavoriteHeader(league: unknown) {
   } = useFavoriteTeamsContext();
 
   const favoriteSportId = useMemo(
-    () => resolveCanonicalFavoriteSportId(league),
+    () => resolveFavoriteSportId(league),
     [league],
   );
 
-  const isFavorite = favoriteSportId
-    ? isFavoriteSport(favoriteSportId)
-    : false;
+  const isFavorite = favoriteSportId ? isFavoriteSport(favoriteSportId) : false;
   const favoritePending =
     favoriteSportsLoading || favoriteSportsSaving || !favoriteSportsReady;
 

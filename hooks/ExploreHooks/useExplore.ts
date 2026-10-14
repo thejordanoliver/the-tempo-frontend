@@ -112,9 +112,7 @@ function removeDuplicateRecentSearch(
 ) {
   const itemKey = getExploreResultIdentity(itemToRemove);
 
-  return searches.filter(
-    (item) => getExploreResultIdentity(item) !== itemKey,
-  );
+  return searches.filter((item) => getExploreResultIdentity(item) !== itemKey);
 }
 
 async function persistRecentSearches(
@@ -191,29 +189,32 @@ export function useExplore() {
     if (event) sendExploreSearchEvent(event);
   }, []);
 
-  const setSearchQuery = useCallback((nextQuery: string) => {
-    clearPendingSettledEvent();
-    setQuery(nextQuery);
-    const nextQueryLength = normalizeExploreSearchQuery(nextQuery).length;
+  const setSearchQuery = useCallback(
+    (nextQuery: string) => {
+      clearPendingSettledEvent();
+      setQuery(nextQuery);
+      const nextQueryLength = normalizeExploreSearchQuery(nextQuery).length;
 
-    if (canSearchExploreQuery(nextQuery)) {
-      startSearchSession();
-      return;
-    }
+      if (canSearchExploreQuery(nextQuery)) {
+        startSearchSession();
+        return;
+      }
 
-    if (nextQueryLength === 0) finishSearchSession();
+      if (nextQueryLength === 0) finishSearchSession();
 
-    requestIdRef.current += 1;
-    abortControllerRef.current?.abort();
-    abortControllerRef.current = null;
-    setResults([]);
-    setError(
-      nextQueryLength > EXPLORE_SEARCH_MAX_QUERY_LENGTH
-        ? "Search query is too long"
-        : null,
-    );
-    setLoading(false);
-  }, [clearPendingSettledEvent, finishSearchSession, startSearchSession]);
+      requestIdRef.current += 1;
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = null;
+      setResults([]);
+      setError(
+        nextQueryLength > EXPLORE_SEARCH_MAX_QUERY_LENGTH
+          ? "Search query is too long"
+          : null,
+      );
+      setLoading(false);
+    },
+    [clearPendingSettledEvent, finishSearchSession, startSearchSession],
+  );
 
   const loadRecentSearches = useCallback(async () => {
     const requestId = ++recentSearchLoadRequestIdRef.current;
@@ -366,7 +367,10 @@ export function useExplore() {
     (item: ResultItem) => {
       const searchSessionId = searchSessionIdRef.current;
       const normalizedSelectionQuery = normalizeExploreSearchQuery(query);
-      if (!searchSessionId || !canSearchExploreQuery(normalizedSelectionQuery)) {
+      if (
+        !searchSessionId ||
+        !canSearchExploreQuery(normalizedSelectionQuery)
+      ) {
         return;
       }
 
@@ -386,7 +390,8 @@ export function useExplore() {
           position: position + 1,
         }),
       );
-    }, [flushPendingSettledEvent, query, results, searchScope],
+    },
+    [flushPendingSettledEvent, query, results, searchScope],
   );
 
   const saveToRecentSearches = useCallback(async (item: ResultItem) => {

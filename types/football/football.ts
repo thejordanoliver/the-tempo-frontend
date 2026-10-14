@@ -90,7 +90,6 @@ export type FootballGame = {
 
   home: {
     id: number;
-    espnId: number;
     uid: string;
     name: string;
     code: string;
@@ -106,7 +105,6 @@ export type FootballGame = {
   };
   away: {
     id: number;
-    espnId: number;
     uid: string;
     name: string;
     code: string;
@@ -150,7 +148,6 @@ export type FootballGameCardProps = {
 
 export const emptyAwayTeam = {
   id: 0,
-  espnId: -2,
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
   name: "TBD",
@@ -174,7 +171,6 @@ export const emptyAwayTeam = {
 
 export const emptyHomeTeam = {
   id: 0,
-  espnId: -1,
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
   name: "TBD",
@@ -208,7 +204,6 @@ export type Conference = {
 
 export interface CFBPlayoffBracketTeam {
   id: number | string;
-  espnId?: string | number;
   oddsId?: string;
   name: string;
   shortName?: string;
@@ -306,7 +301,6 @@ export type NFLPlayoffVenue = {
 
 export type NFLPlayoffTeam = {
   id: number;
-  espnId: number;
   uid: string;
   name: string;
   code: string;

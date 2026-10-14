@@ -36,7 +36,8 @@ export function useLeagueLayoutPreference() {
         const storedId = Number(await AsyncStorage.getItem("userId"));
         if (!active || version !== generation.current) return;
         if (storedId !== owner.current) {
-          owner.current = Number.isSafeInteger(storedId) && storedId > 0 ? storedId : null;
+          owner.current =
+            Number.isSafeInteger(storedId) && storedId > 0 ? storedId : null;
           setLayout("carousel");
         }
         const response = await getLeagueLayout(request.signal);
@@ -44,8 +45,14 @@ export function useLeagueLayoutPreference() {
         owner.current = response.userId;
         setLayout(response.leagueLayout);
       } catch {
-        if (active && version === generation.current && !request.signal.aborted) {
-          setError("Couldn't load your league layout. Try again when connected.");
+        if (
+          active &&
+          version === generation.current &&
+          !request.signal.aborted
+        ) {
+          setError(
+            "Couldn't load your league layout. Try again when connected.",
+          );
         }
       } finally {
         if (active && version === generation.current) setLoading(false);
@@ -57,7 +64,7 @@ export function useLeagueLayoutPreference() {
       void load(accessToken);
     });
     const initialVersion = generation.current;
-    void getAccessToken().then(token => {
+    void getAccessToken().then((token) => {
       if (active && generation.current === initialVersion) void load(token);
     });
     return () => {
@@ -68,31 +75,43 @@ export function useLeagueLayoutPreference() {
     };
   }, []);
 
-  const setLeagueLayout = useCallback(async (next: LeagueLayout) => {
-    if (loading || busy.current || owner.current == null) return;
-    const previous = leagueLayout;
-    const version = generation.current;
-    busy.current = true;
-    setLayout(next);
-    setSaving(true);
-    setError(null);
-    try {
-      const response = await saveLeagueLayout(next);
-      if (version === generation.current && response.userId === owner.current) {
-        setLayout(response.leagueLayout);
+  const setLeagueLayout = useCallback(
+    async (next: LeagueLayout) => {
+      if (loading || busy.current || owner.current == null) return;
+      const previous = leagueLayout;
+      const version = generation.current;
+      busy.current = true;
+      setLayout(next);
+      setSaving(true);
+      setError(null);
+      try {
+        const response = await saveLeagueLayout(next);
+        if (
+          version === generation.current &&
+          response.userId === owner.current
+        ) {
+          setLayout(response.leagueLayout);
+        }
+      } catch {
+        if (version === generation.current) {
+          setLayout(previous);
+          setError("Couldn't save your league layout. Please try again.");
+        }
+      } finally {
+        if (version === generation.current) {
+          busy.current = false;
+          setSaving(false);
+        }
       }
-    } catch {
-      if (version === generation.current) {
-        setLayout(previous);
-        setError("Couldn't save your league layout. Please try again.");
-      }
-    } finally {
-      if (version === generation.current) {
-        busy.current = false;
-        setSaving(false);
-      }
-    }
-  }, [leagueLayout, loading]);
+    },
+    [leagueLayout, loading],
+  );
 
-  return { leagueLayout, setLeagueLayout, leagueLayoutLoading: loading, leagueLayoutSaving: saving, leagueLayoutError: error };
+  return {
+    leagueLayout,
+    setLeagueLayout,
+    leagueLayoutLoading: loading,
+    leagueLayoutSaving: saving,
+    leagueLayoutError: error,
+  };
 }

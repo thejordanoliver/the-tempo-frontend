@@ -28,7 +28,6 @@ export type Player = {
 
 export type SeasonTeam = {
   id: number | string;
-  espn_id: number | string | null;
   name: string | null;
   short_name: string | null;
   code: string | null;
@@ -54,7 +53,7 @@ export type ApiSeason = {
   team?: SeasonTeam | null;
 };
 
-export type CanonicalProfile = {
+export type ResolvedProfile = {
   league: FootballLeague;
   playerId: string;
   redirected: boolean;
@@ -78,7 +77,7 @@ export type PlayerStatsResponse = {
   league: FootballLeague;
   playerId: string;
   player: Player;
-  canonicalProfile?: CanonicalProfile;
+  resolvedProfile?: ResolvedProfile;
   seasons: ApiSeason[];
   count?: number;
   hasStats?: boolean;
@@ -273,7 +272,9 @@ const normalizeFootballLeague = (
   value: unknown,
   fallback: FootballLeague,
 ): FootballLeague => {
-  const normalized = String(value ?? "").trim().toLowerCase();
+  const normalized = String(value ?? "")
+    .trim()
+    .toLowerCase();
   return isFootballLeague(normalized) ? normalized : fallback;
 };
 
@@ -320,11 +321,10 @@ export function usePlayerSeasons(
     college: string | null;
   } | null>(null);
 
-  const [resolvedLeague, setResolvedLeague] =
-    useState<FootballLeague>(league);
+  const [resolvedLeague, setResolvedLeague] = useState<FootballLeague>(league);
 
-  const [canonicalProfile, setCanonicalProfile] =
-    useState<CanonicalProfile | null>(null);
+  const [resolvedProfile, setResolvedProfile] =
+    useState<ResolvedProfile | null>(null);
 
   const [collegeLeague, setCollegeLeague] = useState<"cfb" | null>(null);
 
@@ -352,7 +352,7 @@ export function usePlayerSeasons(
       try {
         setLoading(true);
         setError(null);
-        setCanonicalProfile(null);
+        setResolvedProfile(null);
         setResolvedRequestKey(null);
         setCurrentSeasonRankings({});
 
@@ -429,17 +429,17 @@ export function usePlayerSeasons(
 
         setResolvedLeague(effectiveLeague);
 
-        const canonicalPlayerId = normalizePlayerId(
-          json.canonicalProfile?.playerId ?? json.playerId,
+        const id = normalizePlayerId(
+          json.resolvedProfile?.playerId ?? json.playerId,
           String(playerId),
         );
-        const redirectedFrom = json.canonicalProfile?.redirectedFrom;
+        const redirectedFrom = json.resolvedProfile?.redirectedFrom;
 
-        setCanonicalProfile({
+        setResolvedProfile({
           league: effectiveLeague,
-          playerId: canonicalPlayerId,
+          playerId: id,
           redirected:
-            json.canonicalProfile?.redirected ??
+            json.resolvedProfile?.redirected ??
             effectiveLeague !== requestedLeague,
           redirectedFrom: redirectedFrom
             ? {
@@ -486,7 +486,7 @@ export function usePlayerSeasons(
         setRawCollegeSeasons([]);
         setCurrentSeasonRankings({});
         setPlayer(null);
-        setCanonicalProfile(null);
+        setResolvedProfile(null);
         setCollegeLeague(null);
         setResolvedLeague(fallbackLeague);
         setResolvedRequestKey(requestKey);
@@ -509,9 +509,7 @@ export function usePlayerSeasons(
 
   const currentData = hasCurrentResult ? data : EMPTY_FOOTBALL_SEASONS;
 
-  const currentRawSeasons = hasCurrentResult
-    ? rawSeasons
-    : EMPTY_API_SEASONS;
+  const currentRawSeasons = hasCurrentResult ? rawSeasons : EMPTY_API_SEASONS;
 
   const currentCollegeData = hasCurrentResult
     ? collegeData
@@ -522,35 +520,20 @@ export function usePlayerSeasons(
     : EMPTY_API_SEASONS;
 
   return {
-    /**
-     * Canonical/current league seasons.
-     *
-     * For an NFL player this is NFL data only.
-     * If a CFB route resolves to an NFL player, this is still NFL data.
-     */
+    // A college route may resolve to the pro profile.
     data: currentData,
     rawSeasons: currentRawSeasons,
 
-    /**
-     * Historical college seasons linked to the canonical pro profile.
-     */
+    // College seasons linked to the pro profile.
     collegeData: currentCollegeData,
     rawCollegeSeasons: currentRawCollegeSeasons,
     collegeLeague: hasCurrentResult ? collegeLeague : null,
 
-    /**
-     * Always the canonical profile returned by the backend.
-     * For pro players this stays the NFL profile.
-     */
     player: hasCurrentResult ? player : null,
 
-    /**
-     * Use this when deciding which league the stat table should treat
-     * as the primary/current league.
-     */
     resolvedLeague: hasCurrentResult ? resolvedLeague : fallbackLeague,
 
-    canonicalProfile: hasCurrentResult ? canonicalProfile : null,
+    resolvedProfile: hasCurrentResult ? resolvedProfile : null,
 
     currentSeasonRankings: hasCurrentResult ? currentSeasonRankings : {},
 

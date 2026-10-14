@@ -27,9 +27,13 @@ export function useEditFavorites(selectedTab: EditFavoritesHeaderTab) {
 
   const [teamSearch, setTeamSearch] = useState("");
   const [sportSearch, setSportSearch] = useState("");
-  const [draftFavoriteTeams, setDraftFavoriteTeams] = useState<FavoriteTeamKey[]>([]);
+  const [draftFavoriteTeams, setDraftFavoriteTeams] = useState<
+    FavoriteTeamKey[]
+  >([]);
   const [favoriteTeamsDirty, setFavoriteTeamsDirty] = useState(false);
-  const [draftFavoriteSports, setDraftFavoriteSports] = useState<FavoriteSportId[]>([]);
+  const [draftFavoriteSports, setDraftFavoriteSports] = useState<
+    FavoriteSportId[]
+  >([]);
   const [favoriteSportsDirty, setFavoriteSportsDirty] = useState(false);
 
   const [saving, setSaving] = useState(false);

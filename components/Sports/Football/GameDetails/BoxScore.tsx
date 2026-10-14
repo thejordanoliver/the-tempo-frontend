@@ -126,7 +126,7 @@ const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
           </View>
 
           {visibleAthletes.map(({ athlete }, athleteIndex) => {
-            const playerId = athlete.id ?? athlete.espnId;
+            const playerId = athlete.id 
             const playerName =
               athlete.shortName ??
               athlete.displayName ??
@@ -189,7 +189,7 @@ const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
             </View>
 
             {visibleAthletes.map(({ athlete, stats }, athleteIndex) => {
-              const playerId = athlete.id ?? athlete.espnId;
+              const playerId = athlete.id 
 
               return (
                 <View

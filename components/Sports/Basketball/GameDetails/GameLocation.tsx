@@ -83,10 +83,10 @@ export default function GameLocation({
       : null;
 
   const formattedAttendance =
-    venueAttendance !== null &&
-    venueAttendance !== undefined &&
-    !Number.isNaN(Number(venueAttendance))
-      ? Intl.NumberFormat("en-US").format(Number(venueAttendance))
+    typeof venueAttendance === "number" &&
+    Number.isFinite(venueAttendance) &&
+    venueAttendance > 0
+      ? Intl.NumberFormat("en-US").format(venueAttendance)
       : null;
 
   const formattedCapacity =

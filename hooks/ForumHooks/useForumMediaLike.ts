@@ -4,11 +4,21 @@ import { setPostLike } from "services/forumApi";
 import { useLikesStore } from "store/useLikesStore";
 import type { ForumPostImagesModalProps } from "types/forum";
 
-type Options = Pick<ForumPostImagesModalProps,
-  "postId" | "likedByCurrentUser" | "likesCount" | "postAuthorUserId" | "currentUserId">;
+type Options = Pick<
+  ForumPostImagesModalProps,
+  | "postId"
+  | "likedByCurrentUser"
+  | "likesCount"
+  | "postAuthorUserId"
+  | "currentUserId"
+>;
 
 export function useForumMediaLike({
-  postId, likedByCurrentUser = false, likesCount = 0, postAuthorUserId, currentUserId,
+  postId,
+  likedByCurrentUser = false,
+  likesCount = 0,
+  postAuthorUserId,
+  currentUserId,
 }: Options) {
   const [pending, setPending] = useState({ postId, pending: false });
   const likePending = pending.postId === postId && pending.pending;
@@ -17,13 +27,14 @@ export function useForumMediaLike({
 
   useEffect(() => {
     pendingRef.current = false;
-    return () => { requestVersion.current += 1; };
+    return () => {
+      requestVersion.current += 1;
+    };
   }, [postId]);
 
   const setLike = useLikesStore((state) => state.setLike);
   const likeState = useLikesStore((state) => state.likes[postId]);
   const { handleBadgeAwards } = useBadgeNotifications();
-  /* -------------------- Likes -------------------- */
 
   useEffect(() => {
     if (!likeState && postId) {
@@ -78,7 +89,6 @@ export function useForumMediaLike({
       }
     }
   };
-
 
   return { liked, likeCount, likePending, toggleLikePress };
 }

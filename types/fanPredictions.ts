@@ -1,3 +1,5 @@
+import type { BaseballGame } from "./baseball/baseball";
+
 export type FanPredictionTeamId = string | number;
 
 export type RankedPredictionContext = {
@@ -66,7 +68,7 @@ export type FeedPredictionTeam = {
   code: string;
   name: string;
   logo: string | null;
-  color: string;
+  primaryColor: string;
 };
 export type FeedPrediction = {
   sport: RankedPredictionContext["sport"];
@@ -76,6 +78,7 @@ export type FeedPrediction = {
   state: "pre";
   home: FeedPredictionTeam;
   away: FeedPredictionTeam;
+  game?: BaseballGame;
   reason: "favorite_team" | "favorite_league";
   scoring: FanPredictionScoring;
   votes: { team_id: string; votes: number }[];

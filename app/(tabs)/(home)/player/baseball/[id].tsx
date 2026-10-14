@@ -137,6 +137,11 @@ export default function PlayerDetailScreen() {
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
+    if (loading) {
+      navigation.setOptions({ header: () => null });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -148,7 +153,7 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, teamLogo, teamColor]);
+  }, [navigation, teamLogo, teamColor, loading]);
 
   if (loading)
     return (

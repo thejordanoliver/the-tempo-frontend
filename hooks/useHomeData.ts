@@ -48,7 +48,10 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   // feed to personalized scores, so game hooks receive the updated date.
   if (previousShouldResetDate !== shouldResetDate) {
     setPreviousShouldResetDate(shouldResetDate);
-    if (shouldResetDate && !dayjs(selectedDate).isSame(getStartOfToday(), "day")) {
+    if (
+      shouldResetDate &&
+      !dayjs(selectedDate).isSame(getStartOfToday(), "day")
+    ) {
       setSelectedDate(getStartOfToday());
     }
   }

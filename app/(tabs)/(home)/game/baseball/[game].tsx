@@ -272,10 +272,10 @@ export default function GameDetailsScreen(
   const awayErrors = score?.away.errors;
   const homeRuns = score?.home.score;
   const awayRuns = score?.away.score;
-  const homeRecord = home?.record ?? "0—0";
-  const awayRecord = away?.record ?? "0—0";
-  const homeRank = home?.homeRank;
-  const awayRank = away?.awayRank;
+  const homeRecord = score?.home?.record || home?.record || "—";
+  const awayRecord = score?.away?.record || away?.record || "—";
+  const homeRank = score?.home?.rank ?? home?.homeRank;
+  const awayRank = score?.away?.rank ?? away?.awayRank;
   const plays = score?.plays ?? [];
   const situation = score?.situation ?? null;
   const fieldPlay = useMemo<BaseballPlay | null>(() => {

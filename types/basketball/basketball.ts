@@ -48,7 +48,6 @@ export type BasketballGame = {
   periods: number;
   home: {
     id: number;
-    espnId?: number;
     uid: string;
     name: string;
     shortName: string;
@@ -67,7 +66,6 @@ export type BasketballGame = {
   };
   away: {
     id: number;
-    espnId?: number;
     uid: string;
     name: string;
     shortName: string;
@@ -149,11 +147,10 @@ export type RoundDefinition = {
   order: number;
 };
 
-export type NBAPlayoffId = string | number;
+export type TeamId = string | number;
 
 export type NBAPlayoffTeam = {
-  id: NBAPlayoffId;
-  espnId?: NBAPlayoffId | null;
+  id: TeamId;
   name?: string;
   shortName?: string | null;
   code?: string;
@@ -245,7 +242,7 @@ export type NBABracketMatchup = {
   bottomTeam?: NBAPlayoffTeam;
   winner?: NBAPlayoffTeam;
   wins: Record<string, number>;
-  leader?: NBAPlayoffId;
+  leader?: TeamId;
   seriesSummary?: string | null;
   status?: string;
   games: NBAPlayoffGame[];

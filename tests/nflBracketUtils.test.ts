@@ -9,6 +9,7 @@ import {
   getGamesByWeek,
   getRoundConferenceGames,
   orderWildCardGamesForBracket,
+  isTbdTeam,
 } from "../utils/brackets/nflBracketUtils";
 
 const game = (id: number, home: number, away: number, headline = "") =>
@@ -16,9 +17,16 @@ const game = (id: number, home: number, away: number, headline = "") =>
     id,
     date: "2026-01-10T12:00:00Z",
     headline,
-    home: { id: home, espnId: home, code: home > 0 ? `T${home}` : "TBD" },
-    away: { id: away, espnId: away, code: away > 0 ? `T${away}` : "TBD" },
+    home: { id: home, code: home > 0 ? `T${home}` : "TBD" },
+    away: { id: away, code: away > 0 ? `T${away}` : "TBD" },
   }) as NFLPlayoffGame;
+
+test("recognizes ID-only teams and preserves TBD slots", () => {
+  assert.equal(isTbdTeam(game(1, 13, 30).home), false);
+  assert.equal(isTbdTeam(game(1, -1, 0).home), true);
+  assert.equal(isTbdTeam(game(1, -1, 0).away), true);
+  assert.equal(isTbdTeam(undefined), true);
+});
 
 test("orders wild cards by their divisional target and keeps unmatched games last", () => {
   const first = game(1, 2, 7);

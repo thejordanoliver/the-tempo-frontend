@@ -10,11 +10,11 @@ import {
 import type {
   NBABracketMatchup,
   NBAPlayoffGame,
-  NBAPlayoffId,
   NBAPlayoffRound,
   NBAPlayoffSeries,
   NBAPlayoffTeam,
   PlayoffBracket,
+  TeamId,
 } from "@/types/basketball/basketball";
 import { useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
@@ -256,9 +256,9 @@ const getStatusText = (game?: NBAPlayoffGame | null) =>
 
 const getTeamIdentity = (
   team?: NBAPlayoffTeam | null,
-  fallback?: NBAPlayoffId,
-): NBAPlayoffId | undefined => {
-  const identity = team?.id ?? team?.espnId ?? team?.code ?? fallback;
+  fallback?: TeamId,
+): TeamId | undefined => {
+  const identity = team?.id ?? team?.code ?? fallback;
 
   if (identity === undefined || identity === null || identity === "") {
     return undefined;
@@ -269,7 +269,7 @@ const getTeamIdentity = (
 
 const getTeamIdentityKey = (
   team?: NBAPlayoffTeam | null,
-  fallback?: NBAPlayoffId,
+  fallback?: TeamId,
 ) => {
   const identity = getTeamIdentity(team, fallback);
 
@@ -304,7 +304,6 @@ const toBracketTeam = (
 
   return {
     id,
-    espnId: team?.espnId ?? null,
     name: team?.name ?? team?.shortName ?? series.teamNames[index] ?? code,
     shortName: team?.shortName ?? null,
     code,
@@ -552,7 +551,7 @@ const toBracketSeries = (
   const backendLeader =
     series.leader && typeof series.leader === "object"
       ? getTeamIdentity(series.leader as NBAPlayoffTeam)
-      : (series.leader as NBAPlayoffId | undefined);
+      : (series.leader as TeamId | undefined);
 
   const leader =
     backendLeader ??

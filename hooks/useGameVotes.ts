@@ -10,7 +10,6 @@ export type VoteResponse = {
   userVote: string | number | null;
 };
 
-// Fetch vote results for a game
 export const fetchVoteResults = async (
   gameId: number,
   options: { signal?: AbortSignal } = {},

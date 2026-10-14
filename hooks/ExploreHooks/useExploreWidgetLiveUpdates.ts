@@ -1,10 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { subscribeSportsLive } from "services/liveSportsSocket";
-import type {
-  ExploreWidgetDataCache,
-  ExploreWidgetGame,
-} from "types/widgets";
+import type { ExploreWidgetDataCache, ExploreWidgetGame } from "types/widgets";
 
 type TeamLatestPayload = {
   game?: unknown;

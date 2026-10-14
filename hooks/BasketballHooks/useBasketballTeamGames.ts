@@ -1,19 +1,40 @@
 import type { BasketballGame } from "@/types/basketball/basketball";
 import { isAxiosError } from "axios";
 import { useMonthlyTeamSchedule } from "hooks/Sports/useTeamSchedule";
-import type { ScheduleMonthGroup, ScheduleMonthKey, ScheduleMonthOption } from "types/schedule";
+import type {
+  ScheduleMonthGroup,
+  ScheduleMonthKey,
+  ScheduleMonthOption,
+} from "types/schedule";
 
-export type BasketballTeamScheduleLeague = "nba" | "gleague" | "wnba" | "mcbb" | "wcbb";
+export type BasketballTeamScheduleLeague =
+  "nba" | "gleague" | "wnba" | "mcbb" | "wcbb";
 export type BasketballScheduleMonth = ScheduleMonthGroup<BasketballGame>;
 export type BasketballTeamScheduleTeam = {
-  id?: string; code?: string; location?: string; name?: string;
-  displayName?: string; logo?: string; recordSummary?: string;
-  seasonSummary?: string; standingSummary?: string; groups?: any;
+  id?: string;
+  code?: string;
+  location?: string;
+  name?: string;
+  displayName?: string;
+  logo?: string;
+  recordSummary?: string;
+  seasonSummary?: string;
+  standingSummary?: string;
+  groups?: any;
 };
-type Season = { year: number; type: number; name: string; displayName: string; half: number };
+type Season = {
+  year: number;
+  type: number;
+  name: string;
+  displayName: string;
+  half: number;
+};
 export type BasketballTeamScheduleResponse = {
-  league: string; team: BasketballTeamScheduleTeam | null; season: Season;
-  games: BasketballGame[]; months: BasketballScheduleMonth[];
+  league: string;
+  team: BasketballTeamScheduleTeam | null;
+  season: Season;
+  games: BasketballGame[];
+  months: BasketballScheduleMonth[];
 };
 export interface UseBasketballTeamGamesResult {
   games: BasketballGame[];
@@ -28,14 +49,27 @@ export interface UseBasketballTeamGamesResult {
   refresh: () => Promise<void>;
 }
 
-function normalize(response: BasketballTeamScheduleResponse): BasketballTeamScheduleResponse {
-  return { league: response.league, team: response.team ?? null,
-    season: response.season, games: response.games ?? [], months: response.months ?? [] };
+function normalize(
+  response: BasketballTeamScheduleResponse,
+): BasketballTeamScheduleResponse {
+  return {
+    league: response.league,
+    team: response.team ?? null,
+    season: response.season,
+    games: response.games ?? [],
+    months: response.months ?? [],
+  };
 }
 
 function getError(error: unknown): Error {
-  const serverError = isAxiosError<{ error?: string }>(error) ? error.response?.data?.error : undefined;
-  const message = serverError ?? (error instanceof Error ? error.message : "Failed to fetch basketball team schedule");
+  const serverError = isAxiosError<{ error?: string }>(error)
+    ? error.response?.data?.error
+    : undefined;
+  const message =
+    serverError ??
+    (error instanceof Error
+      ? error.message
+      : "Failed to fetch basketball team schedule");
   console.error("BASKETBALL TEAM SCHEDULE ERROR:", error);
   return new Error(message);
 }
@@ -46,8 +80,12 @@ export function useBasketballTeamGames(
   season?: string | number | null,
 ): UseBasketballTeamGamesResult {
   return useMonthlyTeamSchedule({
-    sport: "basketball", league, teamId, season,
+    sport: "basketball",
+    league,
+    teamId,
+    season,
     endpoint: `api/games/basketball/team/${league}/${teamId}${season != null && season !== "" ? `/${season}` : ""}`,
-    normalize, errorFrom: getError,
+    normalize,
+    errorFrom: getError,
   });
 }

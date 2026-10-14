@@ -281,7 +281,7 @@ function mergeTeamOptions(
     const competitions =
       teamOption.competitions?.length > 0
         ? teamOption.competitions
-        : existingTeamOption?.competitions ?? [];
+        : (existingTeamOption?.competitions ?? []);
 
     mergedTeamOptions.set(teamId, {
       ...existingTeamOption,
@@ -298,7 +298,10 @@ function mergeTeamOptions(
         normalizeText(teamOption.label) ??
         existingTeamOption?.teamName ??
         null,
-      teamSlug: normalizeText(teamOption.teamSlug) ?? existingTeamOption?.teamSlug ?? null,
+      teamSlug:
+        normalizeText(teamOption.teamSlug) ??
+        existingTeamOption?.teamSlug ??
+        null,
       competitions,
     });
   };
@@ -362,9 +365,7 @@ export function usePlayerSeasons(
             `api/player/stats/socc/${normalizedPlayerId}`,
             {
               params: {
-                ...(normalizedTeamId
-                  ? { teamId: normalizedTeamId }
-                  : {}),
+                ...(normalizedTeamId ? { teamId: normalizedTeamId } : {}),
                 ...(normalizedCompetition
                   ? { competition: normalizedCompetition }
                   : {}),
@@ -387,13 +388,15 @@ export function usePlayerSeasons(
           setRefreshing(false);
         }
       }
-    }, [
-    allTeams,
-    canFetch,
-    normalizedCompetition,
-    normalizedPlayerId,
-    normalizedTeamId,
-  ]);
+    },
+    [
+      allTeams,
+      canFetch,
+      normalizedCompetition,
+      normalizedPlayerId,
+      normalizedTeamId,
+    ],
+  );
 
   useEffect(() => {
     void Promise.resolve().then(() => fetchStats(false));

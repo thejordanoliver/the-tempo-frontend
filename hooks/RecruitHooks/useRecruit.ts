@@ -46,8 +46,8 @@ export function useRecruit(id: number, league: "MCBB" | "CFB") {
 
         setError(
           err?.response?.data?.error ||
-          err?.message ||
-          "Failed to fetch recruit",
+            err?.message ||
+            "Failed to fetch recruit",
         );
       } finally {
         if (!controller.signal.aborted) {

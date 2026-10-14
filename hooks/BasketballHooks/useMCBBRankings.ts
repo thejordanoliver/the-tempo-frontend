@@ -3,9 +3,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { apiClient } from "utils/apiClient";
-/* =====================================================
-   TYPES
-===================================================== */
 
 export type TeamWithGroups = StandingsTeamInfo & {
   groups?: {
@@ -41,15 +38,7 @@ export type RankPoll = {
   droppedOut: TeamRank[];
 };
 
-/* =====================================================
-   CONFIG
-===================================================== */
-
 const CACHE_TTL = 6 * 60 * 60 * 1000;
-
-/* =====================================================
-   HOOK
-===================================================== */
 
 export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
   const CACHE_KEY = `mcbb_rankings_cache_${league}_v2`;
@@ -59,10 +48,6 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  /* --------------------------------------------------
-     CACHE HELPERS
-  -------------------------------------------------- */
 
   const saveCache = useCallback(
     async (data: RankPoll[]) => {
@@ -95,10 +80,6 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
     }
   }, [CACHE_KEY]);
 
-  /* --------------------------------------------------
-     FETCH
-  -------------------------------------------------- */
-
   const fetchLatest = useCallback(async () => {
     try {
       const res = await apiClient.get(`api/standings/mcbb/rankings`, {
@@ -114,7 +95,6 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
     } catch (err: any) {
       console.error(`❌ Fetch ${league} rankings failed:`, err);
 
-      // Axios-specific error handling
       const message =
         err.response?.data?.error ||
         err.response?.statusText ||
@@ -125,10 +105,6 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
     }
   }, [LAST_REFRESH_KEY, league, saveCache]);
 
-  /* --------------------------------------------------
-     BACKGROUND REFRESH
-  -------------------------------------------------- */
-
   const fetchLatestInBackground = useCallback(async () => {
     try {
       const last = await AsyncStorage.getItem(LAST_REFRESH_KEY);
@@ -136,12 +112,8 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
       if (last && Date.now() - parseInt(last) < 5 * 60 * 1000) return;
 
       await fetchLatest();
-    } catch { }
+    } catch {}
   }, [LAST_REFRESH_KEY, fetchLatest]);
-
-  /* --------------------------------------------------
-     INITIAL LOAD
-  -------------------------------------------------- */
 
   const fetchRankings = useCallback(async () => {
     setLoading(true);
@@ -164,10 +136,6 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
     void Promise.resolve().then(() => fetchRankings());
   }, [fetchRankings]);
 
-  /* --------------------------------------------------
-     MANUAL REFRESH
-  -------------------------------------------------- */
-
   const refresh = async () => {
     try {
       setRefreshing(true);
@@ -180,10 +148,6 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
       setRefreshing(false);
     }
   };
-
-  /* --------------------------------------------------
-     RANKED TEAM SET
-  -------------------------------------------------- */
 
   const rankedTeamIds = useMemo(() => {
     const set = new Set<string>();

@@ -1,20 +1,13 @@
-// hooks/useProfile.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-/**
- * Normalize image URLs (Cloudinary or server URLs)
- */
 function parseImageUrl(url: string | null | undefined): string | null {
   if (!url || url === "null" || url === "undefined") return null;
   if (!url.startsWith("http")) return null;
   return url;
 }
 
-/**
- * Normalize string values
- */
 function parseString(value: string | null | undefined): string | null {
   if (!value || value === "null" || value === "undefined") return null;
   return value;
@@ -25,7 +18,6 @@ function parseCachedString(value: string | null | undefined): string {
 }
 
 export function useProfile() {
-  /* ------------------ STATE ------------------ */
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
@@ -49,7 +41,6 @@ export function useProfile() {
     setFollowingCount(0);
   }, []);
 
-  /* ------------------ LOAD FROM CACHE ------------------ */
   const loadFromCache = useCallback(async () => {
     try {
       const keys = [
@@ -81,7 +72,6 @@ export function useProfile() {
     }
   }, []);
 
-  /* ------------------ SAVE TO CACHE ------------------ */
   const saveToCache = useCallback(async (data: any) => {
     try {
       const username = parseCachedString(data.username);
@@ -117,30 +107,30 @@ export function useProfile() {
     }
   }, []);
 
-  /* ------------------ LOAD FROM API ------------------ */
-  const loadFromAPI = useCallback(async (userId: string) => {
-    try {
-      const { data } = await apiClient.get(`/api/users/id/${userId}`);
+  const loadFromAPI = useCallback(
+    async (userId: string) => {
+      try {
+        const { data } = await apiClient.get(`/api/users/id/${userId}`);
 
-      setCurrentUserId(data.id);
-      setUsername(parseString(data.username));
-      setFullName(parseString(data.fullName ?? data.full_name));
-      setBio(parseString(data.bio));
-      setProfileImage(parseImageUrl(data.profileImage ?? data.profile_image));
-      setBannerImage(parseImageUrl(data.bannerImage ?? data.banner_image));
-      setFollowersCount(data.followersCount ?? 0);
-      setFollowingCount(data.followingCount ?? 0);
+        setCurrentUserId(data.id);
+        setUsername(parseString(data.username));
+        setFullName(parseString(data.fullName ?? data.full_name));
+        setBio(parseString(data.bio));
+        setProfileImage(parseImageUrl(data.profileImage ?? data.profile_image));
+        setBannerImage(parseImageUrl(data.bannerImage ?? data.banner_image));
+        setFollowersCount(data.followersCount ?? 0);
+        setFollowingCount(data.followingCount ?? 0);
 
-      // Save fresh data to cache
-      await saveToCache(data);
-      return Number(data.id);
-    } catch (error) {
-      console.warn("[useProfile] API load failed:", error);
-      return Number(userId);
-    }
-  }, [saveToCache]);
+        await saveToCache(data);
+        return Number(data.id);
+      } catch (error) {
+        console.warn("[useProfile] API load failed:", error);
+        return Number(userId);
+      }
+    },
+    [saveToCache],
+  );
 
-  /* ------------------ MAIN LOAD FUNCTION ------------------ */
   const loadProfile = useCallback(async () => {
     setIsLoading(true);
 
@@ -153,10 +143,8 @@ export function useProfile() {
         return null;
       }
 
-      // 1. Load cached data instantly (fast UI)
       await loadFromCache();
 
-      // 2. Fetch fresh data in background
       return await loadFromAPI(userId);
     } catch (error) {
       console.warn("[useProfile] Failed:", error);
@@ -166,7 +154,6 @@ export function useProfile() {
     }
   }, [loadFromCache, loadFromAPI, resetProfile]);
 
-  /* ------------------ RETURN ------------------ */
   return {
     isLoading,
     currentUserId,

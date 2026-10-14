@@ -13,12 +13,6 @@ type UseFootballGamesParams = {
   league?: string;
   conferenceId?: number | string | null;
 
-  /**
-   * Controls whether the hook is allowed to fetch.
-   *
-   * Useful when the selected week depends on calendar data that
-   * has not finished resolving yet.
-   */
   enabled?: boolean;
 };
 
@@ -76,7 +70,8 @@ function normalizeGroups(data: FootballGamesResponse): FootballGameGroup[] {
       return {
         key:
           group.key ||
-          `${group.season?.slug ?? "season"}-week-${group.week?.number ?? "unknown"
+          `${group.season?.slug ?? "season"}-week-${
+            group.week?.number ?? "unknown"
           }`,
 
         label:
@@ -156,10 +151,6 @@ export function useFootballGames({
 
       const params: Record<string, string | number> = {};
 
-      /*
-       * A week-based request should only be made once the
-       * requested week is actually known.
-       */
       if (week != null && week !== "") {
         params.week = week;
 

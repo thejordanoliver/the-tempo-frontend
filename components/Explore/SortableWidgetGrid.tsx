@@ -393,7 +393,7 @@ export default function SortableWidgetGrid({
   const scrollOffset = useSharedValue(0);
   const viewportTop = useSharedValue(0);
   const viewportBottom = useSharedValue(0);
-  const canonicalIds = useMemo(
+  const widgetIds = useMemo(
     () => widgets.map((widget) => widget.id),
     [widgets],
   );
@@ -406,11 +406,11 @@ export default function SortableWidgetGrid({
   );
   const orderedWidgets = useMemo(
     () =>
-      (temporaryOrder ?? canonicalIds).flatMap((widgetId) => {
+      (temporaryOrder ?? widgetIds).flatMap((widgetId) => {
         const widget = widgetsById.get(widgetId);
         return widget ? [widget] : [];
       }),
-    [canonicalIds, temporaryOrder, widgetsById],
+    [widgetIds, temporaryOrder, widgetsById],
   );
   const gridLayout = useMemo(
     () =>
@@ -503,18 +503,18 @@ export default function SortableWidgetGrid({
 
       stopAutoScroll();
       activeDragRef.current = null;
-      orderRef.current = canonicalIds;
+      orderRef.current = widgetIds;
       setActiveDrag(null);
       setTemporaryOrder(null);
     },
-    [canonicalIds, stopAutoScroll],
+    [widgetIds, stopAutoScroll],
   );
 
   const handleDragStart = useCallback(
     (widgetId: string) => {
       if (activeDragRef.current) return;
 
-      const initialOrder = canonicalIds.slice();
+      const initialOrder = widgetIds.slice();
       const fromIndex = initialOrder.indexOf(widgetId);
 
       if (fromIndex < 0) return;
@@ -529,7 +529,7 @@ export default function SortableWidgetGrid({
       updateViewportBounds();
       performImpact(Haptics.ImpactFeedbackStyle.Light);
     },
-    [canonicalIds, onBeginEditing, updateViewportBounds],
+    [widgetIds, onBeginEditing, updateViewportBounds],
   );
 
   const handleTargetIndexChange = useCallback(
@@ -574,7 +574,7 @@ export default function SortableWidgetGrid({
         return widget ? [widget] : [];
       });
       const orderChanged = finalIds.some(
-        (id, index) => canonicalIds[index] !== id,
+        (id, index) => widgetIds[index] !== id,
       );
 
       stopAutoScroll();
@@ -589,11 +589,11 @@ export default function SortableWidgetGrid({
         setTemporaryOrder(finalIds.slice());
         onReorder(finalWidgets);
       } else {
-        orderRef.current = canonicalIds;
+        orderRef.current = widgetIds;
         setTemporaryOrder(null);
       }
     },
-    [canonicalIds, onReorder, stopAutoScroll, widgets.length, widgetsById],
+    [widgetIds, onReorder, stopAutoScroll, widgets.length, widgetsById],
   );
 
   useEffect(() => {
@@ -602,9 +602,9 @@ export default function SortableWidgetGrid({
       return;
     }
 
-    orderRef.current = canonicalIds;
+    orderRef.current = widgetIds;
     setTemporaryOrder(null);
-  }, [cancelDrag, canonicalIds, configurationKey]);
+  }, [cancelDrag, widgetIds, configurationKey]);
 
   useEffect(() => {
     if (enabled) return;

@@ -3,7 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { useBadgeNotifications } from "hooks/ForumHooks/useBadgeNotifications";
 import { setPostBookmark, setPostLike, sharePost } from "services/forumApi";
 import { useLikesStore } from "store/useLikesStore";
-import type { ForumLikeMutationResponse, ForumPost, ForumShareMutationResponse } from "types/forum";
+import type {
+  ForumLikeMutationResponse,
+  ForumPost,
+  ForumShareMutationResponse,
+} from "types/forum";
 
 type Options = {
   item: ForumPost;
@@ -14,9 +18,14 @@ type Options = {
 const isSameUser = (
   firstUserId: number | null | undefined,
   secondUserId: number | null | undefined,
-) => firstUserId != null && secondUserId != null && firstUserId === secondUserId;
+) =>
+  firstUserId != null && secondUserId != null && firstUserId === secondUserId;
 
-export function useForumPostInteractions({ item, currentUserId, onBookmarkChange }: Options) {
+export function useForumPostInteractions({
+  item,
+  currentUserId,
+  onBookmarkChange,
+}: Options) {
   const setLike = useLikesStore((state) => state.setLike);
   const likeState = useLikesStore((state) => state.likes[item.id]);
   const { handleBadgeAwards } = useBadgeNotifications();
@@ -29,16 +38,25 @@ export function useForumPostInteractions({ item, currentUserId, onBookmarkChange
   const [bookmarkPending, setBookmarkPending] = useState(false);
   const [sharePending, setSharePending] = useState(false);
 
-  const serverBookmarked = Boolean(item.bookmarked_by_current_user ?? item.bookmarked);
+  const serverBookmarked = Boolean(
+    item.bookmarked_by_current_user ?? item.bookmarked,
+  );
   const serverBookmarkCount = item.bookmarks ?? 0;
   const serverShareCount = item.shares ?? 0;
-  const bookmarkSource = JSON.stringify([item.id, serverBookmarked, serverBookmarkCount]);
+  const bookmarkSource = JSON.stringify([
+    item.id,
+    serverBookmarked,
+    serverBookmarkCount,
+  ]);
   const shareSource = JSON.stringify([item.id, serverShareCount]);
   const [bookmarkOverride, setBookmarkOverride] = useState<{
-    source: string; bookmarked: boolean; count: number;
+    source: string;
+    bookmarked: boolean;
+    count: number;
   } | null>(null);
   const [shareOverride, setShareOverride] = useState<{
-    source: string; count: number;
+    source: string;
+    count: number;
   } | null>(null);
 
   // Discard mutation overrides when new server props arrive. Values below
@@ -49,13 +67,21 @@ export function useForumPostInteractions({ item, currentUserId, onBookmarkChange
   if (shareOverride && shareOverride.source !== shareSource) {
     setShareOverride(null);
   }
-  const currentBookmark = bookmarkOverride?.source === bookmarkSource ? bookmarkOverride : null;
+  const currentBookmark =
+    bookmarkOverride?.source === bookmarkSource ? bookmarkOverride : null;
   const bookmarked = currentBookmark?.bookmarked ?? serverBookmarked;
   const bookmarkCount = currentBookmark?.count ?? serverBookmarkCount;
-  const shareCount = shareOverride?.source === shareSource ? shareOverride.count : serverShareCount;
+  const shareCount =
+    shareOverride?.source === shareSource
+      ? shareOverride.count
+      : serverShareCount;
 
   const updateBookmark = (nextBookmarked: boolean, count: number) =>
-    setBookmarkOverride({ source: bookmarkSource, bookmarked: nextBookmarked, count });
+    setBookmarkOverride({
+      source: bookmarkSource,
+      bookmarked: nextBookmarked,
+      count,
+    });
   const updateShareCount = (count: number) =>
     setShareOverride({ source: shareSource, count });
 
@@ -71,7 +97,6 @@ export function useForumPostInteractions({ item, currentUserId, onBookmarkChange
       likeRequestId.current += 1;
     };
   }, []);
-
 
   useEffect(() => {
     if (!likeState) {
@@ -139,7 +164,6 @@ export function useForumPostInteractions({ item, currentUserId, onBookmarkChange
 
       handleMutationAwards(response.newlyAwardedBadges);
     } catch (err: unknown) {
-
       if (!activeRef.current || requestId !== likeRequestId.current) {
         return;
       }
@@ -230,7 +254,8 @@ export function useForumPostInteractions({ item, currentUserId, onBookmarkChange
   };
 
   const handleSharePress = async () => {
-    if (currentUserId == null || String(currentUserId) === String(item.user_id)) return;
+    if (currentUserId == null || String(currentUserId) === String(item.user_id))
+      return;
     if (sharePendingRef.current) {
       return;
     }
@@ -271,11 +296,18 @@ export function useForumPostInteractions({ item, currentUserId, onBookmarkChange
     }
   };
 
-
   return {
-    liked, likeCount, bookmarked, bookmarkCount, shareCount,
-    bookmarkPending, sharePending, feedbackModal,
+    liked,
+    likeCount,
+    bookmarked,
+    bookmarkCount,
+    shareCount,
+    bookmarkPending,
+    sharePending,
+    feedbackModal,
     dismissFeedback: () => setFeedbackModal(null),
-    toggleLikePress, handleBookmarkPress, handleSharePress,
+    toggleLikePress,
+    handleBookmarkPress,
+    handleSharePress,
   };
 }

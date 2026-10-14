@@ -71,10 +71,7 @@ export function useLoginForm() {
 
   const {
     control: signupControl,
-    formState: {
-      isSubmitting: isSigningUp,
-      isValidating: isSignupValidating,
-    },
+    formState: { isSubmitting: isSigningUp, isValidating: isSignupValidating },
     getValues: getSignupValues,
     handleSubmit: handleSignupSubmit,
     setError: setSignupError,
@@ -232,61 +229,67 @@ export function useLoginForm() {
     [],
   );
 
-  const handleSignup = useCallback(async (signupData: SignupFormValues) => {
-    const formData = new FormData();
-    formData.append("fullName", signupData.fullName);
-    formData.append("username", signupData.username);
-    formData.append("email", signupData.email);
-    formData.append("password", signupData.password);
-    formData.append("favoriteTeams", JSON.stringify(signupData.favoriteTeams));
-    formData.append(
-      "favoriteSports",
-      JSON.stringify(signupData.favoriteSports),
-    );
-    appendImage(formData, signupData.profileImage, "profile");
-    appendImage(formData, signupData.bannerImage, "banner");
-
-    try {
-      await signup(formData);
-    } catch (error: unknown) {
-      const message = getErrorMessage(
-        error,
-        "Your account could not be created. Please try again.",
+  const handleSignup = useCallback(
+    async (signupData: SignupFormValues) => {
+      const formData = new FormData();
+      formData.append("fullName", signupData.fullName);
+      formData.append("username", signupData.username);
+      formData.append("email", signupData.email);
+      formData.append("password", signupData.password);
+      formData.append(
+        "favoriteTeams",
+        JSON.stringify(signupData.favoriteTeams),
       );
+      formData.append(
+        "favoriteSports",
+        JSON.stringify(signupData.favoriteSports),
+      );
+      appendImage(formData, signupData.profileImage, "profile");
+      appendImage(formData, signupData.bannerImage, "banner");
 
-      if (message.startsWith("Full name")) {
-        setSignupError("fullName", { type: "server", message });
-        setSignupStep(0);
-        return;
+      try {
+        await signup(formData);
+      } catch (error: unknown) {
+        const message = getErrorMessage(
+          error,
+          "Your account could not be created. Please try again.",
+        );
+
+        if (message.startsWith("Full name")) {
+          setSignupError("fullName", { type: "server", message });
+          setSignupStep(0);
+          return;
+        }
+
+        if (message.startsWith("Username")) {
+          setSignupError("username", { type: "server", message });
+          setSignupStep(0);
+          return;
+        }
+
+        if (
+          message.startsWith("A valid email") ||
+          message.startsWith("Email")
+        ) {
+          setSignupError("email", { type: "server", message });
+          setSignupStep(1);
+          return;
+        }
+
+        if (message.startsWith("Password")) {
+          setSignupError("password", { type: "server", message });
+          setSignupStep(1);
+          return;
+        }
+
+        showAlert({
+          title: "Signup failed",
+          message,
+        });
       }
-
-      if (message.startsWith("Username")) {
-        setSignupError("username", { type: "server", message });
-        setSignupStep(0);
-        return;
-      }
-
-      if (
-        message.startsWith("A valid email") ||
-        message.startsWith("Email")
-      ) {
-        setSignupError("email", { type: "server", message });
-        setSignupStep(1);
-        return;
-      }
-
-      if (message.startsWith("Password")) {
-        setSignupError("password", { type: "server", message });
-        setSignupStep(1);
-        return;
-      }
-
-      showAlert({
-        title: "Signup failed",
-        message,
-      });
-    }
-  }, [appendImage, setSignupError, showAlert, signup]);
+    },
+    [appendImage, setSignupError, showAlert, signup],
+  );
 
   const handleInvalidSignup = useCallback(
     (errors: FieldErrors<SignupFormValues>) => {
@@ -363,15 +366,17 @@ export function useLoginForm() {
   const handleNextSignupStep = useCallback(async () => {
     if (isCheckingSignupAvailability) return;
 
-    const fields = signupStep === 0
-      ? SIGNUP_ACCOUNT_FIELDS
-      : signupStep === 1 ? SIGNUP_CREDENTIAL_FIELDS : null;
+    const fields =
+      signupStep === 0
+        ? SIGNUP_ACCOUNT_FIELDS
+        : signupStep === 1
+          ? SIGNUP_CREDENTIAL_FIELDS
+          : null;
 
-    if (fields && !await triggerSignup(fields, { shouldFocus: true })) return;
+    if (fields && !(await triggerSignup(fields, { shouldFocus: true }))) return;
 
-    const identityField: SignupIdentityField | null = signupStep === 0
-      ? "username"
-      : signupStep === 1 ? "email" : null;
+    const identityField: SignupIdentityField | null =
+      signupStep === 0 ? "username" : signupStep === 1 ? "email" : null;
 
     if (identityField) {
       try {
@@ -439,13 +444,15 @@ export function useLoginForm() {
       isValidating: isSignupValidating || isCheckingSignupAvailability,
       onSubmit: handleSignupSubmit(handleSignup, handleInvalidSignup),
     },
-    cropEditor: pendingCrop ? {
-      visible: true,
-      imageUri: pendingCrop.uri,
-      onCancel: closeCropEditor,
-      onCrop: onImageCropped,
-      mode: pendingCrop.target,
-    } : null,
+    cropEditor: pendingCrop
+      ? {
+          visible: true,
+          imageUri: pendingCrop.uri,
+          onCancel: closeCropEditor,
+          onCrop: onImageCropped,
+          mode: pendingCrop.target,
+        }
+      : null,
     alertConfig,
     closeAlert,
     previousSignupStep: handlePreviousSignupStep,

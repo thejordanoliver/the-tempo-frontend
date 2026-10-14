@@ -51,12 +51,7 @@ function getFighterImage(fighter: any) {
 
 function toFighterWrapper(fighter: any, fallbackId: number) {
   const rawId =
-    fighter?.id ??
-    fighter?.espn_id ??
-    fighter?.espnId ??
-    fighter?.uid ??
-    fighter?.athlete?.id ??
-    fallbackId;
+    fighter?.id ?? fighter?.uid ?? fighter?.athlete?.id ?? fallbackId;
   const numericId = Number(rawId);
   const name = getDisplayName(fighter);
   const { firstName, lastName } = splitName(name);
@@ -69,7 +64,6 @@ function toFighterWrapper(fighter: any, fallbackId: number) {
     winner: fighter?.winner ?? null,
     info: {
       id: Number.isFinite(numericId) ? numericId : fallbackId,
-      espn_id: rawId === null || rawId === undefined ? null : String(rawId),
       first_name: firstName,
       last_name: lastName,
       full_name: name,

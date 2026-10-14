@@ -12,22 +12,19 @@ type UseNFLPlayoffsResult = {
 
 export const useNFLPlayoffs = (
   season: number,
-  { enabled = true }: { enabled?: boolean; } = {},
+  { enabled = true }: { enabled?: boolean } = {},
 ): UseNFLPlayoffsResult => {
-  const [playoffData, setPlayoffData] =
-    useState<BracketApiResponse | null>(null);
+  const [playoffData, setPlayoffData] = useState<BracketApiResponse | null>(
+    null,
+  );
 
-  const [playoffLoading, setPlayoffLoading] =
-    useState(false);
+  const [playoffLoading, setPlayoffLoading] = useState(false);
 
-  const [playoffError, setPlayoffError] =
-    useState<string | null>(null);
+  const [playoffError, setPlayoffError] = useState<string | null>(null);
 
-  const [playoffRefreshing, setPlayoffRefreshing] =
-    useState(false);
+  const [playoffRefreshing, setPlayoffRefreshing] = useState(false);
 
-  const abortControllerRef =
-    useRef<AbortController | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchPlayoffs = useCallback(
     async (refreshing = false) => {
@@ -54,43 +51,34 @@ export const useNFLPlayoffs = (
 
         setPlayoffError(null);
 
-        const { data } =
-          await apiClient.get<BracketApiResponse>(
-            "api/games/football/nfl/playoffs",
-            {
-              params: {
-                season,
-              },
-              signal: controller.signal,
+        const { data } = await apiClient.get<BracketApiResponse>(
+          "api/games/football/nfl/playoffs",
+          {
+            params: {
+              season,
             },
-          );
+            signal: controller.signal,
+          },
+        );
 
         if (!data?.success) {
           setPlayoffData(null);
-          setPlayoffError(
-            "NFL playoff data is unavailable.",
-          );
+          setPlayoffError("NFL playoff data is unavailable.");
           return;
         }
 
         setPlayoffData(data);
       } catch (error: any) {
-        if (
-          error?.code === "ERR_CANCELED" ||
-          error?.name === "CanceledError"
-        ) {
+        if (error?.code === "ERR_CANCELED" || error?.name === "CanceledError") {
           return;
         }
 
-        console.warn(
-          "[useNFLPlayoffs] Failed to load playoffs:",
-          error,
-        );
+        console.warn("[useNFLPlayoffs] Failed to load playoffs:", error);
 
         setPlayoffError(
           error?.response?.data?.error ??
-          error?.message ??
-          "Failed to load NFL playoffs",
+            error?.message ??
+            "Failed to load NFL playoffs",
         );
 
         // Preserve existing data during failed refreshes.

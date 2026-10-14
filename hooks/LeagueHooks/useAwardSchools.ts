@@ -23,7 +23,7 @@ type Options = {
 
 export function useAwardSchools(options: Options = {}) {
   const {
-    league = "cfb", // default stays CFB
+    league = "cfb",
     category = "all",
     enabled = true,
     refreshToken,

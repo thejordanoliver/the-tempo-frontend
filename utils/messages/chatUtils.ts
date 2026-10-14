@@ -266,7 +266,7 @@ const areChatMessagesEqual = (a: ChatMessageItem, b: ChatMessageItem) =>
   a.reactions === b.reactions &&
   a.gameId === b.gameId;
 
-const hasCanonicalServerId = (message: ChatMessageItem) =>
+const hasServerId = (message: ChatMessageItem) =>
   !message.clientId || message.id !== message.clientId;
 
 export const mergeChatMessages = (
@@ -274,7 +274,7 @@ export const mergeChatMessages = (
   incoming: ChatMessageItem,
 ) => {
   const canonicalMessage =
-    hasCanonicalServerId(incoming) || !hasCanonicalServerId(existing)
+    hasServerId(incoming) || !hasServerId(existing)
       ? incoming
       : existing;
   const secondaryMessage =

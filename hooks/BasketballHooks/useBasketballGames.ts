@@ -108,13 +108,7 @@ export function useBasketballGames(
       try {
         setError(null);
 
-        /*
-         * Initial fetch / conference change can show the normal
-         * loading state.
-         *
-         * Pull-to-refresh and live updates should not display
-         * the full-page skeleton.
-         */
+        // Background updates keep the current list visible.
         if (!forceRefresh && !silent) {
           setLoading(true);
         }
@@ -152,16 +146,6 @@ export function useBasketballGames(
     });
   }, [fetchGames]);
 
-  /*
-   * Re-fetch whenever:
-   *
-   * - date changes
-   * - league changes
-   * - conference changes
-   *
-   * conferenceId is part of requestParams, which is part
-   * of fetchGames' dependency chain.
-   */
   useEffect(() => {
     let cancelled = false;
     void Promise.resolve().then(() => {

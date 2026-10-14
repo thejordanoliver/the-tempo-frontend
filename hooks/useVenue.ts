@@ -76,9 +76,9 @@ export const useVenue = ({ sport, id }: UseVenueParams): UseVenueResponse => {
         if (isAxiosError(err)) {
           setVenueError(
             err.response?.data?.message ||
-            err.response?.data?.error ||
-            err.message ||
-            "Failed to fetch venue",
+              err.response?.data?.error ||
+              err.message ||
+              "Failed to fetch venue",
           );
         } else if (err instanceof Error) {
           setVenueError(err.message);

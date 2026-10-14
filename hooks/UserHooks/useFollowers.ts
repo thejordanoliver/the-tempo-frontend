@@ -1,13 +1,8 @@
 import type { UserFollowCounts } from "types/user";
-// hooks/UserHooks/useFollowers.ts
 
 import { apiClient } from "@/utils/apiClient";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-/**
- * User shape returned by the followers / following endpoints.
- * Images are expected to be remote URLs, usually Cloudinary or normalized server URLs.
- */
 export type User = UserFollowCounts & {
   id: number | string;
   username: string;
@@ -89,14 +84,8 @@ const reconcileFollowList = (
   followeeId: string,
   isFollowing: boolean,
 ) => {
-  if (
-    !isFollowing &&
-    type === "following" &&
-    targetUserId === currentUserId
-  ) {
-    return users.filter(
-      (user) => user.id.toString() !== followeeId.toString(),
-    );
+  if (!isFollowing && type === "following" && targetUserId === currentUserId) {
+    return users.filter((user) => user.id.toString() !== followeeId.toString());
   }
 
   return updateUserFollowState(users, followeeId, isFollowing);
@@ -152,13 +141,6 @@ const updateFollowStateInCache = (
   });
 };
 
-/**
- * Hook to fetch and manage followers / following users for a profile.
- *
- * @param currentUserId - Logged-in user's ID.
- * @param targetUserId - Profile user ID whose followers/following are being viewed.
- * @param type - Whether to fetch "followers" or "following".
- */
 export function useFollowers(
   currentUserId: string,
   targetUserId: string,
@@ -179,14 +161,7 @@ export function useFollowers(
 
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Fetch followers/following when:
-   * - currentUserId changes
-   * - targetUserId changes
-   * - type changes
-   *
-   * Uses cache first, then refreshes in the background.
-   */
+  // Show cached users while refreshing in the background.
   useEffect(() => {
     let isActive = true;
     const controller = new AbortController();
@@ -236,12 +211,6 @@ export function useFollowers(
     };
   }, [cacheKey, currentUserId, targetUserId, type]);
 
-  /**
-   * Set the authenticated viewer's follow state for a specific user.
-   *
-   * @param followeeId - ID of the user to follow or unfollow.
-   * @param isFollowing - Desired follow state.
-   */
   const toggleFollow = useCallback(
     async (followeeId: string, isFollowing: boolean): Promise<boolean> => {
       if (

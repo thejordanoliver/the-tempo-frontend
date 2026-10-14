@@ -1,8 +1,15 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchVoteResults, type PollResult, type VoteResponse } from "hooks/useGameVotes";
+import {
+  fetchVoteResults,
+  type PollResult,
+  type VoteResponse,
+} from "hooks/useGameVotes";
 import type { CastVoteAck } from "hooks/useLiveVotes";
-import type { FanPredictionScoring, FanPredictionTeamId as TeamId } from "types/fanPredictions";
+import type {
+  FanPredictionScoring,
+  FanPredictionTeamId as TeamId,
+} from "types/fanPredictions";
 import {
   getErrorMessage,
   getVoteCount,
@@ -51,7 +58,9 @@ export function useFanPrediction({
   const [userVote, setUserVote] = useState<TeamId | null>(
     initialState?.userVote ?? null,
   );
-  const [results, setResults] = useState<PollResult[]>(initialState?.votes ?? []);
+  const [results, setResults] = useState<PollResult[]>(
+    initialState?.votes ?? [],
+  );
   const [resultsRevealed, setResultsRevealed] = useState(
     initialState != null && (initialState.userVote != null || !canVote),
   );
@@ -78,7 +87,7 @@ export function useFanPrediction({
       setResults(initialState.votes);
       if (initialState.userVote != null) setUserVote(initialState.userVote);
       setResultsRevealed(
-        previous => previous || initialState.userVote != null || !canVote,
+        (previous) => previous || initialState.userVote != null || !canVote,
       );
       setPhase("ready");
     } else {
@@ -91,7 +100,6 @@ export function useFanPrediction({
     }
   }
 
-  // Fetch saved picks and totals only when the caller has not supplied them.
   useEffect(() => {
     if (initialState) return;
     let active = true;
@@ -115,7 +123,6 @@ export function useFanPrediction({
         setResults(fetchedVotes);
         setUserVote(fetchedUserVote);
 
-        // Reveal results to everyone once pregame voting closes.
         setResultsRevealed(fetchedUserVote != null || !canVote);
 
         setPhase("ready");
@@ -201,7 +208,6 @@ export function useFanPrediction({
       });
 
       try {
-        // Show the pick immediately; failed requests roll back to the saved state.
         setUserVote(teamId);
         setResultsRevealed(true);
 

@@ -33,7 +33,6 @@ export default function SeasonStatCardLayout({
   return (
     <View>
       <CenteredHeader isDark={isDark}>{seasonLabel} Season</CenteredHeader>
-
       <View style={[styles.card]}>
         <View style={[styles.rankStrip, { backgroundColor }]} />
         <View style={styles.statsRow}>

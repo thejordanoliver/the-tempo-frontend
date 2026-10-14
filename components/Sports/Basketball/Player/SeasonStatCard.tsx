@@ -3,6 +3,7 @@ import SeasonStatCardLayout, {
 } from "@/components/Player/SeasonStatCardLayout";
 import SeasonStatCardSkeleton from "@/components/Skeletons/SeasonStatCardSkeleton";
 import type { PlayerSeason } from "@/hooks/BasketballHooks/usePlayerSeasons";
+import { getNBASeason } from "@/utils/common/dateUtils";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo } from "react";
@@ -134,15 +135,7 @@ export default function SeasonStatCard({
     );
   }
 
-  if (!latestSeason) {
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>No season stats available</Text>
-      </View>
-    );
-  }
-
-  const averages = latestSeason.averages ?? {};
+  const averages = latestSeason?.averages ?? {};
 
   const stats: SeasonStatItem[] = [
     {
@@ -180,7 +173,9 @@ export default function SeasonStatCard({
   ];
 
   const displaySeason =
-    latestSeason.display_season || latestSeason.season || "Latest";
+    latestSeason?.display_season ||
+    latestSeason?.season ||
+    getNBASeason();
 
   return (
     <SeasonStatCardLayout

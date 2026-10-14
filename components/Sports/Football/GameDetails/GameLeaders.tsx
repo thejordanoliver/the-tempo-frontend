@@ -527,7 +527,7 @@ export default function GameLeaders({
           const teamId = isAway ? awayId : homeId;
           const player = entry.athlete;
 
-          const playerId = player.id ?? player.espnId;
+          const playerId = player.id 
 
           const playerName =
             player.shortName ??

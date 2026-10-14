@@ -7,7 +7,11 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordFormValues,
 } from "schemas/auth/forgotPasswordSchema";
-import { forgotPassword, resetPassword, verifyResetCode } from "utils/apiClient";
+import {
+  forgotPassword,
+  resetPassword,
+  verifyResetCode,
+} from "utils/apiClient";
 import { getErrorMessage } from "utils/common/getErrorMessage";
 
 const RESEND_COOLDOWN_SECONDS = 60;
@@ -47,7 +51,8 @@ export function useForgotPasswordForm(onComplete: () => void) {
     shouldUnregister: false,
   });
 
-  const isRequestBusy = requestAction !== null || isSubmitting || shouldRedirectToLogin;
+  const isRequestBusy =
+    requestAction !== null || isSubmitting || shouldRedirectToLogin;
   const isBusy = isRequestBusy || isValidating;
 
   useEffect(() => {
@@ -97,10 +102,7 @@ export function useForgotPasswordForm(onComplete: () => void) {
       );
     } catch (error: unknown) {
       setGlobalError(
-        getErrorMessage(
-          error,
-          "Unable to send reset code. Please try again.",
-        ),
+        getErrorMessage(error, "Unable to send reset code. Please try again."),
       );
     } finally {
       setRequestAction(null);

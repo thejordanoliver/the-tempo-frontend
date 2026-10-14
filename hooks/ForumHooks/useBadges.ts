@@ -98,10 +98,7 @@ export function useBadges(options: UseBadgesOptions = {}) {
   }, [loadBadges, refreshVersion]);
 
   const badges = useMemo(() => {
-    return buildBadgeProgress(
-      badgeResponse.stats,
-      badgeResponse.earnedBadges,
-    );
+    return buildBadgeProgress(badgeResponse.stats, badgeResponse.earnedBadges);
   }, [badgeResponse]);
 
   const earnedBadges = useMemo(() => {
@@ -115,10 +112,7 @@ export function useBadges(options: UseBadgesOptions = {}) {
   const nextBadges = useMemo(() => {
     return [...lockedBadges]
       .sort((firstBadge, secondBadge) => {
-        return (
-          secondBadge.progressPercent -
-          firstBadge.progressPercent
-        );
+        return secondBadge.progressPercent - firstBadge.progressPercent;
       })
       .slice(0, 3);
   }, [lockedBadges]);

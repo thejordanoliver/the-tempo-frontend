@@ -12,7 +12,6 @@ type TeamRecord = {
 
 type Team = {
   id: string | number;
-  espnId: string | number | null;
   guid: string;
   uid: string;
   location: string;
@@ -128,7 +127,6 @@ export type PlayerStatsByTeam = {
   team: any;
   displayOrder: number | null;
 
-  // Backward-compatible primary block
   type: string | null;
   names: string[];
   keys: string[];
@@ -138,7 +136,6 @@ export type PlayerStatsByTeam = {
   totalsByKey: Record<string, string | number | null>;
   athletes: PlayerStatAthlete[];
 
-  // Full grouped stats
   statBlocks: PlayerStatBlock[];
   statBlocksByType: Record<string, PlayerStatBlock>;
 
@@ -192,40 +189,30 @@ export type BaseballBats = {
 
 export type BaseballPlayTeam = {
   id: number | string | null;
-  espnId?: number | string | null;
-
   name?: string | null;
   fullName?: string | null;
   displayName?: string | null;
   shortName?: string | null;
   shortDisplayName?: string | null;
-
   abbreviation?: string | null;
   code?: string | null;
   location?: string | null;
-
   color?: string | null;
   alternateColor?: string | null;
   primaryColor?: string | null;
   secondaryColor?: string | null;
-
   established?: number | null;
   mlbId?: number | null;
 };
 
 export type BaseballPlayAthlete = {
   id: number | string | null;
-  espnId?: number | string | null;
-
   teamId?: number | string | null;
-  teamEspnId?: number | string | null;
-
   firstName?: string | null;
   lastName?: string | null;
   fullName?: string | null;
   displayName?: string | null;
   shortName?: string | null;
-
   headshot?: string | null;
   jersey?: string | null;
   position?: string | null;
@@ -233,11 +220,8 @@ export type BaseballPlayAthlete = {
 
 export type BaseballPlayParticipant = {
   athlete: BaseballPlayAthlete;
-
   type: "pitcher" | "batter" | "onFirst" | "onSecond" | "onThird" | string;
-
   teamId?: number | string | null;
-  teamEspnId?: number | string | null;
 };
 
 export type BaseballBaseRunner = {
@@ -252,10 +236,7 @@ export type BaseballPlay = {
 
   type: BaseballPlayType;
 
-  /**
-   * Used on play-result entries.
-   * Example: play-result -> single, ground-out, fly-out, etc.
-   */
+  /** Play result, such as a single or ground-out. */
   alternativeType?: BaseballPlayType | null;
 
   alternativePlay?: string | null;
@@ -291,14 +272,10 @@ export type BaseballPlay = {
 
   summaryType?: string | null;
 
-  /**
-   * Count before/around the play depending on the event.
-   */
+  /** Count before or during the play. */
   pitchCount?: BaseballPitchCount | null;
 
-  /**
-   * Count after the event.
-   */
+  /** Count after the event. */
   resultCount?: BaseballPitchCount | null;
 
   trajectory?: string | null;
@@ -348,9 +325,7 @@ type BaseballLeaderStatistic = {
 
 type BaseballLeaderAthlete = {
   id?: string | number | null;
-  espnId?: string | number | null;
   teamId?: string | number | null;
-  teamEspnId?: string | number | null;
   firstName?: string | null;
   lastName?: string | null;
   fullName?: string | null;
@@ -381,7 +356,6 @@ type BaseballLeaderCategory = {
 type BaseballLeaderTeam = {
   team: {
     id: string | number;
-    espnId?: string | number | null;
     displayName?: string | null;
     abbreviation?: string | null;
     logo?: string | null;
@@ -468,18 +442,10 @@ export type BaseballGameDetailsResponse = {
   details: GameDetails | null;
 };
 
-/* ---------------------------------- */
-/* Hook                               */
-/* ---------------------------------- */
-
 export const useBaseballGameDetails = (
   league: string | undefined,
   gameId?: string | number | null,
 ) => {
-  /*
-   * Use null as the explicit empty state.
-   * score and details will never be undefined.
-   */
   const [score, setScore] = useState<Score | null>(null);
   const [details, setDetails] = useState<GameDetails | null>(null);
 
@@ -489,9 +455,7 @@ export const useBaseballGameDetails = (
 
   const skipFetch = !league || !gameId;
 
-  /* ---------------------------------- */
   /* Fetch from /api/baseball/details   */
-  /* ---------------------------------- */
 
   const fetchDetails = useCallback(
     async (silent = false) => {
@@ -543,9 +507,7 @@ export const useBaseballGameDetails = (
     [league, gameId, skipFetch],
   );
 
-  /* ---------------------------------- */
   /* Reset when identifiers are missing */
-  /* ---------------------------------- */
 
   useEffect(() => {
     let cancelled = false;
@@ -566,10 +528,6 @@ export const useBaseballGameDetails = (
       cancelled = true;
     };
   }, [skipFetch]);
-
-  /* ---------------------------------- */
-  /* Initial fetch                      */
-  /* ---------------------------------- */
 
   useEffect(() => {
     if (skipFetch) return;
@@ -593,10 +551,6 @@ export const useBaseballGameDetails = (
       setLastRefresh(new Date());
     },
   });
-
-  /* ---------------------------------- */
-  /* Manual refresh                     */
-  /* ---------------------------------- */
 
   const refresh = useCallback(() => {
     if (skipFetch) return;

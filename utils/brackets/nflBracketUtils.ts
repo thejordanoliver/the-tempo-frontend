@@ -89,7 +89,6 @@ export const isTbdTeam = (team: PlayoffTeam | null | undefined): boolean => {
   }
 
   const id = Number(team.id);
-  const espnId = Number(team.espnId);
 
   const code = team.code?.trim().toUpperCase() ?? "";
 
@@ -98,8 +97,6 @@ export const isTbdTeam = (team: PlayoffTeam | null | undefined): boolean => {
   return (
     !Number.isFinite(id) ||
     id <= 0 ||
-    !Number.isFinite(espnId) ||
-    espnId <= 0 ||
     code === "TBD" ||
     name === "TBD"
   );

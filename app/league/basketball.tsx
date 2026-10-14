@@ -63,12 +63,11 @@ import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import SeasonLeadersList from "../../components/League/SeasonLeaderList";
 import TournamentTreeBracket from "../../components/Sports/Basketball/Playoffs/MCBBTournament/TournamentTreeBracket";
-import { MCBBStandingsList } from "../../components/Sports/Basketball/Standings/CollegeStandingsList";
+import { CollegeStandingsList } from "../../components/Sports/Basketball/Standings/CollegeStandingsList";
 import { getMCBBConferenceSelectionName } from "../../constants/conferences/mcbbConferences";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import {
   getMCBBSeason,
-  getNBACalendarSeason,
   getNBASeason,
   getRecruitYear,
   getWNBASeason,
@@ -158,10 +157,10 @@ function NBALeagueScreen() {
   );
 
   const [standingsYear, setStandingsYear] = useState(() =>
-    getNBACalendarSeason().toString(),
+    getNBASeason().toString(),
   );
 
-  const selectedSeason = getNBACalendarSeason();
+  const selectedSeason = getNBASeason();
 
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
@@ -1380,7 +1379,7 @@ function MCBBLeagueScreen() {
     <View key="standings" style={styles.contentArea}>
       {hasVisitedTab("standings") ? (
         !selectedConferenceGroupId ? (
-          <MCBBStandingsList league={league} />
+          <CollegeStandingsList league={league} />
         ) : (
           <ConferenceStandingsList
             conferences={conferences}
@@ -1771,7 +1770,7 @@ function WCBBLeagueScreen() {
     <View key="standings" style={styles.contentArea}>
       {hasVisitedTab("standings") ? (
         !selectedConferenceGroupId ? (
-          <MCBBStandingsList league={league} />
+          <CollegeStandingsList league={league} />
         ) : (
           <ConferenceStandingsList
             conferences={conferences}

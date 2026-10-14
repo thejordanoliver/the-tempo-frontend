@@ -39,7 +39,10 @@ export function usePlayerGameLog(
       const response = await apiClient.get<PlayerGameLog>(
         `/api/player/gamelog/${league}/${normalizedPlayerId}`,
         {
-          params: { ...(season ? { season } : {}), ...(category ? { category } : {}) },
+          params: {
+            ...(season ? { season } : {}),
+            ...(category ? { category } : {}),
+          },
           signal: controller.signal,
         },
       );
@@ -64,7 +67,7 @@ export function usePlayerGameLog(
 
   useEffect(() => {
     let active = true;
-    
+
     void Promise.resolve().then(() => {
       if (active) return fetchGameLog();
     });

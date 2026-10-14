@@ -16,13 +16,20 @@ export function useFanPredictionRankings() {
         if (!request.signal.aborted) setData(result);
       })
       .catch(() => {
-        if (!request.signal.aborted) setError("We couldn't load fan rankings. Try again.");
+        if (!request.signal.aborted)
+          setError("We couldn't load fan rankings. Try again.");
       })
       .finally(() => {
-        if (!request.signal.aborted) { setLoading(false); setRefreshing(false); }
+        if (!request.signal.aborted) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       });
   }, []);
-  useEffect(() => { void load(); return () => controller.current?.abort(); }, [load]);
+  useEffect(() => {
+    void load();
+    return () => controller.current?.abort();
+  }, [load]);
   const refresh = useCallback(() => {
     setError(null);
     setRefreshing(true);
