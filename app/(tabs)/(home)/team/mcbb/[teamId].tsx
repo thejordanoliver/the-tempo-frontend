@@ -1,8 +1,8 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
-import Roster from "@/components/Sports/Basketball/Team/Roster";
-import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
+import RosterStats from "@/components/Team/BasketballRosterStats";
+import Roster from "@/components/Team/Roster";
 import { Colors } from "@/constants/styles";
 import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";

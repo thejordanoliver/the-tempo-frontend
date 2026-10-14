@@ -1,5 +1,6 @@
-import BadgePreviewSection from "@/components/Profile/Badges/ProfileBadgeSection";
-import ProfileFavoritesSection from "@/components/Profile/ProfileFavoritesSection";
+import BadgePreviewSection from "@/components/Badges/ProfileBadgeSection";
+import ProfilePredictions from "@/components/FanPrediction/ProfilePredictions";
+import ProfileFavoritesSection from "@/components/Favorites/ProfileFavoritesSection";
 import TabBar from "@/components/TabBars/TabBar";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { useBookmarkedPosts } from "@/hooks/ForumHooks/useBookmarkedPosts";
@@ -12,7 +13,6 @@ import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
-import ProfilePredictions from "components/Profile/ProfilePredictions";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";

@@ -1,6 +1,6 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
-import Roster from "@/components/Sports/Basketball/Team/Roster";
+import Roster from "@/components/Team/Roster";
 import { Colors } from "@/constants/styles";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";

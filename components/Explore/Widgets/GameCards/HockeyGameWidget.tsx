@@ -10,9 +10,9 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
-import displayeValue from "utils/widgetUtils";
+} from "utils/common/dateUtils";
+import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
+import displayeValue from "utils/widgets/widgetUtils";
 
 type GameWidgetProps = {
   game: HockeyGame;

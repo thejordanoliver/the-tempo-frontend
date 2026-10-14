@@ -1,4 +1,4 @@
-import { gameTeamIdsMatch } from "utils/gameTeamIdentity";
+import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";

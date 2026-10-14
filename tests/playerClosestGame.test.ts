@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { getClosestPlayerGame, getPlayerGameHeading } from "../utils/playerClosestGame";
+import { getClosestPlayerGame, getPlayerGameHeading } from "../utils/players/playerClosestGame";
 
 const now = Date.parse("2026-10-13T12:00:00Z");
 const final = { date: "2026-10-12T12:00:00Z", status: { state: "post", completed: true } };

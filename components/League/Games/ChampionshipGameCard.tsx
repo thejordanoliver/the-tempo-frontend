@@ -17,8 +17,8 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, TouchableOpacity, View } from "react-native";
 import { champGameCardStyles } from "styles/GamecardStyles/ChampionshipGameCardStyles";
-import { formatDate, formatTime, safeDate } from "utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
+import { formatDate, formatTime, safeDate } from "utils/common/dateUtils";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
 
 interface ChampionshipGameCardProps {
   game: any;

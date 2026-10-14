@@ -32,7 +32,7 @@ import type {
   ForumDisplayMediaItem,
   ForumPostImageItem,
 } from "types/forum";
-import { getUserProfileParams } from "utils/userProfileNavigation";
+import { getUserProfileParams } from "utils/navigation/userProfileNavigation";
 import PostImages from "./PostImages";
 
 const COLLAPSED_HEIGHT = Math.round(3 * 20 * PixelRatio.getFontScale());

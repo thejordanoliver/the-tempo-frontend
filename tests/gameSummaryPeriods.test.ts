@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { filterGameSummaryPeriod, getGameSummaryPeriods } from "../utils/gameSummaryPeriods";
+import { filterGameSummaryPeriod, getGameSummaryPeriods } from "../utils/games/gameSummaryPeriods";
 
 const quarters = ["1st", "2nd", "3rd", "4th"];
 const plays = (...numbers: (number | string)[]) => numbers.map(number => ({ period: { number } }));

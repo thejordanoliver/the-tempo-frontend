@@ -1,4 +1,4 @@
-import { isEligibleFavoriteTeam } from "utils/favoriteTeamEligibility";
+import { isEligibleFavoriteTeam } from "utils/favorites/favoriteTeamEligibility";
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";

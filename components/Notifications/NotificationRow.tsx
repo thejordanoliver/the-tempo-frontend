@@ -2,14 +2,14 @@ import { GameNotificationTeamLogos } from "@/components/Notifications/GameNotifi
 import { Colors, PLACEHOLDER_AVATAR } from "@/constants/styles";
 import { NotificationsCenterStyles } from "@/styles/NotificationCenterStyles";
 import type { AppNotification, NotificationType } from "@/types/notifications";
-import { parseImageUrl } from "@/utils/imageUtils";
-import { getNotificationGameTeams } from "@/utils/notification-team-presentation";
+import { parseImageUrl } from "@/utils/ui/imageUtils";
+import { getNotificationGameTeams } from "@/utils/notifications/notification-team-presentation";
 import {
   getNotificationActorProfileImage,
   getNotificationCenterHref,
   getNotificationLeagueLabel,
   shouldShowNotificationActorProfileImage,
-} from "@/utils/notificationCenter";
+} from "@/utils/notifications/notificationCenter";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistance } from "date-fns/formatDistance";
 import { Image } from "expo-image";

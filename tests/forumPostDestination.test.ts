@@ -4,7 +4,7 @@ import {
   getForumPostCreateEndpoint,
   normalizeForumPostLeague,
   parseForumPostDestinationParams,
-} from "../utils/forumPostDestination";
+} from "../utils/forums/forumPostDestination";
 
 test("normalizes supported league route parameters", () => {
   assert.equal(normalizeForumPostLeague(" NBA "), "nba");

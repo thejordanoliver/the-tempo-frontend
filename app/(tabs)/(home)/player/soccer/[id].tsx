@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import PlayerHeader from "@/components/Sports/Soccer/Player/PlayerHeader";
+import PlayerHeader from "components/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Soccer/Player/PlayerStatTable";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
@@ -119,7 +119,7 @@ export default function PlayerDetailScreen() {
         styles.contentContainerStyle,
       )}
     >
-      <PlayerHeader player={player} isDark={isDark} />
+      <PlayerHeader sport="soccer" player={player} isDark={isDark} />
 
       <PlayerStatTable
         seasons={seasons}

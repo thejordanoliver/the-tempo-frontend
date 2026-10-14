@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { buildChatPayload, type ChatSendPayload } from "utils/chatPayload";
+import { buildChatPayload, type ChatSendPayload } from "utils/messages/chatPayload";
 
 type Props = {
   onSend: (payload: ChatSendPayload) => boolean | Promise<boolean>;

@@ -194,10 +194,10 @@ function shareHarness({ authorId = 7, smsResult = "sent", available = true, send
     "expo-sms": { isAvailableAsync: async () => available, sendSMSAsync: async () => { smsCalls++; return { result: smsResult }; } },
     "hooks/useDebounce": { useDebounce: (value) => value },
     "services/usersApi": { searchUsers: search },
-    "utils/getErrorMessage": { getErrorMessage: (error, fallback) => error.message || fallback },
+    "utils/common/getErrorMessage": { getErrorMessage: (error, fallback) => error.message || fallback },
     "services/defaultMessagingApp": { getDefaultMessagingApp: async () => null },
-    "utils/forumShareRecipients": { getForumShareRecipients: () => [] },
-    "utils/forumPostShare": { getForumPostShareText: () => "Post from @fan on Tempo\nnbascorestracker://post/post-1" },
+    "utils/forums/forumShareRecipients": { getForumShareRecipients: () => [] },
+    "utils/forums/forumPostShare": { getForumPostShareText: () => "Post from @fan on Tempo\nnbascorestracker://post/post-1" },
   });
   const render = () => hook.render({ id: "post-1", username: "fan", text: "Preview", user_id: authorId }, 1, async () => { shares++; });
   return { render, send: async (user) => { render().requestSend(user); return render().confirmSend(); }, get shares() { return shares; }, get smsCalls() { return smsCalls; } };

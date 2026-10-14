@@ -6,7 +6,7 @@ import type {
   CardLayout,
   ConnectorTarget,
 } from "../../../../../types/football/nflBracketTypes";
-import { centerY } from "../../../../../utils/nflBracketLayout";
+import { centerY } from "../../../../../utils/brackets/nflBracketLayout";
 
 export const BracketConnectors = ({
   isDark,

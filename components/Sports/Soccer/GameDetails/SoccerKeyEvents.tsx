@@ -3,7 +3,7 @@
 import HomeAwayTabBar from "@/components/TabBars/HomeAwayTabBar";
 import { getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { KeyEvent } from "@/hooks/SoccerHooks/useSoccerGameDetails";
-import { formatPeriod } from "@/utils/games";
+import { formatPeriod } from "@/utils/games/games";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useMemo, useState } from "react";
 import { Image, StyleSheet, Text, TextStyle, View } from "react-native";

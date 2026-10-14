@@ -4,7 +4,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -12,7 +12,7 @@ import { Image } from "expo-image";
 import { Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { MMAFightCardProps } from "types/mma/mma";
-import { formatPeriod, formatRound, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, formatRound, getBroadcastDisplay } from "utils/games/games";
 
 export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   const router = useScopedRouter();

@@ -2,7 +2,7 @@ import { BadgeApiResponse } from "@/types/badges";
 import {
   buildBadgeProgress,
   getBadgeSummary,
-} from "@/utils/badgeUtils";
+} from "@/utils/profile/badgeUtils";
 import {
   EMPTY_BADGE_RESPONSE,
   getBadgeApiErrorMessage,

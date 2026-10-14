@@ -4,12 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { LiveSport } from "types/liveSports";
 import type { ScheduleMonthGroup } from "types/schedule";
 import { apiClient } from "utils/apiClient";
-import { getFirstSeasonGame } from "utils/seasonGames";
+import { getFirstSeasonGame } from "utils/games/seasonGames";
 import {
   buildScheduleMonthOptions,
   getScheduleGamesForMonth,
   isScheduleOpeningMonth,
-} from "utils/teamSchedule";
+} from "utils/teams/teamSchedule";
 import { ScheduleFreshness } from "./scheduleFreshness";
 
 type ScheduleData<TGame> = { games: TGame[] };

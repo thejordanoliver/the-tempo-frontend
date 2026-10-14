@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { MMAFightLog, MMAFightLogEntry } from "../types/mma/fightLog";
-import { getLatestFighterFight } from "../utils/mmaFightLog";
+import { getLatestFighterFight } from "../utils/sports/mma/mmaFightLog";
 
 const fight = (fightId: string, date: string | null, result: MMAFightLogEntry["result"] = "W"): MMAFightLogEntry => ({
   fightId, eventId: fightId, date, year: null, result, eventName: "UFC", eventShortName: "UFC", opponent: { id: null, name: "Opponent", shortName: "Opponent" }, method: null, round: null, time: null, titleFight: false,

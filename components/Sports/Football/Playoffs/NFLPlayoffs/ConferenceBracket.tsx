@@ -2,7 +2,7 @@ import type { useNFLBracketModel } from "hooks/FootballHooks/useNFLBracketModel"
 import { Text } from "react-native";
 import { NFLPlayoffBracketStyles } from "styles/PlayoffStyles/NFLPlayoffBracketStyles";
 import type { Conference } from "../../../../../types/football/nflBracketTypes";
-import { gameContainsTeam } from "../../../../../utils/nflBracketUtils";
+import { gameContainsTeam } from "../../../../../utils/brackets/nflBracketUtils";
 import { BracketConnectors } from "./BracketConnectors";
 import { ByeTeamCard } from "./ByeTeamCard";
 import { MatchupCard } from "./MatchupCard";

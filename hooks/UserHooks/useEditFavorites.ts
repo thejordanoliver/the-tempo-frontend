@@ -5,7 +5,7 @@ import type { FavoriteSportId } from "constants/leagues";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { buildFavoriteTeamKey, type FavoriteTeamKey } from "types/favorites";
-import { isEligibleFavoriteTeam } from "utils/favoriteTeamEligibility";
+import { isEligibleFavoriteTeam } from "utils/favorites/favoriteTeamEligibility";
 
 // Drafts and searches stay local until Save; leaving the screen discards edits.
 export function useEditFavorites(selectedTab: EditFavoritesHeaderTab) {

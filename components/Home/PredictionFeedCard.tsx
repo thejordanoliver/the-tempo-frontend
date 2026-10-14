@@ -1,4 +1,4 @@
-import { formatDate } from "@/utils/dateUtils";
+import { formatDate } from "@/utils/common/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import PredictionCard from "components/FanPrediction/PredictionCard";
 import { Colors, Fonts, globalStyles } from "constants/styles";
@@ -20,7 +20,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { FeedPrediction } from "types/fanPredictions";
-import { formatPercentage, isSameTeamId } from "utils/fanPredictionVotes";
+import { formatPercentage, isSameTeamId } from "utils/games/fanPredictionVotes";
 import Button from "../Buttons/Button";
 
 const teamLogoHelpers: Record<string, typeof getNBATeamLogo> = {

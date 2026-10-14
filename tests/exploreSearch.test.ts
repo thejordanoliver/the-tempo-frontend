@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { PlayerResult, TeamResult, UserResult } from "../types/explore";
-import { getExploreRouteForResult } from "../utils/exploreNavigation";
+import { getExploreRouteForResult } from "../utils/navigation/exploreNavigation";
 import {
   canSearchExploreQuery,
   getExploreResultIdentity,
   normalizeExploreSearchQuery,
-} from "../utils/exploreSearch";
+} from "../utils/explore/exploreSearch";
 
 const ranking = {
   matchClass: 4 as const,

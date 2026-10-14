@@ -3,8 +3,8 @@ import CFPLogo from "@/assets/College_Logos/Conference_Logos/CFPLogo.png";
 import { Colors } from "@/constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import type { FootballGame } from "@/types/football/football";
-import { formatDate, formatTime, safeDate } from "@/utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
+import { formatDate, formatTime, safeDate } from "@/utils/common/dateUtils";
+import { formatPeriod, getBroadcastDisplay } from "@/utils/games/games";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   CFPBracketStyles,

@@ -9,7 +9,7 @@ import {
   BASE_URL,
   refreshStoredAuthUser,
 } from "utils/apiClient";
-import { removeCachedUserProfile } from "utils/userProfileCache";
+import { removeCachedUserProfile } from "utils/profile/userProfileCache";
 
 type ProfileUpdateResponse = {
   user: PrivateAccountUser;

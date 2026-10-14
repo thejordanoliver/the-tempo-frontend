@@ -11,7 +11,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
 import MatchupComparison from "components/Sports/MMA/GameDetails/MatchupComparison";
@@ -29,7 +29,7 @@ import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
-} from "utils/games";
+} from "utils/games/games";
 const LEAGUE = "MMA";
 
 const leftStancePlaceholder =

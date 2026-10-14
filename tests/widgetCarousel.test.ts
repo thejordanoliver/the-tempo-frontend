@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getWidgetCarouselDotWindow } from "../utils/widgetCarousel";
+import { getWidgetCarouselDotWindow } from "../utils/widgets/widgetCarousel";
 
 test("shows at most five centered carousel dots", () => {
   assert.deepEqual(getWidgetCarouselDotWindow(0, 25), [0, 1, 2, 3, 4]);

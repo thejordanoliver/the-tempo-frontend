@@ -1,4 +1,4 @@
-import { resolveGameTeamGroups } from "utils/gameTeamIdentity";
+import { resolveGameTeamGroups } from "utils/games/gameTeamIdentity";
 import { LeadersType } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";

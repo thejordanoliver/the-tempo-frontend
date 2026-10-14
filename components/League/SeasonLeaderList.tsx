@@ -1,15 +1,15 @@
-import { useMemo } from "react";
-import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
+import { PlayerCard } from "@/components/Player/PlayerCard";
 import { globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { SeasonLeaderCategory } from "@/types/stats";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import { Link, useSegments } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useMemo } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
-import { getTabGroup, scopeHrefToTab } from "utils/tabStackNavigation";
+import { getTabGroup, scopeHrefToTab } from "utils/navigation/tabStackNavigation";
 
 import HeadingTwo from "../Headings/HeadingTwo";
 

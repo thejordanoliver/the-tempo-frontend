@@ -17,13 +17,13 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "utils/dateUtils";
+} from "utils/common/dateUtils";
 import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
-} from "utils/games";
-import { snapPoints } from "utils/modalUtils";
+} from "utils/games/games";
+import { snapPoints } from "utils/ui/modalUtils";
 import { CenterInfo } from "../GameDetails/CenterInfo";
 import { TeamRow } from "../GameDetails/TeamRow";
 import GamePreviewContent from "./GamePreviewContent";

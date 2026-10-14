@@ -7,7 +7,7 @@ import {
   moveWidgetToIndex,
   type WidgetGridItem,
   type WidgetGridLayoutItem,
-} from "../utils/exploreWidgetLayout";
+} from "../utils/widgets/exploreWidgetLayout";
 
 const WIDTH = 390;
 const HORIZONTAL_GAP = 12;

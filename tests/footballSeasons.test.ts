@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getFootballSeason } from "../utils/dateUtils";
+import { getFootballSeason } from "../utils/common/dateUtils";
 
 test("NFL and college postseason games in January use the previous starting year", () => {
   const january = new Date(2031, 0, 20);

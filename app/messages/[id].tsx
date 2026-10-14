@@ -45,7 +45,7 @@ import {
   getMessageReceiptLabels,
   getParticipantReadPosition,
   normalizeId,
-} from "utils/messageReadReceipts";
+} from "utils/messages/messageReadReceipts";
 
 const FALLBACK_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";

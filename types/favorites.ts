@@ -1,4 +1,3 @@
-import { normalizeNHLTeamId } from "../utils/nhlTeamId";
 import type { FavoriteSportId } from "constants/leagues";
 import type { ImageSourcePropType } from "react-native";
 
@@ -63,7 +62,7 @@ export function normalizeFavoriteTeamKey(
   const storedLeague = match[1].toLowerCase();
   const league = storedLeague === "cbb" ? "mcbb" : storedLeague;
   const storedTeamId = Number(match[2]);
-  const teamId = league === "nhl" ? normalizeNHLTeamId(storedTeamId) : storedTeamId;
+  const teamId = storedTeamId;
 
   if (!isFavoriteLeague(league)) return null;
   if (!Number.isSafeInteger(teamId) || teamId <= 0) return null;
@@ -71,9 +70,7 @@ export function normalizeFavoriteTeamKey(
   return `${league}:${teamId}`;
 }
 
-export function normalizeFavoriteTeamKeys(
-  value: unknown,
-): FavoriteTeamKey[] {
+export function normalizeFavoriteTeamKeys(value: unknown): FavoriteTeamKey[] {
   if (!Array.isArray(value)) return [];
 
   const favorites: FavoriteTeamKey[] = [];

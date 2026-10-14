@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import PlayerHeader from "@/components/Sports/Soccer/Player/PlayerHeader";
+import PlayerHeader from "components/Player/PlayerHeader";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
@@ -62,7 +62,7 @@ export default function PlayerDetailScreen() {
       )}
       contentInsetAdjustmentBehavior="automatic"
     >
-      <PlayerHeader player={player} isDark={isDark} />
+      <PlayerHeader sport="racing" player={player} isDark={isDark} />
     </ScrollView>
   );
 }

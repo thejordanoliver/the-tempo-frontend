@@ -27,7 +27,7 @@ import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import { formatDateToUTCYYYYMMDD } from "../../utils/dateUtils";
+import { formatDateToUTCYYYYMMDD } from "../../utils/common/dateUtils";
 
 export default function RacingLeagueScreen() {
   const params = useLocalSearchParams<{

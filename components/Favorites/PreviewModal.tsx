@@ -2,7 +2,7 @@ import Button from "@/components/Buttons/Button";
 import { LEAGUE_CONFIG, type FavoriteSportId } from "@/constants/leagues";
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import type { Team } from "@/types/types";
-import { supportsLiquidGlass } from "@/utils/glass";
+import { supportsLiquidGlass } from "@/utils/ui/glass";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,

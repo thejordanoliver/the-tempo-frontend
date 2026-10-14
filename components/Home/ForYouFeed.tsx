@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { FeedPrediction } from "types/fanPredictions";
 import type { ForumPost } from "types/forum";
-import { interleavePredictions } from "utils/forYouFeed";
+import { interleavePredictions } from "utils/explore/forYouFeed";
 import PredictionFeedCard from "./PredictionFeedCard";
 
 type ForYouFeedProps = {

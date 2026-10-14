@@ -3,7 +3,7 @@ import {
   getMLBBracketLayoutStyles,
   MLBPlayoffBracketStyles,
 } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
-import type { Matchup } from "../../../../utils/mlbBracketUtils";
+import type { Matchup } from "../../../../utils/brackets/mlbBracketUtils";
 
 type Props = {
   league: "american" | "national";

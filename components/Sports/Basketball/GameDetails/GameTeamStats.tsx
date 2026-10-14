@@ -104,6 +104,7 @@ const BASKETBALL_STAT_KEYS: StatConfig[] = [
   { key: "leadChanges", label: "Lead Changes" },
   { key: "leadPercentage", label: "Percent Led", type: "percent" },
   { key: "streak", label: "Streak" },
+  { key: "Last Ten Games", label: "Last Ten Games" },
   {
     key: "threePointFieldGoalPct",
     label: "Three Point Percentage",

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getForumShareRecipients } from "../utils/forumShareRecipients";
+import { getForumShareRecipients } from "../utils/forums/forumShareRecipients";
 import type { MessageItem } from "../types/messages";
 
 const conversation = (userId: number | string | undefined, activityAt: string, extra: Partial<MessageItem> = {}): MessageItem => ({

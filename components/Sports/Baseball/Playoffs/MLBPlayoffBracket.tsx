@@ -9,7 +9,7 @@ import {
   MLBPlayoffBracketStyles,
 } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type { MLBPlayoffBracketResponse } from "types/baseball/baseball";
-import { findSeries } from "../../../../utils/mlbBracketUtils";
+import { findSeries } from "../../../../utils/brackets/mlbBracketUtils";
 import { LeagueBracket } from "./LeagueBracket";
 import { MatchupCard } from "./MatchupCard";
 

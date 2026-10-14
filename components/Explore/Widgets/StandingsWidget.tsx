@@ -1,4 +1,4 @@
-import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
+import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
@@ -20,7 +20,7 @@ import {
   buildStandingsSlides,
   formatStandingsMetric,
   formatStandingsRecord,
-} from "utils/standingsWidget";
+} from "utils/widgets/standingsWidget";
 import StandingsLeagueModal from "../StandingsLeagueModal";
 import WidgetCarousel from "./WidgetCarousel";
 import { WidgetEditControls } from "./WidgetSlider";

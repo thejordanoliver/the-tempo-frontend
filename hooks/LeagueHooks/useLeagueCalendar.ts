@@ -8,7 +8,7 @@ import {
   getLeagueCalendarMonthAnchor,
   normalizeLeagueCalendarLeague,
   setCachedLeagueCalendar,
-} from "utils/leagueCalendarCache";
+} from "utils/teams/leagueCalendarCache";
 
 export type FootballCalendarWeek = {
   label: string;

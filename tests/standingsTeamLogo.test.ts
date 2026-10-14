@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getStandingsTeamLogo } from "../utils/standingsTeamLogo";
+import { getStandingsTeamLogo } from "../utils/teams/standingsTeamLogo";
 
 test("uses backend logos for the selected theme", () => {
   const team = { logo: "https://database.test/light.png", logoDark: "https://database.test/dark.png" };

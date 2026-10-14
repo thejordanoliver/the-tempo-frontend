@@ -29,7 +29,7 @@ import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import type { ImageSourcePropType } from "react-native";
 import { Pressable, Text, View } from "react-native";
 import { ConferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModalStyles";
-import { snapPoints } from "utils/modalUtils";
+import { snapPoints } from "utils/ui/modalUtils";
 
 export type ConferenceListModalRef = {
   present: () => void;

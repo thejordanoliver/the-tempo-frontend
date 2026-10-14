@@ -1,4 +1,4 @@
-import { isEligibleFavoriteTeam } from "utils/favoriteTeamEligibility";
+import { isEligibleFavoriteTeam } from "utils/favorites/favoriteTeamEligibility";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { wcbbTeams } from "@/constants/teamsWCBB";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -26,7 +26,7 @@ import {
 } from "types/favorites";
 import type { Team } from "types/types";
 import { subscribeAuthSession } from "utils/apiClient";
-import { removeCachedUserProfile } from "utils/userProfileCache";
+import { removeCachedUserProfile } from "utils/profile/userProfileCache";
 import { useNotifications } from "contexts/NotificationContext";
 import { useFavoriteSports } from "./useFavoriteSports";
 

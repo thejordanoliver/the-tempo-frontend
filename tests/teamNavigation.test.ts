@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { withTeamLeague } from "../utils/teamNavigation";
-import { resolveSoccerTeamLeague } from "../utils/soccerTeamLeague";
-import { TEAM_TABS } from "../utils/tabs";
-import { getExploreRouteForResult } from "../utils/exploreNavigation";
+import { withTeamLeague } from "../utils/navigation/teamNavigation";
+import { resolveSoccerTeamLeague } from "../utils/teams/soccerTeamLeague";
+import { TEAM_TABS } from "../utils/navigation/tabs";
+import { getExploreRouteForResult } from "../utils/navigation/exploreNavigation";
 
 test("fixed team routes carry league in every tab stack", () => {
   for (const prefix of ["", "/(tabs)/(home)", "/(tabs)/(league)", "/(tabs)/(explore)", "/(tabs)/(profile)"]) {

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { AppState } from "react-native";
-import { shouldShowGameChat } from "utils/dateUtils";
+import { shouldShowGameChat } from "utils/common/dateUtils";
 
 export function useGameChatAvailability(gameDate: Date | null): boolean {
   const [, setTick] = useState(0);

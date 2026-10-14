@@ -29,7 +29,7 @@ import {
   getSourceGameDisplayTeams,
   REGIONAL_SLOT_SEED_GROUPS,
   type RegionalRoundCode,
-} from "utils/tournamentBracket.utils";
+} from "utils/brackets/tournamentBracket.utils";
 
 type TournamentTreeBracketProps = {
   season: number;

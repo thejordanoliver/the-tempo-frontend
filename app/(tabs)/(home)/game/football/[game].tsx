@@ -34,8 +34,8 @@ import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
-} from "@/utils/games";
-import { isGameFinalStatus } from "@/utils/gameStatus";
+} from "@/utils/games/games";
+import { isGameFinalStatus } from "@/utils/games/gameStatus";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import GameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import GameSummary from "components/Sports/Football/GameDetails/GameSummary";
@@ -56,7 +56,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "utils/dateUtils";
+} from "utils/common/dateUtils";
 
 type RouteParams = {
   game?: string | string[];

@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { gameInfoStyles } from "styles/GameDetailStyles/GameInfoStyles";
-import { formatPeriod } from "utils/games";
+import { formatPeriod } from "utils/games/games";
 type CenterInfoProps = {
   date: string;
   time?: string;

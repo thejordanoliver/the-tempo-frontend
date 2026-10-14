@@ -6,7 +6,7 @@ import test from "node:test";
 import {
   getTabGroup,
   scopeHrefToTab,
-} from "../utils/tabStackNavigation";
+} from "../utils/navigation/tabStackNavigation";
 
 const root = process.cwd();
 

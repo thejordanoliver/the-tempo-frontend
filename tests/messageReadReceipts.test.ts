@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { DirectMessageItem, MessageItem } from "../types/messages";
-import { getMessageReceiptLabels, getParticipantReadPosition } from "../utils/messageReadReceipts";
+import { getMessageReceiptLabels, getParticipantReadPosition } from "../utils/messages/messageReadReceipts";
 
 const outgoing = (id: string, createdAt: string, extra = {}): DirectMessageItem =>
   ({ id, createdAt, isCurrentUser: true, text: "hello", ...extra }) as DirectMessageItem;

@@ -22,7 +22,7 @@ import {
   getFootballBoxScoreLabels,
   hasFootballBoxScoreData,
   resolveFootballBoxScoreTeams,
-} from "utils/footballBoxScore";
+} from "utils/sports/football/footballBoxScore";
 
 const COLLAPSED_ROWS = 5;
 const COLUMN_WIDTH = 52;

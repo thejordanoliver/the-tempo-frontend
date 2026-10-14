@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   executeFavoriteSportToggle,
   restoreFavoriteSportMembership,
-} from "utils/favoriteSports";
+} from "utils/favorites/favoriteSports";
 
 function getFavoriteSportsErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "response" in error) {

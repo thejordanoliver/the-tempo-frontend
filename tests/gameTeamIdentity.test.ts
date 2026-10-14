@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { gameTeamIdsMatch, resolveGameTeamGroups } from "../utils/gameTeamIdentity";
+import { gameTeamIdsMatch, resolveGameTeamGroups } from "../utils/games/gameTeamIdentity";
 
 test("shot team matching handles numeric props and string play IDs", () => {
   assert.equal(gameTeamIdsMatch("153", 153), true);

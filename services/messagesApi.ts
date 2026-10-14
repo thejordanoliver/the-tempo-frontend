@@ -8,7 +8,7 @@ import {
   MessageThemePreference,
   SendDirectMessagePayload,
 } from "types/messages";
-import { normalizeMessageThemePreference } from "utils/messageTheme";
+import { normalizeMessageThemePreference } from "utils/messages/messageTheme";
 
 type RawRecord = Record<string, any>;
 type ApiRequestError = {

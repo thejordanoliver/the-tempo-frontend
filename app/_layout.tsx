@@ -1,4 +1,3 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   Oswald_200ExtraLight,
   Oswald_300Light,
@@ -8,6 +7,7 @@ import {
   Oswald_700Bold,
   useFonts,
 } from "@expo-google-fonts/oswald";
+import { useScopedRouter } from "hooks/useScopedRouter";
 
 import {
   BarlowCondensed_300Light,
@@ -30,9 +30,9 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import BadgeUnlockedModal from "../components/Badges/BadgeUnlockedModal";
 import { CustomHeader } from "../components/CustomHeader";
 import ForegroundNotificationBanner from "../components/Notifications/ForegroundNotificationBanner";
-import BadgeUnlockedModal from "../components/Profile/Badges/BadgeUnlockedModal";
 import { Colors } from "../constants/styles";
 import { ExploreWidgetsProvider } from "../contexts/ExploreWidgetsContext";
 import { FavoriteTeamsProvider } from "../contexts/FavoriteTeamsContext";
@@ -50,7 +50,7 @@ import { useAuth } from "../hooks/UserHooks/useAuth";
 import { useBadgeNotificationStore } from "../store/badgeNotificationStore";
 import { clearAuthSession, getAccessToken } from "../utils/apiClient";
 
-SplashScreen.preventAutoHideAsync().catch(() => { });
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 SplashScreen.setOptions({
   duration: 1000,
@@ -109,7 +109,9 @@ function AppLayout() {
 
   const [checkingStoredSession, setCheckingStoredSession] = useState(true);
 
-  const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname === `${route}/`);
+  const isPublicRoute = publicRoutes.some(
+    (route) => pathname === route || pathname === `${route}/`,
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -231,13 +233,13 @@ function AppLayout() {
 
               header: !isSplashScreen
                 ? ({ options }) => (
-                  <CustomHeader
-                    title={options.title ?? route.name}
-                    onBack={
-                      navigation.canGoBack() ? navigation.goBack : undefined
-                    }
-                  />
-                )
+                    <CustomHeader
+                      title={options.title ?? route.name}
+                      onBack={
+                        navigation.canGoBack() ? navigation.goBack : undefined
+                      }
+                    />
+                  )
                 : undefined,
 
               gestureEnabled: !isTabScreen,
@@ -268,7 +270,11 @@ function AppLayout() {
 
           <Stack.Screen
             name="settings/deleteaccountsplash"
-            options={{ animation: "fade", gestureEnabled: false, headerShown: false }}
+            options={{
+              animation: "fade",
+              gestureEnabled: false,
+              headerShown: false,
+            }}
           />
 
           <Stack.Screen

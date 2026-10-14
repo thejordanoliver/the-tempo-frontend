@@ -6,8 +6,8 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
+} from "@/utils/common/dateUtils";
+import { formatPeriod, getBroadcastDisplay } from "@/utils/games/games";
 import { Pressable, Text, View } from "react-native";
 import { CFPBracketStyles } from "styles/PlayoffStyles/CFPBracketStyles";
 import type { FootballTeam } from "types/football/cfpBracketTypes";

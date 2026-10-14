@@ -23,7 +23,7 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import { chunkIntoGridRows } from "utils/gameGrid";
+import { chunkIntoGridRows } from "utils/games/gameGrid";
 import FootballStackedGameCard from "./FootballStackedGameCard";
 
 type Props = {

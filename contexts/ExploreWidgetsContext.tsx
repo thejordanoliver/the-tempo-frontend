@@ -12,7 +12,7 @@ import { useExploreWidgetConfiguration } from "hooks/ExploreHooks/useExploreWidg
 import { useExploreWidgetLiveUpdates } from "hooks/ExploreHooks/useExploreWidgetLiveUpdates";
 import { getExploreWidgets } from "services/exploreWidgetsApi";
 import type { FavoriteTeamKey } from "types/favorites";
-import { prepareExploreFavoriteGames } from "utils/exploreFavoriteGames";
+import { prepareExploreFavoriteGames } from "utils/widgets/exploreFavoriteGames";
 import {
   EXPLORE_WIDGET_LEAGUES,
   type ExploreCollegePollLeague,

@@ -5,7 +5,7 @@ import type { FavoriteSportId } from "../constants/leagues";
 // @ts-ignore Node's type-stripping test runner requires the .ts extension.
 import { getFavoriteHeaderAccessibilityLabel, getFavoriteHeaderIconName } from "../components/CustomHeader/favoriteAction.ts";
 // @ts-ignore Node's type-stripping test runner requires the .ts extension.
-import { executeFavoriteSportToggle, restoreFavoriteSportMembership } from "../utils/favoriteSports.ts";
+import { executeFavoriteSportToggle, restoreFavoriteSportMembership } from "../utils/favorites/favoriteSports.ts";
 
 test("favorite-sport header renders outline and filled heart states", () => {
   assert.equal(getFavoriteHeaderIconName(false), "heart-outline");

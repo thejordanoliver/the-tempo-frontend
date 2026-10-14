@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { MLBPlayoffBracketStyles } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type { MLBPlayoffTeam } from "types/baseball/baseball";
-import type { Matchup } from "../../../../utils/mlbBracketUtils";
+import type { Matchup } from "../../../../utils/brackets/mlbBracketUtils";
 import { TeamRow, isKnownBracketTeam } from "./TeamRow";
 
 export function MatchupCard({

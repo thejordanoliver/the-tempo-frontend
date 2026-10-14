@@ -15,7 +15,7 @@ test('canonical MLB favorites are never translated as legacy IDs', () => {
 });
 test('old favorite and profile caches cannot be read as canonical MLB IDs', () => {
  const hook = readFileSync(new URL('../hooks/UserHooks/useFavoriteTeams.ts', import.meta.url),'utf8');
- const profile = readFileSync(new URL('../utils/userProfileCache.ts', import.meta.url),'utf8');
+ const profile = readFileSync(new URL('../utils/profile/userProfileCache.ts', import.meta.url),'utf8');
  assert.match(hook,/STORAGE_KEY_PREFIX = "favoriteTeams:v6"/);
  assert.match(profile,/USER_PROFILE_CACHE_VERSION = 8/);
 });

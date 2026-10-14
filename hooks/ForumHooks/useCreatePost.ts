@@ -21,7 +21,7 @@ import type {
   ForumPostDestination,
 } from "types/forum";
 import { apiClient } from "utils/apiClient";
-import { getForumPostCreateEndpoint } from "utils/forumPostDestination";
+import { getForumPostCreateEndpoint } from "utils/forums/forumPostDestination";
 
 if (
   Platform.OS === "android" &&

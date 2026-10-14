@@ -6,7 +6,7 @@ import useRoster from "@/hooks/LeagueHooks/useRoster";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
-import Roster from "components/Sports/Baseball/Team/Roster";
+import Roster from "components/Team/Roster";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { useLocalSearchParams } from "expo-router";
@@ -15,7 +15,7 @@ import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getNHLSeason } from "utils/dateUtils";
+import { getNHLSeason } from "utils/common/dateUtils";
 
 export default function TeamDetailScreen() {
   const league = "nhl";

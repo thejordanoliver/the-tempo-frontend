@@ -1,4 +1,4 @@
-import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
+import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import Dropdown from "@/components/Dropdown";

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getForumPostShareLink, getForumPostShareText, getSharedForumPostId } from "../utils/forumPostShare";
+import { getForumPostShareLink, getForumPostShareText, getSharedForumPostId } from "../utils/forums/forumPostShare";
 
 test("shares include a bounded preview and a link to the exact post", () => {
   const text = getForumPostShareText({ id: "post-123", username: "fan", text: "x".repeat(500) });

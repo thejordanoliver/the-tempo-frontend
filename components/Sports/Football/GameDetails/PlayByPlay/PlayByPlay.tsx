@@ -29,7 +29,7 @@ import Animated, {
 
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { PlayByPlayStyles } from "@/styles/GameDetailStyles/PlayByPlayStyles";
-import { formatPeriod } from "@/utils/games";
+import { formatPeriod } from "@/utils/games/games";
 import FootballFieldPlay from "./FootballField";
 
 type FootballFieldProps = {

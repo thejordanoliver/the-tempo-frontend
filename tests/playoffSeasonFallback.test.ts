@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { resolvePlayoffSeason } from "../utils/playoffSeasonFallback";
+import { resolvePlayoffSeason } from "../utils/brackets/playoffSeasonFallback";
 
 test("keeps the requested season when playoffs exist", async () => {
   const requested: number[] = [];

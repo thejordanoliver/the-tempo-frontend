@@ -1,7 +1,8 @@
+import BadgePreviewSection from "@/components/Badges/ProfileBadgeSection";
 import { CustomHeader } from "@/components/CustomHeader";
+import ProfilePredictions from "@/components/FanPrediction/ProfilePredictions";
+import FavoritesSection from "@/components/Favorites/ProfileFavoritesSection";
 import Forum from "@/components/Forum/Forum";
-import BadgePreviewSection from "@/components/Profile/Badges/ProfileBadgeSection";
-import FavoritesSection from "@/components/Profile/ProfileFavoritesSection";
 import SafetyActionsModal from "@/components/SafetyActionsModal";
 import TabBar from "@/components/TabBars/TabBar";
 import { Colors, globalStyles } from "@/constants/styles";
@@ -13,7 +14,6 @@ import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
-import ProfilePredictions from "components/Profile/ProfilePredictions";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -32,7 +32,7 @@ import {
 } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 import type { ForumPost } from "types/forum";
-import { parseProfileCountParam } from "utils/userProfileCounts";
+import { parseProfileCountParam } from "utils/profile/userProfileCounts";
 
 type RouteParam = string | string[] | undefined;
 

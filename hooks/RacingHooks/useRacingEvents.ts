@@ -7,7 +7,7 @@ import {
   UseRacingEventsOptions,
 } from "types/racing/racing";
 import { apiClient } from "utils/apiClient";
-import { formatDateToUTCYYYYMMDD } from "utils/dateUtils";
+import { formatDateToUTCYYYYMMDD } from "utils/common/dateUtils";
 
 type RacingCompetition = RacingEvent["competitions"][number];
 

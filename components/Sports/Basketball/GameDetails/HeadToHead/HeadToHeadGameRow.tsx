@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 
 import { Text, View } from "react-native";
 import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
-import { formatPeriod } from "utils/games";
+import { formatPeriod } from "utils/games/games";
 
 type Props = {
   game: BasketballGame;

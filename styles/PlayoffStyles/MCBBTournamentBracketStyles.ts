@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-import { BRACKET_LAYOUT } from "../../utils/tournamentBracket.utils";
+import { BRACKET_LAYOUT } from "../../utils/brackets/tournamentBracket.utils";
 export const CARD_WIDTH = 176;
 export const CARD_HEIGHT = 142;
 

@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import type { FavoriteLeague, FavoriteTeamKey } from "types/favorites";
-import { getFavoriteTeamRoute } from "utils/favoriteTeams";
+import { getFavoriteTeamRoute } from "utils/favorites/favoriteTeams";
 import WidgetCarousel from "./WidgetCarousel";
 
 export type FavoriteTeamSlide = {

@@ -7,7 +7,7 @@ import { useMemo, type ComponentProps } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { ExploreWidgetSize } from "types/widgets";
 import { WidgetEditControls } from "./WidgetSlider";
-import { formatDate } from "@/utils/dateUtils";
+import { formatDate } from "@/utils/common/dateUtils";
 
 type Props = ComponentProps<typeof WidgetEditControls> & {
   isEditing: boolean;

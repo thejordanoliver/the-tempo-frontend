@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { LEAGUE_TABS, TEAM_TABS } from "utils/tabs";
+import { LEAGUE_TABS, TEAM_TABS } from "utils/navigation/tabs";
 
 const FALLBACK_LEAGUE_TABS = ["scores", "news", "standings", "forum"] as const;
 

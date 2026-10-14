@@ -9,7 +9,7 @@ import {
   findSeries,
   lowestKnownSeed,
   seededMatchup,
-} from "../../../../utils/mlbBracketUtils";
+} from "../../../../utils/brackets/mlbBracketUtils";
 import { BracketConnectors } from "./BracketConnectors";
 import { ByeTeamCard } from "./ByeTeamCard";
 import { MatchupCard } from "./MatchupCard";

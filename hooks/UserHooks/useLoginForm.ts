@@ -17,7 +17,7 @@ import {
   checkSignupAvailability,
   type SignupIdentityField,
 } from "utils/apiClient";
-import { getErrorMessage } from "utils/getErrorMessage";
+import { getErrorMessage } from "utils/common/getErrorMessage";
 
 type CropTarget = "profile" | "banner";
 

@@ -28,7 +28,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { getActiveAtBatPlays } from "../../../../../utils/baseball-play-animation-utils";
+import { getActiveAtBatPlays } from "../../../../../utils/sports/baseball/baseball-play-animation-utils";
 import BaseballFieldPlay, {
   BASEBALL_FIELD_ASPECT_RATIO,
 } from "./BaseballField";

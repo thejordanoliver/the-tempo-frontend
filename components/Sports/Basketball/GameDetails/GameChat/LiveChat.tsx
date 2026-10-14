@@ -30,10 +30,10 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ChatMessageItem } from "types/chat";
-import type { ChatSendPayload } from "utils/chatPayload";
-import { CHAT_EMOJIS } from "utils/gameChatState";
-import { createMessageKey } from "utils/chatUtils";
-import { snapPoints } from "utils/modalUtils";
+import type { ChatSendPayload } from "utils/messages/chatPayload";
+import { CHAT_EMOJIS } from "utils/messages/gameChatState";
+import { createMessageKey } from "utils/messages/chatUtils";
+import { snapPoints } from "utils/ui/modalUtils";
 import { GiphySearchModal } from "../../../../Messages/GiphySearchModal";
 import ChatInputBar from "./ChatInputBar";
 import ChatMessage from "./ChatMessage";

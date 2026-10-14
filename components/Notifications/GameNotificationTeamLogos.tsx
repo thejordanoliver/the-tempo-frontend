@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/styles";
-import type { NotificationGameTeams } from "@/utils/notification-team-presentation";
+import type { NotificationGameTeams } from "@/utils/notifications/notification-team-presentation";
 import { Image } from "expo-image";
 import { StyleSheet, View } from "react-native";
 

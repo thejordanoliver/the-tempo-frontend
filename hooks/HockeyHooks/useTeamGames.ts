@@ -7,12 +7,12 @@ import type {
   ScheduleMonthOption,
 } from "types/schedule";
 import { apiClient } from "utils/apiClient";
-import { getFirstSeasonGame } from "utils/seasonGames";
+import { getFirstSeasonGame } from "utils/games/seasonGames";
 import {
   buildScheduleMonthOptions,
   getScheduleGamesForMonth,
   isScheduleOpeningMonth,
-} from "utils/teamSchedule";
+} from "utils/teams/teamSchedule";
 
 export type TeamScheduleLeague = "nhl" | "mch";
 

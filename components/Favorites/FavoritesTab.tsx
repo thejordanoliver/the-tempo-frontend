@@ -11,7 +11,7 @@ import type { FavoriteItem } from "types/favorites";
 import {
   getFavoriteTeamLogo,
   isCollegeFavoriteLeague,
-} from "utils/favoriteTeams";
+} from "utils/favorites/favoriteTeams";
 
 type Props = RenderItemParams<FavoriteItem> & {
   onPressItem: (item: FavoriteItem) => void;

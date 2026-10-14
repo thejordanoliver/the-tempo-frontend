@@ -27,7 +27,7 @@ import {
   USER_PROFILE_CACHE_VERSION,
   type CachedUserProfilePayload,
   type UserProfileCacheState,
-} from "utils/userProfileCache";
+} from "utils/profile/userProfileCache";
 
 type TeamLookupItem = TeamConfig;
 

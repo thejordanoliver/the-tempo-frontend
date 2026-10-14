@@ -23,7 +23,7 @@ const {
   getSourceGameDisplayTeams,
 } = require(path.join(
   process.cwd(),
-  "utils/tournamentBracket.utils.ts",
+  "utils/brackets/tournamentBracket.utils.ts",
 ));
 
 const team = (id, name, seed, homeAway, winner = null) => ({

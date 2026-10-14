@@ -1,4 +1,4 @@
-import { gameTeamIdsMatch } from "utils/gameTeamIdentity";
+import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 import Dropdown from "@/components/Dropdown";
 import type { Play } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import rinkImage from "assets/Placeholders/NHLRinkPlaceholder.png";

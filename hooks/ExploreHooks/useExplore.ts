@@ -22,7 +22,7 @@ import {
   canSearchExploreQuery,
   getExploreResultIdentity,
   normalizeExploreSearchQuery,
-} from "utils/exploreSearch";
+} from "utils/explore/exploreSearch";
 
 const RECENT_SEARCHES_KEY_PREFIX = "recentSearches";
 const RECENT_SEARCHES_LEGACY_KEY = RECENT_SEARCHES_KEY_PREFIX;

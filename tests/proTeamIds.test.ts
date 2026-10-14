@@ -23,6 +23,6 @@ for (const [file,minimum] of [['teams',30],['teamsNFL',32]] as const) {
 test('NFL/NBA API favorite keys cannot be mistaken for legacy cached values',()=>{
  assert.deepEqual(normalizeFavoriteTeamKeys(['nfl:13','nba:13','mlb:13']),['nfl:13','nba:13','mlb:13']);
  const hook=readFileSync(new URL('../hooks/UserHooks/useFavoriteTeams.ts',import.meta.url),'utf8');
- const profile=readFileSync(new URL('../utils/userProfileCache.ts',import.meta.url),'utf8');
+ const profile=readFileSync(new URL('../utils/profile/userProfileCache.ts',import.meta.url),'utf8');
  assert.match(hook,/favoriteTeams:v6/);assert.match(profile,/USER_PROFILE_CACHE_VERSION = 8/);
 });

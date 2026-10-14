@@ -3,7 +3,7 @@ import { useLiveGameChat, type GameChatContext } from "hooks/useLiveGameChat";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
 import type { ChatMessageItem } from "types/chat";
-import type { ChatSendPayload } from "utils/chatPayload";
+import type { ChatSendPayload } from "utils/messages/chatPayload";
 import FloatingButton from "../../../../Buttons/FloatingButton";
 
 type GameChatSessionProps = {

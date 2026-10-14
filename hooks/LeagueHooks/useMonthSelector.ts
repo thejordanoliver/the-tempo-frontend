@@ -3,7 +3,7 @@ import type { ScheduleMonthKey, ScheduleMonthOption } from "types/schedule";
 import {
   resolveScheduleMonthSelection,
   type ScheduleMonthSelection,
-} from "utils/teamSchedule";
+} from "utils/teams/teamSchedule";
 
 type UseTeamMonthSelectorParams = {
   months: ScheduleMonthOption[];

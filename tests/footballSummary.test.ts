@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { collectFootballSummaryPlays, filterFootballSummaryPlays } from "../utils/footballSummary";
+import { collectFootballSummaryPlays, filterFootballSummaryPlays } from "../utils/sports/football/footballSummary";
 
 const play = (id: string, period: number | string, sequence: number, text = "Run") => ({
   id, period: { number: period }, sequenceNumber: sequence, text, clock: { displayValue: "10:00" },

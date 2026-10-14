@@ -29,7 +29,7 @@ import {
   reorderFavoriteRailItems,
   splitFavoriteRailOrder,
 } from "types/favorites";
-import { getFavoriteBaseTeam, getFavoriteTeamRoute } from "utils/favoriteTeams";
+import { getFavoriteBaseTeam, getFavoriteTeamRoute } from "utils/favorites/favoriteTeams";
 import { FavoritesTab } from "./FavoritesTab";
 
 function setSharedValue<T>(sharedValue: { value: T }, value: T) {

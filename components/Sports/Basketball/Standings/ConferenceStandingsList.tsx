@@ -1,4 +1,4 @@
-import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
+import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import { useMemo } from "react";
 import { Colors, globalStyles } from "constants/styles";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";

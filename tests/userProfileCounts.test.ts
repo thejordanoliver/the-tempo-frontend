@@ -1,8 +1,8 @@
-import { getUserProfileParams } from "../utils/userProfileNavigation";
+import { getUserProfileParams } from "../utils/navigation/userProfileNavigation";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getUserProfileCountParams, parseProfileCountParam } from "../utils/userProfileCounts";
-import { getExploreRouteForResult } from "../utils/exploreNavigation";
+import { getUserProfileCountParams, parseProfileCountParam } from "../utils/profile/userProfileCounts";
+import { getExploreRouteForResult } from "../utils/navigation/exploreNavigation";
 
 test("profile count params preserve known counts, including zero", () => {
   assert.deepEqual(getUserProfileCountParams({ followers_count: 24, following_count: 0 }), {

@@ -11,7 +11,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
@@ -21,8 +21,8 @@ import { useBaseballGameDetails } from "hooks/BaseballHooks/useBaseballGameDetai
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
-import { snapPoints } from "utils/modalUtils";
+import { formatVenueAddress, getBroadcastDisplay } from "utils/games/games";
+import { snapPoints } from "utils/ui/modalUtils";
 import { CenterInfo } from "../GameDetails/CenterInfo";
 import { TeamRow } from "../GameDetails/TeamRow";
 import GamePreviewContent from "./GamePreviewContent";

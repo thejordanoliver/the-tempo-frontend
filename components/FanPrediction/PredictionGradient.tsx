@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
-import { getTeamGradient } from "utils/teamGradient";
+import { getTeamGradient } from "utils/teams/teamGradient";
 
 type Props = {
   color: string;

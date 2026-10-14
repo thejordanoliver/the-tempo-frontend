@@ -17,7 +17,7 @@ export {
   getColCenter,
   getX,
   SIDE_LABEL_TOP,
-} from "../../../../../utils/nflBracketLayout";
+} from "../../../../../utils/brackets/nflBracketLayout";
 
 type NFLPlayoffBracketProps = {
   bracket: BracketApiResponse | null;

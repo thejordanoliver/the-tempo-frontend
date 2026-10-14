@@ -6,7 +6,7 @@ import {
   getCollegePollPageSize,
   isCollegePollTypeAvailable,
   normalizeCollegePollType,
-} from "../utils/collegePollWidget";
+} from "../utils/widgets/collegePollWidget";
 
 test("offers football-specific polls only for college football", () => {
   assert.deepEqual(

@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { Play as BasketballPlay } from "../hooks/BasketballHooks/useBasketballGameDetails";
 import type { Play as HockeyPlay } from "../hooks/HockeyHooks/useHockeyGameDetails";
-import { basketballSummaryModel, footballSummaryModel, hockeySummaryModel } from "../utils/gameSummaryModels";
-import { collectFootballSummaryPlays } from "../utils/footballSummary";
+import { basketballSummaryModel, footballSummaryModel, hockeySummaryModel } from "../utils/games/gameSummaryModels";
+import { collectFootballSummaryPlays } from "../utils/sports/football/footballSummary";
 
 const play = (id: string, period: number, sequence: number) => ({
   id, period: { number: period }, sequenceNumber: String(sequence), text: "Play description",

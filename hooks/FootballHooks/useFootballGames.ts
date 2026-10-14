@@ -1,5 +1,5 @@
 import { FootballGame } from "@/types/football/football";
-import { isGameLive } from "@/utils/games";
+import { isGameLive } from "@/utils/games/games";
 import dayjs from "dayjs";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useMemo, useState } from "react";

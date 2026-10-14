@@ -2,7 +2,7 @@ import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
 import { ScoringPlays } from "@/hooks/FootballHooks/useFootballGameDetails";
-import { formatPeriod } from "@/utils/games";
+import { formatPeriod } from "@/utils/games/games";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";

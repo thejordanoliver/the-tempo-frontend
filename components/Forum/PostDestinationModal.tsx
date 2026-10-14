@@ -1,4 +1,4 @@
-import { snapPoints } from "@/utils/modalUtils";
+import { snapPoints } from "@/utils/ui/modalUtils";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -15,7 +15,7 @@ import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FAVORITE_LEAGUES } from "types/favorites";
 import type { ForumPostDestination } from "types/forum";
-import { normalizeForumPostLeague } from "utils/forumPostDestination";
+import { normalizeForumPostLeague } from "utils/forums/forumPostDestination";
 import SearchBar from "../SearchBars/SearchBar";
 import PillTabs from "../TabBars/PillTabs";
 

@@ -2,7 +2,7 @@ import { isAxiosError, isCancel } from "axios";
 import { useEffect, useMemo, useState } from "react";
 import type { PlayerGameLog, PlayerGameLogSport } from "types/playerGameLog";
 import { apiClient } from "utils/apiClient";
-import { getLatestPlayerGame } from "utils/playerGameLog";
+import { getLatestPlayerGame } from "utils/players/playerGameLog";
 
 export function usePlayerLatestGame<Game extends { id: string | number | null }>(
   gameLog: PlayerGameLog | null,

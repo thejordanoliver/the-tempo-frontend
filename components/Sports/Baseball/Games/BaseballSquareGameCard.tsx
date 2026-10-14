@@ -5,7 +5,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
@@ -17,7 +17,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { getBroadcastDisplay, winnerStyle } from "utils/games";
+import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
 function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {

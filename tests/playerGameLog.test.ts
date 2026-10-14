@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { PlayerGameLog } from "../types/playerGameLog";
-import { getLatestPlayerGame } from "../utils/playerGameLog";
+import { getLatestPlayerGame } from "../utils/players/playerGameLog";
 
 const entry = (eventId: string, date: string | null, section: string): PlayerGameLog["games"][number] => ({
   eventId, date, section,

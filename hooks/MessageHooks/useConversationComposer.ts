@@ -5,7 +5,7 @@ import { getAuthorizedMessageAttachment } from "services/messageAttachmentUrls";
 import { uploadMessageGif, uploadMessageImage } from "services/messagesApi";
 import type { useDirectMessages } from "hooks/MessageHooks/useDirectMessages";
 import type { MessageAttachment } from "types/messages";
-import { getErrorMessage } from "utils/getErrorMessage";
+import { getErrorMessage } from "utils/common/getErrorMessage";
 
 type Options = {
   conversationId: string;

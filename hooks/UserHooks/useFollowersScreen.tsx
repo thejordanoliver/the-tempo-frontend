@@ -1,4 +1,4 @@
-import { getUserProfileParams } from "utils/userProfileNavigation";
+import { getUserProfileParams } from "utils/navigation/userProfileNavigation";
 import { CustomHeader } from "@/components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";

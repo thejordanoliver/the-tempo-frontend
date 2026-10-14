@@ -20,19 +20,19 @@ import type {
   NotificationTeamSport,
   TeamNotificationSubscription,
 } from "@/types/notifications";
-import type { NotificationEventSettings } from "@/utils/notification-settings";
+import type { NotificationEventSettings } from "@/utils/notifications/notification-settings";
 import {
   DEFAULT_NOTIFICATION_EVENT_SETTINGS,
   DISABLED_NOTIFICATION_EVENT_SETTINGS,
   hasEnabledNotificationSetting,
   mergeNotificationSettings,
   notificationSettingsFromSubscription,
-} from "@/utils/notification-settings";
+} from "@/utils/notifications/notification-settings";
 import {
   isNotificationForSession,
   mergeNotifications,
   reconcileHydratedUnreadCount,
-} from "@/utils/notificationState";
+} from "@/utils/notifications/notificationState";
 import { buildFavoriteTeamKey, type FavoriteTeamKey } from "types/favorites";
 import React, {
   createContext,

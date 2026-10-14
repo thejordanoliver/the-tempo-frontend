@@ -6,7 +6,7 @@ import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { getBroadcastDisplay } from "utils/games";
+import { getBroadcastDisplay } from "utils/games/games";
 
 export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
   const router = useScopedRouter();

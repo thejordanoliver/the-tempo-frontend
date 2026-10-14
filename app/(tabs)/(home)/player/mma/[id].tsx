@@ -5,7 +5,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 import FighterCareerStats from "components/Sports/MMA/Player/FighterCareerStats";
 import FighterFightLog from "components/Sports/MMA/Player/FighterFightLog";
-import PlayerHeader from "components/Sports/MMA/Player/PlayerHeader";
+import PlayerHeader from "components/Player/PlayerHeader";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -71,7 +71,7 @@ export default function PlayerDetailScreen() {
       isDark={isDark}
       overview={
         <>
-          <PlayerHeader player={player} isDark={isDark} />
+          <PlayerHeader sport="mma" player={player} isDark={isDark} />
           <LatestGame
             game={latestFight.game}
             loading={fightLog.loading || latestFight.loading}

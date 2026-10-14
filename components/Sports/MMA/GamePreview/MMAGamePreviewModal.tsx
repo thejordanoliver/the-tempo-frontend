@@ -7,7 +7,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
@@ -18,8 +18,8 @@ import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
-} from "utils/games";
-import { snapPoints } from "utils/modalUtils";
+} from "utils/games/games";
+import { snapPoints } from "utils/ui/modalUtils";
 import { FighterRow } from "../GameDetails/FighterRow";
 import { GameInfo } from "../GameDetails/GameInfo";
 import GamePreviewContent from "./GamePreviewContent";

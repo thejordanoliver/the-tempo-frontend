@@ -1,7 +1,7 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Player/LatestGame";
-import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
-import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
+import PlayerAwardList from "@/components/Player/PlayerAwardList";
+import PlayerHeader from "components/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
@@ -20,10 +20,10 @@ import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { usePlayerClosestGame } from "hooks/LeagueHooks/usePlayerClosestGame";
-import type { BasketballGame } from "types/basketball/basketball";
 import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
+import type { BasketballGame } from "types/basketball/basketball";
 
 const BASKETBALL_LEAGUES = new Set<BasketballLeague>([
   "nba",
@@ -171,7 +171,11 @@ export default function PlayerDetailScreen() {
     game: playerGame,
     loading: playerGameLoading,
     error: playerGameError,
-  } = usePlayerClosestGame<BasketballGame>("basketball", canonicalLeague, resolvedTeamId);
+  } = usePlayerClosestGame<BasketballGame>(
+    "basketball",
+    canonicalLeague,
+    resolvedTeamId,
+  );
 
   const game = playerGame;
   const gameLoading = playerGameLoading;
@@ -273,6 +277,7 @@ export default function PlayerDetailScreen() {
       overview={
         <>
           <PlayerHeader
+            sport="basketball"
             player={player}
             isDark={isDark}
             league={canonicalLeague}

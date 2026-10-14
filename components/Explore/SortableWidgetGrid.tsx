@@ -27,7 +27,7 @@ import {
   findWidgetReorderTargetIndex,
   moveWidgetToIndex,
   type WidgetGridLayoutItem,
-} from "utils/exploreWidgetLayout";
+} from "utils/widgets/exploreWidgetLayout";
 
 const LONG_PRESS_DURATION_MS = 320;
 const EDGE_SCROLL_ZONE = 76;

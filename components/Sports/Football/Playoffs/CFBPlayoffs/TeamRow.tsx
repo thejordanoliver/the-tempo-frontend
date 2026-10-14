@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/styles";
-import { winnerStyle } from "@/utils/games";
+import { winnerStyle } from "@/utils/games/games";
 import { Image, Text, View } from "react-native";
 import { CFPBracketStyles } from "styles/PlayoffStyles/CFPBracketStyles";
 

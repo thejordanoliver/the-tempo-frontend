@@ -2,12 +2,12 @@ import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
-import { formatDate, formatTime, getHolidayLabel } from "@/utils/dateUtils";
+import { formatDate, formatTime, getHolidayLabel } from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const router = useScopedRouter();

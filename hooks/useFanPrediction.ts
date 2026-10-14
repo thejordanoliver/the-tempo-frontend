@@ -8,7 +8,7 @@ import {
   getVoteCount,
   isCanceledRequest,
   isSameTeamId,
-} from "utils/fanPredictionVotes";
+} from "utils/games/fanPredictionVotes";
 
 type OptimisticVote = {
   teamId: TeamId;

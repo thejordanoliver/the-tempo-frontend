@@ -9,7 +9,7 @@ import {
   getGamesByWeek,
   getRoundConferenceGames,
   orderWildCardGamesForBracket,
-} from "../utils/nflBracketUtils";
+} from "../utils/brackets/nflBracketUtils";
 
 const game = (id: number, home: number, away: number, headline = "") =>
   ({

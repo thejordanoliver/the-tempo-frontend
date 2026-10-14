@@ -1,5 +1,5 @@
 import { BaseballGame } from "@/types/baseball/baseball";
-import { isGameLive } from "@/utils/games";
+import { isGameLive } from "@/utils/games/games";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";

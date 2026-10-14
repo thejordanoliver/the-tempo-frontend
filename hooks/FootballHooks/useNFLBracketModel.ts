@@ -12,21 +12,21 @@ import {
   centerY,
   getCenteredX,
   getX,
-} from "@/utils/nflBracketLayout";
+} from "@/utils/brackets/nflBracketLayout";
 import {
   findNextRoundIndex,
   getConference,
   getGamesByWeek,
   getRoundConferenceGames,
   orderWildCardGamesForBracket,
-} from "@/utils/nflBracketUtils";
+} from "@/utils/brackets/nflBracketUtils";
 import { useMemo } from "react";
 import { BYE_CARD_HEIGHT } from "styles/PlayoffStyles/ByeTeamCardStyles";
 import type { BracketApiResponse } from "types/football/football";
 import {
   selectNFLByeTeam,
   selectNFLSuperBowl,
-} from "utils/nflPlayoffSelection";
+} from "utils/brackets/nflPlayoffSelection";
 
 export function useNFLBracketModel(bracket: BracketApiResponse | null) {
   const wildCardGames = useMemo(() => getGamesByWeek(bracket, 1), [bracket]);

@@ -7,8 +7,8 @@ import MatchInformation from "@/components/Sports/Tennis/GameDetails/MatchInform
 import GameHeader from "@/components/Sports/Tennis/GameDetails/GameHeader";
 import { useScrollFade } from "@/hooks/useScrollFade";
 import { gameDetailsScreenStyles } from "@/styles/GameDetailStyles/GameDetailsScreenStyles";
-import { formatDate, formatTime, safeDate } from "@/utils/dateUtils";
-import { getBroadcastDisplay } from "@/utils/games";
+import { formatDate, formatTime, safeDate } from "@/utils/common/dateUtils";
+import { getBroadcastDisplay } from "@/utils/games/games";
 import { CustomHeader } from "components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import type { TennisMatch } from "types/tennis/tennis";

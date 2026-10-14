@@ -640,7 +640,7 @@ function createCenterLike(
 }
 
 function testNotificationCenterGrouping() {
-  const center = loadTranspiledModule("utils/notificationCenter.ts");
+  const center = loadTranspiledModule("utils/notifications/notificationCenter.ts");
   // Grouped legacy notification-center records were replaced by canonical
   // AppNotification records. Keep these assertions only for older checkouts.
   if (typeof center.addCenterNotificationToState !== "function") return;

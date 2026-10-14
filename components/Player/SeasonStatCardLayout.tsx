@@ -3,7 +3,7 @@ import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import type { PlayerStatRanking } from "types/playerSeasonRankings";
-import { getContrastingTextColor } from "utils/color";
+import { getContrastingTextColor } from "utils/ui/color";
 
 export type SeasonStatItem = {
   label: string;

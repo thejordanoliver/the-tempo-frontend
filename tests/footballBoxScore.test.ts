@@ -5,7 +5,7 @@ import {
   getFootballBoxScoreLabels,
   hasFootballBoxScoreData,
   resolveFootballBoxScoreTeams,
-} from "../utils/footballBoxScore";
+} from "../utils/sports/football/footballBoxScore";
 
 const block = (id: number, name: string, side = "") => ({
   team: { id, espnId: id + 100, name, homeAway: side },

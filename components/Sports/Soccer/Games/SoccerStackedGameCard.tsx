@@ -7,11 +7,11 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 
 export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {

@@ -1,6 +1,6 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
-import RosterStats from "@/components/Sports/Baseball/Team/RosterStats";
+import RosterStats from "@/components/Team/BaseballRosterStats";
 import { Colors } from "@/constants/styles";
 import { useRosterStats } from "@/hooks/BaseballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BaseballHooks/useTeamStats";
@@ -8,7 +8,7 @@ import useRoster from "@/hooks/LeagueHooks/useRoster";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
-import Roster from "components/Sports/Baseball/Team/Roster";
+import Roster from "components/Team/Roster";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { useLocalSearchParams } from "expo-router";
@@ -18,7 +18,7 @@ import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useState } from "react";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getMLBSeason } from "utils/dateUtils";
+import { getMLBSeason } from "utils/common/dateUtils";
 
 export default function TeamDetailScreen() {
   const league = "mlb";

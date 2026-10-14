@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { reconcileDirectMessages } from '../utils/reconcileDirectMessages';
+import { reconcileDirectMessages } from '../utils/messages/reconcileDirectMessages';
 import type { DirectMessageItem } from '../types/messages';
 const message = (id: string, extra: Partial<DirectMessageItem> = {}): DirectMessageItem => ({
   id, conversationId: 'thread', text: id, timestamp: '', isCurrentUser: false, ...extra,

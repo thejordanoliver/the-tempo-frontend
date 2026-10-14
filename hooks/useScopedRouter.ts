@@ -1,6 +1,6 @@
 import { useRouter as useExpoRouter, useSegments } from "expo-router";
 import { useMemo } from "react";
-import { getTabGroup, scopeHrefToTab } from "utils/tabStackNavigation";
+import { getTabGroup, scopeHrefToTab } from "utils/navigation/tabStackNavigation";
 
 type ExpoRouter = ReturnType<typeof useExpoRouter>;
 

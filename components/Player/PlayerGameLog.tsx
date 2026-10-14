@@ -14,7 +14,8 @@ import type {
 import {
   getPlayerGameLogFilters,
   isRegularGameLogSection,
-} from "utils/playerGameLogFilters";
+} from "utils/players/playerGameLogFilters";
+import HeadingTwo from "../Headings/HeadingTwo";
 
 type Props = {
   sport?: PlayerGameLogSport;
@@ -125,6 +126,7 @@ export default function PlayerGameLog({
   if (!games.length)
     return (
       <View style={styles.container}>
+        <HeadingTwo isDark={isDark}>Game Log</HeadingTwo>
         <View style={styles.statsHeader}>
           {sectionOptions.length ? (
             <PillTabs
@@ -178,9 +180,7 @@ export default function PlayerGameLog({
           </View>
         </View>
         <View style={global.emptyContainer}>
-          <Text style={global.emptyText}>
-            No games in this section
-          </Text>
+          <Text style={global.emptyText}>No games in this section</Text>
         </View>
       </View>
     );
@@ -189,6 +189,7 @@ export default function PlayerGameLog({
 
   return (
     <View style={styles.container}>
+      <HeadingTwo isDark={isDark}>Game Log</HeadingTwo>
       <View style={styles.statsHeader}>
         {sectionOptions.length ? (
           <PillTabs

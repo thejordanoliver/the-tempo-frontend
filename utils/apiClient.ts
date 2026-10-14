@@ -3,14 +3,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { create, isAxiosError } from "axios";
 import { router } from "expo-router";
 import { API_BASE_URL } from "utils/apiConfig";
-import { isRefreshResponseForCurrentSession } from "utils/authSessionRace";
+import { isRefreshResponseForCurrentSession } from "utils/auth/authSessionRace";
 import {
   clearSecureTokens,
   getSecureAccessToken,
   getSecureRefreshToken,
   saveSecureTokens,
-} from "utils/secureAuthStorage";
-import { USER_PROFILE_CACHE_KEY_PREFIX } from "utils/userProfileCache";
+} from "utils/auth/secureAuthStorage";
+import { USER_PROFILE_CACHE_KEY_PREFIX } from "utils/profile/userProfileCache";
 
 export const BASE_URL = API_BASE_URL;
 

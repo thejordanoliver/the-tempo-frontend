@@ -1,7 +1,7 @@
 import { useBaseballGames } from "@/hooks/BaseballHooks/useBaseballGames";
 import { useMLBPlayoffBracket } from "@/hooks/BaseballHooks/useMLBPlayoffBracket";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
-import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
+import { isLeague, League, normalizeLeagueParam } from "@/utils/navigation/tabs";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -28,7 +28,7 @@ import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
-import { getMLBSeason, getMLBStandingsSeason } from "@/utils/dateUtils";
+import { getMLBSeason, getMLBStandingsSeason } from "@/utils/common/dateUtils";
 import SeasonLeadersList from "../../components/League/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
@@ -37,7 +37,7 @@ import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import { getLeagueCalendarDateKey } from "../../utils/leagueCalendarCache";
+import { getLeagueCalendarDateKey } from "../../utils/teams/leagueCalendarCache";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

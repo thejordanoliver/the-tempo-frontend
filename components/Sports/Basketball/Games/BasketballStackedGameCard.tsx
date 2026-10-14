@@ -16,8 +16,8 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
+} from "utils/common/dateUtils";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
 
 export default function BasketballStackedGameCard({
   game,

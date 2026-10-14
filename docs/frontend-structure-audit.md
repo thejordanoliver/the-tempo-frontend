@@ -18,8 +18,8 @@ It is not a full security, runtime, or performance audit.
 
 - `app/user/[id].tsx:283`: unsupported `isCurrentUser` prop.
 - Baseball and basketball `Team/RosterStats.tsx`: `GameTeamStats` is absent from their props types.
-- `utils/footballRosterStats.ts`: missing football `GameTeamStats` export.
-- `utils/stats.ts`: missing basketball `BasketballGameTeamStats` and `GameTeamStats` exports.
+- `utils/sports/football/footballRosterStats.ts`: missing football `GameTeamStats` export.
+- `utils/stats/stats.ts`: missing basketball `BasketballGameTeamStats` and `GameTeamStats` exports.
 
 Check the intended data contracts and consumers before repairing these. Moving
 files while checks already fail makes migration regressions harder to identify.

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { PlayerGameLog } from "../types/playerGameLog";
-import { getPlayerGameLogFilters, isRegularGameLogSection } from "../utils/playerGameLogFilters";
+import { getPlayerGameLogFilters, isRegularGameLogSection } from "../utils/players/playerGameLogFilters";
 
 const log = (overrides: Partial<PlayerGameLog> = {}): PlayerGameLog => ({
   playerId: "1", league: "nba", season: 2027, displaySeason: "2026-27", category: null,

@@ -11,8 +11,8 @@ import type { MessageThemePreference } from "types/messages";
 import {
   DEFAULT_MESSAGE_THEME_PREFERENCE,
   normalizeMessageThemePreference,
-} from "utils/messageTheme";
-import { snapPoints } from "utils/modalUtils";
+} from "utils/messages/messageTheme";
+import { snapPoints } from "utils/ui/modalUtils";
 import Button from "../Buttons/Button";
 import CustomActivityIndicator from "../CustomActivityIndicator";
 type Props = {

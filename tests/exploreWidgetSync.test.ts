@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { ExploreWidgetSync, type WidgetSettings, type WidgetSettingsCache } from "../utils/exploreWidgetSync";
+import { ExploreWidgetSync, type WidgetSettings, type WidgetSettingsCache } from "../utils/widgets/exploreWidgetSync";
 import type { ExploreWidgetConfig } from "../types/widgets";
 
 const widget = (id = "local"): ExploreWidgetConfig => ({ id, type: "standings", title: "Standings", createdAt: 1, size: "medium", order: 0, standingsLeague: "nba" });

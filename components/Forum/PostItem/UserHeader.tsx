@@ -1,5 +1,5 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getUserProfileParams } from "utils/userProfileNavigation";
+import { getUserProfileParams } from "utils/navigation/userProfileNavigation";
 // components/Forum/UserHeader.tsx
 import { Ionicons } from "@expo/vector-icons";
 import SafetyActionsModal from "components/SafetyActionsModal";

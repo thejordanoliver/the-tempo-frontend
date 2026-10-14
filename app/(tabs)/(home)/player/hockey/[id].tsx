@@ -6,7 +6,7 @@ import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 import PlayerGameLog from "components/Player/PlayerGameLog";
-import PlayerHeader from "components/Sports/Baseball/Player/PlayerHeader";
+import PlayerHeader from "components/Player/PlayerHeader";
 import { Colors, globalStyles } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -144,7 +144,7 @@ export default function PlayerDetailScreen() {
       isDark={isDark}
       overview={
         <>
-          <PlayerHeader player={player} isDark={isDark} />
+          <PlayerHeader sport="hockey" player={player} isDark={isDark} />
           <LatestGame
             game={game}
             loading={gameLoading}

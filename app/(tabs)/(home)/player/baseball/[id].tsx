@@ -9,7 +9,7 @@ import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 import PlayerGameLog from "components/Player/PlayerGameLog";
-import PlayerHeader from "components/Sports/Baseball/Player/PlayerHeader";
+import PlayerHeader from "components/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/Baseball/Player/PlayerStatTable";
 import { Colors, globalStyles } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
@@ -218,7 +218,7 @@ export default function PlayerDetailScreen() {
       isDark={isDark}
       overview={
         <>
-          <PlayerHeader player={player} isDark={isDark} />
+          <PlayerHeader sport="baseball" player={player} isDark={isDark} />
           <SeasonStatCard
             season={latestSeason}
             loading={seasonsLoading}

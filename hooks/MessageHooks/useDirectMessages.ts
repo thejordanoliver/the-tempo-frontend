@@ -15,7 +15,7 @@ import {
 import {
   DEFAULT_MESSAGE_THEME_PREFERENCE,
   resolveMessageAccent,
-} from "utils/messageTheme";
+} from "utils/messages/messageTheme";
 
 export const useDirectMessages = (
   conversationId: string,

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { boundedChatMessages, chatMessageKey, chatCacheKey, reconcileChatSnapshot, selectUnconfirmedChatMessages } from "../utils/gameChatState";
+import { boundedChatMessages, chatMessageKey, chatCacheKey, reconcileChatSnapshot, selectUnconfirmedChatMessages } from "../utils/messages/gameChatState";
 import type { ChatMessageItem } from "../types/chat";
 const message = (id: string, time = 1): ChatMessageItem => ({ id, user: "alex", senderId: 1, message: "hello", gameId: "game-1", time, delivery: "sent" });
 

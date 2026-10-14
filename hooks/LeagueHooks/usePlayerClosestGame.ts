@@ -1,6 +1,6 @@
 import { useTeamSchedule } from "hooks/Sports/useTeamSchedule";
 import type { PlayerGameLogSport } from "types/playerGameLog";
-import { getClosestPlayerGame, type PlayerScheduleGame } from "utils/playerClosestGame";
+import { getClosestPlayerGame, type PlayerScheduleGame } from "utils/players/playerClosestGame";
 
 type ScheduleResponse<Game> = { games?: Game[] };
 function normalize<Game>(response: ScheduleResponse<Game>): { games: Game[] } {

@@ -10,7 +10,7 @@ import {
   buildStandingsPreviewRows,
   formatStandingsMetric,
   formatStandingsRecord,
-} from "../utils/standingsWidget";
+} from "../utils/widgets/standingsWidget";
 
 const team = (id: string, wins: number, losses: number): StandingsTeam => ({
   id,

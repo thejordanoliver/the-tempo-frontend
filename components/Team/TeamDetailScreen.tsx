@@ -1,11 +1,11 @@
-import TeamInfoModal from "components/Sports/Basketball/Team/TeamInfoModal";
+import TeamInfoModal from "@/components/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import TeamPager from "components/Team/TeamPager";
 import { Colors, globalStyles } from "constants/styles";
 import type { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { Children, isValidElement, useRef, type ReactNode } from "react";
 import { Platform, Text, View } from "react-native";
 import type PagerView from "react-native-pager-view";
-import TeamPager from "components/Team/TeamPager";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 type Props = {
@@ -24,7 +24,9 @@ export default function TeamDetailScreen({
   const pagerRef = useRef<PagerView>(null);
   const global = globalStyles(screen.isDark);
   const background = {
-    backgroundColor: screen.isDark ? Colors.dark.background : Colors.light.background,
+    backgroundColor: screen.isDark
+      ? Colors.dark.background
+      : Colors.light.background,
   };
   const handleTabPress = (tab: string) => {
     const index = screen.tabs.indexOf(tab);
@@ -71,25 +73,33 @@ export default function TeamDetailScreen({
                 { display: screen.selectedTab === tab ? "flex" : "none" },
               ]}
             >
-              {(screen.selectedTab === tab || screen.hasVisitedTab(tab)) && keyedChildren.get(tab)}
+              {(screen.selectedTab === tab || screen.hasVisitedTab(tab)) &&
+                keyedChildren.get(tab)}
             </View>
           ))}
         </View>
-      ) : <TeamPager
-        ref={pagerRef}
-        style={TeamDetailStyles.contentArea}
-        initialPage={Math.max(0, screen.tabs.indexOf(screen.selectedTab))}
-        onPageScroll={screen.handlePageScroll}
-        onPageSelected={(event) =>
-          screen.handlePageChange(event.nativeEvent.position)
-        }
-      >
-        {screen.tabs.map((tab) => (
-          <View key={tab} collapsable={false} style={TeamDetailStyles.contentArea}>
-            {(screen.selectedTab === tab || screen.hasVisitedTab(tab)) && keyedChildren.get(tab)}
-          </View>
-        ))}
-      </TeamPager>}
+      ) : (
+        <TeamPager
+          ref={pagerRef}
+          style={TeamDetailStyles.contentArea}
+          initialPage={Math.max(0, screen.tabs.indexOf(screen.selectedTab))}
+          onPageScroll={screen.handlePageScroll}
+          onPageSelected={(event) =>
+            screen.handlePageChange(event.nativeEvent.position)
+          }
+        >
+          {screen.tabs.map((tab) => (
+            <View
+              key={tab}
+              collapsable={false}
+              style={TeamDetailStyles.contentArea}
+            >
+              {(screen.selectedTab === tab || screen.hasVisitedTab(tab)) &&
+                keyedChildren.get(tab)}
+            </View>
+          ))}
+        </TeamPager>
+      )}
       {screen.teamInfo.enabled && (
         <TeamInfoModal
           {...screen.teamInfo}

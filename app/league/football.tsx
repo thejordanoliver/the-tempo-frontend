@@ -30,7 +30,7 @@ import { useLeaguesNews } from "@/hooks/NewsHooks/useLeaguesNews";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
-import { getFootballSeason, getRecruitYear } from "@/utils/dateUtils";
+import { getFootballSeason, getRecruitYear } from "@/utils/common/dateUtils";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";

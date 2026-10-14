@@ -27,7 +27,7 @@ import { SectionList, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { leagueGamesListStyles } from "styles/GamecardStyles/LeagueGamesListStyles";
 import type { MMAFight } from "types/mma/mma";
-import { chunkIntoGridRows } from "utils/gameGrid";
+import { chunkIntoGridRows } from "utils/games/gameGrid";
 
 import TennisGameCard from "@/components/Sports/Tennis/Games/TennisGameCard";
 import HeadingTwo from "../../Headings/HeadingTwo";

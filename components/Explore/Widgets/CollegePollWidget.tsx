@@ -1,4 +1,4 @@
-import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
+import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
@@ -28,7 +28,7 @@ import {
   getCollegePollLabel,
   getCollegePollPageSize,
   normalizeCollegePollType,
-} from "utils/collegePollWidget";
+} from "utils/widgets/collegePollWidget";
 import CollegePollSettingsModal from "../CollegePollSettingsModal";
 import WidgetCarousel from "./WidgetCarousel";
 import { WidgetEditControls } from "./WidgetSlider";

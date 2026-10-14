@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { selectNFLSuperBowl } from "../utils/nflPlayoffSelection";
+import { selectNFLSuperBowl } from "../utils/brackets/nflPlayoffSelection";
 import type { BracketApiResponse, NFLPlayoffGame, NFLPlayoffGroup } from "../types/football/football";
 
 const game = (id: number, week: number, headline?: string) =>

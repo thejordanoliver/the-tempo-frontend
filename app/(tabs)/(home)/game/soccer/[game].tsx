@@ -22,7 +22,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
 import LastPlay from "components/Sports/Baseball/GameDetails/LastPlay";
@@ -42,7 +42,7 @@ import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
-} from "utils/games";
+} from "utils/games/games";
 
 type RouteParams = {
   game?: string | string[];

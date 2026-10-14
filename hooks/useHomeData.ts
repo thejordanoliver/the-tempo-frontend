@@ -1,13 +1,13 @@
 import type { HomeLeagueSource, LeagueGame } from "@/types/leagues";
-import { filterByDate } from "@/utils/dateUtils";
+import { filterByDate } from "@/utils/common/dateUtils";
 import { HOME_SCORE_LEAGUES, type HomeLeagueId } from "constants/leagues";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { normalizeGames } from "utils/games";
-import { buildHomeGameSections } from "utils/homeGames";
+import { normalizeGames } from "utils/games/games";
+import { buildHomeGameSections } from "utils/games/homeGames";
 
 import { useBaseballGames } from "./BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "./BasketballHooks/useBasketballGames";

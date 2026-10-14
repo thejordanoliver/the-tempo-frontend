@@ -30,7 +30,7 @@ import { useTennisMatches } from "hooks/TennisHooks/useTennisMatches";
 import { useLeagueFavoriteHeader } from "hooks/UserHooks/useLeagueFavoriteHeader";
 import { LeagueScreenStyles } from "styles/LeagueStyles/LeagueStyles";
 import type { TennisDivision, TennisLeague } from "types/tennis/tennis";
-import { getLeagueCalendarDateKey } from "utils/leagueCalendarCache";
+import { getLeagueCalendarDateKey } from "utils/teams/leagueCalendarCache";
 
 function normalizeLeague(value?: string | string[]): TennisLeague {
   const league = Array.isArray(value) ? value[0] : value;

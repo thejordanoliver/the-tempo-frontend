@@ -1,7 +1,7 @@
 import { BasesIndicator } from "@/components/Sports/Baseball/GameDetails/BasesIndicator";
 import { BaseballGame } from "@/types/baseball/baseball";
-import { getBroadcastDisplay } from "@/utils/games";
-import displayeValue from "@/utils/widgetUtils";
+import { getBroadcastDisplay } from "@/utils/games/games";
+import displayeValue from "@/utils/widgets/widgetUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
@@ -12,7 +12,7 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { formatDate, formatTime, getHolidayLabel } from "utils/dateUtils";
+import { formatDate, formatTime, getHolidayLabel } from "utils/common/dateUtils";
 
 type BaseballGameWidgetProps = {
   game: BaseballGame;

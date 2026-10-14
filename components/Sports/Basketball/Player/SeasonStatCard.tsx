@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { Text, View } from "react-native";
 import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
-type BasketballLeague = "NBA" | "WNBA" | "MCBB" | "WCBB";
+type BasketballLeague = "nba" | "wnba" | "mcbb" | "wcbb";
 
 type Props = {
   seasons: PlayerSeason[];
@@ -21,13 +21,8 @@ type Props = {
   teamColor?: string;
 };
 
-function normalizeLeague(league: Props["league"]) {
-  return String(league ?? "").toUpperCase();
-}
-
 function isProBasketballLeague(league: Props["league"]) {
-  const normalizedLeague = normalizeLeague(league);
-  return normalizedLeague === "NBA" || normalizedLeague === "WNBA";
+  return league === "nba" || league === "wnba";
 }
 
 function getSeasonNumber(season: PlayerSeason) {

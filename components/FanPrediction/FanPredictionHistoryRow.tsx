@@ -6,7 +6,7 @@ import { getNFLTeam, getNFLTeamLogo } from "@/constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "@/constants/teamsNHL";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
-import { winnerStyle } from "@/utils/games";
+import { winnerStyle } from "@/utils/games/games";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles } from "constants/styles";
 import { Image } from "expo-image";
@@ -18,7 +18,7 @@ import type {
   FanPredictionPick,
   FanPredictionPickTeam,
 } from "types/fanPredictions";
-import { formatDate, formatTime, safeDate } from "utils/dateUtils";
+import { formatDate, formatTime, safeDate } from "utils/common/dateUtils";
 
 type Props = { pick: FanPredictionPick; isDark: boolean; onPress: () => void };
 

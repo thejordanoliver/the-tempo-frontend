@@ -12,8 +12,8 @@ import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useMemo, useState } from "react";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getFootballSeason } from "utils/dateUtils";
-import { getFirstSeasonGame } from "utils/seasonGames";
+import { getFootballSeason } from "utils/common/dateUtils";
+import { getFirstSeasonGame } from "utils/games/seasonGames";
 
 export default function TeamDetailScreen() {
   const league = "ufl";

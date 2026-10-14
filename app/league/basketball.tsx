@@ -35,7 +35,7 @@ import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import { getLeagueCalendarDateKey } from "../../utils/leagueCalendarCache";
+import { getLeagueCalendarDateKey } from "../../utils/teams/leagueCalendarCache";
 
 /* -------------------------------------------------------------------------- */
 /*                                     NBA                                    */
@@ -72,7 +72,7 @@ import {
   getNBASeason,
   getRecruitYear,
   getWNBASeason,
-} from "../../utils/dateUtils";
+} from "../../utils/common/dateUtils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

@@ -4,7 +4,7 @@ import type { ExploreWidgetGame } from "../types/widgets";
 import {
   getExploreFavoriteGamePhase,
   prepareExploreFavoriteGames,
-} from "../utils/exploreFavoriteGames";
+} from "../utils/widgets/exploreFavoriteGames";
 
 function game({
   id,

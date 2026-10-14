@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { interleavePredictions } from "../utils/forYouFeed";
+import { interleavePredictions } from "../utils/explore/forYouFeed";
 
 test("spaces predictions without changing news and post ordering", () => {
   const content = Array.from({ length: 15 }, (_, i) => `content-${i}`);

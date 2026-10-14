@@ -18,7 +18,7 @@ import {
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import { MMAFight } from "types/mma/mma";
-import { getMMAGameId } from "utils/mmaEventUtils";
+import { getMMAGameId } from "utils/sports/mma/mmaEventUtils";
 import MMAGamePreviewModal from "../GamePreview/MMAGamePreviewModal";
 import MMAGameCard from "./MMAGameCard";
 import MMASquareGameCard from "./MMASquareGameCard";

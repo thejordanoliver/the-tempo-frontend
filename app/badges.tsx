@@ -1,5 +1,5 @@
+import BadgeCard from "@/components/Badges/BadgeCard";
 import { CustomHeader } from "@/components/CustomHeader";
-import BadgeCard from "@/components/Profile/Badges/BadgeCard";
 import PillTabs from "@/components/TabBars/PillTabs";
 import { Colors, Fonts, globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";

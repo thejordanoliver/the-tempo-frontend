@@ -1,5 +1,5 @@
 import { useForumMediaLike } from "hooks/ForumHooks/useForumMediaLike";
-import { supportsLiquidGlass } from "@/utils/glass";
+import { supportsLiquidGlass } from "@/utils/ui/glass";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";

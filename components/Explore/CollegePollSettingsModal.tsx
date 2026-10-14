@@ -1,4 +1,4 @@
-import { snapPoints } from "@/utils/modalUtils";
+import { snapPoints } from "@/utils/ui/modalUtils";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -22,7 +22,7 @@ import {
 import {
   getCollegePollOptions,
   normalizeCollegePollType,
-} from "utils/collegePollWidget";
+} from "utils/widgets/collegePollWidget";
 
 const collegePollSnapPoints = [snapPoints[1]];
 

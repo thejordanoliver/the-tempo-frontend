@@ -5,7 +5,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, activeOpacity } from "constants/styles";
@@ -13,7 +13,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
 
 export default function MMAGameCard({ game }: MMAFightCardProps) {
   const router = useScopedRouter();

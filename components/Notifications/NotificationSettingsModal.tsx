@@ -1,4 +1,4 @@
-import { snapPoints } from "@/utils/modalUtils";
+import { snapPoints } from "@/utils/ui/modalUtils";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -21,7 +21,7 @@ import type { NotificationTeamSport } from "types/notifications";
 import {
   DISABLED_NOTIFICATION_EVENT_SETTINGS,
   type NotificationEventSettings,
-} from "utils/notification-settings";
+} from "utils/notifications/notification-settings";
 import Button from "../Buttons/Button";
 
 type NotificationSettingsModalProps = {

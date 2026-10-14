@@ -21,7 +21,7 @@ import {
   View,
 } from "react-native";
 import { newsArticleStyles } from "styles/NewsStyles/NewsArticleStyle";
-import { getNewsGameTarget, getNewsPlayerTarget } from "utils/newsArticleLinks";
+import { getNewsGameTarget, getNewsPlayerTarget } from "utils/news/newsArticleLinks";
 
 export default function ArticleScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();

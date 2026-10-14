@@ -16,7 +16,7 @@ import Animated, {
 import { scheduleOnRN } from "react-native-worklets";
 import { widgetCarouselStyles } from "styles/ExploreStyles/WidgetCarouselStyles";
 import type { WidgetCarouselProps } from "types/widgetCarousel";
-import { getWidgetCarouselDotWindow } from "utils/widgetCarousel";
+import { getWidgetCarouselDotWindow } from "utils/widgets/widgetCarousel";
 
 const DEFAULT_AUTO_PLAY_INTERVAL_MS = 5_000;
 const FADE_OUT_MS = 260;

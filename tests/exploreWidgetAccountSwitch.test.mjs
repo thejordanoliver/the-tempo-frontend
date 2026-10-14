@@ -3,7 +3,7 @@ import fs from "node:fs";
 import vm from "node:vm";
 import test from "node:test";
 import ts from "typescript";
-import { ExploreWidgetSync } from "../utils/exploreWidgetSync.ts";
+import { ExploreWidgetSync } from "../utils/widgets/exploreWidgetSync.ts";
 
 const widget = { id: "account-a-widget", type: "standings", title: "Standings", createdAt: 1, size: "medium", order: 0, standingsLeague: "nba" };
 const accountSettings = { schemaVersion: 2, widgets: [widget], revision: 1, updatedAt: "2026-10-02T00:00:00Z" };
@@ -54,11 +54,11 @@ function setup() {
     "react-native": { AppState: { addEventListener: () => ({ remove() {} }) } },
     "@react-native-async-storage/async-storage": { getItem: async () => String(storedUserId) },
     "utils/apiClient": { subscribeAuthSession: (callback) => { listener = callback; return () => { listener = null; }; } },
-    "utils/exploreWidgetSync": { ExploreWidgetSync },
+    "utils/widgets/exploreWidgetSync": { ExploreWidgetSync },
     "constants/exploreWidgets": { getWidgetTitle: () => "Standings", widgetAllowsDuplicates: () => false },
     "types/widgets": { EXPLORE_WIDGET_LEAGUES: ["nba"] },
-    "utils/collegePollWidget": { normalizeCollegePollType: (_league, poll) => poll },
-    "utils/exploreWidgetStorage": {
+    "utils/widgets/collegePollWidget": { normalizeCollegePollType: (_league, poll) => poll },
+    "utils/widgets/exploreWidgetStorage": {
       createExploreWidgetId: () => "new",
       withSequentialOrder: (widgets) => widgets.map((widget, order) => ({ ...widget, order })),
       loadExploreWidgetSettingsCache: async (id) => { calls.push(["load", id]); return caches.get(id) ?? null; },

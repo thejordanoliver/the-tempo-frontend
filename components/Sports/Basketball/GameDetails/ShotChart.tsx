@@ -1,4 +1,4 @@
-import { gameTeamIdsMatch } from "utils/gameTeamIdentity";
+import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 import Dropdown from "@/components/Dropdown";
 import { Play } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";

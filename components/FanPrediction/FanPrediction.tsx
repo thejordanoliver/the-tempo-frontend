@@ -9,7 +9,7 @@ import {
 import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
-import { formatPercentage, isSameTeamId } from "utils/fanPredictionVotes";
+import { formatPercentage, isSameTeamId } from "utils/games/fanPredictionVotes";
 import FanPredictionSection from "./FanPredictionSection";
 import FanRankingsLink from "./FanRankingsLink";
 import PredictionCard from "./PredictionCard";

@@ -50,13 +50,13 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "utils/dateUtils";
+} from "utils/common/dateUtils";
 import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
-} from "utils/games";
-import { isGameFinalStatus } from "utils/gameStatus";
+} from "utils/games/games";
+import { isGameFinalStatus } from "utils/games/gameStatus";
 
 type RouteParams = {
   game?: string | string[];

@@ -1,7 +1,7 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
-import Roster from "@/components/Sports/Baseball/Team/Roster";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
-import RosterStats from "@/components/Sports/Football/Team/RosterStats";
+import RosterStats from "@/components/Team/FootballRosterStats";
+import Roster from "@/components/Team/Roster";
 import { Colors } from "@/constants/styles";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -17,8 +17,8 @@ import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useMemo, useState } from "react";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getFootballSeason } from "utils/dateUtils";
-import { getFirstSeasonGame } from "utils/seasonGames";
+import { getFootballSeason } from "utils/common/dateUtils";
+import { getFirstSeasonGame } from "utils/games/seasonGames";
 
 export default function TeamDetailScreen() {
   const league = "nfl";

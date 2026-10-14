@@ -42,7 +42,7 @@ import type {
 import {
   normalizeForumPostLeague,
   parseForumPostDestinationParams,
-} from "../utils/forumPostDestination";
+} from "../utils/forums/forumPostDestination";
 
 const SOCCER_FORUM_LEAGUES = new Set([
   "bundesliga",

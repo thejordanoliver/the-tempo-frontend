@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { leagueCarouselWindow, leagueCarouselMotionAction, leagueDistanceFromFront, leagueOrbitGeometry, leagueOrbitPosition, wrapLeagueRotation } from "../utils/leagueCarousel";
+import { leagueCarouselWindow, leagueCarouselMotionAction, leagueDistanceFromFront, leagueOrbitGeometry, leagueOrbitPosition, wrapLeagueRotation } from "../utils/explore/leagueCarousel";
 
 const COUNT = 30;
 const geometry = leagueOrbitGeometry(416, 280);

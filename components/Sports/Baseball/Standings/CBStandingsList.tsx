@@ -1,4 +1,4 @@
-import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
+import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import Dropdown from "@/components/Dropdown";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { StandingsStyles } from "@/styles/LeagueStyles/StandingsStyles";

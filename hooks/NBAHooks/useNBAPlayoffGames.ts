@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
-import { resolvePlayoffSeason } from "utils/playoffSeasonFallback";
+import { resolvePlayoffSeason } from "utils/brackets/playoffSeasonFallback";
 
 const ROUND_ORDER: RoundDefinition[] = [
   {

@@ -6,7 +6,7 @@ import { useNotifications } from "@/contexts/NotificationContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { NotificationsCenterStyles } from "@/styles/NotificationCenterStyles";
 import type { AppNotification } from "@/types/notifications";
-import { getNotificationCenterHref } from "@/utils/notificationCenter";
+import { getNotificationCenterHref } from "@/utils/notifications/notificationCenter";
 import { Ionicons } from "@expo/vector-icons";
 import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { Href, useNavigation } from "expo-router";

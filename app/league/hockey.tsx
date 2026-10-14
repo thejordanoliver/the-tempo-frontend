@@ -25,7 +25,7 @@ import { StandingsList } from "@/components/League/Standings/StandingsList";
 
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
-import { getNHLSeason } from "@/utils/dateUtils";
+import { getNHLSeason } from "@/utils/common/dateUtils";
 import SeasonLeadersList from "../../components/League/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
@@ -34,7 +34,7 @@ import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import { getLeagueCalendarDateKey } from "../../utils/leagueCalendarCache";
+import { getLeagueCalendarDateKey } from "../../utils/teams/leagueCalendarCache";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

@@ -1,4 +1,4 @@
-import { reconcileDirectMessages } from "utils/reconcileDirectMessages";
+import { reconcileDirectMessages } from "utils/messages/reconcileDirectMessages";
 import { deliverDirectMessage } from "services/directMessageDelivery";
 import {
   createContext,

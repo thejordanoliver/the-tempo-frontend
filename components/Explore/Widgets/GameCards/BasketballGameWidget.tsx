@@ -10,9 +10,9 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { formatDate, formatTime, getHolidayLabel } from "utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
-import displayeValue from "utils/widgetUtils";
+import { formatDate, formatTime, getHolidayLabel } from "utils/common/dateUtils";
+import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
+import displayeValue from "utils/widgets/widgetUtils";
 
 type GameWidgetProps = {
   game: BasketballGame;

@@ -7,9 +7,9 @@ import { io, type Socket } from "socket.io-client";
 import type { ChatMessageItem, GameChatHistoryResponse, GameChatReactionUpdate, IncomingChatMessage, SendGameChatMessageAck, ToggleGameChatReactionAck } from "types/chat";
 import { apiClient, getAccessToken, subscribeAuthSession } from "utils/apiClient";
 import { getSocketNamespaceUrl } from "utils/apiConfig";
-import { buildChatPayload, type ChatSendPayload } from "utils/chatPayload";
-import { createClientMessage, createSendPayloadKey, normalizeMessage, normalizeProfileImage } from "utils/chatUtils";
-import { boundedChatMessages, chatCacheKey, CHAT_CACHE_TTL_MS, CHAT_EMOJIS, reconcileChatSnapshot, selectUnconfirmedChatMessages, keepNewestChatReactions } from "utils/gameChatState";
+import { buildChatPayload, type ChatSendPayload } from "utils/messages/chatPayload";
+import { createClientMessage, createSendPayloadKey, normalizeMessage, normalizeProfileImage } from "utils/messages/chatUtils";
+import { boundedChatMessages, chatCacheKey, CHAT_CACHE_TTL_MS, CHAT_EMOJIS, reconcileChatSnapshot, selectUnconfirmedChatMessages, keepNewestChatReactions } from "utils/messages/gameChatState";
 
 export type GameChatContext = { sport: string; league: string; date?: string };
 const SOCKET_URL = getSocketNamespaceUrl("");

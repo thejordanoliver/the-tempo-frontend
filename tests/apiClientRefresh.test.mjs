@@ -16,15 +16,15 @@ function setup({ refreshToken = "refresh", post } = {}) {
   const modules = {
     axios: { create: () => client, post, isAxiosError: (err) => err?.isAxiosError === true },
     "@react-native-async-storage/async-storage": { getAllKeys: async () => [], multiRemove: async () => {} },
-    "utils/secureAuthStorage": {
+    "utils/auth/secureAuthStorage": {
       getSecureAccessToken: async () => access, getSecureRefreshToken: async () => refresh,
       saveSecureTokens: async (a, r) => { access = a; refresh = r; },
       clearSecureTokens: async () => { clears++; access = refresh = null; },
     },
     "expo-router": { router: { replace() { redirects++; } } },
     "utils/apiConfig": { API_BASE_URL: "https://api.example.test" },
-    "utils/authSessionRace": { isRefreshResponseForCurrentSession: (a, b) => a === b },
-    "utils/userProfileCache": { USER_PROFILE_CACHE_KEY_PREFIX: "profile:" },
+    "utils/auth/authSessionRace": { isRefreshResponseForCurrentSession: (a, b) => a === b },
+    "utils/profile/userProfileCache": { USER_PROFILE_CACHE_KEY_PREFIX: "profile:" },
   };
   const source = ts.transpileModule(fs.readFileSync("utils/apiClient.ts", "utf8"), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, esModuleInterop: true },

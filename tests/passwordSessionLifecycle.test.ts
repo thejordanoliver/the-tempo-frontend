@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
-import { isRefreshResponseForCurrentSession } from "../utils/authSessionRace";
+import { isRefreshResponseForCurrentSession } from "../utils/auth/authSessionRace";
 
 const projectRoot = process.cwd();
 const readProjectFile = (relativePath: string) =>

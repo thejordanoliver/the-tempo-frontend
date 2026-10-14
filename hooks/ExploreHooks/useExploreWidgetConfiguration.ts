@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { subscribeAuthSession } from "utils/apiClient";
 import { AppState } from "react-native";
 import { getExploreWidgetSettings, saveExploreWidgetSettings } from "services/exploreWidgetsApi";
-import { ExploreWidgetSync, type WidgetSyncState } from "utils/exploreWidgetSync";
+import { ExploreWidgetSync, type WidgetSyncState } from "utils/widgets/exploreWidgetSync";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   getWidgetTitle,
@@ -18,13 +18,13 @@ import type {
   ExploreWidgetType,
 } from "types/widgets";
 import { EXPLORE_WIDGET_LEAGUES } from "types/widgets";
-import { normalizeCollegePollType } from "utils/collegePollWidget";
+import { normalizeCollegePollType } from "utils/widgets/collegePollWidget";
 import {
   createExploreWidgetId,
   loadExploreWidgetSettingsCache,
   saveExploreWidgetSettingsCache,
   withSequentialOrder,
-} from "utils/exploreWidgetStorage";
+} from "utils/widgets/exploreWidgetStorage";
 
 const applyVisibleOrder = (widgets: ExploreWidgetConfig[]) =>
   widgets.map((widget, index) => ({ ...widget, order: index }));

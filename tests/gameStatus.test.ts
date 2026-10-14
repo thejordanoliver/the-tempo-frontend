@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { isGameFinalStatus } from "../utils/gameStatus";
+import { isGameFinalStatus } from "../utils/games/gameStatus";
 
 test("recognizes normalized final game statuses", () => {
   assert.equal(isGameFinalStatus({ state: "post" }), true);

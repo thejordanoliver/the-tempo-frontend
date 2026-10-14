@@ -1,3 +1,4 @@
+import HeadingTwo from "@/components/Headings/HeadingTwo";
 import PillTabs from "@/components/TabBars/PillTabs";
 import { getNBATeam } from "@/constants/teams";
 import { getMCBBTeam } from "@/constants/teamsMCBB";
@@ -1106,6 +1107,7 @@ export default function PlayerStatTable({
 
   const renderHeader = () => (
     <>
+      <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
       <View style={styles.statsHeader}>
         {showSeasonTypeTabs ? (
           <PillTabs
@@ -1168,7 +1170,6 @@ export default function PlayerStatTable({
   return (
     <View style={styles.container}>
       {renderHeader()}
-
       {!filteredRows.length ? (
         <Text style={global.emptyText}>{emptyText}</Text>
       ) : (

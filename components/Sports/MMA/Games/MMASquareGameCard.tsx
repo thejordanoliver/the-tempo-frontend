@@ -6,13 +6,13 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, View } from "react-native";
 import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
 
 export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   const router = useScopedRouter();

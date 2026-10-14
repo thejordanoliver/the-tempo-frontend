@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getNewsGameTarget, getNewsPlayerTarget } from "../utils/newsArticleLinks";
+import { getNewsGameTarget, getNewsPlayerTarget } from "../utils/news/newsArticleLinks";
 
 test("opens the article's college football game in Tempo", () => {
   assert.deepEqual(

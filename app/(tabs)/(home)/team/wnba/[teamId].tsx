@@ -1,7 +1,7 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
-import Roster from "@/components/Sports/Basketball/Team/Roster";
-import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
+import RosterStats from "@/components/Team/BasketballRosterStats";
+import Roster from "@/components/Team/Roster";
 import { Colors } from "@/constants/styles";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
@@ -18,7 +18,7 @@ import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useState } from "react";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getWNBASeason } from "utils/dateUtils";
+import { getWNBASeason } from "utils/common/dateUtils";
 
 export default function TeamDetailScreen() {
   const league = "wnba";

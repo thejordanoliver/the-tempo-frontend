@@ -6,14 +6,14 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 
 export default function SoccerGameCard({ game }: SoccerGameCardProps) {

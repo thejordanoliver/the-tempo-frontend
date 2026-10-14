@@ -5,10 +5,10 @@ import { useDebounce } from "hooks/useDebounce";
 import { useEffect, useRef, useState } from "react";
 import { searchUsers, type UserSearchResult } from "services/usersApi";
 import { getDefaultMessagingApp, type DefaultMessagingApp } from "services/defaultMessagingApp";
-import { getForumShareRecipients } from "utils/forumShareRecipients";
+import { getForumShareRecipients } from "utils/forums/forumShareRecipients";
 import type { ForumPost } from "types/forum";
-import { getErrorMessage } from "utils/getErrorMessage";
-import { getForumPostShareText } from "utils/forumPostShare";
+import { getErrorMessage } from "utils/common/getErrorMessage";
+import { getForumPostShareText } from "utils/forums/forumPostShare";
 
 export function useForumPostShare(post: ForumPost, currentUserId: number | null, onShared: () => Promise<void>) {
   const { createOrGetConversation, sendDirectMessage, getConversationList, loadConversations } = useMessagesContext();

@@ -6,14 +6,14 @@ import {
   useNotifications,
 } from "@/contexts/NotificationContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { parseImageUrl } from "@/utils/imageUtils";
-import { getNotificationGameTeams } from "@/utils/notification-team-presentation";
+import { parseImageUrl } from "@/utils/ui/imageUtils";
+import { getNotificationGameTeams } from "@/utils/notifications/notification-team-presentation";
 import {
   getNotificationActorProfileImage,
   getNotificationCenterHref,
   getNotificationLeagueLabel,
   shouldShowNotificationActorProfileImage,
-} from "@/utils/notificationCenter";
+} from "@/utils/notifications/notificationCenter";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import {

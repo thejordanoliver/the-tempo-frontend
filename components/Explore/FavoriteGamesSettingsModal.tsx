@@ -1,4 +1,4 @@
-import { snapPoints } from "@/utils/modalUtils";
+import { snapPoints } from "@/utils/ui/modalUtils";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,

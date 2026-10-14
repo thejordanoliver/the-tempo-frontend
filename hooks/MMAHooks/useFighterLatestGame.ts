@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { MMAFightLog } from "types/mma/fightLog";
 import type { MMAFight } from "types/mma/mma";
 import { apiClient } from "utils/apiClient";
-import { getLatestFighterFight } from "utils/mmaFightLog";
+import { getLatestFighterFight } from "utils/sports/mma/mmaFightLog";
 
 type Result = { key: string; game: MMAFight | null; error: string | null };
 

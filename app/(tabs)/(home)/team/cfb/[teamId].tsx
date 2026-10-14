@@ -1,8 +1,8 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
-import Roster from "@/components/Sports/Baseball/Team/Roster";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
-import RosterStats from "@/components/Sports/Football/Team/RosterStats";
+import RosterStats from "@/components/Team/FootballRosterStats";
+import Roster from "@/components/Team/Roster";
 import { Colors } from "@/constants/styles";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
@@ -18,7 +18,7 @@ import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useMemo } from "react";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getFirstSeasonGame } from "utils/seasonGames";
+import { getFirstSeasonGame } from "utils/games/seasonGames";
 
 export default function TeamDetailScreen() {
   const league = "cfb";
@@ -45,12 +45,7 @@ export default function TeamDetailScreen() {
   });
   const { teamDetails, teamDetailsLoading, teamDetailsError } = screen;
   const conferenceId = teamDetails?.conferenceId;
-  const {
-    selectedTab,
-    hasVisitedTab,
-    refreshing,
-    isDark,
-  } = screen;
+  const { selectedTab, hasVisitedTab, refreshing, isDark } = screen;
 
   const {
     conferences,
@@ -123,10 +118,7 @@ export default function TeamDetailScreen() {
   };
 
   return (
-    <SharedTeamDetailScreen
-      ready={Boolean(team)}
-      screen={screen}
-    >
+    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
       {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
         <GamesList

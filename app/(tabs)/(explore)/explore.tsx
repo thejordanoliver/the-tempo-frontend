@@ -14,7 +14,7 @@ import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type { ResultItem } from "types/explore";
-import { getExploreRouteForResult } from "utils/exploreNavigation";
+import { getExploreRouteForResult } from "utils/navigation/exploreNavigation";
 
 export default function ExplorePage() {
   const [widgetModalVisible, setWidgetModalVisible] = useState(false);

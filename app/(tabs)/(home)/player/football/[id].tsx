@@ -1,6 +1,6 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Player/LatestGame";
-import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
+import PlayerAwardList from "@/components/Player/PlayerAwardList";
 import SeasonStatCard from "@/components/Sports/Football/Player/SeasonStatCard";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import {
@@ -11,7 +11,7 @@ import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 import PlayerGameLog from "components/Player/PlayerGameLog";
-import PlayerHeader from "components/Sports/Football/Player/PlayerHeader";
+import PlayerHeader from "components/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/Football/Player/PlayerStatTable";
 import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -414,7 +414,7 @@ export default function PlayerDetailScreen() {
       isDark={isDark}
       overview={
         <>
-          <PlayerHeader player={player} isDark={isDark} isCFB={isCFB} />
+          <PlayerHeader sport="football" player={player} isDark={isDark} league={canonicalLeague} />
           <SeasonStatCard
             season={latestSeason}
             loading={seasonsLoading}

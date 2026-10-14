@@ -19,7 +19,7 @@ import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
-} from "@/utils/games";
+} from "@/utils/games/games";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
@@ -30,8 +30,8 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "utils/dateUtils";
-import { snapPoints } from "utils/modalUtils";
+} from "utils/common/dateUtils";
+import { snapPoints } from "utils/ui/modalUtils";
 import { CenterInfo } from "../GameDetails/CenterInfo";
 import { TeamRow } from "../GameDetails/TeamRow";
 import GamePreviewContent from "./GamePreviewContent";

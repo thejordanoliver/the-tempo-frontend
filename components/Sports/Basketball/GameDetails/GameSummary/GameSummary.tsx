@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { GameSummaryStyles } from "styles/GameDetailStyles/GameSummaryStyles";
 import type { GameSummaryModel } from "types/gameSummary";
-import { filterGameSummaryPeriod } from "utils/gameSummaryPeriods";
-import { gameTeamIdsMatch } from "utils/gameTeamIdentity";
+import { filterGameSummaryPeriod } from "utils/games/gameSummaryPeriods";
+import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 import GameSummaryPlayRow from "./GameSummaryPlayRow";
 
 type Props = {

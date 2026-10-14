@@ -21,7 +21,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
 import GameHeader from "components/Sports/Baseball/GameDetails/GameHeader";
@@ -47,8 +47,8 @@ import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BaseballGameCardProps } from "types/baseball/baseball";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
-import { isGameFinalStatus } from "utils/gameStatus";
+import { formatVenueAddress, getBroadcastDisplay } from "utils/games/games";
+import { isGameFinalStatus } from "utils/games/gameStatus";
 
 type RouteParams = {
   game?: string | string[];

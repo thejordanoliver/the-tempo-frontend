@@ -4,7 +4,7 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey/hockey";
 import type { MMAFight } from "types/mma/mma";
-import { getPlayerGameHeading } from "utils/playerClosestGame";
+import { getPlayerGameHeading } from "utils/players/playerClosestGame";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";

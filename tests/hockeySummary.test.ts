@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { Play } from "../hooks/HockeyHooks/useHockeyGameDetails";
-import { filterHockeySummaryPlays, sortHockeySummaryPlays } from "../utils/hockeySummary";
+import { filterHockeySummaryPlays, sortHockeySummaryPlays } from "../utils/sports/hockey/hockeySummary";
 
 const play = (id: string, period: number, clock: string, sequence = id) =>
   ({ id, period: { number: period }, clock: { displayValue: clock }, sequenceNumber: sequence }) as Play;

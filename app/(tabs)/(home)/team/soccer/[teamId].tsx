@@ -2,7 +2,7 @@ import ForumFeed from "@/components/Forum/ForumFeed";
 import MonthSelector from "@/components/League/MonthSelector";
 import Roster, {
   SupportedRosterLeague,
-} from "@/components/Sports/Baseball/Team/Roster";
+} from "@/components/Team/Roster";
 import GamesList from "@/components/Sports/Soccer/Games/GamesList";
 import { Colors } from "@/constants/styles";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
@@ -15,7 +15,7 @@ import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { resolveSoccerTeamLeague } from "utils/soccerTeamLeague";
+import { resolveSoccerTeamLeague } from "utils/teams/soccerTeamLeague";
 
 export default function TeamDetailScreen() {
   const styles = TeamDetailStyles;

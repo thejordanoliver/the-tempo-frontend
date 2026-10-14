@@ -36,7 +36,7 @@ import {
   leagueOrbitPosition,
   wrapLeagueRotation,
   type LeagueOrbitGeometry,
-} from "utils/leagueCarousel";
+} from "utils/explore/leagueCarousel";
 
 const COUNT = BROWSEABLE_LEAGUES.length;
 const TURN_MS = 5000;

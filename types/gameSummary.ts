@@ -1,4 +1,4 @@
-import type { SummaryPeriodTab } from "utils/gameSummaryPeriods";
+import type { SummaryPeriodTab } from "utils/games/gameSummaryPeriods";
 
 export type SummaryPlay = {
   id: string;

@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 // @ts-expect-error Node's type-stripping test runner requires the .ts extension.
-import { getFirstSeasonGame } from "../utils/seasonGames.ts";
+import { getFirstSeasonGame } from "../utils/games/seasonGames.ts";
 // @ts-expect-error Node's type-stripping test runner requires the .ts extension.
-import * as teamSchedule from "../utils/teamSchedule.ts";
+import * as teamSchedule from "../utils/teams/teamSchedule.ts";
 
 const {
   buildScheduleMonthOptions,

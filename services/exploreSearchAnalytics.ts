@@ -1,5 +1,5 @@
 import type { ResultItem, SearchAffiliation } from "types/explore";
-import { normalizeExploreSearchQuery } from "utils/exploreSearch";
+import { normalizeExploreSearchQuery } from "utils/explore/exploreSearch";
 
 export type ExploreSearchAnalyticsScope =
   | "all"

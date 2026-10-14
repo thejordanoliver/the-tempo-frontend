@@ -2,7 +2,7 @@ import { getNFLTeamLogo } from "constants/teamsNFL";
 import { Image, Text, View } from "react-native";
 import { NFLPlayoffBracketStyles } from "styles/PlayoffStyles/NFLPlayoffBracketStyles";
 import type { PlayoffTeam } from "../../../../../types/football/nflBracketTypes";
-import { isTbdTeam } from "../../../../../utils/nflBracketUtils";
+import { isTbdTeam } from "../../../../../utils/brackets/nflBracketUtils";
 
 export const TeamRow = ({
   team,

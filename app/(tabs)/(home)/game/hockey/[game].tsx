@@ -27,7 +27,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -45,7 +45,7 @@ import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
-} from "utils/games";
+} from "utils/games/games";
 
 type RouteParams = {
   game?: string | string[];

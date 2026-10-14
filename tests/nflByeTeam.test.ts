@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { selectNFLByeTeam } from "../utils/nflPlayoffSelection";
+import { selectNFLByeTeam } from "../utils/brackets/nflPlayoffSelection";
 import type { NFLPlayoffGame } from "../types/football/football";
 
 const game = (home: number, away: number) => ({

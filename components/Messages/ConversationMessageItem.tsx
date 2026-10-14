@@ -6,13 +6,13 @@ import SafetyActionsModal from "components/SafetyActionsModal";
 import { ConversationScreenStyles } from "@/styles/MessageStyles/ConversationScreenStyles";
 import { Image } from "expo-image";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getSharedForumPostId } from "utils/forumPostShare";
+import { getSharedForumPostId } from "utils/forums/forumPostShare";
 import { memo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import type { DirectMessageItem } from "types/messages";
-import { getContrastingTextColor } from "utils/color";
-import { getReadableGradientTextColor } from "utils/messageTheme";
+import { getContrastingTextColor } from "utils/ui/color";
+import { getReadableGradientTextColor } from "utils/messages/messageTheme";
 
 type ConversationMessageStyles = ReturnType<typeof ConversationScreenStyles>;
 

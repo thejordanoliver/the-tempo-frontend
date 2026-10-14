@@ -10,7 +10,7 @@ import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
 import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
-import { getFootballSeason } from "utils/dateUtils";
+import { getFootballSeason } from "utils/common/dateUtils";
 
 type Props = {
   position: string;

@@ -1,5 +1,5 @@
 import { BasketballGame } from "@/types/basketball/basketball";
-import { isGameLive } from "@/utils/games";
+import { isGameLive } from "@/utils/games/games";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 

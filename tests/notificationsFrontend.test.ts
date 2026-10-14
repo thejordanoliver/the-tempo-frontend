@@ -7,16 +7,16 @@ import {
   getNotificationCenterHref,
   getNotificationLeagueLabel,
   shouldShowNotificationActorProfileImage,
-} from "../utils/notificationCenter";
+} from "../utils/notifications/notificationCenter";
 import {
   isNotificationForSession,
   mergeNotifications,
   reconcileHydratedUnreadCount,
-} from "../utils/notificationState";
+} from "../utils/notifications/notificationState";
 import {
   hasEnabledNotificationSetting,
   mergeNotificationSettings,
-} from "../utils/notification-settings";
+} from "../utils/notifications/notification-settings";
 
 const notification = (
   type: NotificationType,

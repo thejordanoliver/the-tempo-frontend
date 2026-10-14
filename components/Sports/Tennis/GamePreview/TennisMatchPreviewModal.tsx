@@ -1,14 +1,14 @@
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { TennisMatch } from "@/types/tennis/tennis";
-import { getBroadcastDisplay } from "@/utils/games";
+import { getBroadcastDisplay } from "@/utils/games/games";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { BlurView } from "expo-blur";
 import React, { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
-import { formatDate, formatTime, safeDate } from "utils/dateUtils";
-import { snapPoints } from "utils/modalUtils";
+import { formatDate, formatTime, safeDate } from "utils/common/dateUtils";
+import { snapPoints } from "utils/ui/modalUtils";
 import { CompetitorRow } from "./../GameDetails/CompetitorRow";
 import { GameInfo } from "./../GameDetails/GameInfo";
 

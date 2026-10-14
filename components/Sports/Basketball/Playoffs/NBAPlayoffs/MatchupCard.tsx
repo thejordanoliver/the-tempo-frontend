@@ -1,6 +1,6 @@
 import { NBAPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
 import { NBABracketMatchup } from "@/types/basketball/basketball";
-import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
+import { formatPeriod, getBroadcastDisplay } from "@/utils/games/games";
 import { Colors } from "constants/styles";
 import { getNBATeam } from "constants/teams";
 import { Text, View } from "react-native";

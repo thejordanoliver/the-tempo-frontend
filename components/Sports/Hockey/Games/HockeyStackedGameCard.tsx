@@ -7,14 +7,14 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-} from "@/utils/dateUtils";
+} from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
 
 function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const router = useScopedRouter();

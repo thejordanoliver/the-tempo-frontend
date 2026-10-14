@@ -7,7 +7,8 @@ export const RosterStyles = StyleSheet.create({
     paddingHorizontal: 12,
   },
 
-  playerList: {
-    gap: 12,
+  itemContainer: {
+    marginBottom: 12,
   },
+  sectionFooter: { height: 6 },
 });

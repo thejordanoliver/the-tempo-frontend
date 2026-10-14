@@ -1,5 +1,5 @@
 import SearchBar from "@/components/SearchBars/SearchBar";
-import { snapPoints } from "@/utils/modalUtils";
+import { snapPoints } from "@/utils/ui/modalUtils";
 import {
   BottomSheetBackdrop,
   BottomSheetFlatList,

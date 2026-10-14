@@ -8,7 +8,7 @@ import {
   type ForgotPasswordFormValues,
 } from "schemas/auth/forgotPasswordSchema";
 import { forgotPassword, resetPassword, verifyResetCode } from "utils/apiClient";
-import { getErrorMessage } from "utils/getErrorMessage";
+import { getErrorMessage } from "utils/common/getErrorMessage";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 

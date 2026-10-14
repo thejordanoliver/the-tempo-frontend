@@ -4,7 +4,7 @@ import {
   EXPLORE_WIDGETS_SCHEMA_VERSION,
   normalizeStoredWidgets,
   serializeExploreWidgets,
-} from "../utils/exploreWidgetStorage";
+} from "../utils/widgets/exploreWidgetStorage";
 
 test("preserves My Picks widgets in all sizes", () => {
   for (const size of ["small", "medium", "large"] as const) {

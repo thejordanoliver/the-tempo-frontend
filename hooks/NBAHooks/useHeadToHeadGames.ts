@@ -2,7 +2,7 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import { useEffect, useState } from "react";
 
 import { apiClient } from "utils/apiClient";
-import { getNBASeason } from "utils/dateUtils";
+import { getNBASeason } from "utils/common/dateUtils";
 
 export interface HeadToHead {
   success: boolean;

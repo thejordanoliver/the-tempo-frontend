@@ -11,8 +11,8 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, TouchableOpacity, View } from "react-native";
-import { formatDate, formatTime, getHolidayLabel } from "utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
+import { formatDate, formatTime, getHolidayLabel } from "utils/common/dateUtils";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
 
 export default function BasketballSquareGameCard({
   game,

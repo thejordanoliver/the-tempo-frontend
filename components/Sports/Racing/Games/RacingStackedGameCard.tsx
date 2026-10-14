@@ -7,7 +7,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, View } from "react-native";
 import { racingCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { getBroadcastDisplay } from "utils/games";
+import { getBroadcastDisplay } from "utils/games/games";
 
 export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
   const router = useScopedRouter();
