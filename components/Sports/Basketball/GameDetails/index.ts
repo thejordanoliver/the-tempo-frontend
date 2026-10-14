@@ -12,15 +12,13 @@ export { default as GameLocation } from "./GameLocation";
 export { default as GameSummary } from "./GameSummary/GameSummary";
 export { default as GameTeamStats } from "./GameTeamStats";
 export { default as HeadCoaches } from "./HeadCoaches";
-export { default as HeadToHeadGames } from "./HeadToHead/HeadToHeadGames";
 export { Highlights } from "./Highlights/Highlights";
 export { default as LastFiveGames } from "./LastFiveGames";
 export { default as LastPlay } from "./LastPlay";
 export { default as LineScore } from "./LineScore";
 export { default as MatchupPredictor } from "./MatchupPredictor";
 export { default as Officials } from "./Officials";
-export { default as PlayersInFoulTrouble } from "./PlayersInFoulTrouble";
 export { default as PlayersOnCourt } from "./OnTheCourt";
+export { default as PlayersInFoulTrouble } from "./PlayersInFoulTrouble";
 export { default as ShotChart } from "./ShotChart";
 export { TeamRow } from "./TeamRow";
-

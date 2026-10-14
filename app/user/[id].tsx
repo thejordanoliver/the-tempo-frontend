@@ -336,44 +336,6 @@ function UserProfileContent() {
           />
         </ScrollView>
 
-        {selectedTab === "predictions" && Boolean(Number(userId)) && (
-          <ProfilePredictions
-            isDark={isDark}
-            itemWidth={itemWidth}
-            record={predictions.record}
-            picks={predictions.picks}
-            onPick={(pick) =>
-              router.push({
-                pathname: "/game/[sport]/[game]",
-                params: {
-                  sport: pick.sport,
-                  game: pick.gameId,
-                  league: pick.league,
-                  date: pick.startsAt,
-                },
-              })
-            }
-            loading={predictions.loading}
-            error={predictions.error}
-            onRetry={predictions.refresh}
-            onPredictions={() =>
-              router.push({
-                pathname: "/fan-prediction-picks",
-                params: { userId: String(Number(userId)) },
-              })
-            }
-            onAnalysis={
-              isCurrentUser
-                ? () =>
-                    router.push({
-                      pathname: "/fan-prediction-rankings",
-                      params: { tab: "Analysis" },
-                    })
-                : undefined
-            }
-          />
-        )}
-
         <View
           style={[
             styles.contentContainer,
@@ -406,8 +368,48 @@ function UserProfileContent() {
           </View>
         )}
 
+        {selectedTab === "predictions" && Boolean(Number(userId)) && (
+          <View style={styles.contentContainer}>
+            <ProfilePredictions
+              isDark={isDark}
+              itemWidth={itemWidth}
+              record={predictions.record}
+              picks={predictions.picks}
+              onPick={(pick) =>
+                router.push({
+                  pathname: "/game/[sport]/[game]",
+                  params: {
+                    sport: pick.sport,
+                    game: pick.gameId,
+                    league: pick.league,
+                    date: pick.startsAt,
+                  },
+                })
+              }
+              loading={predictions.loading}
+              error={predictions.error}
+              onRetry={predictions.refresh}
+              onPredictions={() =>
+                router.push({
+                  pathname: "/fan-prediction-picks",
+                  params: { userId: String(Number(userId)) },
+                })
+              }
+              onAnalysis={
+                isCurrentUser
+                  ? () =>
+                      router.push({
+                        pathname: "/fan-prediction-rankings",
+                        params: { tab: "Analysis" },
+                      })
+                  : undefined
+              }
+            />
+          </View>
+        )}
+
         {selectedTab === "posts" && (
-          <View style={styles.bookmarkContainer}>
+          <View style={styles.forumContainer}>
             <Forum
               posts={posts}
               currentUserId={currentUserId}

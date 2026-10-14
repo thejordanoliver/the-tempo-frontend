@@ -479,32 +479,6 @@ export default function ProfileScreen() {
           />
         </ScrollView>
 
-        {selectedTab === "predictions" && Boolean(currentUserId) && (
-          <View style={styles.contentContainer}>
-            <ProfilePredictions
-              isDark={isDark}
-              itemWidth={itemWidth}
-              record={predictions.record}
-              picks={predictions.picks}
-              onPick={(pick) =>
-                router.push({
-                  pathname: "/game/[sport]/[game]",
-                  params: {
-                    sport: pick.sport,
-                    game: pick.gameId,
-                    league: pick.league,
-                    date: pick.startsAt,
-                  },
-                })
-              }
-              loading={predictions.loading}
-              error={predictions.error}
-              onRetry={predictions.refresh}
-              onPredictions={() => router.push("/fan-prediction-rankings")}
-            />
-          </View>
-        )}
-
         {selectedTab === "favorites" && (
           <View style={styles.contentContainer}>
             <ProfileFavoritesSection
@@ -532,6 +506,31 @@ export default function ProfileScreen() {
               onPressSeeAll={() => {
                 router.push("/badges");
               }}
+            />
+          </View>
+        )}
+        {selectedTab === "predictions" && Boolean(currentUserId) && (
+          <View style={styles.contentContainer}>
+            <ProfilePredictions
+              isDark={isDark}
+              itemWidth={itemWidth}
+              record={predictions.record}
+              picks={predictions.picks}
+              onPick={(pick) =>
+                router.push({
+                  pathname: "/game/[sport]/[game]",
+                  params: {
+                    sport: pick.sport,
+                    game: pick.gameId,
+                    league: pick.league,
+                    date: pick.startsAt,
+                  },
+                })
+              }
+              loading={predictions.loading}
+              error={predictions.error}
+              onRetry={predictions.refresh}
+              onPredictions={() => router.push("/fan-prediction-rankings")}
             />
           </View>
         )}

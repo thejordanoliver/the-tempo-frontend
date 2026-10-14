@@ -323,7 +323,7 @@ export default function MessageThemeModal({
       bubbleStyle: draftPreference.bubbleStyle,
       league: team.league,
       teamId: team.id,
-      primaryColor: team.color ?? null,
+      primaryColor: team.primaryColor ?? null,
       secondaryColor: team.secondaryColor ?? null,
     });
 
@@ -595,7 +595,7 @@ export default function MessageThemeModal({
               const teamKey = getTeamKey(team);
               const selected = selectedTeamKey === teamKey;
 
-              const primaryColor = team.color ?? Colors.midTone;
+              const primaryColor = team.primaryColor ?? Colors.midTone;
 
               const secondaryColor = team.secondaryColor ?? Colors.lightGray;
 

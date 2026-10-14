@@ -5,8 +5,7 @@ import type { FanPredictionScoring, RankedPredictionContext } from "types/fanPre
 export function usePredictionScoring(gameId: number, context?: RankedPredictionContext) {
   const sport = context?.sport;
   const league = context?.league;
-  // Only fights need a date to resolve their game. Other dates arrive with
-  // details and must not restart an already-running scoring request.
+
   const date = sport === "mma" ? context?.date : undefined;
   const state = context?.state;
   const enabled = Boolean(sport && league && Number.isSafeInteger(gameId) && gameId > 0 &&
