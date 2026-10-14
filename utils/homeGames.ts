@@ -208,7 +208,10 @@ export function buildHomeGameSections({
   };
 
   if (favoriteSportsReady) {
+    const favoriteLeagueIds = new Set(favoriteSports);
+
     getPersonalizedLeagueOrder({ favoriteTeams, favoriteSports, favoriteSportsReady })
+      .filter((league) => favoriteLeagueIds.has(league))
       .forEach(appendFavoriteLeague);
   }
 

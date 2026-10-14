@@ -208,8 +208,8 @@ export default function GameLeaders({
     isScheduled ? "pointsPerGame" : "points",
   );
 
-  const styles = useMemo(() => GameLeadersStyles(isDark), [isDark]);
-  const global = useMemo(() => globalStyles(isDark), [isDark]);
+  const styles = GameLeadersStyles(isDark);
+  const global = globalStyles(isDark);
 
   const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;
 

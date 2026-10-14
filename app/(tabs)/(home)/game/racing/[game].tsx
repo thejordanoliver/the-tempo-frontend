@@ -1,20 +1,20 @@
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import {
   GameLiveChatOverlay,
   GameLocation,
 } from "@/components/Sports/Basketball/GameDetails";
 import DriversHeader from "@/components/Sports/Racing/GameDetails/DriversHeader";
 import { RacingEventCardProps } from "@/types/racing/racing";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-import { useLayoutEffect, useMemo } from "react";
-import { View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
+import { useLayoutEffect, useMemo } from "react";
+import { View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 
 type RouteParams = {
@@ -160,7 +160,11 @@ export default function GameDetailsScreen(
 
       {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
-          context={{ sport: "racing", league: game?.league ?? "f1", date: gameDateObj?.toISOString() }}
+          context={{
+            sport: "racing",
+            league: game?.league ?? "f1",
+            date: gameDateObj?.toISOString(),
+          }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}

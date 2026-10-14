@@ -1,0 +1,20 @@
+// components/GameDetails/index.ts
+export { default as ChatButton } from "@/components/Buttons/FloatingButton";
+export { default as FanPrediction } from "@/components/FanPrediction/FanPrediction";
+export { default as BoxScore } from "@/components/Sports/Baseball/GameDetails/BoxScore";
+export { CenterInfo } from "@/components/Sports/Baseball/GameDetails/CenterInfo";
+export { default as GameHeader } from "@/components/Sports/Baseball/GameDetails/GameHeader";
+export { default as GameLeaders } from "@/components/Sports/Baseball/GameDetails/GameLeaders";
+export { default as LastPlay } from "@/components/Sports/Baseball/GameDetails/LastPlay";
+export { TeamRow } from "@/components/Sports/Baseball/GameDetails/TeamRow";
+export { default as GameLiveChatOverlay } from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
+export { default as LiveChat } from "@/components/Sports/Basketball/GameDetails/GameChat/LiveChat";
+export { default as GameLocation } from "@/components/Sports/Basketball/GameDetails/GameLocation";
+export { default as HeadCoaches } from "@/components/Sports/Basketball/GameDetails/HeadCoaches";
+export { Highlights } from "@/components/Sports/Basketball/GameDetails/Highlights/Highlights";
+export { default as LastFiveGames } from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
+export { default as LineScore } from "@/components/Sports/Basketball/GameDetails/LineScore";
+export { default as MatchupPredictor } from "@/components/Sports/Basketball/GameDetails/MatchupPredictor";
+export { default as Officials } from "@/components/Sports/Basketball/GameDetails/Officials";
+export { BasesIndicator } from "components/Sports/Baseball/GameDetails/BasesIndicator";
+export { default as TeamInjuries } from "components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";

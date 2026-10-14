@@ -217,8 +217,8 @@ export default function GameDetailsScreen(
   const homeName = homeTeam.fullName ?? home?.name ?? "";
   const awayName = awayTeam.fullName ?? away?.name ?? "";
 
-  const isHomeActive = homeTeam.isActive
-  const isAwayActive = awayTeam.isActive
+  const isHomeActive = homeTeam.isActive;
+  const isAwayActive = awayTeam.isActive;
 
   const awayColor =
     awayTeam.primaryColor ??
@@ -301,7 +301,6 @@ export default function GameDetailsScreen(
 
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
-
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE).games;

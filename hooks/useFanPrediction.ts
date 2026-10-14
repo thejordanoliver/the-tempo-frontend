@@ -281,7 +281,7 @@ export function useFanPrediction({
 
     if (!canVote) {
       if (userVote != null && pickedName) {
-        return `Final results — you picked ${pickedName}`;
+        return `You picked ${pickedName}`;
       }
 
       return "Final results";

@@ -1,17 +1,6 @@
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
-import { useLiveVotes } from "@/hooks/useLiveVotes";
-import useTeams from "@/hooks/useTeams";
-import {
-  formatDate,
-  formatTime,
-  getHolidayLabel,
-  safeDate,
-} from "@/utils/dateUtils";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeader } from "components/CustomHeader";
-import GameHeader from "components/Sports/Baseball/GameDetails/GameHeader";
 import {
   FanPrediction,
   GameLiveChatOverlay,
@@ -24,7 +13,18 @@ import {
   MatchupPredictor,
   Officials,
   TeamInjuries,
-} from "components/Sports/Basketball/GameDetails";
+} from "@/components/Sports/Basketball/GameDetails";
+import { useLiveVotes } from "@/hooks/useLiveVotes";
+import useTeams from "@/hooks/useTeams";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { CustomHeader } from "components/CustomHeader";
+import GameHeader from "components/Sports/Baseball/GameDetails/GameHeader";
 import { Colors } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";

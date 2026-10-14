@@ -28,7 +28,7 @@ type Props = {
   league: "mcbb" | "wcbb";
 };
 
-export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
+export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
   const { rankings, loading, refreshing, error, refresh } =
     useMCBBRankings(league);
   const { resolvedColorScheme } = usePreferences();
@@ -108,7 +108,9 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
             onPress={() => {
               if (!teamId) return;
               router.push({
-                pathname: isWCBB ? "/team/wcbb/[teamId]" : "/team/mcbb/[teamId]",
+                pathname: isWCBB
+                  ? "/team/wcbb/[teamId]"
+                  : "/team/mcbb/[teamId]",
                 params: { teamId },
               });
             }}
@@ -199,7 +201,9 @@ export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
         </View>
         <View style={styles.statCell}>
           <Text style={styles.statText}>
-            {item.team?.conference?.shortName || item.team?.groups?.shortName || "N/A"}
+            {item.team?.conference?.shortName ||
+              item.team?.groups?.shortName ||
+              "N/A"}
           </Text>
         </View>
       </View>

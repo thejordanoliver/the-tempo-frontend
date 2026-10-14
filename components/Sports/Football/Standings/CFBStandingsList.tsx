@@ -1,7 +1,6 @@
 import { getStandingsTeamLogo } from "utils/standingsTeamLogo";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
-// components/CFBStandingsList.tsx
 import Dropdown from "@/components/Dropdown";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
@@ -24,6 +23,7 @@ import {
   View,
 } from "react-native";
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { getCFBTeamLogo } from "@/constants/teamsCFB";
 
 type PollMode = "ap" | "coaches" | "cfp" | "fcs";
 
@@ -88,7 +88,7 @@ export const CFBStandingsList = () => {
     const isLastRow = index === filteredRankings.length - 1;
     const team = item.team;
     const teamId = team?.id ?? 0;
-    const teamLogo = getStandingsTeamLogo(team, isDark);
+    const teamLogo = getCFBTeamLogo(teamId, isDark);
     const teamCode = team?.code || "N/A";
 
     const trendNum = Number(item.trend);

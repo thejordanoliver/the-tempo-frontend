@@ -23,4 +23,4 @@ export { default as PlayersInFoulTrouble } from "./PlayersInFoulTrouble";
 export { default as PlayersOnCourt } from "./OnTheCourt";
 export { default as ShotChart } from "./ShotChart";
 export { TeamRow } from "./TeamRow";
-export { default as Weather } from "./Weather";
+

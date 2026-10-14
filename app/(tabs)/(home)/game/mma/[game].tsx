@@ -1,5 +1,3 @@
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   FanPrediction,
@@ -16,9 +14,12 @@ import {
 } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
+import MatchupComparison from "components/Sports/MMA/GameDetails/MatchupComparison";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
@@ -29,7 +30,6 @@ import {
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games";
-import MatchupComparison from "components/Sports/MMA/GameDetails/MatchupComparison";
 const LEAGUE = "MMA";
 
 const leftStancePlaceholder =
@@ -111,7 +111,18 @@ export default function GameDetailsScreen(
   const holidayLabel = getHolidayLabel(gameDate);
 
   const gameId = game?.id ?? 0;
-  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, { sport: "mma", league: game?.league?.code ?? "ufc", state: game?.status?.state, date: game?.date ?? undefined });
+  const {
+    votes: liveVotes,
+    castVote: castLiveVote,
+    scoring,
+    scoringError,
+    retryScoring,
+  } = useLiveVotes(gameId, {
+    sport: "mma",
+    league: game?.league?.code ?? "ufc",
+    state: game?.status?.state,
+    date: game?.date ?? undefined,
+  });
 
   const firstFighter = game?.competitors?.[0];
   const secondFighter = game?.competitors?.[1];
@@ -178,14 +189,20 @@ export default function GameDetailsScreen(
   const baseVenue = game?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address.formatted ?? (formatVenueAddress(venue?.address) || baseVenueAddress);
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? "";
   const venueAttendance = baseVenue?.attendance ?? null;
-  const venueCity = venue?.address.city ?? baseVenue?.city ?? baseVenue?.address?.city;
+  const venueCity =
+    venue?.address.city ?? baseVenue?.city ?? baseVenue?.address?.city;
   const venueRegion =
     venue?.address.state ??
-    venue?.address.country ?? baseVenue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+    venue?.address.country ??
+    baseVenue?.state ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
@@ -341,7 +358,11 @@ export default function GameDetailsScreen(
 
       {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
-          context={{ sport: "mma", league: game?.league?.code ?? "ufc", date: gameDateObj?.toISOString() }}
+          context={{
+            sport: "mma",
+            league: game?.league?.code ?? "ufc",
+            date: gameDateObj?.toISOString(),
+          }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}

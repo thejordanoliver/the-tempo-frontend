@@ -1,3 +1,14 @@
+import {
+  FanPrediction,
+  GameLiveChatOverlay,
+  GameLocation,
+  GameTeamStats,
+  Highlights,
+  LastFiveGames,
+  LineScore,
+  MatchupPredictor,
+  Officials,
+} from "@/components/Sports/Basketball/GameDetails";
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
@@ -15,17 +26,6 @@ import {
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
 import LastPlay from "components/Sports/Baseball/GameDetails/LastPlay";
-import {
-  FanPrediction,
-  GameLiveChatOverlay,
-  GameLocation,
-  GameTeamStats,
-  Highlights,
-  LastFiveGames,
-  LineScore,
-  MatchupPredictor,
-  Officials,
-} from "components/Sports/Basketball/GameDetails";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";

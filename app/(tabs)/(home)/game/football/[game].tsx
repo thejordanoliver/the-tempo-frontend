@@ -1,4 +1,17 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import {
+  FanPrediction,
+  GameLiveChatOverlay,
+  GameLocation,
+  GameTeamStats,
+  HeadCoaches,
+  Highlights,
+  LastFiveGames,
+  LineScore,
+  MatchupPredictor,
+  Officials,
+  TeamInjuries,
+} from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
@@ -24,19 +37,6 @@ import {
 } from "@/utils/games";
 import { isGameFinalStatus } from "@/utils/gameStatus";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import {
-  FanPrediction,
-  GameLiveChatOverlay,
-  GameLocation,
-  GameTeamStats,
-  HeadCoaches,
-  Highlights,
-  LastFiveGames,
-  LineScore,
-  MatchupPredictor,
-  Officials,
-  TeamInjuries,
-} from "components/Sports/Basketball/GameDetails";
 import GameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import GameSummary from "components/Sports/Football/GameDetails/GameSummary";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
