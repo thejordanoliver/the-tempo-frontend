@@ -3,6 +3,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { ReactNode } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { getContrastingTextColor } from "utils/ui/color";
+import HeadingTwo from "../Headings/HeadingTwo";
 
 type Props = {
   label: string;
@@ -17,7 +18,6 @@ export default function InfoCard({
   image,
   teamColor = Colors.midTone,
 }: Props) {
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = InfoCardStyles(isDark, teamColor);
@@ -31,16 +31,22 @@ export default function InfoCard({
 
   return (
     <>
-      <Text style={styles.label}>{label}</Text>
+      <HeadingTwo isDark={isDark}>{label}</HeadingTwo>
 
       <View style={styles.cardContainer}>
         {image && (
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: image }} style={styles.image} />
+          <View style={styles.headshotContainer}>
+            <Image source={{ uri: image }} style={styles.headshot} />
           </View>
         )}
 
-        <Text style={styles.value}>{formattedValue === null || formattedValue === undefined || formattedValue === "" ? "Not available" : formattedValue}</Text>
+        <Text style={styles.value}>
+          {formattedValue === null ||
+          formattedValue === undefined ||
+          formattedValue === ""
+            ? "Not available"
+            : formattedValue}
+        </Text>
       </View>
     </>
   );
@@ -48,21 +54,11 @@ export default function InfoCard({
 
 export const InfoCardStyles = (isDark: boolean, teamColor: string) =>
   StyleSheet.create({
-    label: {
-      marginBottom: 8,
-      paddingBottom: 4,
-      borderBottomWidth: 0.5,
-      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 20,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
     cardContainer: {
       flexDirection: "row",
       alignItems: "center",
       width: "100%",
-      minHeight: 80,
+      height: 80,
       marginBottom: 12,
       paddingHorizontal: 16,
       paddingVertical: 12,
@@ -71,26 +67,24 @@ export const InfoCardStyles = (isDark: boolean, teamColor: string) =>
       borderRadius: 8,
       backgroundColor: teamColor ?? Colors.midTone,
     },
-
-    imageContainer: {
+    headshotContainer: {
       alignItems: "center",
       justifyContent: "center",
-      marginRight: 12,
+      marginRight: 8,
       borderWidth: 1,
       borderColor: getContrastingTextColor(teamColor),
-      borderRadius: 100,
+      backgroundColor:  Colors.white,
+      borderRadius: 999,
       overflow: "hidden",
-      width: 54,
-      height: 54,
-      paddingTop: 8,
+      width: 60,
+      height: 60,
+      paddingTop: 12,
     },
-
-    image: {
-      width: 64,
-      height: 64,
+    headshot: {
+      width: 68,
+      height: 68,
       resizeMode: "contain",
     },
-
     value: {
       flex: 1,
       flexShrink: 1,

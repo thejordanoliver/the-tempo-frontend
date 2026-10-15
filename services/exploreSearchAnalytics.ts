@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import type { ResultItem, SearchAffiliation } from "types/explore";
 import { normalizeExploreSearchQuery } from "utils/explore/exploreSearch";
 
@@ -136,7 +137,10 @@ export function sendExploreSearchEvent(
 ): void {
   void sender(event).catch((error: unknown) => {
     if (typeof __DEV__ !== "undefined" && __DEV__) {
-      console.warn("Explore search analytics event was dropped", error);
+      const reason = isAxiosError<{ error?: string }>(error)
+        ? (error.response?.data?.error ?? error.message)
+        : error;
+      console.warn("Explore search analytics event was dropped", reason);
     }
   });
 }
