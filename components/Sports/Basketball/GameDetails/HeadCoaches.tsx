@@ -1,6 +1,6 @@
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { Colors, Fonts } from "@/constants/styles";
-import { Coach } from "@/hooks/useTeams";
+import type { Coach } from "@/types/team";
 import { calculateAge } from "@/utils/common/dateUtils";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";

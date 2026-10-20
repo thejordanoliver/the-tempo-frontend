@@ -328,12 +328,23 @@ export function usePlayerSeasons(
   const [refreshing, setRefreshing] = useState(false);
   const [seasonsError, setSeasonsError] = useState<string | null>(null);
 
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
+
   const abortControllerRef = useRef<AbortController | null>(null);
   const normalizedPlayerId = String(playerId ?? "").trim();
   const normalizedTeamId =
     teamId === null || teamId === undefined ? null : String(teamId).trim();
   const normalizedCompetition = competition?.trim() || null;
   const canFetch = enabled && /^\d+$/.test(normalizedPlayerId);
+
+  const requestKey = canFetch
+    ? JSON.stringify([
+        normalizedPlayerId,
+        normalizedTeamId,
+        normalizedCompetition,
+        allTeams,
+      ])
+    : null;
 
   const fetchStats = useCallback(
     async (silent = false) => {
@@ -355,6 +366,7 @@ export function usePlayerSeasons(
         setRefreshing(true);
       } else {
         setSeasonsLoading(true);
+        setResolvedRequestKey(null);
       }
 
       setSeasonsError(null);
@@ -377,10 +389,13 @@ export function usePlayerSeasons(
 
         if (!controller.signal.aborted) {
           setData(response);
+          setResolvedRequestKey(requestKey);
         }
       } catch (requestError: unknown) {
         if (!controller.signal.aborted && !isCanceledRequest(requestError)) {
+          setData(null);
           setSeasonsError(getErrorMessage(requestError));
+          setResolvedRequestKey(requestKey);
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -395,36 +410,45 @@ export function usePlayerSeasons(
       normalizedCompetition,
       normalizedPlayerId,
       normalizedTeamId,
+      requestKey,
     ],
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchStats(false));
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (active) return fetchStats(false);
+    });
 
     return () => {
+      active = false;
       abortControllerRef.current?.abort();
     };
   }, [fetchStats]);
 
   const refresh = useCallback(() => fetchStats(true), [fetchStats]);
 
-  const seasons = Array.isArray(data?.seasons) ? data.seasons : [];
-  const responseTeamOptions = data?.options?.teams ?? data?.teamOptions;
+  const hasCurrentResult =
+    requestKey !== null && resolvedRequestKey === requestKey;
+  const currentData = hasCurrentResult ? data : null;
+  const seasons = Array.isArray(currentData?.seasons) ? currentData.seasons : [];
+  const responseTeamOptions =
+    currentData?.options?.teams ?? currentData?.teamOptions;
   const teamOptions = mergeTeamOptions(
     responseTeamOptions,
     buildTeamOptionsFromSeasonFilters(seasons),
   );
 
   return {
-    data,
+    data: currentData,
     seasons,
     teamOptions,
-    selectedFilters: data?.filters ?? null,
-    count: data?.count ?? 0,
-    hasStats: data?.hasStats ?? false,
-    seasonsLoading,
+    selectedFilters: currentData?.filters ?? null,
+    count: currentData?.count ?? 0,
+    hasStats: currentData?.hasStats ?? false,
+    seasonsLoading: canFetch && (seasonsLoading || !hasCurrentResult),
     refreshing,
-    seasonsError,
+    seasonsError: hasCurrentResult ? seasonsError : null,
     refresh,
   };
 }

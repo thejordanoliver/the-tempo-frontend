@@ -1,3 +1,8 @@
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import {
+  useWidgetBoardLoading,
+  WidgetLoadBoundary,
+} from "hooks/ExploreHooks/useWidgetBoardLoading";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -116,6 +121,9 @@ type WidgetFrameProps = {
 
 function toWidgetSlide(envelope: ExploreWidgetGame): WidgetSlide {
   switch (envelope.league) {
+    case "mcvb":
+    case "wcvb":
+      return { type: envelope.league, data: envelope.game };
     case "nba":
       return { type: "nba", data: envelope.game };
     case "wnba":
@@ -173,7 +181,12 @@ function WidgetFrame({
   );
 }
 
-export default function ExploreWidgetDashboard({
+export default function ExploreWidgetDashboard(props: ExploreWidgetDashboardProps) {
+  const { userId } = useFavoriteTeamsContext();
+  return <WidgetDashboardContent key={userId ?? "signed-out"} {...props} />;
+}
+
+function WidgetDashboardContent({
   isDark,
   selectedWidgets,
   widgetsReady,
@@ -207,6 +220,9 @@ export default function ExploreWidgetDashboard({
         .slice()
         .sort((a, b) => a.order - b.order || a.createdAt - b.createdAt),
     [selectedWidgets],
+  );
+  const { loading: boardLoading, onWidgetReady } = useWidgetBoardLoading(
+    visibleWidgets.map((widget) => widget.id),
   );
   const selectedGameWidgetTypes = useMemo(
     () => visibleWidgets.map((widget) => widget.type).filter(isGameWidgetType),
@@ -439,7 +455,9 @@ export default function ExploreWidgetDashboard({
           },
         ]}
       >
-        {content}
+        <WidgetLoadBoundary widgetId={widget.id} onReady={onWidgetReady}>
+          {content}
+        </WidgetLoadBoundary>
       </WidgetFrame>
     );
   };
@@ -465,21 +483,43 @@ export default function ExploreWidgetDashboard({
     ) : null;
 
   return (
-    <SortableWidgetGrid
-      widgets={visibleWidgets}
-      enabled={isFocused}
-      isEditing={isEditing}
-      refreshing={refreshing}
-      onRefresh={onRefresh}
-      onBeginEditing={onBeginEditing}
-      onReorder={onReorderWidgets}
-      renderWidget={renderWidget}
-      header={dashboardHeader}
-      style={dashboardStyles.scroll}
-      contentContainerStyle={navigationContentStyle(dashboardStyles.content)}
-      horizontalGap={EXPLORE_WIDGET_GRID_GAP}
-      verticalGap={EXPLORE_WIDGET_ROW_GAP}
-    />
+    <View style={dashboardStyles.scroll}>
+      <View
+        style={[dashboardStyles.scroll, boardLoading && { opacity: 0 }]}
+        pointerEvents={boardLoading ? "none" : "auto"}
+        accessibilityElementsHidden={boardLoading}
+        importantForAccessibility={boardLoading ? "no-hide-descendants" : "auto"}
+      >
+        <SortableWidgetGrid
+          widgets={visibleWidgets}
+          enabled={isFocused && !boardLoading}
+          isEditing={isEditing}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          onBeginEditing={onBeginEditing}
+          onReorder={onReorderWidgets}
+          renderWidget={renderWidget}
+          header={dashboardHeader}
+          style={dashboardStyles.scroll}
+          contentContainerStyle={navigationContentStyle(dashboardStyles.content)}
+          horizontalGap={EXPLORE_WIDGET_GRID_GAP}
+          verticalGap={EXPLORE_WIDGET_ROW_GAP}
+        />
+      </View>
+      {boardLoading && (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            styles.centerPrompt,
+            dashboardStyles.emptyWrap,
+          ]}
+          accessibilityLabel="Loading widgets"
+          accessibilityState={{ busy: true }}
+        >
+          <CustomActivityIndicator />
+        </View>
+      )}
+    </View>
   );
 }
 

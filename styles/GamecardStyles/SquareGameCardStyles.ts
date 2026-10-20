@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const squareGameCardStyles = (
+export const SquareGameCardStyles = (
   isDark: boolean,
   isChampionship?: boolean,
 ) => {

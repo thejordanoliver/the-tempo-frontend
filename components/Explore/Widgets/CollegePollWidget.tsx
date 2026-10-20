@@ -1,4 +1,3 @@
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
@@ -8,8 +7,9 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   type MCBBTeamRank,
-  useMCBBRankings,
-} from "hooks/BasketballHooks/useMCBBRankings";
+  useCollegeBasketballRankings,
+} from "hooks/BasketballHooks/useCollegeBasketballRankings";
+import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 import {
   type CFBTeamRank,
   useCFBRankings,
@@ -24,6 +24,7 @@ import type {
   CollegePollTableProps,
   CollegePollWidgetProps,
 } from "types/collegePollWidget";
+import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import {
   getCollegePollLabel,
   getCollegePollPageSize,
@@ -72,6 +73,7 @@ const CollegePollTable = memo(function CollegePollTable({
   onRetry,
   autoPlay,
 }: CollegePollTableProps) {
+  useWidgetLoadReady(loading);
   const router = useScopedRouter();
   const compact = size === "small";
   const pageSize = getCollegePollPageSize(size);
@@ -351,7 +353,8 @@ const MCBBPollTable = memo(function MCBBPollTable({
   pollType,
   autoPlay,
 }: CollegePollSourceProps) {
-  const { rankings, loading, error, refresh } = useMCBBRankings("mcbb");
+  const { rankings, loading, error, refresh } =
+    useCollegeBasketballRankings("mcbb");
   const selectedPoll =
     rankings.find((poll) => poll.type === pollType) ??
     rankings.find((poll) =>

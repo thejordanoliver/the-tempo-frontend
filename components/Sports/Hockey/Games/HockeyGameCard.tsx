@@ -1,5 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
   formatDate,
@@ -11,10 +9,16 @@ import { activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 
 function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const router = useScopedRouter();
@@ -49,12 +53,14 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeName = homeTeam?.name;
   const awayName = awayTeam?.name;
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getNHLTeamLogo(homeId, isDark);
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getNHLTeamLogo(awayId, isDark);
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getNHLTeamLogo(homeId, isDark);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getNHLTeamLogo(awayId, isDark);
 
   const headlineText = game?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
@@ -78,7 +84,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const awayRecord = game?.away?.record ?? "0-0";
   const clock = game.status?.clock;
   const isChampionship = headlineText?.includes("Stanley Cup Final");
-  const styles = gameCardStyles(isDark, isChampionship);
+  const styles = GameCardStyles(isDark, isChampionship);
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -86,7 +92,6 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeWins = game.home.winner;
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
-
 
   const ScoreText = ({
     score,

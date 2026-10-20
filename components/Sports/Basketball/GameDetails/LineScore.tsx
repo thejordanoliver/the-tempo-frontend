@@ -36,6 +36,8 @@ type Props = {
   awayHits?: ScoreValue;
   homeErrors?: ScoreValue;
   awayErrors?: ScoreValue;
+  homeSets?: ScoreValue;
+  awaySets?: ScoreValue;
 };
 
 const BASEBALL_TEAM_WIDTH = 54;
@@ -59,6 +61,8 @@ export default function LineScore({
   awayHits,
   homeErrors,
   awayErrors,
+  homeSets,
+  awaySets,
 }: Props) {
   const styles = lineScoreStyles(isDark);
   const [baseballTableWidth, setBaseballTableWidth] = useState(0);
@@ -67,6 +71,7 @@ export default function LineScore({
   const borderColor = isDark ? Colors.midTone : Colors.lightGray;
 
   const normalizedLeague = league.toLowerCase();
+  const isVolleyball = normalizedLeague === "mcvb" || normalizedLeague === "wcvb";
 
   const isBaseball =
     normalizedLeague === "mlb" ||
@@ -105,11 +110,11 @@ export default function LineScore({
   const homeScores = linescore?.home ?? [];
   const awayScores = linescore?.away ?? [];
 
-  const homeTotal = total(homeScores);
-  const awayTotal = total(awayScores);
+  const homeTotal = isVolleyball ? renderScore(homeSets) : total(homeScores);
+  const awayTotal = isVolleyball ? renderScore(awaySets) : total(awayScores);
 
   const baseColumns =
-    normalizedLeague === "soccer"
+    isVolleyball ? 5 : normalizedLeague === "soccer"
       ? 2
       : normalizedLeague === "mcbb"
         ? 2
@@ -130,6 +135,7 @@ export default function LineScore({
   );
 
   const getPeriodLabel = (index: number): string => {
+    if (isVolleyball) return `S${index + 1}`;
     if (normalizedLeague === "mlb" || normalizedLeague === "cb") {
       return `${index + 1}`;
     }
@@ -401,7 +407,7 @@ export default function LineScore({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo isDark={isDark}>Line Score</HeadingTwo>
+      <HeadingTwo isDark={isDark}>{isVolleyball ? "Set Scores" : "Line Score"}</HeadingTwo>
 
       <View style={styles.wrapper}>
         <View style={styles.headerRow}>
@@ -417,7 +423,7 @@ export default function LineScore({
             ))}
 
             <View style={columnStyle}>
-              <Text style={[styles.header, { color: textColor }]}>Total</Text>
+              <Text style={[styles.header, { color: textColor }]}>{isVolleyball ? "Sets" : "Total"}</Text>
             </View>
           </View>
         </View>

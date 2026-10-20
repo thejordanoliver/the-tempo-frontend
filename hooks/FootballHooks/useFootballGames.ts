@@ -1,5 +1,6 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
+import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { FootballGame } from "@/types/football/football";
-import { isGameLive } from "@/utils/games/games";
 import dayjs from "dayjs";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -14,6 +15,7 @@ type UseFootballGamesParams = {
   conferenceId?: number | string | null;
 
   enabled?: boolean;
+  onScoreboardCalendar?: OnScoreboardCalendar;
 };
 
 type FetchGamesOptions = {
@@ -40,6 +42,9 @@ export type FootballGameGroup = {
 };
 
 type FootballGamesResponse = {
+  calendar?: unknown[] | null;
+  calendarStartDate?: string | null;
+  calendarEndDate?: string | null;
   league?: string;
 
   season?: {
@@ -128,6 +133,7 @@ export function useFootballGames({
   league = "nfl",
   conferenceId = null,
   enabled = true,
+  onScoreboardCalendar,
 }: UseFootballGamesParams = {}) {
   const [groups, setGroups] = useState<FootballGameGroup[]>([]);
   const [loading, setLoading] = useState(enabled);
@@ -190,15 +196,17 @@ export function useFootballGames({
           params,
         });
 
+        onScoreboardCalendar?.(data);
         setGroups(normalizeGroups(data));
       } catch (err) {
+        onScoreboardCalendar?.(null);
         console.error(err);
 
         setError(new Error(`Failed to fetch ${league.toUpperCase()} games`));
 
         // Preserve existing games if a background refresh
         // temporarily fails.
-        if (!silent) {
+        if (!forceRefresh && !silent) {
           setGroups([]);
         }
       } finally {
@@ -211,7 +219,7 @@ export function useFootballGames({
         }
       }
     },
-    [enabled, date, week, season, seasontype, league, conferenceId],
+    [enabled, date, week, season, seasontype, league, conferenceId, onScoreboardCalendar],
   );
 
   const refreshGames = useCallback(async () => {
@@ -243,8 +251,8 @@ export function useFootballGames({
     };
   }, [enabled, fetchGames]);
 
-  const hasLiveGame = useMemo(() => {
-    return games.some(isGameLive);
+  const hasActiveGame = useMemo(() => {
+    return games.some(shouldTrackGameUpdates);
   }, [games]);
 
   const scoreboardDate = useMemo(
@@ -253,7 +261,7 @@ export function useFootballGames({
   );
 
   useLiveSportsSubscription<FootballGamesResponse>({
-    enabled: enabled && hasLiveGame,
+    enabled: enabled && !loading && hasActiveGame,
 
     kind: "scoreboard",
 

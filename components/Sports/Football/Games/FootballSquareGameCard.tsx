@@ -1,10 +1,9 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   getCFBRivalry,
   getCFBTeam,
   getCFBTeamLogo,
 } from "@/constants/teamsCFB";
-import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
+import { SquareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -14,13 +13,18 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatDate,
   formatTime,
   getHolidayLabel,
   safeDate,
 } from "utils/common/dateUtils";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 import Football from "../../../../assets/icons/Football.png";
 import FootballLight from "../../../../assets/icons/FootballLight.png";
 
@@ -53,26 +57,26 @@ function FootballSquareGameCard({
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
 
-  const home = (isNFL ? getNFLTeam(homeId) : getCFBTeam(homeId)) ?? emptyHomeTeam;
-  const away = (isNFL ? getNFLTeam(awayId) : getCFBTeam(awayId)) ?? emptyAwayTeam;
+  const home =
+    (isNFL ? getNFLTeam(homeId) : getCFBTeam(homeId)) ?? emptyHomeTeam;
+  const away =
+    (isNFL ? getNFLTeam(awayId) : getCFBTeam(awayId)) ?? emptyAwayTeam;
 
   const homeName = home?.code ?? game.home.name;
   const awayName = away?.code ?? game.away.name;
 
-  const homeLogo = home.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isNFL
+  const homeLogo =
+    home.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isNFL
         ? getNFLTeamLogo(homeId, isDark)
-        : getCFBTeamLogo(homeId, isDark)
-    );
-  const awayLogo = away.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isNFL
+        : getCFBTeamLogo(homeId, isDark);
+  const awayLogo =
+    away.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isNFL
         ? getNFLTeamLogo(awayId, isDark)
-        : getCFBTeamLogo(awayId, isDark)
-    );
+        : getCFBTeamLogo(awayId, isDark);
 
   const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
   const headline = game.headline ?? rivalry ?? holidayLabel;
@@ -108,7 +112,7 @@ function FootballSquareGameCard({
   const isChampionship =
     headlineMatch?.includes("super bowl") ||
     headlineMatch?.includes("national championship");
-  const styles = squareGameCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
   const homeHasPossession = inProgress && possessionTeamId === home?.id;
   const awayHasPossession = inProgress && possessionTeamId === away?.id;
 

@@ -1,3 +1,4 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
@@ -17,25 +18,6 @@ type FetchLastGameOptions = {
   isRefresh?: boolean;
   silent?: boolean;
 };
-
-const LIVE_STATES = new Set(["in", "half"]);
-
-function isLiveBasketballGame(game: any) {
-  const state = String(game?.status?.state || "").toLowerCase();
-  const description = String(game?.status?.description || "").toLowerCase();
-  const detail = String(game?.status?.detail || "").toLowerCase();
-  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
-
-  return (
-    LIVE_STATES.has(state) ||
-    description.includes("in progress") ||
-    detail.includes("in progress") ||
-    shortDetail.includes("in progress") ||
-    description.includes("live") ||
-    detail.includes("live") ||
-    shortDetail.includes("live")
-  );
-}
 
 export function useTeamLatestGame(
   league: BasketballLeague,
@@ -118,12 +100,12 @@ export function useTeamLatestGame(
     };
   }, [fetchLastGame]);
 
-  const hasLiveGame = useMemo(() => {
-    return isLiveBasketballGame(game);
+  const hasActiveGame = useMemo(() => {
+    return shouldTrackGameUpdates(game);
   }, [game]);
 
   useLiveSportsSubscription<LastBasketballTeamGameResponse>({
-    enabled: Boolean(teamId && hasLiveGame),
+    enabled: Boolean(teamId && !loading && hasActiveGame),
     kind: "scoreboard",
     payload: {
       sport: "basketball",

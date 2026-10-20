@@ -1,3 +1,4 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
 import type { GameVenueInfo } from "types/gameVenue";
@@ -90,7 +91,7 @@ export type StatsTeam = {
   secondaryColor: string;
   established: number;
   venueId: string;
-  venueLeagueKey: string;
+  league: string | null;
 };
 
 export type PlayerStatsGroup = {
@@ -393,7 +394,7 @@ export const useBasketballGameDetails = (
   }, [fetchDetails, skipFetch]);
 
   useLiveSportsSubscription<BasketballGameDetailsResponse>({
-    enabled: !skipFetch && score?.status?.state === "in",
+    enabled: !skipFetch && shouldTrackGameUpdates(score),
     kind: "game",
     payload: {
       sport: "basketball",

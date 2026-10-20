@@ -3,7 +3,9 @@ import { BaseballGame } from "@/types/baseball/baseball";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey/hockey";
+import type { VolleyballGame } from "@/types/volleyball/volleyball";
 import { Ionicons } from "@expo/vector-icons";
+import VolleyballGameCard from "components/Sports/Volleyball/VolleyballGameCard";
 import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { BlurView } from "expo-blur";
@@ -38,6 +40,7 @@ if (
 }
 
 export type WidgetSlide =
+  | { type: "mcvb" | "wcvb"; data: VolleyballGame }
   | { type: "nba"; data: BasketballGame }
   | { type: "nfl"; data: FootballGame }
   | { type: "cfb"; data: FootballGame }
@@ -543,6 +546,13 @@ export default function WidgetSlider({
   const renderSlide = useCallback(
     (item: WidgetSlide) => {
       switch (item.type) {
+        case "mcvb":
+        case "wcvb":
+          return (
+            <View style={{ height: slideHeight, width: slideWidth }}>
+              <VolleyballGameCard game={item.data} compact />
+            </View>
+          );
         case "nba":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>

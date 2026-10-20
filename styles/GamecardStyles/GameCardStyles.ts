@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
+export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;

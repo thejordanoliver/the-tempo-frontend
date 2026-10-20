@@ -1,5 +1,6 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
+import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { HockeyGame } from "@/types/hockey/hockey";
-import { isGameLive } from "@/utils/games/games";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
@@ -15,7 +16,7 @@ type HockeyGamesResponse = {
   games?: HockeyGame[];
 };
 
-export function useHockeyGames(date?: Date, league: League = "nhl") {
+export function useHockeyGames(date?: Date, league: League = "nhl", onScoreboardCalendar?: OnScoreboardCalendar) {
   const [games, setGames] = useState<HockeyGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -47,19 +48,21 @@ export function useHockeyGames(date?: Date, league: League = "nhl") {
 
         if (requestId === requestIdRef.current) {
           setGames(gamesData);
+          onScoreboardCalendar?.(data);
         }
       } catch (err) {
         if (requestId !== requestIdRef.current) return;
+        onScoreboardCalendar?.(null);
         console.error(err);
         setError(new Error(`Failed to fetch ${league} games`));
-        setGames([]);
+        if (!forceRefresh) setGames([]);
       } finally {
         if (requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
     },
-    [formattedDate, league],
+    [formattedDate, league, onScoreboardCalendar],
   );
 
   const refreshGames = useCallback(async () => {
@@ -77,12 +80,12 @@ export function useHockeyGames(date?: Date, league: League = "nhl") {
     };
   }, [fetchGames]);
 
-  const hasLiveGame = useMemo(() => {
-    return games.some(isGameLive);
+  const hasActiveGame = useMemo(() => {
+    return games.some(shouldTrackGameUpdates);
   }, [games]);
 
   useLiveSportsSubscription<HockeyGamesResponse>({
-    enabled: hasLiveGame,
+    enabled: !loading && hasActiveGame,
     kind: "scoreboard",
     payload: {
       sport: "hockey",

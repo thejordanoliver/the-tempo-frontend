@@ -3,6 +3,7 @@ export type LiveSport =
   | "basketball"
   | "baseball"
   | "hockey"
+  | "volleyball"
   | "soccer"
   | "mma"
   | "racing"

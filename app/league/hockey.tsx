@@ -1,3 +1,4 @@
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useHockeyGames } from "@/hooks/HockeyHooks/useHockeyGames";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -72,7 +73,8 @@ function NHLLeagueScreen() {
   const navigation = useNavigation();
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-  const { calendar } = useLeagueCalendar(league);
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "raw", undefined, scoreboardCalendar);
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
@@ -140,7 +142,7 @@ function NHLLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useHockeyGames(selectedDate, league);
+  } = useHockeyGames(selectedDate, league, onScoreboardCalendar);
 
   const {
     articles,

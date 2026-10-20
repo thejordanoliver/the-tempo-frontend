@@ -1,4 +1,5 @@
 import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
+import WNBAPlayoffBracket from "components/Sports/Basketball/Playoffs/WNBAPlayoffs/WNBAPlayoffBracket";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -84,12 +85,6 @@ type SelectedConference = number | string | null;
 
 const getMonthAnchor = (value: Date | string) =>
   dayjs(value).startOf("month").format("YYYY-MM-DD");
-
-function isTop25Rank(rank: unknown) {
-  const parsedRank = Number(rank);
-
-  return Number.isFinite(parsedRank) && parsedRank >= 1 && parsedRank <= 25;
-}
 
 /* -------------------------------------------------------------------------- */
 /*                                 Main Route                                 */
@@ -179,24 +174,20 @@ function NBALeagueScreen() {
   };
 
   const {
-    calendar,
-    error: calendarError,
-    refresh: refreshCalendar,
-  } = useLeagueCalendar(league, "raw", calendarAnchorDate);
+    games: nbaGames,
+    scoreboardCalendar: nbaScoreboardCalendar,
+    error: nbaGamesError,
+    refreshGames: refreshNBAGames,
+    loading: loadingNBAGames,
+  } = useBasketballGames(selectedDate, league);
 
   /* ------------------------------------------------------------------------ */
   /*                                NBA Games                                 */
   /* ------------------------------------------------------------------------ */
 
   const {
-    games: nbaGames,
-    error: nbaGamesError,
-    refreshGames: refreshNBAGames,
-    loading: loadingNBAGames,
-  } = useBasketballGames(selectedDate, league);
-
-  const {
     games: summerVegasGames,
+    scoreboardCalendar: summerVegasScoreboardCalendar,
     error: summerVegasGamesError,
     refreshGames: refreshSummerVegasGames,
     loading: loadingSummerVegasGames,
@@ -204,6 +195,7 @@ function NBALeagueScreen() {
 
   const {
     games: summerUtahGames,
+    scoreboardCalendar: summerUtahScoreboardCalendar,
     error: summerUtahGamesError,
     refreshGames: refreshSummerUtahGames,
     loading: loadingSummerUtahGames,
@@ -211,10 +203,52 @@ function NBALeagueScreen() {
 
   const {
     games: summerCaliforniaGames,
+    scoreboardCalendar: summerCaliforniaScoreboardCalendar,
     error: summerCaliforniaGamesError,
     refreshGames: refreshSummerCaliforniaGames,
     loading: loadingSummerCaliforniaGames,
   } = useBasketballGames(selectedDate, "summercalifornia");
+
+  const combinedScoreboardCalendar = useMemo(() => {
+    const sources = [
+      nbaScoreboardCalendar,
+      summerVegasScoreboardCalendar,
+      summerUtahScoreboardCalendar,
+      summerCaliforniaScoreboardCalendar,
+    ];
+    const starts = sources
+      .flatMap((source) => (source.startDate ? [source.startDate] : []))
+      .sort();
+    const ends = sources
+      .flatMap((source) => (source.endDate ? [source.endDate] : []))
+      .sort();
+    return {
+      pending: sources.some((source) => source.pending),
+      calendar: sources.every((source) => Array.isArray(source.calendar))
+        ? [
+            ...new Set(sources.flatMap((source) => source.calendar ?? [])),
+          ].sort()
+        : null,
+      startDate: starts[0],
+      endDate: ends[ends.length - 1],
+    };
+  }, [
+    nbaScoreboardCalendar,
+    summerVegasScoreboardCalendar,
+    summerUtahScoreboardCalendar,
+    summerCaliforniaScoreboardCalendar,
+  ]);
+
+  const {
+    calendar,
+    error: calendarError,
+    refresh: refreshCalendar,
+  } = useLeagueCalendar(
+    league,
+    "raw",
+    calendarAnchorDate,
+    combinedScoreboardCalendar,
+  );
 
   const combinedGames = useMemo(() => {
     const allGames = [
@@ -559,7 +593,7 @@ function NBALeagueScreen() {
 function WNBALeagueScreen() {
   const league = "wnba";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-
+  const currentSeason = getWNBASeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
@@ -604,23 +638,39 @@ function WNBALeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const {
-    calendar,
-    error: calendarError,
-    refresh: refreshCalendar,
-  } = useLeagueCalendar(league, "raw", calendarAnchorDate);
-
   /* ------------------------------------------------------------------------ */
   /*                                WNBA Games                                 */
   /* ------------------------------------------------------------------------ */
-
   const {
     games: wnbaGames,
+    scoreboardCalendar: wnbaScoreboardCalendar,
     error: wnbaGamesError,
     refreshGames: refreshWNBAGames,
     loading: loadingWNBAGames,
   } = useBasketballGames(selectedDate, league);
 
+  const {
+    calendar,
+    error: calendarError,
+    refresh: refreshCalendar,
+  } = useLeagueCalendar(
+    league,
+    "raw",
+    calendarAnchorDate,
+    wnbaScoreboardCalendar,
+  );
+
+  /* ------------------------------------------------------------------------ */
+  /*                              WNBA Leaders                                 */
+  /* ------------------------------------------------------------------------ */
+
+  const {
+    categories,
+    loading: leadersLoading,
+    error: leadersError,
+  } = useSeasonLeaders(currentSeason, league, {
+    enabled: hasVisitedTab("stats"),
+  });
   /* ------------------------------------------------------------------------ */
   /*                                  News                                    */
   /* ------------------------------------------------------------------------ */
@@ -762,7 +812,7 @@ function WNBALeagueScreen() {
           }
         >
           {/* SCORES */}
-          <View key="scores">
+          <View collapsable={false} key="scores" style={styles.pagerPage}>
             <DateNavigator
               selectedDate={selectedDate}
               onChangeDate={changeDateByDays}
@@ -782,7 +832,7 @@ function WNBALeagueScreen() {
           </View>
 
           {/* NEWS */}
-          <View key="news" style={styles.contentArea}>
+          <View collapsable={false} key="news" style={styles.pagerPage}>
             {hasVisitedTab("news") ? (
               <NewsList
                 items={articles}
@@ -797,7 +847,7 @@ function WNBALeagueScreen() {
           </View>
 
           {/* STANDINGS */}
-          <View key="standings">
+          <View collapsable={false} key="standings" style={styles.pagerPage}>
             {hasVisitedTab("standings") ? (
               <StandingsList
                 year={standingsYear}
@@ -807,8 +857,28 @@ function WNBALeagueScreen() {
             ) : null}
           </View>
 
+          {/* PLAYOFFS */}
+          <View collapsable={false} key="playoffs" style={styles.pagerPage}>
+            {hasVisitedTab("playoffs") ? (
+              <WNBAPlayoffBracket season={getWNBASeason()} />
+            ) : null}
+          </View>
+
+          {/* STATS */}
+          <View collapsable={false} key="stats" style={styles.pagerPage}>
+            {hasVisitedTab("stats") ? (
+              <SeasonLeadersList
+                loading={leadersLoading}
+                error={leadersError}
+                categories={categories}
+                league={league}
+                season={currentSeason}
+              />
+            ) : null}
+          </View>
+
           {/* DRAFT */}
-          <View key="draft" style={styles.contentArea}>
+          <View collapsable={false} key="draft" style={styles.pagerPage}>
             {hasVisitedTab("draft") ? (
               <Draft
                 year={draftYear}
@@ -823,12 +893,12 @@ function WNBALeagueScreen() {
           </View>
 
           {/* AWARDS */}
-          <View key="awards" style={styles.contentArea}>
+          <View collapsable={false} key="awards" style={styles.pagerPage}>
             {hasVisitedTab("awards") ? <AwardSeasons league={league} /> : null}
           </View>
 
           {/* FORUM */}
-          <View key="forum" style={styles.contentArea}>
+          <View collapsable={false} key="forum" style={styles.pagerPage}>
             {hasVisitedTab("forum") ? <ForumFeed league={league} /> : null}
           </View>
         </PagerView>
@@ -896,21 +966,27 @@ function GLeagueScreen() {
   };
 
   const {
-    calendar,
-    error: calendarError,
-    refresh: refreshCalendar,
-  } = useLeagueCalendar(league, "raw", calendarAnchorDate);
-
-  /* ------------------------------------------------------------------------ */
-  /*                                WNBA Games                                 */
-  /* ------------------------------------------------------------------------ */
-
-  const {
     games: gLeagueGames,
+    scoreboardCalendar: gLeagueScoreboardCalendar,
     error: gLeagueGamesError,
     refreshGames: refreshGLeagueGames,
     loading: loadingGLeagueGames,
   } = useBasketballGames(selectedDate, "gleague");
+
+  const {
+    calendar,
+    error: calendarError,
+    refresh: refreshCalendar,
+  } = useLeagueCalendar(
+    league,
+    "raw",
+    calendarAnchorDate,
+    gLeagueScoreboardCalendar,
+  );
+
+  /* ------------------------------------------------------------------------ */
+  /*                                WNBA Games                                 */
+  /* ------------------------------------------------------------------------ */
 
   /* ------------------------------------------------------------------------ */
   /*                                  News                                    */
@@ -1202,7 +1278,20 @@ function MCBBLeagueScreen() {
   /*                                Calendar                                  */
   /* ------------------------------------------------------------------------ */
 
-  const { calendar } = useLeagueCalendar(league);
+  const {
+    games: mcbbGames,
+    scoreboardCalendar: mcbbScoreboardCalendar,
+    error: mcbbGamesError,
+    refreshGames: refreshMCBBGames,
+    loading: mcbbGamesLoading,
+  } = useBasketballGames(selectedDate, league, selectedConference);
+
+  const { calendar } = useLeagueCalendar(
+    league,
+    "raw",
+    undefined,
+    mcbbScoreboardCalendar,
+  );
 
   const markedDates = useMemo(() => {
     return (calendar ?? []).reduce(
@@ -1235,31 +1324,6 @@ function MCBBLeagueScreen() {
       >,
     );
   }, [calendar, isDark]);
-
-  /* ------------------------------------------------------------------------ */
-  /*                                   Games                                  */
-  /* ------------------------------------------------------------------------ */
-
-  const {
-    games: mcbbGames,
-    error: mcbbGamesError,
-    refreshGames: refreshMCBBGames,
-    loading: mcbbGamesLoading,
-  } = useBasketballGames(selectedDate, league, selectedConferenceGroupId);
-
-  const displayedGames = useMemo(() => {
-    if (!selectedConference) {
-      return mcbbGames ?? [];
-    }
-
-    if (selectedConference === "top25") {
-      return (mcbbGames ?? []).filter(
-        (game) => isTop25Rank(game.home?.rank) || isTop25Rank(game.away?.rank),
-      );
-    }
-
-    return mcbbGames ?? [];
-  }, [mcbbGames, selectedConference]);
 
   /* ------------------------------------------------------------------------ */
   /*                                   News                                   */
@@ -1348,7 +1412,7 @@ function MCBBLeagueScreen() {
       />
 
       <GamesList
-        games={displayedGames}
+        games={mcbbGames}
         error={mcbbGamesError}
         loading={mcbbGamesLoading}
         refreshing={gamesRefreshing}
@@ -1593,7 +1657,20 @@ function WCBBLeagueScreen() {
   /*                                Calendar                                  */
   /* ------------------------------------------------------------------------ */
 
-  const { calendar } = useLeagueCalendar(league);
+  const {
+    games: wcbbGames,
+    scoreboardCalendar: wcbbScoreboardCalendar,
+    error: wcbbGamesError,
+    refreshGames: refreshWCBBGames,
+    loading: wcbbGamesLoading,
+  } = useBasketballGames(selectedDate, league, selectedConference);
+
+  const { calendar } = useLeagueCalendar(
+    league,
+    "raw",
+    undefined,
+    wcbbScoreboardCalendar,
+  );
 
   const markedDates = useMemo(() => {
     return (calendar ?? []).reduce(
@@ -1626,31 +1703,6 @@ function WCBBLeagueScreen() {
       >,
     );
   }, [calendar, isDark]);
-
-  /* ------------------------------------------------------------------------ */
-  /*                                   Games                                  */
-  /* ------------------------------------------------------------------------ */
-
-  const {
-    games: wcbbGames,
-    error: wcbbGamesError,
-    refreshGames: refreshWCBBGames,
-    loading: wcbbGamesLoading,
-  } = useBasketballGames(selectedDate, league, selectedConferenceGroupId);
-
-  const displayedGames = useMemo(() => {
-    if (!selectedConference) {
-      return wcbbGames ?? [];
-    }
-
-    if (selectedConference === "top25") {
-      return (wcbbGames ?? []).filter(
-        (game) => isTop25Rank(game.home?.rank) || isTop25Rank(game.away?.rank),
-      );
-    }
-
-    return wcbbGames ?? [];
-  }, [wcbbGames, selectedConference]);
 
   /* ------------------------------------------------------------------------ */
   /*                                   News                                   */
@@ -1739,13 +1791,13 @@ function WCBBLeagueScreen() {
       />
 
       <GamesList
-        games={displayedGames}
+        games={wcbbGames}
         error={wcbbGamesError}
         loading={wcbbGamesLoading}
         refreshing={gamesRefreshing}
         onRefresh={handleScoresRefresh}
         showHeaders={false}
-        isMCBB
+        isWCBB
       />
     </View>
   );

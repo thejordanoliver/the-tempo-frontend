@@ -6,6 +6,8 @@ export type SearchAffiliation =
   | "mlb"
   | "cb"
   | "sb"
+  | "mcvb"
+  | "wcvb"
   | "nhl"
   | "nfl"
   | "cfb"
@@ -31,6 +33,7 @@ export type PlayerResult = SearchRankingFields & {
   association_name: string | null;
   affiliation: SearchAffiliation;
   position: string | null;
+  active?: boolean | null;
   isNFL?: boolean;
   isMMA?: boolean;
   isNBA?: boolean;
@@ -38,6 +41,8 @@ export type PlayerResult = SearchRankingFields & {
   isMLB?: boolean;
   isCB?: boolean;
   isSB?: boolean;
+  isMCVB?: boolean;
+  isWCVB?: boolean;
   isCFB?: boolean;
   isMCBB?: boolean;
   isWCBB?: boolean;
@@ -65,6 +70,8 @@ export type TeamResult = SearchRankingFields & {
   isMLB?: boolean;
   isCB?: boolean;
   isSB?: boolean;
+  isMCVB?: boolean;
+  isWCVB?: boolean;
   isNHL?: boolean;
   isCFB?: boolean;
   isMCBB?: boolean;

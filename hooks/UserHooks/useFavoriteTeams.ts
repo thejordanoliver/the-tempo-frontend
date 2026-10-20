@@ -1,3 +1,4 @@
+import { useVolleyballDirectory } from "hooks/VolleyballHooks/useVolleyball";
 import { isEligibleFavoriteTeam } from "utils/favorites/favoriteTeamEligibility";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { wcbbTeams } from "@/constants/teamsWCBB";
@@ -43,6 +44,7 @@ const getFavoritesStorageKey = (userId: number | string) =>
   `${STORAGE_KEY_PREFIX}:${userId}`;
 
 export function useFavoriteTeams() {
+  const volleyball = useVolleyballDirectory();
   const [search, setSearch] = useState("");
   const [favorites, setFavorites] = useState<FavoriteTeamKey[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
@@ -79,8 +81,9 @@ export function useFavoriteTeams() {
       ...mlbTeams,
       ...nhlTeams,
       ...soccerTeams,
+      ...volleyball.teams,
     ],
-    [],
+    [volleyball.teams],
   );
 
   const filteredTeams = useMemo(() => {
@@ -258,6 +261,39 @@ export function useFavoriteTeams() {
   useEffect(() => {
     void Promise.resolve().then(() => loadFavorites());
   }, [loadFavorites]);
+
+  // A background refresh bypasses hydration's same-user shortcut and local
+  // cache, keeping the current favorites visible if the request fails.
+  const refreshFavorites = useCallback(async () => {
+    const requestUserId = currentUserIdRef.current;
+    if (requestUserId === null) return;
+
+    const requestId = ++loadRequestId.current;
+
+    try {
+      const serverFavorites = await getFavoriteTeams();
+      if (
+        requestId !== loadRequestId.current ||
+        currentUserIdRef.current !== requestUserId
+      ) return;
+
+      savedFavoritesRef.current = serverFavorites;
+      setFavorites(serverFavorites);
+      await AsyncStorage.setItem(
+        getFavoritesStorageKey(requestUserId),
+        JSON.stringify(serverFavorites),
+      );
+    } catch (error) {
+      if (requestId === loadRequestId.current) {
+        console.warn("Failed to refresh favorite teams:", error);
+      }
+    } finally {
+      if (requestId === loadRequestId.current) {
+        setIsLoading(false);
+        setReady(true);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     return subscribeAuthSession(({ accessToken }) => {
@@ -455,6 +491,7 @@ export function useFavoriteTeams() {
 
     const league = previewTeam.league.toLowerCase();
     const route =
+      league === "mcvb" ? "/team/mcvb/[teamId]" : league === "wcvb" ? "/team/wcvb/[teamId]" :
       league === "nfl"
         ? "/team/nfl/[teamId]"
         : league === "nba"
@@ -548,7 +585,9 @@ export function useFavoriteTeams() {
     setFavorites,
 
     userId,
-    isLoading,
+    isLoading: isLoading || volleyball.loading,
+    directoryError: volleyball.error,
+    refreshDirectory: volleyball.refresh,
     isGridView,
     ready,
 
@@ -560,6 +599,7 @@ export function useFavoriteTeams() {
     saveFavorites,
     syncFavorites,
     loadFavorites,
+    refreshFavorites,
     clearFavorites,
 
     allTeams,

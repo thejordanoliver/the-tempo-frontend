@@ -1,3 +1,4 @@
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useBaseballGames } from "@/hooks/BaseballHooks/useBaseballGames";
 import { useMLBPlayoffBracket } from "@/hooks/BaseballHooks/useMLBPlayoffBracket";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
@@ -102,7 +103,8 @@ function MLBLeagueScreen() {
   const navigation = useNavigation();
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-  const { calendar } = useLeagueCalendar(league);
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "raw", undefined, scoreboardCalendar);
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
   const { categories, loading, error } = useSeasonLeaders(
@@ -171,7 +173,7 @@ function MLBLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useBaseballGames(selectedDate, league);
+  } = useBaseballGames(selectedDate, league, onScoreboardCalendar);
 
   const {
     articles,
@@ -389,7 +391,8 @@ function CBLeagueScreen() {
   const navigation = useNavigation();
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-  const { calendar } = useLeagueCalendar(league);
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "raw", undefined, scoreboardCalendar);
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
   const [selectedDate, setSelectedDate] = useState<Date>(
@@ -450,7 +453,7 @@ function CBLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useBaseballGames(selectedDate, league);
+  } = useBaseballGames(selectedDate, league, onScoreboardCalendar);
 
   const {
     articles,
@@ -613,7 +616,8 @@ function SBLeagueScreen() {
   const navigation = useNavigation();
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-  const { calendar } = useLeagueCalendar(league);
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "raw", undefined, scoreboardCalendar);
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
   const [selectedDate, setSelectedDate] = useState<Date>(
@@ -674,7 +678,7 @@ function SBLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useBaseballGames(selectedDate, league);
+  } = useBaseballGames(selectedDate, league, onScoreboardCalendar);
 
   const {
     articles,

@@ -135,6 +135,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [settledDataKey, setSettledDataKey] = useState<string | null>(null);
   const requestGenerationRef = useRef(0);
   const pendingRequestRef = useRef<{
     key: string;
@@ -183,6 +184,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       setLoading(false);
       setRefreshing(false);
       setError(null);
+      setSettledDataKey(null);
     });
 
     return () => {
@@ -327,6 +329,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
           if (pendingRequestRef.current?.promise !== promise) return;
 
           pendingRequestRef.current = null;
+          setSettledDataKey(requestIdentity);
           setLoading(false);
           setRefreshing(false);
         });
@@ -394,6 +397,20 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
     );
   }, [cache, relevantFavoriteKeySet, requestedLeagues, userId]);
 
+  // The request starts from a focus effect. Treat missing initial data as
+  // loading immediately so the board cannot reveal an empty games widget
+  // during the render before that effect starts the request.
+  const initialGamesPending =
+    requestedLeagues.length > 0 &&
+    (!widgetsReady ||
+      !favoritesReady ||
+      favoritesLoading ||
+      (Boolean(userId) &&
+        relevantFavoriteKeys.length > 0 &&
+        cache?.key !== dataKey &&
+        settledDataKey !== dataKey));
+  const gamesLoading = loading || initialGamesPending;
+
   const value = useMemo<ExploreWidgetsContextValue>(
     () => ({
       widgets,
@@ -404,7 +421,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       refreshSettings,
       reloadAccountSettings,
       games,
-      loading,
+      loading: gamesLoading,
       refreshing,
       error,
       addWidget,
@@ -426,7 +443,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       ensureWidgetData,
       error,
       games,
-      loading,
+      gamesLoading,
       moveWidget,
       refreshWidgetData,
       refreshing,

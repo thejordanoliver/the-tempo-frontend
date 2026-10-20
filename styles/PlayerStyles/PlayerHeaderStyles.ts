@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const playerHeaderStyles = (isDark: boolean) => {
+export const PlayerHeaderStyles = (isDark: boolean) => {
   const bg = isDark ? Colors.black : Colors.white;
   const surface = isDark
     ? Colors.dark.itemBackground

@@ -1,3 +1,4 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { GameVenueInfo } from "types/gameVenue";
 import { Venue } from "@/types/types";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
@@ -127,7 +128,7 @@ export type StatsTeam = {
   secondaryColor: string;
   established: number;
   venueId: string;
-  venueLeagueKey: string;
+  league: string | null;
 };
 
 export type PlayerStatsGroup = {
@@ -369,7 +370,7 @@ export const useHockeyGameDetails = (
   }, [skipFetch, fetchDetails]);
 
   useLiveSportsSubscription<HockeyGameDetailsResponse>({
-    enabled: !skipFetch && score?.status.state === "in",
+    enabled: !skipFetch && shouldTrackGameUpdates(score),
     kind: "game",
     payload: {
       sport: "hockey",

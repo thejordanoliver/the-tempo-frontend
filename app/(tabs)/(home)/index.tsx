@@ -106,15 +106,13 @@ export default function HomeScreen() {
       <View style={styles.contentArea}>
         <PagerView
           ref={pagerRef}
-          style={{ flex: 1 }}
+          style={styles.contentArea}
           initialPage={0}
           scrollEnabled={!favoritesInteracting}
           onPageScroll={handlePageScroll}
           onPageSelected={(event) => {
             const index = event.nativeEvent.position;
-
             syncPageScrollProgress(index);
-
             setSelectedTab(index === 0 ? "scores" : "for you");
           }}
         >

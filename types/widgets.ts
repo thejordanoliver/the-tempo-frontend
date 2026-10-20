@@ -2,6 +2,7 @@ import type { BaseballGame } from "./baseball/baseball";
 import type { BasketballGame } from "./basketball/basketball";
 import type { FootballGame } from "./football/football";
 import type { HockeyGame } from "./hockey/hockey";
+import type { VolleyballGame } from "./volleyball/volleyball";
 
 export type ExploreWidgetType =
   | "favorite_games"
@@ -57,8 +58,7 @@ export const EXPLORE_STANDINGS_LEAGUES = [
   "nhl",
 ] as const;
 
-export type ExploreStandingsLeague =
-  (typeof EXPLORE_STANDINGS_LEAGUES)[number];
+export type ExploreStandingsLeague = (typeof EXPLORE_STANDINGS_LEAGUES)[number];
 
 export const EXPLORE_WIDGET_LEAGUES = [
   "nba",
@@ -67,6 +67,8 @@ export const EXPLORE_WIDGET_LEAGUES = [
   "wcbb",
   "mlb",
   "cb",
+  "mcvb",
+  "wcvb",
   "nfl",
   "cfb",
   "ufl",
@@ -82,6 +84,11 @@ type ExploreWidgetGameBase = {
 };
 
 export type ExploreWidgetGame =
+  | (ExploreWidgetGameBase & {
+      sport: "volleyball";
+      league: "mcvb" | "wcvb";
+      game: VolleyballGame;
+    })
   | (ExploreWidgetGameBase & {
       sport: "basketball";
       league: "nba" | "wnba" | "mcbb" | "wcbb";

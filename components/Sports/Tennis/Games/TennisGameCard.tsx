@@ -1,14 +1,14 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { activeOpacity } from "@/constants/styles";
 import { formatDate, formatTime, safeDate } from "@/utils/common/dateUtils";
 import { winnerStyle } from "@/utils/games/games";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Text, TouchableOpacity, View } from "react-native";
-import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import type { TennisCompetitor, TennisMatch } from "types/tennis/tennis";
 
-type TennisCardStyleSheet = ReturnType<typeof gameCardStyles>;
+type TennisCardStyleSheet = ReturnType<typeof GameCardStyles>;
 
 type Props = {
   match: TennisMatch;
@@ -45,7 +45,7 @@ export default function TennisGameCard({ match }: Props) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = gameCardStyles(isDark);
+  const styles = GameCardStyles(isDark);
 
   const competitors = match.competitors.slice(0, 2);
   const leftCompetitor = competitors[0];

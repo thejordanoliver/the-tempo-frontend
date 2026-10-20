@@ -713,7 +713,6 @@ export function NBAPlayoffBracket({
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const styles = useMemo(() => NBAPlayoffBracketStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const bracket = useMemo(

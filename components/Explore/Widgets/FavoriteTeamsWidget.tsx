@@ -1,3 +1,4 @@
+import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { EXPLORE_WIDGET_HEIGHTS } from "constants/exploreWidgetSizes";
@@ -53,6 +54,7 @@ export default function FavoriteTeamsWidget({
 }: FavoriteTeamsWidgetProps) {
   const [settingsVisible, setSettingsVisible] = useState(false);
   const { slides, isLoading } = useFavoriteTeamsWidget(isDark);
+  useWidgetLoadReady(isLoading);
 
   const resolvedWidth = Math.max(
     width ?? containerWidth ?? EXPLORE_WIDGET_HEIGHTS[size],

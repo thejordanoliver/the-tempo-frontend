@@ -1,3 +1,4 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import {
   FetchPlayoffGamesOptions,
   NBAPlayoffGame,
@@ -537,7 +538,9 @@ export function useNBAPlayoffGames({
   }, [games]);
 
   useLiveSportsSubscription<any>({
-    enabled: enabled && pollLiveGames && hasLiveGame && pollIntervalMs > 0,
+    enabled:
+      enabled && pollLiveGames && !loading && pollIntervalMs > 0 &&
+      (hasLiveGame || games.some(shouldTrackGameUpdates)),
     kind: "scoreboard",
     payload: {
       sport: "basketball",

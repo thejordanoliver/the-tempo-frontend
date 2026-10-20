@@ -27,15 +27,12 @@ type FootballRouteLeague = "nfl" | "cfb";
 
 function getSeasonNumber(season: FootballPlayerSeason) {
   const rawSeason = season.season ?? season.year ?? season.displaySeason;
-
   const parsed = Number(rawSeason);
-
   if (Number.isFinite(parsed)) {
     return parsed;
   }
 
   const match = String(rawSeason ?? "").match(/\d{4}/);
-
   return match ? Number(match[0]) : 0;
 }
 
@@ -52,7 +49,6 @@ function getLatestPlayerSeason(seasons: FootballPlayerSeason[]) {
 
   return [...rowsToUse].sort((a, b) => {
     const seasonCompare = getSeasonNumber(b) - getSeasonNumber(a);
-
     if (seasonCompare !== 0) {
       return seasonCompare;
     }
@@ -77,126 +73,25 @@ export default function PlayerDetailScreen() {
   }>();
 
   const { resolvedColorScheme } = usePreferences();
-
   const isDark = resolvedColorScheme === "dark";
-
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-
   const navigation = useNavigation();
-
-  /**
-   * =========================================
-   * REQUESTED PLAYER
-   * =========================================
-   *
-   * This is the league/id that came from the URL.
-   *
-   * Example:
-   *
-   * /player/football/4430841?league=cfb
-   *
-   * may later resolve to NFL.
-   */
-
   const requestedLeague = normalizeFootballLeague(league);
-
   const requestedPlayerId = Number(id);
-
-  /**
-   * =========================================
-   * PLAYER STATS + PROFILE RESOLUTION
-   * =========================================
-   *
-   * This request happens first because the backend
-   * can tell us whether a CFB player should actually
-   * resolve to an NFL profile.
-   */
-
   const {
     data,
     collegeData,
     player: statsPlayer,
-    resolvedLeague,
-    resolvedProfile,
     loading: seasonsLoading,
     error: seasonsError,
     currentSeasonRankings,
   } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
-  /**
-   * =========================================
-   * PLAYER ID
-   * =========================================
-   *
-   * Example:
-   *
-   * requested:
-   * CFB Carson Beck
-   *
-   * resolved:
-   * NFL Carson Beck
-   */
-
-  const playerId = useMemo(() => {
-    const resolvedId =
-      resolvedProfile?.playerId ??
-      (requestedLeague === "nfl" ? requestedPlayerId : undefined);
-
-    if (resolvedId === undefined) {
-      return undefined;
-    }
-
-    const parsed = Number(resolvedId);
-
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
-  }, [resolvedProfile?.playerId, requestedLeague, requestedPlayerId]);
-
-  /**
-   * =========================================
-   * PLAYER LEAGUE
-   * =========================================
-   */
-
-  const playerLeague: FootballRouteLeague = resolvedProfile
-    ? resolvedProfile.league
-    : resolvedLeague;
-
+  const { player, loading, error, resolvedPlayerId: playerId, resolvedLeague: profileLeague } =
+    usePlayerById(requestedPlayerId, requestedLeague);
+  const playerLeague: FootballRouteLeague = normalizeFootballLeague(profileLeague);
   const isNFL = playerLeague === "nfl";
-
   const isCFB = playerLeague === "cfb";
-
-  /**
-   * =========================================
-   * PLAYER PROFILE
-   * =========================================
-   *
-   * IMPORTANT:
-   *
-   * We fetch the player AFTER profile resolution.
-   *
-   * That means a player who has become an NFL player
-   * will use nfl_players rather than cfb_players.
-   */
-
-  const { player, loading, error } = usePlayerById(
-    playerId,
-    playerLeague,
-    requestedLeague === "nfl" || Boolean(resolvedProfile),
-  );
-
-  /**
-   * =========================================
-   * CURRENT TEAM
-   * =========================================
-   *
-   * Prefer the pro player's current team.
-   *
-   * Fall back to:
-   *
-   * 1. stats response team
-   * 2. route team ID
-   */
-
   const currentTeamId = useMemo(() => {
     const profileTeamId = player?.team_id;
 
@@ -213,13 +108,7 @@ export default function PlayerDetailScreen() {
     }
 
     return "";
-  }, [player?.team_id, routeTeamId, statsPlayer?.teamId]);
-
-  /**
-   * =========================================
-   * TEAM
-   * =========================================
-   */
+  }, [player?.team_id, routeTeamId, statsPlayer]);
 
   const team = useMemo(() => {
     if (!currentTeamId) {
@@ -231,7 +120,6 @@ export default function PlayerDetailScreen() {
 
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamId = team?.id != null ? String(team.id) : currentTeamId;
-
   const teamLogo = useMemo(() => {
     return isNFL ? getNFLTeamLogo(teamId, true) : getCFBTeamLogo(teamId, true);
   }, [teamId, isNFL]);
@@ -263,40 +151,16 @@ export default function PlayerDetailScreen() {
   } = usePlayerClosestGame<FootballGame>("football", playerLeague, teamId);
   const gameLoading = latestGameLoading;
   const gameError = latestGameError;
-
-  /**
-   * =========================================
-   * LATEST CURRENT-LEAGUE SEASON
-   * =========================================
-   *
-   * IMPORTANT:
-   *
-   * Use `data`, NOT `rawSeasons`.
-   *
-   * data = FootballPlayerSeason[]
-   * rawSeasons = ApiSeason[]
-   */
-
   const latestSeason = useMemo(() => {
     return getLatestPlayerSeason(data);
   }, [data]);
 
-  /**
-   * =========================================
-   * ACTIVE STATUS
-   * =========================================
-   */
-
   const isActive = player?.active === true;
 
-  /**
-   * =========================================
-   * HEADER
-   * =========================================
-   */
+  const screenLoading = loading || seasonsLoading || latestGameLog.loading;
 
   useLayoutEffect(() => {
-    if (seasonsLoading || loading) {
+    if (screenLoading) {
       navigation.setOptions({ header: () => null });
       return;
     }
@@ -312,21 +176,9 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, teamLogo, teamColor, seasonsLoading, loading]);
+  }, [navigation, teamLogo, teamColor, screenLoading]);
 
-  /**
-   * =========================================
-   * LOADING
-   * =========================================
-   *
-   * Wait for profile resolution before rendering
-   * the profile.
-   *
-   * This avoids briefly showing the CFB profile
-   * before switching to NFL.
-   */
-
-  if (seasonsLoading || loading) {
+  if (screenLoading) {
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
@@ -334,27 +186,15 @@ export default function PlayerDetailScreen() {
     );
   }
 
-  /**
-   * =========================================
-   * ERROR
-   * =========================================
-   */
-
-  if (seasonsError || error) {
+  if (error) {
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>
-          {seasonsError || error || "Couldn’t load player"}
+          {error || "Couldn’t load player"}
         </Text>
       </View>
     );
   }
-
-  /**
-   * =========================================
-   * PLAYER NOT FOUND
-   * =========================================
-   */
 
   if (!player) {
     return (

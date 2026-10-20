@@ -2,8 +2,8 @@ import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 import { BRACKET_LAYOUT } from "../../utils/brackets/tournamentBracket.utils";
-export const CARD_WIDTH = 176;
-export const CARD_HEIGHT = 142;
+import { CARD_WIDTH, CARD_HEIGHT } from "../../utils/brackets/tournamentBracketLayout";
+export { CARD_WIDTH, CARD_HEIGHT } from "../../utils/brackets/tournamentBracketLayout";
 
 export const MCBBTournamentBracketStyles = (isDark: boolean) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
@@ -18,7 +18,7 @@ export const MCBBTournamentBracketStyles = (isDark: boolean) => {
   const separatorColor = isDark
     ? Colors.transparentLightGray
     : Colors.transparentDarkGray;
-  const liveColor = isDark ? Colors.dark.lightRed : Colors.light.red;
+  const statusColor = isDark ? Colors.dark.lightRed : Colors.light.red;
   const accentColor = isDark ? Colors.dark.gold : Colors.light.gold;
   const winnerColor = isDark ? Colors.white : Colors.black;
 
@@ -196,6 +196,12 @@ export const MCBBTournamentBracketStyles = (isDark: boolean) => {
       marginHorizontal: 3,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
+    finalStatusDivider: {
+      width: 1,
+      height: 10,
+      marginHorizontal: 3,
+      backgroundColor: statusColor
+    },
     broadcast: {
       maxWidth: 66,
       fontFamily: Fonts.REGULAR,
@@ -209,12 +215,13 @@ export const MCBBTournamentBracketStyles = (isDark: boolean) => {
       color: textColor,
       textAlign: "center",
     },
-    clock: {
+    status: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      color: liveColor,
+      color: statusColor,
       textAlign: "center",
     },
+
     championshipLabel: {
       position: "absolute",
       top: 0,

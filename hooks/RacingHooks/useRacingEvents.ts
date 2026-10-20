@@ -1,3 +1,4 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import {
@@ -243,6 +244,7 @@ export function useRacingEvents({
   date,
   league = "f1",
   enabled = true,
+  onScoreboardCalendar,
   pollLiveEvents = true,
   pollIntervalMs = 90_000,
 }: UseRacingEventsOptions = {}) {
@@ -267,7 +269,7 @@ export function useRacingEvents({
 
   const endpoint = getEndpoint(normalizedLeague);
 
-  const canFetch = enabled && Boolean(formattedDate);
+  const canFetch = enabled && (Boolean(formattedDate) || (!date && Boolean(onScoreboardCalendar)));
 
   const fetchEvents = useCallback(
     async ({
@@ -278,7 +280,7 @@ export function useRacingEvents({
 
       latestRequestIdRef.current = requestId;
 
-      if (!canFetch || !formattedDate) {
+      if (!canFetch) {
         setGames([]);
         setWeekendEvents([]);
         setResponse(null);
@@ -304,7 +306,7 @@ export function useRacingEvents({
           endpoint,
           {
             params: {
-              date: formattedDate,
+              ...(formattedDate ? { date: formattedDate } : {}),
             },
           },
         );
@@ -325,6 +327,7 @@ export function useRacingEvents({
 
         const sessionEvents = sortSessions(flattenRacingSessions(rawEvents));
 
+        onScoreboardCalendar?.(nextResponse);
         setResponse(nextResponse);
         setWeekendEvents(rawEvents);
         setGames(sessionEvents);
@@ -333,6 +336,7 @@ export function useRacingEvents({
           return;
         }
 
+        onScoreboardCalendar?.(null);
         console.error(
           `[useRacingEvents] ${normalizedLeague} fetch failed`,
           requestError,
@@ -370,7 +374,7 @@ export function useRacingEvents({
         }
       }
     },
-    [canFetch, endpoint, formattedDate, normalizedLeague],
+    [canFetch, endpoint, formattedDate, normalizedLeague, onScoreboardCalendar],
   );
 
   const refreshEvents = useCallback(async () => {
@@ -388,7 +392,9 @@ export function useRacingEvents({
   }, [games]);
 
   useLiveSportsSubscription<RacingEventsResponse>({
-    enabled: canFetch && pollLiveEvents && hasLiveEvent && pollIntervalMs > 0,
+    enabled:
+      canFetch && pollLiveEvents && !loading && pollIntervalMs > 0 &&
+      (hasLiveEvent || games.some(shouldTrackGameUpdates)),
     kind: "scoreboard",
     payload: {
       sport: "racing",

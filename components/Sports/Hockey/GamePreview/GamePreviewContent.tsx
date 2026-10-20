@@ -11,7 +11,7 @@ import {
   Official,
   TeamInjury,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
-import { Coach } from "@/hooks/useTeams";
+import type { Coach } from "@/types/team";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";

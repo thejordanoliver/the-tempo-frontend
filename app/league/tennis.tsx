@@ -1,3 +1,4 @@
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -104,7 +105,8 @@ export default function TennisLeagueScreen() {
   );
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDivision, setSelectedDivision] = useState("");
-  const { calendar } = useLeagueCalendar(league, "raw", calendarAnchor);
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "raw", calendarAnchor, scoreboardCalendar);
 
   const {
     matches,
@@ -113,7 +115,7 @@ export default function TennisLeagueScreen() {
     refreshing,
     error,
     refreshMatches,
-  } = useTennisMatches(selectedDate, league);
+  } = useTennisMatches(selectedDate, league, onScoreboardCalendar);
 
   const {
     articles,

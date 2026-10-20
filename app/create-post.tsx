@@ -1,7 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, activeOpacity, globalStyles } from "constants/styles";
+import {
+  Colors,
+  PLACEHOLDER_AVATAR,
+  activeOpacity,
+  globalStyles,
+} from "constants/styles";
 import * as Haptics from "expo-haptics";
-import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
@@ -9,6 +13,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import {
   Animated,
+  Image,
   Keyboard,
   ScrollView,
   Text,
@@ -142,7 +147,10 @@ export default function CreatePostScreen() {
   // ─────────────────────────────────────────────────────────────────────────
 
   const profileImage =
-    Number(currentUserId) === user?.id ? user?.profile_image : null;
+    Number(currentUserId) === user?.id
+      ? (user?.profile_image ?? PLACEHOLDER_AVATAR)
+      : PLACEHOLDER_AVATAR;
+
   const charCount = newPostText.length;
   const charLimit = 5000;
   const charsRemaining = charLimit - charCount;
@@ -333,7 +341,7 @@ export default function CreatePostScreen() {
                 <Image
                   source={{ uri: item.uri }}
                   style={styles.mediaThumbImage}
-                  contentFit="cover"
+                  resizeMode="cover"
                 />
               ) : item.thumbnailUri ? (
                 <Image
@@ -341,7 +349,7 @@ export default function CreatePostScreen() {
                     uri: `${item.thumbnailUri}?v=${item.trimStartMs ?? Date.now()}`,
                   }}
                   style={styles.mediaThumbImage}
-                  contentFit="cover"
+                  resizeMode="cover"
                 />
               ) : (
                 <Ionicons name="videocam" size={22} color={Colors.white} />
@@ -377,9 +385,9 @@ export default function CreatePostScreen() {
     <View style={styles.userRow}>
       <View style={styles.avatar}>
         <Image
-          source={profileImage}
+          source={{ uri: profileImage }}
           style={styles.avatarImage}
-          contentFit="cover"
+          resizeMode="cover"
         />
       </View>
       <View style={styles.userInfo}>

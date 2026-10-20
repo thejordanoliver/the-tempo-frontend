@@ -1,4 +1,3 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { activeOpacity } from "@/constants/styles";
 import { MMAFightCardProps } from "@/types/mma/mma";
 import {
@@ -10,8 +9,9 @@ import {
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Text, TouchableOpacity, View } from "react-native";
-import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
+import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
 
 export default function MMASquareGameCard({ game }: MMAFightCardProps) {
@@ -61,7 +61,7 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   const broadcast = getBroadcastDisplay(broadcasts);
   const period = formatPeriod({ period: game?.status?.period, isMMA: true });
   const clock = game?.status?.displayClock;
-  const styles = squareGameCardStyles(isDark);
+  const styles = SquareGameCardStyles(isDark);
   const resultText = game.method;
   const results =
     resultText?.toLowerCase() === "submission"

@@ -147,7 +147,9 @@ export const TeamRow = ({
             adjustsFontSizeToFit={true}
             minimumFontScale={0.5}
           >
-            {rank && <Text style={styles.rank}>{rank} </Text>}
+            {rank != null && rank > 0 ? (
+              <Text style={styles.rank}>{rank} </Text>
+            ) : null}
             {name}
           </Text>
 

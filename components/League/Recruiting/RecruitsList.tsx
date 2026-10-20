@@ -1,4 +1,5 @@
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useRecruitingTeams } from "hooks/RecruitHooks/useRecruitingTeams";
 import { useAllRecruits } from "@/hooks/RecruitHooks/useAllRecruits";
 import {
   RecruitTeamRanking,
@@ -246,6 +247,8 @@ export default function RecruitsList({
     refetch: refetchTeamRankings,
   } = useTeamRecruitingRankings(Number(year), league);
 
+  const { teams: recruitingTeams, error: teamFilterError } = useRecruitingTeams(league);
+
   const loading = view === "players" ? loadingPlayers : loadingTeams;
   const refreshing =
     view === "players" ? refreshingPlayers : refreshingTeamRankings;
@@ -266,15 +269,16 @@ export default function RecruitsList({
   }, [refetchTeamRankings, refreshPlayers, view]);
 
   const teamOptions = useMemo(() => {
-    const uniqueTeams = Array.from(
-      new Set(playerData.flatMap((recruit) => getRecruitTeamNames(recruit))),
-    ).sort((a, b) => a.localeCompare(b));
-
     return [
       { label: "All Teams", value: "all" },
-      ...uniqueTeams.map((t) => ({ label: t, value: t })),
+      ...recruitingTeams
+        .map((team) => ({
+          label: team.shortName || team.name,
+          value: String(team.id),
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
     ];
-  }, [playerData]);
+  }, [recruitingTeams]);
 
   const toggleSearch = useCallback(() => {
     setSearchOpen((prev) => !prev);
@@ -288,8 +292,21 @@ export default function RecruitsList({
     let list = playerData;
 
     if (team !== "all") {
+      const selectedTeam = recruitingTeams.find(
+        (option) => String(option.id) === team,
+      );
       list = list.filter((r: Recruit) => {
-        return getRecruitTeamNames(r).includes(team);
+        const ids = [
+          r.committed_team_id,
+          r.projected_team_id,
+          r.predicted_team_id,
+          ...(r.predicted_schools?.map((school) => school.team_id) ?? []),
+        ];
+        if (ids.some((id) => id != null && String(id) === team)) return true;
+        const names = getRecruitTeamNames(r).map(normalizeSearchValue);
+        return [team, selectedTeam?.name, selectedTeam?.shortName]
+          .filter((name): name is string => Boolean(name))
+          .some((name) => names.includes(normalizeSearchValue(name)));
       });
     }
 
@@ -313,7 +330,7 @@ export default function RecruitsList({
     }
 
     return list;
-  }, [playerData, team, search]);
+  }, [playerData, team, search, recruitingTeams]);
 
   const filteredTeamRankings = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -357,23 +374,28 @@ export default function RecruitsList({
 
   const listHeaderComponent = useMemo(
     () => (
-      <RecruitsHeader
-        isDark={isDark}
-        styles={styles}
-        year={year}
-        team={team}
-        view={view}
-        search={search}
-        searchOpen={searchOpen}
-        yearOptions={yearOptions}
-        teamOptions={teamOptions}
-        viewOptions={viewOptions}
-        onYearChange={onYearChange}
-        onTeamChange={onTeamChange}
-        onViewChange={onViewChange}
-        onSearchChange={handleSearchChange}
-        onToggleSearch={toggleSearch}
-      />
+      <>
+        <RecruitsHeader
+          isDark={isDark}
+          styles={styles}
+          year={year}
+          team={team}
+          view={view}
+          search={search}
+          searchOpen={searchOpen}
+          yearOptions={yearOptions}
+          teamOptions={teamOptions}
+          viewOptions={viewOptions}
+          onYearChange={onYearChange}
+          onTeamChange={onTeamChange}
+          onViewChange={onViewChange}
+          onSearchChange={handleSearchChange}
+          onToggleSearch={toggleSearch}
+        />
+        {view === "players" && teamFilterError && (
+          <Text style={styles.errorText}>{teamFilterError}</Text>
+        )}
+      </>
     ),
     [
       handleSearchChange,
@@ -386,6 +408,7 @@ export default function RecruitsList({
       styles,
       team,
       teamOptions,
+      teamFilterError,
       toggleSearch,
       view,
       viewOptions,

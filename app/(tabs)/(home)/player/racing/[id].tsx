@@ -25,9 +25,6 @@ export default function PlayerDetailScreen() {
   const playerId = Number(id);
   const { player, loading, error } = usePlayerById(playerId, league);
 
-  // -------------------------
-  // Header
-  // -------------------------
   useLayoutEffect(() => {
     if (loading) {
       navigation.setOptions({ header: () => null });

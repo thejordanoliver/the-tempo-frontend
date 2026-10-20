@@ -188,6 +188,7 @@ export default function FavoritesScroll({
 
   const {
     favorites: favoriteTeamIds,
+    allTeams,
     syncFavorites,
     setFavorites,
     isLoading,
@@ -219,7 +220,7 @@ export default function FavoritesScroll({
         return teams;
       }
 
-      const baseTeam = getFavoriteBaseTeam(league, favoriteId);
+      const baseTeam = getFavoriteBaseTeam(league, favoriteId) ?? allTeams.find((team) => team.league === league && String(team.id) === favoriteId);
 
       if (!baseTeam) {
         return teams;
@@ -237,7 +238,7 @@ export default function FavoritesScroll({
 
       return teams;
     }, []);
-  }, [favoriteTeamIds]);
+  }, [allTeams, favoriteTeamIds]);
 
   const leagueData = useMemo<FavoriteLeagueItem[]>(() => {
     return favoriteSports.map((sport) => {

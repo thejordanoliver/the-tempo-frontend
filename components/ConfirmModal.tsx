@@ -25,6 +25,7 @@ type ConfirmModalProps = {
   cancelText?: string;
   onConfirm: () => void | Promise<void>;
   onCancel: () => void;
+  onDismiss?: () => void;
   children?: ReactNode;
   variant?: ConfirmModalVariant;
   confirmDisabled?: boolean;
@@ -38,6 +39,7 @@ export default function ConfirmModal({
   title = "Are you sure?",
   message = "Please confirm your action.",
   onCancel,
+  onDismiss,
   onConfirm,
   confirmText = "OK",
   cancelText = "Cancel",
@@ -91,6 +93,7 @@ export default function ConfirmModal({
   return (
     <Modal
       isVisible={visible}
+      onModalHide={onDismiss}
       onBackdropPress={handleCancel}
       onBackButtonPress={handleCancel}
       animationIn="zoomIn"

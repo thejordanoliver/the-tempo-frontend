@@ -1,5 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import {
   formatDate,
@@ -10,10 +8,16 @@ import {
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 
 export default function SoccerGameCard({ game }: SoccerGameCardProps) {
@@ -47,12 +51,14 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const awayTeam = getSOCCTeam(awayId) ?? emptyAwayTeam;
   const homeName = homeTeam?.shortName || homeTeam?.name || home?.name || "TBD";
   const awayName = awayTeam?.shortName || awayTeam?.name || away?.name || "TBD";
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getSOCCTeamLogo(homeId, isDark);
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getSOCCTeamLogo(awayId, isDark);
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getSOCCTeamLogo(homeId, isDark);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getSOCCTeamLogo(awayId, isDark);
   const homeScore = Number(game?.home?.score ?? 0);
   const awayScore = Number(game?.away?.score ?? 0);
   const homeRecord = game?.home?.record ?? "0-0-0";
@@ -60,7 +66,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
 
   const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));
-  const styles = gameCardStyles(isDark, isChampionship);
+  const styles = GameCardStyles(isDark, isChampionship);
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });

@@ -3,7 +3,14 @@ import type { BaseballGame } from "./baseball/baseball";
 export type FanPredictionTeamId = string | number;
 
 export type RankedPredictionContext = {
-  sport: "basketball" | "football" | "baseball" | "hockey" | "soccer" | "mma";
+  sport:
+    | "basketball"
+    | "football"
+    | "baseball"
+    | "hockey"
+    | "soccer"
+    | "mma"
+    | "volleyball";
   league: string;
   date?: string;
   state?: string;
@@ -60,7 +67,13 @@ export type FanPredictionPicksResponse = {
 
 export type FanPredictionScoring = {
   pointsValue: 1 | 2;
-  bonusReason: "ranked" | "playoff" | "championship" | "knockout" | "rivalry" | null;
+  bonusReason:
+    | "ranked"
+    | "playoff"
+    | "championship"
+    | "knockout"
+    | "rivalry"
+    | null;
 };
 
 export type FeedPredictionTeam = {

@@ -1,3 +1,4 @@
+import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo, useState } from "react";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -39,6 +40,7 @@ export default function FavoriteGamesWidget({
   onChangeAutoPlay,
   ...editProps
 }: FavoriteGamesWidgetProps) {
+  useWidgetLoadReady(loading);
   const router = useScopedRouter();
   const { favorites } = useFavoriteTeamsContext();
   const [settingsVisible, setSettingsVisible] = useState(false);

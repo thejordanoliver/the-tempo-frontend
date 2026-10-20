@@ -1,3 +1,4 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { GameVenueInfo } from "types/gameVenue";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
@@ -435,7 +436,7 @@ export const useSoccerGameDetails = (
 
   useLiveSportsSubscription<GameDetailsResponse>({
     enabled:
-      !skipFetch && pollLiveGames && pollIntervalMs > 0 && isLiveScore(score),
+      !skipFetch && pollLiveGames && pollIntervalMs > 0 && shouldTrackGameUpdates(score),
     kind: "game",
     payload: {
       sport: "soccer",

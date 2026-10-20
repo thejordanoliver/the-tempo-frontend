@@ -1,13 +1,13 @@
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
+import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 // components/MCBBStandingsList.tsx
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import {
   MCBBTeamRank,
-  useMCBBRankings,
-} from "@/hooks/BasketballHooks/useMCBBRankings";
+  useCollegeBasketballRankings,
+} from "@/hooks/BasketballHooks/useCollegeBasketballRankings";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import { Colors, Fonts, globalStyles } from "constants/styles";
@@ -30,7 +30,7 @@ type Props = {
 
 export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
   const { rankings, loading, refreshing, error, refresh } =
-    useMCBBRankings(league);
+    useCollegeBasketballRankings(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useScopedRouter();

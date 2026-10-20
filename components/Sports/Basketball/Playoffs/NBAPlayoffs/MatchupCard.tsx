@@ -1,8 +1,9 @@
 import { NBAPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
-import { NBABracketMatchup } from "@/types/basketball/basketball";
+import type { NBABracketMatchup } from "@/types/basketball/basketball";
 import { formatPeriod, getBroadcastDisplay } from "@/utils/games/games";
 import { Colors } from "constants/styles";
 import { getNBATeam } from "constants/teams";
+import { getWNBATeam } from "constants/teamsWNBA";
 import { Text, View } from "react-native";
 import { TeamRow } from "./TeamRow";
 
@@ -13,27 +14,34 @@ type CardLayout = {
   height: number;
 };
 
-const bottomTeamId = (matchup: NBABracketMatchup) =>
-  matchup.bottomTeam?.id?.toString() ?? "";
+type PlayoffGame = NBABracketMatchup["games"][number];
 
-const topTeamId = (matchup: NBABracketMatchup) =>
-  matchup.topTeam?.id?.toString() ?? "";
+type MatchupCardProps = {
+  matchup: NBABracketMatchup;
+  layout: CardLayout;
+  isDark: boolean;
+  finals?: boolean;
+  league?: "nba" | "wnba";
+  bestOf?: number;
+};
 
 const getSeriesRecord = (matchup: NBABracketMatchup) => {
-  const topWins = matchup.wins[topTeamId(matchup)] ?? 0;
-  const bottomWins = matchup.wins[bottomTeamId(matchup)] ?? 0;
+  const topTeamId = matchup.topTeam?.id?.toString() ?? "";
+  const bottomTeamId = matchup.bottomTeam?.id?.toString() ?? "";
+  const topWins = matchup.wins[topTeamId] ?? 0;
+  const bottomWins = matchup.wins[bottomTeamId] ?? 0;
 
   return { topWins, bottomWins };
 };
 
-const latestGame = (game: NBABracketMatchup["games"][number]) => {
+const isActiveOrUpcomingGame = (game: PlayoffGame) => {
   const gameState = game?.status?.state;
 
-  if (gameState === "in") {
+  if (gameState === "in" || gameState === "pre") {
     return true;
-  } else if (gameState === "pre") {
-    return true;
-  } else if (gameState === "post") {
+  }
+
+  if (gameState === "post") {
     return false;
   }
 
@@ -44,11 +52,8 @@ const latestGame = (game: NBABracketMatchup["games"][number]) => {
   return !["scheduled", "final"].includes(normalizedStatus);
 };
 
-const getRecentGame = (matchup: NBABracketMatchup) =>
-  matchup.games.find((game) => latestGame(game));
-
 const getTeamGamePoints = (
-  game: NBABracketMatchup["games"][number],
+  game: PlayoffGame,
   teamId?: string | number,
 ) => {
   if (teamId == null) return null;
@@ -65,7 +70,7 @@ const getTeamGamePoints = (
 };
 
 const getGameStatus = (
-  game: NBABracketMatchup["games"][number] | undefined | null,
+  game: PlayoffGame | undefined | null,
   isDark: boolean,
 ) => {
   const styles = NBAPlayoffBracketStyles(isDark);
@@ -152,10 +157,16 @@ const getGameStatus = (
   );
 };
 
-const getFooterLabel = (matchup: NBABracketMatchup) => {
+const getFooterLabel = (
+  matchup: NBABracketMatchup,
+  league: "nba" | "wnba",
+  bestOf: number,
+) => {
   if (matchup.seriesSummary) return matchup.seriesSummary;
 
   const { topWins, bottomWins } = getSeriesRecord(matchup);
+  const getTeam = league === "wnba" ? getWNBATeam : getNBATeam;
+  const winsNeeded = Math.ceil(bestOf / 2);
 
   const leaderTeam =
     topWins === bottomWins
@@ -165,17 +176,17 @@ const getFooterLabel = (matchup: NBABracketMatchup) => {
         : matchup.bottomTeam;
 
   const teamName =
-    leaderTeam?.code || getNBATeam(leaderTeam?.id ?? 0)?.code || "TBD";
+    leaderTeam?.code || getTeam(leaderTeam?.id ?? 0)?.code || "TBD";
 
   if (topWins === bottomWins && topWins !== 0 && bottomWins !== 0) {
     return "Series Tied";
   }
 
-  if (bottomWins === 4) {
+  if (bottomWins === winsNeeded) {
     return `${teamName} won series ${bottomWins}-${topWins}`;
   }
 
-  if (topWins === 4) {
+  if (topWins === winsNeeded) {
     return `${teamName} won series ${topWins}-${bottomWins}`;
   }
 
@@ -187,7 +198,7 @@ const getFooterLabel = (matchup: NBABracketMatchup) => {
     return `${teamName} leads ${bottomWins}-${topWins}`;
   }
 
-  return "Best of 7";
+  return `Best of ${bestOf}`;
 };
 
 export const MatchupCard = ({
@@ -195,16 +206,18 @@ export const MatchupCard = ({
   layout,
   isDark,
   finals = false,
-}: {
-  matchup: NBABracketMatchup;
-  layout: CardLayout;
-  isDark: boolean;
-  finals?: boolean;
-}) => {
+  league = "nba",
+  bestOf = 7,
+}: MatchupCardProps) => {
   const styles = NBAPlayoffBracketStyles(isDark);
   const { topWins, bottomWins } = getSeriesRecord(matchup);
-
-  const recentGame = getRecentGame(matchup);
+  const recentGame = matchup.games.find(isActiveOrUpcomingGame);
+  const themeColors = isDark ? Colors.dark : Colors.light;
+  const borderColor = finals
+    ? themeColors.gold
+    : isDark
+      ? Colors.darkGray
+      : Colors.lightGray;
 
   const liveTopPoints =
     recentGame?.status?.state === "in"
@@ -212,7 +225,7 @@ export const MatchupCard = ({
       : null;
 
   const liveBottomPoints =
-    recentGame?.status?.state === "post"
+    recentGame?.status?.state === "in"
       ? getTeamGamePoints(recentGame, matchup.bottomTeam?.id)
       : null;
 
@@ -228,26 +241,19 @@ export const MatchupCard = ({
           top: layout.y,
           width: layout.width,
           height: layout.height,
-          borderColor:
-            finals && isDark
-              ? Colors.dark.gold
-              : finals
-                ? Colors.light.gold
-                : isDark
-                  ? Colors.darkGray
-                  : Colors.lightGray,
-          backgroundColor: isDark
-            ? Colors.dark.itemBackground
-            : Colors.light.itemBackground,
+          borderColor,
+          backgroundColor: themeColors.itemBackground,
         },
       ]}
     >
       <TeamRow
         team={matchup.topTeam}
         wins={topWins}
-        oponnentWins={bottomWins}
+        opponentWins={bottomWins}
         score={liveTopPoints}
         isDark={isDark}
+        league={league}
+        bestOf={bestOf}
       />
 
       <View style={styles.divider} />
@@ -255,9 +261,11 @@ export const MatchupCard = ({
       <TeamRow
         team={matchup.bottomTeam}
         wins={bottomWins}
-        oponnentWins={topWins}
+        opponentWins={topWins}
         score={liveBottomPoints}
         isDark={isDark}
+        league={league}
+        bestOf={bestOf}
       />
 
       <View style={styles.statusContainer}>
@@ -266,7 +274,9 @@ export const MatchupCard = ({
       </View>
 
       <View style={styles.statusContainer}>
-        <Text style={styles.footerText}>{getFooterLabel(matchup)}</Text>
+        <Text style={styles.footerText}>
+          {getFooterLabel(matchup, league, bestOf)}
+        </Text>
       </View>
     </View>
   );

@@ -1,3 +1,4 @@
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isFavoriteSportId, type FavoriteSportId } from "constants/leagues";
 import { teams } from "constants/teams";
@@ -258,6 +259,7 @@ export function useUserProfile(
   const { shouldRestore, targetUserId, type, openModal, clearRestore } =
     useFollowersStore();
 
+  const { allTeams } = useFavoriteTeamsContext();
   const teamLookups = useMemo<
     Record<FavoriteLeague, Map<string, TeamLookupItem>>
   >(
@@ -273,8 +275,10 @@ export function useUserProfile(
       sb: createTeamLookup(sbTeams),
       nhl: createTeamLookup(nhlTeams),
       socc: createTeamLookup(soccerTeams),
+      mcvb: createTeamLookup(allTeams.filter((team) => team.league === "mcvb")),
+      wcvb: createTeamLookup(allTeams.filter((team) => team.league === "wcvb")),
     }),
-    [],
+    [allTeams],
   );
 
   const activeProfileKey =

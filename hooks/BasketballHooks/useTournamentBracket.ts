@@ -41,6 +41,7 @@ export type TournamentVenue = {
 };
 
 type TournamentApiGame = {
+  league: TournamentLeagueInfo | null;
   id: string;
   tournamentId: string;
   regionId: string | null;
@@ -49,7 +50,16 @@ type TournamentApiGame = {
   roundLabel: string;
   roundOrder: number;
   date: string | null;
-  status: string;
+  status: {
+    state: string | null;
+    description: string | null;
+    detail: string | null;
+    shortDetail: string | null;
+    period: number | null;
+    clock: string | number | null;
+    displayClock: string | null;
+    completed: boolean;
+  };
   statusText: string | null;
   teams: TournamentTeam[];
   winnerTeamId: string | null;
@@ -307,7 +317,7 @@ export function useTournamentBracket(
         const response = await apiClient.get<TournamentApiResponse>(
           `api/games/basketball/${normalizedLeague}/tournament`,
           {
-            params: { season },
+            params: { season, ...(refreshingRequest ? { refresh: true } : {}) },
           },
         );
 

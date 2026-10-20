@@ -708,7 +708,11 @@ export default function GameTeamStats({
   const isBaseball = isBaseballLeague(league);
 
   const rows = useMemo(() => {
-    const configs = getStatConfig(league, state);
+    const configs = league === "mcvb" || league === "wcvb"
+      ? [...new Map([...getFlatStats(away), ...getFlatStats(home)].filter((stat) => stat.name).map((stat) => [stat.name, {
+        key: stat.name!, label: stat.displayName ?? stat.name!, lowerIsBetter: /errors|faults/i.test(stat.name!),
+      }])).values()]
+      : getStatConfig(league, state);
 
     if (!isBaseball) {
       return buildRows(away, home, configs, false);

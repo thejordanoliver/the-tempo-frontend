@@ -12,8 +12,8 @@ type Props = {
   homeLogo: ImageSourcePropType;
   homeRank: number | null;
   awayRank: number | null;
-  homeScore: number;
-  awayScore: number;
+  homeScore?: number;
+  awayScore?: number;
   homeBonusState?: string | null;
   awayBonusState?: string | null;
   homeTimeouts?: number;

@@ -7,12 +7,14 @@ import {
 import FavoriteSportsSelector from "components/Favorites/FavoriteSportsSelector";
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { useNotifications } from "contexts/NotificationContext";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { useEditFavorites } from "hooks/UserHooks/useEditFavorites";
 import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { View, useWindowDimensions } from "react-native";
+import { Pressable, Text, View, useWindowDimensions } from "react-native";
 import PagerView, {
   type PagerViewOnPageSelectedEvent,
 } from "react-native-pager-view";
@@ -24,6 +26,8 @@ export default function EditFavoritesScreen() {
   const { unreadNotificationCount } = useNotifications();
   const { width: screenWidth } = useWindowDimensions();
   const isDark = resolvedColorScheme === "dark";
+  const { directoryError, refreshDirectory } = useFavoriteTeamsContext();
+  const global = globalStyles(isDark);
   const pagerRef = useRef<PagerView>(null);
   const [selectedTab, setSelectedTab] =
     useState<EditFavoritesHeaderTab>("teams");
@@ -96,6 +100,7 @@ export default function EditFavoritesScreen() {
 
   return (
     <View style={styles.container}>
+      {directoryError && selectedTab === "teams" && <Pressable onPress={() => void refreshDirectory()} accessibilityRole="button" style={{ padding: 12 }}><Text style={[global.caption, { color: isDark ? Colors.dark.blue : Colors.light.blue }]}>Volleyball teams could not load. Tap to retry.</Text></Pressable> }
       <SearchBar
         visible
         value={activeSearch}

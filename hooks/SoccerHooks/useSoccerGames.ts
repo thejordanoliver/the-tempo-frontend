@@ -1,3 +1,5 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
+import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { SoccerGame } from "@/types/soccer/soccer";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -13,16 +15,7 @@ type SoccerGamesResponse = {
   games?: SoccerGame[];
 };
 
-const LIVE_STATES = new Set(["in"]);
-
-function isLiveSoccerGame(game: any) {
-  const state = String(game?.status?.state || "")
-    .trim()
-    .toLowerCase();
-  return LIVE_STATES.has(state);
-}
-
-export function useSoccerGames(date?: Date, league = "epl") {
+export function useSoccerGames(date?: Date, league = "epl", onScoreboardCalendar?: OnScoreboardCalendar) {
   const [games, setGames] = useState<SoccerGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -55,19 +48,21 @@ export function useSoccerGames(date?: Date, league = "epl") {
 
         if (requestId === requestIdRef.current) {
           setGames(gamesData);
+          onScoreboardCalendar?.(data);
         }
       } catch (err) {
         if (requestId !== requestIdRef.current) return;
+        onScoreboardCalendar?.(null);
         console.error(err);
         setError(new Error(`Failed to fetch ${league} games`));
-        setGames([]);
+        if (!forceRefresh && !silent) setGames([]);
       } finally {
         if (!silent && requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
     },
-    [formattedDate, league],
+    [formattedDate, league, onScoreboardCalendar],
   );
 
   const refreshGames = useCallback(async () => {
@@ -85,12 +80,12 @@ export function useSoccerGames(date?: Date, league = "epl") {
     };
   }, [fetchGames]);
 
-  const hasLiveGame = useMemo(() => {
-    return games.some(isLiveSoccerGame);
+  const hasActiveGame = useMemo(() => {
+    return games.some(shouldTrackGameUpdates);
   }, [games]);
 
   useLiveSportsSubscription<SoccerGamesResponse>({
-    enabled: hasLiveGame,
+    enabled: !loading && hasActiveGame,
     kind: "scoreboard",
     payload: {
       sport: "soccer",

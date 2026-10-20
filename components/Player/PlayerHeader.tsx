@@ -1,7 +1,7 @@
 import type { BasketballLeague } from "hooks/BasketballHooks/usePlayerSeasons";
 import { Fragment } from "react";
 import { Image, Text, View } from "react-native";
-import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
+import { PlayerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 import type { RosterPlayer } from "types/roster";
 import { calculateAge, formatBirth } from "utils/common/dateUtils";
 
@@ -40,11 +40,13 @@ function getHeaderRows(props: Props, player: HeaderPlayer) {
   const stats: HeaderRow[] = [
     {
       label: "HEIGHT",
-      value: props.sport === "football" ? player.height : (player.height ?? "—"),
+      value:
+        props.sport === "football" ? player.height : (player.height ?? "—"),
     },
     {
       label: "LBS",
-      value: props.sport === "football" ? player.weight : (player.weight ?? "—"),
+      value:
+        props.sport === "football" ? player.weight : (player.weight ?? "—"),
     },
   ];
   const info: HeaderRow[] = [];
@@ -70,7 +72,8 @@ function getHeaderRows(props: Props, player: HeaderPlayer) {
           draftRow,
         );
       } else {
-        const playerClass = player.experience === 0 ? "R" : player.experience_abbr;
+        const playerClass =
+          player.experience === 0 ? "R" : player.experience_abbr;
         if (playerClass != null) {
           stats.push({ label: "CLASS", value: playerClass });
         }
@@ -123,7 +126,7 @@ function getHeaderRows(props: Props, player: HeaderPlayer) {
 export default function PlayerHeader(props: Props) {
   const { isDark, sport } = props;
   const player = props.player ?? {};
-  const styles = playerHeaderStyles(isDark);
+  const styles = PlayerHeaderStyles(isDark);
   const { stats, info } = getHeaderRows(props, player);
   const showAvatarPlaceholder = sport !== "baseball" && sport !== "hockey";
   const initial = player.first_name?.[0]?.toUpperCase() || "?";

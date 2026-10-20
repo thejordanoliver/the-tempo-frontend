@@ -1,6 +1,6 @@
 import InfoCard from "@/components/Team/InfoCard";
-import type { TeamDetails } from "hooks/useTeams";
 import { StyleSheet, View } from "react-native";
+import type { TeamDetails } from "types/team";
 
 type Props = {
   teamId?: string | number;

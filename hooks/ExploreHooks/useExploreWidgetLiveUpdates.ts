@@ -1,3 +1,4 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { subscribeSportsLive } from "services/liveSportsSocket";
@@ -17,22 +18,6 @@ type UseExploreWidgetLiveUpdatesOptions = {
 
 function getFavoriteTeamId(key: string): string {
   return key.slice(key.indexOf(":") + 1);
-}
-
-function isLiveWidgetGame(game: ExploreWidgetGame["game"]): boolean {
-  const state = String(game.status?.state ?? "").toLowerCase();
-  const description = String(game.status?.description ?? "").toLowerCase();
-  const detail = String(game.status?.detail ?? "").toLowerCase();
-  const shortDetail = String(game.status?.shortDetail ?? "").toLowerCase();
-
-  return (
-    state === "in" ||
-    state === "live" ||
-    state === "half" ||
-    description.includes("in progress") ||
-    detail.includes("in progress") ||
-    shortDetail.includes("in progress")
-  );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -85,7 +70,7 @@ export function useExploreWidgetLiveUpdates({
     const entries = new Map<string, [string, ExploreWidgetGame]>();
 
     cache?.response.games.forEach((envelope) => {
-      if (!isLiveWidgetGame(envelope.game)) return;
+      if (!shouldTrackGameUpdates(envelope.game)) return;
 
       const favoriteKey = envelope.favoriteTeamKeys.find((key) =>
         relevantFavoriteKeySet.has(key),
@@ -135,6 +120,10 @@ export function useExploreWidgetLiveUpdates({
               case "football":
                 if (!isFootballWidgetGame(payload.game)) return;
                 updatedEnvelope = { ...envelope, game: payload.game };
+                break;
+              case "volleyball":
+                if (!isWidgetGame(payload.game)) return;
+                updatedEnvelope = { ...envelope, game: payload.game as Extract<ExploreWidgetGame, { sport: "volleyball" }>["game"] };
                 break;
               case "hockey":
                 if (!isHockeyWidgetGame(payload.game)) return;

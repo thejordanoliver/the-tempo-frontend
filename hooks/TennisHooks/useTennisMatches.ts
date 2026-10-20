@@ -1,3 +1,5 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
+import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -31,7 +33,7 @@ function isCanceledRequest(error: unknown) {
   return value.name === "CanceledError" || value.code === "ERR_CANCELED";
 }
 
-export function useTennisMatches(date?: Date, league: TennisLeague = "atp") {
+export function useTennisMatches(date?: Date, league: TennisLeague = "atp", onScoreboardCalendar?: OnScoreboardCalendar) {
   const [matches, setMatches] = useState<TennisMatch[]>([]);
   const [tournaments, setTournaments] = useState<TennisTournament[]>([]);
   const [availableDivisions, setAvailableDivisions] = useState<
@@ -80,16 +82,18 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp") {
           },
         );
 
+        onScoreboardCalendar?.(data);
         applyResponse(data);
       } catch (caughtError: unknown) {
         if (isCanceledRequest(caughtError)) return;
 
+        onScoreboardCalendar?.(null);
         setError(
           caughtError instanceof Error
             ? caughtError
             : new Error(`Failed to fetch ${league.toUpperCase()} matches`),
         );
-        applyResponse(EMPTY_RESPONSE);
+        if (!silent) applyResponse(EMPTY_RESPONSE);
       } finally {
         if (abortControllerRef.current === abortController) {
           abortControllerRef.current = null;
@@ -97,7 +101,7 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp") {
         }
       }
     },
-    [applyResponse, formattedDate, league],
+    [applyResponse, formattedDate, league, onScoreboardCalendar],
   );
 
   useEffect(() => {
@@ -119,13 +123,13 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp") {
     }
   }, [fetchMatches]);
 
-  const hasLiveMatch = useMemo(
-    () => matches.some((match) => match.status.state === "in"),
+  const hasActiveMatch = useMemo(
+    () => matches.some(shouldTrackGameUpdates),
     [matches],
   );
 
   useLiveSportsSubscription<TennisScoreboardResponse>({
-    enabled: hasLiveMatch,
+    enabled: !loading && hasActiveMatch,
     kind: "scoreboard",
     payload: {
       sport: "tennis",

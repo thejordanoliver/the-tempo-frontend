@@ -13,6 +13,26 @@ export type ExploreSearchImpression = {
   affiliation: SearchAffiliation | null;
   entityId: string;
   position: number;
+  matchClass: ResultItem["matchClass"];
+  textScore: number;
+  active: boolean | null;
+};
+
+export type ExploreSearchSourceTiming = {
+  durationMs: number;
+  queryCount: number;
+};
+
+export type ExploreSearchMetadata = {
+  searchRequestId: string;
+  rankingVersion: string;
+  serverDurationMs: number;
+  cacheHit: boolean;
+  sourceTimings: {
+    players: ExploreSearchSourceTiming;
+    teams: ExploreSearchSourceTiming;
+    users: ExploreSearchSourceTiming;
+  };
 };
 
 type ExploreSearchEventBase = {
@@ -27,6 +47,11 @@ export type ExploreSearchSettledEvent = ExploreSearchEventBase & {
   resultCount: number;
   durationMs: number;
   results: ExploreSearchImpression[];
+  searchRequestId: string;
+  rankingVersion: string;
+  serverDurationMs: number;
+  sourceTimings: ExploreSearchMetadata["sourceTimings"];
+  cacheHit: boolean;
 };
 
 export type ExploreSearchResultSelectedEvent = ExploreSearchEventBase & {
@@ -35,13 +60,21 @@ export type ExploreSearchResultSelectedEvent = ExploreSearchEventBase & {
   affiliation: SearchAffiliation | null;
   entityId: string;
   position: number;
+  searchRequestId: string;
+  attributedEventId: string;
+  rankingVersion: string;
+  matchClass: ResultItem["matchClass"];
+  textScore: number;
 };
 
 export type ExploreSearchEvent =
   | ExploreSearchSettledEvent
   | ExploreSearchResultSelectedEvent;
 
-type EventSender = (event: ExploreSearchEvent) => Promise<unknown>;
+export type ExploreSearchEventBatch = { events: ExploreSearchEvent[] };
+
+type EventPayload = ExploreSearchEvent | ExploreSearchEventBatch;
+type EventSender = (payload: EventPayload) => Promise<unknown>;
 
 function createFallbackUuid(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (token) => {
@@ -70,6 +103,14 @@ export function getExploreSearchImpression(
     affiliation: item.type === "user" ? null : item.affiliation,
     entityId: String(item.id),
     position,
+    matchClass: item.matchClass,
+    textScore: item.textScore,
+    active:
+      item.type === "player"
+        ? (item.active ?? null)
+        : item.type === "team"
+          ? (item.is_active ?? null)
+          : null,
   };
 }
 
@@ -79,12 +120,14 @@ export function buildExploreSearchSettledEvent({
   scope,
   results,
   durationMs,
+  searchMetadata,
 }: {
   searchSessionId: string;
   query: string;
   scope: ExploreSearchAnalyticsScope;
   results: ResultItem[];
   durationMs: number;
+  searchMetadata: ExploreSearchMetadata;
 }): ExploreSearchSettledEvent {
   return {
     eventId: createExploreSearchAnalyticsId(),
@@ -94,6 +137,11 @@ export function buildExploreSearchSettledEvent({
     scope,
     resultCount: results.length,
     durationMs: Math.max(0, Math.round(durationMs)),
+    searchRequestId: searchMetadata.searchRequestId,
+    rankingVersion: searchMetadata.rankingVersion,
+    serverDurationMs: searchMetadata.serverDurationMs,
+    sourceTimings: searchMetadata.sourceTimings,
+    cacheHit: searchMetadata.cacheHit,
     // Positions are deliberately one-based to match product analytics reports.
     results: results.map((item, index) =>
       getExploreSearchImpression(item, index + 1),
@@ -102,33 +150,38 @@ export function buildExploreSearchSettledEvent({
 }
 
 export function buildExploreSearchSelectionEvent({
-  searchSessionId,
-  query,
-  scope,
+  attributedEvent,
   item,
   position,
 }: {
-  searchSessionId: string;
-  query: string;
-  scope: ExploreSearchAnalyticsScope;
+  attributedEvent: ExploreSearchSettledEvent;
   item: ResultItem;
   position: number;
 }): ExploreSearchResultSelectedEvent {
+  const impression = getExploreSearchImpression(item, position);
   return {
     eventId: createExploreSearchAnalyticsId(),
     eventType: "search_result_selected",
-    searchSessionId,
-    normalizedQuery: normalizeExploreAnalyticsQuery(query),
-    scope,
-    ...getExploreSearchImpression(item, position),
+    searchSessionId: attributedEvent.searchSessionId,
+    normalizedQuery: attributedEvent.normalizedQuery,
+    scope: attributedEvent.scope,
+    entityType: impression.entityType,
+    affiliation: impression.affiliation,
+    entityId: impression.entityId,
+    position: impression.position,
+    searchRequestId: attributedEvent.searchRequestId,
+    attributedEventId: attributedEvent.eventId,
+    rankingVersion: attributedEvent.rankingVersion,
+    matchClass: impression.matchClass,
+    textScore: impression.textScore,
   };
 }
 
-const postEvent: EventSender = async (event) => {
+const postEvent: EventSender = async (payload) => {
   // Loading the shared client lazily keeps the event-model helpers portable in
   // unit tests while preserving the app's canonical auth/refresh behavior.
   const { apiClient } = await import("utils/apiClient");
-  return apiClient.post("/api/explore/search/events", event);
+  return apiClient.post("/api/explore/search/events", payload);
 };
 
 export function sendExploreSearchEvent(
@@ -141,6 +194,20 @@ export function sendExploreSearchEvent(
         ? (error.response?.data?.error ?? error.message)
         : error;
       console.warn("Explore search analytics event was dropped", reason);
+    }
+  });
+}
+
+export function sendExploreSearchEvents(
+  events: ExploreSearchEvent[],
+  sender: EventSender = postEvent,
+): void {
+  void sender({ events }).catch((error: unknown) => {
+    if (typeof __DEV__ !== "undefined" && __DEV__) {
+      const reason = isAxiosError<{ error?: string }>(error)
+        ? (error.response?.data?.error ?? error.message)
+        : error;
+      console.warn("Explore search analytics event batch was dropped", reason);
     }
   });
 }

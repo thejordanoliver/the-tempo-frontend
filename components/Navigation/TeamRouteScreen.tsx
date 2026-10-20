@@ -1,13 +1,13 @@
-import { useLocalSearchParams } from "expo-router";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
 
 import NBATeamScreen from "app/(tabs)/(home)/team/[teamId]";
 import CBTeamScreen from "app/(tabs)/(home)/team/cb/[teamId]";
-import MCBBTeamScreen from "app/(tabs)/(home)/team/mcbb/[teamId]";
 import CFBTeamScreen from "app/(tabs)/(home)/team/cfb/[teamId]";
 import GLeagueTeamScreen from "app/(tabs)/(home)/team/gleague/[teamId]";
+import MCBBTeamScreen from "app/(tabs)/(home)/team/mcbb/[teamId]";
 import MLBTeamScreen from "app/(tabs)/(home)/team/mlb/[teamId]";
 import NFLTeamScreen from "app/(tabs)/(home)/team/nfl/[teamId]";
 import NHLTeamScreen from "app/(tabs)/(home)/team/nhl/[teamId]";
@@ -18,6 +18,8 @@ import WCBBTeamScreen from "app/(tabs)/(home)/team/wcbb/[teamId]";
 import WNBATeamScreen from "app/(tabs)/(home)/team/wnba/[teamId]";
 
 const TEAM_SCREENS = {
+  mcvb: null,
+  wcvb: null,
   nba: NBATeamScreen,
   cb: CBTeamScreen,
   mcbb: MCBBTeamScreen,
@@ -37,7 +39,8 @@ export default function TeamRouteScreen() {
   const { teamType } = useLocalSearchParams<{ teamType?: string | string[] }>();
   const { resolvedColorScheme } = usePreferences();
   const global = globalStyles(resolvedColorScheme === "dark");
-  const resolvedTeamType = (Array.isArray(teamType) ? teamType[0] : teamType)?.toLowerCase() ?? "nba";
+  const resolvedTeamType =
+    (Array.isArray(teamType) ? teamType[0] : teamType)?.toLowerCase() ?? "nba";
   const TeamScreen =
     TEAM_SCREENS[resolvedTeamType as keyof typeof TEAM_SCREENS];
 

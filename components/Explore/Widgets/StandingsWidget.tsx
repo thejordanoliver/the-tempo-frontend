@@ -1,3 +1,4 @@
+import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -168,6 +169,7 @@ function StandingsTable({
   );
   const { standings, seasonDisplayName, loading, error, refetch } =
     useLeagueStandings(league);
+  useWidgetLoadReady(loading);
   const compact = size === "small" || width < 240;
   const styles = useMemo(
     () => ({

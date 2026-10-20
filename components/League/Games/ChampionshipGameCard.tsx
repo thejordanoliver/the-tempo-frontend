@@ -1,37 +1,38 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   getNBATeam,
   getNBATeamLogo,
   getTeamBySummerId,
 } from "@/constants/teams";
-import {getMCBBTeam,  getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getMLBTeam, getMLBTeamLogo } from "@/constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "@/constants/teamsNFL";
-import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Text, TouchableOpacity, View } from "react-native";
-import { champGameCardStyles } from "styles/GamecardStyles/ChampionshipGameCardStyles";
+import { ChampionshipGameCardStyles } from "styles/GamecardStyles/ChampionshipGameCardStyles";
 import { formatDate, formatTime, safeDate } from "utils/common/dateUtils";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 
 interface ChampionshipGameCardProps {
   game: any;
-
   isMCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
   isSL?: boolean;
   isGLEAGUE?: boolean;
-
   isNFL?: boolean;
   isCFB?: boolean;
-
   isNHL?: boolean;
   isMLB?: boolean;
 }
@@ -58,12 +59,9 @@ export default function ChampionshipGameCard({
   isNHL = false,
 }: ChampionshipGameCardProps) {
   const router = useScopedRouter();
-
   const { resolvedColorScheme } = usePreferences();
-
   const isDark = resolvedColorScheme === "dark";
-  const styles = champGameCardStyles(isDark);
-
+  const styles = ChampionshipGameCardStyles(isDark);
   const league = game?.league?.id;
 
   const home: TeamSide = game?.home ?? {};
@@ -233,16 +231,14 @@ export default function ChampionshipGameCard({
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.period}>{period}</Text>
-
           <View style={styles.statusDivider} />
-
           <Text style={styles.clock}>{clock}</Text>
         </View>
       );
     }
 
     if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended) {
-      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
+      return <Text style={styles.statusText}>{gameStatusDescription}</Text>;
     }
 
     if (endOfPeriod) {
@@ -250,17 +246,15 @@ export default function ChampionshipGameCard({
     }
 
     if (isHalftime) {
-      return <Text style={styles.finalText}>Halftime</Text>;
+      return <Text style={styles.clock}>Halftime</Text>;
     }
 
     if (isFinal) {
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail || "Final"}</Text>
-
+          <Text style={styles.statusText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
-
-          <Text style={styles.finalText}>{formattedDate}</Text>
+          <Text style={styles.statusText}>{formattedDate}</Text>
         </View>
       );
     }
@@ -306,8 +300,8 @@ export default function ChampionshipGameCard({
   };
 
   const gradientColors = isDark
-    ? ([Colors.dark.gold, Colors.black] as const)
-    : ([Colors.light.gold, Colors.white] as const);
+    ? ([Colors.dark.gold, "transparent"] as const)
+    : ([Colors.light.gold, "transparent"] as const);
 
   return (
     <TouchableOpacity
@@ -317,19 +311,11 @@ export default function ChampionshipGameCard({
     >
       <LinearGradient
         colors={gradientColors}
-        locations={isDark ? [0, 0.8] : [0, 0.9]}
-        start={{
-          x: 0.5,
-          y: 0,
-        }}
-        end={{
-          x: 0.5,
-          y: 1,
-        }}
+        locations={[0, 1]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
         style={styles.card}
       >
-
-
         <View style={styles.badgeContainer}>
           <Text style={styles.badge}>{headline}</Text>
         </View>
@@ -346,16 +332,18 @@ export default function ChampionshipGameCard({
 
             <Text style={styles.teamName} numberOfLines={2}>
               {awayRank ? <Text style={styles.rank}>#{awayRank} </Text> : null}
-
               {awayName}
             </Text>
 
-            {ScoreText({ "score": awayScore, "record": awayRecord, "isWinner": awayWins })}
+            {ScoreText({
+              score: awayScore,
+              record: awayRecord,
+              isWinner: awayWins,
+            })}
           </View>
 
           {/* Center */}
           <View style={styles.centerColumn}>
-
             <View style={styles.info}>
               {renderStatus()}
               {!isFinal && broadcast ? (
@@ -381,7 +369,11 @@ export default function ChampionshipGameCard({
               {homeName}
             </Text>
 
-            {ScoreText({ "score": homeScore, "record": homeRecord, "isWinner": homeWins })}
+            {ScoreText({
+              score: homeScore,
+              record: homeRecord,
+              isWinner: homeWins,
+            })}
           </View>
         </View>
       </LinearGradient>

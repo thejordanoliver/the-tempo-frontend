@@ -103,6 +103,9 @@ export type TennisTournament = {
 };
 
 export type TennisScoreboardResponse = {
+  calendar?: unknown[] | null;
+  calendarStartDate?: string | null;
+  calendarEndDate?: string | null;
   league: {
     id: string;
     uid: string;

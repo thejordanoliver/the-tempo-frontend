@@ -1,3 +1,4 @@
+import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 import { Ionicons } from "@expo/vector-icons";
 import { SkeletonBlock } from "components/Skeletons/primitives";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
@@ -25,6 +26,7 @@ export default function MyPicksWidget({
   ...editProps
 }: Props) {
   const { data, loading, error, refresh } = useCurrentUserPicks();
+  useWidgetLoadReady(loading);
   const router = useScopedRouter();
   const styles = useMemo(() => myPicksStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;

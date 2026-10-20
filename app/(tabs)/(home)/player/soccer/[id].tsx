@@ -77,9 +77,10 @@ export default function PlayerDetailScreen() {
     setSelectedCompetition(competition);
   };
 
-  /* ---------------- Header ---------------- */
+  const screenLoading = loading || seasonsLoading;
+
   useLayoutEffect(() => {
-    if (loading) {
+    if (screenLoading) {
       navigation.setOptions({ header: () => null });
       return;
     }
@@ -95,9 +96,9 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, teamLogo, teamColor, loading]);
+  }, [navigation, teamLogo, teamColor, screenLoading]);
 
-  if (loading)
+  if (screenLoading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />

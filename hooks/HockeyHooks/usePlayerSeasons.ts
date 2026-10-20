@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type StatValue = number | string | null | undefined;
@@ -102,8 +102,17 @@ export function usePlayerSeasons(playerId: number | string, league: string) {
   const [seasonsLoading, setSeasonsLoading] = useState(false);
   const [seasonsError, setSeasonsError] = useState<string | null>(null);
 
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
+  const controllerRef = useRef<AbortController | null>(null);
+  const normalizedPlayerId = String(playerId ?? "").trim();
+  const requestKey =
+    /^\d+$/.test(normalizedPlayerId) && Number(normalizedPlayerId) > 0
+      ? `${league}:${normalizedPlayerId}`
+      : null;
+
   const fetchSeasons = useCallback(async () => {
-    if (!playerId) {
+    controllerRef.current?.abort();
+    if (!requestKey) {
       setPlayer(null);
       setSeasons([]);
       setSeasonsError(null);
@@ -111,13 +120,19 @@ export function usePlayerSeasons(playerId: number | string, league: string) {
       return;
     }
 
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
     try {
       setSeasonsLoading(true);
       setSeasonsError(null);
+      setResolvedRequestKey(null);
 
       const res = await apiClient.get<ApiResponse>(
-        `/api/player/stats/${league}/${playerId}`,
+        `/api/player/stats/${league}/${normalizedPlayerId}`,
+        { signal: controller.signal },
       );
+      if (controller.signal.aborted) return;
 
       setPlayer(res.data.player ?? null);
       setSeasons(
@@ -125,27 +140,40 @@ export function usePlayerSeasons(playerId: number | string, league: string) {
           ? res.data.seasons.map(normalizeApiSeason)
           : [],
       );
+      setResolvedRequestKey(requestKey);
     } catch (err) {
+      if (controller.signal.aborted) return;
       console.error("Failed to fetch player seasons:", err);
       setSeasonsError(
         err instanceof Error ? err.message : "Failed to fetch player seasons",
       );
       setPlayer(null);
       setSeasons([]);
+      setResolvedRequestKey(requestKey);
     } finally {
-      setSeasonsLoading(false);
+      if (!controller.signal.aborted) setSeasonsLoading(false);
     }
-  }, [playerId, league]);
+  }, [normalizedPlayerId, league, requestKey]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchSeasons());
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (active) return fetchSeasons();
+    });
+    return () => {
+      active = false;
+      controllerRef.current?.abort();
+    };
   }, [fetchSeasons]);
 
+  const hasCurrentResult =
+    requestKey !== null && resolvedRequestKey === requestKey;
+
   return {
-    player,
-    seasons,
-    seasonsLoading,
-    seasonsError,
+    player: hasCurrentResult ? player : null,
+    seasons: hasCurrentResult ? seasons : [],
+    seasonsLoading: requestKey !== null && (seasonsLoading || !hasCurrentResult),
+    seasonsError: hasCurrentResult ? seasonsError : null,
     refetch: fetchSeasons,
   };
 }

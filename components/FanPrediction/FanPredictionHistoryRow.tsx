@@ -13,18 +13,19 @@ import { Image } from "expo-image";
 import { memo, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { fanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
-import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import type {
   FanPredictionPick,
   FanPredictionPickTeam,
 } from "types/fanPredictions";
 import { formatDate, formatTime, safeDate } from "utils/common/dateUtils";
+import { isUnavailablePrediction } from "utils/games/predictionAvailability";
 
 type Props = { pick: FanPredictionPick; isDark: boolean; onPress: () => void };
 
 function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
   const styles = useMemo(() => fanPredictionHistoryRowStyles(isDark), [isDark]);
-  const gameStyles = useMemo(() => gameCardStyles(isDark), [isDark]);
+  const gameStyles = useMemo(() => GameCardStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
   const outcome =
@@ -40,6 +41,7 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
           : Colors.light.red
         : colors.icon;
 
+  const isUnavailable = isUnavailablePrediction(pick);
   const isScheduled = pick.state === "pre";
   const isLive = pick.state === "in";
   const isFinal = pick.state === "post";
@@ -126,7 +128,12 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
   const renderStatus = () => {
     return (
       <View style={styles.info}>
-        {isScheduled && pick.statusDescription && (
+        {isUnavailable && (
+          <Text style={gameStyles.date} numberOfLines={2}>
+            {pick.statusDescription}
+          </Text>
+        )}
+        {!isUnavailable && isScheduled && pick.statusDescription && (
           <View style={gameStyles.infoWrapper}>
             <Text style={gameStyles.date} numberOfLines={1}>
               {formatDate(safeDate(pick.startsAt))}
@@ -138,7 +145,7 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
           </View>
         )}
 
-        {isLive && pick.statusDescription && (
+        {!isUnavailable && isLive && pick.statusDescription && (
           <View style={gameStyles.infoWrapper}>
             <Text style={gameStyles.date} numberOfLines={1}>
               {pick.statusDescription}
@@ -146,7 +153,7 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
           </View>
         )}
 
-        {isFinal && pick.statusDescription && (
+        {!isUnavailable && isFinal && pick.statusDescription && (
           <View style={gameStyles.infoWrapper}>
             <Text style={gameStyles.finalText} numberOfLines={1}>
               {pick.statusDescription}
@@ -165,7 +172,11 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${pick.matchup}, picked ${pick.pickedName}, ${outcome}`}
-      accessibilityHint="Open game details"
+      accessibilityHint={
+        isUnavailable ? "Game details unavailable" : "Open game details"
+      }
+      accessibilityState={{ disabled: isUnavailable }}
+      disabled={isUnavailable}
       onPress={onPress}
       style={({ pressed }) => [styles.container, pressed && global.pressed]}
     >

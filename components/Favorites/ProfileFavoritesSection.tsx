@@ -77,6 +77,9 @@ const chunkItems = <T,>(items: T[], size: number): T[][] => {
 
 const getLeagueBadgeColor = (league: string) => {
   switch (league) {
+    case "mcvb":
+    case "wcvb":
+      return "#009CDE";
     case "cfb":
       return "#228B22";
     case "mcbb":
@@ -96,6 +99,9 @@ const getTeamLogo = (team: Team) => {
   const id = Number(team.id);
 
   switch (team.league) {
+    case "mcvb":
+    case "wcvb":
+      return team.logoLight ?? team.logo;
     case "nfl":
       return getNFLTeamLogo(id, true);
 
@@ -368,7 +374,7 @@ export default function ProfileFavoritesSection({
 
     const teamBackgroundColor = team.primaryColor ?? Colors.midTone;
 
-    const showLeagueBadge = ["cfb", "mcbb", "wcbb", "cb", "sb"].includes(
+    const showLeagueBadge = ["cfb", "mcbb", "wcbb", "cb", "sb", "mcvb", "wcvb"].includes(
       league,
     );
 

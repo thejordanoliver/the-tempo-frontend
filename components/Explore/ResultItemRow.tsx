@@ -42,12 +42,14 @@ const teamLookups = {
   mlb: getMLBTeam, nhl: getNHLTeam, nfl: getNFLTeam,
   cfb: getCFBTeam, mcbb: getMCBBTeam, wcbb: getWCBBTeam,
   soccer: getSOCCTeam, cb: getCBTeam, sb: getSBTeam,
+  mcvb: () => undefined, wcvb: () => undefined,
 };
 const logoLookups = {
   nba: getNBATeamLogo, gleague: getGLeagueTeamLogo, wnba: getWNBATeamLogo,
   mlb: getMLBTeamLogo, nhl: getNHLTeamLogo, nfl: getNFLTeamLogo,
   cfb: getCFBTeamLogo, mcbb: getMCBBTeamLogo, wcbb: getWCBBTeamLogo,
   soccer: getSOCCTeamLogo, cb: getCBTeamLogo, sb: getSBTeamLogo,
+  mcvb: () => undefined, wcvb: () => undefined,
 };
 
 function getTeam(affiliation: SearchAffiliation, id: string | number | null) {
@@ -104,6 +106,7 @@ export default function ResultItemRow({
             <ResultImage key={`${team.affiliation}:${team.id}:${isDark}:${backendLogo}`} source={teamLogo} fallback={teamPlaceholderImage} style={styles.teamLogo} contentFit="contain" />
             <View style={styles.resultText}>
               <Text style={styles.name} numberOfLines={1}>{team.full_name || team.name}</Text>
+              {(team.affiliation === "mcvb" || team.affiliation === "wcvb") && <Text style={styles.subtext}>{team.affiliation === "mcvb" ? "Men’s College Volleyball" : "Women’s College Volleyball"}</Text>}
               {team.affiliation === "wcbb" && (
                 <Text style={styles.subtext} numberOfLines={1}>
                   {"Women's College Basketball"}

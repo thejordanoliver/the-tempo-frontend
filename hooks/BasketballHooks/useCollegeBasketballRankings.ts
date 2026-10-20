@@ -1,6 +1,6 @@
-import type { StandingsTeamInfo } from "types/standings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { StandingsTeamInfo } from "types/standings";
 
 import { apiClient } from "utils/apiClient";
 
@@ -40,9 +40,9 @@ export type RankPoll = {
 
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 
-export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
-  const CACHE_KEY = `mcbb_rankings_cache_${league}_v2`;
-  const LAST_REFRESH_KEY = `mcbb_rankings_last_refresh_${league}_v2`;
+export const useCollegeBasketballRankings = (league: "mcbb" | "wcbb") => {
+  const CACHE_KEY = `college_basketball_rankings_cache_${league}_v3`;
+  const LAST_REFRESH_KEY = `college_basketball_rankings_last_refresh_${league}_v3`;
 
   const [rankings, setRankings] = useState<RankPoll[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,10 +57,10 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
           JSON.stringify({ timestamp: Date.now(), data }),
         );
       } catch (err) {
-        console.warn("⚠️ Failed to cache MCBB rankings:", err);
+        console.warn(`⚠️ Failed to cache ${league} rankings:`, err);
       }
     },
-    [CACHE_KEY],
+    [CACHE_KEY, league],
   );
 
   const loadCache = useCallback(async (): Promise<RankPoll[] | null> => {
@@ -82,9 +82,7 @@ export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
 
   const fetchLatest = useCallback(async () => {
     try {
-      const res = await apiClient.get(`api/standings/mcbb/rankings`, {
-        params: { league },
-      });
+      const res = await apiClient.get(`api/standings/${league}/rankings`);
 
       const polls: RankPoll[] = res.data.rankings || [];
 

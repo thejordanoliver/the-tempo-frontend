@@ -7,9 +7,11 @@ import CBLogo from "assets/College_Logos/Conference_Logos/CB.png";
 import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
 import MCBBLogo from "assets/College_Logos/Conference_Logos/MCBB.png";
 import MCSLogo from "assets/College_Logos/Conference_Logos/MCS.png";
+import MCVBLogo from "assets/College_Logos/Conference_Logos/MCVB.png";
 import SBLogo from "assets/College_Logos/Conference_Logos/SB.png";
 import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
 import WCSLogo from "assets/College_Logos/Conference_Logos/WCS.png";
+import WCVBLogo from "assets/College_Logos/Conference_Logos/WCVB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import UFLLogo from "assets/Football/UFL_Logos/UFL.png";
 import UFLLightLogo from "assets/Football/UFL_Logos/UFLLight.png";
@@ -46,7 +48,6 @@ import WTALogo from "assets/Tennis/Logos/WTA.png";
 import WTALogoLight from "assets/Tennis/Logos/WTALight.png";
 import WNBALogo from "assets/WNBA/Logos/WNBA.png";
 import WNBALogoLight from "assets/WNBA/Logos/WNBALight.png";
-
 import type { LeagueType } from "types/types";
 
 export type LeagueRoute =
@@ -54,6 +55,7 @@ export type LeagueRoute =
   | "/league/football"
   | "/league/baseball"
   | "/league/hockey"
+  | "/league/volleyball"
   | "/league/mma"
   | "/league/racing"
   | "/league/tennis"
@@ -103,6 +105,24 @@ export const LEAGUE_CONFIG = {
     route: "/league/baseball",
   },
 
+  mcvb: {
+    id: "MCVB",
+    label: "M. College Volleyball",
+    color: "#009CDE",
+    secondaryColor: "#000000",
+    logo: MCVBLogo,
+    logoLight: MCVBLogo,
+    route: "/league/volleyball",
+  },
+  wcvb: {
+    id: "WCVB",
+    label: "W. College Volleyball",
+    color: "#009CDE",
+    secondaryColor: "#000000",
+    logo: WCVBLogo,
+    logoLight: WCVBLogo,
+    route: "/league/volleyball",
+  },
   mcbb: {
     id: "mcbb",
     label: "M. College Basketball",
@@ -414,6 +434,8 @@ export const HOME_SCORE_LEAGUES = [
   "ligue2",
   "mcbb",
   "wcbb",
+  "MCVB",
+  "WCVB",
   "wnba",
   "ufc",
   "atp",

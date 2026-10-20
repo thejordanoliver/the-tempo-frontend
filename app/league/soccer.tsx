@@ -1,3 +1,4 @@
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useSoccerGames } from "@/hooks/SoccerHooks/useSoccerGames";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import dayjs from "dayjs";
@@ -6,7 +7,7 @@ import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
@@ -23,6 +24,7 @@ import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
+import { getLeagueCalendarDateKey } from "utils/teams/leagueCalendarCache";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 
@@ -44,7 +46,11 @@ export default function SoccerLeagueScreen() {
 
   const leagueLabel = params.leagueLabel;
 
-  const { calendar } = useLeagueCalendar(league);
+  const [calendarAnchor, setCalendarAnchor] = useState(() =>
+    dayjs().format("YYYY-MM-DD"),
+  );
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "raw", calendarAnchor, scoreboardCalendar);
 
   const navigation = useNavigation();
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
@@ -78,10 +84,11 @@ export default function SoccerLeagueScreen() {
     );
   };
 
-  const markDates = (calendarArray: string[]) =>
-    calendarArray.reduce(
+  const markedDates = useMemo(() =>
+    calendar.reduce(
       (acc, dateStr) => {
-        const iso = dayjs(dateStr).format("YYYY-MM-DD");
+        const iso = getLeagueCalendarDateKey(dateStr);
+        if (!iso) return acc;
 
         acc[iso] = {
           marked: true,
@@ -91,13 +98,13 @@ export default function SoccerLeagueScreen() {
         return acc;
       },
       {} as Record<string, { marked: boolean; dotColor: string }>,
-    );
+    ), [calendar, isDark]);
   const {
     games,
     error: gamesError,
     refreshGames: refreshScoreGames,
     loading: loadingGames,
-  } = useSoccerGames(selectedDate, league);
+  } = useSoccerGames(selectedDate, league, onScoreboardCalendar);
 
   const {
     articles,
@@ -158,7 +165,10 @@ export default function SoccerLeagueScreen() {
             <DateNavigator
               selectedDate={selectedDate}
               onChangeDate={changeDateByDays}
-              onOpenCalendar={() => setShowCalendarModal(true)}
+              onOpenCalendar={() => {
+                setCalendarAnchor(dayjs(selectedDate).format("YYYY-MM-DD"));
+                setShowCalendarModal(true);
+              }}
               isDark={isDark}
             />
 
@@ -208,6 +218,8 @@ export default function SoccerLeagueScreen() {
 
       <CalendarModal
         visible={showCalendarModal}
+        selectedDate={dayjs(selectedDate).format("YYYY-MM-DD")}
+        onMonthChange={setCalendarAnchor}
         onClose={() => setShowCalendarModal(false)}
         onSelectDate={(dateString) => {
           const localSelected = dayjs(dateString, "YYYY-MM-DD")
@@ -215,11 +227,10 @@ export default function SoccerLeagueScreen() {
             .toDate();
 
           setSelectedDate(localSelected);
+          setCalendarAnchor(dateString);
           setShowCalendarModal(false);
         }}
-        markedDates={{
-          ...markDates([...calendar]),
-        }}
+        markedDates={markedDates}
       />
     </>
   );

@@ -102,6 +102,8 @@ export type Championships = {
 
 export type TeamDetails = {
   id: number;
+  logo?: string | null;
+  logoDark?: string | null;
   shortName: string;
   name: string;
   code: string;
@@ -113,7 +115,6 @@ export type TeamDetails = {
   established: number | null;
   conferenceId?: number | null;
   venueId: string | number | null;
-  venueLeagueKey: string | null;
   venue: TeamVenue | null;
   league: string;
   isActive: boolean;

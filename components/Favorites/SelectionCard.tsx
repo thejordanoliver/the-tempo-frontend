@@ -75,7 +75,7 @@ function SelectionCard({
       : Colors.light.text;
 
   const sportTagColor =
-    item.league === "cfb"
+    item.league === "mcvb" || item.league === "wcvb" ? "#009CDE" : item.league === "cfb"
       ? "#228B22"
       : item.league === "wcbb"
         ? "#C2185B"

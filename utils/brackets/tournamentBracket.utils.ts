@@ -3,6 +3,7 @@ import type {
   TournamentRoundCode,
   TournamentTeam,
 } from "@/hooks/BasketballHooks/useTournamentBracket";
+import { isGameFinalStatus } from "../games/gameStatus";
 
 export type RegionalRoundCode = Extract<
   TournamentRoundCode,
@@ -162,13 +163,7 @@ export function getSourceGameDisplayTeams(
       return null;
     }
 
-    const teams = getGameTeams(sourceGame);
-
-    if (sourceGame.winnerTeamId) {
-      return teams.find((team) => team?.id === sourceGame.winnerTeamId) ?? null;
-    }
-
-    return teams.find((team) => team?.winner === true) ?? null;
+    return getWinnerTeam(sourceGame);
   };
 
   const destinationTeams = getGameTeams(game);
@@ -212,3 +207,37 @@ export function getFinalFourDisplayTeams(
 
   return [rankedTeams[0].team, rankedTeams[1].team];
 }
+
+export const isTeamWinner = (
+  game: TournamentGame,
+  team: TournamentTeam | null,
+): boolean => {
+  if (!team || !isGameFinalStatus(game.status)) {
+    return false;
+  }
+
+  if (game.winnerTeamId) {
+    return game.winnerTeamId === team.id;
+  }
+
+  return team.winner === true;
+};
+
+export const gameHasWinner = (game: TournamentGame): boolean =>
+  getWinnerTeam(game) !== null;
+
+export const getWinnerTeam = (game: TournamentGame | null): TournamentTeam | null => {
+  if (!game) {
+    return null;
+  }
+
+  if (isTeamWinner(game, game.homeTeam)) {
+    return game.homeTeam;
+  }
+
+  if (isTeamWinner(game, game.awayTeam)) {
+    return game.awayTeam;
+  }
+
+  return null;
+};

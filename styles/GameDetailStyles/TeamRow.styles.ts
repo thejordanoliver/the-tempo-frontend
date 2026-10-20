@@ -74,7 +74,6 @@ export type MMAProps = {
   flag: string | undefined;
   record: string | undefined;
   rank?: string;
-  isActive: boolean;
   isDark: boolean;
   isFirstFighter?: boolean;
   isWinner?: boolean;
@@ -99,7 +98,6 @@ export type TennisProps = {
   isWinner: boolean | null;
   serving: boolean;
   state?: string | null;
-  isActive: boolean;
   isDark: boolean;
 };
 
@@ -115,7 +113,6 @@ export type RacingProps = {
   laps: string | null | undefined;
   time: string | null | undefined;
   rank?: string;
-  isActive: boolean;
   isDark: boolean;
   isWinner: boolean | null | undefined;
   size?: SizeType;

@@ -43,6 +43,8 @@ export type LeagueType =
   | "ligue2"
   | "cb"
   | "sb"
+  | "mcvb"
+  | "wcvb"
   | "mcbb"
   | "wcbb"
   | "mlb"

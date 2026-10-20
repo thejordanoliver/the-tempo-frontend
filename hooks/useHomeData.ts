@@ -1,11 +1,11 @@
-import type { HomeLeagueSource, LeagueGame } from "@/types/leagues";
+import type { HomeGameSection, HomeLeagueSource, LeagueGame } from "@/types/leagues";
 import { filterByDate } from "@/utils/common/dateUtils";
 import { HOME_SCORE_LEAGUES, type HomeLeagueId } from "constants/leagues";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { normalizeGames } from "utils/games/games";
 import { buildHomeGameSections } from "utils/games/homeGames";
 
@@ -16,6 +16,7 @@ import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
 import { useMMAEvents } from "./MMAHooks/useMMAEvents";
 import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 import { useTennisMatches } from "./TennisHooks/useTennisMatches";
+import { useVolleyballGames } from "./VolleyballHooks/useVolleyball";
 import { useForYouFeed } from "./useForYouFeed";
 
 dayjs.extend(utc);
@@ -31,8 +32,21 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     favoriteSportsReady,
     ready: favoriteTeamsReady,
     userId,
+    refreshFavorites,
+    loadFavoriteSports,
   } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
+  const refreshInFlightRef = useRef(false);
+  const dateRefreshRef = useRef<{
+    userId: number | null;
+    started: boolean;
+    resolve: () => void;
+  } | null>(null);
+  const [refreshSnapshot, setRefreshSnapshot] = useState<{
+    userId: number | null;
+    sections: HomeGameSection[];
+    loading: boolean;
+  } | null>(null);
   const [selectedDate, setSelectedDate] = useState(getStartOfToday);
   const isGeneralHome =
     favoriteTeamsReady &&
@@ -220,6 +234,9 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     loading: wsocLoading,
     refreshGames: refreshWomensSoccerGames,
   } = useSoccerGames(selectedDate, "wsoc");
+
+  const mcvb = useVolleyballGames(selectedDate, "mcvb");
+  const wcvb = useVolleyballGames(selectedDate, "wcvb");
 
   const normalizedNBA = useMemo(
     () => normalizeGames(nbaGames, "nba"),
@@ -417,6 +434,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
 
   const homeLeagueSources = useMemo<HomeLeagueSource[]>(() => {
     const gamesByLeague: Record<HomeLeagueId, readonly LeagueGame[]> = {
+      mcvb: mcvb.games,
+      wcvb: wcvb.games,
       nba: filteredNBA,
       nfl: filteredNFL,
       ufl: filteredUFL,
@@ -448,6 +467,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       games: gamesByLeague[id],
     }));
   }, [
+    mcvb.games,
+    wcvb.games,
     filteredNBA,
     filteredNFL,
     filteredUFL,
@@ -494,6 +515,15 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   );
 
   const handleRefresh = async () => {
+    if (refreshInFlightRef.current) return;
+    refreshInFlightRef.current = true;
+    if (selectedTab === "scores") {
+      setRefreshSnapshot({
+        userId,
+        sections: homeGameSections,
+        loading: scoresLoading,
+      });
+    }
     setRefreshing(true);
 
     try {
@@ -503,44 +533,61 @@ export function useHomeData(selectedTab: "scores" | "for you") {
         "day",
       );
 
+      let dateRefresh: Promise<void> | null = null;
+      if (shouldUpdateSelectedDate && selectedTab === "scores") {
+        // Changing the date already makes every game hook fetch. Wait for that
+        // loading cycle instead of refreshing callbacks bound to the old date.
+        dateRefresh = new Promise<void>((resolve) => {
+          dateRefreshRef.current = { userId, started: false, resolve };
+        });
+      }
+
       if (shouldUpdateSelectedDate) {
         setSelectedDate(today);
-
-        if (selectedTab === "scores") return;
       }
 
       if (selectedTab === "scores") {
         await Promise.allSettled([
-          refreshNBAGames(),
-          refreshMLBGames(),
-          refreshNHLGames(),
-          refreshNFLGames(),
-          refreshUFLGames(),
-          refreshCFBGames(),
-          refreshMensMCBB(),
-          refreshWomensMCBB(),
-          refreshWNBA(),
-          refreshMensSoccerGames(),
-          refreshWomensSoccerGames(),
-          refreshMLSGames(),
-          refreshLeaguesCupGames(),
-          refreshEPLGames(),
-          refreshFIFAGames(),
-          refreshChampionsGames(),
-          refreshEuropaGames(),
-          refreshBundesligaGames(),
-          refreshLaligaGames(),
-          refreshLigue1Games(),
-          refreshLigue2Games(),
-          refreshMMAGames(),
-          refreshATPMatches(),
-          refreshWTAMatches(),
+          refreshFavorites(),
+          loadFavoriteSports(true),
+          ...(dateRefresh
+            ? [dateRefresh]
+            : [
+                mcvb.refreshGames(),
+                wcvb.refreshGames(),
+                refreshNBAGames(),
+                refreshMLBGames(),
+                refreshNHLGames(),
+                refreshNFLGames(),
+                refreshUFLGames(),
+                refreshCFBGames(),
+                refreshMensMCBB(),
+                refreshWomensMCBB(),
+                refreshWNBA(),
+                refreshMensSoccerGames(),
+                refreshWomensSoccerGames(),
+                refreshMLSGames(),
+                refreshLeaguesCupGames(),
+                refreshEPLGames(),
+                refreshFIFAGames(),
+                refreshChampionsGames(),
+                refreshEuropaGames(),
+                refreshBundesligaGames(),
+                refreshLaligaGames(),
+                refreshLigue1Games(),
+                refreshLigue2Games(),
+                refreshMMAGames(),
+                refreshATPMatches(),
+                refreshWTAMatches(),
+              ]),
         ]);
       } else {
         await forYouFeed.refresh();
       }
     } finally {
+      refreshInFlightRef.current = false;
       setRefreshing(false);
+      setRefreshSnapshot(null);
     }
   };
 
@@ -553,6 +600,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   // request renders a partial list that visibly moves as later requests finish.
   const scoresLoading =
     !favoriteOrderReady ||
+    mcvb.loading ||
+    wcvb.loading ||
     nbaLoading ||
     mlbLoading ||
     nhlLoading ||
@@ -580,9 +629,30 @@ export function useHomeData(selectedTab: "scores" | "for you") {
 
   const searchingUpcoming =
     isGeneralHome &&
+    !refreshing &&
     !scoresLoading &&
     homeGameSections.length === 0 &&
     dayjs(selectedDate).diff(dayjs(getStartOfToday()), "day") < 7;
+
+  useEffect(() => {
+    const pending = dateRefreshRef.current;
+    if (!pending) return;
+
+    if (pending.userId !== userId) {
+      dateRefreshRef.current = null;
+      pending.resolve();
+    } else if (scoresLoading) {
+      pending.started = true;
+    } else if (pending.started) {
+      dateRefreshRef.current = null;
+      pending.resolve();
+    }
+  }, [scoresLoading, selectedDate, userId]);
+
+  useEffect(() => () => {
+    dateRefreshRef.current?.resolve();
+    dateRefreshRef.current = null;
+  }, []);
 
   useEffect(() => {
     if (selectedTab !== "scores" || !searchingUpcoming) return;
@@ -601,7 +671,10 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     favorites,
     refreshing,
     handleRefresh,
-    homeGameSections,
+    homeGameSections:
+      refreshing && refreshSnapshot?.userId === userId
+        ? refreshSnapshot.sections
+        : homeGameSections,
     forYouError: forYouFeed.error,
     errorFights: mmaError,
     forYouLoading: forYouFeed.loading,
@@ -611,7 +684,9 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     favoriteLeagues: forYouFeed.favoriteLeagues,
     loading:
       selectedTab === "scores"
-        ? scoresLoading || refreshing || searchingUpcoming
+        ? refreshing && refreshSnapshot?.userId === userId
+          ? refreshSnapshot.loading
+          : scoresLoading || searchingUpcoming
         : forYouFeed.loading,
   };
 }

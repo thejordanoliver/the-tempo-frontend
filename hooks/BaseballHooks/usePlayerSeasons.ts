@@ -291,10 +291,16 @@ export function useBaseballPlayerSeasons(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
+  const requestKey =
+    playerId > 0 && Number.isSafeInteger(playerId)
+      ? `${league.toLowerCase()}:${playerId}`
+      : null;
+
   useEffect(() => {
     let cancelled = false;
 
-    if (!playerId) {
+    if (!requestKey) {
       void Promise.resolve().then(() => {
         if (cancelled) return;
         setData([]);
@@ -315,6 +321,7 @@ export function useBaseballPlayerSeasons(
       try {
         setLoading(true);
         setError(null);
+        setResolvedRequestKey(null);
 
         const res = await apiClient.get<PlayerStatsResponse>(
           `api/player/stats/${league.toLowerCase()}/${playerId}`,
@@ -353,6 +360,7 @@ export function useBaseballPlayerSeasons(
         });
 
         setData(mappedSeasons);
+        setResolvedRequestKey(requestKey);
       } catch (err: any) {
         if (cancelled) return;
 
@@ -367,6 +375,7 @@ export function useBaseballPlayerSeasons(
         setRawSeasons([]);
         setCurrentSeasonRankings({});
         setPlayer(null);
+        setResolvedRequestKey(requestKey);
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -379,14 +388,17 @@ export function useBaseballPlayerSeasons(
     return () => {
       cancelled = true;
     };
-  }, [playerId, league]);
+  }, [playerId, league, requestKey]);
+
+  const hasCurrentResult =
+    requestKey !== null && resolvedRequestKey === requestKey;
 
   return {
-    data,
-    rawSeasons,
-    currentSeasonRankings,
-    player,
-    loading,
-    error,
+    data: hasCurrentResult ? data : [],
+    rawSeasons: hasCurrentResult ? rawSeasons : [],
+    currentSeasonRankings: hasCurrentResult ? currentSeasonRankings : {},
+    player: hasCurrentResult ? player : null,
+    loading: requestKey !== null && (loading || !hasCurrentResult),
+    error: hasCurrentResult ? error : null,
   };
 }

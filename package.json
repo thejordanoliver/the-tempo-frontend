@@ -7,7 +7,7 @@
     "start:local": "node ./scripts/start-local.mjs",
     "start:hosted": "node ./scripts/start-hosted.mjs",
     "reset-project": "node ./scripts/reset-project.js",
-    "test:bracket": "node ./scripts/test-tournament-bracket-utils.js",
+    "test:bracket": "node ./scripts/test-tournament-bracket-utils.js && node --test tests/tournamentBracketStatus.test.mjs",
     "test:play-by-play-field": "node ./scripts/test-play-by-play-field-utils.js",
     "test:badges": "node ./scripts/test-badge-notification-store.js",
     "test:favorites": "node --experimental-strip-types --experimental-default-type=module --test tests/favoriteTeamKeys.test.ts tests/favoriteSportHeader.test.ts",

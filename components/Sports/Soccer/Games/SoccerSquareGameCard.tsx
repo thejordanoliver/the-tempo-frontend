@@ -1,13 +1,21 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
-import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
-import { formatDate, formatTime, getHolidayLabel } from "@/utils/common/dateUtils";
+import { SquareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+} from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const router = useScopedRouter();
@@ -47,16 +55,18 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const homeName = homeTeam?.code || "TBD";
   const awayName = awayTeam?.code || "TBD";
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getSOCCTeamLogo(home.id, isDark);
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getSOCCTeamLogo(away.id, isDark);
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getSOCCTeamLogo(home.id, isDark);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getSOCCTeamLogo(away.id, isDark);
 
   const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));
-  const styles = squareGameCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });
   const clock = game.status?.displayClock;

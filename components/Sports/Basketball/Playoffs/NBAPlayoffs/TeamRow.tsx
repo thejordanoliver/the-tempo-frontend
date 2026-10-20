@@ -1,58 +1,60 @@
 import { NBAPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
-import { NBAPlayoffTeam } from "@/types/basketball/basketball";
+import type { NBAPlayoffTeam } from "@/types/basketball/basketball";
 import { Colors } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { Image, Text, View } from "react-native";
+
+type TeamRowProps = {
+  team?: NBAPlayoffTeam;
+  wins: number;
+  opponentWins: number;
+  score: number | null;
+  isDark: boolean;
+  league?: "nba" | "wnba";
+  bestOf?: number;
+};
 
 export const TeamRow = ({
   team,
   wins,
   score,
-  oponnentWins,
+  opponentWins,
   isDark,
-}: {
-  team?: NBAPlayoffTeam;
-  wins: number;
-  oponnentWins: number;
-  score: number | null;
-  isDark: boolean;
-}) => {
+  league = "nba",
+  bestOf = 7,
+}: TeamRowProps) => {
   const styles = NBAPlayoffBracketStyles(isDark);
   const teamId = team?.id;
-  const teamLogo = getNBATeamLogo(teamId, isDark);
-  const teamData = teamId != null ? getNBATeam(teamId) : undefined;
-  const teamName = teamData?.code || "TBD";
+  const getTeam = league === "wnba" ? getWNBATeam : getNBATeam;
+  const getLogo = league === "wnba" ? getWNBATeamLogo : getNBATeamLogo;
+  const teamLogo = getLogo(teamId, isDark);
+  const teamData = teamId != null ? getTeam(teamId) : undefined;
+  const teamName = teamData?.code || team?.code || "TBD";
+  const winsNeeded = Math.ceil(bestOf / 2);
+  const hasWonSeries = wins === winsNeeded;
+  const hasLostSeries = opponentWins === winsNeeded;
   const seed = team?.playoffSeed ?? team?.seed;
-
-  const getTeamCodeColor = () => {
-    if (!team) return Colors.midTone;
-
-    if (wins === 4) return isDark ? Colors.white : Colors.black;
-    if (oponnentWins === 4) return Colors.midTone;
-
-    return isDark ? Colors.white : Colors.black;
-  };
+  const textColor = isDark ? Colors.white : Colors.black;
+  const seedColor = team ? textColor : Colors.midTone;
+  const teamCodeColor =
+    !team || (hasLostSeries && !hasWonSeries) ? Colors.midTone : textColor;
+  const winsBadgeColor = hasWonSeries
+    ? Colors.light.gold
+    : isDark
+      ? Colors.transparentDarkGray
+      : Colors.transparentLightGray;
+  const winsTextColor = hasWonSeries ? Colors.black : textColor;
 
   return (
     <View style={styles.teamRow}>
-      <Text
-        style={[
-          styles.seedText,
-          {
-            color: team
-              ? isDark
-                ? Colors.white
-                : Colors.black
-              : Colors.midTone,
-          },
-        ]}
-      >
+      <Text style={[styles.seedText, { color: seedColor }]}>
         {seed ?? "-"}
       </Text>
       <Image source={teamLogo} style={styles.teamLogo} resizeMode="contain" />
       <Text
         numberOfLines={1}
-        style={[styles.teamCode, { color: getTeamCodeColor() }]}
+        style={[styles.teamCode, { color: teamCodeColor }]}
       >
         {teamName}
       </Text>
@@ -67,29 +69,10 @@ export const TeamRow = ({
         <View
           style={[
             styles.winsBadge,
-            {
-              backgroundColor:
-                wins === 4
-                  ? Colors.light.gold
-                  : isDark
-                    ? Colors.transparentDarkGray
-                    : Colors.transparentLightGray,
-            },
+            { backgroundColor: winsBadgeColor },
           ]}
         >
-          <Text
-            style={[
-              styles.winsText,
-              {
-                color:
-                  wins === 4
-                    ? Colors.black
-                    : isDark
-                      ? Colors.white
-                      : Colors.black,
-              },
-            ]}
-          >
+          <Text style={[styles.winsText, { color: winsTextColor }]}>
             {team ? wins : "-"}
           </Text>
         </View>

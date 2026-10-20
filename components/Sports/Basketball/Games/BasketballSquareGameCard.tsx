@@ -1,18 +1,34 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { useScopedRouter } from "hooks/useScopedRouter";
-import {getMCBBTeam,  getMCBBRivalry, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import {
+  getMCBBRivalry,
+  getMCBBTeam,
+  getMCBBTeamLogo,
+} from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
-import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
+import { SquareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import {getWCBBTeam,  getWCBBRivalry, getWCBBTeamLogo } from "constants/teamsWCBB";
+import {
+  getWCBBRivalry,
+  getWCBBTeam,
+  getWCBBTeamLogo,
+} from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Text, TouchableOpacity, View } from "react-native";
-import { formatDate, formatTime, getHolidayLabel } from "utils/common/dateUtils";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+} from "utils/common/dateUtils";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 
 export default function BasketballSquareGameCard({
   game,
@@ -53,53 +69,47 @@ export default function BasketballSquareGameCard({
   const awayId = away?.id;
 
   const homeTeam =
-    (
-      isMCBB
+    (isMCBB
       ? getMCBBTeam(homeId)
       : isWCBB
         ? getWCBBTeam(homeId)
         : isWNBA
           ? getWNBATeam(homeId)
-          : getNBATeam(homeId)
-    ) ?? emptyHomeTeam;
+          : getNBATeam(homeId)) ?? emptyHomeTeam;
 
   const awayTeam =
-    (
-      isMCBB
+    (isMCBB
       ? getMCBBTeam(awayId)
       : isWCBB
         ? getWCBBTeam(awayId)
         : isWNBA
           ? getWNBATeam(awayId)
-          : getNBATeam(awayId)
-    ) ?? emptyAwayTeam;
+          : getNBATeam(awayId)) ?? emptyAwayTeam;
 
   const homeName = homeTeam?.code || game.home?.code;
   const awayName = awayTeam?.code || game.away?.code;
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isMCBB
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isMCBB
         ? getMCBBTeamLogo(homeId, isDark)
         : isWCBB
           ? getWCBBTeamLogo(homeId, isDark)
           : isWNBA
             ? getWNBATeamLogo(homeId, isDark)
-            : getNBATeamLogo(homeId, isDark)
-    );
+            : getNBATeamLogo(homeId, isDark);
 
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isMCBB
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isMCBB
         ? getMCBBTeamLogo(awayId, isDark)
         : isWCBB
           ? getWCBBTeamLogo(awayId, isDark)
           : isWNBA
             ? getWNBATeamLogo(awayId, isDark)
-            : getNBATeamLogo(awayId, isDark)
-    );
+            : getNBATeamLogo(awayId, isDark);
 
   const rivalry = isMCBB
     ? getMCBBRivalry(homeId, awayId)?.name
@@ -118,7 +128,7 @@ export default function BasketballSquareGameCard({
       "Women's Basketball Championship - National Championship",
     );
 
-  const styles = squareGameCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
 
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;

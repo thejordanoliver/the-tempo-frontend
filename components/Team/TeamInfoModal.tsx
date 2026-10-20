@@ -3,7 +3,7 @@ import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import CenteredHeader from "@/components/Headings/CenteredHeader";
 import ChampionshipBanner from "@/components/Team/ChampionshipBanner";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { TeamDetails } from "@/hooks/useTeams";
+import type { TeamDetails } from "@/types/team";
 import { TeamInfoModalStyles } from "@/styles/ModalsStyles/TeamInfoModalStyles";
 import { snapPoints } from "@/utils/ui/modalUtils";
 import {

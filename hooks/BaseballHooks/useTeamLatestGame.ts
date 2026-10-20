@@ -1,5 +1,5 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import { BaseballGame } from "@/types/baseball/baseball";
-import { isGameLive } from "@/utils/games/games";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
@@ -100,12 +100,12 @@ export function useTeamLatestGame(
     };
   }, [fetchLastGame]);
 
-  const hasLiveGame = useMemo(() => {
-    return isGameLive(game);
+  const hasActiveGame = useMemo(() => {
+    return shouldTrackGameUpdates(game);
   }, [game]);
 
   useLiveSportsSubscription<LastBaseballTeamGameResponse>({
-    enabled: Boolean(teamId && hasLiveGame),
+    enabled: Boolean(teamId && !loading && hasActiveGame),
     kind: "scoreboard",
     payload: {
       sport: "baseball",

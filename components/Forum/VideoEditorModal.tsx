@@ -39,10 +39,8 @@ export default function VideoEditorModal({
   const [trimStartMs, setTrimStartMs] = useState(initialTrimStartMs);
   const [trimEndMs, setTrimEndMs] = useState(initialTrimEndMs ?? 0);
   const [thumbTimeMs, setThumbTimeMs] = useState(initialTrimStartMs);
-  const [thumbnailUri, setThumbnailUri] = useState<string | null>(
-    initialThumbnailUri ?? null,
-  );
   const [thumbnailChanged, setThumbnailChanged] = useState(false);
+  const [saving, setSaving] = useState(false);
   const player = useVideoPlayer(videoUri, (player) => {
     player.loop = false;
     player.pause();
@@ -74,7 +72,6 @@ export default function VideoEditorModal({
       setTrimStartMs(initialTrimStartMs);
       setTrimEndMs(initialTrimEndMs ?? 0);
       setThumbTimeMs(initialTrimStartMs);
-      setThumbnailUri(initialThumbnailUri ?? null);
       setThumbnailChanged(false); // ✅ reset
     });
 
@@ -91,12 +88,12 @@ export default function VideoEditorModal({
 
   const maxEnd = useMemo(() => (durationMs > 0 ? durationMs : 1), [durationMs]);
 
-  // --- Thumbnail generation (explicit only) ---
+  // Thumbnails must come from within the kept clip.
   const captureThumbnail = async (timeMs: number) => {
-    if (!durationMs || durationMs <= 1) return;
+    if (!durationMs || durationMs <= 1) return null;
 
     const safeTime = Math.floor(
-      Math.min(Math.max(timeMs, 0), Math.max(durationMs - 200, 0)),
+      Math.min(Math.max(timeMs, trimStartMs), (trimEndMs || durationMs) - 1),
     );
 
     try {
@@ -107,14 +104,15 @@ export default function VideoEditorModal({
         time: safeTime,
       });
 
-      setThumbnailUri(uri);
       setThumbnailChanged(true);
+      return uri;
     } catch (e) {
       console.warn("Thumbnail capture failed", e);
       Alert.alert(
         "Thumbnail Error",
         "Could not generate thumbnail from this video.",
       );
+      return null;
     }
   };
 
@@ -132,22 +130,24 @@ export default function VideoEditorModal({
 
             <TouchableOpacity
               style={styles.headerBtn}
-              onPress={() => {
-                if (!thumbnailUri) {
-                  Alert.alert(
-                    "Pick a thumbnail",
-                    "Tap “Set thumbnail” before saving.",
-                  );
-                  return;
+              disabled={saving || !videoReady || durationMs <= 1}
+              onPress={async () => {
+                setSaving(true);
+                try {
+                  // Regenerate within the kept clip, including when a default
+                  // thumbnail came from footage that has since been removed.
+                  const savedThumbnail = await captureThumbnail(thumbTimeMs);
+                  if (!savedThumbnail) return;
+
+                  onSave({
+                    thumbnailUri: savedThumbnail,
+                    trimStartMs,
+                    trimEndMs: trimEndMs || maxEnd,
+                  });
+                  onClose();
+                } finally {
+                  setSaving(false);
                 }
-
-                onSave({
-                  thumbnailUri,
-                  trimStartMs,
-                  trimEndMs: trimEndMs || maxEnd,
-                });
-
-                onClose();
               }}
             >
               <Text style={styles.save}>Save</Text>
@@ -171,11 +171,13 @@ export default function VideoEditorModal({
             <Text style={styles.value}>{Math.floor(trimStartMs / 1000)}s</Text>
           </View>
           <Slider
+            disabled={saving || !videoReady}
             minimumValue={0}
             maximumValue={durationMs || 1}
             value={trimStartMs}
             onValueChange={(v) => {
-              const ms = Math.floor(v);
+              const ms = Math.max(0, Math.min(Math.floor(v), (trimEndMs || maxEnd) - 1));
+              setTrimStartMs(ms);
               setThumbTimeMs(ms);
               scrubTo(ms);
             }}
@@ -188,11 +190,13 @@ export default function VideoEditorModal({
             </Text>
           </View>
           <Slider
+            disabled={saving || !videoReady}
             minimumValue={0}
             maximumValue={durationMs || 1}
             value={trimEndMs || maxEnd}
             onValueChange={(v) => {
-              const ms = Math.floor(v);
+              const ms = Math.min(maxEnd, Math.max(Math.floor(v), trimStartMs + 1));
+              setTrimEndMs(ms);
               setThumbTimeMs(ms);
               scrubTo(ms);
             }}
@@ -207,6 +211,7 @@ export default function VideoEditorModal({
           </View>
 
           <Slider
+            disabled={saving || !videoReady}
             minimumValue={0}
             maximumValue={durationMs || 1}
             value={thumbTimeMs}
@@ -219,7 +224,7 @@ export default function VideoEditorModal({
 
           <TouchableOpacity
             style={[styles.thumbBtn, !videoReady && { opacity: 0.5 }]}
-            disabled={!videoReady}
+            disabled={saving || !videoReady}
             onPress={async () => {
               await scrubTo(thumbTimeMs);
               await captureThumbnail(thumbTimeMs);

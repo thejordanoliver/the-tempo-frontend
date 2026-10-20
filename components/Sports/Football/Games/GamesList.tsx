@@ -152,7 +152,11 @@ export default function GamesList({
               }}
             >
               <View style={styles.gridItem}>
-                <FootballSquareGameCard game={game} isNFL={isNFL} isCFB={isCFB} />
+                <FootballSquareGameCard
+                  game={game}
+                  isNFL={isNFL}
+                  isCFB={isCFB}
+                />
               </View>
             </LongPressGestureHandler>
           );
@@ -355,10 +359,7 @@ export default function GamesList({
           )}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
-              <Text style={global.emptyTitle}>
-                No games scheduled
-              </Text>
-
+              <Text style={global.emptyTitle}>No games scheduled</Text>
             </View>
           }
         />
@@ -418,7 +419,6 @@ export default function GamesList({
                   ? "No games scheduled"
                   : "No games on this date"}
               </Text>
-
             </View>
           }
         />

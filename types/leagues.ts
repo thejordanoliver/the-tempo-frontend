@@ -8,7 +8,10 @@ import type { HockeyGame } from "./hockey/hockey";
 import type { SoccerGame } from "./soccer/soccer";
 import type { TennisMatch } from "./tennis/tennis";
 
+import type { VolleyballGame } from "./volleyball/volleyball";
+
 export type LeagueGame =
+  | VolleyballGame
   | BasketballGame
   | FootballGame
   | BaseballGame
@@ -29,7 +32,12 @@ export type HomeGameItem = {
 };
 
 export type HomeGameSection = {
-  id: HomeLeagueId | typeof MY_TEAMS_SECTION_ID | "general-live" | "general-upcoming" | "general-final";
+  id:
+    | HomeLeagueId
+    | typeof MY_TEAMS_SECTION_ID
+    | "general-live"
+    | "general-upcoming"
+    | "general-final";
   title: string;
   data: HomeGameItem[];
 };

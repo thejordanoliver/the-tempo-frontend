@@ -212,6 +212,14 @@ function canonicalizeScoreboardPayload(
       );
     }
 
+    if (sport === "basketball") {
+      addCanonicalParam(
+        params,
+        "conference",
+        input.conferenceId ?? input.groupId ?? input.groups,
+      );
+    }
+
     addCanonicalParam(params, "limit", input.limit);
   }
 

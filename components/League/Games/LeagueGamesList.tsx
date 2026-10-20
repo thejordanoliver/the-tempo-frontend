@@ -1,10 +1,10 @@
-import { usePreferences } from "contexts/PreferencesContext";
 import BasketballGameCard from "@/components/Sports/Basketball/Games/BasketballGameCard";
 import BasketballSquareGameCard from "@/components/Sports/Basketball/Games/BasketballSquareGameCard";
 import BasketballStackedGameCard from "@/components/Sports/Basketball/Games/BasketballStackedGameCard";
 import FootballGameCard from "@/components/Sports/Football/Games/FootballGameCard";
 import FootballStackedGameCard from "@/components/Sports/Football/Games/FootballStackedGameCard";
 import NHLStackedGameCard from "@/components/Sports/Hockey/Games/HockeyStackedGameCard";
+import TennisGameCard from "@/components/Sports/Tennis/Games/TennisGameCard";
 import TennisSquareGameCard from "@/components/Sports/Tennis/Games/TennisSquareGameCard";
 import TennisStackedGameCard from "@/components/Sports/Tennis/Games/TennisStackedGameCard";
 import type { HomeLeagueId } from "@/constants/leagues";
@@ -15,12 +15,15 @@ import type { HockeyGame } from "@/types/hockey/hockey";
 import type { HomeGameItem, HomeGameSection } from "@/types/leagues";
 import type { SoccerGame } from "@/types/soccer/soccer";
 import type { TennisMatch } from "@/types/tennis/tennis";
+import type { VolleyballGame } from "@/types/volleyball/volleyball";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
 import BaseballGameCard from "components/Sports/Baseball/Games/BaseballGameCard";
 import BaseballSquareGameCard from "components/Sports/Baseball/Games/BaseballSquareGameCard";
 import BaseballStackedGameCard from "components/Sports/Baseball/Games/BaseballStackedGameCard";
+import VolleyballGameCard from "components/Sports/Volleyball/VolleyballGameCard";
+import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import { useMemo, useState, type ReactNode } from "react";
 import { SectionList, View } from "react-native";
@@ -28,8 +31,6 @@ import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { leagueGamesListStyles } from "styles/GamecardStyles/LeagueGamesListStyles";
 import type { MMAFight } from "types/mma/mma";
 import { chunkIntoGridRows } from "utils/games/gameGrid";
-
-import TennisGameCard from "@/components/Sports/Tennis/Games/TennisGameCard";
 import HeadingTwo from "../../Headings/HeadingTwo";
 import SquareGameCardSkeleton from "../../Skeletons/GameCards/SquareGameCardSkeleton";
 import HeaderSkeleton from "../../Skeletons/HeaderSkeleton";
@@ -227,6 +228,19 @@ export default function LeagueGamesList({
     };
 
     switch (item.league) {
+      case "mcvb":
+      case "wcvb":
+        return (
+          <View
+            key={item.key}
+            style={viewMode === "grid" ? styles.gridItem : styles.listItem}
+          >
+            <VolleyballGameCard
+              game={item.game as VolleyballGame}
+              compact={viewMode === "grid"}
+            />
+          </View>
+        );
       case "nba": {
         const game = item.game as BasketballGame;
         if (viewMode === "list")
@@ -385,15 +399,16 @@ export default function LeagueGamesList({
     );
   };
 
-  if (!viewModeReady) return null;
-
-  if (loading) {
+  if (loading || !viewModeReady) {
     const skeletonCount = expectedCount ?? 4;
+    const skeletonSectionIds = sections.length
+      ? sections.map((section) => section.id)
+      : ["loading"];
 
     return (
       <View style={styles.contentContainer}>
-        {sections.map((section) => (
-          <View key={section.id}>
+        {skeletonSectionIds.map((sectionId) => (
+          <View key={sectionId}>
             {showHeaders && (
               <View style={styles.headerSkeleton}>
                 <HeaderSkeleton />

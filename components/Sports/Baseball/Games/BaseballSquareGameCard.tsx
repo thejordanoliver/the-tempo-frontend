@@ -1,4 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -16,7 +15,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
+import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
@@ -47,22 +47,18 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const homeId = home?.id;
   const awayId = away?.id;
   const homeTeam =
-    (
-      isSB
+    (isSB
       ? getSBTeam(home?.id)
       : isCB
         ? getCBTeam(home?.id)
-        : getMLBTeam(home?.id)
-    ) ?? emptyHomeTeam;
+        : getMLBTeam(home?.id)) ?? emptyHomeTeam;
 
   const awayTeam =
-    (
-      isSB
+    (isSB
       ? getSBTeam(away?.id)
       : isCB
         ? getCBTeam(away?.id)
-        : getMLBTeam(away?.id)
-    ) ?? emptyAwayTeam;
+        : getMLBTeam(away?.id)) ?? emptyAwayTeam;
 
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
@@ -70,28 +66,26 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const homeName = (homeTeam?.code || game.home?.code) ?? "TBD";
   const awayName = (awayTeam?.code || game.away?.code) ?? "TBD";
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isSB
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isSB
         ? getSBTeamLogo(homeId, isDark)
         : isCB
           ? getCBTeamLogo(homeId, isDark)
-          : getMLBTeamLogo(homeTeamId, isDark)
-    );
+          : getMLBTeamLogo(homeTeamId, isDark);
 
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isSB
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isSB
         ? getSBTeamLogo(awayId, isDark)
         : isCB
           ? getCBTeamLogo(awayId, isDark)
-          : getMLBTeamLogo(awayTeamId, isDark)
-    );
+          : getMLBTeamLogo(awayTeamId, isDark);
 
   const isChampionship = game?.season.slug === "championship-series";
-  const styles = squareGameCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = game.status.description ?? "";

@@ -1,5 +1,5 @@
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { Championships } from "@/hooks/useTeams";
+import type { Championships } from "@/types/team";
 import Fill from "assets/banners/Fill.png";
 import Outline from "assets/banners/Outline.png";
 import OutlineLight from "assets/banners/OutlineLight.png";

@@ -62,39 +62,19 @@ export default function PlayerDetailScreen() {
     player: statsPlayer,
     seasons,
     collegeSeasons,
-    resolvedLeague,
-    resolvedProfile,
     seasonsLoading,
     seasonsError,
     currentSeasonRankings,
   } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
-  const playerId = useMemo(() => {
-    const isCollegeRequest =
-      requestedLeague === "mcbb" || requestedLeague === "wcbb";
-    const resolvedId =
-      resolvedProfile?.playerId ??
-      (!isCollegeRequest ? requestedPlayerId : undefined);
-
-    if (resolvedId === undefined) return undefined;
-
-    const parsed = Number(resolvedId);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
-  }, [resolvedProfile?.playerId, requestedLeague, requestedPlayerId]);
-
-  const playerLeague = resolvedProfile?.league ?? resolvedLeague;
+  const { player, loading, error, resolvedPlayerId: playerId, resolvedLeague: profileLeague } =
+    usePlayerById(requestedPlayerId, requestedLeague);
+  const playerLeague = normalizeBasketballLeague(profileLeague);
   const isNBA = playerLeague === "nba";
   const isWNBA = playerLeague === "wnba";
   const isMCBB = playerLeague === "mcbb";
   const isWCBB = playerLeague === "wcbb";
   const hasPlayerGameLog = isNBA || isMCBB || isWCBB;
-
-  const { player, loading, error } = usePlayerById(
-    playerId,
-    playerLeague,
-    (requestedLeague !== "mcbb" && requestedLeague !== "wcbb") ||
-      Boolean(resolvedProfile),
-  );
 
   const currentTeamId = useMemo(() => {
     const profileTeamId = player?.team_id;
@@ -156,7 +136,6 @@ export default function PlayerDetailScreen() {
       ? gameLogSelection.season
       : null;
   const latestGameLog = usePlayerGameLog(gameLogPlayerId, playerLeague);
-  // Share the initial log; request another season only when the dropdown changes.
   const needsSeasonLog =
     selectedGameLogSeason !== null &&
     selectedGameLogSeason !== String(latestGameLog.data?.season);
@@ -181,9 +160,10 @@ export default function PlayerDetailScreen() {
   const gameLoading = playerGameLoading;
   const gameError = playerGameError;
 
-  /* ---------------- Header ---------------- */
+  const screenLoading = loading || seasonsLoading || latestGameLog.loading;
+
   useLayoutEffect(() => {
-    if (seasonsLoading || loading) {
+    if (screenLoading) {
       navigation.setOptions({ header: () => null });
       return;
     }
@@ -199,20 +179,20 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, teamLogo, teamColor, seasonsLoading, loading]);
+  }, [navigation, teamLogo, teamColor, screenLoading]);
 
-  if (seasonsLoading || loading)
+  if (screenLoading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
       </View>
     );
 
-  if (seasonsError || error)
+  if (error)
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>
-          {seasonsError || error || "Couldn’t load player"}
+          {error || "Couldn’t load player"}
         </Text>
       </View>
     );

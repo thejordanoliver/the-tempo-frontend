@@ -1,3 +1,4 @@
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import MMAChampionsList from "@/components/Sports/MMA/Champions/MMAChampionsList";
 import EventSelector, {
   getDefaultUFCEventIndex,
@@ -66,7 +67,8 @@ function UFCLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { calendar } = useLeagueCalendar(league, league);
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, league, undefined, scoreboardCalendar);
 
   const sortedCalendar = useMemo(() => {
     return [...(calendar ?? [])].sort((a, b) => {
@@ -99,9 +101,10 @@ function UFCLeagueScreen() {
     refreshGames,
     error,
   } = useMMAEvents({
+    onScoreboardCalendar,
     league: "ufc",
     date: selectedEventDate,
-    enabled: Boolean(selectedEventDate),
+    enabled: true,
   });
 
   const {

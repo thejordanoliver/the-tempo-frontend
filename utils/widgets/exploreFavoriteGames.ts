@@ -50,7 +50,7 @@ export function getExploreFavoriteGamePhase(
 
 function getGameTimestamp(envelope: ExploreWidgetGame): number {
   const game = envelope.game;
-  const dateTimestamp = Date.parse(game.startDate || game.date);
+  const dateTimestamp = Date.parse(game.startDate || game.date || "");
 
   if (Number.isFinite(dateTimestamp)) return dateTimestamp;
 

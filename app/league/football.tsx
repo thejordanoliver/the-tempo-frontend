@@ -1,3 +1,4 @@
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import ConferenceListModal, {
@@ -152,7 +153,8 @@ function NFLLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { calendar } = useLeagueCalendar(league, "football");
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "football", undefined, scoreboardCalendar);
 
   const weekGroups = useMemo<FootballWeekGroup[]>(() => {
     if (!calendar?.length) {
@@ -224,11 +226,12 @@ function NFLLeagueScreen() {
     refreshing: gamesRefreshing,
     refreshGames,
   } = useFootballGames({
+    onScoreboardCalendar,
     league,
     season: currentSeason,
     week: selectedWeekNumber,
     seasontype: selectedSeasonType,
-    enabled: selectedWeekNumber != null && selectedSeasonType != null,
+    enabled: true,
   });
 
   const {
@@ -451,10 +454,8 @@ function CFBLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { calendar, loading: calendarLoading } = useLeagueCalendar(
-    league,
-    "football",
-  );
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar, loading: calendarLoading } = useLeagueCalendar(league, "football", undefined, scoreboardCalendar);
 
   const selectedConferenceName = useMemo(() => {
     return getCFBConferenceSelectionName(selectedConference);
@@ -544,6 +545,7 @@ function CFBLeagueScreen() {
     refreshing: gamesRefreshing,
     refreshGames,
   } = useFootballGames({
+    onScoreboardCalendar,
     league: league,
     season: currentSeason,
     week: selectedWeekNumber,
@@ -552,7 +554,7 @@ function CFBLeagueScreen() {
       selectedConference !== "top25" && selectedConference != null
         ? selectedConference
         : undefined,
-    enabled: selectedWeekNumber != null && selectedSeasonType != null,
+    enabled: true,
   });
 
   const {
@@ -825,7 +827,8 @@ function UFLLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { calendar } = useLeagueCalendar(league, "football");
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "football", undefined, scoreboardCalendar);
 
   const weekGroups = useMemo<FootballWeekGroup[]>(() => {
     if (!calendar?.length) {
@@ -865,6 +868,7 @@ function UFLLeagueScreen() {
     refreshing: gamesRefreshing,
     refreshGames,
   } = useFootballGames({
+    onScoreboardCalendar,
     league: league,
     season: currentSeason,
     week: selectedWeekNumber,

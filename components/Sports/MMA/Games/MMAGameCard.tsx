@@ -1,4 +1,3 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { MMAFightCardProps } from "@/types/mma/mma";
 import {
   formatDate,
@@ -11,8 +10,9 @@ import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Text, TouchableOpacity, View } from "react-native";
-import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
 
 export default function MMAGameCard({ game }: MMAFightCardProps) {
@@ -47,7 +47,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const secondFighterRecord = secondFighter?.record ?? "0-0";
   const firstFighterWinner = firstFighter?.winner === true;
   const secondFighterWinner = secondFighter?.winner === true;
-  const styles = gameCardStyles(isDark);
+  const styles = GameCardStyles(isDark);
   const gameStatusDescription = game?.status?.description;
   const gameStatusDetail = game?.status?.shortDetail ?? "";
   const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;

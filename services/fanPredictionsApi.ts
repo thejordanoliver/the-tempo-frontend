@@ -1,9 +1,10 @@
+import { isUnavailablePrediction } from "utils/games/predictionAvailability";
 import { apiClient } from "utils/apiClient";
 import { notifyPredictionPicksChanged } from "services/predictionUpdates";
 import type { FanPredictionSortOrder, FanPredictionScoring, FanPredictionPicksResponse, FanPredictionRankingsResponse, RankedPredictionContext } from "types/fanPredictions";
 export async function fetchCurrentUserPicks(signal?: AbortSignal) {
   const { data } = await apiClient.get<FanPredictionPicksResponse>("/api/predictions/me/picks", { signal });
-  return data;
+  return { ...data, picks: data.picks.filter(pick => !isUnavailablePrediction(pick)) };
 }
 export async function fetchPredictionRankings(signal?: AbortSignal) {
   const { data } = await apiClient.get<FanPredictionRankingsResponse>("/api/predictions/rankings", { signal });
@@ -25,5 +26,5 @@ export async function fetchUserPredictionPicks(userId: number, offset: number, s
   const { data } = await apiClient.get<FanPredictionPicksResponse>(`/api/predictions/users/${userId}/picks`, {
     params: { offset, sort }, signal,
   });
-  return data;
+  return { ...data, picks: data.picks.filter(pick => !isUnavailablePrediction(pick)) };
 }

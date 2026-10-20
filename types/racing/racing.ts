@@ -1,3 +1,4 @@
+import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 export type RacingLeague =
   | "f1"
   | "nascarpremier"
@@ -358,6 +359,9 @@ export type RacingEvent = {
 // ---------- API RESPONSE TYPES ----------
 
 export type RacingEventsResponse = {
+  calendar?: unknown[] | null;
+  calendarStartDate?: string | null;
+  calendarEndDate?: string | null;
   league: RacingLeagueInfo;
 
   date: string | null;
@@ -374,6 +378,7 @@ export type RacingEventsResponse = {
 // ---------- HOOK TYPES ----------
 
 export type UseRacingEventsOptions = {
+  onScoreboardCalendar?: OnScoreboardCalendar;
   date?: Date | string | number | null;
   league?: RacingLeague | string;
   enabled?: boolean;

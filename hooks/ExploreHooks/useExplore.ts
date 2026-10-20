@@ -12,6 +12,8 @@ import {
   buildExploreSearchSettledEvent,
   createExploreSearchAnalyticsId,
   sendExploreSearchEvent,
+  sendExploreSearchEvents,
+  type ExploreSearchMetadata,
   type ExploreSearchSettledEvent,
 } from "services/exploreSearchAnalytics";
 import { getVisibleUserIds } from "services/usersApi";
@@ -39,6 +41,7 @@ type ExploreSearchResponse = {
   players: PlayerResult[];
   teams: TeamResult[];
   users: UserResult[];
+  searchMetadata: ExploreSearchMetadata;
 };
 
 const getRecentSearchesKey = (userId: string | number) =>
@@ -143,6 +146,7 @@ export function useExplore() {
     null,
   );
   const pendingSettledEventRef = useRef<ExploreSearchSettledEvent | null>(null);
+  const latestSettledEventRef = useRef<ExploreSearchSettledEvent | null>(null);
 
   const normalizedQuery = normalizeExploreSearchQuery(query);
   const normalizedDebouncedQuery = normalizeExploreSearchQuery(debouncedQuery);
@@ -175,6 +179,7 @@ export function useExplore() {
 
   const finishSearchSession = useCallback(() => {
     clearPendingSettledEvent();
+    latestSettledEventRef.current = null;
     searchSessionIdRef.current = null;
   }, [clearPendingSettledEvent]);
 
@@ -192,6 +197,7 @@ export function useExplore() {
   const setSearchQuery = useCallback(
     (nextQuery: string) => {
       clearPendingSettledEvent();
+      latestSettledEventRef.current = null;
       setQuery(nextQuery);
       const nextQueryLength = normalizeExploreSearchQuery(nextQuery).length;
 
@@ -332,13 +338,16 @@ export function useExplore() {
         const searchSessionId = searchSessionIdRef.current;
         if (searchSessionId) {
           clearPendingSettledEvent();
-          pendingSettledEventRef.current = buildExploreSearchSettledEvent({
+          const settledEvent = buildExploreSearchSettledEvent({
             searchSessionId,
             query: trimmedQuery,
             scope: requestScope,
             results: res.data.results,
             durationMs: Date.now() - requestStartedAt,
+            searchMetadata: res.data.searchMetadata,
           });
+          pendingSettledEventRef.current = settledEvent;
+          latestSettledEventRef.current = settledEvent;
           settledAnalyticsTimerRef.current = setTimeout(() => {
             flushPendingSettledEvent();
           }, SEARCH_SETTLED_DELAY_MS);
@@ -367,9 +376,14 @@ export function useExplore() {
     (item: ResultItem) => {
       const searchSessionId = searchSessionIdRef.current;
       const normalizedSelectionQuery = normalizeExploreSearchQuery(query);
+      const attributedEvent = latestSettledEventRef.current;
       if (
         !searchSessionId ||
-        !canSearchExploreQuery(normalizedSelectionQuery)
+        !canSearchExploreQuery(normalizedSelectionQuery) ||
+        !attributedEvent ||
+        attributedEvent.searchSessionId !== searchSessionId ||
+        attributedEvent.normalizedQuery !== normalizedSelectionQuery ||
+        attributedEvent.scope !== searchScope
       ) {
         return;
       }
@@ -381,15 +395,14 @@ export function useExplore() {
       if (position < 0) return;
 
       flushPendingSettledEvent();
-      sendExploreSearchEvent(
+      sendExploreSearchEvents([
+        attributedEvent,
         buildExploreSearchSelectionEvent({
-          searchSessionId,
-          query: normalizedSelectionQuery,
-          scope: searchScope,
+          attributedEvent,
           item,
           position: position + 1,
         }),
-      );
+      ]);
     },
     [flushPendingSettledEvent, query, results, searchScope],
   );
@@ -468,6 +481,7 @@ export function useExplore() {
 
   useEffect(() => {
     clearPendingSettledEvent();
+    latestSettledEventRef.current = null;
   }, [clearPendingSettledEvent, expandedSearch, searchScope]);
 
   useFocusEffect(
@@ -480,6 +494,7 @@ export function useExplore() {
     return () => {
       abortControllerRef.current?.abort();
       clearPendingSettledEvent();
+      latestSettledEventRef.current = null;
       searchSessionIdRef.current = null;
     };
   }, [clearPendingSettledEvent]);

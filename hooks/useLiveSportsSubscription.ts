@@ -43,13 +43,19 @@ export function useLiveSportsSubscription<TPayload = unknown>({
     useCallback(() => {
       if (!enabled) return undefined;
 
-      return subscribeSportsLive<TPayload>({
+      let active = true;
+      const unsubscribe = subscribeSportsLive<TPayload>({
         kind,
         payload: payloadRef.current,
         listener: (envelope) => {
-          onUpdateRef.current(envelope.payload, envelope);
+          if (active) onUpdateRef.current(envelope.payload, envelope);
         },
       });
-    }, [enabled, kind]),
+
+      return () => {
+        active = false;
+        unsubscribe();
+      };
+    }, [enabled, kind, stableSubscriptionKey]),
   );
 }

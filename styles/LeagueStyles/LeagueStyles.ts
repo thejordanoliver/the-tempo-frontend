@@ -9,6 +9,10 @@ export const LeagueScreenStyles = (isDark: boolean) =>
     contentArea: {
       flex: 1,
     },
+    pagerPage: {
+      width: "100%",
+      height: "100%",
+    },
     carouselContent: {
       paddingHorizontal: 12,
       paddingBottom: 80,

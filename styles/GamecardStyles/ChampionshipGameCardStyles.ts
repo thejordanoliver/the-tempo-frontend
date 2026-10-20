@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "@/constants/styles";
 import { StyleSheet } from "react-native";
 
-export const champGameCardStyles = (isDark: boolean) =>
+export const ChampionshipGameCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       marginHorizontal: 12,
@@ -51,31 +51,26 @@ export const champGameCardStyles = (isDark: boolean) =>
 
     teamName: {
       maxWidth: 120,
-      minHeight: 36,
       fontSize: 14,
       textAlign: "center",
-      fontFamily: Fonts.BOLD,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
     rank: {
       fontSize: 20,
-      fontFamily: Fonts.BOLD,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
     score: {
-      marginTop: 4,
       fontSize: 34,
-      lineHeight: 38,
       textAlign: "center",
-      fontFamily: Fonts.SPORTS_EXTRA_BOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
-      fontVariant: ["tabular-nums"],
     },
 
     record: {
-      marginTop: 8,
       fontSize: 18,
       textAlign: "center",
       fontFamily: Fonts.BOLD,
@@ -87,14 +82,6 @@ export const champGameCardStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 4,
-    },
-
-    versus: {
-      marginBottom: 8,
-      fontSize: 20,
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.white : Colors.black,
-      letterSpacing: 1.5,
     },
 
     info: {
@@ -119,9 +106,7 @@ export const champGameCardStyles = (isDark: boolean) =>
     finalStatusDivider: {
       width: 1,
       height: 12,
-      backgroundColor: isDark
-        ? "rgba(255,255,255,0.22)"
-        : "rgba(53,40,20,0.22)",
+      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
     period: {
@@ -135,7 +120,6 @@ export const champGameCardStyles = (isDark: boolean) =>
       fontSize: 14,
       fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontVariant: ["tabular-nums"],
     },
 
     date: {
@@ -145,10 +129,10 @@ export const champGameCardStyles = (isDark: boolean) =>
       textAlign: "center",
     },
 
-    finalText: {
-      fontSize: 11,
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.white : Colors.black,
+    statusText: {
+      fontSize: 14,
+      fontFamily: Fonts.REGULAR,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
 

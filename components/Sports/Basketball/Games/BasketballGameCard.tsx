@@ -1,4 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import {
   getMCBBRivalry,
@@ -19,14 +18,19 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Text, TouchableOpacity, View } from "react-native";
-import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatDate,
   formatTime,
   getHolidayLabel,
   safeDate,
 } from "utils/common/dateUtils";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 
 export default function BasketballGameCard({
   game,
@@ -63,8 +67,7 @@ export default function BasketballGameCard({
   const awayId = away?.id;
 
   const homeTeam =
-    (
-      isMCBB
+    (isMCBB
       ? getMCBBTeam(homeId)
       : isWCBB
         ? getWCBBTeam(homeId)
@@ -74,12 +77,10 @@ export default function BasketballGameCard({
             ? getTeamBySummerId(homeId)
             : isGLEAGUE
               ? getGLeagueTeam(homeId)
-              : getNBATeam(homeId)
-    ) ?? emptyHomeTeam;
+              : getNBATeam(homeId)) ?? emptyHomeTeam;
 
   const awayTeam =
-    (
-      isMCBB
+    (isMCBB
       ? getMCBBTeam(awayId)
       : isWCBB
         ? getWCBBTeam(awayId)
@@ -89,16 +90,15 @@ export default function BasketballGameCard({
             ? getTeamBySummerId(awayId)
             : isGLEAGUE
               ? getGLeagueTeam(awayId)
-              : getNBATeam(awayId)
-    ) ?? emptyAwayTeam;
+              : getNBATeam(awayId)) ?? emptyAwayTeam;
 
   const homeName = homeTeam?.shortName || homeTeam?.name || game.home?.name;
   const awayName = awayTeam?.shortName || awayTeam?.name || game.away?.name;
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isMCBB
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isMCBB
         ? getMCBBTeamLogo(homeId, isDark)
         : isWCBB
           ? getWCBBTeamLogo(homeId, isDark)
@@ -108,15 +108,12 @@ export default function BasketballGameCard({
               ? getWNBATeamLogo(homeId, isDark)
               : isGLEAGUE
                 ? getGLeagueTeamLogo(homeId, isDark)
-                : getNBATeamLogo(homeId, isDark, isSL)
-    );
+                : getNBATeamLogo(homeId, isDark, isSL);
 
-
-
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isMCBB
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isMCBB
         ? getMCBBTeamLogo(awayId, isDark)
         : isWCBB
           ? getWCBBTeamLogo(awayId, isDark)
@@ -124,8 +121,7 @@ export default function BasketballGameCard({
             ? getWNBATeamLogo(awayId, isDark)
             : isGLEAGUE
               ? getGLeagueTeamLogo(awayId, isDark)
-              : getNBATeamLogo(awayId, isDark, isSL)
-    );
+              : getNBATeamLogo(awayId, isDark, isSL);
 
   const rivalry = isMCBB
     ? getMCBBRivalry(homeId, awayId)?.name
@@ -144,7 +140,7 @@ export default function BasketballGameCard({
       "Women's Basketball Championship - National Championship",
     );
 
-  const styles = gameCardStyles(isDark, isChampionship);
+  const styles = GameCardStyles(isDark, isChampionship);
 
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;

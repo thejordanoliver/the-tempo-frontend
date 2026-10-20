@@ -1,5 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -14,13 +12,20 @@ import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
-function BaseballGameCard({ game, isCB, isSB, onNavigate }: BaseballGameCardProps) {
+function BaseballGameCard({
+  game,
+  isCB,
+  isSB,
+  onNavigate,
+}: BaseballGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -47,49 +52,43 @@ function BaseballGameCard({ game, isCB, isSB, onNavigate }: BaseballGameCardProp
   const awayId = away?.id;
 
   const homeTeam =
-    (
-      isSB
+    (isSB
       ? getSBTeam(homeId)
       : isCB
         ? getCBTeam(homeId)
-        : getMLBTeam(homeId)
-    ) ?? emptyHomeTeam;
+        : getMLBTeam(homeId)) ?? emptyHomeTeam;
   const awayTeam =
-    (
-      isSB
+    (isSB
       ? getSBTeam(awayId)
       : isCB
         ? getCBTeam(awayId)
-        : getMLBTeam(awayId)
-    ) ?? emptyAwayTeam;
+        : getMLBTeam(awayId)) ?? emptyAwayTeam;
 
   const homeName = homeTeam?.shortName ?? homeTeam?.name ?? "TBD";
   const awayName = awayTeam?.shortName ?? awayTeam?.name ?? "TBD";
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isSB
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isSB
         ? getSBTeamLogo(homeId, isDark)
         : isCB
           ? getCBTeamLogo(homeId, isDark)
-          : getMLBTeamLogo(homeId, isDark)
-    );
+          : getMLBTeamLogo(homeId, isDark);
 
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isSB
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isSB
         ? getSBTeamLogo(awayId, isDark)
         : isCB
           ? getCBTeamLogo(awayId, isDark)
-          : getMLBTeamLogo(awayId, isDark)
-    );
+          : getMLBTeamLogo(awayId, isDark);
 
   const league = game?.league?.code ?? "mlb";
 
   const isChampionship = game?.season.slug === "championship-series";
-  const styles = gameCardStyles(isDark, isChampionship);
+  const styles = GameCardStyles(isDark, isChampionship);
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = game.status.description ?? "";

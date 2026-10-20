@@ -1,3 +1,4 @@
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import F1StandingsList from "components/Sports/Racing/Standings/F1StandingsList";
 import EventSelector, {
   getDefaultUFCEventIndex,
@@ -62,10 +63,8 @@ export default function RacingLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { calendar, loading: calendarLoading } = useLeagueCalendar(
-    league,
-    "racing",
-  );
+  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
+  const { calendar, loading: calendarLoading } = useLeagueCalendar(league, "racing", undefined, scoreboardCalendar);
 
   const sortedCalendar = useMemo(() => {
     return [...(calendar ?? [])].sort((a, b) => {
@@ -137,9 +136,10 @@ export default function RacingLeagueScreen() {
     refreshGames: handleScoresRefresh,
     error: gamesError,
   } = useRacingEvents({
+    onScoreboardCalendar,
     date: selectedEventDate,
     league: league,
-    enabled: Boolean(selectedEventDate),
+    enabled: true,
   });
 
   const {

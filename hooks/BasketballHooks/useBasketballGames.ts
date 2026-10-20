@@ -1,5 +1,5 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import { BasketballGame } from "@/types/basketball/basketball";
-import { isGameLive } from "@/utils/games/games";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -13,6 +13,9 @@ type FetchGamesOptions = {
 
 type BasketballGamesResponse = {
   games?: BasketballGame[];
+  calendar?: unknown[] | null;
+  calendarStartDate?: string | null;
+  calendarEndDate?: string | null;
 };
 
 type ConferenceId = number | string | null | undefined;
@@ -51,6 +54,10 @@ export function useBasketballGames(
   conferenceId?: ConferenceId,
 ) {
   const [games, setGames] = useState<BasketballGame[]>([]);
+  const [calendarResponse, setCalendarResponse] = useState<{
+    league: string;
+    data: BasketballGamesResponse;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const requestIdRef = useRef(0);
@@ -74,7 +81,7 @@ export function useBasketballGames(
 
     const value = String(conferenceId).trim();
 
-    if (!value || value === "top25") {
+    if (!value) {
       return undefined;
     }
 
@@ -113,7 +120,7 @@ export function useBasketballGames(
           setLoading(true);
         }
 
-        const { data } = await apiClient.get(endpoint, {
+        const { data } = await apiClient.get<BasketballGamesResponse>(endpoint, {
           params: requestParams,
         });
 
@@ -123,6 +130,7 @@ export function useBasketballGames(
 
         if (requestId === requestIdRef.current) {
           setGames(gamesData);
+          setCalendarResponse({ league, data });
         }
       } catch (err) {
         if (requestId !== requestIdRef.current) return;
@@ -130,7 +138,7 @@ export function useBasketballGames(
 
         setError(new Error(`Failed to fetch ${league} games`));
 
-        setGames([]);
+        if (!forceRefresh && !silent) setGames([]);
       } finally {
         if (!silent && requestId === requestIdRef.current) {
           setLoading(false);
@@ -157,12 +165,12 @@ export function useBasketballGames(
     };
   }, [fetchGames]);
 
-  const hasLiveGame = useMemo(() => {
-    return games.some(isGameLive);
+  const hasActiveGame = useMemo(() => {
+    return games.some(shouldTrackGameUpdates);
   }, [games]);
 
   useLiveSportsSubscription<BasketballGamesResponse>({
-    enabled: hasLiveGame,
+    enabled: !loading && hasActiveGame,
 
     kind: "scoreboard",
 
@@ -181,8 +189,22 @@ export function useBasketballGames(
     },
   });
 
+  const scoreboardCalendar = useMemo(
+    () => ({
+      pending: loading,
+      calendar: calendarResponse?.league === league
+        ? calendarResponse.data.calendar : null,
+      startDate: calendarResponse?.league === league
+        ? calendarResponse.data.calendarStartDate : null,
+      endDate: calendarResponse?.league === league
+        ? calendarResponse.data.calendarEndDate : null,
+    }),
+    [calendarResponse, league, loading],
+  );
+
   return {
     games,
+    scoreboardCalendar,
     loading,
     error,
     refreshGames,

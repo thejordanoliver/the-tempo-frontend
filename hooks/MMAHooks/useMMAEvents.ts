@@ -1,3 +1,5 @@
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
+import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import type { GameVenueInfo } from "types/gameVenue";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -106,6 +108,9 @@ export type MMAEvent = {
 };
 
 export type MMAGamesResponse = {
+  calendar?: unknown[] | null;
+  calendarStartDate?: string | null;
+  calendarEndDate?: string | null;
   league?: string;
   leagueInfo?: {
     id?: string | number | null;
@@ -127,6 +132,7 @@ export type useMMAEventsOptions = {
   date?: Date | string | number | null;
   league?: MMALeague;
   enabled?: boolean;
+  onScoreboardCalendar?: OnScoreboardCalendar;
   pollLiveEvents?: boolean;
   pollIntervalMs?: number;
 };
@@ -321,6 +327,7 @@ export function useMMAEvents({
   date,
   league = "ufc",
   enabled = true,
+  onScoreboardCalendar,
   pollLiveEvents = true,
   pollIntervalMs = 90000,
 }: useMMAEventsOptions = {}) {
@@ -365,8 +372,10 @@ export function useMMAEvents({
           params: { date: formattedDate },
         });
 
+        onScoreboardCalendar?.(response.data);
         setData(response.data);
       } catch (err: any) {
+        onScoreboardCalendar?.(null);
         console.error(`[useMMAEvents] ${league} fetch failed`, err);
 
         setError(
@@ -377,7 +386,7 @@ export function useMMAEvents({
           ),
         );
 
-        setData(null);
+        if (!forceRefresh && !silent) setData(null);
       } finally {
         if (!silent) {
           setLoading(false);
@@ -386,7 +395,7 @@ export function useMMAEvents({
         setRefreshing(false);
       }
     },
-    [enabled, endpoint, formattedDate, league],
+    [enabled, endpoint, formattedDate, league, onScoreboardCalendar],
   );
 
   const refreshGames = useCallback(async () => {
@@ -402,7 +411,9 @@ export function useMMAEvents({
   }, [rawEvents, games]);
 
   useLiveSportsSubscription<MMAGamesResponse>({
-    enabled: enabled && pollLiveEvents && hasLiveEvent && pollIntervalMs > 0,
+    enabled:
+      enabled && pollLiveEvents && !loading && pollIntervalMs > 0 &&
+      (hasLiveEvent || games.some(shouldTrackGameUpdates)),
     kind: "scoreboard",
     payload: {
       sport: "mma",

@@ -1,17 +1,25 @@
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { fanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
 import { fanPredictionRankingsStyles } from "styles/FanPredictionStyles/FanPredictionRankingsStyles";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { SkeletonBlock } from "./primitives";
 
-export default function FanPredictionHistorySkeleton({ isDark }: { isDark: boolean }) {
+export default function FanPredictionHistorySkeleton({
+  isDark,
+}: {
+  isDark: boolean;
+}) {
   const row = useMemo(() => fanPredictionHistoryRowStyles(isDark), [isDark]);
   const screen = useMemo(() => fanPredictionRankingsStyles(isDark), [isDark]);
-  const game = useMemo(() => gameCardStyles(isDark), [isDark]);
+  const game = useMemo(() => GameCardStyles(isDark), [isDark]);
   const team = (picked: boolean) => (
     <View style={game.teamSection}>
-      <SkeletonBlock width={game.logo.width} height={game.logo.height} radius={8} />
+      <SkeletonBlock
+        width={game.logo.width}
+        height={game.logo.height}
+        radius={8}
+      />
       <View style={styles.teamName}>
         <SkeletonBlock width={36} height={12} />
       </View>
@@ -26,11 +34,19 @@ export default function FanPredictionHistorySkeleton({ isDark }: { isDark: boole
     </View>
   );
   return (
-    <View accessibilityLabel="Loading prediction history" accessibilityState={{ busy: true }}>
-      {[0, 1, 2, 3].map(index => (
+    <View
+      accessibilityLabel="Loading prediction history"
+      accessibilityState={{ busy: true }}
+    >
+      {[0, 1, 2, 3].map((index) => (
         <View key={index}>
           {index > 0 ? <View style={screen.separator} /> : null}
-          <View style={row.container} accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <View
+            style={row.container}
+            accessible={false}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          >
             <View style={row.card}>
               {team(true)}
               {score()}
@@ -45,7 +61,9 @@ export default function FanPredictionHistorySkeleton({ isDark }: { isDark: boole
               {team(false)}
             </View>
             <View style={row.footer}>
-              <View style={row.pickSummary}><SkeletonBlock width="75%" height={12} /></View>
+              <View style={row.pickSummary}>
+                <SkeletonBlock width="75%" height={12} />
+              </View>
               <View style={row.outcomeBadge}>
                 <SkeletonBlock width={13} height={13} radius={7} />
                 <View style={styles.outcomeText}>

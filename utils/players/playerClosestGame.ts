@@ -4,7 +4,8 @@ export type PlayerScheduleGame = {
 };
 
 export function getPlayerGameHeading(game: PlayerScheduleGame): string {
-  if (game.status?.completed || game.status?.state === "post") return "Latest Game";
+  if (game.status?.completed || game.status?.state === "post")
+    return "Latest Game";
   if (["in", "half"].includes(game.status?.state ?? "")) return "Live Game";
   return "Upcoming";
 }

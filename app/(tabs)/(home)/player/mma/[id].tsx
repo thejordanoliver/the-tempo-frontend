@@ -31,8 +31,10 @@ export default function PlayerDetailScreen() {
   const flag = player?.flag_url;
   const color = player?.citizenship_country_alt_color ?? Colors.midTone;
 
+  const screenLoading = loading || fightLog.loading;
+
   useLayoutEffect(() => {
-    if (loading || !player) {
+    if (screenLoading || !player) {
       navigation.setOptions({
         header: () => null,
       });
@@ -50,8 +52,8 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, flag, color, league, loading, player]);
-  if (loading)
+  }, [navigation, flag, color, league, screenLoading, player]);
+  if (screenLoading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />

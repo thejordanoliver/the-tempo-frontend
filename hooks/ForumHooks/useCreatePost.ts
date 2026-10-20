@@ -281,9 +281,8 @@ export function useCreatePost(destination: ForumPostDestination | null) {
       });
     }
 
-    media.forEach((item, idx) => {
-      if (item.type === "gif") return;
-
+    // trimMeta indexes the uploaded files, which do not include remote GIFs.
+    media.filter((item) => item.type !== "gif").forEach((item, idx) => {
       const fallbackExt = item.type === "video" ? "mp4" : "jpg";
       const fallbackName = `${item.type}-${idx}.${fallbackExt}`;
       const filename = item.uri.split("/").pop() || fallbackName;

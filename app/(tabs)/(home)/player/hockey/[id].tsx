@@ -76,9 +76,10 @@ export default function PlayerDetailScreen() {
   const teamLogo = getNHLTeamLogo(currentTeamId, true);
   const teamColor = team?.primaryColor ?? Colors.midTone;
 
-  /* ---------------- Header ---------------- */
+  const screenLoading = loading || seasonsLoading || latestGameLog.loading;
+
   useLayoutEffect(() => {
-    if (loading) {
+    if (screenLoading) {
       navigation.setOptions({ header: () => null });
       return;
     }
@@ -94,9 +95,9 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, teamLogo, teamColor, loading]);
+  }, [navigation, teamLogo, teamColor, screenLoading]);
 
-  if (loading)
+  if (screenLoading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />

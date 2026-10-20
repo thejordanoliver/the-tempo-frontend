@@ -13,6 +13,7 @@ import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
   InteractionManager,
+  Linking,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -75,6 +76,18 @@ export default function SettingsScreen() {
       }
     };
   }, [alertConfig, pendingAlertConfig, showDeleteModal, showLogoutModal]);
+
+  const openSupportPage = async (url: string) => {
+    try {
+      await Linking.openURL(url);
+    } catch {
+      queueAlert({
+        title: "Unable to Open Page",
+        message: `Please open ${url} in your browser, or contact jordanoliver@thetemposports.com.`,
+        confirmText: "OK",
+      });
+    }
+  };
 
   const signOut = async () => {
     try {
@@ -176,6 +189,30 @@ export default function SettingsScreen() {
             />
           </TouchableOpacity>
         </View>
+
+        {[
+          { label: "Privacy Policy", url: "https://thetemposports.com/privacy/" },
+          { label: "Help & Support", url: "https://thetemposports.com/support/" },
+        ].map(({ label, url }) => (
+          <View key={url} style={styles.optionButtonContainer}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              accessibilityRole="link"
+              accessibilityLabel={label}
+              accessibilityHint="Opens the Tempo website in your browser"
+              onPress={() => void openSupportPage(url)}
+            >
+              <Text style={styles.optionText}>{label}</Text>
+              <Ionicons
+                name="open-outline"
+                size={20}
+                color={isDark ? Colors.white : Colors.black}
+                importantForAccessibility="no"
+                accessibilityElementsHidden
+              />
+            </TouchableOpacity>
+          </View>
+        ))}
 
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity

@@ -26,6 +26,8 @@ export const BROWSEABLE_LEAGUES = [
   "nfl",
   "nhl",
   "sb",
+  "mcvb",
+  "wcvb",
   "ufc",
   "ufl",
   "wcbb",

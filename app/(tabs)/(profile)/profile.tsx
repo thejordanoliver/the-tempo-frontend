@@ -84,6 +84,7 @@ export default function ProfileScreen() {
   const lastLoadedUserIdRef = useRef<number | null>(null);
 
   const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const signOutPendingRef = useRef(false);
   const [cachedUser, setCachedUser] = useState<CachedUser | null>(null);
   const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorites");
 
@@ -203,8 +204,6 @@ export default function ProfileScreen() {
       await logout();
     } catch (error) {
       console.warn("Failed to sign out:", error);
-    } finally {
-      setShowSignOutModal(false);
     }
   }, [clearFavorites, logout, resetProfile]);
 
@@ -596,7 +595,15 @@ export default function ProfileScreen() {
         confirmText="Log out"
         cancelText="Cancel"
         variant="danger"
-        onConfirm={signOut}
+        onConfirm={() => {
+          signOutPendingRef.current = true;
+          setShowSignOutModal(false);
+        }}
+        onDismiss={() => {
+          if (!signOutPendingRef.current) return;
+          signOutPendingRef.current = false;
+          void signOut();
+        }}
         onCancel={() => {
           setShowSignOutModal(false);
         }}

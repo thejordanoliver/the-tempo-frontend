@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const LEAGUE_CALENDAR_CACHE_VERSION = 1;
+export const LEAGUE_CALENDAR_CACHE_VERSION = 2;
 export const LEAGUE_CALENDAR_CACHE_KEY_PREFIX = `league-calendar:v${LEAGUE_CALENDAR_CACHE_VERSION}:`;
 
 export const LEAGUE_CALENDAR_CURRENT_MONTH_TTL = 60 * 60 * 1000;

@@ -1,4 +1,6 @@
 export const LEAGUE_TABS = {
+  mcvb: ["scores", "news", "standings", "rankings", "forum"],
+  wcvb: ["scores", "news", "standings", "rankings", "forum"],
   nba: [
     "scores",
     "news",
@@ -10,7 +12,16 @@ export const LEAGUE_TABS = {
     "forum",
   ],
 
-  wnba: ["scores", "news", "standings", "draft", "awards", "forum"],
+  wnba: [
+    "scores",
+    "news",
+    "standings",
+    "playoffs",
+    "stats",
+    "draft",
+    "awards",
+    "forum",
+  ],
 
   gleague: ["scores", "news", "forum"],
 
@@ -25,17 +36,9 @@ export const LEAGUE_TABS = {
     "forum",
   ],
 
-  ufl: ["scores", "news", "standings",  "forum"],
+  ufl: ["scores", "news", "standings", "forum"],
 
-  mlb: [
-    "scores",
-    "news",
-    "standings",
-    "playoffs",
-    "stats",
-    "awards",
-    "forum",
-  ],
+  mlb: ["scores", "news", "standings", "playoffs", "stats", "awards", "forum"],
 
   nhl: ["scores", "news", "standings", "stats", "awards", "forum"],
 
@@ -105,6 +108,8 @@ export const LEAGUE_TABS = {
 } as const;
 
 export const TEAM_TABS = {
+  mcvb: ["schedule", "news", "standings", "forum"],
+  wcvb: ["schedule", "news", "standings", "forum"],
   // Basketball
   nba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   gleague: ["schedule", "news", "roster", "forum"],

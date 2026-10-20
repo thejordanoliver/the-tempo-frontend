@@ -1,3 +1,4 @@
+import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
@@ -40,7 +41,8 @@ export default function CreatePostWidget({
   canMoveDown,
 }: CreatePostWidgetProps) {
   const router = useScopedRouter();
-  const { user } = useAuth();
+  const { user, loadingUser } = useAuth();
+  useWidgetLoadReady(loadingUser);
   const compact = size === "small" || width < 240 || height < 260;
   const styles = useMemo(
     () => createPostWidgetStyles(isDark, compact, isEditing),

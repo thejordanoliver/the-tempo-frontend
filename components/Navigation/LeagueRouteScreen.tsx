@@ -9,7 +9,10 @@ import RacingLeagueScreen from "app/league/racing";
 import SoccerLeagueScreen from "app/league/soccer";
 import TennisLeagueScreen from "app/league/tennis";
 
+import VolleyballLeagueScreen from "app/league/volleyball";
+
 const LEAGUE_SCREENS = {
+  volleyball: VolleyballLeagueScreen,
   baseball: BaseballLeagueScreen,
   basketball: BasketballLeagueScreen,
   football: FootballLeagueScreen,

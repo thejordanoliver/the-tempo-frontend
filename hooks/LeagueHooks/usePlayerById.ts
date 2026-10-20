@@ -8,13 +8,14 @@ export function usePlayerById(
   enabled = true,
 ) {
   const [player, setPlayer] = useState<any>(null);
+  const [identity, setIdentity] = useState<{ league: string; playerId: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
     null,
   );
   const canFetch =
-    enabled && Boolean(playerId) && Number.isFinite(Number(playerId));
+    enabled && Number.isSafeInteger(playerId) && Number(playerId) > 0;
   const requestKey = canFetch ? `${league}:${playerId}` : null;
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export function usePlayerById(
         setLoading(true);
         setError(null);
         setPlayer(null);
+        setIdentity(null);
         setResolvedRequestKey(null);
 
         const url =
@@ -42,6 +44,11 @@ export function usePlayerById(
 
         if (controller.signal.aborted) return;
 
+        const resolvedId = Number(res.data.playerId ?? res.data.player?.id ?? playerId);
+        setIdentity({
+          league: typeof res.data.league === "string" ? res.data.league : league,
+          playerId: Number.isSafeInteger(resolvedId) && resolvedId > 0 ? resolvedId : playerId!,
+        });
         setPlayer(res.data.player ?? null);
         setResolvedRequestKey(requestKey);
       } catch (err: unknown) {
@@ -49,6 +56,7 @@ export function usePlayerById(
 
         console.error("Player fetch error:", err);
         setPlayer(null);
+        setIdentity(null);
         setError(
           isAxiosError<{ error?: string; message?: string }>(err)
             ? err.response?.data?.error ||
@@ -74,6 +82,8 @@ export function usePlayerById(
 
   return {
     player: hasCurrentResult ? player : null,
+    resolvedPlayerId: hasCurrentResult ? identity?.playerId : undefined,
+    resolvedLeague: hasCurrentResult ? identity?.league ?? league : league,
     loading: canFetch ? loading || !hasCurrentResult : false,
     error: hasCurrentResult ? error : null,
   };

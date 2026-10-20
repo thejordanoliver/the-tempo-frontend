@@ -17,4 +17,3 @@ export function getLatestPlayerGame(
   }
   return latest;
 }
-

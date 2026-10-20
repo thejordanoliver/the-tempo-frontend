@@ -2,7 +2,7 @@ import type { Href } from "expo-router";
 import { resolveSoccerTeamLeague } from "../teams/soccerTeamLeague";
 const TEAM_ROUTE_LEAGUES = new Set([
   "nba", "wnba", "gleague", "mcbb", "wcbb", "nfl", "cfb", "ufl",
-  "mlb", "cb", "sb", "nhl",
+  "mlb", "cb", "sb", "nhl", "mcvb", "wcvb",
 ]);
 
 // Recover fixed leagues from paths and retain soccer competition metadata.
