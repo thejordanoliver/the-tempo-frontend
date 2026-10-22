@@ -2,19 +2,19 @@ import { formatDate } from "@/utils/common/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import PredictionCard from "components/FanPrediction/PredictionCard";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getNBATeamLogo } from "constants/teams";
-import { getCBTeamLogo } from "constants/teamsCB";
-import { getCFBTeamLogo } from "constants/teamsCFB";
-import { getGLeagueTeamLogo } from "constants/teamsGLeague";
-import { getMCBBTeamLogo } from "constants/teamsMCBB";
-import { getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeamLogo } from "constants/teamsNFL";
-import { getNHLTeamLogo } from "constants/teamsNHL";
-import { getSBTeamLogo } from "constants/teamsSB";
-import { getSOCCTeamLogo } from "constants/teamsSOCC";
-import { getUFLTeamLogo } from "constants/teamsUFL";
-import { getWCBBTeamLogo } from "constants/teamsWCBB";
-import { getWNBATeamLogo } from "constants/teamsWNBA";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
+import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getGLeagueTeam, getGLeagueTeamLogo } from "constants/teamsGLeague";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
+import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
+import { getSOCCTeam, getSOCCTeamLogo } from "constants/teamsSOCC";
+import { getUFLTeam, getUFLTeamLogo } from "constants/teamsUFL";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFeedPrediction } from "hooks/useFeedPrediction";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo } from "react";
@@ -23,19 +23,24 @@ import type { FeedPrediction } from "types/fanPredictions";
 import { formatPercentage, isSameTeamId } from "utils/games/fanPredictionVotes";
 import Button from "../Buttons/Button";
 
-const teamLogoHelpers: Record<string, typeof getNBATeamLogo> = {
-  nba: getNBATeamLogo,
-  wnba: getWNBATeamLogo,
-  gleague: getGLeagueTeamLogo,
-  mcbb: getMCBBTeamLogo,
-  wcbb: getWCBBTeamLogo,
-  nfl: getNFLTeamLogo,
-  cfb: getCFBTeamLogo,
-  ufl: getUFLTeamLogo,
-  mlb: getMLBTeamLogo,
-  cb: getCBTeamLogo,
-  sb: getSBTeamLogo,
-  nhl: getNHLTeamLogo,
+type TeamHelpers = {
+  getTeam: (id: string | number) => { primaryColor?: string | null } | undefined;
+  getLogo: typeof getNBATeamLogo;
+};
+
+const teamHelpers: Record<string, TeamHelpers> = {
+  nba: { getTeam: getNBATeam, getLogo: getNBATeamLogo },
+  wnba: { getTeam: getWNBATeam, getLogo: getWNBATeamLogo },
+  gleague: { getTeam: getGLeagueTeam, getLogo: getGLeagueTeamLogo },
+  mcbb: { getTeam: getMCBBTeam, getLogo: getMCBBTeamLogo },
+  wcbb: { getTeam: getWCBBTeam, getLogo: getWCBBTeamLogo },
+  nfl: { getTeam: getNFLTeam, getLogo: getNFLTeamLogo },
+  cfb: { getTeam: getCFBTeam, getLogo: getCFBTeamLogo },
+  ufl: { getTeam: getUFLTeam, getLogo: getUFLTeamLogo },
+  mlb: { getTeam: getMLBTeam, getLogo: getMLBTeamLogo },
+  cb: { getTeam: getCBTeam, getLogo: getCBTeamLogo },
+  sb: { getTeam: getSBTeam, getLogo: getSBTeamLogo },
+  nhl: { getTeam: getNHLTeam, getLogo: getNHLTeamLogo },
 };
 
 export default function PredictionFeedCard({
@@ -85,10 +90,10 @@ export default function PredictionFeedCard({
 
   const date = formatDate(game.startsAt, false, true);
 
-  const getTeamLogo =
+  const helpers =
     game.sport === "soccer"
-      ? getSOCCTeamLogo
-      : teamLogoHelpers[game.league.toLowerCase()];
+      ? { getTeam: getSOCCTeam, getLogo: getSOCCTeamLogo }
+      : teamHelpers[game.league.trim().toLowerCase()];
 
   return (
     <View style={styles.container}>
@@ -98,8 +103,8 @@ export default function PredictionFeedCard({
           {game.league.toUpperCase()}
         </Text>
         <Text style={styles.points}>
-          {game.scoring.pointsValue}{" "}
-          {game.scoring.pointsValue === 1 ? "point" : "points"}
+          {prediction.scoring.pointsValue}{" "}
+          {prediction.scoring.pointsValue === 1 ? "point" : "points"}
         </Text>
       </View>
       <Text style={styles.title}>Who wins?</Text>
@@ -111,18 +116,22 @@ export default function PredictionFeedCard({
         {[game.away, game.home].map((team, index) => {
           const percent =
             index === 0 ? prediction.rawPctAway : prediction.rawPctHome;
+          const teamColor =
+            helpers?.getTeam(team.id)?.primaryColor ||
+            team.primaryColor ||
+            Colors.midTone;
           return (
             <PredictionCard
               key={team.id}
               code={team.code}
               logo={
-                getTeamLogo
-                  ? getTeamLogo(team.id, isDark)
+                helpers
+                  ? helpers.getLogo(team.id, isDark)
                   : team.logo
                     ? { uri: team.logo }
                     : undefined
               }
-              color={team.primaryColor}
+              color={teamColor}
               fillPercentage={prediction.resultsRevealed ? percent : 0}
               percentText={formatPercentage(percent)}
               onPress={

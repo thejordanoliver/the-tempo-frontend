@@ -59,10 +59,7 @@ function PredictionGradient({
         locations={[0, 0.5, 1]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 0.8 }}
-        style={[
-          styles.teamGradient,
-          isSelected && styles.teamGradientSelected,
-        ]}
+        style={[styles.teamGradient, isSelected && styles.teamGradientSelected]}
       />
 
       <Animated.View
@@ -72,8 +69,8 @@ function PredictionGradient({
         <LinearGradient
           colors={gradientColors}
           locations={[0, 0.5, 1]}
-          start={{ x: 0.5, y: 1 }}
-          end={{ x: 0.5, y: 0 }}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 0.8 }}
           style={styles.gradientFill}
         />
       </Animated.View>

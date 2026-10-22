@@ -37,44 +37,47 @@ export const ChampionshipGameCardStyles = (isDark: boolean) =>
       justifyContent: "space-between",
     },
 
-    teamColumn: {
-      flex: 1,
+    /* =========================
+       🏀 TEAM
+    ========================= */
+    teamSection: {
       alignItems: "center",
-      justifyContent: "center",
-      gap: 6,
+      width: 70,
     },
 
     logo: {
-      width: 54,
-      height: 54,
+      width: 40,
+      height: 40,
+      resizeMode: "contain",
     },
 
     teamName: {
-      maxWidth: 120,
-      fontSize: 14,
-      textAlign: "center",
+      width: 70,
+      marginTop: 4,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     rank: {
-      fontSize: 20,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 10,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
-    score: {
-      fontSize: 34,
-      textAlign: "center",
+    teamScore: {
+      width: 72,
       fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 28,
+      textAlign: "center",
     },
 
-    record: {
-      fontSize: 18,
-      textAlign: "center",
+    teamRecord: {
+      width: 72,
       fontFamily: Fonts.BOLD,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     centerColumn: {
@@ -111,7 +114,6 @@ export const ChampionshipGameCardStyles = (isDark: boolean) =>
 
     period: {
       fontSize: 14,
-      textTransform: "uppercase",
       fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },

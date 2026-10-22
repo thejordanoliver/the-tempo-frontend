@@ -18,10 +18,10 @@ import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { usePlayerClosestGame } from "hooks/LeagueHooks/usePlayerClosestGame";
-import type { FootballGame } from "types/football/football";
 import { usePlayerGameLog } from "hooks/LeagueHooks/usePlayerGameLog";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
+import type { FootballGame } from "types/football/football";
 
 type FootballRouteLeague = "nfl" | "cfb";
 
@@ -87,11 +87,18 @@ export default function PlayerDetailScreen() {
     currentSeasonRankings,
   } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
-  const { player, loading, error, resolvedPlayerId: playerId, resolvedLeague: profileLeague } =
-    usePlayerById(requestedPlayerId, requestedLeague);
-  const playerLeague: FootballRouteLeague = normalizeFootballLeague(profileLeague);
+  const {
+    player,
+    loading,
+    error,
+    resolvedPlayerId: playerId,
+    resolvedLeague: profileLeague,
+  } = usePlayerById(requestedPlayerId, requestedLeague);
+  const playerLeague: FootballRouteLeague =
+    normalizeFootballLeague(profileLeague);
   const isNFL = playerLeague === "nfl";
   const isCFB = playerLeague === "cfb";
+
   const currentTeamId = useMemo(() => {
     const profileTeamId = player?.team_id;
 
@@ -117,9 +124,9 @@ export default function PlayerDetailScreen() {
 
     return isNFL ? getNFLTeam(currentTeamId) : getCFBTeam(currentTeamId);
   }, [currentTeamId, isNFL]);
-
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamId = team?.id != null ? String(team.id) : currentTeamId;
+
   const teamLogo = useMemo(() => {
     return isNFL ? getNFLTeamLogo(teamId, true) : getCFBTeamLogo(teamId, true);
   }, [teamId, isNFL]);
@@ -189,9 +196,7 @@ export default function PlayerDetailScreen() {
   if (error) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>
-          {error || "Couldn’t load player"}
-        </Text>
+        <Text style={global.errorText}>{error || "Couldn’t load player"}</Text>
       </View>
     );
   }
@@ -259,7 +264,12 @@ export default function PlayerDetailScreen() {
       isDark={isDark}
       overview={
         <>
-          <PlayerHeader sport="football" player={player} isDark={isDark} league={playerLeague} />
+          <PlayerHeader
+            sport="football"
+            player={player}
+            isDark={isDark}
+            league={playerLeague}
+          />
           <SeasonStatCard
             season={latestSeason}
             loading={seasonsLoading}

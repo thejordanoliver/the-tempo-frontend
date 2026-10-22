@@ -2,7 +2,7 @@ import { Colors, Fonts, globalStyles } from "constants/styles";
 import { StyleSheet } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 
-export const fanPredictionHistoryRowStyles = (isDark: boolean) => {
+export const FanPredictionHistoryRowStyles = (isDark: boolean) => {
   const global = globalStyles(isDark);
   const game = GameCardStyles(isDark);
   return StyleSheet.create({

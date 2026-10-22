@@ -8,10 +8,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import {
-  CFBTeamRank,
-  useCFBRankings,
-} from "hooks/FootballHooks/useCFBRankings";
+import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
+import type { CollegeTeamRank } from "types/collegeRankings";
 import { useMemo, useState } from "react";
 import {
   FlatList,
@@ -42,7 +40,7 @@ const POLL_TITLES: Record<PollMode, string> = {
 };
 
 export const CFBStandingsList = () => {
-  const { rankings, loading, refreshing, error, refresh } = useCFBRankings();
+  const { rankings, loading, refreshing, error, refresh } = useCollegeRankings("cfb");
   const { resolvedColorScheme } = usePreferences();
   const { isFavorite } = useFavoriteTeamsContext();
 
@@ -82,7 +80,7 @@ export const CFBStandingsList = () => {
     item,
     index,
   }: {
-    item: CFBTeamRank;
+    item: CollegeTeamRank;
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
@@ -176,7 +174,7 @@ export const CFBStandingsList = () => {
     item,
     index,
   }: {
-    item: CFBTeamRank;
+    item: CollegeTeamRank;
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
@@ -290,7 +288,7 @@ export const CFBStandingsList = () => {
     );
   };
 
-  const Section = ({ title, data }: { title: string; data: CFBTeamRank[] }) => {
+  const Section = ({ title, data }: { title: string; data: CollegeTeamRank[] }) => {
     return (
       <View style={styles.wrapper}>
         <View style={styles.header}>

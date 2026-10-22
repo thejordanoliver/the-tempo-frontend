@@ -1,13 +1,10 @@
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
-// components/MCBBStandingsList.tsx
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
-import {
-  MCBBTeamRank,
-  useCollegeBasketballRankings,
-} from "@/hooks/BasketballHooks/useCollegeBasketballRankings";
+import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
+import type { CollegeTeamRank } from "types/collegeRankings";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import { Colors, Fonts, globalStyles } from "constants/styles";
@@ -30,7 +27,7 @@ type Props = {
 
 export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
   const { rankings, loading, refreshing, error, refresh } =
-    useCollegeBasketballRankings(league);
+    useCollegeRankings(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useScopedRouter();
@@ -72,7 +69,7 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
     item,
     index,
   }: {
-    item: MCBBTeamRank;
+    item: CollegeTeamRank;
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
@@ -169,7 +166,7 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
     item,
     index,
   }: {
-    item: MCBBTeamRank;
+    item: CollegeTeamRank;
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
@@ -266,7 +263,7 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
     );
   };
 
-  function Section({ title, data }: { title: string; data: MCBBTeamRank[] }) {
+  function Section({ title, data }: { title: string; data: CollegeTeamRank[] }) {
     return (
       <>
         <View style={styles.wrapper}>

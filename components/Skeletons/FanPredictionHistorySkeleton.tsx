@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { fanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
+import { FanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
 import { fanPredictionRankingsStyles } from "styles/FanPredictionStyles/FanPredictionRankingsStyles";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { SkeletonBlock } from "./primitives";
@@ -10,7 +10,7 @@ export default function FanPredictionHistorySkeleton({
 }: {
   isDark: boolean;
 }) {
-  const row = useMemo(() => fanPredictionHistoryRowStyles(isDark), [isDark]);
+  const row = useMemo(() => FanPredictionHistoryRowStyles(isDark), [isDark]);
   const screen = useMemo(() => fanPredictionRankingsStyles(isDark), [isDark]);
   const game = useMemo(() => GameCardStyles(isDark), [isDark]);
   const team = (picked: boolean) => (

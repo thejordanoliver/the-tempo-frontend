@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AppState } from "react-native";
 import { isAxiosError } from "axios";
 import { useFanPrediction } from "./useFanPrediction";
+import { usePredictionScoring } from "./usePredictionScoring";
 import { castRankedPrediction } from "services/fanPredictionsApi";
 import type { FeedPrediction, FanPredictionTeamId } from "types/fanPredictions";
 
@@ -9,6 +10,12 @@ export function useFeedPrediction(game: FeedPrediction) {
   const [open, setOpen] = useState(
     () => Date.parse(game.startsAt) > Date.now(),
   );
+  const { scoring } = usePredictionScoring(game.gameId, {
+    sport: game.sport,
+    league: game.league,
+    date: game.startsAt,
+    state: open ? "pre" : "in",
+  });
 
   useEffect(() => {
     const remaining = Date.parse(game.startsAt) - Date.now();
@@ -65,5 +72,5 @@ export function useFeedPrediction(game: FeedPrediction) {
     votes: null,
     castVote,
   });
-  return { ...prediction, open };
+  return { ...prediction, open, scoring: scoring ?? game.scoring };
 }

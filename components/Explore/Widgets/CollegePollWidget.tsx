@@ -5,19 +5,13 @@ import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-  type MCBBTeamRank,
-  useCollegeBasketballRankings,
-} from "hooks/BasketballHooks/useCollegeBasketballRankings";
 import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
-import {
-  type CFBTeamRank,
-  useCFBRankings,
-} from "hooks/FootballHooks/useCFBRankings";
+import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo, useCallback, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { collegePollWidgetStyles } from "styles/ExploreStyles/CollegePollWidgetStyles";
+import type { CollegeTeamRank } from "types/collegeRankings";
 import type {
   CollegePollRow,
   CollegePollSourceProps,
@@ -319,7 +313,7 @@ const CFBPollTable = memo(function CFBPollTable({
   pollType,
   autoPlay,
 }: CollegePollSourceProps) {
-  const { rankings, loading, error, refresh } = useCFBRankings();
+  const { rankings, loading, error, refresh } = useCollegeRankings("cfb");
   const selectedPoll = rankings.find((poll) => poll.type === pollType);
   const rows = useMemo<CollegePollRow[]>(
     () =>
@@ -354,7 +348,7 @@ const MCBBPollTable = memo(function MCBBPollTable({
   autoPlay,
 }: CollegePollSourceProps) {
   const { rankings, loading, error, refresh } =
-    useCollegeBasketballRankings("mcbb");
+    useCollegeRankings("mcbb");
   const selectedPoll =
     rankings.find((poll) => poll.type === pollType) ??
     rankings.find((poll) =>
@@ -387,7 +381,7 @@ const MCBBPollTable = memo(function MCBBPollTable({
 });
 
 function createCFBRow(
-  rank: CFBTeamRank,
+  rank: CollegeTeamRank,
   index: number,
   isDark: boolean,
 ): CollegePollRow {
@@ -413,7 +407,7 @@ function createCFBRow(
 }
 
 function createMCBBRow(
-  rank: MCBBTeamRank,
+  rank: CollegeTeamRank,
   index: number,
   isDark: boolean,
 ): CollegePollRow {

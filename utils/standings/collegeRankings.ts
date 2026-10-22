@@ -1,46 +1,11 @@
-import type { StandingsTeamInfo } from "types/standings";
-import { useCallback, useEffect, useState } from "react";
+import type {
+  CollegePollType,
+  CollegeRankingsLeague,
+  CollegeRankPoll,
+  CollegeTeamRank,
+} from "types/collegeRankings";
 
-import { apiClient } from "utils/apiClient";
-
-export type CFBTeamRank = {
-  current: number;
-  previous: number;
-  points: number;
-  firstPlaceVotes: number;
-  trend: string;
-  recordSummary: string;
-
-  team:
-    | (StandingsTeamInfo & {
-        groups?: {
-          id: string;
-          shortName: string;
-
-          parent?: {
-            id: string;
-            shortName: string;
-            isConference: boolean;
-          };
-
-          isConference: boolean;
-        };
-      })
-    | null;
-
-  date: string;
-  lastUpdated: string;
-};
-
-export type CFBRankPoll = {
-  type: "ap" | "coaches" | "cfp" | "fcs";
-  shortName: string;
-  ranks: CFBTeamRank[];
-  outsideTop25: CFBTeamRank[];
-  droppedOut: CFBTeamRank[];
-};
-
-type PollType = CFBRankPoll["type"];
+type PollType = CollegePollType;
 
 type RawPoll = {
   type?: unknown;
@@ -54,13 +19,6 @@ type RawPoll = {
   outsideTop25?: unknown;
   droppedOut?: unknown;
 };
-
-type RawRankingsResponse = {
-  league?: unknown;
-  rankings?: unknown;
-};
-
-const RANKINGS_ENDPOINT = "/api/standings/cfb/rankings";
 
 const POLL_NAMES: Record<PollType, string> = {
   ap: "AP Poll",
@@ -83,8 +41,8 @@ const toStringValue = (value: unknown): string => {
   return "";
 };
 
-const toTeamRanks = (value: unknown): CFBTeamRank[] => {
-  return Array.isArray(value) ? (value as CFBTeamRank[]) : [];
+const toTeamRanks = (value: unknown): CollegeTeamRank[] => {
+  return Array.isArray(value) ? (value as CollegeTeamRank[]) : [];
 };
 
 const getPollSearchText = (poll: RawPoll): string => {
@@ -188,7 +146,7 @@ const getPollCandidates = (rawValue: unknown): RawPoll[] => {
 const normalizePoll = (
   poll: RawPoll | undefined,
   type: PollType,
-): CFBRankPoll => {
+): CollegeRankPoll => {
   if (!poll) {
     return {
       type,
@@ -212,7 +170,7 @@ const normalizePoll = (
   };
 };
 
-const normalizeRankings = (rawValue: unknown): CFBRankPoll[] => {
+const normalizeRankings = (rawValue: unknown): CollegeRankPoll[] => {
   const candidates = getPollCandidates(rawValue);
 
   return POLL_TYPES.map((type) => {
@@ -222,78 +180,13 @@ const normalizeRankings = (rawValue: unknown): CFBRankPoll[] => {
   });
 };
 
-export const useCFBRankings = () => {
-  const [rankings, setRankings] = useState<CFBRankPoll[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const requestRankings = useCallback(async (): Promise<CFBRankPoll[]> => {
-    const response =
-      await apiClient.get<RawRankingsResponse>(RANKINGS_ENDPOINT);
-
-    const normalized = normalizeRankings(response.data);
-
-    return normalized;
-  }, []);
-
-  const fetchLatest = useCallback(async () => {
-    setRefreshing(true);
-    setError(null);
-
-    try {
-      const polls = await requestRankings();
-
-      setRankings(polls);
-    } catch (err: unknown) {
-      console.error("❌ Fetch CFB rankings failed:", err);
-
-      setError(err instanceof Error ? err.message : "Failed to fetch rankings");
-    } finally {
-      setRefreshing(false);
-    }
-  }, [requestRankings]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadRankings = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const polls = await requestRankings();
-
-        if (isMounted) {
-          setRankings(polls);
-        }
-      } catch (err: unknown) {
-        console.error("❌ Initial CFB rankings fetch failed:", err);
-
-        if (isMounted) {
-          setError(
-            err instanceof Error ? err.message : "Failed to fetch rankings",
-          );
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadRankings();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [requestRankings]);
-
-  return {
-    rankings,
-    loading,
-    refreshing,
-    error,
-    refresh: fetchLatest,
-  };
-};
+// These are backend poll responses; football keeps its four selector slots.
+export function getCollegeRankingPolls(
+  response: unknown,
+  league: CollegeRankingsLeague,
+): CollegeRankPoll[] {
+  if (league === "cfb") return normalizeRankings(response);
+  return isRecord(response) && Array.isArray(response.rankings)
+    ? response.rankings as CollegeRankPoll[]
+    : [];
+}

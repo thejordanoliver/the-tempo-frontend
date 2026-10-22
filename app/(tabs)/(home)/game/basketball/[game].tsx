@@ -165,7 +165,6 @@ export default function GameDetailsScreen(
       logo: "",
       primaryColor: "",
       secondaryColor: "",
-      nbaAPIID: 0,
       rank: team.rank ?? 0,
     });
 
@@ -522,6 +521,7 @@ export default function GameDetailsScreen(
                 isDark={isDark}
                 state={state}
               />
+
               <FanPrediction
                 scoring={scoring}
                 scoringError={scoringError}

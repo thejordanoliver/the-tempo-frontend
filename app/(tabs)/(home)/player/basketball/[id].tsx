@@ -1,7 +1,6 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Player/LatestGame";
 import PlayerAwardList from "@/components/Player/PlayerAwardList";
-import PlayerHeader from "components/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
@@ -15,6 +14,7 @@ import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 import PlayerGameLog from "components/Player/PlayerGameLog";
+import PlayerHeader from "components/Player/PlayerHeader";
 import { Colors, globalStyles } from "constants/styles";
 import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -67,8 +67,13 @@ export default function PlayerDetailScreen() {
     currentSeasonRankings,
   } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
-  const { player, loading, error, resolvedPlayerId: playerId, resolvedLeague: profileLeague } =
-    usePlayerById(requestedPlayerId, requestedLeague);
+  const {
+    player,
+    loading,
+    error,
+    resolvedPlayerId: playerId,
+    resolvedLeague: profileLeague,
+  } = usePlayerById(requestedPlayerId, requestedLeague);
   const playerLeague = normalizeBasketballLeague(profileLeague);
   const isNBA = playerLeague === "nba";
   const isWNBA = playerLeague === "wnba";
@@ -112,14 +117,12 @@ export default function PlayerDetailScreen() {
 
   const teamLogo = useMemo(() => {
     const logoTeamId = team?.id ?? currentTeamId;
-
     if (!logoTeamId) return undefined;
-
-    if (isNBA) return getNBATeamLogo(logoTeamId, isDark);
-    if (isWNBA) return getWNBATeamLogo(logoTeamId, isDark);
-    if (isWCBB) return getWCBBTeamLogo(logoTeamId, isDark);
-    return getMCBBTeamLogo(logoTeamId, isDark);
-  }, [currentTeamId, isDark, isNBA, isWCBB, isWNBA, team?.id]);
+    if (isNBA) return getNBATeamLogo(logoTeamId, true);
+    if (isWNBA) return getWNBATeamLogo(logoTeamId, true);
+    if (isWCBB) return getWCBBTeamLogo(logoTeamId, true);
+    return getMCBBTeamLogo(logoTeamId, true);
+  }, [currentTeamId, isNBA, isWCBB, isWNBA, team?.id]);
 
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const isActive = player?.active === true;
@@ -191,9 +194,7 @@ export default function PlayerDetailScreen() {
   if (error)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>
-          {error || "Couldn’t load player"}
-        </Text>
+        <Text style={global.errorText}>{error || "Couldn’t load player"}</Text>
       </View>
     );
 
@@ -276,8 +277,7 @@ export default function PlayerDetailScreen() {
             rankings={currentSeasonRankings}
             teamColor={teamColor}
           />
-          {(hasPlayerGameLog && playerId) ||
-          (isActive && resolvedTeamId) ? (
+          {(hasPlayerGameLog && playerId) || (isActive && resolvedTeamId) ? (
             <LatestGame
               game={game}
               loading={gameLoading}

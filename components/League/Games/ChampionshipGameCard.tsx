@@ -145,7 +145,6 @@ export default function ChampionshipGameCard({
   const awayLogo = getTeamLogo(awayId);
 
   const homeName = homeTeam?.shortName || homeTeam?.name || home.name || "Home";
-
   const awayName = awayTeam?.shortName || awayTeam?.name || away.name || "Away";
 
   const gameDate = safeDate(game?.date);
@@ -280,13 +279,13 @@ export default function ChampionshipGameCard({
     isWinner: boolean;
   }) => {
     if (showRecordAsScore) {
-      return <Text style={styles.record}>{record}</Text>;
+      return <Text style={styles.teamRecord}>{record}</Text>;
     }
 
     return (
       <Text
         style={[
-          styles.score,
+          styles.teamScore,
           winnerStyle({
             isWinner,
             isTie,
@@ -322,7 +321,7 @@ export default function ChampionshipGameCard({
 
         <View style={styles.matchupRow}>
           {/* Away */}
-          <View style={styles.teamColumn}>
+          <View style={styles.teamSection}>
             <Image
               source={awayLogo}
               style={styles.logo}
@@ -334,13 +333,12 @@ export default function ChampionshipGameCard({
               {awayRank ? <Text style={styles.rank}>#{awayRank} </Text> : null}
               {awayName}
             </Text>
-
-            {ScoreText({
-              score: awayScore,
-              record: awayRecord,
-              isWinner: awayWins,
-            })}
           </View>
+          {ScoreText({
+            score: awayScore,
+            record: awayRecord,
+            isWinner: awayWins,
+          })}
 
           {/* Center */}
           <View style={styles.centerColumn}>
@@ -353,9 +351,13 @@ export default function ChampionshipGameCard({
               ) : null}
             </View>
           </View>
-
+          {ScoreText({
+            score: homeScore,
+            record: homeRecord,
+            isWinner: homeWins,
+          })}
           {/* Home */}
-          <View style={styles.teamColumn}>
+          <View style={styles.teamSection}>
             <Image
               source={homeLogo}
               style={styles.logo}
@@ -368,12 +370,6 @@ export default function ChampionshipGameCard({
 
               {homeName}
             </Text>
-
-            {ScoreText({
-              score: homeScore,
-              record: homeRecord,
-              isWinner: homeWins,
-            })}
           </View>
         </View>
       </LinearGradient>

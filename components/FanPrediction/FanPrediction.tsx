@@ -155,8 +155,8 @@ function FanPredictionContent(props: Props) {
           </View>
           <View style={styles.footer}>
             <Text style={styles.rankingHint}>
-              Correct picks earn 1 point, or 2 for qualifying important
-              matchups.
+              Correct picks earn 1 or 2 points. Points update until game time,
+              then lock.
             </Text>
             <FanRankingsLink />
           </View>

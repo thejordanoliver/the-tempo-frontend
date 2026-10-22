@@ -106,7 +106,7 @@ export const LEAGUE_CONFIG = {
   },
 
   mcvb: {
-    id: "MCVB",
+    id: "mcvb",
     label: "M. College Volleyball",
     color: "#009CDE",
     secondaryColor: "#000000",
@@ -115,7 +115,7 @@ export const LEAGUE_CONFIG = {
     route: "/league/volleyball",
   },
   wcvb: {
-    id: "WCVB",
+    id: "wcvb",
     label: "W. College Volleyball",
     color: "#009CDE",
     secondaryColor: "#000000",
@@ -392,7 +392,9 @@ export const LEAGUE_CONFIG = {
     logoLight: WTALogoLight,
     route: "/league/tennis",
   },
-} as const satisfies Record<LeagueType, LeagueDefinition>;
+} as const satisfies {
+  [League in LeagueType]: LeagueDefinition & { id: League };
+};
 
 export type LeagueConfig = (typeof LEAGUE_CONFIG)[LeagueType];
 
@@ -434,8 +436,8 @@ export const HOME_SCORE_LEAGUES = [
   "ligue2",
   "mcbb",
   "wcbb",
-  "MCVB",
-  "WCVB",
+  "mcvb",
+  "wcvb",
   "wnba",
   "ufc",
   "atp",

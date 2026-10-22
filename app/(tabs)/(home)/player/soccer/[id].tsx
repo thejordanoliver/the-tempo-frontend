@@ -41,7 +41,7 @@ export default function PlayerDetailScreen() {
       : undefined;
   const routeTeamId = normalizeParam(teamId);
   const normalizedLeague = normalizeParam(league)?.toUpperCase();
-  const playerLeague = normalizedLeague === "SOCC" ? "SOCC" : "SOCC";
+  const playerLeague = normalizedLeague === "socc" ? "socc" : "socc";
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedCompetition, setSelectedCompetition] = useState<string | null>(
     null,

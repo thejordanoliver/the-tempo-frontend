@@ -81,7 +81,6 @@ export default function PlayerDetailScreen() {
     .trim()
     .toUpperCase();
   const isActive = player?.active === true;
-
   const currentTeamId =
     player?.team_id != null
       ? String(player.team_id)

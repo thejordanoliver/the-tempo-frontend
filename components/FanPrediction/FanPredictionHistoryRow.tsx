@@ -6,13 +6,14 @@ import { getNFLTeam, getNFLTeamLogo } from "@/constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "@/constants/teamsNHL";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { winnerStyle } from "@/utils/games/games";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles } from "constants/styles";
 import { Image } from "expo-image";
 import { memo, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
-import { fanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
+import { FanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import type {
   FanPredictionPick,
@@ -24,7 +25,7 @@ import { isUnavailablePrediction } from "utils/games/predictionAvailability";
 type Props = { pick: FanPredictionPick; isDark: boolean; onPress: () => void };
 
 function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
-  const styles = useMemo(() => fanPredictionHistoryRowStyles(isDark), [isDark]);
+  const styles = useMemo(() => FanPredictionHistoryRowStyles(isDark), [isDark]);
   const gameStyles = useMemo(() => GameCardStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
@@ -85,7 +86,9 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
                   ? getNHLTeam(participant?.id ?? 0)?.code
                   : league === "mlb"
                     ? getMLBTeam(participant?.id ?? 0)?.code
-                    : getSOCCTeam(participant?.id ?? 0)?.code;
+                    : league === "wnba"
+                      ? getWNBATeam(participant?.id ?? 0)?.code
+                      : getSOCCTeam(participant?.id ?? 0)?.code;
     const teamLogo =
       league === "nfl"
         ? getNFLTeamLogo(participant?.id, isDark)
@@ -103,7 +106,9 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
                     ? getNHLTeamLogo(participant?.id, isDark)
                     : league === "mlb"
                       ? getMLBTeamLogo(participant?.id, isDark)
-                      : getSOCCTeamLogo(participant?.id, isDark);
+                      : league === "wnba"
+                        ? getWNBATeamLogo(participant?.id, isDark)
+                        : getSOCCTeamLogo(participant?.id, isDark);
 
     return (
       <View style={gameStyles.teamSection}>

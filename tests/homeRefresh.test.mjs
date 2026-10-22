@@ -60,7 +60,11 @@ function harness() {
     }).outputText;
     vm.runInNewContext(source, {
       exports, console: { error() {}, warn() {} }, AbortController, setTimeout, clearTimeout,
-      require(name) { assert.ok(name in modules, `Unexpected import: ${name}`); return modules[name]; },
+      require(name) {
+        if (name.startsWith("assets/")) return name;
+        assert.ok(name in modules, `Unexpected import: ${name}`);
+        return modules[name];
+      },
     });
     return exports;
   }
@@ -90,7 +94,8 @@ function homeHarness(tab = "scores") {
     loadFavoriteSports: (force) => { assert.equal(force, true); return request("sports"); },
   }) };
   h.modules["./useForYouFeed"] = { useForYouFeed: () => ({ loading: false, refresh: () => request("feed") }) };
-  h.modules["constants/leagues"] = { HOME_SCORE_LEAGUES: ["nba"] };
+  h.modules["constants/leagueIds"] = h.load("constants/leagueIds.ts");
+  h.modules["constants/leagues"] = h.load("constants/leagues.ts");
   h.modules["@/utils/common/dateUtils"] = { filterByDate: (games) => games };
   h.modules["utils/games/games"] = { normalizeGames: (games) => games };
   h.modules["utils/games/homeGames"] = { buildHomeGameSections: ({ sources }) => sources.map(({ id, games }) => ({ id, data: games })) };
@@ -120,6 +125,22 @@ function homeHarness(tab = "scores") {
   h.start(h.load("hooks/useHomeData.ts").useHomeData, [tab]);
   return Object.assign(h, { requests });
 }
+
+test("home sources retain volleyball games using the canonical league IDs", () => {
+  const h = homeHarness();
+  try {
+    for (const [key, config] of Object.entries(h.modules["constants/leagues"].LEAGUE_CONFIG)) {
+      assert.equal(config.id, key);
+    }
+    for (const league of ["mcvb", "wcvb"]) {
+      const section = h.state.homeGameSections.find(({ id }) => id === league);
+      assert.ok(section, `${league} must be included in home sources`);
+      assert.equal(section.data.length, 1);
+      assert.ok(section.data[0].id.startsWith(`${league}:`));
+    }
+    assert.ok(h.state.homeGameSections.every(({ data }) => Array.isArray(data)));
+  } finally { h.stop(); }
+});
 
 test("Scores refresh starts favorites and all leagues together, keeps content, and waits for the last request", async () => {
   const h = homeHarness();
