@@ -261,10 +261,10 @@ test("one and two widget boards remain stable", () => {
 test("many widgets remain responsive and extend beyond one viewport", () => {
   const sizes: ExploreWidgetSize[] = ["small", "small", "medium", "large"];
   const widgets = items(
-    Array.from({ length: 24 }, (_, index) => [
-      `widget-${index}`,
-      sizes[index % sizes.length],
-    ] as const),
+    Array.from(
+      { length: 24 },
+      (_, index) => [`widget-${index}`, sizes[index % sizes.length]] as const,
+    ),
   );
 
   const phoneLayout = assertValidLayout(widgets, 360);

@@ -1,3 +1,4 @@
+import type { SportsRequestOptions } from "hooks/Sports/useSportsRequestScope";
 import type {
   VolleyballDirectoryTeam,
   VolleyballGameDetails,
@@ -12,15 +13,19 @@ import { apiClient } from "utils/apiClient";
 import { volleyballDirectoryTeam } from "utils/volleyball";
 
 /** Backend responses only. Request generations also guard refreshes and live updates. */
-export function useVolleyballResource<T>(path: string | null) {
+export function useVolleyballResource<T>(
+  path: string | null,
+  { enabled = true, scopeKey = "" }: SportsRequestOptions = {},
+) {
+  const identity = JSON.stringify([path, scopeKey]);
   const [state, setState] = useState<{
-    path: string | null;
+    identity: string | null;
     data: T | null;
     loading: boolean;
     refreshing: boolean;
     error: Error | null;
   }>({
-    path: null,
+    identity: null,
     data: null,
     loading: false,
     refreshing: false,
@@ -28,25 +33,28 @@ export function useVolleyballResource<T>(path: string | null) {
   });
   const controller = useRef<AbortController | null>(null);
   const generation = useRef(0);
+  const activeIdentity = useRef<string | null>(null);
   const request = useCallback(
     async (refreshing = false) => {
+      if (!path || !enabled || activeIdentity.current !== identity) return;
       controller.current?.abort();
       const id = ++generation.current;
-      if (!path) return;
       const abort = new AbortController();
       controller.current = abort;
       setState((previous) => ({
-        path,
-        data: previous.path === path ? previous.data : null,
-        loading: !refreshing,
+        identity,
+        data: previous.identity === identity ? previous.data : null,
+        loading:
+          !refreshing &&
+          (previous.identity !== identity || previous.data === null),
         refreshing,
         error: null,
       }));
       try {
         const { data } = await apiClient.get<T>(path, { signal: abort.signal });
-        if (generation.current === id)
+        if (!abort.signal.aborted && generation.current === id)
           setState({
-            path,
+            identity,
             data,
             loading: false,
             refreshing: false,
@@ -65,34 +73,44 @@ export function useVolleyballResource<T>(path: string | null) {
         }));
       }
     },
-    [path],
+    [path, enabled, identity],
   );
   useEffect(() => {
+    activeIdentity.current = enabled && path ? identity : null;
     let cancelled = false;
     void Promise.resolve().then(() => {
       if (!cancelled) void request();
     });
     return () => {
       cancelled = true;
+      activeIdentity.current = null;
       generation.current += 1;
       controller.current?.abort();
       controller.current = null;
     };
-  }, [request]);
+  }, [request, enabled, identity, path]);
   const refresh = useCallback(() => request(true), [request]);
   const replace = useCallback(
     (data: T) => {
+      if (!enabled || !path || activeIdentity.current !== identity) return;
       generation.current += 1;
       controller.current?.abort();
-      setState({ path, data, loading: false, refreshing: false, error: null });
+      setState({
+        identity,
+        data,
+        loading: false,
+        refreshing: false,
+        error: null,
+      });
     },
-    [path],
+    [path, enabled, identity],
   );
   return {
-    data: state.path === path ? state.data : null,
-    loading: !!path && (state.path !== path || state.loading),
-    refreshing: state.path === path && state.refreshing,
-    error: state.path === path ? state.error : null,
+    data: state.identity === identity ? state.data : null,
+    loading:
+      enabled && !!path && (state.identity !== identity || state.loading),
+    refreshing: enabled && state.identity === identity && state.refreshing,
+    error: enabled && state.identity === identity ? state.error : null,
     refresh,
     replace,
   };
@@ -102,15 +120,18 @@ export function useVolleyballGames(
   date: Date,
   league: string,
   onCalendar?: OnScoreboardCalendar,
+  options: SportsRequestOptions = {},
 ) {
   const day = dayjs(date).format("YYYYMMDD");
   const resource = useVolleyballResource<VolleyballScoreboard>(
     `/api/games/volleyball/${league}?date=${day}`,
+    options,
   );
   useEffect(() => {
     if (resource.data || resource.error) onCalendar?.(resource.data);
   }, [onCalendar, resource.data, resource.error]);
   useLiveSportsSubscription<VolleyballScoreboard>({
+    enabled: options.enabled ?? true,
     kind: "scoreboard",
     payload: { sport: "volleyball", league, date: day },
     onUpdate: resource.replace,

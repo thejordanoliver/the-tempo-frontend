@@ -115,7 +115,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: StanfordLogo,
-    logoLight: StanfordLogoLight
+    logoLight: StanfordLogoLight,
   },
   {
     id: 26,
@@ -132,7 +132,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: UCLALogo,
-    logoLight: UCLALogoLight
+    logoLight: UCLALogoLight,
   },
   {
     id: 28,
@@ -149,7 +149,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: UCSanDiegoLogo,
-    logoLight: UCSanDiegoLogoLight
+    logoLight: UCSanDiegoLogoLight,
   },
   {
     id: 30,
@@ -166,7 +166,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: USCLogo,
-    logoLight: USCLogoLight
+    logoLight: USCLogoLight,
   },
   {
     id: 62,
@@ -183,7 +183,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: HawaiiLogo,
-    logoLight: HawaiiLogoLight
+    logoLight: HawaiiLogoLight,
   },
   {
     id: 85,
@@ -200,7 +200,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: IUIndianapolisLogo,
-    logoLight: IUIndianapolisLogoLight
+    logoLight: IUIndianapolisLogoLight,
   },
   {
     id: 94,
@@ -217,7 +217,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: NorthernKentuckyLogo,
-    logoLight: NorthernKentuckyLogoLight
+    logoLight: NorthernKentuckyLogoLight,
   },
   {
     id: 108,
@@ -234,7 +234,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: HarvardLogo,
-    logoLight: HarvardLogoLight
+    logoLight: HarvardLogoLight,
   },
   {
     id: 123,
@@ -251,7 +251,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 163,
@@ -268,7 +268,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PrincetonLogo,
-    logoLight: PrincetonLogoLight
+    logoLight: PrincetonLogoLight,
   },
   {
     id: 164,
@@ -285,7 +285,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: RutgersLogo,
-    logoLight: RutgersLogoLight
+    logoLight: RutgersLogoLight,
   },
   {
     id: 194,
@@ -302,7 +302,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: OhioStateLogo,
-    logoLight: OhioStateLogoLight
+    logoLight: OhioStateLogoLight,
   },
   {
     id: 213,
@@ -319,7 +319,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PennStateLogo,
-    logoLight: PennStateLogoLight
+    logoLight: PennStateLogoLight,
   },
   {
     id: 252,
@@ -336,7 +336,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: BYULogo,
-    logoLight: BYULogoLight
+    logoLight: BYULogoLight,
   },
   {
     id: 279,
@@ -353,7 +353,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PacificLogo,
-    logoLight: PacificLogoLight
+    logoLight: PacificLogoLight,
   },
   {
     id: 299,
@@ -370,7 +370,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: LongBeachStateLogo,
-    logoLight: LongBeachStateLogoLight
+    logoLight: LongBeachStateLogoLight,
   },
   {
     id: 300,
@@ -387,7 +387,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: UCIrvineLogo,
-    logoLight: UCIrvineLogoLight
+    logoLight: UCIrvineLogoLight,
   },
   {
     id: 435,
@@ -404,7 +404,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2050,
@@ -421,7 +421,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: BallStateLogo,
-    logoLight: BallStateLogoLight
+    logoLight: BallStateLogoLight,
   },
   {
     id: 2054,
@@ -438,7 +438,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2058,
@@ -455,7 +455,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2059,
@@ -472,7 +472,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2107,
@@ -489,7 +489,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2215,
@@ -506,7 +506,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2233,
@@ -523,7 +523,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: FranklinLogo,
-    logoLight: FranklinLogoLight
+    logoLight: FranklinLogoLight,
   },
   {
     id: 2244,
@@ -540,7 +540,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: GeorgeMasonLogo,
-    logoLight: GeorgeMasonLogoLight
+    logoLight: GeorgeMasonLogoLight,
   },
   {
     id: 2253,
@@ -557,7 +557,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: GrandCanyonLogo,
-    logoLight: GrandCanyonLogoLight
+    logoLight: GrandCanyonLogoLight,
   },
   {
     id: 2327,
@@ -574,7 +574,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2332,
@@ -591,7 +591,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2350,
@@ -608,7 +608,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: LoyolaChicagoLogo,
-    logoLight: LoyolaChicagoLogoLight
+    logoLight: LoyolaChicagoLogoLight,
   },
   {
     id: 2363,
@@ -625,7 +625,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: ManhattanLogo,
-    logoLight: ManhattanLogoLight
+    logoLight: ManhattanLogoLight,
   },
   {
     id: 2379,
@@ -642,7 +642,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: MdEastShoreLogo,
-    logoLight: MdEastShoreLogoLight
+    logoLight: MdEastShoreLogoLight,
   },
   {
     id: 2384,
@@ -659,7 +659,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: MercyLogo,
-    logoLight: MercyLogoLight
+    logoLight: MercyLogoLight,
   },
   {
     id: 2418,
@@ -676,7 +676,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2444,
@@ -693,7 +693,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: NewberryLogo,
-    logoLight: NewberryLogoLight
+    logoLight: NewberryLogoLight,
   },
   {
     id: 2463,
@@ -710,7 +710,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: CalStateNorthridgeLogo,
-    logoLight: CalStateNorthridgeLogoLight
+    logoLight: CalStateNorthridgeLogoLight,
   },
   {
     id: 2474,
@@ -727,7 +727,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2492,
@@ -744,7 +744,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PepperdineLogo,
-    logoLight: PepperdineLogoLight
+    logoLight: PepperdineLogoLight,
   },
   {
     id: 2503,
@@ -761,7 +761,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PuertoRicoMayaguezLogo,
-    logoLight: PuertoRicoMayaguezLogoLight
+    logoLight: PuertoRicoMayaguezLogoLight,
   },
   {
     id: 2525,
@@ -778,7 +778,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2529,
@@ -795,7 +795,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: SacredHeartLogo,
-    logoLight: SacredHeartLogoLight
+    logoLight: SacredHeartLogoLight,
   },
   {
     id: 2540,
@@ -812,7 +812,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: UCSantaBarbaraLogo,
-    logoLight: UCSantaBarbaraLogoLight
+    logoLight: UCSantaBarbaraLogoLight,
   },
   {
     id: 2586,
@@ -829,7 +829,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: SouthwestBaptistLogo,
-    logoLight: SouthwestBaptistLogoLight
+    logoLight: SouthwestBaptistLogoLight,
   },
   {
     id: 2598,
@@ -846,7 +846,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: SaintFrancisLogo,
-    logoLight: SaintFrancisLogoLight
+    logoLight: SaintFrancisLogoLight,
   },
   {
     id: 2815,
@@ -863,7 +863,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: LindenwoodLogo,
-    logoLight: LindenwoodLogoLight
+    logoLight: LindenwoodLogoLight,
   },
   {
     id: 2816,
@@ -880,7 +880,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: McKendreeLogo,
-    logoLight: McKendreeLogoLight
+    logoLight: McKendreeLogoLight,
   },
   {
     id: 2825,
@@ -897,7 +897,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: QuincyLogo,
-    logoLight: QuincyLogoLight
+    logoLight: QuincyLogoLight,
   },
   {
     id: 2870,
@@ -914,7 +914,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PurdueFortWayneLogo,
-    logoLight: PurdueFortWayneLogoLight
+    logoLight: PurdueFortWayneLogoLight,
   },
   {
     id: 2885,
@@ -931,7 +931,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: NJITLogo,
-    logoLight: NJITLogoLight
+    logoLight: NJITLogoLight,
   },
   {
     id: 2889,
@@ -948,7 +948,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2917,
@@ -965,7 +965,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 2939,
@@ -982,7 +982,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 3259,
@@ -999,7 +999,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: KingTNLogo,
-    logoLight: KingTNLogoLight
+    logoLight: KingTNLogoLight,
   },
   {
     id: 111369,
@@ -1016,7 +1016,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 117485,
@@ -1033,7 +1033,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 118348,
@@ -1050,7 +1050,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 119333,
@@ -1067,7 +1067,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 119676,
@@ -1084,7 +1084,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: ThomasMoreLogo,
-    logoLight: ThomasMoreLogoLight
+    logoLight: ThomasMoreLogoLight,
   },
   {
     id: 121290,
@@ -1101,7 +1101,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 121312,
@@ -1118,7 +1118,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 122556,
@@ -1135,7 +1135,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: CharlestonWVLogo,
-    logoLight: CharlestonWVLogoLight
+    logoLight: CharlestonWVLogoLight,
   },
   {
     id: 123447,
@@ -1152,7 +1152,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 123448,
@@ -1169,7 +1169,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: QueensLogo,
-    logoLight: QueensLogoLight
+    logoLight: QueensLogoLight,
   },
   {
     id: 125228,
@@ -1186,7 +1186,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: NorthGreenvilleLogo,
-    logoLight: NorthGreenvilleLogoLight
+    logoLight: NorthGreenvilleLogoLight,
   },
   {
     id: 125254,
@@ -1203,7 +1203,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 125314,
@@ -1220,7 +1220,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 125353,
@@ -1237,7 +1237,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 125354,
@@ -1254,7 +1254,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: LongIslandLogo,
-    logoLight: LongIslandLogoLight
+    logoLight: LongIslandLogoLight,
   },
   {
     id: 125583,
@@ -1271,7 +1271,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: FairleighDickinsonLogo,
-    logoLight: FairleighDickinsonLogoLight
+    logoLight: FairleighDickinsonLogoLight,
   },
   {
     id: 125660,
@@ -1288,7 +1288,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 125665,
@@ -1305,7 +1305,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 127262,
@@ -1322,7 +1322,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: MerrimackLogo,
-    logoLight: MerrimackLogoLight
+    logoLight: MerrimackLogoLight,
   },
   {
     id: 127336,
@@ -1339,7 +1339,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: MissouriSAndTLogo,
-    logoLight: MissouriSAndTLogoLight
+    logoLight: MissouriSAndTLogoLight,
   },
   {
     id: 127650,
@@ -1356,7 +1356,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: AmericanInternationalLogo,
-    logoLight: AmericanInternationalLogoLight
+    logoLight: AmericanInternationalLogoLight,
   },
   {
     id: 128930,
@@ -1373,7 +1373,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 128989,
@@ -1390,7 +1390,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: KentuckyStateLogo,
-    logoLight: KentuckyStateLogoLight
+    logoLight: KentuckyStateLogoLight,
   },
   {
     id: 129349,
@@ -1407,7 +1407,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 130474,
@@ -1424,7 +1424,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 130478,
@@ -1441,7 +1441,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 130481,
@@ -1458,7 +1458,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
   {
     id: 130731,
@@ -1475,7 +1475,7 @@ export const mcvbTeams: Team[] = [
     isAllStar: false,
     isNational: false,
     logo: PlaceholderLogo,
-    logoLight: PlaceholderLogo
+    logoLight: PlaceholderLogo,
   },
 ];
 

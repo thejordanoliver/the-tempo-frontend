@@ -42,8 +42,7 @@ export default function CountdownClock<TGame extends CountdownGame>({
   const gameDate = game?.date ?? null;
   const animationKey = String(game?.id ?? gameDate ?? "");
 
-  const formatTime = (value?: number) =>
-    String(value ?? 0).padStart(2, "0");
+  const formatTime = (value?: number) => String(value ?? 0).padStart(2, "0");
 
   const handleAnimationComplete = useCallback(() => {
     setShowSeasonAnimation(false);
@@ -76,8 +75,7 @@ export default function CountdownClock<TGame extends CountdownGame>({
         stopInterval();
 
         const shouldPlay =
-          wasActivelyCountingDown &&
-          !playedSeasonAnimations.has(animationKey);
+          wasActivelyCountingDown && !playedSeasonAnimations.has(animationKey);
 
         if (shouldPlay) {
           playedSeasonAnimations.add(animationKey);
@@ -97,16 +95,10 @@ export default function CountdownClock<TGame extends CountdownGame>({
       setCountdown({
         days: Math.floor(distance / (1000 * 60 * 60 * 24)),
         hours: Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) /
-          (1000 * 60 * 60),
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
         ),
-        minutes: Math.floor(
-          (distance % (1000 * 60 * 60)) /
-          (1000 * 60),
-        ),
-        seconds: Math.floor(
-          (distance % (1000 * 60)) / 1000,
-        ),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000),
       });
     };
 
@@ -162,30 +154,22 @@ export default function CountdownClock<TGame extends CountdownGame>({
 
       <View style={styles.wrapper}>
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>
-            {formatTime(countDown.days)}
-          </Text>
+          <Text style={styles.time}>{formatTime(countDown.days)}</Text>
           <Text style={styles.label}>Days</Text>
         </View>
 
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>
-            {formatTime(countDown.hours)}
-          </Text>
+          <Text style={styles.time}>{formatTime(countDown.hours)}</Text>
           <Text style={styles.label}>Hours</Text>
         </View>
 
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>
-            {formatTime(countDown.minutes)}
-          </Text>
+          <Text style={styles.time}>{formatTime(countDown.minutes)}</Text>
           <Text style={styles.label}>Minutes</Text>
         </View>
 
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>
-            {formatTime(countDown.seconds)}
-          </Text>
+          <Text style={styles.time}>{formatTime(countDown.seconds)}</Text>
           <Text style={styles.label}>Seconds</Text>
         </View>
       </View>

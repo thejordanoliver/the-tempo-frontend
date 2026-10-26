@@ -8,7 +8,10 @@ export function usePlayerById(
   enabled = true,
 ) {
   const [player, setPlayer] = useState<any>(null);
-  const [identity, setIdentity] = useState<{ league: string; playerId: number } | null>(null);
+  const [identity, setIdentity] = useState<{
+    league: string;
+    playerId: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
@@ -44,10 +47,16 @@ export function usePlayerById(
 
         if (controller.signal.aborted) return;
 
-        const resolvedId = Number(res.data.playerId ?? res.data.player?.id ?? playerId);
+        const resolvedId = Number(
+          res.data.playerId ?? res.data.player?.id ?? playerId,
+        );
         setIdentity({
-          league: typeof res.data.league === "string" ? res.data.league : league,
-          playerId: Number.isSafeInteger(resolvedId) && resolvedId > 0 ? resolvedId : playerId!,
+          league:
+            typeof res.data.league === "string" ? res.data.league : league,
+          playerId:
+            Number.isSafeInteger(resolvedId) && resolvedId > 0
+              ? resolvedId
+              : playerId!,
         });
         setPlayer(res.data.player ?? null);
         setResolvedRequestKey(requestKey);
@@ -83,7 +92,7 @@ export function usePlayerById(
   return {
     player: hasCurrentResult ? player : null,
     resolvedPlayerId: hasCurrentResult ? identity?.playerId : undefined,
-    resolvedLeague: hasCurrentResult ? identity?.league ?? league : league,
+    resolvedLeague: hasCurrentResult ? (identity?.league ?? league) : league,
     loading: canFetch ? loading || !hasCurrentResult : false,
     error: hasCurrentResult ? error : null,
   };

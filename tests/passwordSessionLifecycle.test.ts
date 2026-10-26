@@ -36,7 +36,10 @@ test("password change installs the typed token pair before returning success", (
 
   const changePasswordIndex = screenSource.indexOf("await changePassword(");
   const resetIndex = screenSource.indexOf("reset();", changePasswordIndex);
-  const successIndex = screenSource.indexOf('Alert.alert("Success"', resetIndex);
+  const successIndex = screenSource.indexOf(
+    'Alert.alert("Success"',
+    resetIndex,
+  );
 
   assert.ok(changePasswordIndex >= 0);
   assert.ok(resetIndex > changePasswordIndex);
@@ -50,6 +53,9 @@ test("authenticated requests read the newly stored access token on every call", 
     clientSource,
     /interceptors\.request\.use\(async \(config\) => \{\s*const token = await getAccessToken\(\)/s,
   );
-  assert.match(clientSource, /await saveSecureTokens\(accessToken, refreshToken\)/);
+  assert.match(
+    clientSource,
+    /await saveSecureTokens\(accessToken, refreshToken\)/,
+  );
   assert.match(clientSource, /notifyAuthSessionListeners\(accessToken\)/);
 });

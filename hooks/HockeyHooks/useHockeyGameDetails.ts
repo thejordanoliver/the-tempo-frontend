@@ -168,6 +168,7 @@ export type PlayParticipantAthlete = {
 };
 
 export type PlayParticipant = {
+  type?: string | null;
   teamId: number | null;
   athlete: PlayParticipantAthlete;
 };
@@ -200,7 +201,7 @@ export type Play = {
   coordinate: {
     x: number;
     y: number;
-  };
+  } | null;
   pointsAttempted: number;
   shortDescription: string;
 };
@@ -251,7 +252,7 @@ export type Leaders = {
 
 export type GameStatus = {
   id: string;
-  name: "STATUS_SCHEDULED" | "STATUS_IN_PROGRESS" | "STATUS_FINAL";
+  name: string;
   state: "pre" | "in" | "post";
   completed: boolean;
   gameStatusDescription: string;
@@ -276,7 +277,7 @@ export type Score = {
   home: Team;
   away: Team;
   plays: Play[];
-  lastPlay: Play;
+  lastPlay: Play | null;
   teamStats: TeamStats;
   playerStats: PlayerStats;
   leaders: Leaders[];

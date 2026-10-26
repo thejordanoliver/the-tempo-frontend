@@ -140,11 +140,7 @@ export type Circuit = RacingCircuit;
 
 // ---------- STATISTIC TYPES ----------
 
-export type RacingStatisticValue =
-  | number
-  | string
-  | boolean
-  | null;
+export type RacingStatisticValue = number | string | boolean | null;
 
 export type RacingStatistic = {
   name: string | null;

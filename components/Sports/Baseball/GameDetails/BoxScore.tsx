@@ -1182,7 +1182,7 @@ export default function BoxScore({
             ) ||
             Boolean(
               targetCodeIdentifier &&
-              groupIdentifiers.includes(targetCodeIdentifier),
+                groupIdentifiers.includes(targetCodeIdentifier),
             )
           );
         });

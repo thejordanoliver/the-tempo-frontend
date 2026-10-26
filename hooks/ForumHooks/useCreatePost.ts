@@ -282,39 +282,41 @@ export function useCreatePost(destination: ForumPostDestination | null) {
     }
 
     // trimMeta indexes the uploaded files, which do not include remote GIFs.
-    media.filter((item) => item.type !== "gif").forEach((item, idx) => {
-      const fallbackExt = item.type === "video" ? "mp4" : "jpg";
-      const fallbackName = `${item.type}-${idx}.${fallbackExt}`;
-      const filename = item.uri.split("/").pop() || fallbackName;
+    media
+      .filter((item) => item.type !== "gif")
+      .forEach((item, idx) => {
+        const fallbackExt = item.type === "video" ? "mp4" : "jpg";
+        const fallbackName = `${item.type}-${idx}.${fallbackExt}`;
+        const filename = item.uri.split("/").pop() || fallbackName;
 
-      formData.append("media", {
-        uri: item.uri,
-        name: filename,
-        type: getMimeType(item),
-      } as unknown as Blob);
+        formData.append("media", {
+          uri: item.uri,
+          name: filename,
+          type: getMimeType(item),
+        } as unknown as Blob);
 
-      if (item.type === "video") {
-        if (item.thumbnailUri) {
-          const thumbName =
-            item.thumbnailUri.split("/").pop() || `thumb-${idx}.jpg`;
+        if (item.type === "video") {
+          if (item.thumbnailUri) {
+            const thumbName =
+              item.thumbnailUri.split("/").pop() || `thumb-${idx}.jpg`;
 
-          formData.append("thumbnails", {
-            uri: item.thumbnailUri,
-            name: thumbName,
-            type: "image/jpeg",
-          } as unknown as Blob);
+            formData.append("thumbnails", {
+              uri: item.thumbnailUri,
+              name: thumbName,
+              type: "image/jpeg",
+            } as unknown as Blob);
+          }
+
+          formData.append(
+            "trimMeta",
+            JSON.stringify({
+              idx,
+              startMs: item.trimStartMs ?? 0,
+              endMs: item.trimEndMs ?? null,
+            }),
+          );
         }
-
-        formData.append(
-          "trimMeta",
-          JSON.stringify({
-            idx,
-            startMs: item.trimStartMs ?? 0,
-            endMs: item.trimEndMs ?? null,
-          }),
-        );
-      }
-    });
+      });
 
     try {
       const endpoint = getForumPostCreateEndpoint(destination);

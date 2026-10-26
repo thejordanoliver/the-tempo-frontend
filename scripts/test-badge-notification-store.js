@@ -119,9 +119,9 @@ function testBadgeNotificationStore() {
   useBadgeNotificationStore.getState().enqueueNotifications(undefined);
   useBadgeNotificationStore.getState().enqueueNotifications(null);
   useBadgeNotificationStore.getState().enqueueNotifications([]);
-  useBadgeNotificationStore.getState().enqueueNotifications([
-    { notificationId: "malformed" },
-  ]);
+  useBadgeNotificationStore
+    .getState()
+    .enqueueNotifications([{ notificationId: "malformed" }]);
   assert.equal(useBadgeNotificationStore.getState().currentNotification, null);
   assertArrayEqual(
     useBadgeNotificationStore.getState().queuedNotifications,
@@ -182,11 +182,13 @@ function testBadgeNotificationStore() {
   );
 
   resetStore();
-  useBadgeNotificationStore.getState().enqueueNotifications([
-    createBadgeNotification("first"),
-    createBadgeNotification("second"),
-    createBadgeNotification("third"),
-  ]);
+  useBadgeNotificationStore
+    .getState()
+    .enqueueNotifications([
+      createBadgeNotification("first"),
+      createBadgeNotification("second"),
+      createBadgeNotification("third"),
+    ]);
   assert.equal(
     useBadgeNotificationStore.getState().currentNotification.notificationId,
     "first",
@@ -224,10 +226,12 @@ function testBadgeNotificationStore() {
   assert.equal(useBadgeNotificationStore.getState().currentNotification, null);
 
   resetStore();
-  useBadgeNotificationStore.getState().enqueueNotifications([
-    createBadgeNotification("dupe"),
-    createBadgeNotification("dupe"),
-  ]);
+  useBadgeNotificationStore
+    .getState()
+    .enqueueNotifications([
+      createBadgeNotification("dupe"),
+      createBadgeNotification("dupe"),
+    ]);
   assert.equal(
     useBadgeNotificationStore.getState().currentNotification.notificationId,
     "dupe",
@@ -238,10 +242,12 @@ function testBadgeNotificationStore() {
   );
 
   resetStore();
-  useBadgeNotificationStore.getState().enqueueNotifications([
-    createBadgeNotification("socket", "same-badge"),
-    createBadgeNotification("pending", "same-badge"),
-  ]);
+  useBadgeNotificationStore
+    .getState()
+    .enqueueNotifications([
+      createBadgeNotification("socket", "same-badge"),
+      createBadgeNotification("pending", "same-badge"),
+    ]);
   assert.equal(
     useBadgeNotificationStore.getState().currentNotification.notificationId,
     "socket",
@@ -252,10 +258,12 @@ function testBadgeNotificationStore() {
   );
 
   useBadgeNotificationStore.getState().dismissCurrentNotification();
-  useBadgeNotificationStore.getState().enqueueNotifications([
-    createBadgeNotification("socket", "same-badge"),
-    createBadgeNotification("pending", "same-badge"),
-  ]);
+  useBadgeNotificationStore
+    .getState()
+    .enqueueNotifications([
+      createBadgeNotification("socket", "same-badge"),
+      createBadgeNotification("pending", "same-badge"),
+    ]);
   assert.equal(useBadgeNotificationStore.getState().currentNotification, null);
   assertArrayEqual(useBadgeNotificationStore.getState().knownNotificationIds, [
     "socket",
@@ -282,20 +290,23 @@ function testBadgeNotificationStore() {
   );
 
   resetStore();
-  useBadgeNotificationStore.getState().enqueueNotifications([
-    createBadgeNotification("clear-current"),
-    createBadgeNotification("clear-queued"),
-  ]);
   useBadgeNotificationStore
     .getState()
-    .queueNotificationReadRetry("clear-read");
+    .enqueueNotifications([
+      createBadgeNotification("clear-current"),
+      createBadgeNotification("clear-queued"),
+    ]);
+  useBadgeNotificationStore.getState().queueNotificationReadRetry("clear-read");
   useBadgeNotificationStore.getState().clearBadgeNotifications();
   assert.equal(useBadgeNotificationStore.getState().currentNotification, null);
   assertArrayEqual(
     useBadgeNotificationStore.getState().queuedNotifications,
     [],
   );
-  assertArrayEqual(useBadgeNotificationStore.getState().knownNotificationIds, []);
+  assertArrayEqual(
+    useBadgeNotificationStore.getState().knownNotificationIds,
+    [],
+  );
   assertArrayEqual(useBadgeNotificationStore.getState().knownBadgeIds, []);
   assertArrayEqual(
     useBadgeNotificationStore.getState().readRetryNotificationIds,
@@ -400,8 +411,7 @@ function testNotificationSocketSingleton() {
         },
       },
       "@/utils/apiConfig": {
-        getSocketNamespaceUrl: (namespace) =>
-          `http://api.local${namespace}`,
+        getSocketNamespaceUrl: (namespace) => `http://api.local${namespace}`,
         logSocketConfig() {},
       },
     },
@@ -612,16 +622,9 @@ async function testRealtimeHelpers() {
 
   assertArrayEqual(failedAcknowledgedIds, []);
   assertArrayEqual(failedRetryQueue, [["read-3"]]);
-
 }
 
-function createCenterLike(
-  id,
-  postId,
-  actorUsername,
-  createdAt,
-  actorUserId,
-) {
+function createCenterLike(id, postId, actorUsername, createdAt, actorUserId) {
   return {
     id,
     type: "likes",
@@ -640,7 +643,9 @@ function createCenterLike(
 }
 
 function testNotificationCenterGrouping() {
-  const center = loadTranspiledModule("utils/notifications/notificationCenter.ts");
+  const center = loadTranspiledModule(
+    "utils/notifications/notificationCenter.ts",
+  );
   // Grouped legacy notification-center records were replaced by canonical
   // AppNotification records. Keep these assertions only for older checkouts.
   if (typeof center.addCenterNotificationToState !== "function") return;
@@ -677,12 +682,7 @@ function testNotificationCenterGrouping() {
 
   notifications = center.addCenterNotificationToState(
     notifications,
-    createCenterLike(
-      "like:2",
-      "post-1",
-      "alex",
-      "2026-07-14T00:01:00.000Z",
-    ),
+    createCenterLike("like:2", "post-1", "alex", "2026-07-14T00:01:00.000Z"),
   );
   assert.equal(notifications.length, 1);
   assert.equal(notifications[0].title, "2 new likes");
@@ -690,12 +690,7 @@ function testNotificationCenterGrouping() {
 
   notifications = center.addCenterNotificationToState(
     notifications,
-    createCenterLike(
-      "like:3",
-      "post-1",
-      "sam",
-      "2026-07-14T00:02:00.000Z",
-    ),
+    createCenterLike("like:3", "post-1", "sam", "2026-07-14T00:02:00.000Z"),
   );
   assert.equal(notifications[0].title, "3 new likes");
   assert.equal(
@@ -705,21 +700,11 @@ function testNotificationCenterGrouping() {
 
   notifications = center.addCenterNotificationToState(
     notifications,
-    createCenterLike(
-      "like:4",
-      "post-1",
-      "lee",
-      "2026-07-14T00:03:00.000Z",
-    ),
+    createCenterLike("like:4", "post-1", "lee", "2026-07-14T00:03:00.000Z"),
   );
   notifications = center.addCenterNotificationToState(
     notifications,
-    createCenterLike(
-      "like:5",
-      "post-1",
-      "morgan",
-      "2026-07-14T00:04:00.000Z",
-    ),
+    createCenterLike("like:5", "post-1", "morgan", "2026-07-14T00:04:00.000Z"),
   );
   assert.equal(notifications[0].title, "5 new likes");
   assert.equal(
@@ -804,40 +789,44 @@ function testNotificationCenterGrouping() {
   assert.equal(messageNotifications[0].messageCount, 2);
 
   assert.equal(
-    center.getUnreadCenterNotificationCount([
-      {
-        ...messageNotifications[0],
-        messageCount: 3,
-      },
-      createCenterLike(
-        "like:weighted",
-        "post-3",
-        "first",
-        "2026-07-14T02:00:00.000Z",
+    center.getUnreadCenterNotificationCount(
+      [
+        {
+          ...messageNotifications[0],
+          messageCount: 3,
+        },
+        createCenterLike(
+          "like:weighted",
+          "post-3",
+          "first",
+          "2026-07-14T02:00:00.000Z",
+        ),
+        {
+          id: "comment:1",
+          type: "comments",
+          title: "New Comment",
+          text: "Commented on your post",
+          readAt: null,
+          createdAt: "2026-07-14T02:01:00.000Z",
+        },
+      ].map((notification) =>
+        notification.id === "like:weighted"
+          ? { ...notification, likeCount: 4 }
+          : notification,
       ),
-      {
-        id: "comment:1",
-        type: "comments",
-        title: "New Comment",
-        text: "Commented on your post",
-        readAt: null,
-        createdAt: "2026-07-14T02:01:00.000Z",
-      },
-    ].map((notification) =>
-      notification.id === "like:weighted"
-        ? { ...notification, likeCount: 4 }
-        : notification,
-    )),
+    ),
     8,
   );
 
   assert.equal(
-    center.getNotificationCenterHref(createCenterLike(
-      "like:route",
-      "post-route",
-      "jordan",
-      "2026-07-14T03:00:00.000Z",
-    )),
+    center.getNotificationCenterHref(
+      createCenterLike(
+        "like:route",
+        "post-route",
+        "jordan",
+        "2026-07-14T03:00:00.000Z",
+      ),
+    ),
     "/post/post-route",
   );
 

@@ -48,9 +48,7 @@ const formatPercentStat = (value: number | null | undefined): string => {
   return `${value.toFixed(1)}%`;
 };
 
-export const getTeamSummaryRows = (
-  teamStats: TeamStats,
-): TeamStatRow[] => [
+export const getTeamSummaryRows = (teamStats: TeamStats): TeamStatRow[] => [
   {
     label: "Team",
     value: teamStats?.team?.fullName || teamStats?.team?.name || "—",
@@ -69,9 +67,7 @@ export const getTeamSummaryRows = (
   },
 ];
 
-export const getTeamDisplayAverages = (
-  teamStats: TeamStats,
-): TeamStatRow[] => [
+export const getTeamDisplayAverages = (teamStats: TeamStats): TeamStatRow[] => [
   {
     label: "Points Per Game",
     value: formatFixedStat(teamStats.pointsPerGame),
@@ -114,9 +110,7 @@ export const getTeamDisplayAverages = (
   },
 ];
 
-export const getTeamDisplayTotals = (
-  teamStats: TeamStats,
-): TeamStatRow[] => [
+export const getTeamDisplayTotals = (teamStats: TeamStats): TeamStatRow[] => [
   {
     label: "Total Points",
     value: formatStatValue(teamStats.totalPoints),

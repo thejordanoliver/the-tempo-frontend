@@ -57,9 +57,7 @@ function getGameTimestamp(envelope: ExploreWidgetGame): number {
   const rawTimestamp = Number(game.timestamp);
   if (!Number.isFinite(rawTimestamp)) return Number.POSITIVE_INFINITY;
 
-  return rawTimestamp < 10_000_000_000
-    ? rawTimestamp * 1_000
-    : rawTimestamp;
+  return rawTimestamp < 10_000_000_000 ? rawTimestamp * 1_000 : rawTimestamp;
 }
 
 function getGameIdentity(envelope: ExploreWidgetGame): string {

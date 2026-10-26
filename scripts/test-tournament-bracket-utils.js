@@ -21,10 +21,9 @@ const {
   getFinalFourDisplayTeams,
   getRegionalDisplayTeams,
   getSourceGameDisplayTeams,
-} = require(path.join(
-  process.cwd(),
-  "utils/brackets/tournamentBracket.utils.ts",
-));
+} = require(
+  path.join(process.cwd(), "utils/brackets/tournamentBracket.utils.ts"),
+);
 
 const team = (id, name, seed, homeAway, winner = null) => ({
   id,
@@ -38,13 +37,7 @@ const team = (id, name, seed, homeAway, winner = null) => ({
   homeAway,
 });
 
-const game = ({
-  id,
-  round,
-  homeTeam,
-  awayTeam,
-  winnerTeamId = null,
-}) => ({
+const game = ({ id, round, homeTeam, awayTeam, winnerTeamId = null }) => ({
   league: {
     id: 10,
     uid: "s:40~l:41",
@@ -174,20 +167,32 @@ const championship = game({
   awayTeam: team("semi-one-winner", "Winner One", 1, "away"),
 });
 assert.deepEqual(
-  getSourceGameDisplayTeams(
-    championship,
-    semifinalOne,
-    semifinalTwo,
-  ).map((displayTeam) => displayTeam?.id),
+  getSourceGameDisplayTeams(championship, semifinalOne, semifinalTwo).map(
+    (displayTeam) => displayTeam?.id,
+  ),
   ["semi-one-winner", "semi-two-winner"],
 );
 
-const { buildRegionRoundSlots, getRegionalTeamOrder, getOrderedFinalFourGames, getFinalFourRegionLayout } = require(path.join(process.cwd(), "utils/brackets/tournamentBracketGames.ts"));
-const { getWinnerTeam } = require(path.join(process.cwd(), "utils/brackets/tournamentBracket.utils.ts"));
-const { getTournamentGameState } = require(path.join(process.cwd(), "utils/brackets/tournamentGameStatus.ts"));
+const {
+  buildRegionRoundSlots,
+  getRegionalTeamOrder,
+  getOrderedFinalFourGames,
+  getFinalFourRegionLayout,
+} = require(
+  path.join(process.cwd(), "utils/brackets/tournamentBracketGames.ts"),
+);
+const { getWinnerTeam } = require(
+  path.join(process.cwd(), "utils/brackets/tournamentBracket.utils.ts"),
+);
+const { getTournamentGameState } = require(
+  path.join(process.cwd(), "utils/brackets/tournamentGameStatus.ts"),
+);
 
 // A live leader is not a bracket winner, even if a stale winner flag is present.
-const scheduled = { ...semifinalOne, status: { state: "pre", description: "Scheduled", completed: false } };
+const scheduled = {
+  ...semifinalOne,
+  status: { state: "pre", description: "Scheduled", completed: false },
+};
 assert.equal(getWinnerTeam(scheduled), null);
 assert.equal(getWinnerTeam(semifinalOne)?.id, "semi-one-winner");
 for (const [state, description, expected] of [
@@ -200,33 +205,77 @@ for (const [state, description, expected] of [
   ["in", "Delayed", "interrupted"],
   ["post", "Final", "final"],
 ]) {
-  assert.equal(getTournamentGameState({ ...semifinalOne, status: { state, description } }), expected);
+  assert.equal(
+    getTournamentGameState({ ...semifinalOne, status: { state, description } }),
+    expected,
+  );
 }
 
 const region = (id, order, games) => ({ id, name: id, order, games });
 const firstRound = game({
-  id: "seven-ten", round: "ROUND_OF_64",
+  id: "seven-ten",
+  round: "ROUND_OF_64",
   homeTeam: team("seven", "Seven", 7, "home", true),
   awayTeam: team("ten", "Ten", 10, "away"),
 });
 const seedlessNextRound = game({
-  id: "seedless", round: "ROUND_OF_32",
+  id: "seedless",
+  round: "ROUND_OF_32",
   homeTeam: team("seven", "Seven", null, "home"),
   awayTeam: team("unknown", "Unknown", null, "away"),
 });
-const slots = buildRegionRoundSlots(region("east", 0, [seedlessNextRound, firstRound]));
+const slots = buildRegionRoundSlots(
+  region("east", 0, [seedlessNextRound, firstRound]),
+);
 assert.equal(slots.ROUND_OF_64[6]?.id, "seven-ten");
 assert.equal(slots.ROUND_OF_32[3]?.id, "seedless");
 assert.equal(slots.ROUND_OF_32[0], undefined);
 
 // Region membership keeps semifinal feeders ordered even without Elite Eight data.
-const east = region("east", 0, [game({ id: "east-round", round: "ROUND_OF_64", homeTeam: finalFour.awayTeam, awayTeam: null })]);
-const south = region("south", 1, [game({ id: "south-round", round: "ROUND_OF_64", homeTeam: finalFour.homeTeam, awayTeam: null })]);
+const east = region("east", 0, [
+  game({
+    id: "east-round",
+    round: "ROUND_OF_64",
+    homeTeam: finalFour.awayTeam,
+    awayTeam: null,
+  }),
+]);
+const south = region("south", 1, [
+  game({
+    id: "south-round",
+    round: "ROUND_OF_64",
+    homeTeam: finalFour.homeTeam,
+    awayTeam: null,
+  }),
+]);
 const teamOrder = getRegionalTeamOrder([east, south]);
-assert.deepEqual(getFinalFourDisplayTeams(finalFour, teamOrder).map((t) => t?.id), ["east-champion", "south-champion"]);
-assert.deepEqual(getOrderedFinalFourGames([finalFour], teamOrder).map((g) => g.id), ["final-four-one"]);
-assert.deepEqual(getFinalFourRegionLayout([east, south], [finalFour], teamOrder).map((r) => r?.id ?? null), ["east", "south", null, null]);
-const missingRegionSemifinal = { ...finalFour, homeTeam: team("missing", "Missing", null, "home") };
-assert.deepEqual(getFinalFourRegionLayout([east], [missingRegionSemifinal], getRegionalTeamOrder([east])).map((r) => r?.id ?? null), [null, "east", null, null]);
+assert.deepEqual(
+  getFinalFourDisplayTeams(finalFour, teamOrder).map((t) => t?.id),
+  ["east-champion", "south-champion"],
+);
+assert.deepEqual(
+  getOrderedFinalFourGames([finalFour], teamOrder).map((g) => g.id),
+  ["final-four-one"],
+);
+assert.deepEqual(
+  getFinalFourRegionLayout([east, south], [finalFour], teamOrder).map(
+    (r) => r?.id ?? null,
+  ),
+  ["east", "south", null, null],
+);
+const missingRegionSemifinal = {
+  ...finalFour,
+  homeTeam: team("missing", "Missing", null, "home"),
+};
+assert.deepEqual(
+  getFinalFourRegionLayout(
+    [east],
+    [missingRegionSemifinal],
+    getRegionalTeamOrder([east]),
+  ).map((r) => r?.id ?? null),
+  [null, "east", null, null],
+);
 
-console.log("Tournament bracket ordering, feeder, winner, and status tests passed.");
+console.log(
+  "Tournament bracket ordering, feeder, winner, and status tests passed.",
+);

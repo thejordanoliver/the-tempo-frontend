@@ -48,9 +48,7 @@ export const TeamRow = ({
 
   return (
     <View style={styles.teamRow}>
-      <Text style={[styles.seedText, { color: seedColor }]}>
-        {seed ?? "-"}
-      </Text>
+      <Text style={[styles.seedText, { color: seedColor }]}>{seed ?? "-"}</Text>
       <Image source={teamLogo} style={styles.teamLogo} resizeMode="contain" />
       <Text
         numberOfLines={1}
@@ -66,12 +64,7 @@ export const TeamRow = ({
         </View>
       )}
       {score == null && (
-        <View
-          style={[
-            styles.winsBadge,
-            { backgroundColor: winsBadgeColor },
-          ]}
-        >
+        <View style={[styles.winsBadge, { backgroundColor: winsBadgeColor }]}>
           <Text style={[styles.winsText, { color: winsTextColor }]}>
             {team ? wins : "-"}
           </Text>

@@ -11,6 +11,18 @@ export const PlayByPlayStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.midTone : Colors.lightGray,
       borderRadius: 8,
     },
+    basketballWrapper: {
+      gap: 4,
+      padding: 10,
+    },
+    basketballDetailRow: {
+      height: "auto",
+      minHeight: 24,
+      paddingBottom: 6,
+    },
+    basketballParticipantsRow: {
+      paddingTop: 8,
+    },
     fieldFrame: {
       alignItems: "center",
       alignSelf: "stretch",
@@ -173,19 +185,14 @@ export const PlayByPlayStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.dark.lightRed : Colors.light.red,
       backgroundColor: isDark ? Colors.light.red : Colors.dark.lightRed,
     },
-    touchdownBadge: {
+    scoreBadge: {
       minWidth: 94,
       borderColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
       backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
     },
-    fieldGoalBadge: {
-      minWidth: 88,
-      borderColor: isDark ? Colors.dark.yellow : Colors.light.yellow,
-      backgroundColor: isDark ? "#7A5A09" : "#B88700",
-    },
     baseballBadge: {
       borderColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
-      backgroundColor: isDark ? "#245C2A" : Colors.light.green,
+      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
     playStatusGlow: {
       ...StyleSheet.absoluteFill,
@@ -193,11 +200,8 @@ export const PlayByPlayStyles = (isDark: boolean) =>
     redZoneGlow: {
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
-    touchdownGlow: {
+    scoreGlow: {
       backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
-    },
-    fieldGoalGlow: {
-      backgroundColor: isDark ? Colors.dark.yellow : Colors.light.yellow,
     },
     baseballGlow: {
       backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,

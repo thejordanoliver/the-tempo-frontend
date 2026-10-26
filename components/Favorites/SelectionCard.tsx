@@ -75,15 +75,17 @@ function SelectionCard({
       : Colors.light.text;
 
   const sportTagColor =
-    item.league === "mcvb" || item.league === "wcvb" ? "#009CDE" : item.league === "cfb"
-      ? "#228B22"
-      : item.league === "wcbb"
-        ? "#C2185B"
-        : item.league === "cb"
-          ? "#0F766E"
-          : item.league === "sb"
-            ? "#B45309"
-            : "#1E90FF";
+    item.league === "mcvb" || item.league === "wcvb"
+      ? "#009CDE"
+      : item.league === "cfb"
+        ? "#228B22"
+        : item.league === "wcbb"
+          ? "#C2185B"
+          : item.league === "cb"
+            ? "#0F766E"
+            : item.league === "sb"
+              ? "#B45309"
+              : "#1E90FF";
 
   return (
     <Pressable

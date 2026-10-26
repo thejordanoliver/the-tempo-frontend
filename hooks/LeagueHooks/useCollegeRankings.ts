@@ -1,6 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CollegeRankingsLeague, CollegeRankPoll } from "types/collegeRankings";
+import type {
+  CollegeRankingsLeague,
+  CollegeRankPoll,
+} from "types/collegeRankings";
 import { apiClient } from "utils/apiClient";
 import { getCollegeRankingPolls } from "utils/standings/collegeRankings";
 
@@ -54,74 +57,97 @@ export function useCollegeRankings(league: CollegeRankingsLeague) {
   const generation = useRef(0);
   const controller = useRef<AbortController | null>(null);
 
-  const load = useCallback(async (force = false) => {
-    const requestId = ++generation.current;
-    controller.current?.abort();
-    const abort = new AbortController();
-    controller.current = abort;
-    const isCurrent = () => generation.current === requestId && !abort.signal.aborted;
-    const cacheKey = `college_basketball_rankings_cache_${league}_v3`;
-    const lastRefreshKey = `college_basketball_rankings_last_refresh_${league}_v3`;
-    const useCache = league !== "cfb";
+  const load = useCallback(
+    async (force = false) => {
+      const requestId = ++generation.current;
+      controller.current?.abort();
+      const abort = new AbortController();
+      controller.current = abort;
+      const isCurrent = () =>
+        generation.current === requestId && !abort.signal.aborted;
+      const cacheKey = `college_basketball_rankings_cache_${league}_v3`;
+      const lastRefreshKey = `college_basketball_rankings_last_refresh_${league}_v3`;
+      const useCache = league !== "cfb";
 
-    setState((previous) => ({
-      league,
-      rankings: previous.league === league ? previous.rankings : EMPTY_RANKINGS,
-      loading: !force,
-      refreshing: force,
-      error: null,
-    }));
+      setState((previous) => ({
+        league,
+        rankings:
+          previous.league === league ? previous.rankings : EMPTY_RANKINGS,
+        loading: !force,
+        refreshing: force,
+        error: null,
+      }));
 
-    try {
-      if (useCache && !force) {
-        const cached = await readCache(cacheKey);
-        if (!isCurrent()) return;
-        if (cached) {
-          setState((previous) => ({ ...previous, rankings: cached, loading: false }));
-          let lastRefresh: string | null = null;
-          try {
-            lastRefresh = await AsyncStorage.getItem(lastRefreshKey);
-          } catch {
-            // Storage failures must not prevent a network request.
-          }
+      try {
+        if (useCache && !force) {
+          const cached = await readCache(cacheKey);
           if (!isCurrent()) return;
-          if (
-            lastRefresh &&
-            Date.now() - Number(lastRefresh) < BACKGROUND_REFRESH_INTERVAL
-          ) return;
+          if (cached) {
+            setState((previous) => ({
+              ...previous,
+              rankings: cached,
+              loading: false,
+            }));
+            let lastRefresh: string | null = null;
+            try {
+              lastRefresh = await AsyncStorage.getItem(lastRefreshKey);
+            } catch {
+              // Storage failures must not prevent a network request.
+            }
+            if (!isCurrent()) return;
+            if (
+              lastRefresh &&
+              Date.now() - Number(lastRefresh) < BACKGROUND_REFRESH_INTERVAL
+            )
+              return;
+          }
+        }
+        if (!isCurrent()) return;
+
+        const response = await apiClient.get<unknown>(
+          `/api/standings/${league}/rankings`,
+          { signal: abort.signal },
+        );
+        if (!isCurrent()) return;
+        const rankings = getCollegeRankingPolls(response.data, league);
+        setState({
+          league,
+          rankings,
+          loading: false,
+          refreshing: false,
+          error: null,
+        });
+
+        if (useCache) {
+          try {
+            await AsyncStorage.setItem(
+              cacheKey,
+              JSON.stringify({ timestamp: Date.now(), data: rankings }),
+            );
+            await AsyncStorage.setItem(lastRefreshKey, String(Date.now()));
+          } catch (error) {
+            console.warn(`Failed to cache ${league} rankings:`, error);
+          }
+        }
+      } catch (error: unknown) {
+        if (isCurrent()) {
+          setState((previous) => ({
+            ...previous,
+            error: getErrorMessage(error),
+          }));
+        }
+      } finally {
+        if (isCurrent()) {
+          setState((previous) => ({
+            ...previous,
+            loading: false,
+            refreshing: false,
+          }));
         }
       }
-      if (!isCurrent()) return;
-
-      const response = await apiClient.get<unknown>(
-        `/api/standings/${league}/rankings`,
-        { signal: abort.signal },
-      );
-      if (!isCurrent()) return;
-      const rankings = getCollegeRankingPolls(response.data, league);
-      setState({ league, rankings, loading: false, refreshing: false, error: null });
-
-      if (useCache) {
-        try {
-          await AsyncStorage.setItem(
-            cacheKey,
-            JSON.stringify({ timestamp: Date.now(), data: rankings }),
-          );
-          await AsyncStorage.setItem(lastRefreshKey, String(Date.now()));
-        } catch (error) {
-          console.warn(`Failed to cache ${league} rankings:`, error);
-        }
-      }
-    } catch (error: unknown) {
-      if (isCurrent()) {
-        setState((previous) => ({ ...previous, error: getErrorMessage(error) }));
-      }
-    } finally {
-      if (isCurrent()) {
-        setState((previous) => ({ ...previous, loading: false, refreshing: false }));
-      }
-    }
-  }, [league]);
+    },
+    [league],
+  );
 
   useEffect(() => {
     let cancelled = false;

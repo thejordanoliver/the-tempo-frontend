@@ -41,7 +41,9 @@ export default function TournamentTreeBracket({
     refresh,
   } = useTournamentBracket(league, season);
   const hasMainBracket =
-    regions.length > 0 || finalFourGames.length > 0 || championshipGame !== null;
+    regions.length > 0 ||
+    finalFourGames.length > 0 ||
+    championshipGame !== null;
 
   if (loading && games.length === 0) {
     return (
@@ -83,7 +85,11 @@ export default function TournamentTreeBracket({
         )}
       >
         <View>
-          <FirstFour games={openingRoundGames} isDark={isDark} league={league} />
+          <FirstFour
+            games={openingRoundGames}
+            isDark={isDark}
+            league={league}
+          />
         </View>
 
         {hasMainBracket && (

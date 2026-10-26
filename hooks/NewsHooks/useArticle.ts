@@ -22,8 +22,24 @@ export interface ArticleStorySegment {
 }
 
 export type ArticleStoryLinkTarget =
-  | { kind: "game"; screen: "football" | "basketball"; gameId: string; league: string }
-  | { kind: "player"; screen: "baseball" | "basketball" | "football" | "hockey" | "mma" | "soccer"; playerId: string; league: string }
+  | {
+      kind: "game";
+      screen: "football" | "basketball";
+      gameId: string;
+      league: string;
+    }
+  | {
+      kind: "player";
+      screen:
+        | "baseball"
+        | "basketball"
+        | "football"
+        | "hockey"
+        | "mma"
+        | "soccer";
+      playerId: string;
+      league: string;
+    }
   | {
       kind: "team";
       league: string;

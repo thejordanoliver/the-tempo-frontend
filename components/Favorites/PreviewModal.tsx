@@ -45,7 +45,7 @@ const getTeamLogo = (team: Team, isDark: boolean) => {
   switch (team.league) {
     case "mcvb":
     case "wcvb":
-      return isDark ? team.logoLight ?? team.logo : team.logo;
+      return isDark ? (team.logoLight ?? team.logo) : team.logo;
     case "mcbb":
       return getMCBBTeamLogo(team.id, isDark);
     case "wcbb":

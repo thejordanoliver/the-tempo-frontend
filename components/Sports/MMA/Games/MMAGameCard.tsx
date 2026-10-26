@@ -5,9 +5,8 @@ import {
   getHolidayLabel,
   safeDate,
 } from "@/utils/common/dateUtils";
-import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
-import { Colors, activeOpacity } from "constants/styles";
+import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -101,13 +100,6 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
       return (
         <View style={styles.winnerContainer}>
           <Text style={[styles.teamRecord, { opacity }]}>{record}</Text>
-
-          <Ionicons
-            size={14}
-            name="caret-up"
-            color={isDark ? Colors.white : Colors.black}
-            style={{ position: "absolute", bottom: -14 }}
-          />
         </View>
       );
     }

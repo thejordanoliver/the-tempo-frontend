@@ -1,5 +1,10 @@
-import { activeOpacity, Colors, Fonts } from "@/constants/styles";
+import { activeOpacity } from "@/constants/styles";
+import { DateSelectorStyles } from "@/styles/LeagueStyles/DateSelectorStyles";
 import WeekSelectorSkeleton from "components/Skeletons/WeekSelectorSkeleton";
+import {
+  DATE_SELECTOR_ITEM_SPACING,
+  DATE_SELECTOR_SIDE_PADDING,
+} from "constants/dateSelectorConstants";
 import React, {
   useCallback,
   useEffect,
@@ -11,7 +16,6 @@ import {
   Animated,
   LayoutChangeEvent,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -38,9 +42,6 @@ type Props = {
 };
 
 const DEFAULT_ITEM_WIDTH = 140;
-const SIDE_PADDING = 12;
-const ITEM_SPACING = 0;
-const ITEM_HEIGHT = 32;
 
 export function getUFCEventId(event: UFCCalendarEvent | null | undefined) {
   const ref = event?.event?.$ref;
@@ -102,14 +103,14 @@ export default function EventSelector({
   containerStyle,
   itemWidth = DEFAULT_ITEM_WIDTH,
 }: Props) {
-  const styles = EventSelectorStyles(isDark, itemWidth);
+  const styles = DateSelectorStyles(isDark, { itemWidth });
 
   const scrollViewRef = useRef<ScrollView>(null);
   const [indicatorX] = useState(() => new Animated.Value(0));
 
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const itemStep = itemWidth + ITEM_SPACING;
+  const itemStep = itemWidth + DATE_SELECTOR_ITEM_SPACING;
 
   const safeSelectedIndex = useMemo(() => {
     if (!events.length) return 0;
@@ -126,12 +127,15 @@ export default function EventSelector({
       if (!containerWidth || !events.length) return 0;
 
       const targetOffset =
-        SIDE_PADDING + index * itemStep - containerWidth / 2 + itemWidth / 2;
+        DATE_SELECTOR_SIDE_PADDING +
+        index * itemStep -
+        containerWidth / 2 +
+        itemWidth / 2;
 
       const totalWidth =
-        SIDE_PADDING * 2 +
+        DATE_SELECTOR_SIDE_PADDING * 2 +
         events.length * itemWidth +
-        ITEM_SPACING * Math.max(events.length - 1, 0);
+        DATE_SELECTOR_ITEM_SPACING * Math.max(events.length - 1, 0);
 
       const maxOffset = Math.max(0, totalWidth - containerWidth);
 
@@ -173,7 +177,7 @@ export default function EventSelector({
   }, [safeSelectedIndex, containerWidth, events.length, computeScrollOffset]);
 
   if (loading && !events.length) {
-    return <WeekSelectorSkeleton />;
+    return <WeekSelectorSkeleton itemWidth={itemWidth} />;
   }
 
   if (!events.length) {
@@ -208,11 +212,13 @@ export default function EventSelector({
               key={getUFCEventKey(event)}
               activeOpacity={activeOpacity}
               onPress={() => handleSelectEvent(index)}
-              style={styles.label}
+              style={styles.item}
             >
               <Text
                 numberOfLines={1}
-                style={isSelected ? styles.eventTextSelected : styles.eventText}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+                style={isSelected ? styles.selectedLabel : styles.label}
               >
                 {getEventLabel(event)}
               </Text>
@@ -223,49 +229,3 @@ export default function EventSelector({
     </View>
   );
 }
-
-const EventSelectorStyles = (isDark: boolean, itemWidth: number) =>
-  StyleSheet.create({
-    wrapper: {
-      marginVertical: 8,
-    },
-    contentContainerStyle: {
-      position: "relative",
-      alignItems: "center",
-      paddingHorizontal: SIDE_PADDING,
-    },
-    slidingSelectedContainer: {
-      position: "absolute",
-      top: 0,
-      left: SIDE_PADDING,
-      width: itemWidth,
-      height: ITEM_HEIGHT,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 12,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    label: {
-      zIndex: 2,
-      alignItems: "center",
-      justifyContent: "center",
-      width: itemWidth,
-      height: ITEM_HEIGHT,
-      paddingHorizontal: 8,
-      borderRadius: 12,
-    },
-    eventText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
-    eventTextSelected: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-  });

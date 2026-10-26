@@ -1,5 +1,8 @@
 import { Text, View } from "react-native";
-import { BRACKET_LAYOUT, type RegionalRoundCode } from "utils/brackets/tournamentBracket.utils";
+import {
+  BRACKET_LAYOUT,
+  type RegionalRoundCode,
+} from "utils/brackets/tournamentBracket.utils";
 import {
   REGIONAL_ROUNDS,
   ROUND_LABELS,

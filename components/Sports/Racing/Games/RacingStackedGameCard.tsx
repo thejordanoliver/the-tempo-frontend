@@ -69,14 +69,14 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
   const statusLabel = isCanceled
     ? "Canceled"
     : isPostponed
-    ? "Postponed"
-    : isDelayed
-    ? "Delayed"
-    : isFinal
-    ? "Final"
-    : inProgress
-    ? game.status?.detail || "Live"
-    : tbd || formattedTime;
+      ? "Postponed"
+      : isDelayed
+        ? "Delayed"
+        : isFinal
+          ? "Final"
+          : inProgress
+            ? game.status?.detail || "Live"
+            : tbd || formattedTime;
 
   const renderDriverRow = (driver: RacingDriver, index: number) => {
     const isLast = index === topDrivers.length - 1;
@@ -89,10 +89,7 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
       >
         <View style={styles.positionContainer}>
           <Text
-            style={[
-              styles.position,
-              position === 1 && styles.leaderPosition,
-            ]}
+            style={[styles.position, position === 1 && styles.leaderPosition]}
           >
             {position}
           </Text>
@@ -117,7 +114,11 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
         </View>
 
         {driver.winner ? (
-          <Ionicons name="trophy" size={16} color={styles.leaderPosition.color} />
+          <Ionicons
+            name="trophy"
+            size={16}
+            color={styles.leaderPosition.color}
+          />
         ) : null}
       </View>
     );
@@ -147,17 +148,15 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
               isFinal
                 ? styles.finalText
                 : inProgress
-                ? styles.liveText
-                : styles.scheduledText
+                  ? styles.liveText
+                  : styles.scheduledText
             }
           >
             {statusLabel}
           </Text>
         </View>
 
-        <View style={styles.driverList}>
-          {topDrivers.map(renderDriverRow)}
-        </View>
+        <View style={styles.driverList}>{topDrivers.map(renderDriverRow)}</View>
 
         {broadcast ? (
           <Text style={styles.broadcast} numberOfLines={1}>

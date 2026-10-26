@@ -14,10 +14,10 @@ test("normalizes supported league route parameters", () => {
 });
 
 test("creates a league destination when no team is supplied", () => {
-  assert.deepEqual(
-    parseForumPostDestinationParams({ league: "nfl" }),
-    { kind: "league", league: "nfl" },
-  );
+  assert.deepEqual(parseForumPostDestinationParams({ league: "nfl" }), {
+    kind: "league",
+    league: "nfl",
+  });
 });
 
 test("creates a team destination only for a valid numeric team ID", () => {

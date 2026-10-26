@@ -39,7 +39,7 @@ export const centerBetween = (firstY: number, secondY: number): number => {
 export const makeNextRoundYs = (sourceYs: readonly number[]): number[] => {
   const result: number[] = [];
 
-  for (let index = 0;index < sourceYs.length;index += 2) {
+  for (let index = 0; index < sourceYs.length; index += 2) {
     const firstY = sourceYs[index];
     const secondY = sourceYs[index + 1];
 
@@ -86,7 +86,8 @@ export const FINAL_STAGE_HEIGHT = 360;
 export const FINAL_FOUR_Y = 16;
 export const QUADRANT_BOARD_WIDTH =
   REGION_ROUNDS_WIDTH * 2 + FINAL_STAGE_WIDTH + CENTER_STAGE_GAP * 2;
-export const QUADRANT_BOARD_HEIGHT = REGION_BLOCK_HEIGHT * 2 + QUADRANT_VERTICAL_GAP;
+export const QUADRANT_BOARD_HEIGHT =
+  REGION_BLOCK_HEIGHT * 2 + QUADRANT_VERTICAL_GAP;
 
 export const getRoundColumnX = (columnIndex: number): number =>
   columnIndex *

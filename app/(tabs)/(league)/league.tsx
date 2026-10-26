@@ -27,7 +27,9 @@ export default function LeagueScreen() {
   }, []);
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader tabName="Leagues" onSearchToggle={handleSearchToggle} />,
+      header: () => (
+        <CustomHeader tabName="Leagues" onSearchToggle={handleSearchToggle} />
+      ),
     });
   }, [handleSearchToggle, navigation]);
 
@@ -66,17 +68,25 @@ export default function LeagueScreen() {
         />
       </View>
       {leagueLayout === "list" ? (
-        <LeagueList isDark={isDark} searchQuery={searchQuery} onSelect={goToLeague}
-          contentContainerStyle={navigationContentStyle(styles.scrollContent)} />
+        <LeagueList
+          isDark={isDark}
+          searchQuery={searchQuery}
+          onSelect={goToLeague}
+          contentContainerStyle={navigationContentStyle(styles.scrollContent)}
+        />
       ) : (
-      <ScrollView
-        contentContainerStyle={navigationContentStyle(styles.carouselContent)}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-      >
-        <LeagueCarousel isDark={isDark} searchQuery={searchQuery} onSelect={goToLeague} />
-      </ScrollView>
+        <ScrollView
+          contentContainerStyle={navigationContentStyle(styles.carouselContent)}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+        >
+          <LeagueCarousel
+            isDark={isDark}
+            searchQuery={searchQuery}
+            onSelect={goToLeague}
+          />
+        </ScrollView>
       )}
     </View>
   );

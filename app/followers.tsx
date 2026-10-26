@@ -25,7 +25,9 @@ export default function FollowersScreen() {
     <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
+        contentContainerStyle={navigationContentStyle(
+          styles.contentContainerStyle,
+        )}
       >
         <SearchBar
           placeholder="Search"

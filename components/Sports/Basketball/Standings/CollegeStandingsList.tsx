@@ -263,7 +263,13 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
     );
   };
 
-  function Section({ title, data }: { title: string; data: CollegeTeamRank[] }) {
+  function Section({
+    title,
+    data,
+  }: {
+    title: string;
+    data: CollegeTeamRank[];
+  }) {
     return (
       <>
         <View style={styles.wrapper}>

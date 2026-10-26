@@ -4,13 +4,17 @@ import { fanRankingRowStyles } from "styles/FanPredictionStyles/FanRankingRowSty
 import { fanPredictionRankingsStyles } from "styles/FanPredictionStyles/FanPredictionRankingsStyles";
 import { SkeletonBlock, SkeletonCircle } from "./primitives";
 
-export default function FanPredictionRankingsSkeleton({ isDark }: { isDark: boolean }) {
+export default function FanPredictionRankingsSkeleton({
+  isDark,
+}: {
+  isDark: boolean;
+}) {
   const row = useMemo(() => fanRankingRowStyles(isDark), [isDark]);
   const screen = useMemo(() => fanPredictionRankingsStyles(isDark), [isDark]);
 
   return (
     <View>
-      {[0, 1, 2, 3].map(index => (
+      {[0, 1, 2, 3].map((index) => (
         <View key={index}>
           {index > 0 ? <View style={screen.separator} /> : null}
           <View style={row.row}>
@@ -23,7 +27,7 @@ export default function FanPredictionRankingsSkeleton({ isDark }: { isDark: bool
                 </View>
               </View>
               <View style={row.stats}>
-                {[0, 1, 2].map(stat => (
+                {[0, 1, 2].map((stat) => (
                   <View key={stat} style={row.stat}>
                     <SkeletonBlock width="65%" height={26} />
                     <SkeletonBlock width="80%" height={16} />
@@ -31,7 +35,7 @@ export default function FanPredictionRankingsSkeleton({ isDark }: { isDark: bool
                 ))}
               </View>
               <View style={row.stats}>
-                {[0, 1].map(stat => (
+                {[0, 1].map((stat) => (
                   <View key={stat} style={row.stat}>
                     <SkeletonBlock width="65%" height={26} />
                     <SkeletonBlock width="80%" height={16} />

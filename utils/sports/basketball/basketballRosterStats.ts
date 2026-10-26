@@ -159,5 +159,3 @@ export const getPlayerName = (player: RosterPlayer) =>
   player.full_name ||
   [player.first_name, player.last_name].filter(Boolean).join(" ") ||
   "Unknown Player";
-
-

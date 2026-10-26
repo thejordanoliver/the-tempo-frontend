@@ -29,8 +29,7 @@ export const StandingsSkeleton = ({
   const borderColor = isDark ? Colors.darkGray : Colors.lightGray;
   const sectionCount = variant === "league" ? 2 : 1;
   const rowCount = variant === "league" ? 5 : 8;
-  const filterCount =
-    variant === "league" ? 2 : variant === "rankings" ? 1 : 0;
+  const filterCount = variant === "league" ? 2 : variant === "rankings" ? 1 : 0;
 
   useEffect(() => {
     const animation = Animated.loop(
@@ -98,7 +97,9 @@ export const StandingsSkeleton = ({
                 <View style={styles.seasonLeadersPlayerDetails}>
                   {renderSeasonBlock([
                     styles.seasonLeadersPlayerName,
-                    { width: index % 3 === 0 ? 112 : index % 3 === 1 ? 94 : 104 },
+                    {
+                      width: index % 3 === 0 ? 112 : index % 3 === 1 ? 94 : 104,
+                    },
                   ])}
                   <View style={styles.seasonLeadersTeam}>
                     {renderSeasonBlock(styles.seasonLeadersTeamLogo)}
@@ -108,7 +109,11 @@ export const StandingsSkeleton = ({
               </View>
             ))}
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.seasonLeadersStatsViewport}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.seasonLeadersStatsViewport}
+          >
             <View style={styles.seasonLeadersStatsContent}>
               <View
                 style={[
@@ -131,7 +136,10 @@ export const StandingsSkeleton = ({
                   style={[
                     styles.seasonLeadersRow,
                     rowIndex % 2 === 1 && { backgroundColor: blockColor },
-                    rowIndex < 7 && { borderBottomWidth: 1, borderBottomColor: borderColor },
+                    rowIndex < 7 && {
+                      borderBottomWidth: 1,
+                      borderBottomColor: borderColor,
+                    },
                   ]}
                 >
                   {Array.from({ length: 4 }, (_, statIndex) => (
@@ -157,7 +165,9 @@ export const StandingsSkeleton = ({
   if (variant === "widget") {
     return (
       <View style={styles.widget}>
-        <View style={[styles.widgetConference, { borderBottomColor: borderColor }]}>
+        <View
+          style={[styles.widgetConference, { borderBottomColor: borderColor }]}
+        >
           {renderBlock(styles.widgetConferenceName)}
         </View>
         <View style={[styles.widgetHeader, { borderBottomColor: borderColor }]}>
@@ -177,9 +187,9 @@ export const StandingsSkeleton = ({
             {renderBlock(styles.widgetRank)}
             {renderBlock(styles.widgetLogo)}
             {renderBlock([
-                styles.widgetTeamName,
-                { width: index % 2 === 0 ? 58 : 44 },
-              ])}
+              styles.widgetTeamName,
+              { width: index % 2 === 0 ? 58 : 44 },
+            ])}
             {renderBlock(styles.widgetRecord)}
             {renderBlock(styles.widgetMetric)}
           </View>
@@ -192,9 +202,9 @@ export const StandingsSkeleton = ({
     <View style={[styles.table, { borderColor }]}>
       <View style={[styles.sectionHeader, { borderBottomColor: borderColor }]}>
         {renderBlock([
-            styles.sectionTitle,
-            { width: sectionIndex === 0 ? 146 : 126 },
-          ])}
+          styles.sectionTitle,
+          { width: sectionIndex === 0 ? 146 : 126 },
+        ])}
       </View>
 
       <View style={styles.columns}>
@@ -218,16 +228,18 @@ export const StandingsSkeleton = ({
               {renderBlock(styles.rank)}
               {renderBlock(styles.logo)}
               {renderBlock([
-                  styles.teamName,
-                  { width: index % 3 === 0 ? 54 : index % 3 === 1 ? 70 : 62 },
-                ])}
+                styles.teamName,
+                { width: index % 3 === 0 ? 54 : index % 3 === 1 ? 70 : 62 },
+              ])}
             </View>
           ))}
         </View>
 
         <View style={styles.statsViewport}>
           <View style={styles.statsContent}>
-            <View style={[styles.headerRow, { borderBottomColor: borderColor }]}>
+            <View
+              style={[styles.headerRow, { borderBottomColor: borderColor }]}
+            >
               {Array.from({ length: 4 }, (_, index) => (
                 <View key={`stat-header-${index}`} style={styles.statCell}>
                   {renderBlock(styles.statHeader)}
@@ -249,9 +261,9 @@ export const StandingsSkeleton = ({
                 {Array.from({ length: 4 }, (_, statIndex) => (
                   <View key={`stat-${statIndex}`} style={styles.statCell}>
                     {renderBlock([
-                        styles.statValue,
-                        { width: (rowIndex + statIndex) % 2 === 0 ? 34 : 42 },
-                      ])}
+                      styles.statValue,
+                      { width: (rowIndex + statIndex) % 2 === 0 ? 34 : 42 },
+                    ])}
                   </View>
                 ))}
               </View>
@@ -272,10 +284,7 @@ export const StandingsSkeleton = ({
         <View style={styles.filters}>
           {Array.from({ length: filterCount }, (_, index) => (
             <View key={`filter-${index}`}>
-              {renderBlock([
-                styles.filter,
-                { width: index === 0 ? 140 : 112 },
-              ])}
+              {renderBlock([styles.filter, { width: index === 0 ? 140 : 112 }])}
             </View>
           ))}
         </View>
@@ -317,11 +326,26 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   seasonLeadersFixedBorder: { borderRightWidth: 1 },
-  seasonLeadersRankHeader: { width: 14, height: 13, marginHorizontal: 10, borderRadius: 4 },
+  seasonLeadersRankHeader: {
+    width: 14,
+    height: 13,
+    marginHorizontal: 10,
+    borderRadius: 4,
+  },
   seasonLeadersPlayerHeader: { width: 48, height: 13, borderRadius: 4 },
   seasonLeadersRow: { height: 64, flexDirection: "row", alignItems: "center" },
-  seasonLeadersRank: { width: 14, height: 16, marginHorizontal: 10, borderRadius: 4 },
-  seasonLeadersHeadshot: { width: 38, height: 38, marginRight: 8, borderRadius: 19 },
+  seasonLeadersRank: {
+    width: 14,
+    height: 16,
+    marginHorizontal: 10,
+    borderRadius: 4,
+  },
+  seasonLeadersHeadshot: {
+    width: 38,
+    height: 38,
+    marginRight: 8,
+    borderRadius: 19,
+  },
   seasonLeadersPlayerDetails: { flex: 1, gap: 6, paddingRight: 8 },
   seasonLeadersPlayerName: { height: 13, borderRadius: 4 },
   seasonLeadersTeam: { flexDirection: "row", alignItems: "center", gap: 5 },

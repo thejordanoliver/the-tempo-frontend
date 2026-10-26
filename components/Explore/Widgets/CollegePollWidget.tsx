@@ -347,8 +347,7 @@ const MCBBPollTable = memo(function MCBBPollTable({
   pollType,
   autoPlay,
 }: CollegePollSourceProps) {
-  const { rankings, loading, error, refresh } =
-    useCollegeRankings("mcbb");
+  const { rankings, loading, error, refresh } = useCollegeRankings("mcbb");
   const selectedPoll =
     rankings.find((poll) => poll.type === pollType) ??
     rankings.find((poll) =>

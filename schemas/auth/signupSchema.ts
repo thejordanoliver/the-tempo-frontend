@@ -1,4 +1,10 @@
-import { passwordSchema, PASSWORD_REQUIREMENTS, USERNAME_PATTERN, USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH } from "./credentialRules";
+import {
+  passwordSchema,
+  PASSWORD_REQUIREMENTS,
+  USERNAME_PATTERN,
+  USERNAME_MIN_LENGTH,
+  USERNAME_MAX_LENGTH,
+} from "./credentialRules";
 import { BROWSEABLE_LEAGUES } from "constants/leagueIds";
 import type { FavoriteSportId } from "constants/leagues";
 import {

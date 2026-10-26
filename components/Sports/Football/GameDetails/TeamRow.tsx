@@ -31,7 +31,7 @@ export const TeamRow = ({
 
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = state === "in";
-  const isFinal = gameStatusDescription === "Final";
+  const isFinal = state === "post";
   const showRecordInsteadOfScore = isScheduled || score == null;
 
   const handleTeamPress = () => {

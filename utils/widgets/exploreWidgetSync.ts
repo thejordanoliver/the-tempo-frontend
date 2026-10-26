@@ -23,13 +23,22 @@ type Dependencies = {
   load: () => Promise<WidgetSettingsCache | null>;
   persist: (cache: WidgetSettingsCache) => Promise<void>;
   get: () => Promise<WidgetSettings | null>;
-  put: (widgets: ExploreWidgetConfig[], revision: number) => Promise<WidgetSettings>;
+  put: (
+    widgets: ExploreWidgetConfig[],
+    revision: number,
+  ) => Promise<WidgetSettings>;
   onChange: (state: WidgetSyncState) => void;
 };
 
 /** One account/session owns each instance. Network and disk writes are serialized. */
 export class ExploreWidgetSync {
-  state: WidgetSyncState = { widgets: [], ready: false, pending: false, error: null, conflict: false };
+  state: WidgetSyncState = {
+    widgets: [],
+    ready: false,
+    pending: false,
+    error: null,
+    conflict: false,
+  };
   private cache: WidgetSettingsCache | null = null;
   private stopped = false;
   private writing: Promise<void> = Promise.resolve();
@@ -45,12 +54,16 @@ export class ExploreWidgetSync {
   }
   private persist(cache = this.cache) {
     const snapshot = JSON.parse(JSON.stringify(cache)) as WidgetSettingsCache;
-    this.writing = this.writing.catch(() => {}).then(() => this.dependencies.persist(snapshot));
+    this.writing = this.writing
+      .catch(() => {})
+      .then(() => this.dependencies.persist(snapshot));
     return this.writing;
   }
   start(): Promise<void> {
     if (this.starting) return this.starting;
-    this.starting = this.initialize().finally(() => { this.starting = null; });
+    this.starting = this.initialize().finally(() => {
+      this.starting = null;
+    });
     return this.starting;
   }
   private async initialize() {
@@ -58,8 +71,18 @@ export class ExploreWidgetSync {
       const cache = await this.dependencies.load();
       if (this.stopped) return;
       this.hasLocalConfiguration = cache !== null;
-      this.cache = cache ?? { version: 2, widgets: [], revision: null, pending: false };
-      this.state = { ...this.state, widgets: this.cache.widgets, ready: true, pending: this.cache.pending };
+      this.cache = cache ?? {
+        version: 2,
+        widgets: [],
+        revision: null,
+        pending: false,
+      };
+      this.state = {
+        ...this.state,
+        widgets: this.cache.widgets,
+        ready: true,
+        pending: this.cache.pending,
+      };
       this.emit();
       await this.refresh();
     } catch {
@@ -81,13 +104,17 @@ export class ExploreWidgetSync {
       this.emit();
     });
     clearTimeout(this.timer);
-    this.timer = setTimeout(() => { void this.refresh(); }, 500);
+    this.timer = setTimeout(() => {
+      void this.refresh();
+    }, 500);
   }
   refresh(): Promise<void> {
     if (this.stopped || this.state.conflict) return Promise.resolve();
     if (!this.cache) return this.start();
     if (this.syncing) return this.syncing;
-    this.syncing = this.run().finally(() => { this.syncing = null; });
+    this.syncing = this.run().finally(() => {
+      this.syncing = null;
+    });
     return this.syncing;
   }
   private async run() {
@@ -98,15 +125,28 @@ export class ExploreWidgetSync {
         const remote = await this.dependencies.get();
         if (this.stopped) return;
         if (remote) {
-          if (this.cache.pending && (this.cache.revision === null || edits !== this.edits)) {
+          if (
+            this.cache.pending &&
+            (this.cache.revision === null || edits !== this.edits)
+          ) {
             // A dirty known revision can be saved safely using compare-and-swap.
-            if (this.cache.revision === null) throw { response: { status: 409 } };
+            if (this.cache.revision === null)
+              throw { response: { status: 409 } };
           } else if (edits === this.edits) {
-            this.cache = { version: 2, widgets: remote.widgets, revision: remote.revision, pending: false };
+            this.cache = {
+              version: 2,
+              widgets: remote.widgets,
+              revision: remote.revision,
+              pending: false,
+            };
           }
         } else {
           // Import existing local settings only after a successful absent-server read.
-          this.cache = { ...this.cache, revision: 0, pending: this.cache.pending || this.hasLocalConfiguration };
+          this.cache = {
+            ...this.cache,
+            revision: 0,
+            pending: this.cache.pending || this.hasLocalConfiguration,
+          };
         }
       }
       while (this.cache.pending && !this.stopped) {
@@ -114,24 +154,40 @@ export class ExploreWidgetSync {
         if (this.stopped) return;
         const snapshot = this.cache;
         const edits = this.edits;
-        const saved = await this.dependencies.put(snapshot.widgets, snapshot.revision!);
+        const saved = await this.dependencies.put(
+          snapshot.widgets,
+          snapshot.revision!,
+        );
         if (this.stopped) return;
-        this.cache = { ...this.cache, revision: saved.revision,
+        this.cache = {
+          ...this.cache,
+          revision: saved.revision,
           widgets: edits === this.edits ? saved.widgets : this.cache.widgets,
-          pending: edits !== this.edits };
+          pending: edits !== this.edits,
+        };
         await this.persist();
       }
       if (this.stopped) return;
       await this.persist();
-      this.state = { ...this.state, widgets: this.cache.widgets, pending: this.cache.pending, error: null };
+      this.state = {
+        ...this.state,
+        widgets: this.cache.widgets,
+        pending: this.cache.pending,
+        error: null,
+      };
       this.emit();
     } catch (error) {
       if (this.stopped) return;
-      const conflict = (error as { response?: { status?: number } })?.response?.status === 409;
-      this.state = { ...this.state, pending: this.cache?.pending ?? false, conflict,
+      const conflict =
+        (error as { response?: { status?: number } })?.response?.status === 409;
+      this.state = {
+        ...this.state,
+        pending: this.cache?.pending ?? false,
+        conflict,
         error: conflict
           ? "Widgets changed on another device. Your edits are saved here. Reload account settings to use the other device’s version."
-          : "Widget settings could not sync. Your edits will retry when you return to the app." };
+          : "Widget settings could not sync. Your edits will retry when you return to the app.",
+      };
       this.emit();
     }
   }
@@ -143,18 +199,35 @@ export class ExploreWidgetSync {
       const edits = this.edits;
       const remote = await this.dependencies.get();
       if (this.stopped) return;
-      if (edits !== this.edits) throw new Error("Settings edited while reloading");
-      const replacement: WidgetSettingsCache = { version: 2, widgets: remote?.widgets ?? [], revision: remote?.revision ?? 0, pending: false };
+      if (edits !== this.edits)
+        throw new Error("Settings edited while reloading");
+      const replacement: WidgetSettingsCache = {
+        version: 2,
+        widgets: remote?.widgets ?? [],
+        revision: remote?.revision ?? 0,
+        pending: false,
+      };
       await this.persist(replacement);
       if (this.stopped) return;
-      if (edits !== this.edits) throw new Error("Settings edited while reloading");
+      if (edits !== this.edits)
+        throw new Error("Settings edited while reloading");
       this.cache = replacement;
-      this.state = { widgets: this.cache.widgets, ready: true, pending: this.cache.pending, conflict: false, error: null };
+      this.state = {
+        widgets: this.cache.widgets,
+        ready: true,
+        pending: this.cache.pending,
+        conflict: false,
+        error: null,
+      };
       this.emit();
     } catch {
-      this.state.error = "Unable to reload account widget settings. Your local edits are still saved.";
+      this.state.error =
+        "Unable to reload account widget settings. Your local edits are still saved.";
       this.emit();
     }
   }
-  stop() { this.stopped = true; clearTimeout(this.timer); }
+  stop() {
+    this.stopped = true;
+    clearTimeout(this.timer);
+  }
 }

@@ -29,8 +29,13 @@ export default function LoginScreen() {
   const { resolvedColorScheme } = usePreferences();
   const styles = formStyles(resolvedColorScheme === "dark");
   const {
-    signIn, signUp, cropEditor, alertConfig, closeAlert,
-    previousSignupStep, toggleLayout,
+    signIn,
+    signUp,
+    cropEditor,
+    alertConfig,
+    closeAlert,
+    previousSignupStep,
+    toggleLayout,
   } = useLoginForm();
   const pagerRef = useRef<PagerView>(null);
   const [selectedTab, setSelectedTab] = useState<AuthHeaderTab>("sign in");
@@ -41,11 +46,14 @@ export default function LoginScreen() {
   const showAuthTabs = !isSignup || signupStep === 0;
   const isSubmitting = signIn.isSubmitting || signUp.isSubmitting;
 
-  const selectTab = useCallback((tab: AuthHeaderTab) => {
-    if (isSubmitting) return;
-    Keyboard.dismiss();
-    pagerRef.current?.setPage(AUTH_TABS.indexOf(tab));
-  }, [isSubmitting]);
+  const selectTab = useCallback(
+    (tab: AuthHeaderTab) => {
+      if (isSubmitting) return;
+      Keyboard.dismiss();
+      pagerRef.current?.setPage(AUTH_TABS.indexOf(tab));
+    },
+    [isSubmitting],
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -59,13 +67,23 @@ export default function LoginScreen() {
           onAuthTabPress={showAuthTabs ? selectTab : undefined}
           authScrollProgress={scrollProgress}
           isGrid={isGridView}
-          onToggleLayout={isSignup && signupStep === 2 ? toggleLayout : undefined}
+          onToggleLayout={
+            isSignup && signupStep === 2 ? toggleLayout : undefined
+          }
         />
       ),
     });
   }, [
-    navigation, isSignup, signupStep, previousSignupStep, selectedTab,
-    showAuthTabs, selectTab, scrollProgress, isGridView, toggleLayout,
+    navigation,
+    isSignup,
+    signupStep,
+    previousSignupStep,
+    selectedTab,
+    showAuthTabs,
+    selectTab,
+    scrollProgress,
+    isGridView,
+    toggleLayout,
   ]);
 
   return (
@@ -83,13 +101,21 @@ export default function LoginScreen() {
           setSelectedTab(AUTH_TABS[nativeEvent.position]);
         }}
       >
-        <View key="sign in" collapsable={false} style={{ width: "100%", height: "100%" }}>
+        <View
+          key="sign in"
+          collapsable={false}
+          style={{ width: "100%", height: "100%" }}
+        >
           <SignInForm
             {...signIn}
             onForgotPassword={() => router.push("/forgot-password")}
           />
         </View>
-        <View key="sign up" collapsable={false} style={{ width: "100%", height: "100%" }}>
+        <View
+          key="sign up"
+          collapsable={false}
+          style={{ width: "100%", height: "100%" }}
+        >
           <SignUpForm {...signUp} />
         </View>
       </PagerView>

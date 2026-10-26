@@ -210,8 +210,7 @@ export const CBStandingsList = ({ league }: Props) => {
       const team = item.team;
       const teamId = apiTeamId;
       const teamLogo = getStandingsTeamLogo(team, isDark);
-      const teamCode =
-        team?.code || item.team?.name || "N/A";
+      const teamCode = team?.code || item.team?.name || "N/A";
       const trendNum = parseTrend(item.trend);
       const isUp = trendNum > 0;
 
@@ -237,7 +236,8 @@ export const CBStandingsList = ({ league }: Props) => {
               onPress={() => {
                 if (!teamId) return;
                 router.push({
-                  pathname: league === "sb" ? "/team/sb/[teamId]" : "/team/cb/[teamId]",
+                  pathname:
+                    league === "sb" ? "/team/sb/[teamId]" : "/team/cb/[teamId]",
                   params: { teamId: String(teamId), league },
                 });
               }}

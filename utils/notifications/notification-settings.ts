@@ -26,9 +26,7 @@ export const DISABLED_NOTIFICATION_EVENT_SETTINGS: NotificationEventSettings = {
 };
 
 export function notificationSettingsFromSubscription(
-  subscription:
-    | TeamNotificationSubscription
-    | GameNotificationSubscription,
+  subscription: TeamNotificationSubscription | GameNotificationSubscription,
 ): NotificationEventSettings {
   return {
     gameStartEnabled: subscription.gameStartEnabled,

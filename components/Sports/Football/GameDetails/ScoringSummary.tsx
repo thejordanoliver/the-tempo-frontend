@@ -111,23 +111,22 @@ export default function ScoringSummary({
                   key={`${play.id ?? "scoring-play"}-${index}`}
                   style={[styles.playRow, isLastPlay && styles.lastPlayRow]}
                 >
-                  <View style={styles.status}>
-                    <Text numberOfLines={1} style={styles.statusText}>
-                      {period}
-                    </Text>
-
-                    {!!clock && (
+                  <View style={styles.timeColumn}>
+                    {clock && (
                       <Text numberOfLines={1} style={styles.clockText}>
                         {clock}
                       </Text>
                     )}
+                    <Text numberOfLines={1} style={styles.periodText}>
+                      {period}
+                    </Text>
                   </View>
 
                   <View style={styles.play}>
                     <Text style={styles.playText}>{play.text}</Text>
                   </View>
 
-                  <View style={styles.score}>
+                  <View style={styles.scorePill}>
                     <Text numberOfLines={1} style={styles.scoreText}>
                       {play.awayScore ?? 0}-{play.homeScore ?? 0}
                     </Text>
@@ -142,8 +141,9 @@ export default function ScoringSummary({
   );
 }
 
-const ScoringSummaryStyles = (isDark: boolean) =>
-  StyleSheet.create({
+const ScoringSummaryStyles = (isDark: boolean) => {
+  const theme = isDark ? Colors.dark : Colors.light;
+  return StyleSheet.create({
     wrapper: {
       maxHeight: 400,
       borderWidth: 1,
@@ -189,11 +189,29 @@ const ScoringSummaryStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
 
+    timeColumn: {
+      width: 44,
+      paddingTop: 3,
+      alignItems: "flex-end",
+    },
+
     clockText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 18,
+      lineHeight: 22,
+      color: theme.text,
+    },
+
+    periodText: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      lineHeight: 16,
-      color: isDark ? Colors.midTone : Colors.darkGray,
+      fontSize: 11,
+      color: theme.icon,
+      marginTop: 2,
+    },
+
+    timelineColumn: {
+      width: 32,
+      alignItems: "center",
     },
 
     play: {
@@ -208,19 +226,25 @@ const ScoringSummaryStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
 
-    score: {
-      flexShrink: 0,
-      alignItems: "flex-end",
+    scorePill: {
+      flexDirection: "row",
+      alignItems: "center",
       justifyContent: "center",
-      minWidth: 48,
-      paddingTop: 1,
+      gap: 6,
+      paddingHorizontal: 9,
+      paddingVertical: 3,
+      borderRadius: 6,
+      backgroundColor: theme.itemBackground,
     },
-
+    scoringScorePill: {
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.green,
+    },
     scoreText: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 14,
-      lineHeight: 20,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "right",
+      fontFamily: Fonts.SEMIBOLD,
+      fontSize: 15,
+      color: theme.text,
+      fontVariant: ["tabular-nums"],
     },
   });
+};

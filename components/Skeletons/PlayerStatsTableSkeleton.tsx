@@ -10,7 +10,9 @@ const CELL_HEIGHT = 10;
 const CELL_MARGIN = 8;
 const ROW_HEIGHT = 36;
 
-export default function PlayerStatTableSkeleton({ showHeader = true }: { showHeader?: boolean } = {}) {
+export default function PlayerStatTableSkeleton({
+  showHeader = true,
+}: { showHeader?: boolean } = {}) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);

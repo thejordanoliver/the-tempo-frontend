@@ -1,13 +1,13 @@
-import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
-import MMAChampionsList from "@/components/Sports/MMA/Champions/MMAChampionsList";
 import EventSelector, {
   getDefaultUFCEventIndex,
-} from "@/components/Sports/MMA/EventSelector";
+} from "@/components/League/Selectors/EventSelector";
+import MMAChampionsList from "@/components/Sports/MMA/Champions/MMAChampionsList";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -67,8 +67,14 @@ function UFCLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
-  const { calendar } = useLeagueCalendar(league, league, undefined, scoreboardCalendar);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(
+    league,
+    league,
+    undefined,
+    scoreboardCalendar,
+  );
 
   const sortedCalendar = useMemo(() => {
     return [...(calendar ?? [])].sort((a, b) => {
@@ -174,8 +180,8 @@ function UFCLeagueScreen() {
                 items={articles}
                 loading={newsLoading}
                 error={newsError}
-              refreshing={refreshingNews}
-              loadingMore={loadingMoreNews}
+                refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />

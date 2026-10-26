@@ -31,7 +31,7 @@ export type SupportedRosterLeague =
   | "nhl"
   | "nfl"
   | "cfb"
-  
+
   // soccer
   | "afcon"
   | "aleague"

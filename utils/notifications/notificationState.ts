@@ -12,7 +12,8 @@ const compareIdsDescending = (first: string, second: string) => {
 
 const sortNotifications = (notifications: AppNotification[]) =>
   [...notifications].sort((first, second) => {
-    const timeDifference = Date.parse(second.createdAt) - Date.parse(first.createdAt);
+    const timeDifference =
+      Date.parse(second.createdAt) - Date.parse(first.createdAt);
     return timeDifference || compareIdsDescending(first.id, second.id);
   });
 
@@ -20,7 +21,9 @@ export const mergeNotifications = (
   current: AppNotification[],
   incoming: AppNotification[],
 ) => {
-  const byId = new Map(current.map((notification) => [notification.id, notification]));
+  const byId = new Map(
+    current.map((notification) => [notification.id, notification]),
+  );
   incoming.forEach((notification) => {
     const existing = byId.get(notification.id);
     if (!existing) {

@@ -539,7 +539,10 @@ export function useNBAPlayoffGames({
 
   useLiveSportsSubscription<any>({
     enabled:
-      enabled && pollLiveGames && !loading && pollIntervalMs > 0 &&
+      enabled &&
+      pollLiveGames &&
+      !loading &&
+      pollIntervalMs > 0 &&
       (hasLiveGame || games.some(shouldTrackGameUpdates)),
     kind: "scoreboard",
     payload: {

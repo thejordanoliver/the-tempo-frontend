@@ -25,6 +25,13 @@ export const FanPredictionHistoryRowStyles = (isDark: boolean) => {
       backgroundColor: "transparent",
     },
     score: { ...game.teamScore, width: undefined, minWidth: 30, fontSize: 24 },
+    scoreSection: {
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 1,
+      minWidth: 30,
+    },
+    headline: { ...game.headlineText, marginBottom: 4 },
     record: {
       ...game.teamRecord,
       width: undefined,

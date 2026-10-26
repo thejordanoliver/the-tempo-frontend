@@ -19,7 +19,9 @@ export const FanPredictionStyles = (isDark: boolean) =>
       fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: isDark ? Colors.dark.green : Colors.light.green,
-      backgroundColor: isDark ? Colors.dark.transparentGreen : Colors.light.transparentGreen,
+      backgroundColor: isDark
+        ? Colors.dark.transparentGreen
+        : Colors.light.transparentGreen,
       paddingHorizontal: 10,
       paddingVertical: 6,
       borderRadius: 8,
@@ -61,7 +63,7 @@ export const FanPredictionStyles = (isDark: boolean) =>
       fontSize: 12,
       lineHeight: 18,
       color: Colors.midTone,
-      textAlign: "center"
+      textAlign: "center",
     },
     rankingsButton: {
       alignItems: "center",

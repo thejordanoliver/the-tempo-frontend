@@ -16,7 +16,6 @@ type SeasonCategory = "pointsPerGame" | "assistsPerGame" | "reboundsPerGame";
 
 type Category = GameCategory | SeasonCategory;
 
-
 type LeaderEntry = LeadersType["leaders"][number]["leaders"][number];
 
 type DisplayStat = {
@@ -40,7 +39,6 @@ type CategoryConfig = {
   label: string;
   stats: StatDefinition[];
 };
-
 
 type Props = {
   leaders: LeadersType[];

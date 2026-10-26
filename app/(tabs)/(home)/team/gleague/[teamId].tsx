@@ -5,7 +5,7 @@ import { Colors } from "@/constants/styles";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import MonthSelector from "components/League/MonthSelector";
+import MonthSelector from "components/League/Selectors/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { useLocalSearchParams } from "expo-router";

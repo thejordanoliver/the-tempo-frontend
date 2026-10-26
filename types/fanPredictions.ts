@@ -1,4 +1,10 @@
 import type { BaseballGame } from "./baseball/baseball";
+import type { BasketballGame } from "./basketball/basketball";
+import type { FootballGame } from "./football/football";
+import type { HockeyGame } from "./hockey/hockey";
+import type { SoccerGame } from "./soccer/soccer";
+import type { MMAFight } from "./mma/mma";
+import type { VolleyballGame } from "./volleyball/volleyball";
 
 export type FanPredictionTeamId = string | number;
 
@@ -42,7 +48,69 @@ export type FanPredictionPickTeam = {
   record?: string | null;
 };
 
+export type FanPredictionGameTeam = Omit<
+  FanPredictionPickTeam,
+  "id" | "name" | "code"
+> & {
+  id: string | number | null;
+  name?: string | null;
+  shortName?: string | null;
+  code?: string | null;
+  rank?: number | null;
+  homeRank?: number | null;
+  awayRank?: number | null;
+  setsWon?: number | null;
+};
+
+type FanPredictionGameBase = {
+  id?: string | number;
+  date?: string | null;
+  league?: { code: string };
+  home: FanPredictionGameTeam;
+  away: FanPredictionGameTeam;
+  headline?: string | null;
+  broadcasts?: string[];
+  status: {
+    state?: string | null;
+    completed?: boolean;
+    description?: string | null;
+    detail?: string | null;
+    shortDetail?: string | null;
+    period?: number | null;
+    displayClock?: string | null;
+  };
+};
+
+export type FanPredictionGame = FanPredictionGameBase &
+  (
+    | { sport: "basketball" | "hockey" | "soccer" }
+    | {
+        sport: "baseball";
+        situation?: Partial<
+          Pick<
+            BaseballGame["situation"],
+            "outs" | "onFirst" | "onSecond" | "onThird"
+          >
+        >;
+      }
+    | {
+        sport: "football";
+        situation?: Partial<
+          Pick<FootballGame["situation"], "downDistanceText" | "isRedZone">
+        > & { possession?: string | number | null };
+      }
+    | { sport: "volleyball"; sets?: VolleyballGame["sets"]; bestOf?: number }
+    | {
+        sport: "mma";
+        competitors?: MMAFight["competitors"];
+        method?: string | null;
+        round?: number | null;
+        time?: string | null;
+      }
+  );
+
 export type FanPredictionPick = {
+  game?: FanPredictionGame;
   state?: string | null;
   statusDescription?: string;
   winnerId?: string | null;
@@ -91,7 +159,14 @@ export type FeedPrediction = {
   state: "pre";
   home: FeedPredictionTeam;
   away: FeedPredictionTeam;
-  game?: BaseballGame;
+  game?:
+    | BaseballGame
+    | BasketballGame
+    | FootballGame
+    | HockeyGame
+    | SoccerGame
+    | MMAFight
+    | VolleyballGame;
   reason: "favorite_team" | "favorite_league";
   scoring: FanPredictionScoring;
   votes: { team_id: string; votes: number }[];

@@ -8,13 +8,7 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { useConversations } from "hooks/MessageHooks/useConversations";
-import {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Alert, LayoutAnimation, StyleSheet, View } from "react-native";
 import type { UserSearchResult } from "services/usersApi";
 import type { MessageItem } from "types/messages";
@@ -165,7 +159,7 @@ export default function MessageListScreen() {
         return;
       }
 
-        setIsCreatingConversation(true);
+      setIsCreatingConversation(true);
 
       try {
         const result = await createConversation(user.id);

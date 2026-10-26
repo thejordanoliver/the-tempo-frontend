@@ -21,10 +21,23 @@ export default function CredentialRequirements({ title, value, rules }: Props) {
       {rules.map((rule) => {
         const met = rule.test(value);
         return (
-          <View key={rule.label} style={styles.row}
-            accessible accessibilityLabel={`${rule.label}: ${met ? "met" : "not met"}`}>
-            <Ionicons name={met ? "checkmark-circle" : "ellipse-outline"} size={16}
-              color={met ? (isDark ? Colors.dark.green : Colors.light.green) : Colors.midTone} />
+          <View
+            key={rule.label}
+            style={styles.row}
+            accessible
+            accessibilityLabel={`${rule.label}: ${met ? "met" : "not met"}`}
+          >
+            <Ionicons
+              name={met ? "checkmark-circle" : "ellipse-outline"}
+              size={16}
+              color={
+                met
+                  ? isDark
+                    ? Colors.dark.green
+                    : Colors.light.green
+                  : Colors.midTone
+              }
+            />
             <Text style={[styles.text, met && styles.met]}>{rule.label}</Text>
           </View>
         );

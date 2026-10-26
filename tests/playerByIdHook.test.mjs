@@ -6,7 +6,6 @@ import ts from "typescript";
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-
 function setup(initialArgs = [100, "cfb"]) {
   const slots = [];
   const effects = [];
@@ -68,7 +67,10 @@ function setup(initialArgs = [100, "cfb"]) {
         });
       },
     },
-    axios: { isAxiosError: (error) => error?.isAxiosError === true, isCancel: () => false },
+    axios: {
+      isAxiosError: (error) => error?.isAxiosError === true,
+      isCancel: () => false,
+    },
     "utils/apiClient": {
       apiClient: {
         get(url, options) {
@@ -129,7 +131,9 @@ function setup(initialArgs = [100, "cfb"]) {
 test("loads profile identity without requesting stats", async () => {
   const h = setup();
   assert.equal(h.requests[0].url, "api/roster/cfb/player/100");
-  h.requests[0].resolve({ data: { player: { id: 200 }, playerId: "200", league: "nfl" } });
+  h.requests[0].resolve({
+    data: { player: { id: 200 }, playerId: "200", league: "nfl" },
+  });
   await flush();
   assert.equal(h.state.player.id, 200);
   assert.equal(h.state.resolvedPlayerId, 200);
@@ -141,9 +145,13 @@ test("ignores late profile results after switching players", async () => {
   const h = setup();
   h.update([300, "mcbb"]);
   assert.equal(h.requests[0].signal.aborted, true);
-  h.requests[1].resolve({ data: { player: { id: 400 }, playerId: "400", league: "nba" } });
+  h.requests[1].resolve({
+    data: { player: { id: 400 }, playerId: "400", league: "nba" },
+  });
   await flush();
-  h.requests[0].resolve({ data: { player: { id: 200 }, playerId: "200", league: "nfl" } });
+  h.requests[0].resolve({
+    data: { player: { id: 200 }, playerId: "200", league: "nfl" },
+  });
   await flush();
   assert.equal(h.state.resolvedLeague, "nba");
   assert.equal(h.state.player.id, 400);

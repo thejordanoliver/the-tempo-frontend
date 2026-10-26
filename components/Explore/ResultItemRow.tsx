@@ -38,26 +38,49 @@ const userPlaceholderImage = require("../../assets/Placeholders/ProfilePlacehold
 const teamPlaceholderImage = require("../../assets/Placeholders/teamPlaceholder.png");
 
 const teamLookups = {
-  nba: getNBATeam, gleague: getGLeagueTeam, wnba: getWNBATeam,
-  mlb: getMLBTeam, nhl: getNHLTeam, nfl: getNFLTeam,
-  cfb: getCFBTeam, mcbb: getMCBBTeam, wcbb: getWCBBTeam,
-  soccer: getSOCCTeam, cb: getCBTeam, sb: getSBTeam,
-  mcvb: () => undefined, wcvb: () => undefined,
+  nba: getNBATeam,
+  gleague: getGLeagueTeam,
+  wnba: getWNBATeam,
+  mlb: getMLBTeam,
+  nhl: getNHLTeam,
+  nfl: getNFLTeam,
+  cfb: getCFBTeam,
+  mcbb: getMCBBTeam,
+  wcbb: getWCBBTeam,
+  soccer: getSOCCTeam,
+  cb: getCBTeam,
+  sb: getSBTeam,
+  mcvb: () => undefined,
+  wcvb: () => undefined,
 };
 const logoLookups = {
-  nba: getNBATeamLogo, gleague: getGLeagueTeamLogo, wnba: getWNBATeamLogo,
-  mlb: getMLBTeamLogo, nhl: getNHLTeamLogo, nfl: getNFLTeamLogo,
-  cfb: getCFBTeamLogo, mcbb: getMCBBTeamLogo, wcbb: getWCBBTeamLogo,
-  soccer: getSOCCTeamLogo, cb: getCBTeamLogo, sb: getSBTeamLogo,
-  mcvb: () => undefined, wcvb: () => undefined,
+  nba: getNBATeamLogo,
+  gleague: getGLeagueTeamLogo,
+  wnba: getWNBATeamLogo,
+  mlb: getMLBTeamLogo,
+  nhl: getNHLTeamLogo,
+  nfl: getNFLTeamLogo,
+  cfb: getCFBTeamLogo,
+  mcbb: getMCBBTeamLogo,
+  wcbb: getWCBBTeamLogo,
+  soccer: getSOCCTeamLogo,
+  cb: getCBTeamLogo,
+  sb: getSBTeamLogo,
+  mcvb: () => undefined,
+  wcvb: () => undefined,
 };
 
 function getTeam(affiliation: SearchAffiliation, id: string | number | null) {
-  return id == null || affiliation === "mma" ? null : teamLookups[affiliation]?.(id);
+  return id == null || affiliation === "mma"
+    ? null
+    : teamLookups[affiliation]?.(id);
 }
 
 // Remount on source changes so a failed image cannot poison a reused row.
-function ResultImage({ fallback, ...props }: ImageProps & { fallback: ImageProps["source"] }) {
+function ResultImage({
+  fallback,
+  ...props
+}: ImageProps & { fallback: ImageProps["source"] }) {
   const [failed, setFailed] = useState(false);
   return (
     <Image
@@ -74,10 +97,14 @@ export default function ResultItemRow({
   onDelete,
   query = "",
 }: Props) {
-  const [cacheDay, setCacheDay] = useState(() => Math.floor(Date.now() / 86_400_000));
-  useFocusEffect(useCallback(() => {
-    setCacheDay(Math.floor(Date.now() / 86_400_000));
-  }, []));
+  const [cacheDay, setCacheDay] = useState(() =>
+    Math.floor(Date.now() / 86_400_000),
+  );
+  useFocusEffect(
+    useCallback(() => {
+      setCacheDay(Math.floor(Date.now() / 86_400_000));
+    }, []),
+  );
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = exploreStyles(isDark);
@@ -88,9 +115,14 @@ export default function ResultItemRow({
   // -------------------------
   const renderTeam = (team: TeamResult) => {
     if (team.is_active === false) return null;
-    const backendLogo = (isDark ? team.logoLight || team.logo : team.logo)?.trim();
-    const teamLogo: ImageProps["source"] = backendLogo ||
-      (team.affiliation === "mma" ? null : logoLookups[team.affiliation]?.(team.id, isDark)) ||
+    const backendLogo = (
+      isDark ? team.logoLight || team.logo : team.logo
+    )?.trim();
+    const teamLogo: ImageProps["source"] =
+      backendLogo ||
+      (team.affiliation === "mma"
+        ? null
+        : logoLookups[team.affiliation]?.(team.id, isDark)) ||
       teamPlaceholderImage;
 
     return (
@@ -103,32 +135,58 @@ export default function ResultItemRow({
           accessibilityLabel={`Open ${team.full_name || team.name}`}
         >
           <View style={styles.userRow}>
-            <ResultImage key={`${team.affiliation}:${team.id}:${isDark}:${backendLogo}`} source={teamLogo} fallback={teamPlaceholderImage} style={styles.teamLogo} contentFit="contain" />
+            <ResultImage
+              key={`${team.affiliation}:${team.id}:${isDark}:${backendLogo}`}
+              source={teamLogo}
+              fallback={teamPlaceholderImage}
+              style={styles.teamLogo}
+              contentFit="contain"
+            />
             <View style={styles.resultText}>
-              <Text style={styles.name} numberOfLines={1}>{team.full_name || team.name}</Text>
-              {(team.affiliation === "mcvb" || team.affiliation === "wcvb") && <Text style={styles.subtext}>{team.affiliation === "mcvb" ? "Men’s College Volleyball" : "Women’s College Volleyball"}</Text>}
+              <Text style={styles.name} numberOfLines={1}>
+                {team.full_name || team.name}
+              </Text>
+              {(team.affiliation === "mcvb" || team.affiliation === "wcvb") && (
+                <Text style={styles.subtext}>
+                  {team.affiliation === "mcvb"
+                    ? "Men’s College Volleyball"
+                    : "Women’s College Volleyball"}
+                </Text>
+              )}
               {team.affiliation === "wcbb" && (
                 <Text style={styles.subtext} numberOfLines={1}>
                   {"Women's College Basketball"}
                 </Text>
               )}
               {team.affiliation === "mcbb" && (
-                <Text style={styles.subtext} numberOfLines={1}>{"Men's College Basketball"}</Text>
+                <Text style={styles.subtext} numberOfLines={1}>
+                  {"Men's College Basketball"}
+                </Text>
               )}
               {team.affiliation === "cb" && (
-                <Text style={styles.subtext} numberOfLines={1}>College Baseball</Text>
+                <Text style={styles.subtext} numberOfLines={1}>
+                  College Baseball
+                </Text>
               )}
               {team.affiliation === "sb" && (
-                <Text style={styles.subtext} numberOfLines={1}>College Softball</Text>
+                <Text style={styles.subtext} numberOfLines={1}>
+                  College Softball
+                </Text>
               )}
               {team.affiliation === "cfb" && (
-                <Text style={styles.subtext} numberOfLines={1}>College Football</Text>
+                <Text style={styles.subtext} numberOfLines={1}>
+                  College Football
+                </Text>
               )}
               {team.affiliation === "soccer" && team.league === "msoc" && (
-                <Text style={styles.subtext} numberOfLines={1}>{"Men's College Soccer"}</Text>
+                <Text style={styles.subtext} numberOfLines={1}>
+                  {"Men's College Soccer"}
+                </Text>
               )}
               {team.affiliation === "soccer" && team.league === "wsoc" && (
-                <Text style={styles.subtext} numberOfLines={1}>{"Women's College Soccer"}</Text>
+                <Text style={styles.subtext} numberOfLines={1}>
+                  {"Women's College Soccer"}
+                </Text>
               )}
             </View>
           </View>
@@ -159,7 +217,9 @@ export default function ResultItemRow({
     const headshot = player.headshot_url?.trim();
     const playerName = player.full_name?.trim() || "Unknown player";
     const team = getTeam(player.affiliation, player.team_id);
-    const association = team?.fullName || player.association_name?.trim() ||
+    const association =
+      team?.fullName ||
+      player.association_name?.trim() ||
       (player.affiliation === "mma" ? null : "Free Agent");
     // A new daily key bypasses stale native cache entries at an unchanged URL.
     const cacheKey = headshot ? `${headshot}:${cacheDay}` : undefined;
@@ -177,7 +237,11 @@ export default function ResultItemRow({
             <View style={styles.playerAvatarContainer}>
               <ResultImage
                 key={`${player.affiliation}:${player.id}:${cacheKey}`}
-                source={headshot ? { uri: headshot, cacheKey } : playerPlaceholderImage}
+                source={
+                  headshot
+                    ? { uri: headshot, cacheKey }
+                    : playerPlaceholderImage
+                }
                 fallback={playerPlaceholderImage}
                 style={styles.avatar}
                 contentFit="contain"
@@ -186,7 +250,9 @@ export default function ResultItemRow({
               />
             </View>
             <View style={styles.resultText}>
-              <Text style={styles.name} numberOfLines={1}>{playerName}</Text>
+              <Text style={styles.name} numberOfLines={1}>
+                {playerName}
+              </Text>
               {association && (
                 <Text style={styles.subtext} numberOfLines={1}>
                   {association}
@@ -234,14 +300,22 @@ export default function ResultItemRow({
               <ResultImage
                 key={`user:${user.id}:${profileImageUrl}`}
                 fallback={userPlaceholderImage}
-                source={profileImageUrl ? { uri: profileImageUrl } : userPlaceholderImage}
+                source={
+                  profileImageUrl
+                    ? { uri: profileImageUrl }
+                    : userPlaceholderImage
+                }
                 style={styles.avatar}
                 contentFit="cover"
               />
             </View>
             <View style={styles.resultText}>
-              <Text style={styles.name} numberOfLines={1}>{user.username}</Text>
-              <Text style={styles.subtext} numberOfLines={1}>{user.full_name}</Text>
+              <Text style={styles.name} numberOfLines={1}>
+                {user.username}
+              </Text>
+              <Text style={styles.subtext} numberOfLines={1}>
+                {user.full_name}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>

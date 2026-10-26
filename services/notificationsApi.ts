@@ -3,10 +3,12 @@ import { apiClient } from "@/utils/apiClient";
 
 const NOTIFICATION_REQUEST_TIMEOUT_MS = 15_000;
 
-export async function getNotificationsPage(options: {
-  cursor?: string | null;
-  limit?: number;
-} = {}): Promise<NotificationPage> {
+export async function getNotificationsPage(
+  options: {
+    cursor?: string | null;
+    limit?: number;
+  } = {},
+): Promise<NotificationPage> {
   const response = await apiClient.get<NotificationPage>("/api/notifications", {
     params: {
       cursor: options.cursor || undefined,
@@ -41,12 +43,16 @@ export async function markAllNotificationsRead() {
   return response.data;
 }
 
-export async function markConversationNotificationsRead(conversationId: string) {
+export async function markConversationNotificationsRead(
+  conversationId: string,
+) {
   const response = await apiClient.patch<{
     notifications: AppNotification[];
     readAt: string;
     unreadCount: number;
-  }>(`/api/notifications/conversations/${encodeURIComponent(conversationId)}/read`);
+  }>(
+    `/api/notifications/conversations/${encodeURIComponent(conversationId)}/read`,
+  );
   return response.data;
 }
 

@@ -100,7 +100,22 @@ export default function EditFavoritesScreen() {
 
   return (
     <View style={styles.container}>
-      {directoryError && selectedTab === "teams" && <Pressable onPress={() => void refreshDirectory()} accessibilityRole="button" style={{ padding: 12 }}><Text style={[global.caption, { color: isDark ? Colors.dark.blue : Colors.light.blue }]}>Volleyball teams could not load. Tap to retry.</Text></Pressable> }
+      {directoryError && selectedTab === "teams" && (
+        <Pressable
+          onPress={() => void refreshDirectory()}
+          accessibilityRole="button"
+          style={{ padding: 12 }}
+        >
+          <Text
+            style={[
+              global.caption,
+              { color: isDark ? Colors.dark.blue : Colors.light.blue },
+            ]}
+          >
+            Volleyball teams could not load. Tap to retry.
+          </Text>
+        </Pressable>
+      )}
       <SearchBar
         visible
         value={activeSearch}

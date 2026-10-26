@@ -1,31 +1,33 @@
 // https://docs.expo.dev/guides/using-eslint/
-const { defineConfig } = require('eslint/config');
-const expoConfig = require('eslint-config-expo/flat');
+const { defineConfig } = require("eslint/config");
+const expoConfig = require("eslint-config-expo/flat");
+const prettierConfig = require("eslint-config-prettier/flat");
 
 module.exports = defineConfig([
   expoConfig,
   {
     settings: {
-      'import/resolver': {
+      "import/resolver": {
         typescript: {
-          project: './tsconfig.json',
+          project: "./tsconfig.json",
           alwaysTryTypes: true,
         },
         node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
         },
       },
     },
   },
   {
-    ignores: ['dist/*', '.expo/*'],
+    ignores: ["dist/*", ".expo/*"],
   },
   {
-    files: ['metro.config.cjs'],
+    files: ["metro.config.cjs"],
     languageOptions: {
       globals: {
-        __dirname: 'readonly',
+        __dirname: "readonly",
       },
     },
   },
+  prettierConfig,
 ]);

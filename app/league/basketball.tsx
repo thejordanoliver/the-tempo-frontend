@@ -48,7 +48,7 @@ import Draft, {
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import { NBAPlayoffBracket } from "../../components/Sports/Basketball/Playoffs/NBAPlayoffs/NBAPlayoffBracket";
 
-import { useNBAPlayoffGames } from "../../hooks/NBAHooks/useNBAPlayoffGames";
+import { useNBAPlayoffGames } from "../../hooks/BasketballHooks/useNBAPlayoffGames";
 
 /* -------------------------------------------------------------------------- */
 /*                                     MCBB/WCBB                                    */
@@ -62,7 +62,7 @@ import { getWCBBConferenceSelectionName } from "@/constants/conferences/wcbbConf
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
-import SeasonLeadersList from "../../components/League/SeasonLeaderList";
+import SeasonLeadersList from "../../components/League/SeasonLeaders/SeasonLeaderList";
 import TournamentTreeBracket from "../../components/Sports/Basketball/Playoffs/MCBBTournament/TournamentTreeBracket";
 import { CollegeStandingsList } from "../../components/Sports/Basketball/Standings/CollegeStandingsList";
 import { getMCBBConferenceSelectionName } from "../../constants/conferences/mcbbConferences";
@@ -545,6 +545,7 @@ function NBALeagueScreen() {
           <View key="draft" style={styles.contentArea}>
             {hasVisitedTab("draft") ? (
               <Draft
+                active={selectedTab === "draft"}
                 year={draftYear}
                 team={draftTeam}
                 round={draftRound}
@@ -860,7 +861,10 @@ function WNBALeagueScreen() {
           {/* PLAYOFFS */}
           <View collapsable={false} key="playoffs" style={styles.pagerPage}>
             {hasVisitedTab("playoffs") ? (
-              <WNBAPlayoffBracket season={getWNBASeason()} />
+              <WNBAPlayoffBracket
+                season={getWNBASeason()}
+                active={selectedTab === "playoffs"}
+              />
             ) : null}
           </View>
 
@@ -881,6 +885,7 @@ function WNBALeagueScreen() {
           <View collapsable={false} key="draft" style={styles.pagerPage}>
             {hasVisitedTab("draft") ? (
               <Draft
+                active={selectedTab === "draft"}
                 year={draftYear}
                 team={draftTeam}
                 round={draftRound}

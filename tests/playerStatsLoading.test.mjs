@@ -6,7 +6,6 @@ import ts from "typescript";
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-
 function setup(file, hookName, initialArgs) {
   const slots = [];
   const effects = [];
@@ -68,7 +67,10 @@ function setup(file, hookName, initialArgs) {
         });
       },
     },
-    axios: { isAxiosError: (error) => error?.isAxiosError === true, isCancel: () => false },
+    axios: {
+      isAxiosError: (error) => error?.isAxiosError === true,
+      isCancel: () => false,
+    },
     "utils/apiClient": {
       apiClient: {
         get(url, options) {
@@ -217,7 +219,9 @@ for (const config of cases) {
 }
 
 test("soccer waits for the current team filter before exposing stats", async () => {
-  const h = setup("hooks/SoccerHooks/usePlayerSeasons.ts", "usePlayerSeasons", [100]);
+  const h = setup("hooks/SoccerHooks/usePlayerSeasons.ts", "usePlayerSeasons", [
+    100,
+  ]);
   try {
     await flush();
     h.requests[0].resolve({ data: { seasons: [], filters: { teamId: "1" } } });

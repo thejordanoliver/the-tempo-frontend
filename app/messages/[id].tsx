@@ -291,7 +291,12 @@ export default function ConversationScreen() {
   ]);
 
   return (
-    <View ref={rootRef} collapsable={false} onLayout={onLayout} style={styles.root}>
+    <View
+      ref={rootRef}
+      collapsable={false}
+      onLayout={onLayout}
+      style={styles.root}
+    >
       <Animated.View style={[styles.container, { paddingBottom: bottomInset }]}>
         <FlatList
           style={styles.messagesList}

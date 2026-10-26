@@ -46,14 +46,8 @@ test("sports recent-search identity includes affiliation", () => {
     affiliation: "cfb",
   };
 
-  assert.equal(
-    getExploreResultIdentity(nflPlayer),
-    "player:nfl:4430841",
-  );
-  assert.equal(
-    getExploreResultIdentity(cfbPlayer),
-    "player:cfb:4430841",
-  );
+  assert.equal(getExploreResultIdentity(nflPlayer), "player:nfl:4430841");
+  assert.equal(getExploreResultIdentity(cfbPlayer), "player:cfb:4430841");
   assert.notEqual(
     getExploreResultIdentity(nflPlayer),
     getExploreResultIdentity(cfbPlayer),

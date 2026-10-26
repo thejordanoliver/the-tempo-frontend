@@ -236,7 +236,6 @@ export default function GamesList({
         ListEmptyComponent={
           <View style={global.emptyContainer}>
             <Text style={global.emptyTitle}>No races scheduled</Text>
-
           </View>
         }
       />
@@ -257,7 +256,6 @@ export default function GamesList({
       ListEmptyComponent={
         <View style={global.emptyContainer}>
           <Text style={global.emptyTitle}>No races scheduled</Text>
-
         </View>
       }
     />

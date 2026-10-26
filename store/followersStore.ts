@@ -10,7 +10,7 @@ interface FollowersState {
   openModal: (
     type: "followers" | "following",
     targetUserId: string,
-    currentUserId?: string
+    currentUserId?: string,
   ) => void;
   closeModal: () => void;
   markForRestore: () => void;

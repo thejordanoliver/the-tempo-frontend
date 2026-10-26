@@ -92,7 +92,10 @@ function MountedGameLiveChatOverlay({
     sendMessage,
     addReaction,
     hideBlockedUser,
-    currentUserId, error, retryMessage, deleteMessage,
+    currentUserId,
+    error,
+    retryMessage,
+    deleteMessage,
   } = useLiveGameChat(gameId, context);
 
   return (

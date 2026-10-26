@@ -12,6 +12,7 @@ import {
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
+import SoccerPlayByPlay from "@/components/Sports/Soccer/GameDetails/SoccerPlayByPlay";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
@@ -25,7 +26,6 @@ import {
 } from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
-import LastPlay from "components/Sports/Baseball/GameDetails/LastPlay";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -212,7 +212,6 @@ export default function GameDetailsScreen(
     : undefined;
   const period = formatPeriod({ period: score?.status.period, isSOCC: true });
   const clock = score?.status.displayClock ?? "00'";
-  const lastPlay = score?.lastPlay;
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
   const shotMap = score?.shotMap ?? [];
@@ -351,14 +350,6 @@ export default function GameDetailsScreen(
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            <LastPlay
-              lastPlay={lastPlay}
-              homeId={homeId}
-              awayId={awayId}
-              state={state}
-              league={LEAGUE}
-            />
-
             <LineScore
               linescore={lineScore}
               homeCode={homeCode}
@@ -386,6 +377,19 @@ export default function GameDetailsScreen(
               state={state}
             />
 
+            <SoccerPlayByPlay
+              key={gameId}
+              events={score?.playByPlay}
+              awayId={awayId}
+              homeId={homeId}
+              awayCode={awayCode}
+              homeCode={homeCode}
+              awayLogo={awayLogo}
+              homeLogo={homeLogo}
+              isDark={isDark}
+              state={state}
+            />
+
             <MatchupPredictor
               homeId={homeId}
               homeCode={homeCode}
@@ -404,19 +408,6 @@ export default function GameDetailsScreen(
               state={state}
             />
 
-            <GameTeamStats
-              stats={teamStats}
-              homeLogo={homeLogo}
-              awayLogo={awayLogo}
-              homeCode={homeCode}
-              awayCode={awayCode}
-              awayColor={awayColor}
-              homeColor={homeColor}
-              isDark={isDark}
-              state={state}
-              league={LEAGUE}
-            />
-
             <SoccerShotMap
               shots={shotMap}
               awayId={awayId}
@@ -429,6 +420,19 @@ export default function GameDetailsScreen(
               homeColor={homeColor}
               isDark={isDark}
               state={state}
+            />
+
+            <GameTeamStats
+              stats={teamStats}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              awayColor={awayColor}
+              homeColor={homeColor}
+              isDark={isDark}
+              state={state}
+              league={LEAGUE}
             />
 
             <SoccerKeyEvents
@@ -445,11 +449,7 @@ export default function GameDetailsScreen(
 
             <Highlights highlights={highlights} isDark={isDark} />
 
-            <Officials
-              officials={officials ?? []}
-              isDark={isDark}
-              state={state}
-            />
+            <Officials officials={officials} isDark={isDark} state={state} />
 
             <LastFiveGames
               homeId={homeId}

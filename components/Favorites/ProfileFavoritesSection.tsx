@@ -374,9 +374,15 @@ export default function ProfileFavoritesSection({
 
     const teamBackgroundColor = team.primaryColor ?? Colors.midTone;
 
-    const showLeagueBadge = ["cfb", "mcbb", "wcbb", "cb", "sb", "mcvb", "wcvb"].includes(
-      league,
-    );
+    const showLeagueBadge = [
+      "cfb",
+      "mcbb",
+      "wcbb",
+      "cb",
+      "sb",
+      "mcvb",
+      "wcvb",
+    ].includes(league);
 
     const teamName = team.name ?? team.shortName ?? String(id);
 

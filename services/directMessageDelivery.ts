@@ -1,7 +1,9 @@
 // A missing acknowledgement is ambiguous: the server may already have saved the
 // message. The caller must reuse the same clientId for REST and manual retries.
 export async function deliverDirectMessage<T>(options: {
-  socketSend?: (ack: (response: { error?: string; message?: T }) => void) => void;
+  socketSend?: (
+    ack: (response: { error?: string; message?: T }) => void,
+  ) => void;
   restSend: () => Promise<T>;
   timeoutMs?: number;
 }): Promise<T> {

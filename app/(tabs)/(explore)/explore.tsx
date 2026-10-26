@@ -69,9 +69,17 @@ export default function ExplorePage() {
     setFavoriteGamesAutoPlay,
     moveWidget,
     reorderWidgets,
+    setBoardVisible,
     ensureWidgetData,
     refreshWidgetData,
   } = useExploreWidgets();
+
+  useFocusEffect(
+    useCallback(() => {
+      setBoardVisible(true);
+      return () => setBoardVisible(false);
+    }, [setBoardVisible]),
+  );
 
   useFocusEffect(
     useCallback(() => {

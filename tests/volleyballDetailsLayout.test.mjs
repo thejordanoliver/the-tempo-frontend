@@ -9,20 +9,54 @@ function loadLineScore() {
   const jsx = (type, props) => ({ type, props });
   const modules = {
     "react/jsx-runtime": { jsx, jsxs: jsx },
-    react: { useMemo: (factory) => factory(), useState: (initial) => [initial, () => {}] },
+    react: {
+      useMemo: (factory) => factory(),
+      useState: (initial) => [initial, () => {}],
+    },
     "react-native": {
-      View: "View", Text: "Text", ScrollView: "ScrollView",
+      View: "View",
+      Text: "Text",
+      ScrollView: "ScrollView",
       StyleSheet: { hairlineWidth: 1, create: (styles) => styles },
     },
-    "components/Headings/HeadingTwo": { default: "HeadingTwo", __esModule: true },
-    "constants/styles": { Colors: { white: "white", black: "black", midTone: "gray", lightGray: "gray" } },
+    "components/Headings/HeadingTwo": {
+      default: "HeadingTwo",
+      __esModule: true,
+    },
+    "constants/styles": {
+      Colors: {
+        white: "white",
+        black: "black",
+        midTone: "gray",
+        lightGray: "gray",
+      },
+    },
     "styles/GameDetailStyles/LineScoreStyles": { lineScoreStyles: () => ({}) },
-    "../../../Skeletons/GameDetails/LineScoreSkeleton": { default: "Skeleton", __esModule: true },
+    "../../../Skeletons/GameDetails/LineScoreSkeleton": {
+      default: "Skeleton",
+      __esModule: true,
+    },
   };
-  const source = ts.transpileModule(fs.readFileSync("components/Sports/Basketball/GameDetails/LineScore.tsx", "utf8"), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
-  }).outputText;
-  vm.runInNewContext(source, { exports, require(name) { assert(name in modules, name); return modules[name]; } });
+  const source = ts.transpileModule(
+    fs.readFileSync(
+      "components/Sports/Basketball/GameDetails/LineScore.tsx",
+      "utf8",
+    ),
+    {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        jsx: ts.JsxEmit.ReactJSX,
+        esModuleInterop: true,
+      },
+    },
+  ).outputText;
+  vm.runInNewContext(source, {
+    exports,
+    require(name) {
+      assert(name in modules, name);
+      return modules[name];
+    },
+  });
   return exports.default;
 }
 
@@ -36,9 +70,14 @@ function textNodes(value) {
 test("the shared volleyball line score labels the fifth set and totals sets won", () => {
   const LineScore = loadLineScore();
   const tree = LineScore({
-    league: "wcvb", isDark: true, state: "post", homeCode: "HOME", awayCode: "AWAY",
+    league: "wcvb",
+    isDark: true,
+    state: "post",
+    homeCode: "HOME",
+    awayCode: "AWAY",
     linescore: { home: [25, 20, 25, 20, 15], away: [20, 25, 20, 25, 12] },
-    homeSets: 3, awaySets: 2,
+    homeSets: 3,
+    awaySets: 2,
   });
   const content = textNodes(tree);
   assert(content.includes("Set Scores"));
@@ -54,7 +93,11 @@ test("the shared volleyball line score labels the fifth set and totals sets won"
 test("the shared basketball line score retains overtime and point totals", () => {
   const LineScore = loadLineScore();
   const tree = LineScore({
-    league: "nba", isDark: false, state: "post", homeCode: "HOME", awayCode: "AWAY",
+    league: "nba",
+    isDark: false,
+    state: "post",
+    homeCode: "HOME",
+    awayCode: "AWAY",
     linescore: { home: [25, 20, 25, 20, 15], away: [20, 25, 20, 25, 12] },
   });
   const content = textNodes(tree);

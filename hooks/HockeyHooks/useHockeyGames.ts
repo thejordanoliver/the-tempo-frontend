@@ -1,8 +1,12 @@
+import {
+  useSportsRequestScope,
+  type SportsRequestOptions,
+} from "hooks/Sports/useSportsRequestScope";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { HockeyGame } from "@/types/hockey/hockey";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
@@ -16,19 +20,34 @@ type HockeyGamesResponse = {
   games?: HockeyGame[];
 };
 
-export function useHockeyGames(date?: Date, league: League = "nhl", onScoreboardCalendar?: OnScoreboardCalendar) {
-  const [games, setGames] = useState<HockeyGame[]>([]);
+export function useHockeyGames(
+  date?: Date,
+  league: League = "nhl",
+  onScoreboardCalendar?: OnScoreboardCalendar,
+  options: SportsRequestOptions = {},
+) {
+  const [storedGames, setGames] = useState<HockeyGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const requestIdRef = useRef(0);
 
   const formattedDate = useMemo(() => {
     return date ? dayjs(date).format("YYYYMMDD") : "today";
   }, [date]);
 
+  const scope = useSportsRequestScope(
+    JSON.stringify([league, formattedDate]),
+    options,
+  );
+  const { enabled, begin, isCurrent, accept, finish } = scope;
+  const games = useMemo(
+    () => (scope.hasData ? storedGames : []),
+    [scope.hasData, storedGames],
+  );
+
   const fetchGames = useCallback(
     async ({ forceRefresh = false }: FetchGamesOptions = {}) => {
-      const requestId = ++requestIdRef.current;
+      const request = begin();
+      if (!request) return;
       const endpoint =
         league === "mch" ? "api/games/hockey/mch" : "api/games/hockey";
 
@@ -37,32 +56,41 @@ export function useHockeyGames(date?: Date, league: League = "nhl", onScoreboard
 
         // Keep pull-to-refresh from showing the full page loading skeleton.
         if (!forceRefresh) {
-          setLoading(true);
+          setLoading(!request.hasData);
         }
 
         const { data } = await apiClient.get(endpoint, {
           params: formattedDate !== "today" ? { date: formattedDate } : {},
+          signal: request.controller.signal,
         });
 
         const gamesData = Array.isArray(data?.games) ? data.games : [];
 
-        if (requestId === requestIdRef.current) {
+        if (accept(request)) {
           setGames(gamesData);
           onScoreboardCalendar?.(data);
         }
       } catch (err) {
-        if (requestId !== requestIdRef.current) return;
+        if (!isCurrent(request)) return;
         onScoreboardCalendar?.(null);
         console.error(err);
         setError(new Error(`Failed to fetch ${league} games`));
         if (!forceRefresh) setGames([]);
       } finally {
-        if (requestId === requestIdRef.current) {
+        if (finish(request)) {
           setLoading(false);
         }
       }
     },
-    [formattedDate, league, onScoreboardCalendar],
+    [
+      formattedDate,
+      league,
+      onScoreboardCalendar,
+      begin,
+      accept,
+      finish,
+      isCurrent,
+    ],
   );
 
   const refreshGames = useCallback(async () => {
@@ -72,20 +100,19 @@ export function useHockeyGames(date?: Date, league: League = "nhl", onScoreboard
   useEffect(() => {
     let cancelled = false;
     void Promise.resolve().then(() => {
-      if (!cancelled) void fetchGames();
+      if (!cancelled && enabled) void fetchGames();
     });
     return () => {
       cancelled = true;
-      requestIdRef.current += 1;
     };
-  }, [fetchGames]);
+  }, [enabled, fetchGames]);
 
   const hasActiveGame = useMemo(() => {
     return games.some(shouldTrackGameUpdates);
   }, [games]);
 
   useLiveSportsSubscription<HockeyGamesResponse>({
-    enabled: !loading && hasActiveGame,
+    enabled: enabled && scope.settled && !loading && hasActiveGame,
     kind: "scoreboard",
     payload: {
       sport: "hockey",
@@ -93,15 +120,16 @@ export function useHockeyGames(date?: Date, league: League = "nhl", onScoreboard
       date: formattedDate !== "today" ? formattedDate : undefined,
     },
     onUpdate: (payload) => {
-      requestIdRef.current += 1;
+      if (!accept()) return;
+      setLoading(false);
       setGames(Array.isArray(payload?.games) ? payload.games : []);
     },
   });
 
   return {
     games,
-    loading,
-    error,
+    loading: enabled && !scope.hasData && (!scope.settled || loading),
+    error: enabled && scope.settled ? error : null,
     refreshGames,
   };
 }

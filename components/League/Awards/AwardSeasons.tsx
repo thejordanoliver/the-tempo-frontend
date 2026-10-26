@@ -159,7 +159,9 @@ export default function AwardSeasons({ league }: Props) {
           tintColor={isDark ? Colors.white : Colors.black}
         />
       }
-      contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
+      contentContainerStyle={navigationContentStyle(
+        styles.contentContainerStyle,
+      )}
     >
       <View style={styles.dropdownRow}>
         {viewMode !== "champions" && awards.length > 0 && (

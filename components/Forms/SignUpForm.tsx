@@ -500,7 +500,11 @@ export default function SignUpForm({
   };
 
   const content = (
-    <View style={signupStep <= 1 ? styles.credentialsSection : styles.sectionContainer}>
+    <View
+      style={
+        signupStep <= 1 ? styles.credentialsSection : styles.sectionContainer
+      }
+    >
       {renderStep()}
 
       {showProgress && (
@@ -550,5 +554,7 @@ export default function SignUpForm({
   );
   return signupStep <= 1 ? (
     <AuthFormLayout keyboardAware>{content}</AuthFormLayout>
-  ) : content;
+  ) : (
+    content
+  );
 }

@@ -1,15 +1,15 @@
-import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
-import F1StandingsList from "components/Sports/Racing/Standings/F1StandingsList";
 import EventSelector, {
   getDefaultUFCEventIndex,
-} from "@/components/Sports/MMA/EventSelector";
+} from "@/components/League/Selectors/EventSelector";
 import GamesList from "@/components/Sports/Racing/Games/RacingGamesList";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useRacingEvents } from "@/hooks/RacingHooks/useRacingEvents";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
+import F1StandingsList from "components/Sports/Racing/Standings/F1StandingsList";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import {
   useCallback,
   useEffect,
@@ -63,8 +63,14 @@ export default function RacingLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
-  const { calendar, loading: calendarLoading } = useLeagueCalendar(league, "racing", undefined, scoreboardCalendar);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar, loading: calendarLoading } = useLeagueCalendar(
+    league,
+    "racing",
+    undefined,
+    scoreboardCalendar,
+  );
 
   const sortedCalendar = useMemo(() => {
     return [...(calendar ?? [])].sort((a, b) => {

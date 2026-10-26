@@ -29,7 +29,10 @@ import {
   reorderFavoriteRailItems,
   splitFavoriteRailOrder,
 } from "types/favorites";
-import { getFavoriteBaseTeam, getFavoriteTeamRoute } from "utils/favorites/favoriteTeams";
+import {
+  getFavoriteBaseTeam,
+  getFavoriteTeamRoute,
+} from "utils/favorites/favoriteTeams";
 import { FavoritesTab } from "./FavoritesTab";
 
 function setSharedValue<T>(sharedValue: { value: T }, value: T) {
@@ -220,7 +223,11 @@ export default function FavoritesScroll({
         return teams;
       }
 
-      const baseTeam = getFavoriteBaseTeam(league, favoriteId) ?? allTeams.find((team) => team.league === league && String(team.id) === favoriteId);
+      const baseTeam =
+        getFavoriteBaseTeam(league, favoriteId) ??
+        allTeams.find(
+          (team) => team.league === league && String(team.id) === favoriteId,
+        );
 
       if (!baseTeam) {
         return teams;

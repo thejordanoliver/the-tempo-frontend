@@ -8,10 +8,22 @@ import {
 
 test("preserves My Picks widgets in all sizes", () => {
   for (const size of ["small", "medium", "large"] as const) {
-    const widgets = normalizeStoredWidgets([{ id: "my-picks", type: "my_picks", title: "My Picks", createdAt: 1, size, order: 0 }]);
+    const widgets = normalizeStoredWidgets([
+      {
+        id: "my-picks",
+        type: "my_picks",
+        title: "My Picks",
+        createdAt: 1,
+        size,
+        order: 0,
+      },
+    ]);
     assert.equal(widgets[0]?.type, "my_picks");
     assert.equal(widgets[0]?.size, size);
-    assert.deepEqual(normalizeStoredWidgets(JSON.parse(serializeExploreWidgets(widgets))), widgets);
+    assert.deepEqual(
+      normalizeStoredWidgets(JSON.parse(serializeExploreWidgets(widgets))),
+      widgets,
+    );
   }
 });
 
@@ -106,36 +118,53 @@ test("accepts UFL and college baseball Favorite Games selections", () => {
   assert.deepEqual(widgets[0].favoriteGameLeagues, ["cb", "ufl"]);
 });
 
-
 test("rejects future schema versions instead of dropping settings", () => {
-  assert.throws(() => normalizeStoredWidgets({ version: EXPLORE_WIDGETS_SCHEMA_VERSION + 1, widgets: [] }), /Unsupported/);
+  assert.throws(
+    () =>
+      normalizeStoredWidgets({
+        version: EXPLORE_WIDGETS_SCHEMA_VERSION + 1,
+        widgets: [],
+      }),
+    /Unsupported/,
+  );
 });
 
 test("preserves saved men's basketball widgets during the MCBB rename", () => {
   const widgets = normalizeStoredWidgets([
     { type: "favorite_games", favoriteGameLeagues: ["cbb", "wcbb"], order: 0 },
-    { type: "college_polls", collegePollLeague: "cbb", collegePollType: "coaches", order: 2 },
+    {
+      type: "college_polls",
+      collegePollLeague: "cbb",
+      collegePollType: "coaches",
+      order: 2,
+    },
   ]);
   assert.deepEqual(widgets[0].favoriteGameLeagues, ["mcbb", "wcbb"]);
   assert.equal(widgets[1].collegePollLeague, "mcbb");
   assert.equal(widgets[1].collegePollType, "coaches");
-  assert.deepEqual(normalizeStoredWidgets([{ type: "cbb_games" }])[0].favoriteGameLeagues, ["mcbb"]);
+  assert.deepEqual(
+    normalizeStoredWidgets([{ type: "cbb_games" }])[0].favoriteGameLeagues,
+    ["mcbb"],
+  );
 });
-
 
 test("Favorite Teams autoplay defaults on and preserves the saved preference", () => {
   for (const autoPlay of [undefined, true, false]) {
-    const widgets = normalizeStoredWidgets([{
-      id: "favorite-teams",
-      type: "favorite_teams",
-      title: "Favorite Teams",
-      createdAt: 1,
-      size: "medium",
-      order: 0,
-      favoriteTeamsAutoPlay: autoPlay,
-    }]);
+    const widgets = normalizeStoredWidgets([
+      {
+        id: "favorite-teams",
+        type: "favorite_teams",
+        title: "Favorite Teams",
+        createdAt: 1,
+        size: "medium",
+        order: 0,
+        favoriteTeamsAutoPlay: autoPlay,
+      },
+    ]);
     assert.equal(widgets[0].favoriteTeamsAutoPlay, autoPlay !== false);
-    const restored = normalizeStoredWidgets(JSON.parse(serializeExploreWidgets(widgets)));
+    const restored = normalizeStoredWidgets(
+      JSON.parse(serializeExploreWidgets(widgets)),
+    );
     assert.equal(restored[0].favoriteTeamsAutoPlay, autoPlay !== false);
   }
 });

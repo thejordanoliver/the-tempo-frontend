@@ -1,7 +1,13 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
-import { Text, TouchableOpacity, View } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 import type { ConversationScreenStyles } from "styles/MessageStyles/ConversationScreenStyles";
 
 type Props = {
@@ -10,6 +16,7 @@ type Props = {
   isLoading: boolean;
   error: string | null;
   refresh: () => void;
+  style?: StyleProp<ViewStyle>;
 };
 
 export default function ConversationEmptyState({
@@ -18,11 +25,12 @@ export default function ConversationEmptyState({
   isLoading,
   error,
   refresh,
+  style,
 }: Props) {
   const global = globalStyles(isDark);
   if (isLoading) {
     return (
-      <View style={global.emptyContainer}>
+      <View style={[global.emptyContainer, style]}>
         <CustomActivityIndicator />
       </View>
     );
@@ -30,7 +38,7 @@ export default function ConversationEmptyState({
 
   if (error) {
     return (
-      <View style={styles.emptyState}>
+      <View style={[styles.emptyState, style]}>
         <Ionicons
           name="alert-circle-outline"
           size={34}
@@ -51,7 +59,7 @@ export default function ConversationEmptyState({
   }
 
   return (
-    <View style={styles.emptyState}>
+    <View style={[styles.emptyState, style]}>
       <Ionicons
         name="chatbubble-ellipses-outline"
         size={34}

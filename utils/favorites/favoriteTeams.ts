@@ -1,7 +1,7 @@
-import {getWCBBTeam,  getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import {getMCBBTeam,  getMCBBTeamLogo } from "constants/teamsMCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -162,6 +162,8 @@ export function isCollegeFavoriteLeague(league: string): boolean {
     league === "mcbb" ||
     league === "wcbb" ||
     league === "cb" ||
-    league === "sb" || league === "mcvb" || league === "wcvb"
+    league === "sb" ||
+    league === "mcvb" ||
+    league === "wcvb"
   );
 }

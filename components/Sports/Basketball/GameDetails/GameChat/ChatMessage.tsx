@@ -1,7 +1,14 @@
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { Image } from "expo-image";
 import { memo, useMemo } from "react";
-import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import SafetyActionsModal from "components/SafetyActionsModal";
 import type { ChatMessageItem } from "types/chat";
@@ -21,7 +28,17 @@ interface Props {
 const profilePlaceholder =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
 
-function ChatMessage({ currentUserId, onRetry, onDelete, item, userName, isDark, emojis, onReaction, onBlockedUser }: Props) {
+function ChatMessage({
+  currentUserId,
+  onRetry,
+  onDelete,
+  item,
+  userName,
+  isDark,
+  emojis,
+  onReaction,
+  onBlockedUser,
+}: Props) {
   const styles = useMemo(() => ChatMessageStyles(isDark), [isDark]);
 
   const time = new Date(item.time).toLocaleTimeString([], {
@@ -33,7 +50,8 @@ function ChatMessage({ currentUserId, onRetry, onDelete, item, userName, isDark,
   const gifUrl = item.gif_url;
   const hasGif = Boolean(gifUrl);
 
-  const isCurrentUser = item.senderId != null && item.senderId === currentUserId;
+  const isCurrentUser =
+    item.senderId != null && item.senderId === currentUserId;
   const safety = useSafetyActions({
     userId: item.senderId,
     username: item.user,
@@ -45,93 +63,125 @@ function ChatMessage({ currentUserId, onRetry, onDelete, item, userName, isDark,
 
   return (
     <>
-    <Pressable
-      onLongPress={isCurrentUser && item.delivery === "sent" ? () => Alert.alert("Delete message?", "This removes the message for everyone.", [
-        { text: "Cancel", style: "cancel" }, { text: "Delete", style: "destructive", onPress: () => onDelete(item.id) },
-      ]) : isCurrentUser ? undefined : safety.open}
-      delayLongPress={350}
-      accessibilityHint={isCurrentUser ? undefined : "Long press for safety actions"}
-      style={[
-        styles.messageContainer,
-        isCurrentUser ? styles.currentUserContainer : styles.otherUserContainer,
-      ]}
-    >
-      <View
-        style={[styles.userWrapper, isCurrentUser && styles.currentUserWrapper]}
-      >
-        <Image source={{ uri: profileImage }} style={styles.image} />
-
-        <Text style={styles.user} numberOfLines={1}>
-          {item.user}
-        </Text>
-      </View>
-
-      <View
+      <Pressable
+        onLongPress={
+          isCurrentUser && item.delivery === "sent"
+            ? () =>
+                Alert.alert(
+                  "Delete message?",
+                  "This removes the message for everyone.",
+                  [
+                    { text: "Cancel", style: "cancel" },
+                    {
+                      text: "Delete",
+                      style: "destructive",
+                      onPress: () => onDelete(item.id),
+                    },
+                  ],
+                )
+            : isCurrentUser
+              ? undefined
+              : safety.open
+        }
+        delayLongPress={350}
+        accessibilityHint={
+          isCurrentUser ? undefined : "Long press for safety actions"
+        }
         style={[
-          styles.messageWrapper,
-          isCurrentUser && styles.currentUserMessageWrapper,
-          hasGif && !hasText && styles.gifOnlyMessageWrapper,
+          styles.messageContainer,
+          isCurrentUser
+            ? styles.currentUserContainer
+            : styles.otherUserContainer,
         ]}
       >
-        {hasGif && gifUrl && (
-          <Image
-            source={{ uri: gifUrl }}
-            style={styles.gif}
-            contentFit="cover"
-          />
-        )}
+        <View
+          style={[
+            styles.userWrapper,
+            isCurrentUser && styles.currentUserWrapper,
+          ]}
+        >
+          <Image source={{ uri: profileImage }} style={styles.image} />
 
-        {hasText && (
-          <Text
-            style={[styles.message, isCurrentUser && styles.currentUserText]}
-          >
-            {item.message}
+          <Text style={styles.user} numberOfLines={1}>
+            {item.user}
           </Text>
-        )}
+        </View>
 
-        <Text style={[styles.time, isCurrentUser && styles.currentUserTime]}>
-          {time}{item.delivery === "pending" ? " · Sending…" : ""}
-        </Text>
-      </View>
+        <View
+          style={[
+            styles.messageWrapper,
+            isCurrentUser && styles.currentUserMessageWrapper,
+            hasGif && !hasText && styles.gifOnlyMessageWrapper,
+          ]}
+        >
+          {hasGif && gifUrl && (
+            <Image
+              source={{ uri: gifUrl }}
+              style={styles.gif}
+              contentFit="cover"
+            />
+          )}
 
-      {item.delivery === "failed" && <TouchableOpacity onPress={() => onRetry(item.id)} accessibilityRole="button">
-        <Text style={styles.message}>{item.error ?? "Message failed"} · Retry</Text>
-      </TouchableOpacity>}
-      <View
-        style={[
-          styles.reactionContainer,
-          isCurrentUser && styles.currentUserReactionContainer,
-        ]}
-      >
-        {emojis.map((emoji) => {
-          const count = item.reactions?.[emoji]?.length ?? 0;
-          const selected = item.reactions?.[emoji]?.includes(String(currentUserId)) ?? false;
-
-          return (
-            <TouchableOpacity
-              key={emoji}
-              activeOpacity={activeOpacity}
-              disabled={item.delivery !== "sent"}
-              onPress={() => onReaction(item.id, emoji)}
-              style={[
-                styles.reactionButtonWrapper,
-                selected && styles.reactionButtonSelected,
-              ]}
+          {hasText && (
+            <Text
+              style={[styles.message, isCurrentUser && styles.currentUserText]}
             >
-              <Text
+              {item.message}
+            </Text>
+          )}
+
+          <Text style={[styles.time, isCurrentUser && styles.currentUserTime]}>
+            {time}
+            {item.delivery === "pending" ? " · Sending…" : ""}
+          </Text>
+        </View>
+
+        {item.delivery === "failed" && (
+          <TouchableOpacity
+            onPress={() => onRetry(item.id)}
+            accessibilityRole="button"
+          >
+            <Text style={styles.message}>
+              {item.error ?? "Message failed"} · Retry
+            </Text>
+          </TouchableOpacity>
+        )}
+        <View
+          style={[
+            styles.reactionContainer,
+            isCurrentUser && styles.currentUserReactionContainer,
+          ]}
+        >
+          {emojis.map((emoji) => {
+            const count = item.reactions?.[emoji]?.length ?? 0;
+            const selected =
+              item.reactions?.[emoji]?.includes(String(currentUserId)) ?? false;
+
+            return (
+              <TouchableOpacity
+                key={emoji}
+                activeOpacity={activeOpacity}
+                disabled={item.delivery !== "sent"}
+                onPress={() => onReaction(item.id, emoji)}
                 style={[
-                  styles.reactionButtonText,
-                  selected && styles.reactionButtonTextSelected,
+                  styles.reactionButtonWrapper,
+                  selected && styles.reactionButtonSelected,
                 ]}
               >
-                {emoji} {count}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </Pressable>
-    <SafetyActionsModal {...safety.modalProps} />
+                <Text
+                  style={[
+                    styles.reactionButtonText,
+                    selected && styles.reactionButtonTextSelected,
+                  ]}
+                >
+                  {emoji} {count}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </Pressable>
+      <SafetyActionsModal {...safety.modalProps} />
     </>
   );
 }

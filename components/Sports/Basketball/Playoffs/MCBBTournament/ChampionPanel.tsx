@@ -3,13 +3,19 @@ import type { TournamentTeam } from "hooks/BasketballHooks/useTournamentBracket"
 import { getTournamentTeamLogo } from "./teamLogo";
 import { MCBBTournamentBracketStyles } from "styles/PlayoffStyles/MCBBTournamentBracketStyles";
 
-export function ChampionPanel({ champion, isDark, league }: {
+export function ChampionPanel({
+  champion,
+  isDark,
+  league,
+}: {
   champion: TournamentTeam | null;
   isDark: boolean;
   league: string;
 }) {
   const styles = MCBBTournamentBracketStyles(isDark);
-  const championLogoSource = champion ? getTournamentTeamLogo(champion.id, league, isDark) : null;
+  const championLogoSource = champion
+    ? getTournamentTeamLogo(champion.id, league, isDark)
+    : null;
   return (
     <View style={styles.championPanel}>
       {championLogoSource && (
@@ -27,9 +33,7 @@ export function ChampionPanel({ champion, isDark, league }: {
       </Text>
 
       {champion?.seed !== null && champion?.seed !== undefined ? (
-        <Text style={styles.championMeta}>
-          {`No. ${champion.seed} seed`}
-        </Text>
+        <Text style={styles.championMeta}>{`No. ${champion.seed} seed`}</Text>
       ) : null}
     </View>
   );

@@ -27,7 +27,15 @@ type Props = {
   loading?: boolean;
 };
 
-const COLLEGE_LEAGUES = new Set(["cfb", "mcbb", "wcbb", "cb", "sb", "mcvb", "wcvb"]);
+const COLLEGE_LEAGUES = new Set([
+  "cfb",
+  "mcbb",
+  "wcbb",
+  "cb",
+  "sb",
+  "mcvb",
+  "wcvb",
+]);
 
 const getTeamLogo = (
   league: string,
@@ -83,7 +91,10 @@ const FavoriteTeamsSelector = ({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => FavoritesSelectorStyles(itemWidth), [itemWidth]);
-  const eligibleTeams = useMemo(() => teams.filter(isEligibleFavoriteTeam), [teams]);
+  const eligibleTeams = useMemo(
+    () => teams.filter(isEligibleFavoriteTeam),
+    [teams],
+  );
   const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
 
   const handleToggle = useCallback(
@@ -98,7 +109,9 @@ const FavoriteTeamsSelector = ({
       const favoriteKey = buildFavoriteTeamKey(item.league, item.id);
       const isSelected = favoriteKey ? favoritesSet.has(favoriteKey) : false;
       const useAltLogo = isDark || isSelected;
-      const logo = getTeamLogo(item.league, Number(item.id), useAltLogo) ?? (useAltLogo ? item.logoLight ?? item.logo : item.logo);
+      const logo =
+        getTeamLogo(item.league, Number(item.id), useAltLogo) ??
+        (useAltLogo ? (item.logoLight ?? item.logo) : item.logo);
 
       return (
         <SelectionCard

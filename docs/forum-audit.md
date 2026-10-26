@@ -28,7 +28,7 @@ New shares use `tempo://post/[postId]`. The legacy `nbascorestracker` scheme rem
 
 `expo-sms` is now an SDK-compatible dependency. A custom native development/release app must be rebuilt to include it and register the new Tempo scheme. Browser and iOS simulator SMS attempts show an unavailable message; they still support Tempo DMs. Phone composer behavior needs real-device verification.
 
-The iOS option displays a Messages-style icon for the system SMS composer. On Android, the local `tempo-messaging` Expo module reads the selected default SMS app’s public label and actual icon through `Telephony.Sms.getDefaultSmsPackage` and `PackageManager`. It declares only the scoped SMS-delivery package query, with no SMS/contact permissions ([Android API reference](https://developer.android.com/reference/android/provider/Telephony.Sms#getDefaultSmsPackage(android.content.Context))). Expo Go/older builds use a generic SMS icon; Android must be rebuilt to include the local module. Native icon behavior has not been verified on a device.
+The iOS option displays a Messages-style icon for the system SMS composer. On Android, the local `tempo-messaging` Expo module reads the selected default SMS app’s public label and actual icon through `Telephony.Sms.getDefaultSmsPackage` and `PackageManager`. It declares only the scoped SMS-delivery package query, with no SMS/contact permissions ([Android API reference](<https://developer.android.com/reference/android/provider/Telephony.Sms#getDefaultSmsPackage(android.content.Context)>)). Expo Go/older builds use a generic SMS icon; Android must be rebuilt to include the local module. Native icon behavior has not been verified on a device.
 
 ## Verification
 

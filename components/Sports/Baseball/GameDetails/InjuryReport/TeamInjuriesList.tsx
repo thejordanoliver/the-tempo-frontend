@@ -30,9 +30,7 @@ export default function TeamInjuriesList({ injuries, isDark }: Props) {
       removeClippedSubviews={false}
       ListEmptyComponent={
         <View style={global.emptyContainer}>
-          <Text style={global.emptyText}>
-            No injuries reported
-          </Text>
+          <Text style={global.emptyText}>No injuries reported</Text>
         </View>
       }
     />

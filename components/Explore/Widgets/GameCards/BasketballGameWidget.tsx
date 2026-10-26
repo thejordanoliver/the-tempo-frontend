@@ -1,8 +1,8 @@
 import { activeOpacity } from "@/constants/styles";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import {getMCBBTeam,  getMCBBTeamLogo } from "constants/teamsMCBB";
-import {getWCBBTeam,  getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { router } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -10,7 +10,11 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { formatDate, formatTime, getHolidayLabel } from "utils/common/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+} from "utils/common/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
 import displayeValue from "utils/widgets/widgetUtils";
 

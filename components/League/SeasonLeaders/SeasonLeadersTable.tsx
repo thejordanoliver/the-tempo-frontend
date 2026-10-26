@@ -1,10 +1,8 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import placeholder from "@/assets/Placeholders/playerPlaceholder.png";
 import { Colors, activeOpacity, globalStyles } from "@/constants/styles";
 import { getNBATeam } from "@/constants/teams";
-import { getMCBBTeam } from "@/constants/teamsMCBB";
 import { getCFBTeam } from "@/constants/teamsCFB";
+import { getMCBBTeam } from "@/constants/teamsMCBB";
 import { getMLBTeam } from "@/constants/teamsMLB";
 import { getNFLTeam } from "@/constants/teamsNFL";
 import { getNHLTeam } from "@/constants/teamsNHL";
@@ -13,6 +11,8 @@ import { getWNBATeam } from "@/constants/teamsWNBA";
 import { SeasonLeadersTableStyles } from "@/styles/LeagueStyles/SeasonLeadersTableStyles";
 import { PlayerLeader, SeasonLeaderColumn } from "@/types/stats";
 import { Image } from "expo-image";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -23,7 +23,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { StandingsSkeleton } from "../Skeletons/StandingsSkeleton";
+import { StandingsSkeleton } from "../../Skeletons/StandingsSkeleton";
 
 type PlayerRoutePathname =
   | "/player/basketball/[id]"

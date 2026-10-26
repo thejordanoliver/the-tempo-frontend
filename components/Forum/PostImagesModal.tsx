@@ -70,7 +70,11 @@ export default function PostImagesModal({
   const [captionOpacity] = useState(() => new Animated.Value(1));
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const { liked, likeCount, likePending, toggleLikePress } = useForumMediaLike({
-    postId, likedByCurrentUser, likesCount, postAuthorUserId, currentUserId,
+    postId,
+    likedByCurrentUser,
+    likesCount,
+    postAuthorUserId,
+    currentUserId,
   });
   const liquid = supportsLiquidGlass();
 

@@ -547,8 +547,7 @@ function getSeasonTeamCode(
     return "—";
   }
 
-  const team =
-    league === "nfl" ? getNFLTeam(teamId) : getCFBTeam(teamId);
+  const team = league === "nfl" ? getNFLTeam(teamId) : getCFBTeam(teamId);
 
   return team?.code || "—";
 }

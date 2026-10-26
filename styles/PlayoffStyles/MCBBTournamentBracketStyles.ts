@@ -2,8 +2,14 @@ import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 import { BRACKET_LAYOUT } from "../../utils/brackets/tournamentBracket.utils";
-import { CARD_WIDTH, CARD_HEIGHT } from "../../utils/brackets/tournamentBracketLayout";
-export { CARD_WIDTH, CARD_HEIGHT } from "../../utils/brackets/tournamentBracketLayout";
+import {
+  CARD_WIDTH,
+  CARD_HEIGHT,
+} from "../../utils/brackets/tournamentBracketLayout";
+export {
+  CARD_WIDTH,
+  CARD_HEIGHT,
+} from "../../utils/brackets/tournamentBracketLayout";
 
 export const MCBBTournamentBracketStyles = (isDark: boolean) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
@@ -200,7 +206,7 @@ export const MCBBTournamentBracketStyles = (isDark: boolean) => {
       width: 1,
       height: 10,
       marginHorizontal: 3,
-      backgroundColor: statusColor
+      backgroundColor: statusColor,
     },
     broadcast: {
       maxWidth: 66,

@@ -198,4 +198,3 @@ export const NotificationRow = memo(function NotificationRow({
     </Pressable>
   );
 });
-

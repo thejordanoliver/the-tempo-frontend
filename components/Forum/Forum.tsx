@@ -19,8 +19,7 @@ import { PostItem } from "./PostItem/PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 
 const DEFAULT_EMPTY_TITLE = "No posts yet";
-const DEFAULT_EMPTY_MESSAGE =
-  "Start the conversation.";
+const DEFAULT_EMPTY_MESSAGE = "Start the conversation.";
 const DEFAULT_EMPTY_ICON = "chatbubble-outline";
 const DEFAULT_SKELETON_COUNT = 5;
 

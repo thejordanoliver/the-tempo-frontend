@@ -1,5 +1,5 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   SoccerProps,
@@ -28,12 +28,9 @@ export const TeamRow = ({
   const styles = TeamRowStyles(isDark);
 
   const isScheduled = gameStatusDescription === "Scheduled";
-  const isSuspended = gameStatusDescription === "Suspended";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isPostponed = gameStatusDescription === "Postponed";
-  const isForfeited = gameStatusDescription === "Forfeited";
-  const isFinal = state === "post";
   const inProgress = state === "in";
+  const isFinal = state === "post";
+  const showRecordInsteadOfScore = isScheduled || score == null;
 
   const getScoreStyle = () => {
     if (score == null) {
@@ -73,30 +70,25 @@ export const TeamRow = ({
       },
     });
   };
-  const showRecordInsteadOfScore =
-    isScheduled ||
-    isPostponed ||
-    isForfeited ||
-    isSuspended ||
-    isCanceled ||
-    score == null;
+
+  const renderScore = () => (
+    <View style={styles.scoreWrapper}>
+      <Text
+        style={[
+          isScheduled
+            ? [styles.preGameRecord]
+            : [styles.score, getScoreStyle()],
+        ]}
+      >
+        {showRecordInsteadOfScore ? (record ?? "0-0") : score}
+      </Text>
+    </View>
+  );
 
   return (
     <View style={styles.row}>
-      {/* Home Score */}
-      {isHome && (
-        <Text
-          style={
-            showRecordInsteadOfScore
-              ? styles.preGameRecord
-              : [styles.score, getScoreStyle()]
-          }
-        >
-          {showRecordInsteadOfScore ? record : score}
-        </Text>
-      )}
+      {isHome && renderScore()}
 
-      {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
           <Image source={logo} style={styles.logo} />
@@ -109,7 +101,7 @@ export const TeamRow = ({
             adjustsFontSizeToFit={true}
             minimumFontScale={0.5}
           >
-            <Text style={styles.rank}>{rank} </Text>
+            {rank ? <Text style={styles.rank}>{rank} </Text> : null}
             {name}
           </Text>
 
@@ -119,20 +111,7 @@ export const TeamRow = ({
         </View>
       </View>
 
-      {/* Away Score */}
-      {!isHome && (
-        <View style={styles.scoreWrapper}>
-          <Text
-            style={
-              showRecordInsteadOfScore
-                ? styles.preGameRecord
-                : [styles.score, getScoreStyle()]
-            }
-          >
-            {showRecordInsteadOfScore ? record : (score ?? "")}
-          </Text>
-        </View>
-      )}
+      {!isHome && renderScore()}
     </View>
   );
 };

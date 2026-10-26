@@ -1,4 +1,8 @@
-import type { HomeGameSection, HomeLeagueSource, LeagueGame } from "@/types/leagues";
+import type {
+  HomeGameSection,
+  HomeLeagueSource,
+  LeagueGame,
+} from "@/types/leagues";
 import { filterByDate } from "@/utils/common/dateUtils";
 import { HOME_SCORE_LEAGUES, type HomeLeagueId } from "constants/leagues";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -7,7 +11,10 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { normalizeGames } from "utils/games/games";
-import { buildHomeGameSections } from "utils/games/homeGames";
+import {
+  buildHomeGameSections,
+  getHomeRequestLeagues,
+} from "utils/games/homeGames";
 
 import { useBaseballGames } from "./BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
@@ -44,17 +51,31 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } | null>(null);
   const [refreshSnapshot, setRefreshSnapshot] = useState<{
     userId: number | null;
+    leagueKey: string;
     sections: HomeGameSection[];
     loading: boolean;
   } | null>(null);
   const [selectedDate, setSelectedDate] = useState(getStartOfToday);
-  const isGeneralHome =
+  const favoriteOrderReady =
     favoriteTeamsReady &&
-    (favoriteSportsReady || userId === null) &&
-    favorites.length === 0 &&
-    favoriteSports.length === 0;
-  const shouldResetDate =
-    favoriteTeamsReady && favoriteSportsReady && !isGeneralHome;
+    (userId === null || favoriteSportsReady || favoriteSportsError !== null);
+  const requiredLeagues = getHomeRequestLeagues({
+    selectedTab,
+    favoriteTeams: favorites,
+    favoriteSports,
+    favoriteTeamsReady,
+    favoriteSportsReady,
+    favoriteSportsError,
+    userId,
+  });
+  const requiredLeagueKey = [...requiredLeagues].join(",");
+  const requestOptions = (league: HomeLeagueId) => ({
+    enabled: requiredLeagues.has(league),
+    scopeKey: String(userId),
+  });
+  const isGeneralHome =
+    favoriteOrderReady && favorites.length === 0 && favoriteSports.length === 0;
+  const shouldResetDate = favoriteOrderReady && !isGeneralHome;
   const [previousShouldResetDate, setPreviousShouldResetDate] =
     useState(shouldResetDate);
 
@@ -82,19 +103,19 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     games: nbaGames,
     loading: nbaLoading,
     refreshGames: refreshNBAGames,
-  } = useBasketballGames(selectedDate, "nba");
+  } = useBasketballGames(selectedDate, "nba", undefined, requestOptions("nba"));
 
   const {
     games: mlbGames,
     loading: mlbLoading,
     refreshGames: refreshMLBGames,
-  } = useBaseballGames(selectedDate, "mlb");
+  } = useBaseballGames(selectedDate, "mlb", undefined, requestOptions("mlb"));
 
   const {
     games: nhlGames,
     loading: nhlLoading,
     refreshGames: refreshNHLGames,
-  } = useHockeyGames(selectedDate, "nhl");
+  } = useHockeyGames(selectedDate, "nhl", undefined, requestOptions("nhl"));
 
   const {
     games: cfbGames,
@@ -103,6 +124,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useFootballGames({
     date: selectedDate,
     league: "cfb",
+    ...requestOptions("cfb"),
   });
 
   const {
@@ -112,6 +134,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useFootballGames({
     date: selectedDate,
     league: "nfl",
+    ...requestOptions("nfl"),
   });
 
   const {
@@ -121,25 +144,41 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useFootballGames({
     date: selectedDate,
     league: "ufl",
+    ...requestOptions("ufl"),
   });
 
   const {
     games: mensBasketballGames,
     loading: mensMCBBLoading,
     refreshGames: refreshMensMCBB,
-  } = useBasketballGames(selectedDate, "mcbb");
+  } = useBasketballGames(
+    selectedDate,
+    "mcbb",
+    undefined,
+    requestOptions("mcbb"),
+  );
 
   const {
     games: womensBasketballGames,
     loading: womensMCBBLoading,
     refreshGames: refreshWomensMCBB,
-  } = useBasketballGames(selectedDate, "wcbb");
+  } = useBasketballGames(
+    selectedDate,
+    "wcbb",
+    undefined,
+    requestOptions("wcbb"),
+  );
 
   const {
     games: wnbaGames,
     loading: wnbaLoading,
     refreshGames: refreshWNBA,
-  } = useBasketballGames(selectedDate, "wnba");
+  } = useBasketballGames(
+    selectedDate,
+    "wnba",
+    undefined,
+    requestOptions("wnba"),
+  );
 
   const {
     games: mmaGames,
@@ -149,94 +188,140 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useMMAEvents({
     date: selectedDate,
     league: "ufc",
+    ...requestOptions("ufc"),
   });
 
   const {
     matches: atpMatches,
     loading: atpLoading,
     refreshMatches: refreshATPMatches,
-  } = useTennisMatches(selectedDate, "atp");
+  } = useTennisMatches(selectedDate, "atp", undefined, requestOptions("atp"));
 
   const {
     matches: wtaMatches,
     loading: wtaLoading,
     refreshMatches: refreshWTAMatches,
-  } = useTennisMatches(selectedDate, "wta");
+  } = useTennisMatches(selectedDate, "wta", undefined, requestOptions("wta"));
 
   const {
     games: mlsGames,
     loading: mlsLoading,
     refreshGames: refreshMLSGames,
-  } = useSoccerGames(selectedDate, "mls");
+  } = useSoccerGames(selectedDate, "mls", undefined, requestOptions("mls"));
 
   const {
     games: leaguesCupGames,
     loading: leaguesCupLoading,
     refreshGames: refreshLeaguesCupGames,
-  } = useSoccerGames(selectedDate, "leaguescup");
+  } = useSoccerGames(
+    selectedDate,
+    "leaguescup",
+    undefined,
+    requestOptions("leaguescup"),
+  );
 
   const {
     games: fifaGames,
     loading: fifaLoading,
     refreshGames: refreshFIFAGames,
-  } = useSoccerGames(selectedDate, "fifa");
+  } = useSoccerGames(selectedDate, "fifa", undefined, requestOptions("fifa"));
 
   const {
     games: eplGames,
     loading: eplLoading,
     refreshGames: refreshEPLGames,
-  } = useSoccerGames(selectedDate, "epl");
+  } = useSoccerGames(selectedDate, "epl", undefined, requestOptions("epl"));
 
   const {
     games: championsGames,
     loading: championsLoading,
     refreshGames: refreshChampionsGames,
-  } = useSoccerGames(selectedDate, "champions");
+  } = useSoccerGames(
+    selectedDate,
+    "champions",
+    undefined,
+    requestOptions("champions"),
+  );
 
   const {
     games: europaGames,
     loading: europaLoading,
     refreshGames: refreshEuropaGames,
-  } = useSoccerGames(selectedDate, "europa");
+  } = useSoccerGames(
+    selectedDate,
+    "europa",
+    undefined,
+    requestOptions("europa"),
+  );
 
   const {
     games: bundesligaGames,
     loading: bundesligaLoading,
     refreshGames: refreshBundesligaGames,
-  } = useSoccerGames(selectedDate, "bundesliga");
+  } = useSoccerGames(
+    selectedDate,
+    "bundesliga",
+    undefined,
+    requestOptions("bundesliga"),
+  );
 
   const {
     games: laligaGames,
     loading: laligaLoading,
     refreshGames: refreshLaligaGames,
-  } = useSoccerGames(selectedDate, "laliga");
+  } = useSoccerGames(
+    selectedDate,
+    "laliga",
+    undefined,
+    requestOptions("laliga"),
+  );
 
   const {
     games: ligue1Games,
     loading: ligue1Loading,
     refreshGames: refreshLigue1Games,
-  } = useSoccerGames(selectedDate, "ligue1");
+  } = useSoccerGames(
+    selectedDate,
+    "ligue1",
+    undefined,
+    requestOptions("ligue1"),
+  );
 
   const {
     games: ligue2Games,
     loading: ligue2Loading,
     refreshGames: refreshLigue2Games,
-  } = useSoccerGames(selectedDate, "ligue2");
+  } = useSoccerGames(
+    selectedDate,
+    "ligue2",
+    undefined,
+    requestOptions("ligue2"),
+  );
 
   const {
     games: msocGames,
     loading: msocLoading,
     refreshGames: refreshMensSoccerGames,
-  } = useSoccerGames(selectedDate, "msoc");
+  } = useSoccerGames(selectedDate, "msoc", undefined, requestOptions("msoc"));
 
   const {
     games: wsocGames,
     loading: wsocLoading,
     refreshGames: refreshWomensSoccerGames,
-  } = useSoccerGames(selectedDate, "wsoc");
+  } = useSoccerGames(selectedDate, "wsoc", undefined, requestOptions("wsoc"));
 
-  const mcvb = useVolleyballGames(selectedDate, "mcvb");
-  const wcvb = useVolleyballGames(selectedDate, "wcvb");
+  const mcvb = useVolleyballGames(
+    selectedDate,
+    "mcvb",
+    undefined,
+    requestOptions("mcvb"),
+  );
+  const wcvb = useVolleyballGames(
+    selectedDate,
+    "wcvb",
+    undefined,
+    requestOptions("wcvb"),
+  );
 
   const normalizedNBA = useMemo(
     () => normalizeGames(nbaGames, "nba"),
@@ -462,11 +547,14 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       wta: wtaMatches,
     };
 
-    return HOME_SCORE_LEAGUES.map((id) => ({
+    return HOME_SCORE_LEAGUES.filter((id) =>
+      requiredLeagueKey.split(",").includes(id),
+    ).map((id) => ({
       id,
       games: gamesByLeague[id],
     }));
   }, [
+    requiredLeagueKey,
     mcvb.games,
     wcvb.games,
     filteredNBA,
@@ -501,17 +589,9 @@ export function useHomeData(selectedTab: "scores" | "for you") {
         sources: homeLeagueSources,
         favoriteTeams: favorites,
         favoriteSports,
-        favoriteSportsReady:
-          favoriteSportsReady || (userId === null && favoriteTeamsReady),
+        favoriteSportsReady: favoriteOrderReady,
       }),
-    [
-      favoriteSports,
-      favoriteSportsReady,
-      favorites,
-      homeLeagueSources,
-      userId,
-      favoriteTeamsReady,
-    ],
+    [favoriteSports, favoriteOrderReady, favorites, homeLeagueSources],
   );
 
   const handleRefresh = async () => {
@@ -520,6 +600,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     if (selectedTab === "scores") {
       setRefreshSnapshot({
         userId,
+        leagueKey: requiredLeagueKey,
         sections: homeGameSections,
         loading: scoresLoading,
       });
@@ -534,7 +615,11 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       );
 
       let dateRefresh: Promise<void> | null = null;
-      if (shouldUpdateSelectedDate && selectedTab === "scores") {
+      if (
+        shouldUpdateSelectedDate &&
+        selectedTab === "scores" &&
+        requiredLeagues.size > 0
+      ) {
         // Changing the date already makes every game hook fetch. Wait for that
         // loading cycle instead of refreshing callbacks bound to the old date.
         dateRefresh = new Promise<void>((resolve) => {
@@ -591,10 +676,6 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     }
   };
 
-  const favoriteOrderReady =
-    favoriteTeamsReady &&
-    (userId === null || favoriteSportsReady || favoriteSportsError !== null);
-
   // Keep the list behind its loading state until every source that affects its
   // contents and personalized order has settled. Otherwise the first completed
   // request renders a partial list that visibly moves as later requests finish.
@@ -638,7 +719,11 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     const pending = dateRefreshRef.current;
     if (!pending) return;
 
-    if (pending.userId !== userId) {
+    if (
+      pending.userId !== userId ||
+      selectedTab !== "scores" ||
+      requiredLeagueKey.length === 0
+    ) {
       dateRefreshRef.current = null;
       pending.resolve();
     } else if (scoresLoading) {
@@ -647,12 +732,15 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       dateRefreshRef.current = null;
       pending.resolve();
     }
-  }, [scoresLoading, selectedDate, userId]);
+  }, [scoresLoading, selectedDate, selectedTab, userId, requiredLeagueKey]);
 
-  useEffect(() => () => {
-    dateRefreshRef.current?.resolve();
-    dateRefreshRef.current = null;
-  }, []);
+  useEffect(
+    () => () => {
+      dateRefreshRef.current?.resolve();
+      dateRefreshRef.current = null;
+    },
+    [],
+  );
 
   useEffect(() => {
     if (selectedTab !== "scores" || !searchingUpcoming) return;
@@ -672,7 +760,10 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     refreshing,
     handleRefresh,
     homeGameSections:
-      refreshing && refreshSnapshot?.userId === userId
+      refreshing &&
+      selectedTab === "scores" &&
+      refreshSnapshot?.userId === userId &&
+      refreshSnapshot.leagueKey === requiredLeagueKey
         ? refreshSnapshot.sections
         : homeGameSections,
     forYouError: forYouFeed.error,
@@ -684,7 +775,10 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     favoriteLeagues: forYouFeed.favoriteLeagues,
     loading:
       selectedTab === "scores"
-        ? refreshing && refreshSnapshot?.userId === userId
+        ? refreshing &&
+          selectedTab === "scores" &&
+          refreshSnapshot?.userId === userId &&
+          refreshSnapshot.leagueKey === requiredLeagueKey
           ? refreshSnapshot.loading
           : scoresLoading || searchingUpcoming
         : forYouFeed.loading,

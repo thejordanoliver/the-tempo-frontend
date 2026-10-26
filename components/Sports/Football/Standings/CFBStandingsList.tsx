@@ -40,7 +40,8 @@ const POLL_TITLES: Record<PollMode, string> = {
 };
 
 export const CFBStandingsList = () => {
-  const { rankings, loading, refreshing, error, refresh } = useCollegeRankings("cfb");
+  const { rankings, loading, refreshing, error, refresh } =
+    useCollegeRankings("cfb");
   const { resolvedColorScheme } = usePreferences();
   const { isFavorite } = useFavoriteTeamsContext();
 
@@ -210,7 +211,8 @@ export const CFBStandingsList = () => {
 
         <View style={styles.statCell}>
           <Text style={styles.statText}>
-            {item.team?.conference?.shortName || item.team?.groups?.shortName ||
+            {item.team?.conference?.shortName ||
+              item.team?.groups?.shortName ||
               item.team?.groups?.parent?.shortName ||
               "N/A"}
           </Text>
@@ -288,7 +290,13 @@ export const CFBStandingsList = () => {
     );
   };
 
-  const Section = ({ title, data }: { title: string; data: CollegeTeamRank[] }) => {
+  const Section = ({
+    title,
+    data,
+  }: {
+    title: string;
+    data: CollegeTeamRank[];
+  }) => {
     return (
       <View style={styles.wrapper}>
         <View style={styles.header}>

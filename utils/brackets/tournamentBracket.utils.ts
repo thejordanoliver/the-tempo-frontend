@@ -70,14 +70,32 @@ const REGIONAL_DISPLAY_FEEDERS: Record<
     [[2], [15]],
   ],
   ROUND_OF_32: [
-    [[1, 16], [8, 9]],
-    [[5, 12], [4, 13]],
-    [[6, 11], [3, 14]],
-    [[7, 10], [2, 15]],
+    [
+      [1, 16],
+      [8, 9],
+    ],
+    [
+      [5, 12],
+      [4, 13],
+    ],
+    [
+      [6, 11],
+      [3, 14],
+    ],
+    [
+      [7, 10],
+      [2, 15],
+    ],
   ],
   SWEET_16: [
-    [[1, 16, 8, 9], [5, 12, 4, 13]],
-    [[6, 11, 3, 14], [7, 10, 2, 15]],
+    [
+      [1, 16, 8, 9],
+      [5, 12, 4, 13],
+    ],
+    [
+      [6, 11, 3, 14],
+      [7, 10, 2, 15],
+    ],
   ],
   ELITE_8: [
     [
@@ -226,7 +244,9 @@ export const isTeamWinner = (
 export const gameHasWinner = (game: TournamentGame): boolean =>
   getWinnerTeam(game) !== null;
 
-export const getWinnerTeam = (game: TournamentGame | null): TournamentTeam | null => {
+export const getWinnerTeam = (
+  game: TournamentGame | null,
+): TournamentTeam | null => {
   if (!game) {
     return null;
   }

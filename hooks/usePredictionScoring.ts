@@ -1,5 +1,5 @@
+import { useScreenActivity } from "./useScreenActivity";
 import { useCallback, useEffect, useState } from "react";
-import { AppState } from "react-native";
 import { fetchPredictionScoring } from "services/fanPredictionsApi";
 import type {
   FanPredictionScoring,
@@ -10,6 +10,7 @@ export function usePredictionScoring(
   gameId: number,
   context?: RankedPredictionContext,
 ) {
+  const { active, activeRef } = useScreenActivity();
   const sport = context?.sport;
   const league = context?.league;
 
@@ -17,11 +18,11 @@ export function usePredictionScoring(
   const state = context?.state;
   const enabled = Boolean(
     sport &&
-    league &&
-    Number.isSafeInteger(gameId) &&
-    gameId > 0 &&
-    (state == null || state === "pre") &&
-    (sport !== "mma" || date),
+      league &&
+      Number.isSafeInteger(gameId) &&
+      gameId > 0 &&
+      (state == null || state === "pre") &&
+      (sport !== "mma" || date),
   );
   const [attempt, setAttempt] = useState(0);
   const key = JSON.stringify([gameId, sport, league, date]);
@@ -31,31 +32,40 @@ export function usePredictionScoring(
     error: boolean;
   } | null>(null);
   useEffect(() => {
-    if (!enabled || !sport || !league) return;
+    if (!active || !enabled || !sport || !league) return;
     const controller = new AbortController();
     let pending = false;
     const refresh = async () => {
-      if (pending || AppState.currentState !== "active") return;
+      if (pending || !activeRef.current) return;
       pending = true;
       try {
-        const scoring = await fetchPredictionScoring(gameId, { sport, league, date }, controller.signal);
-        if (!controller.signal.aborted) setResult({ key, scoring, error: false });
+        const scoring = await fetchPredictionScoring(
+          gameId,
+          { sport, league, date },
+          controller.signal,
+        );
+        if (!controller.signal.aborted && activeRef.current)
+          setResult({ key, scoring, error: false });
       } catch {
-        if (!controller.signal.aborted)
-          setResult((previous) => ({ key, scoring: previous?.key === key ? previous.scoring : null, error: true }));
-      } finally { pending = false; }
+        if (!controller.signal.aborted && activeRef.current)
+          setResult((previous) => ({
+            key,
+            scoring: previous?.key === key ? previous.scoring : null,
+            error: true,
+          }));
+      } finally {
+        pending = false;
+      }
     };
     void refresh();
-    const timer = setInterval(() => { void refresh(); }, 60_000);
-    const subscription = AppState.addEventListener("change", (next) => {
-      if (next === "active") void refresh();
-    });
+    const timer = setInterval(() => {
+      void refresh();
+    }, 60_000);
     return () => {
       controller.abort();
       clearInterval(timer);
-      subscription.remove();
     };
-  }, [gameId, sport, league, date, enabled, key, attempt]);
+  }, [gameId, sport, league, date, enabled, key, attempt, active, activeRef]);
   const retryScoring = useCallback(() => setAttempt((value) => value + 1), []);
   return {
     scoring: result?.key === key ? result.scoring : null,

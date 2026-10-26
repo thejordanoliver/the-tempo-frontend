@@ -61,7 +61,6 @@ export default function FavoriteTeamsSlider({
 
   const renderSlide = useCallback(
     (item: FavoriteTeamSlide) => {
-
       return (
         <Pressable
           disabled={disabled}

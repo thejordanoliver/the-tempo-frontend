@@ -275,7 +275,8 @@ export function useFavoriteTeams() {
       if (
         requestId !== loadRequestId.current ||
         currentUserIdRef.current !== requestUserId
-      ) return;
+      )
+        return;
 
       savedFavoritesRef.current = serverFavorites;
       setFavorites(serverFavorites);
@@ -491,28 +492,31 @@ export function useFavoriteTeams() {
 
     const league = previewTeam.league.toLowerCase();
     const route =
-      league === "mcvb" ? "/team/mcvb/[teamId]" : league === "wcvb" ? "/team/wcvb/[teamId]" :
-      league === "nfl"
-        ? "/team/nfl/[teamId]"
-        : league === "nba"
-          ? "/team/[teamId]"
-          : league === "wnba"
-            ? "/team/wnba/[teamId]"
-            : league === "cfb"
-              ? "/team/cfb/[teamId]"
-              : league === "mcbb"
-                ? "/team/mcbb/[teamId]"
-                : league === "wcbb"
-                  ? "/team/wcbb/[teamId]"
-                  : league === "mlb"
-                    ? "/team/mlb/[teamId]"
-                    : league === "cb"
-                      ? "/team/cb/[teamId]"
-                      : league === "sb"
-                        ? "/team/sb/[teamId]"
-                        : league === "socc"
-                          ? "/team/soccer/[teamId]"
-                          : "/team/nhl/[teamId]";
+      league === "mcvb"
+        ? "/team/mcvb/[teamId]"
+        : league === "wcvb"
+          ? "/team/wcvb/[teamId]"
+          : league === "nfl"
+            ? "/team/nfl/[teamId]"
+            : league === "nba"
+              ? "/team/[teamId]"
+              : league === "wnba"
+                ? "/team/wnba/[teamId]"
+                : league === "cfb"
+                  ? "/team/cfb/[teamId]"
+                  : league === "mcbb"
+                    ? "/team/mcbb/[teamId]"
+                    : league === "wcbb"
+                      ? "/team/wcbb/[teamId]"
+                      : league === "mlb"
+                        ? "/team/mlb/[teamId]"
+                        : league === "cb"
+                          ? "/team/cb/[teamId]"
+                          : league === "sb"
+                            ? "/team/sb/[teamId]"
+                            : league === "socc"
+                              ? "/team/soccer/[teamId]"
+                              : "/team/nhl/[teamId]";
 
     router.push({
       pathname: route,

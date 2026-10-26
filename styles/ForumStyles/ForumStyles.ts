@@ -6,7 +6,6 @@ export function ForumStyles(
   bottomInset: number,
   showCreateButton: boolean,
 ) {
-  
   const bottomSpacing = showCreateButton
     ? Math.max(120, bottomInset + 16) + 88
     : bottomInset + 24;

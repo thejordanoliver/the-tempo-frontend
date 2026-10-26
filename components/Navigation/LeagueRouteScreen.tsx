@@ -25,8 +25,7 @@ const LEAGUE_SCREENS = {
 
 export default function LeagueRouteScreen() {
   const { sport } = useLocalSearchParams<{ sport?: string }>();
-  const LeagueScreen =
-    LEAGUE_SCREENS[sport as keyof typeof LEAGUE_SCREENS];
+  const LeagueScreen = LEAGUE_SCREENS[sport as keyof typeof LEAGUE_SCREENS];
 
   if (!LeagueScreen) {
     return null;

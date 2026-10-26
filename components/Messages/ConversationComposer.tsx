@@ -107,9 +107,7 @@ export default function ConversationComposer({
           ref={inputRef}
           value={draftMessage}
           onChangeText={handleDraftChange}
-          placeholder={
-            selectedAttachment ? "Add a caption..." : "Message..."
-          }
+          placeholder={selectedAttachment ? "Add a caption..." : "Message..."}
           placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
           style={styles.input}
           multiline

@@ -23,9 +23,9 @@ module.exports = function (api) {
       [
         "module-resolver",
         {
-          alias: rootAliases
-        }
-      ]
-    ]
+          alias: rootAliases,
+        },
+      ],
+    ],
   };
 };

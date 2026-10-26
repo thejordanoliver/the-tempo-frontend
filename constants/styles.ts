@@ -42,7 +42,7 @@ export const Colors = {
     gold: "#9f854f",
     transparentGold: "#dbb14550",
 
-    background: "#fff",
+    background: "#ffffff",
     transparentBackground: "#ffffff50",
 
     transparentTint: "#0a7ea450",
@@ -60,7 +60,7 @@ export const Colors = {
   },
 
   dark: {
-    text: "#fff",
+    text: "#ffffff",
     transparentText: "#ffffff50",
 
     gray: "#555555",

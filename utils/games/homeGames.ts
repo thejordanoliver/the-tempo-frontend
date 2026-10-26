@@ -1,5 +1,6 @@
 import {
   LEAGUE_CONFIG,
+  HOME_SCORE_LEAGUES,
   MY_TEAMS_SECTION_ID,
   MY_TEAMS_SECTION_TITLE,
   isFavoriteSportId,
@@ -21,6 +22,49 @@ type BuildHomeGameSectionsOptions = {
   favoriteSportsReady: boolean;
   maxGamesPerLeague?: number;
 };
+
+/** Wait for account preferences before choosing general versus personalized feeds. */
+export function getHomeRequestLeagues({
+  selectedTab,
+  favoriteTeams,
+  favoriteSports,
+  favoriteTeamsReady,
+  favoriteSportsReady,
+  favoriteSportsError,
+  userId,
+}: {
+  selectedTab: "scores" | "for you";
+  favoriteTeams: readonly string[];
+  favoriteSports: readonly FavoriteSportId[];
+  favoriteTeamsReady: boolean;
+  favoriteSportsReady: boolean;
+  favoriteSportsError: unknown;
+  userId: number | null;
+}): ReadonlySet<HomeLeagueId> {
+  if (
+    selectedTab !== "scores" ||
+    !favoriteTeamsReady ||
+    (userId !== null && !favoriteSportsReady && !favoriteSportsError)
+  ) {
+    return new Set();
+  }
+  if (!favoriteTeams.length && !favoriteSports.length) {
+    return new Set(HOME_SCORE_LEAGUES);
+  }
+  const needed = new Set<string>(favoriteSports);
+  for (const favorite of favoriteTeams) {
+    const league = favorite.split(":")[0];
+    if (league === "socc") {
+      // Soccer team IDs span competitions; keep every existing Home soccer feed.
+      for (const id of HOME_SCORE_LEAGUES) {
+        if (LEAGUE_CONFIG[id].route === "/league/soccer") needed.add(id);
+      }
+    } else {
+      needed.add(league);
+    }
+  }
+  return new Set(HOME_SCORE_LEAGUES.filter((league) => needed.has(league)));
+}
 
 function getTeamId(team: unknown): string | null {
   if (!team || typeof team !== "object" || !("id" in team)) return null;
@@ -89,10 +133,31 @@ function getGamePriority(item: HomeGameItem): number {
   return item.game.status?.state === "post" ? 2 : 1;
 }
 
-function sortLiveFirst(items: readonly HomeGameItem[]): HomeGameItem[] {
-  return [...items].sort(
-    (a, b) => getGamePriority(a) - getGamePriority(b),
-  );
+function sortHomeGames(items: readonly HomeGameItem[]): HomeGameItem[] {
+  return [...items].sort((a, b) => {
+    const statusDifference = getGamePriority(a) - getGamePriority(b);
+    if (statusDifference !== 0) return statusDifference;
+
+    // Matchup policy belongs to the backend. Older responses have neutral priority.
+    const aPriority = Array.isArray(a.game.matchupPriority)
+      ? a.game.matchupPriority
+      : [];
+    const bPriority = Array.isArray(b.game.matchupPriority)
+      ? b.game.matchupPriority
+      : [];
+
+    for (
+      let index = 0;
+      index < Math.max(aPriority.length, bPriority.length);
+      index++
+    ) {
+      const aValue = Number.isFinite(aPriority[index]) ? aPriority[index] : 0;
+      const bValue = Number.isFinite(bPriority[index]) ? bPriority[index] : 0;
+      const difference = bValue - aValue;
+      if (difference !== 0) return difference;
+    }
+    return 0;
+  });
 }
 
 export function getFavoriteTeamLeagueOrder(
@@ -169,23 +234,35 @@ export function buildHomeGameSections({
 
     nonFavoriteGamesByLeague.set(
       source.id,
-      sortLiveFirst(nonFavoriteItems).slice(0, maxGamesPerLeague),
+      sortHomeGames(nonFavoriteItems).slice(0, maxGamesPerLeague),
     );
   }
 
   const sections: HomeGameSection[] = [];
-  if (favoriteSportsReady && favoriteTeamKeys.size === 0 && favoriteSports.length === 0) {
-    const games = safeSources.flatMap(source => nonFavoriteGamesByLeague.get(source.id) ?? []);
+  if (
+    favoriteSportsReady &&
+    favoriteTeamKeys.size === 0 &&
+    favoriteSports.length === 0
+  ) {
+    const games = sortHomeGames(
+      safeSources.flatMap(
+        (source) => nonFavoriteGamesByLeague.get(source.id) ?? [],
+      ),
+    );
     return [
       { id: "general-live" as const, title: "Live now", priority: 0 },
       { id: "general-upcoming" as const, title: "Upcoming", priority: 1 },
       { id: "general-final" as const, title: "Final", priority: 2 },
-    ].map(({ id, title, priority }) => ({
-      id, title, data: games.filter(item => getGamePriority(item) === priority),
-    })).filter(section => section.data.length > 0);
+    ]
+      .map(({ id, title, priority }) => ({
+        id,
+        title,
+        data: games.filter((item) => getGamePriority(item) === priority),
+      }))
+      .filter((section) => section.data.length > 0);
   }
 
-  const sortedFavoriteTeamGames = sortLiveFirst(favoriteTeamGames);
+  const sortedFavoriteTeamGames = sortHomeGames(favoriteTeamGames);
 
   if (sortedFavoriteTeamGames.length > 0) {
     sections.push({
@@ -210,7 +287,11 @@ export function buildHomeGameSections({
   if (favoriteSportsReady) {
     const favoriteLeagueIds = new Set(favoriteSports);
 
-    getPersonalizedLeagueOrder({ favoriteTeams, favoriteSports, favoriteSportsReady })
+    getPersonalizedLeagueOrder({
+      favoriteTeams,
+      favoriteSports,
+      favoriteSportsReady,
+    })
       .filter((league) => favoriteLeagueIds.has(league))
       .forEach(appendFavoriteLeague);
   }

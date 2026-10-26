@@ -11,11 +11,11 @@ export function leagueCarouselWindow(index: number, count: number) {
 }
 
 export function leagueOrbitGeometry(width: number, cardWidth: number) {
-  const pitch = -6 * Math.PI / 180;
+  const pitch = (-6 * Math.PI) / 180;
   return {
     radius: (cardWidth + 16) / (2 * Math.tan(Math.PI / RING_SLOTS)),
     perspective: Math.max(800, width * 2.5),
-    angleStep: 2 * Math.PI / RING_SLOTS,
+    angleStep: (2 * Math.PI) / RING_SLOTS,
     sinPitch: Math.sin(pitch),
     cosPitch: Math.cos(pitch),
   };
@@ -28,12 +28,23 @@ export function wrapLeagueRotation(value: number, count: number) {
   return ((value % count) + count) % count;
 }
 
-export function leagueDistanceFromFront(leagueIndex: number, rotation: number, count: number) {
+export function leagueDistanceFromFront(
+  leagueIndex: number,
+  rotation: number,
+  count: number,
+) {
   "worklet";
-  return wrapLeagueRotation(leagueIndex - rotation + count / 2, count) - count / 2;
+  return (
+    wrapLeagueRotation(leagueIndex - rotation + count / 2, count) - count / 2
+  );
 }
 
-export function leagueOrbitPosition(leagueIndex: number, rotation: number, count: number, geometry: LeagueOrbitGeometry) {
+export function leagueOrbitPosition(
+  leagueIndex: number,
+  rotation: number,
+  count: number,
+  geometry: LeagueOrbitGeometry,
+) {
   "worklet";
   const distance = leagueDistanceFromFront(leagueIndex, rotation, count);
   const angle = distance * geometry.angleStep;
@@ -47,26 +58,47 @@ export function leagueOrbitPosition(leagueIndex: number, rotation: number, count
   // Test the outward normal against the camera, including perspective. This
   // hides backs before they could display reversed logos, and keeps recycling
   // on the rear of the ring invisible, even during a long search animation.
-  const facing = ((perspective * cosPitch + radius) * cos - radius) / perspective;
+  const facing =
+    ((perspective * cosPitch + radius) * cos - radius) / perspective;
   return {
-    opacity: Math.abs(distance) > LEAGUE_CAROUSEL_WINDOW_SIZE / 2
-      ? 0
-      : Math.max(0, Math.min(1, facing * 8)),
+    opacity:
+      Math.abs(distance) > LEAGUE_CAROUSEL_WINDOW_SIZE / 2
+        ? 0
+        : Math.max(0, Math.min(1, facing * 8)),
     zIndex: Math.round((cos + 1) * 500) + 1,
     // Column-major perspective * rotation * translation. Native RN requires
     // `matrix` to be the only transform, so bake perspective into its last row.
     // The faces are tangent to the circle with their front normal facing out.
     matrix: [
-      cos, sinPitch * sin, -cosPitch * sin, cosPitch * sin / perspective,
-      0, cosPitch, sinPitch, -sinPitch / perspective,
-      sin, -sinPitch * cos, cosPitch * cos, -cosPitch * cos / perspective,
-      x, y, z, 1 - z / perspective,
+      cos,
+      sinPitch * sin,
+      -cosPitch * sin,
+      (cosPitch * sin) / perspective,
+      0,
+      cosPitch,
+      sinPitch,
+      -sinPitch / perspective,
+      sin,
+      -sinPitch * cos,
+      cosPitch * cos,
+      (-cosPitch * cos) / perspective,
+      x,
+      y,
+      z,
+      1 - z / perspective,
     ],
   };
 }
 
 // Pause and reduced motion control autoplay, while explicit navigation still runs.
-export function leagueCarouselMotionAction({ focused, appActive, interacting, paused, reduceMotion, searching = false }: {
+export function leagueCarouselMotionAction({
+  focused,
+  appActive,
+  interacting,
+  paused,
+  reduceMotion,
+  searching = false,
+}: {
   focused: boolean;
   appActive: boolean;
   interacting: boolean;

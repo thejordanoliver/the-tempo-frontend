@@ -76,12 +76,14 @@ export default function GameHeader({
 
   return (
     <View style={styles.container}>
-      <View style={styles.headlineContainer}>
-        <Text style={styles.headlineText}>{headline}</Text>
-      </View>
-
+      {headline && (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headlineText} numberOfLines={1}>
+            {headline}
+          </Text>
+        </View>
+      )}
       <View style={styles.teamsContainer}>
-        {/* Away Team Row */}
         <TeamRow
           id={awayId}
           isActive={isAwayActive}

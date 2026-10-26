@@ -97,7 +97,9 @@ export default function TennisStackedGameCard({ match }: Props) {
               {match.round.name}
             </Text>
           </View>
-          <View style={styles.competitors}>{competitors.map(renderCompetitor)}</View>
+          <View style={styles.competitors}>
+            {competitors.map(renderCompetitor)}
+          </View>
         </View>
         <View style={styles.statusColumn}>
           <Text

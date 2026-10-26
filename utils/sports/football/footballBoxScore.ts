@@ -4,7 +4,10 @@ import type {
 } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { gameTeamIdsMatch } from "../../games/gameTeamIdentity";
 
-const identifier = (value: unknown) => String(value ?? "").trim().toLowerCase();
+const identifier = (value: unknown) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase();
 
 export function resolveFootballBoxScoreTeams(
   blocks: BoxScorePlayerTeam[],
@@ -18,7 +21,8 @@ export function resolveFootballBoxScoreTeams(
     blocks.find((block) => block.team.homeAway === side) ??
     blocks.find((block) =>
       [block.team.name, block.team.shortName, block.team.code].some(
-        (value) => identifier(name) !== "" && identifier(value) === identifier(name),
+        (value) =>
+          identifier(name) !== "" && identifier(value) === identifier(name),
       ),
     );
   let away = find(awayId, awayName, "away");
@@ -39,8 +43,12 @@ export function getFootballBoxScoreLabels(category: BoxScoreStatCategory) {
     category.totals?.length ?? 0,
     ...(category.athletes ?? []).map((row) => row.stats?.length ?? 0),
   );
-  return Array.from({ length: count }, (_, index) =>
-    category.labels?.[index]?.trim() || category.keys?.[index]?.trim() || `Stat ${index + 1}`,
+  return Array.from(
+    { length: count },
+    (_, index) =>
+      category.labels?.[index]?.trim() ||
+      category.keys?.[index]?.trim() ||
+      `Stat ${index + 1}`,
   );
 }
 

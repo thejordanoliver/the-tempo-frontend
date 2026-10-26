@@ -1,7 +1,4 @@
-import {
-  isFavoriteSportId,
-  type FavoriteSportId,
-} from "constants/leagues";
+import { isFavoriteSportId, type FavoriteSportId } from "constants/leagues";
 import {
   normalizeFavoriteTeamKeys,
   type FavoriteTeamKey,
@@ -43,11 +40,15 @@ export type ReportTargetType =
   | "game_chat_message";
 
 export async function blockUser(userId: string | number): Promise<void> {
-  await apiClient.post(`/api/safety/blocks/${encodeURIComponent(String(userId))}`);
+  await apiClient.post(
+    `/api/safety/blocks/${encodeURIComponent(String(userId))}`,
+  );
 }
 
 export async function unblockUser(userId: string | number): Promise<void> {
-  await apiClient.delete(`/api/safety/blocks/${encodeURIComponent(String(userId))}`);
+  await apiClient.delete(
+    `/api/safety/blocks/${encodeURIComponent(String(userId))}`,
+  );
 }
 
 export async function getBlockedUsers(): Promise<BlockedUser[]> {
@@ -96,9 +97,7 @@ export async function reportContent(
   });
 }
 
-export async function searchUsers(
-  query: string,
-): Promise<UserSearchResult[]> {
+export async function searchUsers(query: string): Promise<UserSearchResult[]> {
   const trimmed = query.trim();
 
   if (trimmed.length < 2) return [];

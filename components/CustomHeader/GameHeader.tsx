@@ -247,11 +247,11 @@ export function GameHeader({
         locations={[0, 0.5, 0.5, 1]}
         start={{
           x: 0,
-          y: -2,
+          y: -1.1,
         }}
         end={{
-          x: 1.08,
-          y: 1.2,
+          x: 1,
+          y: 2.1,
         }}
         style={StyleSheet.absoluteFill}
       />

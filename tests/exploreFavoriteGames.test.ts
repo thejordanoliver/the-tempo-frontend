@@ -45,11 +45,21 @@ function game({
 
 test("orders live, upcoming, and completed games for the carousel", () => {
   const result = prepareExploreFavoriteGames([
-    game({ id: "1", date: "2026-09-24T19:00:00Z", state: "post", completed: true }),
+    game({
+      id: "1",
+      date: "2026-09-24T19:00:00Z",
+      state: "post",
+      completed: true,
+    }),
     game({ id: "2", date: "2026-09-28T19:00:00Z" }),
     game({ id: "3", date: "2026-09-26T19:00:00Z", state: "in" }),
     game({ id: "4", date: "2026-09-27T19:00:00Z" }),
-    game({ id: "5", date: "2026-09-25T19:00:00Z", state: "post", completed: true }),
+    game({
+      id: "5",
+      date: "2026-09-25T19:00:00Z",
+      state: "post",
+      completed: true,
+    }),
   ]);
 
   assert.deepEqual(
@@ -79,8 +89,16 @@ test("deduplicates a game and retains every matching favorite team", () => {
 });
 
 test("recognizes descriptive live and completed statuses", () => {
-  const halftime = game({ id: "20", date: "2026-09-26T19:00:00Z", state: "Halftime" });
-  const final = game({ id: "21", date: "2026-09-26T19:00:00Z", state: "Final/OT" });
+  const halftime = game({
+    id: "20",
+    date: "2026-09-26T19:00:00Z",
+    state: "Halftime",
+  });
+  const final = game({
+    id: "21",
+    date: "2026-09-26T19:00:00Z",
+    state: "Final/OT",
+  });
 
   assert.equal(getExploreFavoriteGamePhase(halftime), "live");
   assert.equal(getExploreFavoriteGamePhase(final), "completed");

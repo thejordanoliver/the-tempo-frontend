@@ -6,7 +6,9 @@ import type {
   VolleyballStandingsGroup,
 } from "../types/volleyball/volleyball";
 
-export function isVolleyballLeague(value: unknown): value is VolleyballLeagueKey {
+export function isVolleyballLeague(
+  value: unknown,
+): value is VolleyballLeagueKey {
   return value === "mcvb" || value === "wcvb";
 }
 

@@ -1,8 +1,6 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
-import MonthSelector from "@/components/League/MonthSelector";
-import Roster, {
-  SupportedRosterLeague,
-} from "@/components/Team/Roster";
+import MonthSelector from "@/components/League/Selectors/MonthSelector";
+import Roster, { SupportedRosterLeague } from "@/components/Team/Roster";
 import GamesList from "@/components/Sports/Soccer/Games/GamesList";
 import { Colors } from "@/constants/styles";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";

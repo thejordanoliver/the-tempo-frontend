@@ -17,7 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { ForumVideoEditorModalProps } from "types/forum";
 
-const seekVideoPlayer = (player: { currentTime: number; }, seconds: number) => {
+const seekVideoPlayer = (player: { currentTime: number }, seconds: number) => {
   player.currentTime = seconds;
 };
 
@@ -57,7 +57,7 @@ export default function VideoEditorModal({
   const scrubTo = async (ms: number) => {
     try {
       seekVideoPlayer(player, ms / 1000);
-    } catch { }
+    } catch {}
   };
 
   // --- Reset state when opening ---
@@ -176,7 +176,10 @@ export default function VideoEditorModal({
             maximumValue={durationMs || 1}
             value={trimStartMs}
             onValueChange={(v) => {
-              const ms = Math.max(0, Math.min(Math.floor(v), (trimEndMs || maxEnd) - 1));
+              const ms = Math.max(
+                0,
+                Math.min(Math.floor(v), (trimEndMs || maxEnd) - 1),
+              );
               setTrimStartMs(ms);
               setThumbTimeMs(ms);
               scrubTo(ms);
@@ -195,7 +198,10 @@ export default function VideoEditorModal({
             maximumValue={durationMs || 1}
             value={trimEndMs || maxEnd}
             onValueChange={(v) => {
-              const ms = Math.min(maxEnd, Math.max(Math.floor(v), trimStartMs + 1));
+              const ms = Math.min(
+                maxEnd,
+                Math.max(Math.floor(v), trimStartMs + 1),
+              );
               setTrimEndMs(ms);
               setThumbTimeMs(ms);
               scrubTo(ms);

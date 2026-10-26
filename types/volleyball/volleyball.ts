@@ -225,17 +225,30 @@ export type VolleyballMatchDetails = {
   venue: {
     id: string | null;
     fullName: string | null;
-    address: { city: string | null; state: string | null; zipCode: string | null; country: string | null };
+    address: {
+      city: string | null;
+      state: string | null;
+      zipCode: string | null;
+      country: string | null;
+    };
     images: { href: string | null }[];
   } | null;
   venueInfo: GameVenueInfo | null;
   attendance: number | null;
   officials: Official[];
   highlights: Highlight[];
-  available: { teamStats: boolean; playerStats: boolean; plays: boolean; highlights: boolean };
+  available: {
+    teamStats: boolean;
+    playerStats: boolean;
+    plays: boolean;
+    highlights: boolean;
+  };
 };
 
-export type VolleyballGameDetailsResponse = Pick<VolleyballGameDetails, "score" | "details">;
+export type VolleyballGameDetailsResponse = Pick<
+  VolleyballGameDetails,
+  "score" | "details"
+>;
 
 export type VolleyballDirectoryTeam = {
   id: number;

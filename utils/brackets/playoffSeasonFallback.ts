@@ -8,7 +8,11 @@ export async function resolvePlayoffSeason<T>(
   let year = season;
   let data = await fetchSeason(year);
 
-  while (Number.isInteger(year) && year > earliestSeason && !hasPlayoffs(data)) {
+  while (
+    Number.isInteger(year) &&
+    year > earliestSeason &&
+    !hasPlayoffs(data)
+  ) {
     year -= 1;
     data = await fetchSeason(year);
   }

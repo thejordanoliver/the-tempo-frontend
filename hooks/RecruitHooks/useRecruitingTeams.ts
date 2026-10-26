@@ -27,13 +27,15 @@ export function useRecruitingTeams(league: "cfb" | "mcbb") {
       })
       .catch(() => {
         if (!controller.signal.aborted) {
-          setState({ league, teams: [], error: "Unable to load team filters." });
+          setState({
+            league,
+            teams: [],
+            error: "Unable to load team filters.",
+          });
         }
       });
     return () => controller.abort();
   }, [league]);
 
-  return state.league === league
-    ? state
-    : { league, teams: [], error: null };
+  return state.league === league ? state : { league, teams: [], error: null };
 }

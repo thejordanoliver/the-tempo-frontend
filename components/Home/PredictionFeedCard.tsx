@@ -2,46 +2,14 @@ import { formatDate } from "@/utils/common/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import PredictionCard from "components/FanPrediction/PredictionCard";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
-import { getGLeagueTeam, getGLeagueTeamLogo } from "constants/teamsGLeague";
-import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
-import { getSOCCTeam, getSOCCTeamLogo } from "constants/teamsSOCC";
-import { getUFLTeam, getUFLTeamLogo } from "constants/teamsUFL";
-import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
-import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFeedPrediction } from "hooks/useFeedPrediction";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { FeedPrediction } from "types/fanPredictions";
 import { formatPercentage, isSameTeamId } from "utils/games/fanPredictionVotes";
+import { getPredictionTeamHelpers } from "utils/games/predictionTeamHelpers";
 import Button from "../Buttons/Button";
-
-type TeamHelpers = {
-  getTeam: (id: string | number) => { primaryColor?: string | null } | undefined;
-  getLogo: typeof getNBATeamLogo;
-};
-
-const teamHelpers: Record<string, TeamHelpers> = {
-  nba: { getTeam: getNBATeam, getLogo: getNBATeamLogo },
-  wnba: { getTeam: getWNBATeam, getLogo: getWNBATeamLogo },
-  gleague: { getTeam: getGLeagueTeam, getLogo: getGLeagueTeamLogo },
-  mcbb: { getTeam: getMCBBTeam, getLogo: getMCBBTeamLogo },
-  wcbb: { getTeam: getWCBBTeam, getLogo: getWCBBTeamLogo },
-  nfl: { getTeam: getNFLTeam, getLogo: getNFLTeamLogo },
-  cfb: { getTeam: getCFBTeam, getLogo: getCFBTeamLogo },
-  ufl: { getTeam: getUFLTeam, getLogo: getUFLTeamLogo },
-  mlb: { getTeam: getMLBTeam, getLogo: getMLBTeamLogo },
-  cb: { getTeam: getCBTeam, getLogo: getCBTeamLogo },
-  sb: { getTeam: getSBTeam, getLogo: getSBTeamLogo },
-  nhl: { getTeam: getNHLTeam, getLogo: getNHLTeamLogo },
-};
 
 export default function PredictionFeedCard({
   game,
@@ -70,14 +38,16 @@ export default function PredictionFeedCard({
         league: game.league,
         leagueId: game.league,
         data: encodeURIComponent(
-          JSON.stringify(game.game ?? {
-            id: game.gameId,
-            league: { code: game.league },
-            date: game.startsAt,
-            home: game.home,
-            away: game.away,
-            status: { state: game.state },
-          }),
+          JSON.stringify(
+            game.game ?? {
+              id: game.gameId,
+              league: { code: game.league },
+              date: game.startsAt,
+              home: game.home,
+              away: game.away,
+              status: { state: game.state },
+            },
+          ),
         ),
       },
     });
@@ -90,10 +60,7 @@ export default function PredictionFeedCard({
 
   const date = formatDate(game.startsAt, false, true);
 
-  const helpers =
-    game.sport === "soccer"
-      ? { getTeam: getSOCCTeam, getLogo: getSOCCTeamLogo }
-      : teamHelpers[game.league.trim().toLowerCase()];
+  const helpers = getPredictionTeamHelpers(game.sport, game.league);
 
   return (
     <View style={styles.container}>
@@ -125,7 +92,7 @@ export default function PredictionFeedCard({
               key={team.id}
               code={team.code}
               logo={
-                helpers
+                helpers?.getTeam(team.id)
                   ? helpers.getLogo(team.id, isDark)
                   : team.logo
                     ? { uri: team.logo }

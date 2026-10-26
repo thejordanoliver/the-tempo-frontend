@@ -12,8 +12,6 @@ import {
   View,
 } from "react-native";
 
-
-
 type DraftProspectAttribute = {
   name?: string | null;
   displayName?: string | null;

@@ -2,11 +2,7 @@ import { isAxiosError } from "axios";
 import type { ResultItem, SearchAffiliation } from "types/explore";
 import { normalizeExploreSearchQuery } from "utils/explore/exploreSearch";
 
-export type ExploreSearchAnalyticsScope =
-  | "all"
-  | "players"
-  | "teams"
-  | "users";
+export type ExploreSearchAnalyticsScope = "all" | "players" | "teams" | "users";
 
 export type ExploreSearchImpression = {
   entityType: ResultItem["type"];

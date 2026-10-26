@@ -1,7 +1,7 @@
 import { MatchupPredictorStyles } from "@/styles/GameDetailStyles/MatchupPredictorStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { useEffect, useMemo } from "react";
-import { Image, Text, View } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Image, type LayoutChangeEvent, Text, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -28,7 +28,8 @@ interface Props {
 }
 
 const ANIMATION_DURATION = 850;
-const AWAY_STRIPES = Array.from({ length: 80 }, (_, index) => index);
+const STRIPE_SPACING = 5;
+const MARKER_SIZE = 40;
 
 const clampPercentage = (percentage: number) => {
   "worklet";
@@ -59,6 +60,19 @@ export default function MatchupPredictor({
 }: Props) {
   const styles = useMemo(() => MatchupPredictorStyles(isDark), [isDark]);
   const animatedSplitPercent = useSharedValue(50);
+  const [trackWidth, setTrackWidth] = useState(0);
+  const awayStripes = useMemo(
+    () =>
+      Array.from(
+        { length: Math.ceil(trackWidth / STRIPE_SPACING) + 1 },
+        (_, index) => index,
+      ),
+    [trackWidth],
+  );
+
+  const handleTrackLayout = useCallback((event: LayoutChangeEvent) => {
+    setTrackWidth(event.nativeEvent.layout.width);
+  }, []);
 
   const homePct = clampPercentage(homeChance);
   const awayPct = clampPercentage(awayChance);
@@ -90,7 +104,13 @@ export default function MatchupPredictor({
   }));
 
   const markerStyle = useAnimatedStyle(() => ({
-    left: `${animatedSplitPercent.value}%`,
+    left: Math.max(
+      0,
+      Math.min(
+        (trackWidth * animatedSplitPercent.value) / 100 - MARKER_SIZE / 2,
+        trackWidth - MARKER_SIZE,
+      ),
+    ),
   }));
 
   if (state !== "pre") return null;
@@ -143,7 +163,7 @@ export default function MatchupPredictor({
           </View>
         </View>
 
-        <View style={styles.trackArea}>
+        <View style={styles.trackArea} onLayout={handleTrackLayout}>
           <Animated.View
             style={[
               styles.logoMarker,
@@ -162,7 +182,7 @@ export default function MatchupPredictor({
           <View style={styles.track}>
             <Animated.View style={[styles.awayMeter, awayMeterStyle]}>
               <View style={styles.awayStripeRow}>
-                {AWAY_STRIPES.map((stripe) => (
+                {awayStripes.map((stripe) => (
                   <View key={stripe} style={styles.awayStripe} />
                 ))}
               </View>

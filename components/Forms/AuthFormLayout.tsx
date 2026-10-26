@@ -30,7 +30,8 @@ export default function AuthFormLayout({
       edges={["left", "right", "bottom"]}
       style={{
         flex: 1,
-        backgroundColor: resolvedColorScheme === "dark" ? Colors.black : Colors.white,
+        backgroundColor:
+          resolvedColorScheme === "dark" ? Colors.black : Colors.white,
       }}
     >
       {keyboardAware ? (

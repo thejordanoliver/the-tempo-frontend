@@ -52,9 +52,11 @@ export default function BlockedUsersScreen() {
     }
   }, []);
 
-  useFocusEffect(useCallback(() => {
-    void loadUsers();
-  }, [loadUsers]));
+  useFocusEffect(
+    useCallback(() => {
+      void loadUsers();
+    }, [loadUsers]),
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -77,7 +79,13 @@ export default function BlockedUsersScreen() {
     } finally {
       setPendingUserId(null);
     }
-  }, [pendingUserId, selectedUser, setSelectedUser, setUsers, setPendingUserId]);
+  }, [
+    pendingUserId,
+    selectedUser,
+    setSelectedUser,
+    setUsers,
+    setPendingUserId,
+  ]);
 
   if (loading) {
     return (
@@ -94,8 +102,10 @@ export default function BlockedUsersScreen() {
         keyExtractor={(item) => String(item.id)}
         refreshing={refreshing}
         onRefresh={() => void loadUsers(true)}
-        contentContainerStyle={navigationContentStyle(users.length ? styles.list : styles.emptyList)}
-        ListEmptyComponent={(
+        contentContainerStyle={navigationContentStyle(
+          users.length ? styles.list : styles.emptyList,
+        )}
+        ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons
               name="shield-checkmark-outline"
@@ -107,11 +117,14 @@ export default function BlockedUsersScreen() {
               Accounts you block will appear here.
             </Text>
           </View>
-        )}
+        }
         renderItem={({ item }) => (
           <View style={styles.row}>
             {item.profileImage ? (
-              <Image source={{ uri: item.profileImage }} style={styles.avatar} />
+              <Image
+                source={{ uri: item.profileImage }}
+                style={styles.avatar}
+              />
             ) : (
               <View style={[styles.avatar, styles.avatarFallback]}>
                 <Ionicons name="person" size={22} color={Colors.midTone} />
@@ -119,7 +132,9 @@ export default function BlockedUsersScreen() {
             )}
             <View style={styles.identity}>
               <Text style={styles.username}>@{item.username}</Text>
-              {item.fullName ? <Text style={styles.fullName}>{item.fullName}</Text> : null}
+              {item.fullName ? (
+                <Text style={styles.fullName}>{item.fullName}</Text>
+              ) : null}
             </View>
             <TouchableOpacity
               style={styles.unblockButton}
@@ -139,7 +154,11 @@ export default function BlockedUsersScreen() {
       <ConfirmModal
         visible={selectedUser !== null}
         title="Unblock account?"
-        message={selectedUser ? `@${selectedUser.username} will be able to find and interact with you again.` : ""}
+        message={
+          selectedUser
+            ? `@${selectedUser.username} will be able to find and interact with you again.`
+            : ""
+        }
         confirmText="Unblock"
         cancelText="Cancel"
         onConfirm={() => void confirmUnblock()}
@@ -149,20 +168,77 @@ export default function BlockedUsersScreen() {
   );
 }
 
-const createStyles = (isDark: boolean) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: isDark ? Colors.black : Colors.white },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: isDark ? Colors.black : Colors.white },
-  list: { padding: 16, gap: 10 },
-  emptyList: { flexGrow: 1 },
-  row: { flexDirection: "row", alignItems: "center", gap: 12, padding: 14, borderRadius: 14, backgroundColor: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground },
-  avatar: { width: 48, height: 48, borderRadius: 24 },
-  avatarFallback: { alignItems: "center", justifyContent: "center", backgroundColor: isDark ? Colors.darkGray : Colors.lightGray },
-  identity: { flex: 1 },
-  username: { fontFamily: Fonts.BOLD, fontSize: 15, color: isDark ? Colors.white : Colors.black },
-  fullName: { marginTop: 3, fontFamily: Fonts.REGULAR, fontSize: 13, color: Colors.midTone },
-  unblockButton: { paddingHorizontal: 14, paddingVertical: 9, borderWidth: StyleSheet.hairlineWidth, borderColor: isDark ? Colors.lightGray : Colors.darkGray, borderRadius: 999 },
-  unblockText: { fontFamily: Fonts.BOLD, fontSize: 13, color: isDark ? Colors.white : Colors.black },
-  empty: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32 },
-  emptyTitle: { marginTop: 14, fontFamily: Fonts.BOLD, fontSize: 18, color: isDark ? Colors.white : Colors.black },
-  emptyText: { marginTop: 6, fontFamily: Fonts.REGULAR, fontSize: 14, textAlign: "center", color: Colors.midTone },
-});
+const createStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isDark ? Colors.black : Colors.white,
+    },
+    centered: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.black : Colors.white,
+    },
+    list: { padding: 16, gap: 10 },
+    emptyList: { flexGrow: 1 },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      padding: 14,
+      borderRadius: 14,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    avatar: { width: 48, height: 48, borderRadius: 24 },
+    avatarFallback: {
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    identity: { flex: 1 },
+    username: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 15,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    fullName: {
+      marginTop: 3,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 13,
+      color: Colors.midTone,
+    },
+    unblockButton: {
+      paddingHorizontal: 14,
+      paddingVertical: 9,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderRadius: 999,
+    },
+    unblockText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    empty: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 32,
+    },
+    emptyTitle: {
+      marginTop: 14,
+      fontFamily: Fonts.BOLD,
+      fontSize: 18,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    emptyText: {
+      marginTop: 6,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 14,
+      textAlign: "center",
+      color: Colors.midTone,
+    },
+  });

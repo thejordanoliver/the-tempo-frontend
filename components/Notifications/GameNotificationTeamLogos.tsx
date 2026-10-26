@@ -9,11 +9,7 @@ type Props = {
   size?: number;
 };
 
-export function GameNotificationTeamLogos({
-  teams,
-  isDark,
-  size = 30,
-}: Props) {
+export function GameNotificationTeamLogos({ teams, isDark, size = 30 }: Props) {
   const visibleTeams = [teams.away, teams.home].filter(
     (team): team is NonNullable<typeof team> => Boolean(team),
   );

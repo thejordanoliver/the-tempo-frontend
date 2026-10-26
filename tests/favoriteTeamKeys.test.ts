@@ -17,12 +17,7 @@ test("favorite-team keys are canonical lowercase league-plus-team identities", (
 
 test("favorite-team normalization preserves order and removes duplicates", () => {
   assert.deepEqual(
-    normalizeFavoriteTeamKeys([
-      "NBA:17",
-      "nfl:2",
-      "CFB:113",
-      "nba:17",
-    ]),
+    normalizeFavoriteTeamKeys(["NBA:17", "nfl:2", "CFB:113", "nba:17"]),
     ["nba:17", "nfl:2", "cfb:113"],
   );
 });
@@ -107,5 +102,8 @@ test("teams reorder only within the teams area", () => {
 });
 
 test("upgrades saved men's college basketball favorites without changing women's favorites", () => {
-  assert.deepEqual(normalizeFavoriteTeamKeys(["CBB:017", "mcbb:17", "wcbb:17"]), ["mcbb:17", "wcbb:17"]);
+  assert.deepEqual(
+    normalizeFavoriteTeamKeys(["CBB:017", "mcbb:17", "wcbb:17"]),
+    ["mcbb:17", "wcbb:17"],
+  );
 });

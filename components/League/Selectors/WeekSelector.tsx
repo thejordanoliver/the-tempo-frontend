@@ -1,4 +1,10 @@
-import { Colors, Fonts, activeOpacity } from "@/constants/styles";
+import WeekSelectorSkeleton from "@/components/Skeletons/WeekSelectorSkeleton";
+import { activeOpacity } from "@/constants/styles";
+import { DateSelectorStyles } from "@/styles/LeagueStyles/DateSelectorStyles";
+import {
+  DATE_SELECTOR_ITEM_SPACING,
+  DATE_SELECTOR_SIDE_PADDING,
+} from "constants/dateSelectorConstants";
 import React, {
   useCallback,
   useLayoutEffect,
@@ -10,13 +16,11 @@ import {
   Animated,
   LayoutChangeEvent,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
-import WeekSelectorSkeleton from "../Skeletons/WeekSelectorSkeleton";
 
 export type FootballWeekGroup = {
   key: string;
@@ -44,9 +48,6 @@ type Props = {
 };
 
 const DEFAULT_ITEM_WIDTH = 100;
-const SIDE_PADDING = 12;
-const ITEM_SPACING = 0;
-const ITEM_HEIGHT = 32;
 
 function getWeekLabel(group: FootballWeekGroup): string {
   const label = group.label || "";
@@ -92,7 +93,7 @@ export default function WeekSelector({
   containerStyle,
   itemWidth = DEFAULT_ITEM_WIDTH,
 }: Props) {
-  const styles = WeekSelectorStyles(isDark, itemWidth);
+  const styles = DateSelectorStyles(isDark, { itemWidth });
 
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -102,7 +103,7 @@ export default function WeekSelector({
 
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const itemStep = itemWidth + ITEM_SPACING;
+  const itemStep = itemWidth + DATE_SELECTOR_ITEM_SPACING;
 
   /**
    * null means the parent has not resolved the active week yet.
@@ -128,12 +129,15 @@ export default function WeekSelector({
       }
 
       const targetOffset =
-        SIDE_PADDING + index * itemStep - containerWidth / 2 + itemWidth / 2;
+        DATE_SELECTOR_SIDE_PADDING +
+        index * itemStep -
+        containerWidth / 2 +
+        itemWidth / 2;
 
       const totalWidth =
-        SIDE_PADDING * 2 +
+        DATE_SELECTOR_SIDE_PADDING * 2 +
         groups.length * itemWidth +
-        ITEM_SPACING * Math.max(groups.length - 1, 0);
+        DATE_SELECTOR_ITEM_SPACING * Math.max(groups.length - 1, 0);
 
       const maxOffset = Math.max(0, totalWidth - containerWidth);
 
@@ -208,7 +212,7 @@ export default function WeekSelector({
   }, [safeSelectedIndex, containerWidth, groups.length, computeScrollOffset]);
 
   if (loading && !groups.length) {
-    return <WeekSelectorSkeleton />;
+    return <WeekSelectorSkeleton itemWidth={itemWidth} />;
   }
 
   if (!groups.length) {
@@ -250,11 +254,13 @@ export default function WeekSelector({
               key={group.key || `${group.season?.slug}-${group.week?.number}`}
               activeOpacity={activeOpacity}
               onPress={() => handleSelectWeek(index)}
-              style={styles.label}
+              style={styles.item}
             >
               <Text
                 numberOfLines={1}
-                style={isSelected ? styles.monthTextSelected : styles.monthText}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+                style={isSelected ? styles.selectedLabel : styles.label}
               >
                 {getWeekLabel(group)}
               </Text>
@@ -265,55 +271,3 @@ export default function WeekSelector({
     </View>
   );
 }
-
-const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
-  StyleSheet.create({
-    wrapper: {
-      marginVertical: 8,
-    },
-
-    contentContainerStyle: {
-      position: "relative",
-      alignItems: "center",
-      paddingHorizontal: SIDE_PADDING,
-    },
-
-    slidingSelectedContainer: {
-      position: "absolute",
-      top: 0,
-      left: SIDE_PADDING,
-      width: itemWidth,
-      height: ITEM_HEIGHT,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 12,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      overflow: "hidden",
-    },
-
-    label: {
-      zIndex: 2,
-      alignItems: "center",
-      justifyContent: "center",
-      width: itemWidth,
-      height: ITEM_HEIGHT,
-      padding: 4,
-      borderRadius: 8,
-    },
-
-    monthText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
-
-    monthTextSelected: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-  });

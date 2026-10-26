@@ -640,34 +640,36 @@ export const StandingsList = ({
           data: conference.standings,
         }))
     : Object.values(conferenceConfig)
-    .map((conference) => {
-      const data =
-        conferences?.find(
-          (item) =>
-            item.abbreviation === conference.code ||
-            item.name === conference.name,
-        )?.standings ?? [];
+        .map((conference) => {
+          const data =
+            conferences?.find(
+              (item) =>
+                item.abbreviation === conference.code ||
+                item.name === conference.name,
+            )?.standings ?? [];
 
-      if (!data.length) {
-        return null;
-      }
+          if (!data.length) {
+            return null;
+          }
 
-      return {
-        title: conference.name,
-        data,
-      };
-    })
-    .filter(
-      (
-        section,
-      ): section is {
-        title: string;
-        data: StandingsTeam[];
-      } => section !== null,
-    );
+          return {
+            title: conference.name,
+            data,
+          };
+        })
+        .filter(
+          (
+            section,
+          ): section is {
+            title: string;
+            data: StandingsTeam[];
+          } => section !== null,
+        );
 
   const displayedSections =
-    soccer || sortMode === "conference" ? conferenceSections : divisionStandings;
+    soccer || sortMode === "conference"
+      ? conferenceSections
+      : divisionStandings;
 
   return (
     <ScrollView

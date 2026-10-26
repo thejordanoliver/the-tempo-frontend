@@ -4,7 +4,10 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
 import type { CFPBracketProps } from "types/football/cfpBracketTypes";
-import { buildCFPBracketData, buildRoundDates } from "utils/brackets/cfpBracketUtils";
+import {
+  buildCFPBracketData,
+  buildRoundDates,
+} from "utils/brackets/cfpBracketUtils";
 import { CFPBracketCanvas } from "./CFPBracketCanvas";
 import { CFPBracketState } from "./CFPBracketState";
 
@@ -45,9 +48,7 @@ export function CFPBracket({
   if (!data) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>
-          No playoff games available
-        </Text>
+        <Text style={global.emptyText}>No playoff games available</Text>
       </View>
     );
   }

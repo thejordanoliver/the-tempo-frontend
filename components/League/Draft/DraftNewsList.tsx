@@ -21,17 +21,20 @@ const ITEM_STRIDE = CARD_WIDTH + CARD_SEPARATOR;
 const TICKER_SPEED = 40;
 
 type Props = {
+  active?: boolean;
   year: string;
   league: string;
 };
 
-export default function DraftNewsList({ year, league }: Props) {
+export default function DraftNewsList({ year, league, active = true }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = draftNewsList(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const [tickerX] = useState(() => new Animated.Value(0));
-  const { draft, loading, error } = useDraft(league, Number(year));
+  const { draft, loading, error, isActive } = useDraft(league, Number(year), {
+    enabled: active,
+  });
 
   const news = draft?.breakingNews ?? [];
 
@@ -39,7 +42,7 @@ export default function DraftNewsList({ year, league }: Props) {
   const singleSetWidth = news.length * ITEM_STRIDE;
 
   useEffect(() => {
-    if (singleSetWidth === 0) return;
+    if (!isActive || singleSetWidth === 0) return;
 
     // Duration so speed stays constant regardless of item count
     const duration = (singleSetWidth / TICKER_SPEED) * 1000;
@@ -57,7 +60,7 @@ export default function DraftNewsList({ year, league }: Props) {
 
     animation.start();
     return () => animation.stop();
-  }, [singleSetWidth, tickerX]);
+  }, [isActive, singleSetWidth, tickerX]);
 
   if (error)
     return (

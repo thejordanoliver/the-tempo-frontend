@@ -1,6 +1,13 @@
 import DivisionFilterSkeleton from "@/components/Skeletons/DivisionFilterSkeleton";
 import { activeOpacity, Colors, Fonts } from "@/constants/styles";
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Animated,
   StyleSheet,

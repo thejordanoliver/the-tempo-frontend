@@ -708,11 +708,23 @@ export default function GameTeamStats({
   const isBaseball = isBaseballLeague(league);
 
   const rows = useMemo(() => {
-    const configs = league === "mcvb" || league === "wcvb"
-      ? [...new Map([...getFlatStats(away), ...getFlatStats(home)].filter((stat) => stat.name).map((stat) => [stat.name, {
-        key: stat.name!, label: stat.displayName ?? stat.name!, lowerIsBetter: /errors|faults/i.test(stat.name!),
-      }])).values()]
-      : getStatConfig(league, state);
+    const configs =
+      league === "mcvb" || league === "wcvb"
+        ? [
+            ...new Map(
+              [...getFlatStats(away), ...getFlatStats(home)]
+                .filter((stat) => stat.name)
+                .map((stat) => [
+                  stat.name,
+                  {
+                    key: stat.name!,
+                    label: stat.displayName ?? stat.name!,
+                    lowerIsBetter: /errors|faults/i.test(stat.name!),
+                  },
+                ]),
+            ).values(),
+          ]
+        : getStatConfig(league, state);
 
     if (!isBaseball) {
       return buildRows(away, home, configs, false);
@@ -763,10 +775,7 @@ export default function GameTeamStats({
   const awayLabel = awayName ?? awayCode ?? away.team?.abbreviation ?? "";
   const homeLabel = homeName ?? homeCode ?? home.team?.abbreviation ?? "";
 
-  const renderStatRow = (
-    row: StatRow,
-    index: number,
-  ) => {
+  const renderStatRow = (row: StatRow, index: number) => {
     const awayOpacity = row.isTie || row.awayWins ? 1 : 0.4;
     const homeOpacity = row.isTie || row.homeWins ? 1 : 0.4;
     const isLastRow = index === rows.length - 1;

@@ -73,8 +73,6 @@ export default function GamesList({
   const styles = gameListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { viewMode, viewModeReady } = usePreferences();
-  const [previewGame, setPreviewGame] = useState<VolleyballGame | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
 
@@ -145,7 +143,7 @@ export default function GamesList({
               key={game.id}
               minDurationMs={300}
               onHandlerStateChange={({ nativeEvent }) => {
-                if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
+                if (nativeEvent.state === State.ACTIVE) handleLongPress();
               }}
             >
               <View style={styles.gridItem}>
@@ -167,10 +165,8 @@ export default function GamesList({
     setPage((prev) => prev + 1);
   };
 
-  const handleLongPress = (game: VolleyballGame) => {
+  const handleLongPress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setPreviewGame(game);
-    setModalVisible(true);
   };
 
   const renderGameCard = (game: VolleyballGame, index?: number) => {
@@ -180,7 +176,7 @@ export default function GamesList({
           key={game?.id ?? index}
           minDurationMs={300}
           onHandlerStateChange={({ nativeEvent }) => {
-            if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
+            if (nativeEvent.state === State.ACTIVE) handleLongPress();
           }}
         >
           <View>{child}</View>

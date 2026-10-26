@@ -1,4 +1,5 @@
 import type { RosterResponse } from "types/roster";
+import { decodeRosterResponse } from "utils/rosterWire";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -33,13 +34,13 @@ export default function useRoster(
       const url = `api/roster/${league}/${teamId}`;
 
       try {
-        const res = await apiClient.get<RosterResponse>(url, { signal });
+        const res = await apiClient.get(url, {
+          signal,
+          params: { representation: "indexed-v1" },
+        });
         if (signal?.aborted || requestId !== requestIdRef.current) return;
 
-        setRoster({
-          players: Array.isArray(res.data.players) ? res.data.players : [],
-          sections: Array.isArray(res.data.sections) ? res.data.sections : [],
-        });
+        setRoster(decodeRosterResponse(res.data));
         setError(null);
       } catch (err: any) {
         if (signal?.aborted || requestId !== requestIdRef.current) return;

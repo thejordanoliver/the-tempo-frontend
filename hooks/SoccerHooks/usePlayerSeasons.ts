@@ -328,7 +328,9 @@ export function usePlayerSeasons(
   const [refreshing, setRefreshing] = useState(false);
   const [seasonsError, setSeasonsError] = useState<string | null>(null);
 
-  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
+    null,
+  );
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const normalizedPlayerId = String(playerId ?? "").trim();
@@ -431,7 +433,9 @@ export function usePlayerSeasons(
   const hasCurrentResult =
     requestKey !== null && resolvedRequestKey === requestKey;
   const currentData = hasCurrentResult ? data : null;
-  const seasons = Array.isArray(currentData?.seasons) ? currentData.seasons : [];
+  const seasons = Array.isArray(currentData?.seasons)
+    ? currentData.seasons
+    : [];
   const responseTeamOptions =
     currentData?.options?.teams ?? currentData?.teamOptions;
   const teamOptions = mergeTeamOptions(

@@ -12,15 +12,23 @@ type GameStatusLike = {
 export function isGameFinalStatus(status?: GameStatusLike | null) {
   if (!status) return false;
 
-  const state = String(status.state ?? "").trim().toLowerCase();
-  const name = String(status.name ?? "").trim().toLowerCase();
+  const state = String(status.state ?? "")
+    .trim()
+    .toLowerCase();
+  const name = String(status.name ?? "")
+    .trim()
+    .toLowerCase();
   const statusLabels = [
     status.gameStatusDescription,
     status.gameStatusDetail,
     status.description,
     status.detail,
     status.shortDetail,
-  ].map((value) => String(value ?? "").trim().toLowerCase());
+  ].map((value) =>
+    String(value ?? "")
+      .trim()
+      .toLowerCase(),
+  );
 
   return (
     status.completed === true ||
@@ -38,7 +46,9 @@ export function shouldTrackGameUpdates(
   const status = game?.status;
   if (!status || isGameFinalStatus(status)) return false;
 
-  const state = String(status.state ?? "").trim().toLowerCase();
+  const state = String(status.state ?? "")
+    .trim()
+    .toLowerCase();
   if (["pre", "in", "half", "live", "in_play", "in_progress"].includes(state)) {
     return true;
   }

@@ -452,7 +452,9 @@ export const getCFBConferenceName = (groupId: number | string | null) => {
   return conference?.shortName || conference?.name;
 };
 
-export const resolveMCBBConferenceselection = (selection: MCBBConferenceSelection) => {
+export const resolveMCBBConferenceselection = (
+  selection: MCBBConferenceSelection,
+) => {
   const normalizedSelection = normalizeMCBBConferenceselection(selection);
 
   if (!normalizedSelection) {
@@ -476,7 +478,9 @@ export const resolveMCBBConferenceselection = (selection: MCBBConferenceSelectio
   });
 };
 
-export const getMCBBConferenceSelectionName = (selection: MCBBConferenceSelection) => {
+export const getMCBBConferenceSelectionName = (
+  selection: MCBBConferenceSelection,
+) => {
   const conference = resolveMCBBConferenceselection(selection);
 
   if (!conference) {

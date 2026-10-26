@@ -1,0 +1,14 @@
+# Dependency lockfiles and assets
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+assets/
+
+# Generated files
+expo-env.d.ts
+*.tsbuildinfo
+coverage/
+
+# Local environment files
+.env
+.env.*

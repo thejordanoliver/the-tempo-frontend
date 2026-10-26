@@ -24,6 +24,7 @@ Backend TypeScript checks pass. The full backend baseline had 8 failing suites a
 ## Remaining verified work
 
 The backend baseline failures require separate investigation:
+
 - standingsRoute: CFB rankings response mapping
 - gameNotificationService: poll rejection handling expectations
 - teamScheduleScoreFallbacks, basketballScheduleService, basketball/marchMadnessRoute: suites failing to initialize

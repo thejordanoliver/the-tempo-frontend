@@ -99,17 +99,23 @@ test("session filtering prevents cross-account notification leakage", () => {
 test("the central navigation mapper covers all notification types", () => {
   for (const type of ["post_like", "post_comment", "comment_reply"] as const) {
     assert.equal(
-      getNotificationCenterHref(notification(type, { data: { postId: "post/a" } })),
+      getNotificationCenterHref(
+        notification(type, { data: { postId: "post/a" } }),
+      ),
       "/post/post%2Fa",
     );
   }
 
   assert.equal(
-    getNotificationCenterHref(notification("message", { data: { conversationId: "dm/1" } })),
+    getNotificationCenterHref(
+      notification("message", { data: { conversationId: "dm/1" } }),
+    ),
     "/messages/dm%2F1",
   );
   assert.equal(
-    getNotificationCenterHref(notification("new_follower", { actorUserId: 42 })),
+    getNotificationCenterHref(
+      notification("new_follower", { actorUserId: 42 }),
+    ),
     "/user/42",
   );
   assert.equal(getNotificationCenterHref(notification("badge")), "/profile");
@@ -151,7 +157,10 @@ test("game notifications preserve supported league labels in their routes", () =
       getNotificationCenterHref(gameNotification),
       `/game/${sport}/401234567?league=${league}`,
     );
-    assert.equal(getNotificationLeagueLabel(gameNotification), league.toUpperCase());
+    assert.equal(
+      getNotificationLeagueLabel(gameNotification),
+      league.toUpperCase(),
+    );
   }
 });
 
@@ -169,10 +178,15 @@ test("game notification routing stays backward-compatible without a league", () 
 
 test("the navigation mapper safely handles missing metadata", () => {
   assert.equal(getNotificationCenterHref(notification("post_like")), null);
-  assert.equal(getNotificationCenterHref(notification("game_final", { entityId: null })), null);
+  assert.equal(
+    getNotificationCenterHref(notification("game_final", { entityId: null })),
+    null,
+  );
   assert.equal(getNotificationCenterHref(notification("message")), "/messages");
   assert.equal(
-    getNotificationCenterHref(notification("new_follower", { actorUserId: null })),
+    getNotificationCenterHref(
+      notification("new_follower", { actorUserId: null }),
+    ),
     "/profile",
   );
 });
@@ -261,15 +275,24 @@ test("an all-off game override remains distinguishable from no settings", () => 
 });
 
 test("follower notification profile links carry available actor preview data", () => {
-  const href = getNotificationCenterHref(notification("new_follower", {
-    actorUserId: 42,
-    data: { username: "tempo", full_name: "Tempo Fan",
-      profileImage: "https://images.example.com/actor.jpg", isFollowing: false },
-  }));
+  const href = getNotificationCenterHref(
+    notification("new_follower", {
+      actorUserId: 42,
+      data: {
+        username: "tempo",
+        full_name: "Tempo Fan",
+        profileImage: "https://images.example.com/actor.jpg",
+        isFollowing: false,
+      },
+    }),
+  );
   const url = new URL(href!, "https://tempo.test");
   assert.equal(url.pathname, "/user/42");
   assert.equal(url.searchParams.get("username"), "tempo");
   assert.equal(url.searchParams.get("fullName"), "Tempo Fan");
-  assert.equal(url.searchParams.get("profileImage"), "https://images.example.com/actor.jpg");
+  assert.equal(
+    url.searchParams.get("profileImage"),
+    "https://images.example.com/actor.jpg",
+  );
   assert.equal(url.searchParams.get("isFollowing"), "false");
 });

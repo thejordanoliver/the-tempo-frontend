@@ -115,9 +115,7 @@ const PLAYER_SPORT_BY_AFFILIATION: Record<SearchAffiliation, string> = {
   soccer: "soccer",
 };
 
-export function getExploreRouteForResult(
-  item: ResultItem,
-): ExploreRoute {
+export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
   if (item.type === "user") {
     return {
       pathname: "/(tabs)/(explore)/user/[id]",
@@ -131,13 +129,15 @@ export function getExploreRouteForResult(
     );
 
     const teamType = teamRoute?.teamType ?? "nba";
-    const league = teamType === "soccer"
-      ? resolveSoccerTeamLeague(item.id, item.leagueKey || item.league)
-      : teamType;
+    const league =
+      teamType === "soccer"
+        ? resolveSoccerTeamLeague(item.id, item.leagueKey || item.league)
+        : teamType;
     return {
-      pathname: teamType === "nba"
-        ? "/(tabs)/(explore)/team/[teamId]"
-        : "/(tabs)/(explore)/team/[teamType]/[teamId]",
+      pathname:
+        teamType === "nba"
+          ? "/(tabs)/(explore)/team/[teamId]"
+          : "/(tabs)/(explore)/team/[teamType]/[teamId]",
       params: {
         teamId: String(item.id),
         league,

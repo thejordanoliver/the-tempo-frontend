@@ -99,20 +99,14 @@ export default function GamesList({
     );
 
     if (viewMode === "list") {
-      return wrapper(
-        <SoccerGameCard game={game} />,
-      );
+      return wrapper(<SoccerGameCard game={game} />);
     }
 
     if (viewMode === "grid") {
-      return wrapper(
-        <SoccerSquareGameCard game={game} />,
-      );
+      return wrapper(<SoccerSquareGameCard game={game} />);
     }
 
-    return wrapper(
-      <SoccerStackedGameCard game={game} />,
-    );
+    return wrapper(<SoccerStackedGameCard game={game} />);
   };
 
   /* --------------------------- Skeletons ------------------------------- */
@@ -204,9 +198,7 @@ export default function GamesList({
           />
         }
       >
-        <Text style={global.errorText}>
-          Couldn’t load matches
-        </Text>
+        <Text style={global.errorText}>Couldn’t load matches</Text>
       </ScrollView>
     );
   }
@@ -238,17 +230,16 @@ export default function GamesList({
           )}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
-              <Text style={global.emptyTitle}>
-                No matches scheduled
-              </Text>
-
+              <Text style={global.emptyTitle}>No matches scheduled</Text>
             </View>
           }
         />
       ) : (
         <SectionList
           sections={sections as SectionListData<any, GameSection>[]}
-          keyExtractor={(item, index) => `game-${item?.game?.id ?? item?.id ?? index}`}
+          keyExtractor={(item, index) =>
+            `game-${item?.game?.id ?? item?.id ?? index}`
+          }
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
@@ -261,7 +252,6 @@ export default function GamesList({
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>No matches scheduled</Text>
-
             </View>
           }
         />

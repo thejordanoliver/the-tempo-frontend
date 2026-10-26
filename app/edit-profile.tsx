@@ -326,9 +326,7 @@ export default function EditProfileScreen() {
 
     const mediaIsDirty = profileImageChanged || bannerImageChanged;
     const mayReplaceCachedValues =
-      initializationSourceRef.current === "cache" &&
-      !isDirty &&
-      !mediaIsDirty;
+      initializationSourceRef.current === "cache" && !isDirty && !mediaIsDirty;
 
     if (initializationSourceRef.current && !mayReplaceCachedValues) return;
 

@@ -291,7 +291,9 @@ export function useBaseballPlayerSeasons(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
+    null,
+  );
   const requestKey =
     playerId > 0 && Number.isSafeInteger(playerId)
       ? `${league.toLowerCase()}:${playerId}`

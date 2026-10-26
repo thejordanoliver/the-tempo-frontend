@@ -3,10 +3,11 @@ import test from "node:test";
 import { selectNFLByeTeam } from "../utils/brackets/nflPlayoffSelection";
 import type { NFLPlayoffGame } from "../types/football/football";
 
-const game = (home: number, away: number) => ({
-  home: { id: home, code: home > 0 ? `T${home}` : "TBD" },
-  away: { id: away, code: away > 0 ? `T${away}` : "TBD" },
-} as NFLPlayoffGame);
+const game = (home: number, away: number) =>
+  ({
+    home: { id: home, code: home > 0 ? `T${home}` : "TBD" },
+    away: { id: away, code: away > 0 ? `T${away}` : "TBD" },
+  }) as NFLPlayoffGame;
 const wildCard = [game(2, 7), game(3, 6), game(4, 5)];
 
 test("finds the divisional participant who skipped the wild card round", () => {
@@ -15,7 +16,10 @@ test("finds the divisional participant who skipped the wild card round", () => {
 });
 
 test("keeps the bye team unknown when wild card participants are incomplete", () => {
-  assert.equal(selectNFLByeTeam([game(2, 0), ...wildCard.slice(1)], [game(1, 7)]), undefined);
+  assert.equal(
+    selectNFLByeTeam([game(2, 0), ...wildCard.slice(1)], [game(1, 7)]),
+    undefined,
+  );
   assert.equal(selectNFLByeTeam(wildCard.slice(1), [game(1, 7)]), undefined);
 });
 

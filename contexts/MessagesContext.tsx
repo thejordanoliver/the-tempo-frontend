@@ -584,9 +584,9 @@ export function MessagesProvider({
 
     const isOnline = Boolean(
       payload?.isOnline ??
-      payload?.online ??
-      (payload?.status === "online" ? true : undefined) ??
-      payload?.user?.isOnline,
+        payload?.online ??
+        (payload?.status === "online" ? true : undefined) ??
+        payload?.user?.isOnline,
     );
 
     setConversationLists((current) => {
@@ -938,7 +938,8 @@ export function MessagesProvider({
         createMessageCacheState();
       const hasCachedMessages = currentState.messages.length > 0;
       const snapshotDeletions = new Set<string>();
-      snapshotDeletionsRef.current[normalizedConversationId] = snapshotDeletions;
+      snapshotDeletionsRef.current[normalizedConversationId] =
+        snapshotDeletions;
 
       updateMessageState(normalizedConversationId, (state) => ({
         ...state,
@@ -988,7 +989,10 @@ export function MessagesProvider({
           ...state,
           messages: sortMessages(
             reconcileDirectMessages(
-              initialMessages, state.messages, messagePage.messages, snapshotDeletions,
+              initialMessages,
+              state.messages,
+              messagePage.messages,
+              snapshotDeletions,
             ),
           ).slice(-MESSAGE_CACHE_LIMIT),
           nextCursor: messagePage.nextCursor,
@@ -999,7 +1003,10 @@ export function MessagesProvider({
           loaded: true,
         }));
       } catch (error: any) {
-        if (messageRequestIdsRef.current[normalizedConversationId] !== requestId) return;
+        if (
+          messageRequestIdsRef.current[normalizedConversationId] !== requestId
+        )
+          return;
         updateMessageState(normalizedConversationId, (state) => ({
           ...state,
           isLoading: false,
@@ -1010,7 +1017,10 @@ export function MessagesProvider({
               : getErrorMessage(error, "Messages failed to load."),
         }));
       } finally {
-        if (snapshotDeletionsRef.current[normalizedConversationId] === snapshotDeletions) {
+        if (
+          snapshotDeletionsRef.current[normalizedConversationId] ===
+          snapshotDeletions
+        ) {
           delete snapshotDeletionsRef.current[normalizedConversationId];
         }
       }
@@ -1053,7 +1063,10 @@ export function MessagesProvider({
           cursor,
         });
 
-        if (messageRequestIdsRef.current[normalizedConversationId] !== requestId) return;
+        if (
+          messageRequestIdsRef.current[normalizedConversationId] !== requestId
+        )
+          return;
         updateMessageState(normalizedConversationId, (current) => ({
           ...current,
           messages: mergeMessages(messagePage.messages, current.messages),
@@ -1067,7 +1080,10 @@ export function MessagesProvider({
           isLoadingMore: false,
         }));
       } finally {
-        updateMessageState(normalizedConversationId, (current) => ({ ...current, isLoadingMore: false }));
+        updateMessageState(normalizedConversationId, (current) => ({
+          ...current,
+          isLoadingMore: false,
+        }));
         loadingOlderMessagesRef.current[normalizedConversationId] = false;
       }
     },
@@ -1133,8 +1149,13 @@ export function MessagesProvider({
 
   const unsendDirectMessage = useCallback(
     async (message: DirectMessageItem) => {
-      if (!enabled || !token || !message.isCurrentUser ||
-          message.status === "pending" || message.status === "failed") {
+      if (
+        !enabled ||
+        !token ||
+        !message.isCurrentUser ||
+        message.status === "pending" ||
+        message.status === "failed"
+      ) {
         throw new Error("Only your sent messages can be unsent.");
       }
 
@@ -1152,9 +1173,11 @@ export function MessagesProvider({
       }));
 
       // Refresh the preview even when this device has no socket connection.
-      void getConversation(conversationId, userId).then((conversation) => {
-        if (conversation) upsertConversation(conversation);
-      }).catch(() => {});
+      void getConversation(conversationId, userId)
+        .then((conversation) => {
+          if (conversation) upsertConversation(conversation);
+        })
+        .catch(() => {});
     },
     [enabled, token, updateMessageState, upsertConversation, userId],
   );
@@ -1231,13 +1254,17 @@ export function MessagesProvider({
       try {
         const savedMessage = await deliverDirectMessage<DirectMessageItem>({
           socketSend: socketRef.current?.connected
-            ? (ack) => emitMessageSend(requestPayload, (response: any) => ack(response))
+            ? (ack) =>
+                emitMessageSend(requestPayload, (response: any) =>
+                  ack(response),
+                )
             : undefined,
-          restSend: () => sendMessageRest(normalizedConversationId, {
-            text,
-            ...(attachmentId ? { attachmentId } : {}),
-            clientId,
-          }),
+          restSend: () =>
+            sendMessageRest(normalizedConversationId, {
+              text,
+              ...(attachmentId ? { attachmentId } : {}),
+              clientId,
+            }),
         });
 
         handleSavedMessage(savedMessage);

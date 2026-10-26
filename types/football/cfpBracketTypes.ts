@@ -1,6 +1,8 @@
 import type { FootballGame } from "@/types/football/football";
 
-export type FootballTeam = NonNullable<FootballGame["home"] | FootballGame["away"]>;
+export type FootballTeam = NonNullable<
+  FootballGame["home"] | FootballGame["away"]
+>;
 
 export type CFPBracketData = {
   firstRound: FootballGame[];

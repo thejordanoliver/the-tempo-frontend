@@ -1,6 +1,9 @@
 import { Tabs, usePathname } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { NAVIGATION_BAR_ROW_HEIGHT, NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
+import {
+  NAVIGATION_BAR_ROW_HEIGHT,
+  NavigationBarInsetContext,
+} from "contexts/NavigationBarInsetContext";
 import NavigationBar from "../../components/NavigationBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 
@@ -16,9 +19,15 @@ export default function TabLayout() {
     pathname.endsWith("/settings/deleteaccountsplash");
 
   return (
-    <NavigationBarInsetContext.Provider value={hideNavigationBar ? 0 : NAVIGATION_BAR_ROW_HEIGHT + insets.bottom}>
+    <NavigationBarInsetContext.Provider
+      value={hideNavigationBar ? 0 : NAVIGATION_BAR_ROW_HEIGHT + insets.bottom}
+    >
       <Tabs
-        tabBar={(props) => hideNavigationBar ? null : <NavigationBar {...props} isDark={isDark} />}
+        tabBar={(props) =>
+          hideNavigationBar ? null : (
+            <NavigationBar {...props} isDark={isDark} />
+          )
+        }
         screenOptions={{
           freezeOnBlur: true,
           tabBarStyle: { position: "absolute", backgroundColor: "transparent" },

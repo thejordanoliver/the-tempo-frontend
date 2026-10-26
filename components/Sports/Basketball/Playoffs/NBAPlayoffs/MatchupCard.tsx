@@ -52,10 +52,7 @@ const isActiveOrUpcomingGame = (game: PlayoffGame) => {
   return !["scheduled", "final"].includes(normalizedStatus);
 };
 
-const getTeamGamePoints = (
-  game: PlayoffGame,
-  teamId?: string | number,
-) => {
+const getTeamGamePoints = (game: PlayoffGame, teamId?: string | number) => {
   if (teamId == null) return null;
 
   if (String(game?.home?.id) === String(teamId)) {

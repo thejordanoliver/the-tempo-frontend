@@ -53,9 +53,7 @@ export function getContrastingTextColor(
   };
 
   const luminance =
-    0.2126 * toLinear(red) +
-    0.7152 * toLinear(green) +
-    0.0722 * toLinear(blue);
+    0.2126 * toLinear(red) + 0.7152 * toLinear(green) + 0.0722 * toLinear(blue);
 
   const contrastWithWhite = 1.05 / (luminance + 0.05);
   const contrastWithBlack = (luminance + 0.05) / 0.05;
@@ -72,7 +70,5 @@ export function getContrastingTextColor(
   }
 
   // If neither reaches the requested threshold, use the better option.
-  return contrastWithWhite >= contrastWithBlack
-    ? lightText
-    : darkText;
+  return contrastWithWhite >= contrastWithBlack ? lightText : darkText;
 }

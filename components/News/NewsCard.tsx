@@ -20,7 +20,11 @@ type NewsCardProps = {
   contextLabel?: string;
 };
 
-export default function NewsCard({ content, isDark, contextLabel }: NewsCardProps) {
+export default function NewsCard({
+  content,
+  isDark,
+  contextLabel,
+}: NewsCardProps) {
   const router = useScopedRouter();
   const { width } = useWindowDimensions();
   const styles = NewsCardStyles(isDark, width);

@@ -251,6 +251,9 @@ export default function HockeyGamePreviewModal({
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
+                  plays={score?.plays}
+                  lastPlay={score?.lastPlay}
+                  gameStatus={score?.status}
                   homeColor={homeColor}
                   gameStatusDescription={gameStatusDescription}
                   state={state}

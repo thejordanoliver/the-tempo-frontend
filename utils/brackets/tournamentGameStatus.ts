@@ -7,13 +7,17 @@ export function getTournamentGameState(game: TournamentGame) {
     .filter(Boolean)
     .join(" ");
 
-  if (/cancelled|canceled|postponed|delayed|suspended|forfeit/i.test(statusText)) {
+  if (
+    /cancelled|canceled|postponed|delayed|suspended|forfeit/i.test(statusText)
+  ) {
     return "interrupted";
   }
   if (isGameFinalStatus(game.status)) return "final";
   if (/half.?time/i.test(statusText)) return "halftime";
   if (/end of (period|half|quarter)/i.test(statusText)) return "endOfPeriod";
-  if (game.status.state === "in" || description === "in progress") return "live";
-  if (game.status.state === "pre" || description === "scheduled") return "scheduled";
+  if (game.status.state === "in" || description === "in progress")
+    return "live";
+  if (game.status.state === "pre" || description === "scheduled")
+    return "scheduled";
   return "unknown";
 }

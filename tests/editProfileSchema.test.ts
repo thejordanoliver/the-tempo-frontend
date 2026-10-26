@@ -33,7 +33,9 @@ test("edit-profile schema requires a non-empty full name after trimming", () => 
   assert.equal(result.success, false);
 
   if (!result.success) {
-    assert.ok(result.error.issues.some((issue) => issue.path[0] === "fullName"));
+    assert.ok(
+      result.error.issues.some((issue) => issue.path[0] === "fullName"),
+    );
   }
 });
 

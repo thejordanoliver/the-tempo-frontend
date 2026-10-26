@@ -179,7 +179,6 @@ export default function TennisGamesList({
         <Text selectable style={global.emptyTitle}>
           No matches scheduled
         </Text>
-
       </ScrollView>
     );
   }

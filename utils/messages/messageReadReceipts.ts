@@ -1,4 +1,8 @@
-import type { ConversationReadPosition, DirectMessageItem, MessageItem } from "types/messages";
+import type {
+  ConversationReadPosition,
+  DirectMessageItem,
+  MessageItem,
+} from "types/messages";
 
 export const normalizeId = (value: unknown) => String(value ?? "").trim();
 
@@ -28,7 +32,7 @@ export const hasReadMessageCursor = (
 ) =>
   Boolean(
     receipt &&
-    Object.prototype.hasOwnProperty.call(receipt, "lastReadMessageId"),
+      Object.prototype.hasOwnProperty.call(receipt, "lastReadMessageId"),
   );
 
 export type ParticipantReadPosition = {
@@ -133,4 +137,3 @@ export const getMessageReceiptLabels = (
 
   return labels;
 };
-

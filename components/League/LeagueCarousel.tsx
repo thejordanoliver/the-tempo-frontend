@@ -72,6 +72,8 @@ const OrbitCard = memo(function OrbitCard({
   onSelect,
 }: CardProps) {
   const config = LEAGUE_CONFIG[league];
+  const contentScale = Math.max(1, cardWidth / 270);
+  const borderRadius = 22 * contentScale;
   const styles = LeagueCarouselStyles;
   const theme = isDark ? Colors.dark : Colors.light;
   const typography = useMemo(() => globalStyles(isDark), [isDark]);
@@ -105,6 +107,7 @@ const OrbitCard = memo(function OrbitCard({
           width: cardWidth,
           height: cardWidth * 1.5,
           left: (width - cardWidth) / 2,
+          borderRadius,
         },
         animatedStyle,
       ]}
@@ -117,10 +120,15 @@ const OrbitCard = memo(function OrbitCard({
           styles.cardContent,
           {
             backgroundColor: theme.itemBackground,
+            padding: 20 * contentScale,
+            borderRadius,
           },
         ]}
       >
-        <View pointerEvents="none" style={styles.cardVisuals}>
+        <View
+          pointerEvents="none"
+          style={[styles.cardVisuals, { borderRadius }]}
+        >
           <LinearGradient
             colors={[config.color, `${config.color}66`, `${config.color}00`]}
             locations={[0, 0.4, 1]}
@@ -136,20 +144,48 @@ const OrbitCard = memo(function OrbitCard({
             resizeMode="contain"
           />
         </View>
-        <Text style={[typography.subheading, styles.title]} numberOfLines={3}>
+        <Text
+          style={[
+            typography.subheading,
+            styles.title,
+            {
+              fontSize: 22 * contentScale,
+              lineHeight: 28 * contentScale,
+              minHeight: 56 * contentScale,
+            },
+          ]}
+          numberOfLines={3}
+        >
           {config.label}
         </Text>
-        <View style={[styles.open, { borderTopColor: theme.gray }]}>
-          <Text style={typography.secondaryText}>Explore league</Text>
+        <View
+          style={[
+            styles.open,
+            {
+              borderTopColor: theme.gray,
+              gap: 8 * contentScale,
+              marginTop: 12 * contentScale,
+              paddingTop: 12 * contentScale,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              typography.secondaryText,
+              { fontSize: 14 * contentScale, lineHeight: 20 * contentScale },
+            ]}
+          >
+            Explore league
+          </Text>
           <Ionicons
             name="arrow-forward"
-            size={18}
+            size={18 * contentScale}
             color={isDark ? Colors.lightGray : Colors.darkGray}
           />
         </View>
         <View
           pointerEvents="none"
-          style={[styles.cardBorder, { borderColor: theme.gray }]}
+          style={[styles.cardBorder, { borderColor: theme.gray, borderRadius }]}
         />
       </Pressable>
     </Animated.View>
@@ -395,7 +431,7 @@ export default function LeagueCarousel({
     },
     [onSelect, rotation],
   );
-  const cardWidth = Math.min(270, width * 0.62);
+  const cardWidth = width * 0.62;
   const geometry = useMemo(
     () => leagueOrbitGeometry(width, cardWidth),
     [width, cardWidth],

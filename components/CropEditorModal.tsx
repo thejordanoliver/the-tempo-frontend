@@ -30,8 +30,8 @@ type CropEditorModalProps = {
   mode: CropMode;
 };
 
-type Coordinate = { x: number; y: number; };
-type Size = { width: number; height: number; };
+type Coordinate = { x: number; y: number };
+type Size = { width: number; height: number };
 
 type CropConfig = {
   cropWidth: number;
@@ -124,7 +124,7 @@ const getCoverSize = (
   return { width, height: width / imageRatio };
 };
 
-const getDistance = (touches: { pageX: number; pageY: number; }[]) => {
+const getDistance = (touches: { pageX: number; pageY: number }[]) => {
   const [a, b] = touches;
   return Math.hypot(b.pageX - a.pageX, b.pageY - a.pageY);
 };

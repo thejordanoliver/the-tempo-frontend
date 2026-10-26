@@ -163,11 +163,13 @@ export type ForumPollResponse<TPoll = ForumPollState> = {
   poll?: TPoll | null;
 };
 
-export type ForumPostCreateResponse<TPost = unknown, TPoll = unknown> =
-  BadgeMutationResponse & {
-    post: TPost;
-    poll?: TPoll | null;
-  };
+export type ForumPostCreateResponse<
+  TPost = unknown,
+  TPoll = unknown,
+> = BadgeMutationResponse & {
+  post: TPost;
+  poll?: TPoll | null;
+};
 
 /**
  * Shared response type used by:

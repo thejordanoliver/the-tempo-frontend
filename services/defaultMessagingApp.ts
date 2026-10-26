@@ -14,7 +14,9 @@ export async function getDefaultMessagingApp(): Promise<DefaultMessagingApp | nu
   if (!native) return null;
   try {
     const app = await native.getDefaultSmsApp();
-    return app?.name && app.iconUri?.startsWith("data:image/png;base64,") ? app : null;
+    return app?.name && app.iconUri?.startsWith("data:image/png;base64,")
+      ? app
+      : null;
   } catch {
     return null;
   }

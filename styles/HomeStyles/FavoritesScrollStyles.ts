@@ -12,7 +12,9 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
       padding: 16,
       borderRadius: 12,
       gap: 12,
-      backgroundColor: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
     emptyCopy: { gap: 4 },
     addButton: {

@@ -10,7 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { buildChatPayload, type ChatSendPayload } from "utils/messages/chatPayload";
+import {
+  buildChatPayload,
+  type ChatSendPayload,
+} from "utils/messages/chatPayload";
 
 type Props = {
   onSend: (payload: ChatSendPayload) => boolean | Promise<boolean>;
@@ -52,8 +55,7 @@ function ChatInputBar({
   );
 
   const inputDisabled = disabled || isSending;
-  const sendDisabled =
-    !payload || isSending || disabled || sendDisabledProp;
+  const sendDisabled = !payload || isSending || disabled || sendDisabledProp;
 
   const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
@@ -179,7 +181,6 @@ function ChatInputBar({
     </View>
   );
 }
-
 
 const MemoizedChatInputBar = memo(ChatInputBar);
 

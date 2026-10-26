@@ -2,7 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type RecruitTeamRankingType =
-  "composite" | "overall" | "transfer" | string;
+  | "composite"
+  | "overall"
+  | "transfer"
+  | string;
 export type RecruitTeamRankingSource = "247sports" | string;
 
 export interface RecruitTeamRanking {

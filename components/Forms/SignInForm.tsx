@@ -3,12 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Pressable,
-  TextInput,
-  View,
-} from "react-native";
+import { Animated, Pressable, TextInput, View } from "react-native";
 import { formStyles } from "styles/FormStyles";
 import AuthFormLayout from "./AuthFormLayout";
 
@@ -99,7 +94,11 @@ export default function SignInForm({ ...props }: SignInFormProps) {
         </View>
 
         <View style={styles.buttonContainer}>
-          <Button isDark={isDark} onPress={props.onSubmit} disabled={props.isSubmitting}>
+          <Button
+            isDark={isDark}
+            onPress={props.onSubmit}
+            disabled={props.isSubmitting}
+          >
             {props.isSubmitting ? "Signing In…" : "Sign In"}
           </Button>
           <Button

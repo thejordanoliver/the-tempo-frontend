@@ -174,7 +174,9 @@ const parseNumericStat = (value: BaseballStatValue | undefined) => {
   return Number.isFinite(numeric) ? numeric : null;
 };
 
-export const formatStatValue = (value: BaseballStatValue | undefined): string => {
+export const formatStatValue = (
+  value: BaseballStatValue | undefined,
+): string => {
   if (!hasDisplayableStatValue(value)) return "—";
 
   if (typeof value === "number") return numberFormatter.format(value);
@@ -185,7 +187,8 @@ export const formatStatValue = (value: BaseballStatValue | undefined): string =>
 const getGamesPlayed = (stats: BaseballStatMap | null | undefined) =>
   parseNumericStat(stats?.gamesPlayed) ?? 0;
 
-export const getPlayerId = (player: RosterPlayer) => player.playerId ?? player.id;
+export const getPlayerId = (player: RosterPlayer) =>
+  player.playerId ?? player.id;
 
 export const getPlayerDisplayName = (player: RosterPlayer) =>
   player.short_name ||
@@ -220,7 +223,10 @@ export const getPlayerRows = (players: RosterPlayer[]) => {
     .filter((row): row is PlayerStatRow => row !== null);
 };
 
-export const getStatLeader = (rows: PlayerStatRow[], definition: LeaderDefinition) => {
+export const getStatLeader = (
+  rows: PlayerStatRow[],
+  definition: LeaderDefinition,
+) => {
   return rows.reduce<StatLeader | null>((leader, row) => {
     const stats =
       definition.group === "advanced-batting"
@@ -245,5 +251,3 @@ export const getStatLeader = (rows: PlayerStatRow[], definition: LeaderDefinitio
     return isBetter ? { row, value: leaderValue, numericValue } : leader;
   }, null);
 };
-
-

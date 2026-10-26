@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import SeasonLeadersTable from "@/components/League/SeasonLeadersTable";
+import SeasonLeadersTable from "@/components/League/SeasonLeaders/SeasonLeadersTable";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useSeasonLeaders } from "@/hooks/LeagueHooks/useSeasonLeaders";
 import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
@@ -44,19 +44,13 @@ export default function SeasonLeadersScreen() {
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
 
-  const {
-    categories,
-    loading,
-    loadingMore,
-    hasMore,
-    error,
-    loadMore,
-  } = useSeasonLeaders(season, league, {
-    enabled: Boolean(league),
-    limit: PAGE_SIZE,
-    category: requestedCategory,
-    paginated: true,
-  });
+  const { categories, loading, loadingMore, hasMore, error, loadMore } =
+    useSeasonLeaders(season, league, {
+      enabled: Boolean(league),
+      limit: PAGE_SIZE,
+      category: requestedCategory,
+      paginated: true,
+    });
 
   const category = useMemo(
     () =>

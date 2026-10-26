@@ -3,7 +3,11 @@ import type { ImageSourcePropType } from "react-native";
 import { apiClient } from "utils/apiClient";
 
 export type LastFiveGamesSport =
-  "basketball" | "baseball" | "football" | "hockey" | "soccer";
+  | "basketball"
+  | "baseball"
+  | "football"
+  | "hockey"
+  | "soccer";
 
 export type LastFiveGameResult = {
   id: number;

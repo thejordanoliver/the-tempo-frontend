@@ -14,4 +14,3 @@ export function getTeamGradient(color: string): [string, string, string] {
     `rgba(${red}, ${green}, ${blue}, 0)`,
   ];
 }
-

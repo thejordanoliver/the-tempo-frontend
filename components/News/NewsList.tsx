@@ -48,14 +48,13 @@ export default function NewsList({
     );
   }
 
-
-   if (items.length === 0) {
-     return (
-       <View style={global.emptyContainer}>
-         <Text style={global.emptyTitle}>No news available</Text>
-       </View>
-     );
-   }
+  if (items.length === 0) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>No news available</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList

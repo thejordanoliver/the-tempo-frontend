@@ -29,14 +29,14 @@ export function useLiveSportsSubscription<TPayload = unknown>({
     onUpdateRef.current = onUpdate;
   }, [onUpdate]);
 
-  const payloadRef = useRef(payload);
   const stableSubscriptionKey = getSportsLiveSubscriptionLocalKey(
     kind,
     payload,
   );
+  const payloadRef = useRef({ key: stableSubscriptionKey, payload });
 
   useEffect(() => {
-    payloadRef.current = payload;
+    payloadRef.current = { key: stableSubscriptionKey, payload };
   }, [stableSubscriptionKey, payload]);
 
   useFocusEffect(
@@ -46,9 +46,10 @@ export function useLiveSportsSubscription<TPayload = unknown>({
       let active = true;
       const unsubscribe = subscribeSportsLive<TPayload>({
         kind,
-        payload: payloadRef.current,
+        payload: payloadRef.current.payload,
         listener: (envelope) => {
-          if (active) onUpdateRef.current(envelope.payload, envelope);
+          if (active && payloadRef.current.key === stableSubscriptionKey)
+            onUpdateRef.current(envelope.payload, envelope);
         },
       });
 

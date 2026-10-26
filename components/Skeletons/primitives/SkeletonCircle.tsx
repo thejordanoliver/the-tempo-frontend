@@ -12,11 +12,6 @@ export default function SkeletonCircle({
   style,
 }: SkeletonCircleProps) {
   return (
-    <SkeletonBlock
-      width={size}
-      height={size}
-      radius={size / 2}
-      style={style}
-    />
+    <SkeletonBlock width={size} height={size} radius={size / 2} style={style} />
   );
 }

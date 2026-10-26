@@ -41,7 +41,7 @@ export const GameSummaryStyles = (isDark: boolean) => {
       paddingHorizontal: 12,
       paddingTop: 14,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: theme.transparentGray,
+      borderBottomColor: Colors.midTone,
     },
     scoringRow: {
       backgroundColor: theme.transparentItemBackground,
@@ -88,13 +88,6 @@ export const GameSummaryStyles = (isDark: boolean) => {
       height: 6,
       borderRadius: 3,
       backgroundColor: theme.icon,
-    },
-    timelineLine: {
-      flex: 1,
-      width: StyleSheet.hairlineWidth,
-      minHeight: 12,
-      marginTop: 5,
-      backgroundColor: theme.transparentGray,
     },
     playContent: {
       flex: 1,

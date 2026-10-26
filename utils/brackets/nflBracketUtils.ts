@@ -94,12 +94,7 @@ export const isTbdTeam = (team: PlayoffTeam | null | undefined): boolean => {
 
   const name = team.name?.trim().toUpperCase() ?? "";
 
-  return (
-    !Number.isFinite(id) ||
-    id <= 0 ||
-    code === "TBD" ||
-    name === "TBD"
-  );
+  return !Number.isFinite(id) || id <= 0 || code === "TBD" || name === "TBD";
 };
 
 const getWinnerId = (game?: PlayoffGame): number | null => {

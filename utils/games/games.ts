@@ -108,7 +108,7 @@ export const formatPeriod = ({
 
     return statusText || "";
   }
-  
+
   // Default: football / basketball quarters
   if (p === 1) return "1st";
   if (p === 2) return "2nd";
@@ -148,7 +148,13 @@ export const formatVenueAddress = (address?: {
 }) => {
   if (!address) return undefined;
 
-  return [address.street, address.city, address.state, address.postalCode ?? address.zipCode, address.country]
+  return [
+    address.street,
+    address.city,
+    address.state,
+    address.postalCode ?? address.zipCode,
+    address.country,
+  ]
     .filter(Boolean)
     .join(" ");
 };

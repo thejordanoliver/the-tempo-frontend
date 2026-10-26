@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { leagueCarouselWindow, leagueCarouselMotionAction, leagueDistanceFromFront, leagueOrbitGeometry, leagueOrbitPosition, wrapLeagueRotation } from "../utils/explore/leagueCarousel";
+import {
+  leagueCarouselWindow,
+  leagueCarouselMotionAction,
+  leagueDistanceFromFront,
+  leagueOrbitGeometry,
+  leagueOrbitPosition,
+  wrapLeagueRotation,
+} from "../utils/explore/leagueCarousel";
 
 const COUNT = 30;
 const geometry = leagueOrbitGeometry(416, 280);
@@ -33,30 +40,48 @@ test("the front remains opaque, largest, and above the other visible cards", () 
       assert.ok(card.matrix[14] <= selected.matrix[14] + 1e-10);
       assert.ok(card.zIndex <= selected.zIndex);
       if (Math.abs(leagueDistanceFromFront(league, rotation, COUNT)) <= 1) {
-        assert.equal(card.opacity, 1, "foreground cards must not show other logos through them");
+        assert.equal(
+          card.opacity,
+          1,
+          "foreground cards must not show other logos through them",
+        );
       }
     }
-    assert.ok(visible <= 4, "hide rear-facing cards instead of rendering mirrored logos");
+    assert.ok(
+      visible <= 4,
+      "hide rear-facing cards instead of rendering mirrored logos",
+    );
   }
 });
 
 test("card centers follow one circle and their faces point outward, tangent to the ring", () => {
   for (let distance = -3; distance <= 3; distance += 0.125) {
     const { matrix } = leagueOrbitPosition(0, -distance, COUNT, geometry);
-    const radial = [matrix[12], matrix[13] - geometry.sinPitch * geometry.radius, matrix[14] + geometry.cosPitch * geometry.radius];
+    const radial = [
+      matrix[12],
+      matrix[13] - geometry.sinPitch * geometry.radius,
+      matrix[14] + geometry.cosPitch * geometry.radius,
+    ];
     assert.ok(Math.abs(Math.hypot(...radial) - geometry.radius) < 1e-8);
     // The face normal is the matrix's Z column; the card's width lies tangent
     // to the circle. A billboard/scale-only transform would fail both checks.
     for (let axis = 0; axis < 3; axis++) {
-      assert.ok(Math.abs(radial[axis] / geometry.radius - matrix[8 + axis]) < 1e-8);
+      assert.ok(
+        Math.abs(radial[axis] / geometry.radius - matrix[8 + axis]) < 1e-8,
+      );
     }
-    assert.ok(Math.abs(radial[0] * matrix[0] + radial[1] * matrix[1] + radial[2] * matrix[2]) < 1e-8);
+    assert.ok(
+      Math.abs(
+        radial[0] * matrix[0] + radial[1] * matrix[1] + radial[2] * matrix[2],
+      ) < 1e-8,
+    );
   }
 });
 
 test("perspective makes side cards recede symmetrically at phone and tablet widths", () => {
-  for (const width of [280, 390, 768]) {
-    const layout = leagueOrbitGeometry(width, Math.min(270, width * 0.62));
+  for (const width of [280, 390, 768, 1024, 1366]) {
+    const cardWidth = width * 0.62;
+    const layout = leagueOrbitGeometry(width, cardWidth);
     const front = leagueOrbitPosition(0, 0, COUNT, layout);
     const left = leagueOrbitPosition(COUNT - 1, 0, COUNT, layout);
     const right = leagueOrbitPosition(1, 0, COUNT, layout);
@@ -64,12 +89,28 @@ test("perspective makes side cards recede symmetrically at phone and tablet widt
     assert.equal(front.matrix[12], 0);
     assert.equal(front.matrix[14], 0);
     assert.ok(right.matrix[14] < 0);
-    assert.ok(right.matrix[15] > 1, "the single native matrix must include perspective foreshortening");
+    assert.ok(
+      right.matrix[15] > 1,
+      "the single native matrix must include perspective foreshortening",
+    );
     assert.equal(right.matrix.length, 16);
     assert.ok(right.matrix.every(Number.isFinite));
     assert.ok(Math.abs(projectX(left.matrix) + projectX(right.matrix)) < 1e-8);
-    assert.ok(right.matrix[8] > 0 && left.matrix[8] < 0, "side faces rotate away from the ring's center");
-    assert.ok(projectX(right.matrix) > width * 0.3, "leave space for the front card");
+    assert.ok(
+      right.matrix[8] > 0 && left.matrix[8] < 0,
+      "side faces rotate away from the ring's center",
+    );
+    assert.ok(
+      projectX(right.matrix) > width * 0.3,
+      "leave space for the front card",
+    );
+    const outerEdgeX =
+      (right.matrix[0] * (cardWidth / 2) + right.matrix[12]) /
+      (right.matrix[3] * (cardWidth / 2) + right.matrix[15]);
+    assert.ok(
+      outerEdgeX > width / 2,
+      "show only part of the neighboring card at every device width",
+    );
     assert.equal(leagueOrbitPosition(4, 0, COUNT, layout).opacity, 0);
   }
 });
@@ -82,7 +123,10 @@ test("the seven-card window includes every visible face across wraparound and se
     assert.equal(new Set(window).size, 7);
     for (let league = 0; league < COUNT; league++) {
       if (leagueOrbitPosition(league, rotation, COUNT, geometry).opacity > 0) {
-        assert.ok(window.includes(league), `visible league ${league} missing at rotation ${rotation}`);
+        assert.ok(
+          window.includes(league),
+          `visible league ${league} missing at rotation ${rotation}`,
+        );
       }
     }
   }
@@ -90,20 +134,69 @@ test("the seven-card window includes every visible face across wraparound and se
 });
 
 test("paused arrows and search retain their manual animation until the target is reached", () => {
-  const state = { focused: true, appActive: true, paused: true, reduceMotion: false, interacting: false };
+  const state = {
+    focused: true,
+    appActive: true,
+    paused: true,
+    reduceMotion: false,
+    interacting: false,
+  };
   assert.equal(leagueCarouselMotionAction(state), "stop");
-  assert.equal(leagueCarouselMotionAction({ ...state, interacting: true }), "manual");
-  assert.equal(leagueCarouselMotionAction({ ...state, interacting: true, reduceMotion: true }), "manual");
-  assert.equal(leagueCarouselMotionAction({ ...state, interacting: true, appActive: false }), "stop");
+  assert.equal(
+    leagueCarouselMotionAction({ ...state, interacting: true }),
+    "manual",
+  );
+  assert.equal(
+    leagueCarouselMotionAction({
+      ...state,
+      interacting: true,
+      reduceMotion: true,
+    }),
+    "manual",
+  );
+  assert.equal(
+    leagueCarouselMotionAction({
+      ...state,
+      interacting: true,
+      appActive: false,
+    }),
+    "stop",
+  );
   assert.equal(leagueCarouselMotionAction({ ...state, paused: false }), "auto");
 });
 
 test("search holds the selected league and clearing search preserves manual pause", () => {
-  const state = { focused: true, appActive: true, paused: false, reduceMotion: false, interacting: false, searching: false };
+  const state = {
+    focused: true,
+    appActive: true,
+    paused: false,
+    reduceMotion: false,
+    interacting: false,
+    searching: false,
+  };
   assert.equal(leagueCarouselMotionAction(state), "auto");
-  assert.equal(leagueCarouselMotionAction({ ...state, searching: true }), "stop");
-  assert.equal(leagueCarouselMotionAction({ ...state, searching: true, interacting: true }), "manual");
-  assert.equal(leagueCarouselMotionAction({ ...state, searching: false }), "auto");
-  assert.equal(leagueCarouselMotionAction({ ...state, paused: true, searching: true }), "stop");
-  assert.equal(leagueCarouselMotionAction({ ...state, paused: true, searching: false }), "stop");
+  assert.equal(
+    leagueCarouselMotionAction({ ...state, searching: true }),
+    "stop",
+  );
+  assert.equal(
+    leagueCarouselMotionAction({
+      ...state,
+      searching: true,
+      interacting: true,
+    }),
+    "manual",
+  );
+  assert.equal(
+    leagueCarouselMotionAction({ ...state, searching: false }),
+    "auto",
+  );
+  assert.equal(
+    leagueCarouselMotionAction({ ...state, paused: true, searching: true }),
+    "stop",
+  );
+  assert.equal(
+    leagueCarouselMotionAction({ ...state, paused: true, searching: false }),
+    "stop",
+  );
 });

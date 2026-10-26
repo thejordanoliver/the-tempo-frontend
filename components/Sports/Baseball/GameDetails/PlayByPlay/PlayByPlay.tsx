@@ -63,7 +63,7 @@ export type PlayByPlayProps = {
   awayTeamId?: string | number | null;
   homeTeamId?: string | number | null;
   homeLogo?: ImageSourcePropType;
-  awayLogo?: ImageSourcePropType; 
+  awayLogo?: ImageSourcePropType;
   play?: BaseballPlay | null;
   plays?: BaseballPlay[];
   situation?: BaseballSituation | null;

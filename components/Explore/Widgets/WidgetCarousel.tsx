@@ -26,9 +26,8 @@ const SWIPE_THRESHOLD = 0.22;
 const FLING_VELOCITY = 500;
 const SLIDE_EASING = Easing.bezier(0.22, 1, 0.36, 1);
 const DISSOLVE_EASING = Easing.bezier(0.4, 0, 0.2, 1);
-const DOT_LAYOUT_TRANSITION = LinearTransition.duration(220).easing(
-  SLIDE_EASING,
-);
+const DOT_LAYOUT_TRANSITION =
+  LinearTransition.duration(220).easing(SLIDE_EASING);
 const DOT_ENTERING_TRANSITION = ZoomIn.duration(180).easing(SLIDE_EASING);
 const DOT_EXITING_TRANSITION = ZoomOut.duration(160).easing(SLIDE_EASING);
 

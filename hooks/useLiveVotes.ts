@@ -1,3 +1,4 @@
+import { useScreenActivity } from "./useScreenActivity";
 import { usePredictionScoring } from "./usePredictionScoring";
 
 import { castRankedPrediction } from "services/fanPredictionsApi";
@@ -17,7 +18,8 @@ type VoteUpdatePayload = {
 };
 
 type JoinGameAck =
-  ({ ok: true } & VoteUpdatePayload) | { ok: false; error: string };
+  | ({ ok: true } & VoteUpdatePayload)
+  | { ok: false; error: string };
 
 type CastVotePayload = {
   gameId: number;
@@ -70,11 +72,20 @@ export function useLiveVotes(
   gameId: number,
   predictionContext?: RankedPredictionContext,
 ) {
+  const { active, activeRef } = useScreenActivity();
+  const gameRef = useRef(gameId);
+  useEffect(() => {
+    gameRef.current = gameId;
+  }, [gameId]);
   const { scoring, scoringError, retryScoring } = usePredictionScoring(
     gameId,
     predictionContext,
   );
-  const [votes, setVotes] = useState<PollResult[] | null>(null);
+  const [voteState, setVoteState] = useState<{
+    gameId: number;
+    votes: PollResult[];
+  } | null>(null);
+  const votes = voteState?.gameId === gameId ? voteState.votes : null;
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef<Socket<
     VoteServerToClientEvents,
@@ -82,6 +93,7 @@ export function useLiveVotes(
   > | null>(null);
 
   useEffect(() => {
+    if (!active) return;
     let socket: Socket<
       VoteServerToClientEvents,
       VoteClientToServerEvents
@@ -89,12 +101,11 @@ export function useLiveVotes(
     let mounted = true;
 
     const connectSocket = async () => {
-      setVotes(null);
       setIsConnected(false);
 
       const token = await getAccessToken();
 
-      if (!mounted) return;
+      if (!mounted || !activeRef.current) return;
       if (!token) {
         console.warn("No access token found; skipping socket connection");
         return;
@@ -108,10 +119,10 @@ export function useLiveVotes(
 
       const joinGame = () => {
         socket?.emit("joinGame", gameId, (response) => {
-          if (!mounted) return;
+          if (!mounted || !activeRef.current) return;
 
           if (response.ok && String(response.gameId) === String(gameId)) {
-            setVotes(response.votes);
+            setVoteState({ gameId, votes: response.votes });
             return;
           }
 
@@ -121,16 +132,23 @@ export function useLiveVotes(
         });
       };
 
+      socket.auth = async (callback: (auth: { token?: string }) => void) => {
+        const latest = await getAccessToken();
+        if (mounted && activeRef.current)
+          callback(latest ? { token: latest } : {});
+      };
       socket.on("connect", () => {
+        if (!mounted || !activeRef.current) return;
         setIsConnected(true);
         joinGame();
       });
 
       socket.on("disconnect", () => {
-        setIsConnected(false);
+        if (mounted && activeRef.current) setIsConnected(false);
       });
 
       socket.on("connect_error", (err) => {
+        if (!mounted || !activeRef.current) return;
         setIsConnected(false);
         console.warn("Vote socket connection error", err.message);
       });
@@ -138,8 +156,12 @@ export function useLiveVotes(
       socket.on(
         "voteUpdate",
         ({ gameId: updatedGameId, votes: updatedVotes }) => {
-          if (String(updatedGameId) === String(gameId)) {
-            setVotes(updatedVotes);
+          if (
+            mounted &&
+            activeRef.current &&
+            String(updatedGameId) === String(gameId)
+          ) {
+            setVoteState({ gameId, votes: updatedVotes });
           }
         },
       );
@@ -157,7 +179,7 @@ export function useLiveVotes(
       socketRef.current = null;
       setIsConnected(false);
     };
-  }, [gameId]);
+  }, [gameId, active, activeRef]);
 
   const castVoteOverHttp = useCallback(
     async (teamId: string | number): Promise<CastVoteAck> => {
@@ -168,7 +190,8 @@ export function useLiveVotes(
         // refresh should not turn a successfully persisted vote into an error.
         try {
           const state = await fetchVoteResults(gameId);
-          setVotes(state.votes);
+          if (activeRef.current && gameRef.current === gameId)
+            setVoteState({ gameId, votes: state.votes });
         } catch (error) {
           console.warn("Vote result refresh error", error);
         }
@@ -178,7 +201,7 @@ export function useLiveVotes(
         return { ok: false, error: getVoteErrorMessage(error) };
       }
     },
-    [gameId],
+    [gameId, activeRef],
   );
 
   const sport = predictionContext?.sport;
@@ -197,7 +220,9 @@ export function useLiveVotes(
         try {
           await castRankedPrediction(gameId, teamId, { sport, league, date });
           try {
-            setVotes((await fetchVoteResults(gameId)).votes);
+            const next = await fetchVoteResults(gameId);
+            if (activeRef.current && gameRef.current === gameId)
+              setVoteState({ gameId, votes: next.votes });
           } catch (error) {
             console.warn("Vote result refresh error", error);
           }
@@ -236,7 +261,7 @@ export function useLiveVotes(
 
       return response;
     },
-    [castVoteOverHttp, gameId, sport, league, date, state, scoring],
+    [castVoteOverHttp, gameId, sport, league, date, state, scoring, activeRef],
   );
 
   return { votes, castVote, isConnected, scoring, scoringError, retryScoring };

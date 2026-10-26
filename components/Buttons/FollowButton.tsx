@@ -70,13 +70,15 @@ export default function FollowButton({
       disabled={loading || isFollowing === null}
       style={[styles.followButtonContainer, compactContainerStyle]}
     >
-      <View
-        pointerEvents="none"
-        style={styles.followButtonBackground}
-      />
+      <View pointerEvents="none" style={styles.followButtonBackground} />
 
       {isFollowing === null ? (
-        <View style={[styles.loadingContainer, compact && styles.compactLoadingContainer]}>
+        <View
+          style={[
+            styles.loadingContainer,
+            compact && styles.compactLoadingContainer,
+          ]}
+        >
           <ActivityIndicator
             size="small"
             color={isDark ? Colors.white : Colors.black}

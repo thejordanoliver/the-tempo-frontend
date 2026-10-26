@@ -101,7 +101,10 @@ export const NewsCardStyles = (isDark: boolean, screenWidth: number) => {
   });
 };
 
-export const NewsCardSkeletonStyles = (isDark: boolean, screenWidth: number) => {
+export const NewsCardSkeletonStyles = (
+  isDark: boolean,
+  screenWidth: number,
+) => {
   const cardStyles = NewsCardStyles(isDark, screenWidth);
   const backgroundColor = isDark ? Colors.darkGray : Colors.lightGray;
   const titleHeight = cardStyles.title.fontSize;

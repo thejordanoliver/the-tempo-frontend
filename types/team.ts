@@ -48,15 +48,9 @@ export type TeamVenue = {
   leagueKey: string | null;
   sourceRef: string | null;
   updatedAt: string | null;
-  geocodedAt: string | null;
   leagueSlug: string | null;
   sourceType: string | null;
   sourceTeamId: number | null;
-  geocodingQuery: string | null;
-  sourceImageUrl: string | null;
-  geocodingProvider: string | null;
-  geocodingConfidence: number | null;
-  geocodingNeedsReview: boolean | null;
 };
 
 export type Conference = {

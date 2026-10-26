@@ -10,13 +10,11 @@ export type AuthorizedMessageAttachment = {
   url: string;
 };
 
-const signedUrlCache =
-  createExpiringRequestCache<AuthorizedMessageAttachment>({
-    refreshBufferMs: EXPIRY_REFRESH_BUFFER_MS,
-  });
+const signedUrlCache = createExpiringRequestCache<AuthorizedMessageAttachment>({
+  refreshBufferMs: EXPIRY_REFRESH_BUFFER_MS,
+});
 
-const normalizeAttachmentId = (value: unknown) =>
-  String(value ?? "").trim();
+const normalizeAttachmentId = (value: unknown) => String(value ?? "").trim();
 
 export const clearMessageAttachmentUrlCache = () => {
   signedUrlCache.clear();
@@ -56,11 +54,7 @@ export const getAuthorizedMessageAttachment = async (
       const url = String(raw.url ?? "");
       const attachment = raw.attachment as MessageAttachment | undefined;
 
-      if (
-        !url ||
-        !attachment?.id ||
-        attachment.id !== attachmentId
-      ) {
+      if (!url || !attachment?.id || attachment.id !== attachmentId) {
         throw new Error("Attachment URL response was invalid.");
       }
 

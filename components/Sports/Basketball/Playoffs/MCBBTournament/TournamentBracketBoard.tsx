@@ -44,8 +44,7 @@ export function TournamentBracketBoard({
     [regions],
   );
   const orderedFinalFour = useMemo(
-    () =>
-      getOrderedFinalFourGames(finalFourGames, regionalTeamOrderById),
+    () => getOrderedFinalFourGames(finalFourGames, regionalTeamOrderById),
     [finalFourGames, regionalTeamOrderById],
   );
   const orderedRegions = useMemo(

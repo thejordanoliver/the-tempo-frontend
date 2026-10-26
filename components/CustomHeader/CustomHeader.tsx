@@ -133,13 +133,19 @@ export function CustomHeader({
     isTabRoute &&
     navigationState != null &&
     navigationState.type === "stack" &&
-    navigationState.routes.findIndex((route) => route.key === headerRoute.key) > 0;
+    navigationState.routes.findIndex((route) => route.key === headerRoute.key) >
+      0;
 
   const handleTabStackBack = useCallback(() => {
     const state = navigation.getState();
 
-    if (!isTabRoute || !state || state.type !== "stack" || state.index <= 0 ||
-        state.routes[state.index]?.key !== headerRoute.key) {
+    if (
+      !isTabRoute ||
+      !state ||
+      state.type !== "stack" ||
+      state.index <= 0 ||
+      state.routes[state.index]?.key !== headerRoute.key
+    ) {
       return;
     }
 

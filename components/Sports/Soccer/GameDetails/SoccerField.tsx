@@ -56,50 +56,50 @@ const SHOT_OUTCOMES: {
   value: ShotOutcome;
   label: string;
 }[] = [
-    {
-      value: "goal",
-      label: "Goal",
-    },
-    {
-      value: "saved",
-      label: "Save",
-    },
-    {
-      value: "off-target",
-      label: "Off Target",
-    },
-    {
-      value: "blocked",
-      label: "Blocked",
-    },
+  {
+    value: "goal",
+    label: "Goal",
+  },
+  {
+    value: "saved",
+    label: "Save",
+  },
+  {
+    value: "off-target",
+    label: "Off Target",
+  },
+  {
+    value: "blocked",
+    label: "Blocked",
+  },
 
-    {
-      value: "unknown",
-      label: "Unknown",
-    },
-  ];
+  {
+    value: "unknown",
+    label: "Unknown",
+  },
+];
 
 const LEGEND_OUTCOMES: {
   value: ShotOutcome;
   label: string;
 }[] = [
-    {
-      value: "goal",
-      label: "Goal",
-    },
-    {
-      value: "saved",
-      label: "Save",
-    },
-    {
-      value: "blocked",
-      label: "Blocked",
-    },
-    {
-      value: "off-target",
-      label: "Off Target",
-    },
-  ];
+  {
+    value: "goal",
+    label: "Goal",
+  },
+  {
+    value: "saved",
+    label: "Save",
+  },
+  {
+    value: "blocked",
+    label: "Blocked",
+  },
+  {
+    value: "off-target",
+    label: "Off Target",
+  },
+];
 
 const clamp = (value: number, minimum: number, maximum: number) => {
   return Math.max(minimum, Math.min(value, maximum));
@@ -480,18 +480,18 @@ export default function SoccerShotMap({
 
   const selectedStartPoint = selectedShot
     ? getShotPoint(
-      selectedShot,
-      selectedShot.coordinates.x,
-      selectedShot.coordinates.y,
-    )
+        selectedShot,
+        selectedShot.coordinates.x,
+        selectedShot.coordinates.y,
+      )
     : null;
 
   const selectedEndPoint = selectedShot
     ? getShotPoint(
-      selectedShot,
-      selectedShot.coordinates.endX,
-      selectedShot.coordinates.endY,
-    )
+        selectedShot,
+        selectedShot.coordinates.endX,
+        selectedShot.coordinates.endY,
+      )
     : null;
 
   if (state === "pre" || state === "post") return null;
@@ -522,8 +522,8 @@ export default function SoccerShotMap({
             height
               ? { height }
               : {
-                aspectRatio: FIELD_WIDTH / FIELD_HEIGHT,
-              },
+                  aspectRatio: FIELD_WIDTH / FIELD_HEIGHT,
+                },
           ]}
         >
           <Svg

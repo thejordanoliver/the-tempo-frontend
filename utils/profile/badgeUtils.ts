@@ -7,11 +7,7 @@ import {
 } from "@/types/badges";
 
 export function getTotalEngagement(stats: UserForumStats): number {
-  return (
-    stats.likesReceived +
-    stats.commentsReceived +
-    stats.sharesReceived
-  );
+  return stats.likesReceived + stats.commentsReceived + stats.sharesReceived;
 }
 
 export function getBadgeMetricValue(
@@ -51,8 +47,7 @@ export function buildBadgeProgress(
     const currentValue = getBadgeMetricValue(badge, stats);
     const earnedRecord = earnedBadgeMap.get(badge.id);
 
-    const isEarned =
-      Boolean(earnedRecord) || currentValue >= badge.threshold;
+    const isEarned = Boolean(earnedRecord) || currentValue >= badge.threshold;
 
     const progressPercent = Math.min(
       (currentValue / badge.threshold) * 100,
@@ -72,17 +67,14 @@ export function buildBadgeProgress(
   });
 }
 
-export function getBadgeSummary(
-  badges: BadgeProgress[],
-): BadgeSummary {
+export function getBadgeSummary(badges: BadgeProgress[]): BadgeSummary {
   const earnedCount = badges.filter((badge) => badge.isEarned).length;
   const totalCount = badges.length;
 
   return {
     earnedCount,
     totalCount,
-    completionPercent:
-      totalCount > 0 ? (earnedCount / totalCount) * 100 : 0,
+    completionPercent: totalCount > 0 ? (earnedCount / totalCount) * 100 : 0,
   };
 }
 

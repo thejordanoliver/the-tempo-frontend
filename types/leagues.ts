@@ -10,7 +10,10 @@ import type { TennisMatch } from "./tennis/tennis";
 
 import type { VolleyballGame } from "./volleyball/volleyball";
 
-export type LeagueGame =
+/** Backend sort key: compare values descending in order, after game status. */
+export type MatchupPriority = readonly [number, number, number, number];
+
+export type LeagueGame = (
   | VolleyballGame
   | BasketballGame
   | FootballGame
@@ -18,7 +21,8 @@ export type LeagueGame =
   | HockeyGame
   | SoccerGame
   | TennisMatch
-  | MMAFight;
+  | MMAFight
+) & { matchupPriority?: MatchupPriority | null };
 
 export type HomeLeagueSource = {
   id: HomeLeagueId;

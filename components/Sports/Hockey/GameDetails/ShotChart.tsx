@@ -58,7 +58,6 @@ const RINK_VIEWBOX_LENGTH =
 const RINK_VIEWBOX_WIDTH = RINK_VIEWBOX_BOUNDS.bottom - RINK_VIEWBOX_BOUNDS.top;
 const RINK_CENTER_LOGO_SIZE = 50;
 
-
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
 
@@ -179,7 +178,6 @@ export default function ShotChart({
 
     const isHomeShot = gameTeamIdsMatch(playTeamId, homeId);
     const isAwayShot = gameTeamIdsMatch(playTeamId, awayId);
-
 
     const rinkX = clamp(rawX + RINK_HALF_LENGTH, 0, RINK_LENGTH);
     const rinkY = clamp(RINK_HALF_WIDTH - rawY, 0, RINK_WIDTH);

@@ -313,7 +313,7 @@ function teamMatches(
 
   return Boolean(
     (normalizedTeamId && possibleTeamIds.includes(normalizedTeamId)) ||
-    (normalizedTeamCode && actualTeamCode === normalizedTeamCode),
+      (normalizedTeamCode && actualTeamCode === normalizedTeamCode),
   );
 }
 
@@ -686,6 +686,7 @@ function createDriveShape({
     startX,
     catchX,
     endX,
+    markerX: isKick ? startX : endX,
     footballX: kickTargetX ?? endX,
     footballY: kickTargetY ?? FIELD_MIDDLE_Y,
 
@@ -1233,7 +1234,7 @@ function FootballField({
 
           {/* Possession marker */}
           <G
-            transform={`${getPossessionMarkerTransform(driveShape.endX)} translate(0 -8)`}
+            transform={`${getPossessionMarkerTransform(driveShape.markerX)} translate(0 -8)`}
           >
             <Path
               d="M15 12.5c8.7 0 15.75 7.05 15.75 15.75 0 8.7-7.8 16.7-15.22 24.07a.75.75 0 0 1-1.06 0C7.05 44.95-.75 36.95-.75 28.25-.75 19.55 6.3 12.5 15 12.5Z"
@@ -1268,7 +1269,7 @@ function FootballField({
           {/* Yardage badge */}
           <G
             transform={`translate(${clamp(
-              driveShape.endX - YARDAGE_BADGE_WIDTH / 2,
+              driveShape.markerX - YARDAGE_BADGE_WIDTH / 2,
               4,
               VIEWBOX_WIDTH - YARDAGE_BADGE_WIDTH - 4,
             )} ${YARDAGE_BADGE_Y})`}

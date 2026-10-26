@@ -6,15 +6,15 @@ Reviewed October 14, 2026. This is an audit of the current working tree; no appl
 
 Reviewed all seven player screen implementations, the shared routes for Explore/Leagues/Profile, player headers, career tables, season summaries, awards, game/fight logs, relevant fetching hooks, and navigation entry points. Read local backend routes and response types to verify API contracts.
 
-| Screen | Leagues reviewed | Findings |
-| --- | --- | --- |
-| Basketball | NBA, WNBA, men's/women's college basketball | F02, F04, F11, F13, F15 |
-| Football | NFL, college football | F02, F04, F11, F13 |
-| Baseball | MLB | F02, F04, F05, F06, F11 |
-| Hockey | NHL, including goalies | F02, F03, F04, F07, F09, F14 |
-| Soccer | Shared soccer profile and team/competition filters | F08, F10; shared route imports also encounter F02 |
-| MMA | MMA/UFC profile, career stats, fight log, latest fight | F02, F12 |
-| Racing | Driver entry point and profile route | F01; shared route imports also encounter F02 |
+| Screen     | Leagues reviewed                                       | Findings                                          |
+| ---------- | ------------------------------------------------------ | ------------------------------------------------- |
+| Basketball | NBA, WNBA, men's/women's college basketball            | F02, F04, F11, F13, F15                           |
+| Football   | NFL, college football                                  | F02, F04, F11, F13                                |
+| Baseball   | MLB                                                    | F02, F04, F05, F06, F11                           |
+| Hockey     | NHL, including goalies                                 | F02, F03, F04, F07, F09, F14                      |
+| Soccer     | Shared soccer profile and team/competition filters     | F08, F10; shared route imports also encounter F02 |
+| MMA        | MMA/UFC profile, career stats, fight log, latest fight | F02, F12                                          |
+| Racing     | Driver entry point and profile route                   | F01; shared route imports also encounter F02      |
 
 There are **15 actionable findings: two P1 and thirteen P2**. P1 indicates an unusable route/platform flow; P2 indicates incorrect data or degraded recovery/loading behavior. Calculations were checked with synthetic inputs, not production athlete data.
 
@@ -22,7 +22,7 @@ There are **15 actionable findings: two P1 and thirteen P2**. P1 indicates an un
 
 ### F01 — P1: Racing profiles request football data
 
-Location: [racing screen](/Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/racing/[id].tsx:26), [driver navigation](/Users/jordanoliver/Projects/the-tempo-frontend/components/Sports/Racing/GameDetails/DriverRow.tsx:22).
+Location: [racing screen](</Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/racing/[id].tsx:26>), [driver navigation](/Users/jordanoliver/Projects/the-tempo-frontend/components/Sports/Racing/GameDetails/DriverRow.tsx:22).
 
 Driver navigation sends only `id`. The racing screen passes its missing `league` to `usePlayerById`, whose default is `nfl`, so tapping a driver requests `/api/roster/nfl/player/<driverId>`. This can display an unrelated football player if IDs overlap, or an error otherwise. Supplying a racing league alone would still fail: the local roster router has no racing player endpoint, and the screen uses the soccer profile header.
 
@@ -82,7 +82,7 @@ Repair: abort superseded requests and expose results only for the current league
 
 ### F08 — P2: Soccer filters and previous results are not scoped to player identity
 
-Location: [soccer screen filter state](/Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/soccer/[id].tsx:45), [soccer hook return values](/Users/jordanoliver/Projects/the-tempo-frontend/hooks/SoccerHooks/usePlayerSeasons.ts:408).
+Location: [soccer screen filter state](</Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/soccer/[id].tsx:45>), [soccer hook return values](/Users/jordanoliver/Projects/the-tempo-frontend/hooks/SoccerHooks/usePlayerSeasons.ts:408).
 
 When the existing route instance changes player ID, its selected team and competition remain unchanged and are sent for the new player. The hook also returns the previous response until the new request finishes. A new profile can therefore retain another player's filter selection or briefly show their table; invalid carried filters can leave the new player with an empty result.
 
@@ -106,7 +106,7 @@ Repair: sum only counting metrics and compute rates from their totals, or leave 
 
 ### F11 — P2: Season summaries choose an arbitrary team stint
 
-Location: [basketball summary selection](/Users/jordanoliver/Projects/the-tempo-frontend/components/Sports/Basketball/Player/SeasonStatCard.tsx:47), [baseball selection](/Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/baseball/[id].tsx:54), [football selection](/Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/football/[id].tsx:60).
+Location: [basketball summary selection](/Users/jordanoliver/Projects/the-tempo-frontend/components/Sports/Basketball/Player/SeasonStatCard.tsx:47), [baseball selection](</Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/baseball/[id].tsx:54>), [football selection](</Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/football/[id].tsx:60>).
 
 After sorting by season, these selectors break ties with lexicographic team ID and choose one row. They do not identify a full-season aggregate or combine individual stints. Traded players can therefore have a card labeled as their season summary that represents only one team. Verified basketball example: 20 PPG across 10 games and 30 PPG across 30 games displays `20`, although the full-season average is `27.5`.
 
@@ -114,7 +114,7 @@ Repair: prefer an explicit combined row or aggregate disjoint stints with the co
 
 ### F12 — P2: MMA profile errors remove the visible Back action
 
-Location: [MMA header effect](/Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/mma/[id].tsx:35).
+Location: [MMA header effect](</Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/mma/[id].tsx:35>).
 
 The header becomes `null` whenever loading is true or `player` is absent. On a failed profile request, `player` remains absent, so the screen permanently displays an error without its visible Back button. There is also no profile retry action. Native hardware back or navigation gestures may still work, but the visible recovery controls are gone.
 
@@ -122,7 +122,7 @@ Repair: render the header with fallback branding during loading/errors and provi
 
 ### F13 — P2: Pro basketball/football stats failures hide otherwise usable profiles
 
-Location: [basketball top-level error branch](/Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/basketball/[id].tsx:206), [football error branch](/Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/football/[id].tsx:338).
+Location: [basketball top-level error branch](</Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/basketball/[id].tsx:206>), [football error branch](</Users/jordanoliver/Projects/the-tempo-frontend/app/(tabs)/(home)/player/football/[id].tsx:338>).
 
 For direct NBA/WNBA/NFL requests, the player ID and league are already known and the roster profile can load independently. Nevertheless, a seasons error replaces the entire screen, hiding the loaded profile, awards, game log, and team game. Waiting for seasons also delays all of those features. The stat components' own error and skeleton states cannot be reached through these top-level branches.
 

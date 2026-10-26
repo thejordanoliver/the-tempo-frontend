@@ -1,5 +1,7 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import {
+  BasketballPlayByPlay,
+  BasketballGameCharts,
   BoxScore,
   FanPrediction,
   GameHeader,
@@ -11,7 +13,6 @@ import {
   HeadCoaches,
   Highlights,
   LastFiveGames,
-  LastPlay,
   LineScore,
   MatchupPredictor,
   Officials,
@@ -506,13 +507,24 @@ export default function GameDetailsScreen(
         <View style={styles.innerContainer}>
           {!dontShowDetails && (
             <>
-              <LastPlay
+              <BasketballPlayByPlay
+                scope={`${LEAGUE}:${gameId}`}
+                plays={plays}
                 lastPlay={lastPlay}
                 homeId={homeId}
                 awayId={awayId}
+                homeCode={homeCode}
+                awayCode={awayCode}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
+                homeColor={homeColor}
+                awayColor={awayColor}
                 state={state}
+                gameStatus={score?.status}
+                isDark={isDark}
                 league={LEAGUE}
               />
+
               <LineScore
                 linescore={lineScore}
                 awayCode={awayCode}
@@ -521,6 +533,21 @@ export default function GameDetailsScreen(
                 isDark={isDark}
                 state={state}
               />
+
+              {LEAGUE === "nba" ? (
+                <BasketballGameCharts
+                  scope={`${LEAGUE}:${gameId}`}
+                  league={LEAGUE}
+                  state={state}
+                  plays={plays}
+                  winProbability={score?.winProbability}
+                  homeCode={homeCode}
+                  awayCode={awayCode}
+                  homeColor={homeColor}
+                  awayColor={awayColor}
+                  isDark={isDark}
+                />
+              ) : null}
 
               <FanPrediction
                 scoring={scoring}

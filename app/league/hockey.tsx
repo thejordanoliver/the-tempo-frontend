@@ -1,10 +1,10 @@
-import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useHockeyGames } from "@/hooks/HockeyHooks/useHockeyGames";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -27,7 +27,7 @@ import { StandingsList } from "@/components/League/Standings/StandingsList";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { getNHLSeason } from "@/utils/common/dateUtils";
-import SeasonLeadersList from "../../components/League/SeasonLeaderList";
+import SeasonLeadersList from "../../components/League/SeasonLeaders/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
@@ -73,8 +73,14 @@ function NHLLeagueScreen() {
   const navigation = useNavigation();
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
-  const { calendar } = useLeagueCalendar(league, "raw", undefined, scoreboardCalendar);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(
+    league,
+    "raw",
+    undefined,
+    scoreboardCalendar,
+  );
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );

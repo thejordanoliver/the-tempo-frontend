@@ -73,7 +73,7 @@ export const InfoCardStyles = (isDark: boolean, teamColor: string) =>
       marginRight: 8,
       borderWidth: 1,
       borderColor: getContrastingTextColor(teamColor),
-  
+
       borderRadius: 999,
       overflow: "hidden",
       width: 60,

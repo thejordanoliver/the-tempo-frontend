@@ -270,7 +270,13 @@ export default function LatestGame(props: Props) {
 
       case "mma":
       case "ufc":
-        return <MMAGamePreviewModal game={game} visible={modalVisible} onClose={handleCloseModal} />;
+        return (
+          <MMAGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+          />
+        );
     }
   };
 
@@ -294,7 +300,11 @@ export default function LatestGame(props: Props) {
   return (
     <>
       <View>
-        <HeadingTwo isDark={isDark}>{league === "mma" || league === "ufc" ? "Latest Fight" : getPlayerGameHeading(props.game)}</HeadingTwo>
+        <HeadingTwo isDark={isDark}>
+          {league === "mma" || league === "ufc"
+            ? "Latest Fight"
+            : getPlayerGameHeading(props.game)}
+        </HeadingTwo>
 
         <LongPressGestureHandler
           onHandlerStateChange={handleLongPress}

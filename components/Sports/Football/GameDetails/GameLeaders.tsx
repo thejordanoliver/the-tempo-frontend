@@ -225,8 +225,7 @@ function findTeamLeaders(
   return leaders.find((teamLeaders) => {
     const team = teamLeaders.team;
 
-    const matchesId =
-      idsMatch(team?.id, teamId);
+    const matchesId = idsMatch(team?.id, teamId);
 
     const teamCodes = [
       normalizeValue(team?.code),
@@ -527,7 +526,7 @@ export default function GameLeaders({
           const teamId = isAway ? awayId : homeId;
           const player = entry.athlete;
 
-          const playerId = player.id 
+          const playerId = player.id;
 
           const playerName =
             player.shortName ??

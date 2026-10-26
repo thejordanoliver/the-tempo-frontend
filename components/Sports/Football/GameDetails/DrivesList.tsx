@@ -3,7 +3,13 @@ import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam } from "constants/teamsCFB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { useMemo } from "react";
-import { FlatList, Image, Text, View, type ImageSourcePropType } from "react-native";
+import {
+  FlatList,
+  Image,
+  Text,
+  View,
+  type ImageSourcePropType,
+} from "react-native";
 import { DriveListStyles } from "styles/GameDetailStyles/DrivesListStyles";
 
 type Props = {
@@ -54,8 +60,10 @@ export default function DrivesList({
     return true;
   });
 
-  if (loading && drives.length === 0) return <Text style={styles.emptyText}>Loading drives…</Text>;
-  if (error && drives.length === 0) return <Text style={styles.emptyText}>{error}</Text>;
+  if (loading && drives.length === 0)
+    return <Text style={styles.emptyText}>Loading drives…</Text>;
+  if (error && drives.length === 0)
+    return <Text style={styles.emptyText}>{error}</Text>;
   if (drives.length === 0)
     return (
       <View style={global.emptyContainer}>
@@ -64,8 +72,6 @@ export default function DrivesList({
     );
 
   const subTextColor = isDark ? Colors.midTone : Colors.darkGray;
-
-  const borderColor = isDark ? Colors.midTone : Colors.lightGray;
 
   return (
     <FlatList
@@ -81,7 +87,11 @@ export default function DrivesList({
         const team = isNFL ? getNFLTeam(teamId) : getCFBTeam(teamId);
         const isLast = index === drives.length - 1;
 
-        const result = item.displayResult?.trim() || item.shortDisplayResult?.trim() || item.result?.trim() || (safeCurrent.includes(item) ? "In progress" : "Unavailable");
+        const result =
+          item.displayResult?.trim() ||
+          item.shortDisplayResult?.trim() ||
+          item.result?.trim() ||
+          (safeCurrent.includes(item) ? "In progress" : "Unavailable");
         const resultUpper = (item.result || result).toUpperCase();
         let resultColor = subTextColor;
 
@@ -95,20 +105,19 @@ export default function DrivesList({
           resultUpper.includes("DOWNS")
         ) {
           resultColor = isDark ? Colors.dark.lightRed : Colors.light.red;
-        } else if (item.isScore || /\b(TD|FG)\b/.test(resultUpper) || resultUpper.includes("TOUCHDOWN") || resultUpper.includes("FIELD GOAL")) {
+        } else if (
+          item.isScore ||
+          /\b(TD|FG)\b/.test(resultUpper) ||
+          resultUpper.includes("TOUCHDOWN") ||
+          resultUpper.includes("FIELD GOAL")
+        ) {
           resultColor = isDark ? Colors.dark.leafGreen : Colors.light.green;
         } else if (resultUpper.includes("PUNT")) {
           resultColor = isDark ? Colors.dark.yellow : Colors.light.yellow;
         }
 
         return (
-          <View
-            style={[
-              styles.driveCard,
-              !isLast && { borderBottomColor: borderColor },
-              isLast && { borderBottomWidth: 0 },
-            ]}
-          >
+          <View style={[styles.driveRow, isLast && { borderBottomWidth: 0 }]}>
             <View style={styles.headerRow}>
               {teamLogo && (
                 <Image
@@ -117,7 +126,14 @@ export default function DrivesList({
                   resizeMode="contain"
                 />
               )}
-              <Text style={styles.driveTeam}>{teamCode || team?.code || item.team?.code || item.team?.abbreviation || item.team?.displayName || "Team"}</Text>
+              <Text style={styles.driveTeam}>
+                {teamCode ||
+                  team?.code ||
+                  item.team?.code ||
+                  item.team?.abbreviation ||
+                  item.team?.displayName ||
+                  "Team"}
+              </Text>
             </View>
 
             <Text style={styles.driveDescription}>{item.description}</Text>

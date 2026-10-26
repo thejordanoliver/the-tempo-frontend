@@ -6,15 +6,16 @@ import MCBBCourtImage from "assets/Placeholders/MCBBCourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import {getMCBBTeam,  getMCBBTeamLogo } from "constants/teamsMCBB";
-import {getWCBBTeam,  getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo, useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
+import NBAShotChart from "./Charts/NBAShotChart";
 
-interface ShotChartProps {
+export interface ShotChartProps {
   plays?: Play[];
   homeId: string | number;
   awayId: string | number;
@@ -41,8 +42,15 @@ const COURT_WIDTH = 50;
 const NBA_BASKET_OFFSET = 5.25;
 const SHOT_MARKER_EXTENT = 1.65;
 
+export default function ShotChart(props: ShotChartProps) {
+  return props.league === "nba" ? (
+    <NBAShotChart {...props} />
+  ) : (
+    <LegacyShotChart {...props} />
+  );
+}
 
-export default function ShotChart({
+function LegacyShotChart({
   plays = [],
   homeId,
   awayId,

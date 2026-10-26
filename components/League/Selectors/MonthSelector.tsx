@@ -1,23 +1,22 @@
-import { Colors, Fonts, activeOpacity } from "constants/styles";
+import MonthSelectorSkeleton from "@/components/Skeletons/MonthSelectorSkeleton";
+import {
+  DATE_SELECTOR_ITEM_SPACING,
+  DATE_SELECTOR_ITEM_WIDTH,
+  DATE_SELECTOR_SIDE_PADDING,
+} from "@/constants/dateSelectorConstants";
+import { DateSelectorStyles } from "@/styles/LeagueStyles/DateSelectorStyles";
+import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   LayoutChangeEvent,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import type { ScheduleMonthKey, ScheduleMonthOption } from "types/schedule";
-import {
-  MONTH_SELECTOR_ITEM_HEIGHT,
-  MONTH_SELECTOR_ITEM_SPACING,
-  MONTH_SELECTOR_ITEM_WIDTH,
-  MONTH_SELECTOR_SIDE_PADDING,
-} from "../../constants/monthSelectorConstants";
-import MonthSelectorSkeleton from "../Skeletons/MonthSelectorSkeleton";
 
 type Props = {
   months: ScheduleMonthOption[];
@@ -40,30 +39,30 @@ export default function MonthSelector({
 
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const itemStep = MONTH_SELECTOR_ITEM_WIDTH + MONTH_SELECTOR_ITEM_SPACING;
+  const itemStep = DATE_SELECTOR_ITEM_WIDTH + DATE_SELECTOR_ITEM_SPACING;
 
   const rawItemsWidth = useMemo(() => {
     return (
-      months.length * MONTH_SELECTOR_ITEM_WIDTH +
-      MONTH_SELECTOR_ITEM_SPACING * Math.max(0, months.length - 1)
+      months.length * DATE_SELECTOR_ITEM_WIDTH +
+      DATE_SELECTOR_ITEM_SPACING * Math.max(0, months.length - 1)
     );
   }, [months.length]);
 
   const needsScroll =
     containerWidth > 0 &&
-    rawItemsWidth + MONTH_SELECTOR_SIDE_PADDING * 2 > containerWidth;
+    rawItemsWidth + DATE_SELECTOR_SIDE_PADDING * 2 > containerWidth;
 
   const horizontalPadding = needsScroll
-    ? MONTH_SELECTOR_SIDE_PADDING
+    ? DATE_SELECTOR_SIDE_PADDING
     : Math.max(
         (containerWidth - rawItemsWidth) / 2,
-        MONTH_SELECTOR_SIDE_PADDING,
+        DATE_SELECTOR_SIDE_PADDING,
       );
 
   const contentWidth = horizontalPadding * 2 + rawItemsWidth;
 
   const styles = useMemo(
-    () => monthSelectorStyles(isDark, horizontalPadding),
+    () => DateSelectorStyles(isDark, { horizontalPadding }),
     [horizontalPadding, isDark],
   );
 
@@ -84,7 +83,7 @@ export default function MonthSelector({
         horizontalPadding +
         index * itemStep -
         containerWidth / 2 +
-        MONTH_SELECTOR_ITEM_WIDTH / 2;
+        DATE_SELECTOR_ITEM_WIDTH / 2;
 
       const maxOffset = Math.max(0, contentWidth - containerWidth);
 
@@ -149,7 +148,7 @@ export default function MonthSelector({
   }
 
   return (
-    <View style={styles.monthSelector} onLayout={onLayoutContainer}>
+    <View style={styles.wrapper} onLayout={onLayoutContainer}>
       <ScrollView
         ref={scrollRef}
         horizontal
@@ -180,7 +179,7 @@ export default function MonthSelector({
               key={key}
               activeOpacity={activeOpacity}
               onPress={() => handleSelectMonth(key)}
-              style={styles.monthButton}
+              style={styles.item}
               accessibilityRole="tab"
               accessibilityState={{ selected: isSelected }}
               accessibilityLabel={`${label}, ${count} ${gameLabel}`}
@@ -189,7 +188,7 @@ export default function MonthSelector({
                 numberOfLines={1}
                 adjustsFontSizeToFit
                 minimumFontScale={0.8}
-                style={isSelected ? styles.monthTextSelected : styles.monthText}
+                style={isSelected ? styles.selectedLabel : styles.label}
               >
                 {label}
               </Text>
@@ -198,11 +197,7 @@ export default function MonthSelector({
                 numberOfLines={1}
                 adjustsFontSizeToFit
                 minimumFontScale={0.8}
-                style={
-                  isSelected
-                    ? styles.gameCountTextSelected
-                    : styles.gameCountText
-                }
+                style={isSelected ? styles.selectedDetail : styles.detail}
               >
                 {count} {gameLabel}
               </Text>
@@ -213,68 +208,3 @@ export default function MonthSelector({
     </View>
   );
 }
-
-export const monthSelectorStyles = (
-  isDark: boolean,
-  horizontalPadding: number,
-) =>
-  StyleSheet.create({
-    monthSelector: {
-      flexDirection: "row",
-      marginVertical: 8,
-    },
-    contentContainerStyle: {
-      position: "relative",
-      alignItems: "center",
-      paddingHorizontal: horizontalPadding,
-    },
-    slidingSelectedContainer: {
-      position: "absolute",
-      top: 0,
-      left: horizontalPadding,
-      width: MONTH_SELECTOR_ITEM_WIDTH,
-      height: MONTH_SELECTOR_ITEM_HEIGHT,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 12,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      overflow: "hidden",
-    },
-    monthButton: {
-      zIndex: 2,
-      alignItems: "center",
-      justifyContent: "center",
-      width: MONTH_SELECTOR_ITEM_WIDTH,
-      height: MONTH_SELECTOR_ITEM_HEIGHT,
-      padding: 4,
-      borderRadius: 12,
-    },
-    monthText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 18,
-      color: Colors.midTone,
-      textAlign: "center",
-    },
-    monthTextSelected: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 18,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlign: "center",
-    },
-    gameCountText: {
-      marginTop: 1,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 11,
-      color: Colors.midTone,
-      textAlign: "center",
-    },
-    gameCountTextSelected: {
-      marginTop: 1,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 11,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlign: "center",
-    },
-  });

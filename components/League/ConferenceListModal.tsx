@@ -146,14 +146,16 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             logo: defaultLeagueLogo,
           },
 
-          ...mcbbConferences.filter(isMCBBConferenceOption).map((conference) => ({
-            label:
-              getMCBBConferenceSelectionName(conference.groupId) ||
-              conference.shortName ||
-              conference.name,
-            value: conference.groupId,
-            logo: getMCBBConferenceLogo(conference.groupId, isDark),
-          })),
+          ...mcbbConferences
+            .filter(isMCBBConferenceOption)
+            .map((conference) => ({
+              label:
+                getMCBBConferenceSelectionName(conference.groupId) ||
+                conference.shortName ||
+                conference.name,
+              value: conference.groupId,
+              logo: getMCBBConferenceLogo(conference.groupId, isDark),
+            })),
         ];
       }
       if (isWCBB) {

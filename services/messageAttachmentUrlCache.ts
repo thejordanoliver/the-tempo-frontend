@@ -2,12 +2,9 @@ export type ExpiringCacheValue = {
   expiresAt: string;
 };
 
-export function createExpiringRequestCache<T extends ExpiringCacheValue>(
-  options: {
-    now?: () => number;
-    refreshBufferMs: number;
-  },
-) {
+export function createExpiringRequestCache<
+  T extends ExpiringCacheValue,
+>(options: { now?: () => number; refreshBufferMs: number }) {
   const now = options.now ?? Date.now;
   const entries = new Map<string, T & { expiresAtMs: number }>();
   const requests = new Map<string, Promise<T>>();
@@ -29,10 +26,7 @@ export function createExpiringRequestCache<T extends ExpiringCacheValue>(
     } else {
       const cached = entries.get(key);
 
-      if (
-        cached &&
-        cached.expiresAtMs - options.refreshBufferMs > now()
-      ) {
+      if (cached && cached.expiresAtMs - options.refreshBufferMs > now()) {
         return cached;
       }
     }

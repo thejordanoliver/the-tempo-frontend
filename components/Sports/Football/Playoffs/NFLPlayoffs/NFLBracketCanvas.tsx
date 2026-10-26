@@ -1,7 +1,10 @@
 import type { useNFLBracketModel } from "hooks/FootballHooks/useNFLBracketModel";
 import { View } from "react-native";
 import { NFLPlayoffBracketStyles } from "styles/PlayoffStyles/NFLPlayoffBracketStyles";
-import { COLS, getColCenter } from "../../../../../utils/brackets/nflBracketLayout";
+import {
+  COLS,
+  getColCenter,
+} from "../../../../../utils/brackets/nflBracketLayout";
 import { ConferenceBracket } from "./ConferenceBracket";
 import { MatchupCard } from "./MatchupCard";
 import { RoundLabel } from "./RoundLabel";

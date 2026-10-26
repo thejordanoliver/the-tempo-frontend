@@ -9,6 +9,7 @@ type TeamLatestPayload = {
 };
 
 type UseExploreWidgetLiveUpdatesOptions = {
+  enabled?: boolean;
   cache: ExploreWidgetDataCache | null;
   dataKey: string;
   relevantFavoriteKeySet: ReadonlySet<string>;
@@ -60,6 +61,7 @@ function isHockeyWidgetGame(
 }
 
 export function useExploreWidgetLiveUpdates({
+  enabled = true,
   cache,
   dataKey,
   relevantFavoriteKeySet,
@@ -93,7 +95,8 @@ export function useExploreWidgetLiveUpdates({
   }, [liveSubscriptionEntries]);
 
   useEffect(() => {
-    if (!userId || !liveSubscriptionKey) return;
+    if (!enabled || !userId || !liveSubscriptionKey) return;
+    let listening = true;
 
     const unsubscribe = liveSubscriptionEntriesRef.current.map(
       ([favoriteKey, envelope]) =>
@@ -106,6 +109,7 @@ export function useExploreWidgetLiveUpdates({
             teamId: getFavoriteTeamId(favoriteKey),
           },
           listener: ({ payload }) => {
+            if (!listening) return;
             let updatedEnvelope: ExploreWidgetGame;
 
             switch (envelope.sport) {
@@ -123,7 +127,13 @@ export function useExploreWidgetLiveUpdates({
                 break;
               case "volleyball":
                 if (!isWidgetGame(payload.game)) return;
-                updatedEnvelope = { ...envelope, game: payload.game as Extract<ExploreWidgetGame, { sport: "volleyball" }>["game"] };
+                updatedEnvelope = {
+                  ...envelope,
+                  game: payload.game as Extract<
+                    ExploreWidgetGame,
+                    { sport: "volleyball" }
+                  >["game"],
+                };
                 break;
               case "hockey":
                 if (!isHockeyWidgetGame(payload.game)) return;
@@ -187,7 +197,8 @@ export function useExploreWidgetLiveUpdates({
     );
 
     return () => {
+      listening = false;
       unsubscribe.forEach((unsubscribeFavorite) => unsubscribeFavorite());
     };
-  }, [dataKey, liveSubscriptionKey, setCache, userId]);
+  }, [enabled, dataKey, liveSubscriptionKey, setCache, userId]);
 }

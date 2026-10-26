@@ -5,7 +5,7 @@ import { Colors } from "@/constants/styles";
 import { useRosterStats } from "@/hooks/BaseballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BaseballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import MonthSelector from "components/League/MonthSelector";
+import MonthSelector from "components/League/Selectors/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import Roster from "components/Team/Roster";

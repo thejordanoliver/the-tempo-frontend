@@ -247,7 +247,8 @@ export default function RecruitsList({
     refetch: refetchTeamRankings,
   } = useTeamRecruitingRankings(Number(year), league);
 
-  const { teams: recruitingTeams, error: teamFilterError } = useRecruitingTeams(league);
+  const { teams: recruitingTeams, error: teamFilterError } =
+    useRecruitingTeams(league);
 
   const loading = view === "players" ? loadingPlayers : loadingTeams;
   const refreshing =

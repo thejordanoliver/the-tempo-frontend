@@ -10,35 +10,61 @@ function setup(initialFavorites = {}) {
   const slots = [];
   const effects = [];
   const requests = [];
+  const appListeners = new Set();
+  let liveEnabled = false;
   let index = 0;
   let queued = false;
   let stopped = false;
   let state;
-  let favorites = { userId: 1, favorites: ["nba:1"], ready: true, isLoading: false, ...initialFavorites };
-  const same = (a, b) => a && b && a.length === b.length && a.every((value, i) => Object.is(value, b[i]));
+  let favorites = {
+    userId: 1,
+    favorites: ["nba:1"],
+    ready: true,
+    isLoading: false,
+    ...initialFavorites,
+  };
+  const same = (a, b) =>
+    a &&
+    b &&
+    a.length === b.length &&
+    a.every((value, i) => Object.is(value, b[i]));
   const schedule = () => {
     if (queued || stopped) return;
     queued = true;
-    queueMicrotask(() => { queued = false; if (!stopped) render(); });
+    queueMicrotask(() => {
+      queued = false;
+      if (!stopped) render();
+    });
   };
   const memo = (factory, deps) => {
     const position = index++;
-    if (!slots[position] || !same(slots[position].deps, deps)) slots[position] = { value: factory(), deps };
+    if (!slots[position] || !same(slots[position].deps, deps))
+      slots[position] = { value: factory(), deps };
     return slots[position].value;
   };
   const react = {
     createContext: () => ({ Provider: "provider" }),
     useState(initial) {
       const position = index++;
-      slots[position] ??= { value: typeof initial === "function" ? initial() : initial };
-      return [slots[position].value, (next) => {
-        const value = typeof next === "function" ? next(slots[position].value) : next;
-        if (Object.is(value, slots[position].value)) return;
-        slots[position].value = value;
-        schedule();
-      }];
+      slots[position] ??= {
+        value: typeof initial === "function" ? initial() : initial,
+      };
+      return [
+        slots[position].value,
+        (next) => {
+          const value =
+            typeof next === "function" ? next(slots[position].value) : next;
+          if (Object.is(value, slots[position].value)) return;
+          slots[position].value = value;
+          schedule();
+        },
+      ];
     },
-    useRef(initial) { const position = index++; slots[position] ??= { current: initial }; return slots[position]; },
+    useRef(initial) {
+      const position = index++;
+      slots[position] ??= { current: initial };
+      return slots[position];
+    },
     useMemo: memo,
     useCallback: (callback, deps) => memo(() => callback, deps),
     useEffect(callback, deps) {
@@ -46,30 +72,69 @@ function setup(initialFavorites = {}) {
       if (slots[position] && same(slots[position].deps, deps)) return;
       const previous = slots[position];
       slots[position] = { deps, cleanup: previous?.cleanup };
-      effects.push(() => { previous?.cleanup?.(); slots[position].cleanup = callback(); });
+      effects.push(() => {
+        previous?.cleanup?.();
+        slots[position].cleanup = callback();
+      });
     },
   };
   const modules = {
     react,
+    "react-native": {
+      AppState: {
+        currentState: "active",
+        addEventListener: (_, callback) => {
+          appListeners.add(callback);
+          return { remove: () => appListeners.delete(callback) };
+        },
+      },
+    },
     "react/jsx-runtime": { jsx: (_type, props) => props },
     "./FavoriteTeamsContext": { useFavoriteTeamsContext: () => favorites },
     "hooks/ExploreHooks/useExploreWidgetConfiguration": {
-      useExploreWidgetConfiguration: () => ({ widgets: [{ id: "games", type: "favorite_games", favoriteGameLeagues: ["nba"] }], ready: true }),
+      useExploreWidgetConfiguration: () => ({
+        widgets: [
+          { id: "games", type: "favorite_games", favoriteGameLeagues: ["nba"] },
+        ],
+        ready: true,
+      }),
     },
-    "hooks/ExploreHooks/useExploreWidgetLiveUpdates": { useExploreWidgetLiveUpdates() {} },
-    "utils/widgets/exploreFavoriteGames": { prepareExploreFavoriteGames: (games) => games },
+    "hooks/ExploreHooks/useExploreWidgetLiveUpdates": {
+      useExploreWidgetLiveUpdates({ enabled }) {
+        liveEnabled = enabled;
+      },
+    },
+    "utils/widgets/exploreFavoriteGames": {
+      prepareExploreFavoriteGames: (games) => games,
+    },
     "types/widgets": { EXPLORE_WIDGET_LEAGUES: ["nba"] },
     "services/exploreWidgetsApi": {
-      getExploreWidgets: () => new Promise((resolve, reject) => requests.push({ resolve, reject })),
+      getExploreWidgets: (options) =>
+        new Promise((resolve, reject) =>
+          requests.push({ ...options, resolve, reject }),
+        ),
     },
   };
   const exports = {};
-  const source = ts.transpileModule(fs.readFileSync("contexts/ExploreWidgetsContext.tsx", "utf8"), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
-  }).outputText;
+  const source = ts.transpileModule(
+    fs.readFileSync("contexts/ExploreWidgetsContext.tsx", "utf8"),
+    {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        jsx: ts.JsxEmit.ReactJSX,
+      },
+    },
+  ).outputText;
   vm.runInNewContext(source, {
-    exports, AbortController, console, setTimeout, clearTimeout,
-    require(name) { assert.ok(name in modules, `Unexpected import: ${name}`); return modules[name]; },
+    exports,
+    AbortController,
+    console,
+    setTimeout,
+    clearTimeout,
+    require(name) {
+      assert.ok(name in modules, `Unexpected import: ${name}`);
+      return modules[name];
+    },
   });
   function render() {
     index = 0;
@@ -78,14 +143,34 @@ function setup(initialFavorites = {}) {
   }
   render();
   return {
-    get state() { return state; },
+    get state() {
+      return state;
+    },
     requests,
-    updateFavorites(next) { favorites = { ...favorites, ...next }; render(); },
-    stop() { stopped = true; slots.forEach((slot) => slot?.cleanup?.()); },
+    get liveEnabled() {
+      return liveEnabled;
+    },
+    app(state) {
+      appListeners.forEach((callback) => callback(state));
+    },
+    updateFavorites(next) {
+      favorites = { ...favorites, ...next };
+      render();
+    },
+    stop() {
+      stopped = true;
+      slots.forEach((slot) => slot?.cleanup?.());
+    },
   };
 }
 
-const emptyResponse = { version: 1, requestedLeagues: ["nba"], favoriteTeamKeys: ["nba:1"], games: [], failures: [] };
+const emptyResponse = {
+  version: 1,
+  requestedLeagues: ["nba"],
+  favoriteTeamKeys: ["nba:1"],
+  games: [],
+  failures: [],
+};
 
 test("games remain loading before the focus request starts and until it completes", async () => {
   const h = setup();
@@ -98,9 +183,12 @@ test("games remain loading before the focus request starts and until it complete
     assert.equal(h.requests.length, 1);
     assert.equal(h.state.loading, true);
     h.requests[0].resolve(emptyResponse);
-    await pending; await flush();
+    await pending;
+    await flush();
     assert.equal(h.state.loading, false);
-  } finally { h.stop(); }
+  } finally {
+    h.stop();
+  }
 });
 
 test("a failed games request settles the loading gate and preserves its retry error", async () => {
@@ -109,10 +197,13 @@ test("a failed games request settles the loading gate and preserves its retry er
     await flush();
     const pending = h.state.ensureWidgetData();
     h.requests[0].reject(new Error("Unavailable"));
-    await pending; await flush();
+    await pending;
+    await flush();
     assert.equal(h.state.loading, false);
     assert.ok(h.state.error);
-  } finally { h.stop(); }
+  } finally {
+    h.stop();
+  }
 });
 
 test("favorites must finish loading before no favorites counts as a ready empty state", async () => {
@@ -122,8 +213,48 @@ test("favorites must finish loading before no favorites counts as a ready empty 
     await flush();
     h.updateFavorites({ ready: true, isLoading: false });
     assert.equal(h.state.loading, false);
-    await h.state.ensureWidgetData(); await flush();
+    await h.state.ensureWidgetData();
+    await flush();
     assert.equal(h.requests.length, 0);
     assert.equal(h.state.loading, false);
-  } finally { h.stop(); }
+  } finally {
+    h.stop();
+  }
+});
+
+test("the widget board cancels invisible requests, rejects late results and restores cached games", async () => {
+  const h = setup();
+  const game = { id: "one", league: "nba", favoriteTeamKeys: ["nba:1"] };
+  try {
+    await flush();
+    assert.equal(h.requests.length, 0);
+    assert.equal(h.liveEnabled, false);
+    h.state.setBoardVisible(true);
+    await flush();
+    assert.equal(h.requests.length, 1);
+    assert.equal(h.liveEnabled, true);
+    h.app("background");
+    await flush();
+    assert.equal(h.requests[0].signal.aborted, true);
+    assert.equal(h.liveEnabled, false);
+    h.requests[0].resolve({ ...emptyResponse, games: [game] });
+    await flush();
+    assert.equal(h.state.games.length, 0);
+    h.app("active");
+    await flush();
+    assert.equal(h.requests.length, 2);
+    h.requests[1].resolve({ ...emptyResponse, games: [game] });
+    await flush();
+    assert.equal(h.state.games.length, 1);
+    h.state.setBoardVisible(false);
+    await flush();
+    assert.equal(h.liveEnabled, false);
+    assert.equal(h.state.games.length, 1);
+    h.state.setBoardVisible(true);
+    await flush();
+    assert.equal(h.requests.length, 2);
+    assert.equal(h.liveEnabled, true);
+  } finally {
+    h.stop();
+  }
 });

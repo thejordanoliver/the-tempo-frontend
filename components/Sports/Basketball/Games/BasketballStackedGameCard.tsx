@@ -1,11 +1,19 @@
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import {getMCBBTeam,  getMCBBRivalry, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import {
+  getMCBBTeam,
+  getMCBBRivalry,
+  getMCBBTeamLogo,
+} from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import {getWCBBTeam,  getWCBBRivalry, getWCBBTeamLogo } from "constants/teamsWCBB";
+import {
+  getWCBBTeam,
+  getWCBBRivalry,
+  getWCBBTeamLogo,
+} from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -17,7 +25,11 @@ import {
   getHolidayLabel,
   safeDate,
 } from "utils/common/dateUtils";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 
 export default function BasketballStackedGameCard({
   game,
@@ -52,61 +64,55 @@ export default function BasketballStackedGameCard({
   const awayId = away?.id;
 
   const homeTeam =
-    (
-      isMCBB
+    (isMCBB
       ? getMCBBTeam(homeId)
       : isWCBB
         ? getWCBBTeam(homeId)
         : isWNBA
           ? getWNBATeam(homeId)
-          : getNBATeam(homeId)
-    ) ?? emptyHomeTeam;
+          : getNBATeam(homeId)) ?? emptyHomeTeam;
 
   const awayTeam =
-    (
-      isMCBB
+    (isMCBB
       ? getMCBBTeam(awayId)
       : isWCBB
         ? getWCBBTeam(awayId)
         : isWNBA
           ? getWNBATeam(awayId)
-          : getNBATeam(awayId)
-    ) ?? emptyAwayTeam;
+          : getNBATeam(awayId)) ?? emptyAwayTeam;
 
   const homeName = homeTeam?.fullName || game.home?.name;
   const awayName = awayTeam?.fullName || game.away?.name;
 
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : (
-      isMCBB
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : isMCBB
         ? getMCBBTeamLogo(homeId, isDark)
         : isWCBB
           ? getWCBBTeamLogo(homeId, isDark)
           : isWNBA
             ? getWNBATeamLogo(homeId, isDark)
-            : getNBATeamLogo(homeId, isDark)
-    );
+            : getNBATeamLogo(homeId, isDark);
 
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : (
-      isMCBB
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : isMCBB
         ? getMCBBTeamLogo(awayId, isDark)
         : isWCBB
           ? getWCBBTeamLogo(awayId, isDark)
           : isWNBA
             ? getWNBATeamLogo(awayId, isDark)
-            : getNBATeamLogo(awayId, isDark)
-    );
+            : getNBATeamLogo(awayId, isDark);
 
-    const rivalry = isMCBB
-      ? getMCBBRivalry(homeId, awayId)?.name
-      : isMCBB
-        ? getWCBBRivalry(homeId, awayId)?.name
-        : null;
+  const rivalry = isMCBB
+    ? getMCBBRivalry(homeId, awayId)?.name
+    : isMCBB
+      ? getWCBBRivalry(homeId, awayId)?.name
+      : null;
 
-    const headline = game?.headline || rivalry || holidayLabel;
+  const headline = game?.headline || rivalry || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
     headline?.includes("NBA Finals") ||

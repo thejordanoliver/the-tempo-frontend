@@ -1,7 +1,11 @@
+import {
+  useSportsRequestScope,
+  type SportsRequestOptions,
+} from "hooks/Sports/useSportsRequestScope";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import { BasketballGame } from "@/types/basketball/basketball";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
@@ -52,15 +56,15 @@ export function useBasketballGames(
   date?: Date,
   league: string = "nba",
   conferenceId?: ConferenceId,
+  options: SportsRequestOptions = {},
 ) {
-  const [games, setGames] = useState<BasketballGame[]>([]);
+  const [storedGames, setGames] = useState<BasketballGame[]>([]);
   const [calendarResponse, setCalendarResponse] = useState<{
     league: string;
     data: BasketballGamesResponse;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const requestIdRef = useRef(0);
 
   const formattedDate = useMemo(() => {
     return date ? dayjs(date).format("YYYYMMDD") : "today";
@@ -105,47 +109,62 @@ export function useBasketballGames(
     return params;
   }, [formattedDate, normalizedConferenceId]);
 
+  const scope = useSportsRequestScope(
+    JSON.stringify([league, formattedDate, normalizedConferenceId]),
+    options,
+  );
+  const { enabled, begin, isCurrent, accept, finish } = scope;
+  const games = useMemo(
+    () => (scope.hasData ? storedGames : []),
+    [scope.hasData, storedGames],
+  );
+
   const fetchGames = useCallback(
     async ({
       forceRefresh = false,
       silent = false,
     }: FetchGamesOptions = {}) => {
-      const requestId = ++requestIdRef.current;
+      const request = begin();
+      if (!request) return;
 
       try {
         setError(null);
 
         // Background updates keep the current list visible.
         if (!forceRefresh && !silent) {
-          setLoading(true);
+          setLoading(!request.hasData);
         }
 
-        const { data } = await apiClient.get<BasketballGamesResponse>(endpoint, {
-          params: requestParams,
-        });
+        const { data } = await apiClient.get<BasketballGamesResponse>(
+          endpoint,
+          {
+            params: requestParams,
+            signal: request.controller.signal,
+          },
+        );
 
         const gamesData: BasketballGame[] = Array.isArray(data?.games)
           ? data.games
           : [];
 
-        if (requestId === requestIdRef.current) {
+        if (accept(request)) {
           setGames(gamesData);
           setCalendarResponse({ league, data });
         }
       } catch (err) {
-        if (requestId !== requestIdRef.current) return;
+        if (!isCurrent(request)) return;
         console.error(`Failed to fetch ${league} games:`, err);
 
         setError(new Error(`Failed to fetch ${league} games`));
 
         if (!forceRefresh && !silent) setGames([]);
       } finally {
-        if (!silent && requestId === requestIdRef.current) {
+        if (finish(request)) {
           setLoading(false);
         }
       }
     },
-    [endpoint, league, requestParams],
+    [endpoint, league, requestParams, begin, accept, finish, isCurrent],
   );
 
   const refreshGames = useCallback(async () => {
@@ -157,20 +176,19 @@ export function useBasketballGames(
   useEffect(() => {
     let cancelled = false;
     void Promise.resolve().then(() => {
-      if (!cancelled) void fetchGames();
+      if (!cancelled && enabled) void fetchGames();
     });
     return () => {
       cancelled = true;
-      requestIdRef.current += 1;
     };
-  }, [fetchGames]);
+  }, [enabled, fetchGames]);
 
   const hasActiveGame = useMemo(() => {
     return games.some(shouldTrackGameUpdates);
   }, [games]);
 
   useLiveSportsSubscription<BasketballGamesResponse>({
-    enabled: !loading && hasActiveGame,
+    enabled: enabled && scope.settled && !loading && hasActiveGame,
 
     kind: "scoreboard",
 
@@ -184,29 +202,36 @@ export function useBasketballGames(
     },
 
     onUpdate: (payload) => {
-      requestIdRef.current += 1;
+      if (!accept()) return;
+      setLoading(false);
       setGames(Array.isArray(payload?.games) ? payload.games : []);
     },
   });
 
   const scoreboardCalendar = useMemo(
     () => ({
-      pending: loading,
-      calendar: calendarResponse?.league === league
-        ? calendarResponse.data.calendar : null,
-      startDate: calendarResponse?.league === league
-        ? calendarResponse.data.calendarStartDate : null,
-      endDate: calendarResponse?.league === league
-        ? calendarResponse.data.calendarEndDate : null,
+      pending: enabled && !scope.hasData && (!scope.settled || loading),
+      calendar:
+        scope.hasData && calendarResponse?.league === league
+          ? calendarResponse.data.calendar
+          : null,
+      startDate:
+        scope.hasData && calendarResponse?.league === league
+          ? calendarResponse.data.calendarStartDate
+          : null,
+      endDate:
+        scope.hasData && calendarResponse?.league === league
+          ? calendarResponse.data.calendarEndDate
+          : null,
     }),
-    [calendarResponse, league, loading],
+    [calendarResponse, league, loading, enabled, scope.hasData, scope.settled],
   );
 
   return {
     games,
     scoreboardCalendar,
-    loading,
-    error,
+    loading: enabled && !scope.hasData && (!scope.settled || loading),
+    error: enabled && scope.settled ? error : null,
     refreshGames,
   };
 }

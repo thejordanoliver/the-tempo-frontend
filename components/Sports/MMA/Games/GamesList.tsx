@@ -83,20 +83,14 @@ export default function GamesList({
     );
 
     if (viewMode === "list") {
-      return wrapper(
-        <MMAGameCard game={game as MMAFight} />,
-      );
+      return wrapper(<MMAGameCard game={game as MMAFight} />);
     }
 
     if (viewMode === "grid") {
-      return wrapper(
-        <MMASquareGameCard game={game as MMAFight} />,
-      );
+      return wrapper(<MMASquareGameCard game={game as MMAFight} />);
     }
 
-    return wrapper(
-      <MMAStackedGameCard game={game as MMAFight} />,
-    );
+    return wrapper(<MMAStackedGameCard game={game as MMAFight} />);
   };
 
   const renderSkeletons = (count: number) => {
@@ -216,10 +210,7 @@ export default function GamesList({
           scrollEnabled={scrollEnabled}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
-              <Text style={global.emptyTitle}>
-                No fights scheduled
-              </Text>
-
+              <Text style={global.emptyTitle}>No fights scheduled</Text>
             </View>
           }
         />
@@ -252,10 +243,7 @@ export default function GamesList({
         scrollEnabled={scrollEnabled}
         ListEmptyComponent={
           <View style={global.emptyContainer}>
-            <Text style={global.emptyTitle}>
-              No fights scheduled
-            </Text>
-
+            <Text style={global.emptyTitle}>No fights scheduled</Text>
           </View>
         }
       />

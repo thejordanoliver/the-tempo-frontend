@@ -74,7 +74,11 @@ export function createExploreWidgetId(type: ExploreWidgetConfig["type"]) {
 export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
   if (value && typeof value === "object" && !Array.isArray(value)) {
     const version = (value as StoredExploreWidgetsPayload).version;
-    if (version !== undefined && version !== 1 && version !== EXPLORE_WIDGETS_SCHEMA_VERSION) {
+    if (
+      version !== undefined &&
+      version !== 1 &&
+      version !== EXPLORE_WIDGETS_SCHEMA_VERSION
+    ) {
       throw new Error("Unsupported widget settings version");
     }
   }
@@ -94,7 +98,7 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
   rawWidgets = rawWidgets.map((widget) => {
     if (!widget || typeof widget !== "object") return widget;
     const stored = widget as Record<string, unknown>;
-    const league = (value: unknown) => value === "cbb" ? "mcbb" : value;
+    const league = (value: unknown) => (value === "cbb" ? "mcbb" : value);
     return {
       ...stored,
       type: stored.type === "cbb_games" ? "mcbb_games" : stored.type,
@@ -124,25 +128,24 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
   const firstFavoriteGamesIndex = hasStoredFavoriteGames
     ? storedFavoriteGamesIndex
     : favoriteGamesIndexes[0];
-  const migratedFavoriteGameLeagues = EXPLORE_WIDGET_LEAGUES.filter(
-    (league) =>
-      rawWidgets.some((widget) => {
-        if (!widget || typeof widget !== "object") return false;
+  const migratedFavoriteGameLeagues = EXPLORE_WIDGET_LEAGUES.filter((league) =>
+    rawWidgets.some((widget) => {
+      if (!widget || typeof widget !== "object") return false;
 
-        const stored = widget as {
-          type?: unknown;
-          favoriteGameLeagues?: unknown;
-        };
-        if (isLegacyGameWidgetType(stored.type)) {
-          return LEGACY_GAME_WIDGET_LEAGUES[stored.type] === league;
-        }
+      const stored = widget as {
+        type?: unknown;
+        favoriteGameLeagues?: unknown;
+      };
+      if (isLegacyGameWidgetType(stored.type)) {
+        return LEGACY_GAME_WIDGET_LEAGUES[stored.type] === league;
+      }
 
-        return (
-          stored.type === "favorite_games" &&
-          (!Array.isArray(stored.favoriteGameLeagues) ||
-            stored.favoriteGameLeagues.includes(league))
-        );
-      }),
+      return (
+        stored.type === "favorite_games" &&
+        (!Array.isArray(stored.favoriteGameLeagues) ||
+          stored.favoriteGameLeagues.includes(league))
+      );
+    }),
   );
   const migratedRawWidgets = rawWidgets.flatMap((widget, index) => {
     if (!widget || typeof widget !== "object") return [widget];
@@ -209,9 +212,12 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
             ? widget.title
             : getWidgetTitle(type),
         createdAt,
-        size: type === "create_post" ? "small" : isExploreWidgetSize(widget.size)
-          ? widget.size
-          : getDefaultWidgetSize(type),
+        size:
+          type === "create_post"
+            ? "small"
+            : isExploreWidgetSize(widget.size)
+              ? widget.size
+              : getDefaultWidgetSize(type),
         order:
           typeof widget.order === "number"
             ? widget.order
@@ -225,8 +231,7 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
               : undefined,
         collegePollLeague:
           type === "college_polls" ? collegePollLeague : undefined,
-        collegePollType:
-          type === "college_polls" ? collegePollType : undefined,
+        collegePollType: type === "college_polls" ? collegePollType : undefined,
         // Older stored widgets predate this field; only an explicit false
         // disables autoplay so those widgets retain the default behavior.
         collegePollAutoPlay:
@@ -269,7 +274,9 @@ export function serializeExploreWidgets(widgets: ExploreWidgetConfig[]) {
 }
 
 export async function loadExploreWidgetsForUser(userId: string) {
-  const storedWidgets = await AsyncStorage.getItem(getExploreWidgetsKey(userId));
+  const storedWidgets = await AsyncStorage.getItem(
+    getExploreWidgetsKey(userId),
+  );
   return normalizeStoredWidgets(safeParseJson(storedWidgets));
 }
 
@@ -287,19 +294,41 @@ export async function cleanupLegacyExploreWidgetsKey() {
   await AsyncStorage.removeItem(EXPLORE_WIDGETS_LEGACY_KEY);
 }
 
-export async function loadExploreWidgetSettingsCache(userId: string): Promise<WidgetSettingsCache | null> {
+export async function loadExploreWidgetSettingsCache(
+  userId: string,
+): Promise<WidgetSettingsCache | null> {
   const stored = await AsyncStorage.getItem(getExploreWidgetsKey(userId));
   if (stored === null) return null;
   const value: unknown = JSON.parse(stored);
-  if (!value || typeof value !== "object" || (!Array.isArray(value) && !Array.isArray((value as { widgets?: unknown }).widgets))) {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    (!Array.isArray(value) &&
+      !Array.isArray((value as { widgets?: unknown }).widgets))
+  ) {
     throw new Error("Invalid saved widget settings");
   }
   const metadata = value as Partial<WidgetSettingsCache>;
-  if (metadata.revision !== undefined && metadata.revision !== null &&
-    (!Number.isSafeInteger(metadata.revision) || metadata.revision < 0)) throw new Error("Invalid saved revision");
-  return { version: 2, widgets: normalizeStoredWidgets(value), revision: metadata.revision ?? null, pending: metadata.pending === true };
+  if (
+    metadata.revision !== undefined &&
+    metadata.revision !== null &&
+    (!Number.isSafeInteger(metadata.revision) || metadata.revision < 0)
+  )
+    throw new Error("Invalid saved revision");
+  return {
+    version: 2,
+    widgets: normalizeStoredWidgets(value),
+    revision: metadata.revision ?? null,
+    pending: metadata.pending === true,
+  };
 }
 
-export async function saveExploreWidgetSettingsCache(userId: string, cache: WidgetSettingsCache) {
-  await AsyncStorage.setItem(getExploreWidgetsKey(userId), JSON.stringify(cache));
+export async function saveExploreWidgetSettingsCache(
+  userId: string,
+  cache: WidgetSettingsCache,
+) {
+  await AsyncStorage.setItem(
+    getExploreWidgetsKey(userId),
+    JSON.stringify(cache),
+  );
 }

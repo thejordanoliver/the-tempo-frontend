@@ -89,7 +89,6 @@ type CategoryConfig = {
   stats: StatDefinition[];
 };
 
-
 type Props = {
   leaders: BaseballLeaderTeam[];
   awayId: TeamId;

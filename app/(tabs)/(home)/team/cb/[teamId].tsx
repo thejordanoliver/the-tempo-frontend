@@ -3,7 +3,7 @@ import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
 import { Colors } from "@/constants/styles";
 import { getCBTeam, getCBTeamLogo } from "@/constants/teamsCB";
-import MonthSelector from "components/League/MonthSelector";
+import MonthSelector from "components/League/Selectors/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { useLocalSearchParams } from "expo-router";

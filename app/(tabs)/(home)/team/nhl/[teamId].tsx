@@ -3,7 +3,7 @@ import GamesList from "@/components/Sports/Hockey/Games/GamesList";
 import { Colors, globalStyles } from "@/constants/styles";
 import { useTeamGames } from "@/hooks/HockeyHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import MonthSelector from "components/League/MonthSelector";
+import MonthSelector from "components/League/Selectors/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import Roster from "components/Team/Roster";

@@ -76,7 +76,7 @@ export default function LineScoreSkeleton({ league }: Props) {
     </View>
   );
 
-  const TeamRow = ({ keyPrefix }: { keyPrefix: string; }) => (
+  const TeamRow = ({ keyPrefix }: { keyPrefix: string }) => (
     <View style={styles.row}>
       <Animated.View
         style={[
@@ -101,7 +101,7 @@ export default function LineScoreSkeleton({ league }: Props) {
       <Animated.View style={[styles.wrapper, { borderColor: borderPulse }]}>
         {HeaderRow()}
 
-        {TeamRow({ "keyPrefix": "away" })}
+        {TeamRow({ keyPrefix: "away" })}
 
         <Animated.View
           style={[
@@ -110,7 +110,7 @@ export default function LineScoreSkeleton({ league }: Props) {
           ]}
         />
 
-        {TeamRow({ "keyPrefix": "home" })}
+        {TeamRow({ keyPrefix: "home" })}
       </Animated.View>
     </View>
   );

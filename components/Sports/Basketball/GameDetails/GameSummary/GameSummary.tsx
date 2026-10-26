@@ -1,3 +1,4 @@
+import { formatPeriod } from "@/utils/games/games";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { globalStyles } from "constants/styles";
@@ -112,6 +113,7 @@ function GameSummary({
               !playText.includes("start of") &&
               !playText.includes("end of");
             const scoring = play.scoring;
+            const period = formatPeriod({ period: play.period.number });
 
             return (
               <GameSummaryPlayRow
@@ -122,8 +124,9 @@ function GameSummary({
               >
                 <View style={styles.timeColumn}>
                   <Text style={styles.clockText}>{play.clock}</Text>
-                  <Text style={styles.periodText}>{play.periodLabel}</Text>
+                  <Text style={styles.periodText}>{period}</Text>
                 </View>
+
                 <View style={styles.timelineColumn}>
                   <View
                     style={[styles.teamMarker, scoring && styles.scoringMarker]}
@@ -138,8 +141,8 @@ function GameSummary({
                       <View style={styles.neutralDot} />
                     )}
                   </View>
-                  <View style={styles.timelineLine} />
                 </View>
+
                 <View style={styles.playContent}>
                   <View style={styles.playMeta}>
                     <Text

@@ -160,32 +160,34 @@ export default function ConfirmModal({
                 </Pressable>
               )}
 
-              {showConfirm && <Pressable
-                onPress={handleConfirm}
-                disabled={isConfirmDisabled}
-                hitSlop={8}
-                accessibilityRole="button"
-                accessibilityLabel={confirmText}
-                accessibilityState={{
-                  disabled: isConfirmDisabled,
-                  busy: isSubmitting,
-                }}
-                style={({ pressed }) => [
-                  styles.button,
-                  styles.confirmButton,
-                  isDanger
-                    ? styles.dangerConfirmButton
-                    : styles.defaultConfirmButton,
-                  pressed && !isConfirmDisabled && styles.buttonPressed,
-                  isConfirmDisabled && styles.confirmButtonDisabled,
-                ]}
-              >
-                {isSubmitting ? (
-                  <ActivityIndicator size="small" color={Colors.white} />
-                ) : (
-                  <Text style={styles.confirmText}>{confirmText}</Text>
-                )}
-              </Pressable>}
+              {showConfirm && (
+                <Pressable
+                  onPress={handleConfirm}
+                  disabled={isConfirmDisabled}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel={confirmText}
+                  accessibilityState={{
+                    disabled: isConfirmDisabled,
+                    busy: isSubmitting,
+                  }}
+                  style={({ pressed }) => [
+                    styles.button,
+                    styles.confirmButton,
+                    isDanger
+                      ? styles.dangerConfirmButton
+                      : styles.defaultConfirmButton,
+                    pressed && !isConfirmDisabled && styles.buttonPressed,
+                    isConfirmDisabled && styles.confirmButtonDisabled,
+                  ]}
+                >
+                  {isSubmitting ? (
+                    <ActivityIndicator size="small" color={Colors.white} />
+                  ) : (
+                    <Text style={styles.confirmText}>{confirmText}</Text>
+                  )}
+                </Pressable>
+              )}
             </View>
           </View>
         </ScrollView>

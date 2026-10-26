@@ -20,7 +20,8 @@ import Animated, {
 } from "react-native-reanimated";
 import PredictionGradient from "./PredictionGradient";
 
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableOpacity);
 
 type PredictionCardProps = {
   code: string;
@@ -76,11 +77,7 @@ function PredictionCard({
       onPress={onPress}
       disabled={disabled}
       activeOpacity={disabled ? 1 : 0.7}
-      style={[
-        styles.predictionCard,
-        style,
-        animatedBorderStyle,
-      ]}
+      style={[styles.predictionCard, style, animatedBorderStyle]}
       accessibilityRole="button"
       accessibilityLabel={`${isSelected ? "Your pick: " : ""}${
         showPercent
@@ -100,7 +97,11 @@ function PredictionCard({
       />
 
       {isSelected ? (
-        <View style={styles.selectedBadge} pointerEvents="none" accessible={false}>
+        <View
+          style={styles.selectedBadge}
+          pointerEvents="none"
+          accessible={false}
+        >
           <Ionicons
             name="checkmark"
             size={14}

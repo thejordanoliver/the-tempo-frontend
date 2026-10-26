@@ -83,9 +83,7 @@ export type BaseballLeaderDefinition = {
 
 export type BaseballStatColumn = {
   header: string;
-  getValue: (
-    row: BaseballPlayerStatRow,
-  ) => BaseballStatValue | undefined;
+  getValue: (row: BaseballPlayerStatRow) => BaseballStatValue | undefined;
 };
 
 export type BaseballTeamStatRow = {
@@ -171,11 +169,7 @@ export type TeamAggregatedStats = {
 };
 
 export type BaseballRosterStatsProps = {
-  rosterStats:
-    | BaseballRosterStats
-    | BaseballRosterPlayer[]
-    | null
-    | undefined;
+  rosterStats: BaseballRosterStats | BaseballRosterPlayer[] | null | undefined;
   teamId: string | number;
   teamStats?: TeamAggregatedStats | null;
   loading: boolean;

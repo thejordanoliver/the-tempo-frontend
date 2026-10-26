@@ -7,8 +7,5 @@ module.exports = (() => {
   // Exclude .web.js overrides
   config.resolver.resolverMainFields = ["react-native", "browser", "main"];
 
- 
-
-
   return config;
 })();

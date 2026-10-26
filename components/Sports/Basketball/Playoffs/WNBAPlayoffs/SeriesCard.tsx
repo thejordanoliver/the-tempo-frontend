@@ -27,7 +27,7 @@ export default function SeriesCard({
   isDark,
   onPress,
 }: Props) {
-  const styles = WNBAPlayoffBracketStyles(isDark)
+  const styles = WNBAPlayoffBracketStyles(isDark);
   const layout = getWNBASeriesLayout(roundIndex, seriesIndex);
   const disabled = series.games.length === 0;
   const matchupName = series.teams

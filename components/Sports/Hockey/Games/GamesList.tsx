@@ -8,13 +8,7 @@ import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useMemo, useState } from "react";
-import {
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import NHLGamePreviewModal from "../GamePreview/HockeyGamePreviewModal";
@@ -220,9 +214,11 @@ export default function GamesList({
             />
           ) : null
         }
-        contentContainerStyle={navigationContentStyle(viewMode === "grid"
+        contentContainerStyle={navigationContentStyle(
+          viewMode === "grid"
             ? styles.gridListContainer
-            : styles.contentContainer)}
+            : styles.contentContainer,
+        )}
         refreshing={refreshing}
         onRefresh={onRefresh}
         showsVerticalScrollIndicator={false}
@@ -230,7 +226,6 @@ export default function GamesList({
         ListEmptyComponent={
           <View style={global.emptyContainer}>
             <Text style={global.emptyTitle}>No games scheduled</Text>
-
           </View>
         }
       />

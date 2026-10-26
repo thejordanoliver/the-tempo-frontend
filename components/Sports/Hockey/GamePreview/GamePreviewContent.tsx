@@ -11,15 +11,20 @@ import {
   Official,
   TeamInjury,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
-import type { Coach } from "@/types/team";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import type { Coach } from "@/types/team";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import type { GameStatus, Play } from "hooks/HockeyHooks/useHockeyGameDetails";
 import React from "react";
 import { View } from "react-native";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
+import HockeyPlayByPlay from "../GameDetails/PlayByPlay/HockeyPlayByPlay";
 
 type GamePreviewContentProps = {
+  plays?: Play[];
+  lastPlay?: Play | null;
+  gameStatus?: GameStatus | null;
   homeColor: string;
   homeCode: string;
   homeLogo: any;
@@ -53,6 +58,9 @@ type GamePreviewContentProps = {
 };
 
 export default function GamePreviewContent({
+  plays,
+  lastPlay,
+  gameStatus,
   homeColor,
   homeCode,
   homeLogo,
@@ -89,6 +97,19 @@ export default function GamePreviewContent({
       contentContainerStyle={styles.contentContainerStyle}
     >
       <View style={styles.bottomSheetScrollViewWrapper}>
+        <HockeyPlayByPlay
+          plays={plays}
+          lastPlay={lastPlay}
+          gameStatus={gameStatus}
+          homeId={homeId}
+          awayId={awayId}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
+          homeColor={homeColor}
+          awayColor={awayColor}
+          state={state}
+          isDark={isDark}
+        />
         <LineScore
           linescore={lineScore}
           awayCode={awayCode}

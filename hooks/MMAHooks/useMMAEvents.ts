@@ -1,3 +1,4 @@
+import { useSportsRequestScope } from "hooks/Sports/useSportsRequestScope";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import type { GameVenueInfo } from "types/gameVenue";
@@ -132,6 +133,7 @@ export type useMMAEventsOptions = {
   date?: Date | string | number | null;
   league?: MMALeague;
   enabled?: boolean;
+  scopeKey?: string;
   onScoreboardCalendar?: OnScoreboardCalendar;
   pollLiveEvents?: boolean;
   pollIntervalMs?: number;
@@ -327,11 +329,12 @@ export function useMMAEvents({
   date,
   league = "ufc",
   enabled = true,
+  scopeKey,
   onScoreboardCalendar,
   pollLiveEvents = true,
   pollIntervalMs = 90000,
 }: useMMAEventsOptions = {}) {
-  const [data, setData] = useState<MMAGamesResponse | null>(null);
+  const [storedData, setData] = useState<MMAGamesResponse | null>(null);
   const [loading, setLoading] = useState(enabled);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -344,6 +347,13 @@ export function useMMAEvents({
 
   const endpoint = getEndpoint(league);
 
+  const scope = useSportsRequestScope(JSON.stringify([league, formattedDate]), {
+    enabled,
+    scopeKey,
+  });
+  const { begin, isCurrent, accept, finish } = scope;
+  const data = scope.hasData ? storedData : null;
+
   const rawEvents = useMemo(() => getRawMMAEvents(data), [data]);
 
   const games = useMemo(() => normalizeMMAGames(data), [data]);
@@ -353,11 +363,8 @@ export function useMMAEvents({
       forceRefresh = false,
       silent = false,
     }: FetchGamesOptions = {}) => {
-      if (!enabled) {
-        setLoading(false);
-        setRefreshing(false);
-        return;
-      }
+      const request = begin();
+      if (!request) return;
 
       try {
         setError(null);
@@ -365,16 +372,20 @@ export function useMMAEvents({
         if (forceRefresh) {
           setRefreshing(true);
         } else if (!silent) {
-          setLoading(true);
+          setLoading(!request.hasData);
         }
 
         const response = await apiClient.get<MMAGamesResponse>(endpoint, {
           params: { date: formattedDate },
+          signal: request.controller.signal,
         });
 
-        onScoreboardCalendar?.(response.data);
-        setData(response.data);
+        if (accept(request)) {
+          onScoreboardCalendar?.(response.data);
+          setData(response.data);
+        }
       } catch (err: any) {
+        if (!isCurrent(request)) return;
         onScoreboardCalendar?.(null);
         console.error(`[useMMAEvents] ${league} fetch failed`, err);
 
@@ -388,14 +399,22 @@ export function useMMAEvents({
 
         if (!forceRefresh && !silent) setData(null);
       } finally {
-        if (!silent) {
+        if (finish(request)) {
           setLoading(false);
+          setRefreshing(false);
         }
-
-        setRefreshing(false);
       }
     },
-    [enabled, endpoint, formattedDate, league, onScoreboardCalendar],
+    [
+      endpoint,
+      formattedDate,
+      league,
+      onScoreboardCalendar,
+      begin,
+      accept,
+      finish,
+      isCurrent,
+    ],
   );
 
   const refreshGames = useCallback(async () => {
@@ -403,8 +422,14 @@ export function useMMAEvents({
   }, [fetchGames]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchGames());
-  }, [fetchGames]);
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled && enabled) void fetchGames();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, fetchGames]);
 
   const hasLiveEvent = useMemo(() => {
     return rawEvents.some(isLiveMMAEvent) || games.some(isLiveMMAEvent);
@@ -412,7 +437,10 @@ export function useMMAEvents({
 
   useLiveSportsSubscription<MMAGamesResponse>({
     enabled:
-      enabled && pollLiveEvents && !loading && pollIntervalMs > 0 &&
+      enabled &&
+      pollLiveEvents &&
+      !loading &&
+      pollIntervalMs > 0 &&
       (hasLiveEvent || games.some(shouldTrackGameUpdates)),
     kind: "scoreboard",
     payload: {
@@ -422,6 +450,9 @@ export function useMMAEvents({
       date: formattedDate,
     },
     onUpdate: (payload) => {
+      if (!accept()) return;
+      setLoading(false);
+      setRefreshing(false);
       setData(payload);
     },
   });
@@ -436,9 +467,9 @@ export function useMMAEvents({
     games,
     flatGames: games,
 
-    loading,
-    refreshing,
-    error,
+    loading: enabled && !scope.hasData && (!scope.settled || loading),
+    refreshing: enabled && refreshing,
+    error: enabled && scope.settled ? error : null,
     refreshGames,
     hasLiveEvent,
   };

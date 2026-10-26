@@ -102,6 +102,5 @@ export const newsArticleStyles = (isDark: boolean, screenWidth: number) => {
       color: isDark ? Colors.dark.blue : Colors.light.blue,
       textDecorationLine: "underline",
     },
-
   });
 };

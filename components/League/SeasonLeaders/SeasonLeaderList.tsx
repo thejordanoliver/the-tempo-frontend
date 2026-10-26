@@ -9,9 +9,12 @@ import { useMemo } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
-import { getTabGroup, scopeHrefToTab } from "utils/navigation/tabStackNavigation";
+import {
+  getTabGroup,
+  scopeHrefToTab,
+} from "utils/navigation/tabStackNavigation";
 
-import HeadingTwo from "../Headings/HeadingTwo";
+import HeadingTwo from "../../Headings/HeadingTwo";
 
 interface SeasonLeadersListProps {
   loading?: boolean;

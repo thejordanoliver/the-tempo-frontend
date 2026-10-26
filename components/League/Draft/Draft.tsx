@@ -17,6 +17,7 @@ const DRAFT_TAB_OPTIONS = DRAFT_TABS.map((tab) => ({
 }));
 
 type Props = {
+  active?: boolean;
   year: string;
   team: string;
   round: string;
@@ -27,6 +28,7 @@ type Props = {
 };
 
 export default function Draft({
+  active = true,
   year,
   team,
   round,
@@ -77,6 +79,7 @@ export default function Draft({
           pointerEvents={selectedTab === "Draft List" ? "auto" : "none"}
         >
           <DraftList
+            active={active && selectedTab === "Draft List"}
             year={year}
             team={team}
             round={round}
@@ -95,7 +98,11 @@ export default function Draft({
             ]}
             pointerEvents={selectedTab === "Draft Board" ? "auto" : "none"}
           >
-            <DraftBoardTab safeYear={safeYear} league={league} />
+            <DraftBoardTab
+              safeYear={safeYear}
+              league={league}
+              active={active && selectedTab === "Draft Board"}
+            />
           </View>
         )}
 
@@ -107,7 +114,11 @@ export default function Draft({
             ]}
             pointerEvents={selectedTab === "Draft News" ? "auto" : "none"}
           >
-            <DraftNewsTab safeYear={safeYear} league={league} />
+            <DraftNewsTab
+              safeYear={safeYear}
+              league={league}
+              active={active && selectedTab === "Draft News"}
+            />
           </View>
         )}
       </View>

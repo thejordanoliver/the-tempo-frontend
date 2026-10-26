@@ -52,7 +52,10 @@ export default function FavoriteGamesWidget({
     [favorites],
   );
   const filteredGames = useMemo(
-    () => games.filter((game) => selectedLeagues.includes(game.type as ExploreWidgetLeague)),
+    () =>
+      games.filter((game) =>
+        selectedLeagues.includes(game.type as ExploreWidgetLeague),
+      ),
     [games, selectedLeagues],
   );
   const hasSelectedFavoriteLeague = selectedLeagues.some((league) =>
@@ -73,7 +76,8 @@ export default function FavoriteGamesWidget({
           }
         : {
             title: "No games scheduled",
-            message: "There are no recent or upcoming games in your selected leagues.",
+            message:
+              "There are no recent or upcoming games in your selected leagues.",
             action: undefined,
           };
 

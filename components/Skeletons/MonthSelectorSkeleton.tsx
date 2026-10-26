@@ -1,3 +1,8 @@
+import {
+  DATE_SELECTOR_ITEM_SPACING,
+  DATE_SELECTOR_ITEM_WIDTH,
+  DATE_SELECTOR_SIDE_PADDING,
+} from "constants/dateSelectorConstants";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useMemo, useState } from "react";
@@ -8,12 +13,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import {
-  MONTH_SELECTOR_ITEM_HEIGHT,
-  MONTH_SELECTOR_ITEM_SPACING,
-  MONTH_SELECTOR_ITEM_WIDTH,
-  MONTH_SELECTOR_SIDE_PADDING,
-} from "../../constants/monthSelectorConstants";
+import { DateSelectorStyles } from "styles/LeagueStyles/DateSelectorStyles";
 
 type Props = {
   itemCount?: number;
@@ -27,30 +27,32 @@ export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
 
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const itemStep = MONTH_SELECTOR_ITEM_WIDTH + MONTH_SELECTOR_ITEM_SPACING;
+  const itemStep = DATE_SELECTOR_ITEM_WIDTH + DATE_SELECTOR_ITEM_SPACING;
 
   const rawItemsWidth = useMemo(() => {
     return (
-      itemCount * MONTH_SELECTOR_ITEM_WIDTH +
-      MONTH_SELECTOR_ITEM_SPACING * Math.max(0, itemCount - 1)
+      itemCount * DATE_SELECTOR_ITEM_WIDTH +
+      DATE_SELECTOR_ITEM_SPACING * Math.max(0, itemCount - 1)
     );
   }, [itemCount]);
 
   const needsScroll =
     containerWidth > 0 &&
-    rawItemsWidth + MONTH_SELECTOR_SIDE_PADDING * 2 > containerWidth;
+    rawItemsWidth + DATE_SELECTOR_SIDE_PADDING * 2 > containerWidth;
 
   const horizontalPadding = needsScroll
-    ? MONTH_SELECTOR_SIDE_PADDING
+    ? DATE_SELECTOR_SIDE_PADDING
     : Math.max(
         (containerWidth - rawItemsWidth) / 2,
-        MONTH_SELECTOR_SIDE_PADDING,
+        DATE_SELECTOR_SIDE_PADDING,
       );
 
   const styles = useMemo(
-    () => getStyles(isDark, horizontalPadding),
+    () => DateSelectorStyles(isDark, { horizontalPadding }),
     [horizontalPadding, isDark],
   );
+
+  const placeholderStyles = getPlaceholderStyles(isDark);
 
   const onLayoutContainer = (event: LayoutChangeEvent) => {
     setContainerWidth(event.nativeEvent.layout.width);
@@ -84,7 +86,7 @@ export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
   );
 
   return (
-    <View style={styles.monthSelector} onLayout={onLayoutContainer}>
+    <View style={styles.wrapper} onLayout={onLayoutContainer}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -94,9 +96,9 @@ export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
         contentContainerStyle={styles.contentContainerStyle}
       >
         {Array.from({ length: itemCount }).map((_, index) => (
-          <View key={index} style={styles.monthButton}>
-            <SkeletonBlock style={styles.monthText} />
-            <SkeletonBlock style={styles.gameCountText} />
+          <View key={index} style={styles.item}>
+            <SkeletonBlock style={placeholderStyles.monthText} />
+            <SkeletonBlock style={placeholderStyles.gameCountText} />
           </View>
         ))}
       </ScrollView>
@@ -104,25 +106,8 @@ export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
   );
 }
 
-const getStyles = (isDark: boolean, horizontalPadding: number) =>
+const getPlaceholderStyles = (isDark: boolean) =>
   StyleSheet.create({
-    monthSelector: {
-      flexDirection: "row",
-      marginVertical: 8,
-    },
-    contentContainerStyle: {
-      position: "relative",
-      alignItems: "center",
-      paddingHorizontal: horizontalPadding,
-    },
-    monthButton: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: MONTH_SELECTOR_ITEM_WIDTH,
-      height: MONTH_SELECTOR_ITEM_HEIGHT,
-      padding: 4,
-      borderRadius: 12,
-    },
     monthText: {
       width: 38,
       height: 17,

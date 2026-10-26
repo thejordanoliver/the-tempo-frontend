@@ -1,8 +1,20 @@
 import type { Href } from "expo-router";
 import { resolveSoccerTeamLeague } from "../teams/soccerTeamLeague";
 const TEAM_ROUTE_LEAGUES = new Set([
-  "nba", "wnba", "gleague", "mcbb", "wcbb", "nfl", "cfb", "ufl",
-  "mlb", "cb", "sb", "nhl", "mcvb", "wcvb",
+  "nba",
+  "wnba",
+  "gleague",
+  "mcbb",
+  "wcbb",
+  "nfl",
+  "cfb",
+  "ufl",
+  "mlb",
+  "cb",
+  "sb",
+  "nhl",
+  "mcvb",
+  "wcvb",
 ]);
 
 // Recover fixed leagues from paths and retain soccer competition metadata.
@@ -10,11 +22,15 @@ export function withTeamLeague(href: Href): Href {
   const pathname = typeof href === "string" ? href : href.pathname;
   if (
     typeof pathname !== "string" ||
-    !/^\/(?:\(tabs\)\/\((?:home|league|explore|profile)\)\/)?team\//.test(pathname)
+    !/^\/(?:\(tabs\)\/\((?:home|league|explore|profile)\)\/)?team\//.test(
+      pathname,
+    )
   ) {
     return href;
   }
-  const match = pathname.split(/[?#]/, 1)[0].match(/\/team\/([^/]+)(?:\/([^/]+))?$/);
+  const match = pathname
+    .split(/[?#]/, 1)[0]
+    .match(/\/team\/([^/]+)(?:\/([^/]+))?$/);
   if (!match) return href;
 
   const params = typeof href === "string" ? undefined : href.params;
@@ -34,7 +50,10 @@ export function withTeamLeague(href: Href): Href {
       : value || teamType;
 
   if (typeof href !== "string") {
-    return { ...href, params: { ...params, league: getLeague(params?.league) } } as Href;
+    return {
+      ...href,
+      params: { ...params, league: getLeague(params?.league) },
+    } as Href;
   }
   const [pathAndQuery, fragment] = href.split("#", 2);
   const [path, query] = pathAndQuery.split("?", 2);

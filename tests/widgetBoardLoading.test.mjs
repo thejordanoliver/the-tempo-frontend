@@ -13,27 +13,49 @@ function setup(initialIds) {
   let state;
   let context;
   const react = {
-    createContext(value) { context = { current: value }; return context; },
-    useContext(value) { return value.current; },
+    createContext(value) {
+      context = { current: value };
+      return context;
+    },
+    useContext(value) {
+      return value.current;
+    },
     useState(initial) {
       const position = index++;
-      if (!(position in slots)) slots[position] = typeof initial === "function" ? initial() : initial;
-      return [slots[position], (next) => {
-        const value = typeof next === "function" ? next(slots[position]) : next;
-        if (!Object.is(value, slots[position])) {
-          slots[position] = value;
-          changed = true;
-        }
-      }];
+      if (!(position in slots))
+        slots[position] = typeof initial === "function" ? initial() : initial;
+      return [
+        slots[position],
+        (next) => {
+          const value =
+            typeof next === "function" ? next(slots[position]) : next;
+          if (!Object.is(value, slots[position])) {
+            slots[position] = value;
+            changed = true;
+          }
+        },
+      ];
     },
-    useCallback(callback) { return callback; },
-    useMemo(factory) { return factory(); },
-    useEffect(callback) { callback(); },
+    useCallback(callback) {
+      return callback;
+    },
+    useMemo(factory) {
+      return factory();
+    },
+    useEffect(callback) {
+      callback();
+    },
   };
   const exports = {};
-  const source = ts.transpileModule(fs.readFileSync("hooks/ExploreHooks/useWidgetBoardLoading.tsx", "utf8"), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
-  }).outputText;
+  const source = ts.transpileModule(
+    fs.readFileSync("hooks/ExploreHooks/useWidgetBoardLoading.tsx", "utf8"),
+    {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        jsx: ts.JsxEmit.ReactJSX,
+      },
+    },
+  ).outputText;
   vm.runInNewContext(source, {
     exports,
     require(name) {
@@ -51,8 +73,13 @@ function setup(initialIds) {
   }
   render();
   return {
-    get loading() { return state.loading; },
-    updateIds(next) { ids = next; render(); },
+    get loading() {
+      return state.loading;
+    },
+    updateIds(next) {
+      ids = next;
+      render();
+    },
     report(id, loading) {
       context.current = () => state.onWidgetReady(id);
       exports.useWidgetLoadReady(loading);
@@ -66,7 +93,15 @@ function setup(initialIds) {
 }
 
 test("all widget types stay hidden until the slowest initial load settles", () => {
-  const ids = ["games", "teams", "picks", "post", "standings", "polls", "second-standings"];
+  const ids = [
+    "games",
+    "teams",
+    "picks",
+    "post",
+    "standings",
+    "polls",
+    "second-standings",
+  ];
   const board = setup(ids);
   assert.equal(board.loading, true);
   for (const id of ids.slice().reverse()) {

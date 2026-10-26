@@ -1,5 +1,6 @@
 import {
   BoxScore,
+  BasketballPlayByPlay,
   GameLeaders,
   GameLocation,
   GameTeamStats,
@@ -12,6 +13,10 @@ import {
 } from "@/components/Sports/Basketball/GameDetails";
 import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
 import type { Coach } from "@/types/team";
+import type {
+  GameStatus,
+  Play,
+} from "hooks/BasketballHooks/useBasketballGameDetails";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -47,6 +52,9 @@ type GamePreviewContentProps = {
   homeCoach: Coach | undefined | null;
   awayCoach: Coach | undefined | null;
   leaders: any;
+  plays?: Play[];
+  lastPlay?: Play | null;
+  gameStatus?: GameStatus;
   venueImage?: any;
   venueName?: string;
   venueLocation?: string;
@@ -84,6 +92,9 @@ export default function GamePreviewContent({
   teamStats,
   officials,
   leaders,
+  plays,
+  lastPlay,
+  gameStatus,
   venueImage,
   venueName,
   venueLocation,
@@ -128,6 +139,21 @@ export default function GamePreviewContent({
           state={state}
           isDark={isDark}
           size={180}
+        />
+
+        <BasketballPlayByPlay
+          plays={plays}
+          lastPlay={lastPlay}
+          homeId={homeId}
+          awayId={awayId}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
+          homeColor={homeColor}
+          awayColor={awayColor}
+          state={state}
+          gameStatus={gameStatus}
+          isDark={isDark}
+          league={league}
         />
 
         <GameLeaders

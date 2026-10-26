@@ -17,7 +17,10 @@ import {
   volleyballStandingGroups,
   volleyballStatus,
 } from "../utils/volleyball";
-import { getVolleyballGameParams, getVolleyballGameRoute } from "../utils/navigation/volleyballGame";
+import {
+  getVolleyballGameParams,
+  getVolleyballGameRoute,
+} from "../utils/navigation/volleyballGame";
 
 test("volleyball favorites retain gender and league when school IDs overlap", () => {
   assert.deepEqual(
@@ -115,24 +118,65 @@ test("live and final volleyball labels use set periods", () => {
 
 test("volleyball detail links retain league identity for cards and every tab", () => {
   for (const league of ["mcvb", "wcvb"] as const) {
-    const game = { id: "401902970", league: { code: league, id: league === "mcvb" ? 401 : 402 } } as VolleyballGame;
+    const game = {
+      id: "401902970",
+      league: { code: league, id: league === "mcvb" ? 401 : 402 },
+    } as VolleyballGame;
     const route = getVolleyballGameRoute(game);
     assert.equal(route.pathname, "/game/volleyball/[game]");
     assert.equal(route.params.league, league);
-    assert.deepEqual(getVolleyballGameParams(route.params), { gameId: game.id, league });
-    for (const tab of ["(home)", "(league)", "(explore)", "(profile)"] as const) {
-      assert.equal(scopeHrefToTab(`/game/volleyball/${game.id}`, tab), `/(tabs)/${tab}/game/volleyball/${game.id}`);
+    assert.deepEqual(getVolleyballGameParams(route.params), {
+      gameId: game.id,
+      league,
+    });
+    for (const tab of [
+      "(home)",
+      "(league)",
+      "(explore)",
+      "(profile)",
+    ] as const) {
+      assert.equal(
+        scopeHrefToTab(`/game/volleyball/${game.id}`, tab),
+        `/(tabs)/${tab}/game/volleyball/${game.id}`,
+      );
     }
-    assert.deepEqual(getVolleyballGameParams({ game: game.id, leagueId: route.params.leagueId }), { gameId: game.id, league });
-    assert.deepEqual(getVolleyballGameParams({ game: encodeURIComponent(JSON.stringify(game)) }), { gameId: game.id, league });
+    assert.deepEqual(
+      getVolleyballGameParams({
+        game: game.id,
+        leagueId: route.params.leagueId,
+      }),
+      { gameId: game.id, league },
+    );
+    assert.deepEqual(
+      getVolleyballGameParams({
+        game: encodeURIComponent(JSON.stringify(game)),
+      }),
+      { gameId: game.id, league },
+    );
   }
 });
 
 test("volleyball deep links reject invalid leagues and mismatched serialized games", () => {
-  assert.deepEqual(getVolleyballGameParams({ game: ["401902970"], league: ["wcvb"] }), { gameId: "401902970", league: "wcvb" });
-  assert.equal(getVolleyballGameParams({ game: "401902970", league: "nfl" }).league, null);
-  assert.equal(getVolleyballGameParams({ game: "bad", league: "mcvb", data: "%broken" }).gameId, "");
-  assert.equal(getVolleyballGameParams({ game: "401902970", data: JSON.stringify({ id: "different", league: { code: "mcvb" } }) }).league, null);
+  assert.deepEqual(
+    getVolleyballGameParams({ game: ["401902970"], league: ["wcvb"] }),
+    { gameId: "401902970", league: "wcvb" },
+  );
+  assert.equal(
+    getVolleyballGameParams({ game: "401902970", league: "nfl" }).league,
+    null,
+  );
+  assert.equal(
+    getVolleyballGameParams({ game: "bad", league: "mcvb", data: "%broken" })
+      .gameId,
+    "",
+  );
+  assert.equal(
+    getVolleyballGameParams({
+      game: "401902970",
+      data: JSON.stringify({ id: "different", league: { code: "mcvb" } }),
+    }).league,
+    null,
+  );
 });
 
 test("standings preserve nested conference groups and skip empty headings", () => {

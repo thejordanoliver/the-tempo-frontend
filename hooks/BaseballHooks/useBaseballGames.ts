@@ -1,8 +1,12 @@
+import {
+  useSportsRequestScope,
+  type SportsRequestOptions,
+} from "hooks/Sports/useSportsRequestScope";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { BaseballGame } from "@/types/baseball/baseball";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
@@ -29,11 +33,15 @@ function getBaseballEndpoint(league: League) {
   }
 }
 
-export function useBaseballGames(date?: Date, league: League = "mlb", onScoreboardCalendar?: OnScoreboardCalendar) {
-  const [games, setGames] = useState<BaseballGame[]>([]);
+export function useBaseballGames(
+  date?: Date,
+  league: League = "mlb",
+  onScoreboardCalendar?: OnScoreboardCalendar,
+  options: SportsRequestOptions = {},
+) {
+  const [storedGames, setGames] = useState<BaseballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const requestIdRef = useRef(0);
 
   const formattedDate = useMemo(() => {
     return date ? dayjs(date).format("YYYYMMDD") : "today";
@@ -41,44 +49,65 @@ export function useBaseballGames(date?: Date, league: League = "mlb", onScoreboa
 
   const endpoint = getBaseballEndpoint(league);
 
+  const scope = useSportsRequestScope(
+    JSON.stringify([league, formattedDate]),
+    options,
+  );
+  const { enabled, begin, isCurrent, accept, finish } = scope;
+  const games = useMemo(
+    () => (scope.hasData ? storedGames : []),
+    [scope.hasData, storedGames],
+  );
+
   const fetchGames = useCallback(
     async ({
       forceRefresh = false,
       silent = false,
     }: FetchGamesOptions = {}) => {
-      const requestId = ++requestIdRef.current;
+      const request = begin();
+      if (!request) return;
 
       try {
         setError(null);
 
         // Keep pull-to-refresh and live updates from showing the full skeleton.
         if (!forceRefresh && !silent) {
-          setLoading(true);
+          setLoading(!request.hasData);
         }
 
         const { data } = await apiClient.get(endpoint, {
           params: formattedDate !== "today" ? { date: formattedDate } : {},
+          signal: request.controller.signal,
         });
 
         const gamesData = Array.isArray(data?.games) ? data.games : [];
 
-        if (requestId === requestIdRef.current) {
+        if (accept(request)) {
           setGames(gamesData);
           onScoreboardCalendar?.(data);
         }
       } catch (err) {
-        if (requestId !== requestIdRef.current) return;
+        if (!isCurrent(request)) return;
         onScoreboardCalendar?.(null);
         console.error(err);
         setError(new Error(`Failed to fetch ${league} games`));
         if (!forceRefresh && !silent) setGames([]);
       } finally {
-        if (!silent && requestId === requestIdRef.current) {
+        if (finish(request)) {
           setLoading(false);
         }
       }
     },
-    [endpoint, formattedDate, league, onScoreboardCalendar],
+    [
+      endpoint,
+      formattedDate,
+      league,
+      onScoreboardCalendar,
+      begin,
+      accept,
+      finish,
+      isCurrent,
+    ],
   );
 
   const refreshGames = useCallback(async () => {
@@ -88,20 +117,19 @@ export function useBaseballGames(date?: Date, league: League = "mlb", onScoreboa
   useEffect(() => {
     let cancelled = false;
     void Promise.resolve().then(() => {
-      if (!cancelled) void fetchGames();
+      if (!cancelled && enabled) void fetchGames();
     });
     return () => {
       cancelled = true;
-      requestIdRef.current += 1;
     };
-  }, [fetchGames]);
+  }, [enabled, fetchGames]);
 
   const hasActiveGame = useMemo(() => {
     return games.some(shouldTrackGameUpdates);
   }, [games]);
 
   useLiveSportsSubscription<BaseballGamesResponse>({
-    enabled: !loading && hasActiveGame,
+    enabled: enabled && scope.settled && !loading && hasActiveGame,
     kind: "scoreboard",
     payload: {
       sport: "baseball",
@@ -109,15 +137,16 @@ export function useBaseballGames(date?: Date, league: League = "mlb", onScoreboa
       date: formattedDate !== "today" ? formattedDate : undefined,
     },
     onUpdate: (payload) => {
-      requestIdRef.current += 1;
+      if (!accept()) return;
+      setLoading(false);
       setGames(Array.isArray(payload?.games) ? payload.games : []);
     },
   });
 
   return {
     games,
-    loading,
-    error,
+    loading: enabled && !scope.hasData && (!scope.settled || loading),
+    error: enabled && scope.settled ? error : null,
     refreshGames,
   };
 }

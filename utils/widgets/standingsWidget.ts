@@ -61,11 +61,13 @@ export function buildStandingsSlides(
   return buildStandingsPreviewGroups(conferences, Infinity).flatMap(
     (group): StandingsSlide[] => [
       { type: "conference", key: `conference:${group.id}`, name: group.name },
-      ...group.rows.map((row): StandingsSlide => ({
-        type: "team",
-        key: `${group.id}:${row.team.id}`,
-        row,
-      })),
+      ...group.rows.map(
+        (row): StandingsSlide => ({
+          type: "team",
+          key: `${group.id}:${row.team.id}`,
+          row,
+        }),
+      ),
     ],
   );
 }

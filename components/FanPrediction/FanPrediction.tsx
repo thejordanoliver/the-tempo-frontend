@@ -59,9 +59,16 @@ function FanPredictionContent(props: Props) {
     handleHomeVote,
   } = useFanPrediction(props);
   const isLive = state === "in";
-  const voteDisabled = (canVote && !scoring) || !canVote || userVote != null || submittingTeamId != null;
+  const voteDisabled =
+    (canVote && !scoring) ||
+    !canVote ||
+    userVote != null ||
+    submittingTeamId != null;
 
-  if (phase === "loading" || (phase === "ready" && canVote && !scoring && !scoringError)) {
+  if (
+    phase === "loading" ||
+    (phase === "ready" && canVote && !scoring && !scoringError)
+  ) {
     return (
       <FanPredictionSkeleton
         isDark={isDark}

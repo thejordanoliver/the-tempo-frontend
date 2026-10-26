@@ -184,7 +184,12 @@ export default function NotificationsCenter() {
       <FlatList
         style={styles.list}
         data={visibleNotifications}
-        extraData={{ relativeTimeNow, isSelectionMode, isAllSelected, selectedIds }}
+        extraData={{
+          relativeTimeNow,
+          isSelectionMode,
+          isAllSelected,
+          selectedIds,
+        }}
         keyExtractor={(item) => item.id}
         renderItem={renderNotificationItem}
         ListHeaderComponent={

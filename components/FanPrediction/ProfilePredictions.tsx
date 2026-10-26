@@ -4,7 +4,10 @@ import { SkeletonBlock } from "components/Skeletons/primitives";
 import { Colors, globalStyles } from "constants/styles";
 import { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import type { FanPredictionPick, FanPredictionRanking } from "types/fanPredictions";
+import type {
+  FanPredictionPick,
+  FanPredictionRanking,
+} from "types/fanPredictions";
 import HeadingTwo from "../Headings/HeadingTwo";
 import Subheading from "../Headings/Subheading";
 

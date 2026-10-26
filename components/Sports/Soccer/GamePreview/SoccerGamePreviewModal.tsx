@@ -261,6 +261,7 @@ export default function SoccerGamePreviewModal({
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
+                  playByPlay={score?.playByPlay}
                   homeId={homeId}
                   awayId={awayId}
                   homeColor={homeColor}

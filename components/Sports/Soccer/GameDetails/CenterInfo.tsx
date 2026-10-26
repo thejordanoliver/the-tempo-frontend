@@ -27,8 +27,8 @@ export function CenterInfo({
 
   const isFinal = state === "post";
   const inProgress = state === "in";
-  const endOfPeriod = gameStatusDescription === "End of Period";
   const isScheduled = gameStatusDescription === "Scheduled";
+  const endOfPeriod = gameStatusDescription === "End of Period";
   const isSuspended = gameStatusDescription === "Suspended";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -37,7 +37,7 @@ export function CenterInfo({
   const isHalftime = gameStatusDescription === "Halftime";
 
   return (
-    <View>
+    <View style={styles.container}>
       {isFinal && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>{gameStatusDetail}</Text>

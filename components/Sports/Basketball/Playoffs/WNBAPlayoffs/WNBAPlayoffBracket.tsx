@@ -14,7 +14,7 @@ import type { WNBAPlayoffSeries } from "types/basketball/wnbaPlayoffs";
 import BracketConnectors from "./BracketConnectors";
 import SeriesCard from "./SeriesCard";
 
-type Props = { season: number };
+type Props = { season: number; active?: boolean };
 
 function getSeriesGame(series: WNBAPlayoffSeries) {
   return (
@@ -24,14 +24,16 @@ function getSeriesGame(series: WNBAPlayoffSeries) {
   );
 }
 
-export default function WNBAPlayoffBracket({ season }: Props) {
+export default function WNBAPlayoffBracket({ season, active = true }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const colors = isDark ? Colors.dark : Colors.light;
   const styles = WNBAPlayoffBracketStyles(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const router = useScopedRouter();
-  const { data, loading, error, refresh } = useWNBAPlayoffs(season);
+  const { data, loading, error, refresh } = useWNBAPlayoffs(season, {
+    enabled: active,
+  });
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {

@@ -87,7 +87,8 @@ export default function GamesList({
     String(game?.league?.id) === "23170" ||
     String(game?.league?.id) === "64" ||
     String(game?.league?.id) === "63";
-  const isMCBBGame = (game: BasketballGame) => String(game?.league?.id) === "10";
+  const isMCBBGame = (game: BasketballGame) =>
+    String(game?.league?.id) === "10";
   const isWCBBGame = (game: BasketballGame) =>
     String(game?.league?.id) === "54";
   const isGLEAGUEGame = (game: BasketballGame) =>
@@ -288,10 +289,7 @@ export default function GamesList({
           )}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
-              <Text style={global.emptyTitle}>
-                No games scheduled
-              </Text>
-
+              <Text style={global.emptyTitle}>No games scheduled</Text>
             </View>
           }
         />
@@ -323,7 +321,6 @@ export default function GamesList({
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>No games scheduled</Text>
-
             </View>
           }
         />

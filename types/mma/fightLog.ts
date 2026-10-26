@@ -18,7 +18,12 @@ export type MMAFightLog = {
   league: "ufc";
   years: { value: string; label: string }[];
   fights: MMAFightLogEntry[];
-  careerStats: { key: string; label: string; description: string; value: string }[];
+  careerStats: {
+    key: string;
+    label: string;
+    description: string;
+    value: string;
+  }[];
   fetchedAt: string;
   stale: boolean;
 };

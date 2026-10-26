@@ -1,3 +1,4 @@
+import { AppState } from "react-native";
 import type { ReactNode } from "react";
 import {
   createContext,
@@ -29,6 +30,7 @@ import {
 import { useFavoriteTeamsContext } from "./FavoriteTeamsContext";
 
 type ExploreWidgetsContextValue = {
+  setBoardVisible: (visible: boolean) => void;
   widgets: ExploreWidgetConfig[];
   widgetsReady: boolean;
   settingsError: string | null;
@@ -101,10 +103,16 @@ function getExploreFavoriteLeague(
 }
 
 function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Unable to load widget games.";
+  return error instanceof Error
+    ? error.message
+    : "Unable to load widget games.";
 }
 
-export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
+export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
+  const [boardVisible, setBoardVisible] = useState(false);
+  const [foreground, setForeground] = useState(
+    AppState.currentState === "active",
+  );
   const {
     favorites,
     isLoading: favoritesLoading,
@@ -283,7 +291,9 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       const timeout = new Promise<never>((_, reject) => {
         deadline = setTimeout(() => {
           controller.abort();
-          reject(new Error("Widget refresh timed out. Pull down to try again."));
+          reject(
+            new Error("Widget refresh timed out. Pull down to try again."),
+          );
         }, WIDGET_DATA_DEADLINE_MS);
       });
       const promise = Promise.race([
@@ -375,7 +385,37 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
     [],
   );
 
+  useEffect(() => {
+    const listener = AppState.addEventListener("change", (state) =>
+      setForeground(state === "active"),
+    );
+    return () => listener.remove();
+  }, []);
+  useEffect(() => {
+    let cancelled = false;
+    if (!boardVisible || !foreground) {
+      requestGenerationRef.current += 1;
+      pendingRequestRef.current?.controller.abort();
+      pendingRequestRef.current = null;
+    }
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      if (boardVisible && foreground) {
+        void ensureWidgetData();
+      } else {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [boardVisible, foreground, ensureWidgetData]);
+
   useExploreWidgetLiveUpdates({
+    enabled: boardVisible && foreground,
     cache,
     dataKey,
     relevantFavoriteKeySet,
@@ -413,6 +453,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
 
   const value = useMemo<ExploreWidgetsContextValue>(
     () => ({
+      setBoardVisible,
       widgets,
       widgetsReady,
       settingsError,

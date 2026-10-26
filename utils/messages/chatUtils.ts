@@ -5,7 +5,10 @@ import type {
 } from "types/chat";
 import { CHAT_EMOJIS, chatMessageKey } from "utils/messages/gameChatState";
 import { BASE_URL } from "utils/apiClient";
-import { buildChatPayload, type ChatSendPayload } from "utils/messages/chatPayload";
+import {
+  buildChatPayload,
+  type ChatSendPayload,
+} from "utils/messages/chatPayload";
 
 const ECHO_DEDUPE_WINDOW_MS = 1500;
 
@@ -90,9 +93,9 @@ const normalizeReactions = (value: unknown): ChatReactionMap | undefined => {
     return undefined;
   }
 
-  const reactions = Object.entries(value as Record<string, unknown>).reduce<
-    ChatReactionMap
-  >((acc, [emoji, users]) => {
+  const reactions = Object.entries(
+    value as Record<string, unknown>,
+  ).reduce<ChatReactionMap>((acc, [emoji, users]) => {
     if (!CHAT_EMOJIS.includes(emoji) || !Array.isArray(users)) return acc;
 
     const normalizedUsers = Array.from(
@@ -193,7 +196,9 @@ export const getFallbackMessageId = (message: IncomingChatMessage) =>
     getMessageGifUrl(message) ?? "",
   ].join(":");
 
-export const createMessageKey = (message: ChatMessageItem | IncomingChatMessage) => {
+export const createMessageKey = (
+  message: ChatMessageItem | IncomingChatMessage,
+) => {
   const raw = message as FlexibleIncomingChatMessage;
   return chatMessageKey({
     senderId: normalizeSenderId(raw.senderId ?? raw.sender_id),
@@ -228,15 +233,13 @@ export const normalizeMessage = (
     profile_image: getMessageProfileImage(message),
     gif_url: gifUrl,
     reactions: normalizeReactions(raw.reactions),
-    reactionVersion: typeof raw.reactionVersion === "number" ? raw.reactionVersion : 0,
+    reactionVersion:
+      typeof raw.reactionVersion === "number" ? raw.reactionVersion : 0,
     gameId: getMessageGameId(message),
   };
 };
 
-export const areSameChatMessage = (
-  a: ChatMessageItem,
-  b: ChatMessageItem,
-) => {
+export const areSameChatMessage = (a: ChatMessageItem, b: ChatMessageItem) => {
   if (
     a.id === b.id ||
     Boolean(a.clientId && b.clientId && a.clientId === b.clientId) ||
@@ -274,11 +277,8 @@ export const mergeChatMessages = (
   incoming: ChatMessageItem,
 ) => {
   const canonicalMessage =
-    hasServerId(incoming) || !hasServerId(existing)
-      ? incoming
-      : existing;
-  const secondaryMessage =
-    canonicalMessage === incoming ? existing : incoming;
+    hasServerId(incoming) || !hasServerId(existing) ? incoming : existing;
+  const secondaryMessage = canonicalMessage === incoming ? existing : incoming;
 
   const merged: ChatMessageItem = {
     ...secondaryMessage,
@@ -321,7 +321,10 @@ export const createClientMessage = (
     now = Date.now(),
   }: CreateClientMessageOptions,
 ) => {
-  const normalizedPayload = buildChatPayload(payload.text ?? "", payload.gifUrl);
+  const normalizedPayload = buildChatPayload(
+    payload.text ?? "",
+    payload.gifUrl,
+  );
   if (!normalizedPayload) return null;
 
   const clientId = [

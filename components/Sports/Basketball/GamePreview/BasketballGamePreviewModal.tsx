@@ -371,6 +371,9 @@ export default function GamePreviewModal({
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
+                  plays={score?.plays}
+                  lastPlay={score?.lastPlay}
+                  gameStatus={score?.status}
                   state={state}
                   homeId={homeId}
                   awayId={awayId}

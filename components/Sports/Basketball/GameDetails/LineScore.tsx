@@ -71,7 +71,8 @@ export default function LineScore({
   const borderColor = isDark ? Colors.midTone : Colors.lightGray;
 
   const normalizedLeague = league.toLowerCase();
-  const isVolleyball = normalizedLeague === "mcvb" || normalizedLeague === "wcvb";
+  const isVolleyball =
+    normalizedLeague === "mcvb" || normalizedLeague === "wcvb";
 
   const isBaseball =
     normalizedLeague === "mlb" ||
@@ -113,8 +114,9 @@ export default function LineScore({
   const homeTotal = isVolleyball ? renderScore(homeSets) : total(homeScores);
   const awayTotal = isVolleyball ? renderScore(awaySets) : total(awayScores);
 
-  const baseColumns =
-    isVolleyball ? 5 : normalizedLeague === "soccer"
+  const baseColumns = isVolleyball
+    ? 5
+    : normalizedLeague === "soccer"
       ? 2
       : normalizedLeague === "mcbb"
         ? 2
@@ -407,7 +409,9 @@ export default function LineScore({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo isDark={isDark}>{isVolleyball ? "Set Scores" : "Line Score"}</HeadingTwo>
+      <HeadingTwo isDark={isDark}>
+        {isVolleyball ? "Set Scores" : "Line Score"}
+      </HeadingTwo>
 
       <View style={styles.wrapper}>
         <View style={styles.headerRow}>
@@ -423,7 +427,9 @@ export default function LineScore({
             ))}
 
             <View style={columnStyle}>
-              <Text style={[styles.header, { color: textColor }]}>{isVolleyball ? "Sets" : "Total"}</Text>
+              <Text style={[styles.header, { color: textColor }]}>
+                {isVolleyball ? "Sets" : "Total"}
+              </Text>
             </View>
           </View>
         </View>

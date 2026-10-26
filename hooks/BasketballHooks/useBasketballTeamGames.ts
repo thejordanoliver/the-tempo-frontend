@@ -8,7 +8,11 @@ import type {
 } from "types/schedule";
 
 export type BasketballTeamScheduleLeague =
-  "nba" | "gleague" | "wnba" | "mcbb" | "wcbb";
+  | "nba"
+  | "gleague"
+  | "wnba"
+  | "mcbb"
+  | "wcbb";
 export type BasketballScheduleMonth = ScheduleMonthGroup<BasketballGame>;
 export type BasketballTeamScheduleTeam = {
   id?: string;

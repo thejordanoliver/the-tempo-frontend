@@ -6,11 +6,11 @@ export const DriveListStyles = (isDark: boolean) =>
     listContainer: {
       marginVertical: 8,
     },
-    driveCard: {
+    driveRow: {
       paddingHorizontal: 12,
       paddingVertical: 8,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomColor: Colors.midTone,
     },
     headerRow: {
       flexDirection: "row",

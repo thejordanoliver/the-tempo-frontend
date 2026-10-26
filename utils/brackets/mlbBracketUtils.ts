@@ -1,6 +1,15 @@
-import type { MLBPlayoffBracketResponse, MLBPlayoffLeague, MLBPlayoffRound, MLBPlayoffSeries, MLBPlayoffTeam } from "types/baseball/baseball";
+import type {
+  MLBPlayoffBracketResponse,
+  MLBPlayoffLeague,
+  MLBPlayoffRound,
+  MLBPlayoffSeries,
+  MLBPlayoffTeam,
+} from "types/baseball/baseball";
 
-export type Matchup = Pick<MLBPlayoffSeries, "id" | "label" | "bestOf" | "teams" | "winnerTeamId" | "games">;
+export type Matchup = Pick<
+  MLBPlayoffSeries,
+  "id" | "label" | "bestOf" | "teams" | "winnerTeamId" | "games"
+>;
 
 export function findSeries(
   bracket: MLBPlayoffBracketResponse,
@@ -42,4 +51,3 @@ export function lowestKnownSeed(matchup: Matchup) {
 
   return seeds.length > 0 ? Math.min(...seeds) : Number.MAX_SAFE_INTEGER;
 }
-

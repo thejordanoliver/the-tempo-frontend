@@ -1053,5 +1053,3 @@ export function getNFLTeamLogo(
     ? (team.logoLight ?? team.logo ?? placeholderLogo)
     : (team.logo ?? placeholderLogo);
 }
-
-

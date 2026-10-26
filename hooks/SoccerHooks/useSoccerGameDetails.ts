@@ -1,5 +1,6 @@
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { GameVenueInfo } from "types/gameVenue";
+import type { SoccerPlayByPlayEvent } from "types/soccer/playByPlay";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
@@ -118,7 +119,11 @@ export type KeyEvent = {
 };
 
 export type ShotOutcome =
-  "goal" | "saved" | "off-target" | "blocked" | "unknown";
+  | "goal"
+  | "saved"
+  | "off-target"
+  | "blocked"
+  | "unknown";
 
 export type ShotTeam = {
   id: string | number | null;
@@ -213,6 +218,7 @@ export type Score = {
   rosters?: any[];
   commentary?: any[];
   plays: any[];
+  playByPlay?: SoccerPlayByPlayEvent[];
   lastPlay: any | null;
   boxScore: any | null;
   teamStats: {
@@ -385,6 +391,9 @@ export const useSoccerGameDetails = (
 
         setScore({
           ...data.score,
+          playByPlay: Array.isArray(data.score.playByPlay)
+            ? data.score.playByPlay
+            : [],
           shotMapAvailable: data.score.shotMapAvailable === true,
           shotMap: Array.isArray(data.score.shotMap) ? data.score.shotMap : [],
         });
@@ -436,7 +445,10 @@ export const useSoccerGameDetails = (
 
   useLiveSportsSubscription<GameDetailsResponse>({
     enabled:
-      !skipFetch && pollLiveGames && pollIntervalMs > 0 && shouldTrackGameUpdates(score),
+      !skipFetch &&
+      pollLiveGames &&
+      pollIntervalMs > 0 &&
+      shouldTrackGameUpdates(score),
     kind: "game",
     payload: {
       sport: "soccer",
@@ -448,6 +460,9 @@ export const useSoccerGameDetails = (
 
       setScore({
         ...payload.score,
+        playByPlay: Array.isArray(payload.score.playByPlay)
+          ? payload.score.playByPlay
+          : [],
         shotMapAvailable: payload.score.shotMapAvailable === true,
         shotMap: Array.isArray(payload.score.shotMap)
           ? payload.score.shotMap

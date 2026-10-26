@@ -7,7 +7,6 @@ import {
   HeadCoaches,
   Highlights,
   LastFiveGames,
-  LastPlay,
   LineScore,
   MatchupPredictor,
   TeamInjuries,
@@ -15,6 +14,7 @@ import {
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
+import HockeyPlayByPlay from "@/components/Sports/Hockey/GameDetails/PlayByPlay/HockeyPlayByPlay";
 import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { Colors } from "@/constants/styles";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
@@ -334,12 +334,18 @@ export default function GameDetailsScreen(
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            <LastPlay
+            <HockeyPlayByPlay
+              plays={plays}
               lastPlay={lastPlay}
               homeId={homeId}
               awayId={awayId}
               state={state}
-              league={LEAGUE}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              homeColor={homeColor}
+              awayColor={awayColor}
+              gameStatus={score?.status}
+              isDark={isDark}
             />
 
             <LineScore

@@ -2,18 +2,17 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { FavoriteSportId } from "../constants/leagues";
 
+// prettier-ignore
 // @ts-ignore Node's type-stripping test runner requires the .ts extension.
 import { getFavoriteHeaderAccessibilityLabel, getFavoriteHeaderIconName } from "../components/CustomHeader/favoriteAction.ts";
+// prettier-ignore
 // @ts-ignore Node's type-stripping test runner requires the .ts extension.
 import { executeFavoriteSportToggle, restoreFavoriteSportMembership } from "../utils/favorites/favoriteSports.ts";
 
 test("favorite-sport header renders outline and filled heart states", () => {
   assert.equal(getFavoriteHeaderIconName(false), "heart-outline");
   assert.equal(getFavoriteHeaderIconName(true), "heart");
-  assert.equal(
-    getFavoriteHeaderAccessibilityLabel(false),
-    "Add to favorites",
-  );
+  assert.equal(getFavoriteHeaderAccessibilityLabel(false), "Add to favorites");
   assert.equal(
     getFavoriteHeaderAccessibilityLabel(true),
     "Remove from favorites",

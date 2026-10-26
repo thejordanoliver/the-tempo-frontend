@@ -1,6 +1,9 @@
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
+import { useSportsRequestScope } from "hooks/Sports/useSportsRequestScope";
+import { useScreenActivity } from "hooks/useScreenActivity";
+import type { BasketballWinProbability } from "types/basketball/visualizations";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { GameVenueInfo } from "types/gameVenue";
 import { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
@@ -176,6 +179,7 @@ export type PlayParticipantAthlete = {
 };
 
 export type PlayParticipant = {
+  type?: string | null;
   teamId: number | null;
   athlete: PlayParticipantAthlete;
 };
@@ -208,7 +212,9 @@ export type Play = {
   coordinate: {
     x: number;
     y: number;
-  };
+  } | null;
+  /** Backend court position in feet, independent of team or provider orientation. */
+  courtPosition?: { x: number; y: number } | null;
   pointsAttempted: number;
   shortDescription: string;
 };
@@ -259,11 +265,7 @@ export type LeadersType = {
 
 export type GameStatus = {
   id: string;
-  name:
-    | "STATUS_SCHEDULED"
-    | "STATUS_IN_PROGRESS"
-    | "STATUS_HALFTIME"
-    | "STATUS_FINAL";
+  name: string;
   state: string;
   completed: boolean;
   gameStatusDescription: string;
@@ -288,7 +290,8 @@ export type Score = {
   home: Team;
   away: Team;
   plays: Play[];
-  lastPlay: Play;
+  lastPlay: Play | null;
+  winProbability?: BasketballWinProbability[];
   teamStats: teamStats;
   playerStats: PlayerStats;
   leaders: LeadersType[];
@@ -335,12 +338,21 @@ export const useBasketballGameDetails = (
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
   const skipFetch = !league || !gameId;
+  const identity = JSON.stringify([league, String(gameId)]);
+  const { active, activeRef } = useScreenActivity();
+  const { begin, isCurrent, accept, finish, hasData, settled } =
+    useSportsRequestScope(identity, { enabled: !skipFetch && active });
+  const latestSnapshot = useRef<{ identity: string; stamp: number } | null>(
+    null,
+  );
+  const currentScore = hasData ? score : undefined;
 
   /* Fetch from /api/basketball/details */
 
   const fetchDetails = useCallback(
     async (silent = false) => {
-      if (skipFetch) return;
+      const request = begin();
+      if (!request) return;
 
       try {
         if (!silent) {
@@ -358,18 +370,30 @@ export const useBasketballGameDetails = (
           "api/basketball/details",
           {
             params,
+            signal: request.controller.signal,
           },
         );
 
-        if (!data?.score) {
+        if (!isCurrent(request)) return;
+        if (!data?.score || String(data.score.gameId) !== String(gameId)) {
           setWarning("Game data unavailable");
           return;
         }
 
-        setScore(data.score);
-        setDetails(data.details);
-        setLastRefresh(new Date());
+        const stamp = data.score.lastUpdated;
+        if (
+          latestSnapshot.current?.identity === identity &&
+          stamp < latestSnapshot.current.stamp
+        )
+          return;
+        if (accept(request)) {
+          latestSnapshot.current = { identity, stamp };
+          setScore(data.score);
+          setDetails(data.details);
+          setLastRefresh(new Date());
+        }
       } catch (error: unknown) {
+        if (!isCurrent(request)) return;
         const message =
           error instanceof Error
             ? error.message
@@ -379,22 +403,26 @@ export const useBasketballGameDetails = (
 
         setWarning(message);
       } finally {
-        if (!silent) {
+        if (finish(request)) {
           setLoading(false);
         }
       }
     },
-    [gameId, league, skipFetch],
+    [gameId, league, identity, begin, isCurrent, accept, finish],
   );
 
   useEffect(() => {
-    if (skipFetch) return;
-
-    void Promise.resolve().then(() => fetchDetails(true));
-  }, [fetchDetails, skipFetch]);
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled && !skipFetch && active) void fetchDetails(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchDetails, skipFetch, active]);
 
   useLiveSportsSubscription<BasketballGameDetailsResponse>({
-    enabled: !skipFetch && shouldTrackGameUpdates(score),
+    enabled: !skipFetch && active && shouldTrackGameUpdates(currentScore),
     kind: "game",
     payload: {
       sport: "basketball",
@@ -402,11 +430,25 @@ export const useBasketballGameDetails = (
       gameId: gameId || "",
     },
     onUpdate: (payload) => {
-      if (!payload?.score) return;
+      if (
+        !payload?.score ||
+        !activeRef.current ||
+        String(payload.score.gameId) !== String(gameId)
+      )
+        return;
+      const stamp = payload.score.lastUpdated;
+      if (
+        latestSnapshot.current?.identity === identity &&
+        stamp < latestSnapshot.current.stamp
+      )
+        return;
+      if (!accept()) return;
+      latestSnapshot.current = { identity, stamp };
 
       setScore(payload.score);
       setDetails(payload.details);
       setLastRefresh(new Date());
+      setLoading(false);
     },
   });
 
@@ -417,12 +459,12 @@ export const useBasketballGameDetails = (
   }, [fetchDetails, skipFetch]);
 
   return {
-    score,
-    details,
-    loading,
-    warning,
+    score: currentScore,
+    details: hasData ? details : undefined,
+    loading: active && (loading || (!hasData && !settled)),
+    warning: settled ? warning : null,
     refresh,
-    isLive: score?.status?.state === "in",
-    lastRefresh,
+    isLive: currentScore?.status?.state === "in",
+    lastRefresh: hasData ? lastRefresh : null,
   };
 };

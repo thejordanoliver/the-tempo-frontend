@@ -86,7 +86,6 @@ export const WidgetDashboardStyles = (isDark: boolean) =>
       justifyContent: "center",
       minHeight: 84,
       borderRadius: 8,
-
     },
     errorCard: {
       gap: 6,

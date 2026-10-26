@@ -98,7 +98,9 @@ const PreferencesScreen = () => {
               key={layout}
               style={[
                 styles.optionButtonContainer,
-                viewMode === layout && { borderBottomColor: selectedBorderColor },
+                viewMode === layout && {
+                  borderBottomColor: selectedBorderColor,
+                },
               ]}
             >
               <TouchableOpacity

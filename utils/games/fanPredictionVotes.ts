@@ -54,4 +54,3 @@ export function getVoteCount(votes: PollResult[], teamId: TeamId): number {
 export function formatPercentage(percentage: number): string {
   return `${Math.round(percentage * 100)}%`;
 }
-

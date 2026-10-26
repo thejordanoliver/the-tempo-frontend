@@ -75,7 +75,10 @@ type Props = {
 };
 
 export default function LiveChat({
-  currentUserId, error, onRetry, onDelete,
+  currentUserId,
+  error,
+  onRetry,
+  onDelete,
   messages,
   userCount,
   currentUserName,
@@ -94,8 +97,12 @@ export default function LiveChat({
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const listRef = useRef<BottomSheetFlatListMethods>(null);
   const scrollFrameRef = useRef<number | null>(null);
-  const scrollTimeoutOneRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scrollTimeoutTwoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollTimeoutOneRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const scrollTimeoutTwoRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const [inputHeight, setInputHeight] = useState(FALLBACK_INPUT_HEIGHT);
   const [showLatestButton, setShowLatestButton] = useState(false);
@@ -133,33 +140,36 @@ export default function LiveChat({
     }
   }, []);
 
-  const scrollToLatestMessage = useCallback((animated = true) => {
-    clearScheduledScroll();
+  const scrollToLatestMessage = useCallback(
+    (animated = true) => {
+      clearScheduledScroll();
 
-    const scroll = (shouldAnimate: boolean) => {
-      listRef.current?.scrollToEnd({ animated: shouldAnimate });
-      listRef.current?.scrollToOffset?.({
-        offset: Number.MAX_SAFE_INTEGER,
-        animated: shouldAnimate,
+      const scroll = (shouldAnimate: boolean) => {
+        listRef.current?.scrollToEnd({ animated: shouldAnimate });
+        listRef.current?.scrollToOffset?.({
+          offset: Number.MAX_SAFE_INTEGER,
+          animated: shouldAnimate,
+        });
+
+        isNearBottomRef.current = true;
+        setShowLatestButton(false);
+      };
+
+      scrollFrameRef.current = requestAnimationFrame(() => {
+        scrollFrameRef.current = null;
+        scroll(animated);
+        scrollTimeoutOneRef.current = setTimeout(() => {
+          scrollTimeoutOneRef.current = null;
+          scroll(false);
+        }, 60);
+        scrollTimeoutTwoRef.current = setTimeout(() => {
+          scrollTimeoutTwoRef.current = null;
+          scroll(false);
+        }, 160);
       });
-
-      isNearBottomRef.current = true;
-      setShowLatestButton(false);
-    };
-
-    scrollFrameRef.current = requestAnimationFrame(() => {
-      scrollFrameRef.current = null;
-      scroll(animated);
-      scrollTimeoutOneRef.current = setTimeout(() => {
-        scrollTimeoutOneRef.current = null;
-        scroll(false);
-      }, 60);
-      scrollTimeoutTwoRef.current = setTimeout(() => {
-        scrollTimeoutTwoRef.current = null;
-        scroll(false);
-      }, 160);
-    });
-  }, [clearScheduledScroll]);
+    },
+    [clearScheduledScroll],
+  );
 
   useEffect(() => clearScheduledScroll, [clearScheduledScroll]);
 
@@ -237,7 +247,15 @@ export default function LiveChat({
         onBlockedUser={onBlockedUser}
       />
     ),
-    [currentUserId, currentUserName, isDark, onBlockedUser, onReaction, onRetry, onDelete],
+    [
+      currentUserId,
+      currentUserName,
+      isDark,
+      onBlockedUser,
+      onReaction,
+      onRetry,
+      onDelete,
+    ],
   );
 
   const handleSend = useCallback(
@@ -288,7 +306,11 @@ export default function LiveChat({
     () => (
       <View style={styles.header}>
         <Text style={styles.title}>Live Chat</Text>
-        {error && <Text accessibilityRole="alert" style={styles.userCount}>{error}</Text>}
+        {error && (
+          <Text accessibilityRole="alert" style={styles.userCount}>
+            {error}
+          </Text>
+        )}
         <Text style={styles.userCount}>
           {userCount} {userCount === 1 ? "person" : "people"} in chat
         </Text>

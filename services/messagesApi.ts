@@ -174,7 +174,9 @@ const normalizeAttachment = (
 ): MessageAttachment | null => {
   if (!raw) return null;
 
-  const id = String(raw.id ?? raw.attachmentId ?? raw.attachment_id ?? "").trim();
+  const id = String(
+    raw.id ?? raw.attachmentId ?? raw.attachment_id ?? "",
+  ).trim();
   const type = raw.type;
 
   if (!id || (type !== "image" && type !== "gif")) return null;
@@ -380,7 +382,7 @@ export const normalizeConversation = (
   const lastMessageText =
     typeof lastMessage === "string"
       ? lastMessage
-      : lastMessage?.text ?? raw.lastMessageText ?? "";
+      : (lastMessage?.text ?? raw.lastMessageText ?? "");
 
   const fullName =
     raw.fullName ??
@@ -550,9 +552,7 @@ export const createConversation = async (
     : null;
 
   const conversationId =
-    response.data?.conversationId ??
-    conversation?.id ??
-    response.data?.id;
+    response.data?.conversationId ?? conversation?.id ?? response.data?.id;
 
   return {
     success: response.data?.success,

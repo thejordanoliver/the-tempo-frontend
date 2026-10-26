@@ -6,7 +6,9 @@ import ConfirmModal from "components/ConfirmModal";
 import { Colors } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { memo, useRef } from "react";
-import PostShareModal, { type PostShareModalRef } from "components/Forum/PostShareModal";
+import PostShareModal, {
+  type PostShareModalRef,
+} from "components/Forum/PostShareModal";
 import { Text, TouchableOpacity, View } from "react-native";
 import type { ForumPost } from "types/forum";
 
@@ -25,14 +27,22 @@ export const Interactions = memo(function Interactions({
   onBookmarkChange,
   disableCommentNavigation,
 }: InteractionsProps) {
-
   const shareSheet = useRef<PostShareModalRef>(null);
   const router = useScopedRouter();
   const styles = PostItemStyles(isDark);
   const {
-    liked, likeCount, bookmarked, bookmarkCount, shareCount,
-    bookmarkPending, sharePending, feedbackModal, dismissFeedback,
-    toggleLikePress, handleBookmarkPress, handleSharePress,
+    liked,
+    likeCount,
+    bookmarked,
+    bookmarkCount,
+    shareCount,
+    bookmarkPending,
+    sharePending,
+    feedbackModal,
+    dismissFeedback,
+    toggleLikePress,
+    handleBookmarkPress,
+    handleSharePress,
   } = useForumPostInteractions({ item, currentUserId, onBookmarkChange });
   const timestamp = formatDistanceToNow(new Date(item.created_at), {
     addSuffix: true,
@@ -161,7 +171,12 @@ export const Interactions = memo(function Interactions({
       {/*                         Interaction Error                          */}
       {/* ------------------------------------------------------------------ */}
 
-      <PostShareModal ref={shareSheet} post={item} currentUserId={currentUserId} onShared={handleSharePress} />
+      <PostShareModal
+        ref={shareSheet}
+        post={item}
+        currentUserId={currentUserId}
+        onShared={handleSharePress}
+      />
 
       <ConfirmModal
         title={feedbackModal?.title}

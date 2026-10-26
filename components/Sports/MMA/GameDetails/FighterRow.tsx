@@ -1,5 +1,5 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   MMAProps,
@@ -39,7 +39,9 @@ export const FighterRow = ({
    * --------------------------------------------------- */
   const getScoreStyle = () => {
     if (isWinner === false && isFinal) {
-      return { color: Colors.midTone, opacity: 0.5 };
+      return {
+        opacity: 0.5,
+      };
     }
 
     if (inProgress) {

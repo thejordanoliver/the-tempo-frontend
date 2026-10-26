@@ -1,4 +1,8 @@
-import type { TournamentGame, TournamentRegion, TournamentTeam } from "hooks/BasketballHooks/useTournamentBracket";
+import type {
+  TournamentGame,
+  TournamentRegion,
+  TournamentTeam,
+} from "hooks/BasketballHooks/useTournamentBracket";
 import {
   REGIONAL_SLOT_SEED_GROUPS,
   getFinalFourDisplayTeams,
@@ -19,7 +23,9 @@ export const getGameTimestamp = (game: TournamentGame): number => {
   return Number.isFinite(timestamp) ? timestamp : Number.MAX_SAFE_INTEGER;
 };
 
-export const sortGamesByDate = (games: readonly TournamentGame[]): TournamentGame[] =>
+export const sortGamesByDate = (
+  games: readonly TournamentGame[],
+): TournamentGame[] =>
   [...games].sort((firstGame, secondGame) => {
     const dateDifference =
       getGameTimestamp(firstGame) - getGameTimestamp(secondGame);
@@ -30,7 +36,6 @@ export const sortGamesByDate = (games: readonly TournamentGame[]): TournamentGam
 
     return firstGame.id.localeCompare(secondGame.id);
   });
-
 
 export const getGameSeeds = (game: TournamentGame): number[] =>
   [game.homeTeam?.seed, game.awayTeam?.seed].filter(
@@ -73,14 +78,21 @@ export const placeRoundGames = (
   const unresolved: TournamentGame[] = [];
 
   for (const game of sortGamesByDate(games)) {
-    const teamIds = new Set([game.homeTeam?.id, game.awayTeam?.id].filter(Boolean));
+    const teamIds = new Set(
+      [game.homeTeam?.id, game.awayTeam?.id].filter(Boolean),
+    );
     const feederSlots = new Set<number>();
     sourceSlots.forEach((sourceGame, index) => {
-      if (sourceGame && [sourceGame.homeTeam?.id, sourceGame.awayTeam?.id].some(
-        (id) => id != null && teamIds.has(id),
-      )) feederSlots.add(Math.floor(index / 2));
+      if (
+        sourceGame &&
+        [sourceGame.homeTeam?.id, sourceGame.awayTeam?.id].some(
+          (id) => id != null && teamIds.has(id),
+        )
+      )
+        feederSlots.add(Math.floor(index / 2));
     });
-    const slotIndex = getSeedSlotIndex(game, round) ??
+    const slotIndex =
+      getSeedSlotIndex(game, round) ??
       (feederSlots.size === 1 ? [...feederSlots][0] : null);
 
     if (
@@ -118,7 +130,12 @@ export const buildRegionRoundSlots = (
   region: TournamentRegion,
 ): RegionalRoundSlots => {
   const slots = {} as RegionalRoundSlots;
-  const rounds: RegionalRoundCode[] = ["ROUND_OF_64", "ROUND_OF_32", "SWEET_16", "ELITE_8"];
+  const rounds: RegionalRoundCode[] = [
+    "ROUND_OF_64",
+    "ROUND_OF_32",
+    "SWEET_16",
+    "ELITE_8",
+  ];
   rounds.forEach((round, index) => {
     slots[round] = placeRoundGames(
       region.games.filter((game) => game.round === round),
@@ -150,9 +167,9 @@ export const getFinalFourGameRegionOrder = (
 ): number =>
   Math.min(
     regionalChampionOrderByTeamId.get(game.homeTeam?.id ?? "") ??
-    Number.MAX_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER,
     regionalChampionOrderByTeamId.get(game.awayTeam?.id ?? "") ??
-    Number.MAX_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER,
   );
 
 export const getOrderedFinalFourGames = (
@@ -194,7 +211,9 @@ export const getFinalFourRegionLayout = (
   const assigned = new Set<string>();
   const slots = Array.from({ length: 4 }, (_, index) => {
     const game = orderedFinalFourGames[Math.floor(index / 2)];
-    const team = game ? getFinalFourDisplayTeams(game, regionalTeamOrderById)[index % 2] : null;
+    const team = game
+      ? getFinalFourDisplayTeams(game, regionalTeamOrderById)[index % 2]
+      : null;
     const region = getRegionForTeam(regions, team);
     if (!region || assigned.has(region.id)) return null;
     assigned.add(region.id);

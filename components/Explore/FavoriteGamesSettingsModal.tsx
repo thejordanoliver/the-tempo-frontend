@@ -142,7 +142,9 @@ export default function FavoriteGamesSettingsModal({
             </Text>
             <Pressable
               onPress={() => onChangeLeagues([...EXPLORE_WIDGET_LEAGUES])}
-              disabled={selectedLeagues.length === EXPLORE_WIDGET_LEAGUES.length}
+              disabled={
+                selectedLeagues.length === EXPLORE_WIDGET_LEAGUES.length
+              }
               accessibilityRole="button"
               accessibilityLabel="Select all sports"
             >
@@ -162,7 +164,8 @@ export default function FavoriteGamesSettingsModal({
             const selected = selectedLeagues.includes(league);
             const isOnlySelection = selected && selectedLeagues.length === 1;
             const hasFavoriteTeam = favoriteLeagues.includes(league);
-            const isDisabled = isOnlySelection || (!hasFavoriteTeam && !selected);
+            const isDisabled =
+              isOnlySelection || (!hasFavoriteTeam && !selected);
 
             return (
               <Pressable
@@ -181,8 +184,8 @@ export default function FavoriteGamesSettingsModal({
                   !hasFavoriteTeam
                     ? "Add a favorite team from this league to enable it"
                     : isOnlySelection
-                    ? "At least one league must remain selected"
-                    : undefined
+                      ? "At least one league must remain selected"
+                      : undefined
                 }
                 accessibilityState={{ checked: selected, disabled: isDisabled }}
               >

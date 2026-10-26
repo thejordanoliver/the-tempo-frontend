@@ -12,7 +12,11 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { formatDate, formatTime, getHolidayLabel } from "utils/common/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+} from "utils/common/dateUtils";
 
 type BaseballGameWidgetProps = {
   game: BaseballGame;

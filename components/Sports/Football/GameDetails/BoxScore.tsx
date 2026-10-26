@@ -25,6 +25,7 @@ import {
 } from "utils/sports/football/footballBoxScore";
 
 const COLLAPSED_ROWS = 5;
+const COLLAPSED_CATEGORIES = new Set(["passing", "rushing", "receiving"]);
 const COLUMN_WIDTH = 52;
 
 type Props = {
@@ -103,10 +104,7 @@ const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
   const totals = category.totals ?? [];
   const categoryKey = category.name;
   const columnCount = Math.max(labels.length, totals.length, 1);
-  const columnWidth = Math.max(
-    COLUMN_WIDTH,
-    statsViewportWidth / columnCount,
-  );
+  const columnWidth = Math.max(COLUMN_WIDTH, statsViewportWidth / columnCount);
   const tableWidth = columnCount * columnWidth;
 
   return (
@@ -126,7 +124,7 @@ const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
           </View>
 
           {visibleAthletes.map(({ athlete }, athleteIndex) => {
-            const playerId = athlete.id 
+            const playerId = athlete.id;
             const playerName =
               athlete.shortName ??
               athlete.displayName ??
@@ -189,7 +187,7 @@ const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
             </View>
 
             {visibleAthletes.map(({ athlete, stats }, athleteIndex) => {
-              const playerId = athlete.id 
+              const playerId = athlete.id;
 
               return (
                 <View
@@ -204,7 +202,10 @@ const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
                       key={`${categoryKey}-${label}-${statIndex}`}
                       style={[styles.cellContainer, { width: columnWidth }]}
                     >
-                      <Text selectable style={[styles.cell, { width: columnWidth }]}>
+                      <Text
+                        selectable
+                        style={[styles.cell, { width: columnWidth }]}
+                      >
                         {stats?.[statIndex] ?? "—"}
                       </Text>
                     </View>
@@ -220,7 +221,14 @@ const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
                     key={`${categoryKey}-total-${label}-${statIndex}`}
                     style={[styles.cellContainer, { width: columnWidth }]}
                   >
-                    <Text selectable style={[styles.cell, styles.totalText, { width: columnWidth }]}>
+                    <Text
+                      selectable
+                      style={[
+                        styles.cell,
+                        styles.totalText,
+                        { width: columnWidth },
+                      ]}
+                    >
                       {totals[statIndex] ?? "—"}
                     </Text>
                   </View>
@@ -263,7 +271,11 @@ export default function BoxScore({
   const { away: awayTeamBlock, home: homeTeamBlock } = useMemo(
     () =>
       resolveFootballBoxScoreTeams(
-        teamBlocks, awayId, homeId, awayName, homeName,
+        teamBlocks,
+        awayId,
+        homeId,
+        awayName,
+        homeName,
       ),
     [teamBlocks, awayId, homeId, awayName, homeName],
   );
@@ -318,10 +330,16 @@ export default function BoxScore({
     if (categories.length === 0) return null;
 
     const resolvedTeamId = teamBlock.team.id ?? teamId;
-    const canExpand = categories.some(
-      (category) => (category.athletes?.length ?? 0) > COLLAPSED_ROWS,
+    const collapsedCategories = categories.filter((category) =>
+      COLLAPSED_CATEGORIES.has(normalizeIdentifier(category.name)),
     );
+    const canExpand =
+      categories.length > collapsedCategories.length ||
+      collapsedCategories.some(
+        (category) => (category.athletes?.length ?? 0) > COLLAPSED_ROWS,
+      );
     const isExpanded = expandedTeams[teamKey] ?? false;
+    const visibleCategories = isExpanded ? categories : collapsedCategories;
 
     return (
       <View style={styles.teamContainer}>
@@ -337,7 +355,7 @@ export default function BoxScore({
           </View>
         </View>
 
-        {categories.map((category, categoryIndex) =>
+        {visibleCategories.map((category, categoryIndex) => (
           <FootballBoxScoreCategory
             key={`${teamKey}-${category.name}-${categoryIndex}`}
             category={category}
@@ -345,8 +363,8 @@ export default function BoxScore({
             isExpanded={isExpanded}
             styles={styles}
             onPlayerPress={handlePlayerPress}
-          />,
-        )}
+          />
+        ))}
 
         {canExpand && (
           <TouchableOpacity

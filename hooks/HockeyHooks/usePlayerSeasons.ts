@@ -102,7 +102,9 @@ export function usePlayerSeasons(playerId: number | string, league: string) {
   const [seasonsLoading, setSeasonsLoading] = useState(false);
   const [seasonsError, setSeasonsError] = useState<string | null>(null);
 
-  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null);
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
+    null,
+  );
   const controllerRef = useRef<AbortController | null>(null);
   const normalizedPlayerId = String(playerId ?? "").trim();
   const requestKey =
@@ -172,7 +174,8 @@ export function usePlayerSeasons(playerId: number | string, league: string) {
   return {
     player: hasCurrentResult ? player : null,
     seasons: hasCurrentResult ? seasons : [],
-    seasonsLoading: requestKey !== null && (seasonsLoading || !hasCurrentResult),
+    seasonsLoading:
+      requestKey !== null && (seasonsLoading || !hasCurrentResult),
     seasonsError: hasCurrentResult ? seasonsError : null,
     refetch: fetchSeasons,
   };

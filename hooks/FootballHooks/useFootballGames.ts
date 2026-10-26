@@ -1,3 +1,4 @@
+import { useSportsRequestScope } from "hooks/Sports/useSportsRequestScope";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { FootballGame } from "@/types/football/football";
@@ -15,6 +16,7 @@ type UseFootballGamesParams = {
   conferenceId?: number | string | null;
 
   enabled?: boolean;
+  scopeKey?: string;
   onScoreboardCalendar?: OnScoreboardCalendar;
 };
 
@@ -133,6 +135,7 @@ export function useFootballGames({
   league = "nfl",
   conferenceId = null,
   enabled = true,
+  scopeKey,
   onScoreboardCalendar,
 }: UseFootballGamesParams = {}) {
   const [groups, setGroups] = useState<FootballGameGroup[]>([]);
@@ -140,18 +143,30 @@ export function useFootballGames({
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  const scope = useSportsRequestScope(
+    JSON.stringify([
+      league,
+      date ? dayjs(date).format("YYYYMMDD") : null,
+      week,
+      season,
+      seasontype,
+      conferenceId,
+    ]),
+    { enabled, scopeKey },
+  );
+  const { begin, isCurrent, accept, finish } = scope;
+
   const games = useMemo(() => {
-    return groups.flatMap((group) => group.games);
-  }, [groups]);
+    return scope.hasData ? groups.flatMap((group) => group.games) : [];
+  }, [groups, scope.hasData]);
 
   const fetchGames = useCallback(
     async ({
       forceRefresh = false,
       silent = false,
     }: FetchGamesOptions = {}) => {
-      if (!enabled) {
-        return;
-      }
+      const request = begin();
+      if (!request) return;
 
       const endpoint = getEndpoint(league);
 
@@ -189,16 +204,20 @@ export function useFootballGames({
         if (forceRefresh) {
           setRefreshing(true);
         } else if (!silent) {
-          setLoading(true);
+          setLoading(!request.hasData);
         }
 
         const { data } = await apiClient.get<FootballGamesResponse>(endpoint, {
           params,
+          signal: request.controller.signal,
         });
 
-        onScoreboardCalendar?.(data);
-        setGroups(normalizeGroups(data));
+        if (accept(request)) {
+          onScoreboardCalendar?.(data);
+          setGroups(normalizeGroups(data));
+        }
       } catch (err) {
+        if (!isCurrent(request)) return;
         onScoreboardCalendar?.(null);
         console.error(err);
 
@@ -210,16 +229,25 @@ export function useFootballGames({
           setGroups([]);
         }
       } finally {
-        if (forceRefresh) {
+        if (finish(request)) {
           setRefreshing(false);
-        }
-
-        if (!silent) {
           setLoading(false);
         }
       }
     },
-    [enabled, date, week, season, seasontype, league, conferenceId, onScoreboardCalendar],
+    [
+      date,
+      week,
+      season,
+      seasontype,
+      league,
+      conferenceId,
+      onScoreboardCalendar,
+      begin,
+      accept,
+      finish,
+      isCurrent,
+    ],
   );
 
   const refreshGames = useCallback(async () => {
@@ -261,7 +289,7 @@ export function useFootballGames({
   );
 
   useLiveSportsSubscription<FootballGamesResponse>({
-    enabled: enabled && !loading && hasActiveGame,
+    enabled: enabled && scope.hasData && !loading && hasActiveGame,
 
     kind: "scoreboard",
 
@@ -276,16 +304,19 @@ export function useFootballGames({
     },
 
     onUpdate: (payload: FootballGamesResponse) => {
+      if (!accept()) return;
+      setLoading(false);
+      setRefreshing(false);
       setGroups(normalizeGroups(payload));
     },
   });
 
   return {
     games,
-    groups,
-    loading,
-    refreshing,
-    error,
+    groups: scope.hasData ? groups : [],
+    loading: enabled && !scope.hasData && (!scope.settled || loading),
+    refreshing: enabled && refreshing,
+    error: enabled && scope.settled ? error : null,
     refreshGames,
   };
 }

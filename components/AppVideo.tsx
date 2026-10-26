@@ -1,11 +1,7 @@
 // components/Video/AppVideo.tsx
 
 import { useEvent, useEventListener } from "expo";
-import {
-  VideoView,
-  useVideoPlayer,
-  type VideoContentFit,
-} from "expo-video";
+import { VideoView, useVideoPlayer, type VideoContentFit } from "expo-video";
 import { useEffect, useRef } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 

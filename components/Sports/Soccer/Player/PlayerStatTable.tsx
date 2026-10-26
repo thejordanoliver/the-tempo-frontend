@@ -553,20 +553,22 @@ export default function PlayerStatTable({
   const renderFilters = () => {
     return (
       <View style={styles.filtersRow}>
-        {teamDropdownOptions.length > 0 ? <Dropdown
-          isDark={isDark}
-          options={teamDropdownOptions}
-          selectedValue={
-            selectedTeam
-              ? (normalizeText(selectedTeam.teamId) ??
-                normalizeText(selectedTeam.value) ??
-                undefined)
-              : undefined
-          }
-          onSelect={onTeamChange}
-          width={140}
-          style={styles.filterDropdown}
-        /> : null}
+        {teamDropdownOptions.length > 0 ? (
+          <Dropdown
+            isDark={isDark}
+            options={teamDropdownOptions}
+            selectedValue={
+              selectedTeam
+                ? (normalizeText(selectedTeam.teamId) ??
+                  normalizeText(selectedTeam.value) ??
+                  undefined)
+                : undefined
+            }
+            onSelect={onTeamChange}
+            width={140}
+            style={styles.filterDropdown}
+          />
+        ) : null}
 
         <Dropdown
           isDark={isDark}
@@ -636,7 +638,9 @@ export default function PlayerStatTable({
     return (
       <View style={styles.container}>
         {renderHeader()}
-        <Text style={[global.emptyText, styles.emptyText]}>{emptyStatsText}</Text>
+        <Text style={[global.emptyText, styles.emptyText]}>
+          {emptyStatsText}
+        </Text>
       </View>
     );
   }

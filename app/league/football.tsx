@@ -1,4 +1,3 @@
-import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import ConferenceListModal, {
@@ -6,11 +5,11 @@ import ConferenceListModal, {
 } from "@/components/League/ConferenceListModal";
 import Draft, { getDefaultDraftYear } from "@/components/League/Draft/Draft";
 import RecruitsList from "@/components/League/Recruiting/RecruitsList";
-import SeasonLeadersList from "@/components/League/SeasonLeaderList";
-import { StandingsList } from "@/components/League/Standings/StandingsList";
+import SeasonLeadersList from "@/components/League/SeasonLeaders/SeasonLeaderList";
 import WeekSelector, {
   FootballWeekGroup,
-} from "@/components/League/WeekSelector";
+} from "@/components/League/Selectors/WeekSelector";
+import { StandingsList } from "@/components/League/Standings/StandingsList";
 import NewsList from "@/components/News/NewsList";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
@@ -38,6 +37,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import {
   useCallback,
   useEffect,
@@ -153,8 +153,14 @@ function NFLLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
-  const { calendar } = useLeagueCalendar(league, "football", undefined, scoreboardCalendar);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(
+    league,
+    "football",
+    undefined,
+    scoreboardCalendar,
+  );
 
   const weekGroups = useMemo<FootballWeekGroup[]>(() => {
     if (!calendar?.length) {
@@ -388,6 +394,7 @@ function NFLLeagueScreen() {
           <View key="draft" style={styles.contentArea}>
             {hasVisitedTab("draft") ? (
               <Draft
+                active={selectedTab === "draft"}
                 year={draftYear}
                 team={draftTeam}
                 round={draftRound}
@@ -454,8 +461,12 @@ function CFBLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
-  const { calendar, loading: calendarLoading } = useLeagueCalendar(league, "football", undefined, scoreboardCalendar);
+  // Resolve the week before loading games so the first request covers the
+  // whole college football week rather than only today's games.
+  const { calendar, loading: calendarLoading } = useLeagueCalendar(
+    league,
+    "football",
+  );
 
   const selectedConferenceName = useMemo(() => {
     return getCFBConferenceSelectionName(selectedConference);
@@ -545,7 +556,6 @@ function CFBLeagueScreen() {
     refreshing: gamesRefreshing,
     refreshGames,
   } = useFootballGames({
-    onScoreboardCalendar,
     league: league,
     season: currentSeason,
     week: selectedWeekNumber,
@@ -554,7 +564,7 @@ function CFBLeagueScreen() {
       selectedConference !== "top25" && selectedConference != null
         ? selectedConference
         : undefined,
-    enabled: true,
+    enabled: !calendarLoading,
   });
 
   const {
@@ -827,8 +837,14 @@ function UFLLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
-  const { calendar } = useLeagueCalendar(league, "football", undefined, scoreboardCalendar);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(
+    league,
+    "football",
+    undefined,
+    scoreboardCalendar,
+  );
 
   const weekGroups = useMemo<FootballWeekGroup[]>(() => {
     if (!calendar?.length) {

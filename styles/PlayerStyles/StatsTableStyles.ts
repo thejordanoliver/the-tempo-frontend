@@ -16,7 +16,6 @@ export const statsTableStyles = (isDark: boolean) => {
 
   return StyleSheet.create({
     container: {
-    
       width: "100%",
     },
 
@@ -41,7 +40,6 @@ export const statsTableStyles = (isDark: boolean) => {
       alignItems: "center",
       flexWrap: "wrap",
       gap: 8,
-      
     },
 
     filterDropdown: {

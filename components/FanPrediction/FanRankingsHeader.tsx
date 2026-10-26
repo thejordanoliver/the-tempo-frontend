@@ -34,7 +34,6 @@ export default function FanRankingsHeader({
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
 
-
   return (
     <View style={styles.header}>
       <View style={styles.intro}>

@@ -3,10 +3,7 @@ import type { ExploreWidgetConfig, ExploreWidgetSize } from "types/widgets";
 
 export type WidgetGridSpan = 1 | 2;
 
-export type WidgetGridItem = Pick<
-  ExploreWidgetConfig,
-  "id" | "size"
->;
+export type WidgetGridItem = Pick<ExploreWidgetConfig, "id" | "size">;
 
 export type WidgetGridLayoutItem = {
   id: string;
@@ -84,8 +81,7 @@ export const calculateWidgetGridLayout = (
       advanceRow();
     }
 
-    const width =
-      columnWidth * span + horizontalGap * Math.max(span - 1, 0);
+    const width = columnWidth * span + horizontalGap * Math.max(span - 1, 0);
     const height = heights[widget.size];
     const x = cursorColumn * (columnWidth + horizontalGap);
 
@@ -178,7 +174,7 @@ export const findWidgetReorderTargetIndex = (
   return current.index;
 };
 
-export const moveWidgetToIndex = <T,>(
+export const moveWidgetToIndex = <T>(
   items: readonly T[],
   fromIndex: number,
   toIndex: number,

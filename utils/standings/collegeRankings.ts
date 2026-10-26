@@ -187,6 +187,6 @@ export function getCollegeRankingPolls(
 ): CollegeRankPoll[] {
   if (league === "cfb") return normalizeRankings(response);
   return isRecord(response) && Array.isArray(response.rankings)
-    ? response.rankings as CollegeRankPoll[]
+    ? (response.rankings as CollegeRankPoll[])
     : [];
 }

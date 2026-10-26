@@ -325,8 +325,18 @@ export default function BadgeUnlockedModal() {
                     style={[
                       styles.haloOuter,
                       {
-                        opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.18, 0.4] }),
-                        transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] }) }],
+                        opacity: pulse.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.18, 0.4],
+                        }),
+                        transform: [
+                          {
+                            scale: pulse.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [1, 1.08],
+                            }),
+                          },
+                        ],
                       },
                     ]}
                   />
@@ -336,8 +346,18 @@ export default function BadgeUnlockedModal() {
                     style={[
                       styles.haloMiddle,
                       {
-                        opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.35, 0.55] }),
-                        transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] }) }],
+                        opacity: pulse.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.35, 0.55],
+                        }),
+                        transform: [
+                          {
+                            scale: pulse.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [1, 1.05],
+                            }),
+                          },
+                        ],
                       },
                     ]}
                   />
@@ -347,8 +367,21 @@ export default function BadgeUnlockedModal() {
                     style={[
                       styles.haloInner,
                       {
-                        opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [isDark ? 0.1 : 0.08, isDark ? 0.2 : 0.16] }),
-                        transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] }) }],
+                        opacity: pulse.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [
+                            isDark ? 0.1 : 0.08,
+                            isDark ? 0.2 : 0.16,
+                          ],
+                        }),
+                        transform: [
+                          {
+                            scale: pulse.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [1, 1.08],
+                            }),
+                          },
+                        ],
                       },
                     ]}
                   />
@@ -359,8 +392,18 @@ export default function BadgeUnlockedModal() {
                     style={[
                       styles.sparkles,
                       {
-                        opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.45, 1] }),
-                        transform: [{ rotate: pulse.interpolate({ inputRange: [0, 1], outputRange: ["-3deg", "3deg"] }) }],
+                        opacity: pulse.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.45, 1],
+                        }),
+                        transform: [
+                          {
+                            rotate: pulse.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: ["-3deg", "3deg"],
+                            }),
+                          },
+                        ],
                       },
                     ]}
                   >
@@ -384,7 +427,16 @@ export default function BadgeUnlockedModal() {
                   <Animated.View
                     style={[
                       styles.emblemContainer,
-                      { transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.045] }) }] },
+                      {
+                        transform: [
+                          {
+                            scale: pulse.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [1, 1.045],
+                            }),
+                          },
+                        ],
+                      },
                     ]}
                   >
                     <BadgeEmblem

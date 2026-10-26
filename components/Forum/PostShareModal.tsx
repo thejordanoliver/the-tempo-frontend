@@ -212,7 +212,7 @@ const PostShareModal = forwardRef<PostShareModalRef, Props>(
                 style={({ pressed }) => [
                   styles.option,
                   { opacity: pressed ? activeOpacity : 1 },
-                  { opacity: share.pending ? activeOpacity: 1 },
+                  { opacity: share.pending ? activeOpacity : 1 },
                 ]}
                 onPress={() => {
                   Keyboard.dismiss();

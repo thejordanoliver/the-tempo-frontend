@@ -51,7 +51,11 @@ export default function FormInput<T extends FieldValues>({
       render={({ field, fieldState }) => (
         <View style={styles.field}>
           <View
-            style={[styles.input, containerStyle, fieldState.error && styles.inputError]}
+            style={[
+              styles.input,
+              containerStyle,
+              fieldState.error && styles.inputError,
+            ]}
           >
             <TextInput
               placeholderTextColor={Colors.midTone}
@@ -74,7 +78,9 @@ export default function FormInput<T extends FieldValues>({
             </Text>
           )}
           {!!helperText && (
-            <Text selectable style={styles.fieldHelperText}>{helperText}</Text>
+            <Text selectable style={styles.fieldHelperText}>
+              {helperText}
+            </Text>
           )}
         </View>
       )}

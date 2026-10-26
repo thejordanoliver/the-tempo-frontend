@@ -7,8 +7,15 @@ const ENTER_PLAY = FadeInLeft.duration(280)
   .reduceMotion(ReduceMotion.System);
 
 export default function GameSummaryPlayRow({
-  children, animate, index, style,
-}: PropsWithChildren<{ animate: boolean; index: number; style: StyleProp<ViewStyle> }>) {
+  children,
+  animate,
+  index,
+  style,
+}: PropsWithChildren<{
+  animate: boolean;
+  index: number;
+  style: StyleProp<ViewStyle>;
+}>) {
   return (
     <Animated.View
       entering={animate ? ENTER_PLAY.delay(Math.min(index, 4) * 35) : undefined}

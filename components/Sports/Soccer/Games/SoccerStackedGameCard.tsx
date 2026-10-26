@@ -11,7 +11,11 @@ import {
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games/games";
+import {
+  formatPeriod,
+  getBroadcastDisplay,
+  winnerStyle,
+} from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 
 export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
@@ -42,12 +46,14 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const awayTeam = getSOCCTeam(away.id) ?? emptyAwayTeam;
   const homeName = homeTeam?.fullName || homeTeam?.name || "TBD";
   const awayName = awayTeam?.fullName || awayTeam?.name || "TBD";
-  const homeLogo = homeTeam.id === emptyHomeTeam.id
-    ? emptyHomeTeam.logo
-    : getSOCCTeamLogo(home.id, isDark);
-  const awayLogo = awayTeam.id === emptyAwayTeam.id
-    ? emptyAwayTeam.logo
-    : getSOCCTeamLogo(away.id, isDark);
+  const homeLogo =
+    homeTeam.id === emptyHomeTeam.id
+      ? emptyHomeTeam.logo
+      : getSOCCTeamLogo(home.id, isDark);
+  const awayLogo =
+    awayTeam.id === emptyAwayTeam.id
+      ? emptyAwayTeam.logo
+      : getSOCCTeamLogo(away.id, isDark);
   const homeScore = Number(game?.home?.score ?? 0);
   const awayScore = Number(game?.away?.score ?? 0);
   const homeRecord = game?.home?.record ?? "0-0-0";

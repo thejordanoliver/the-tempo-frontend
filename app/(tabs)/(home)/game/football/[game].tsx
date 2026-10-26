@@ -549,8 +549,7 @@ export default function GameDetailsScreen(
             />
 
             <PlayByPlay
-              width={420}
-              height={130}
+              gameStatus={score?.status}
               awayCode={awayCode}
               homeCode={homeCode}
               awayName={awayName}
@@ -627,20 +626,6 @@ export default function GameDetailsScreen(
               state={state}
             />
 
-            <TeamDrives
-              previousDrives={previousDrives}
-              currentDrives={currentDrives}
-              awayId={awayId}
-              homeId={homeId}
-              homeCode={homeCode}
-              awayCode={awayCode}
-              homeLogo={homeLogo}
-              awayLogo={awayLogo}
-              league={LEAGUE}
-              isDark={isDark}
-              state={state}
-            />
-
             <GameSummary
               gameId={gameId}
               plays={score?.plays}
@@ -664,6 +649,20 @@ export default function GameDetailsScreen(
               isDark={isDark}
               state={state}
               league={LEAGUE}
+            />
+
+            <TeamDrives
+              previousDrives={previousDrives}
+              currentDrives={currentDrives}
+              awayId={awayId}
+              homeId={homeId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              league={LEAGUE}
+              isDark={isDark}
+              state={state}
             />
 
             <LastFiveGames

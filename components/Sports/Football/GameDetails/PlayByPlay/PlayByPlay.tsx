@@ -1,9 +1,9 @@
-// components/Sports/Football/PlayByPlay.tsx
 import { Colors } from "@/constants/styles";
 import type {
   FootballDrives,
   FootballPlayAthlete,
   FootballPlayParticipant,
+  GameStatus,
   PlayObject,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -30,12 +30,10 @@ import Animated, {
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { PlayByPlayStyles } from "@/styles/GameDetailStyles/PlayByPlayStyles";
 import { formatPeriod } from "@/utils/games/games";
+import { isFootballRedZonePlay } from "@/utils/sports/football/footballRedZone";
 import FootballFieldPlay from "./FootballField";
 
 type FootballFieldProps = {
-  width?: number;
-  height?: number;
-
   awayCode?: string;
   homeCode?: string;
 
@@ -60,13 +58,15 @@ type FootballFieldProps = {
   showPlay?: boolean;
   isDark?: boolean;
   state: string | undefined | null;
+  gameStatus?: GameStatus | null;
   league: string | undefined;
   neutralSite?: boolean;
 };
 
 type PlayByPlayStyleSheet = ReturnType<typeof PlayByPlayStyles>;
 
-const VIEWBOX_WIDTH = 600;
+// Preserve the phone layout's proportions while filling the card on any device.
+const FIELD_ASPECT_RATIO = 420 / 130;
 const INITIAL_FIELD_HORIZONTAL_INSET = 26;
 
 type PlayBadgeVariant = "redZone" | "touchdown" | "fieldGoal";
@@ -188,36 +188,6 @@ function getPlayParticipants(participants?: FootballPlayParticipant[]) {
   return uniqueParticipants;
 }
 
-function getYardsToEndzone(value: unknown) {
-  const yardsToEndzone = Number(value);
-
-  return Number.isFinite(yardsToEndzone) ? yardsToEndzone : null;
-}
-
-function isRedZonePlay(play?: PlayObject | null, state?: string | null) {
-  if (!play) return false;
-
-  if (state === "post") return false;
-
-  const redZonePositions = [
-    getYardsToEndzone(play.start?.yardsToEndzone),
-    getYardsToEndzone(play.end?.yardsToEndzone),
-  ].filter((value): value is number => value !== null);
-
-  const isInsideTwenty = redZonePositions.some(
-    (yardsToEndzone) => yardsToEndzone >= 0 && yardsToEndzone <= 20,
-  );
-
-  const isGoalToGo = [
-    play.start?.downDistanceText,
-    play.start?.shortDownDistanceText,
-    play.end?.downDistanceText,
-    play.end?.shortDownDistanceText,
-  ].some((text) => text?.toLowerCase().includes("goal"));
-
-  return isInsideTwenty || isGoalToGo;
-}
-
 function getScoreValue(value: unknown) {
   const scoreValue = Number(value);
 
@@ -275,10 +245,18 @@ function isMadeFieldGoalPlay(play?: PlayObject | null) {
 function getPlayBadgeVariant(
   play?: PlayObject | null,
   state?: string | null,
+  gameStatus?: GameStatus | null,
 ): PlayBadgeVariant | null {
   if (isTouchdownPlay(play)) return "touchdown";
   if (isMadeFieldGoalPlay(play)) return "fieldGoal";
-  if (isRedZonePlay(play, state)) return "redZone";
+  if (
+    isFootballRedZonePlay(
+      play,
+      gameStatus ?? (state === "in" ? { state } : null),
+    )
+  ) {
+    return "redZone";
+  }
 
   return null;
 }
@@ -347,8 +325,8 @@ function PlayStatusBadge({
         style={[
           styles.playStatusBadge,
           variant === "redZone" && styles.redZoneBadge,
-          variant === "touchdown" && styles.touchdownBadge,
-          variant === "fieldGoal" && styles.fieldGoalBadge,
+          variant === "touchdown" && styles.scoreBadge,
+          variant === "fieldGoal" && styles.scoreBadge,
           badgeStyle,
         ]}
         accessibilityLabel={PLAY_BADGE_LABELS[variant]}
@@ -358,8 +336,8 @@ function PlayStatusBadge({
           style={[
             styles.playStatusGlow,
             variant === "redZone" && styles.redZoneGlow,
-            variant === "touchdown" && styles.touchdownGlow,
-            variant === "fieldGoal" && styles.fieldGoalGlow,
+            variant === "touchdown" && styles.scoreGlow,
+            variant === "fieldGoal" && styles.scoreGlow,
             glowStyle,
           ]}
         />
@@ -373,8 +351,6 @@ function PlayStatusBadge({
 }
 
 function PlayByPlay({
-  width = VIEWBOX_WIDTH,
-  height = 150,
   awayCode = "AWAY",
   homeCode = "HOME",
   awayName = "AWAY",
@@ -392,6 +368,7 @@ function PlayByPlay({
   showPlay = true,
   isDark = true,
   state,
+  gameStatus,
   league = "nfl",
   neutralSite,
 }: FootballFieldProps) {
@@ -406,9 +383,8 @@ function PlayByPlay({
     0,
     windowWidth - INITIAL_FIELD_HORIZONTAL_INSET,
   );
-  const maxFieldWidth = Math.max(0, availableFieldWidth ?? fallbackFieldWidth);
-  const fieldWidth = Math.min(width, maxFieldWidth);
-  const fieldHeight = width > 0 ? height * (fieldWidth / width) : height;
+  const fieldWidth = Math.max(0, availableFieldWidth ?? fallbackFieldWidth);
+  const fieldHeight = fieldWidth / FIELD_ASPECT_RATIO;
 
   const handleFieldLayout = useCallback((event: LayoutChangeEvent) => {
     const nextWidth = event.nativeEvent.layout.width;
@@ -433,7 +409,7 @@ function PlayByPlay({
       playData.start?.downDistanceText ??
       null;
 
-    const playBadgeVariant = getPlayBadgeVariant(playData, state);
+    const playBadgeVariant = getPlayBadgeVariant(playData, state, gameStatus);
     const fieldPosition = playData.start?.possessionText ?? null;
     const playText = playData.text ?? playData.shortText ?? null;
     const isScoringPlay = playData.scoringPlay;
@@ -456,7 +432,7 @@ function PlayByPlay({
       playText,
       participants,
     };
-  }, [playData, state]);
+  }, [gameStatus, playData, state]);
 
   const possessionTeam =
     playData?.start?.team ??
@@ -464,9 +440,7 @@ function PlayByPlay({
     drives?.current?.at(-1)?.team ??
     null;
 
-  const possessionTeamId = String(
-    possessionTeam?.id ?? "",
-  );
+  const possessionTeamId = String(possessionTeam?.id ?? "");
 
   const possessionCode = (
     possessionTeam?.abbreviation ??
@@ -508,6 +482,7 @@ function PlayByPlay({
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Play By Play</HeadingTwo>
+
       <View style={styles.wrapper}>
         <View style={styles.headerContainer}>
           {playInfo && (
@@ -551,6 +526,7 @@ function PlayByPlay({
             </View>
           </View>
         </View>
+
         <View style={styles.detailRow}>
           {playText && state === "in" && (
             <Text

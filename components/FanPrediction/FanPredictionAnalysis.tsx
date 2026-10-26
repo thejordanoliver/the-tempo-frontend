@@ -101,7 +101,9 @@ export default function FanPredictionAnalysis({
       </View>
       <View style={styles.intro}>
         <Text style={styles.sectionTitle}>Weekly accuracy</Text>
-        <Text style={styles.note}>Peformance over 8 weeks. Grouped by game date</Text>
+        <Text style={styles.note}>
+          Peformance over 8 weeks. Grouped by game date
+        </Text>
         <View style={styles.weeklyChart}>
           {data.weekly.map((week) => {
             const value = accuracy(week);

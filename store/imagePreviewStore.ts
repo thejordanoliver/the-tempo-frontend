@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 type ImagePreviewState = {
   images: string[]; // array of URIs
-  index: number;    // current image index
+  index: number; // current image index
   setImages: (images: string[], index?: number) => void;
   clearImages: () => void;
 };

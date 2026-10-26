@@ -246,13 +246,30 @@ export function useLeagueCalendar(
       try {
         setError(null);
 
-        const scoreboardCoversMonth = !requestMonth || (
-          scoreboard?.startDate && scoreboard?.endDate &&
-          requestMonth >= scoreboard.startDate.slice(0, 7) &&
-          requestMonth <= scoreboard.endDate.slice(0, 7)
-        );
-        const includedCalendar = scoreboardCoversMonth && Array.isArray(scoreboard?.calendar)
-          ? scoreboard.calendar : null;
+        const scoreboardCoversMonth =
+          !requestMonth ||
+          (scoreboard?.startDate &&
+            scoreboard?.endDate &&
+            requestMonth >= scoreboard.startDate.slice(0, 7) &&
+            requestMonth <= scoreboard.endDate.slice(0, 7));
+        let includedCalendar =
+          scoreboardCoversMonth && Array.isArray(scoreboard?.calendar)
+            ? scoreboard.calendar
+            : null;
+        // Phase boundaries alone cannot populate a week selector. Older
+        // scoreboard responses may omit weeks even though the calendar API has them.
+        if (
+          (format === "football" || format === "soccer") &&
+          includedCalendar?.length &&
+          !includedCalendar.some(
+            (phase) =>
+              isObject(phase) &&
+              Array.isArray(phase.entries) &&
+              phase.entries.length > 0,
+          )
+        ) {
+          includedCalendar = null;
+        }
         // A selector can bootstrap from the initial games response.
         if (includedCalendar === null && scoreboard?.pending) {
           waitingForScoreboard = true;
@@ -260,7 +277,11 @@ export function useLeagueCalendar(
           return;
         }
 
-        if (includedCalendar === null && shouldUseMonthCache && requestMonth !== null) {
+        if (
+          includedCalendar === null &&
+          shouldUseMonthCache &&
+          requestMonth !== null
+        ) {
           const cachedResult = await getCachedLeagueCalendar(
             normalizedLeague,
             requestMonth,
@@ -316,19 +337,20 @@ export function useLeagueCalendar(
             ? getLeagueCalendarMonthAnchor(requestMonth)
             : anchorDate;
 
-        const { data } = includedCalendar !== null
-          ? { data: { calendar: includedCalendar } }
-          : await apiClient.get<CalendarResponse>(
-          `/api/games/calendar/${normalizedLeague}`,
-          {
-            params: requestDate
-              ? {
-                  date: requestDate,
-                }
-              : undefined,
-            signal: abortController.signal,
-          },
-        );
+        const { data } =
+          includedCalendar !== null
+            ? { data: { calendar: includedCalendar } }
+            : await apiClient.get<CalendarResponse>(
+                `/api/games/calendar/${normalizedLeague}`,
+                {
+                  params: requestDate
+                    ? {
+                        date: requestDate,
+                      }
+                    : undefined,
+                  signal: abortController.signal,
+                },
+              );
 
         if (requestSequenceRef.current !== requestId) {
           return;
@@ -482,7 +504,14 @@ export function useLeagueCalendar(
         }
       }
     },
-    [anchorDate, calendarMonth, format, normalizedLeague, scoreboard, setCalendar],
+    [
+      anchorDate,
+      calendarMonth,
+      format,
+      normalizedLeague,
+      scoreboard,
+      setCalendar,
+    ],
   );
 
   useEffect(() => {

@@ -4,7 +4,11 @@ import { useMemo, type ReactNode } from "react";
 import { View } from "react-native";
 import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
 
-export default function FanPredictionSection({ children }: { children: ReactNode }) {
+export default function FanPredictionSection({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => FanPredictionStyles(isDark), [isDark]);
@@ -16,4 +20,3 @@ export default function FanPredictionSection({ children }: { children: ReactNode
     </View>
   );
 }
-

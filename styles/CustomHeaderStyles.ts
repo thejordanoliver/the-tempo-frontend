@@ -173,13 +173,8 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     },
 
     dividerWrapper: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      left: "50%",
+      ...StyleSheet.absoluteFill,
       zIndex: 10,
-      width: isTablet ? 80 : 60,
-      marginLeft: isTablet ? -15 : -30,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -187,6 +182,7 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     dividerText: {
       fontFamily: Fonts.BOLD,
       fontSize: isTablet ? 32 : 24,
+      lineHeight: isTablet ? 42 : 30,
       color: Colors.white,
       textAlign: "center",
     },

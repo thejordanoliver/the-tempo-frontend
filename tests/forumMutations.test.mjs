@@ -6,7 +6,10 @@ import ts from "typescript";
 
 const defer = () => {
   let resolve, reject;
-  const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  const promise = new Promise((yes, no) => {
+    resolve = yes;
+    reject = no;
+  });
   return { promise, resolve, reject };
 };
 const flush = () => new Promise((resolve) => setImmediate(resolve));
@@ -14,25 +17,36 @@ const flush = () => new Promise((resolve) => setImmediate(resolve));
 // Execute the actual hooks with injected platform dependencies and explicit
 // render/effect lifecycles so async races can be tested without a native device.
 function hookHarness(file, exportName, dependencies) {
-  let cursor = 0, effects = [];
+  let cursor = 0,
+    effects = [];
   const slots = [];
   const react = {
     useState(initial) {
       const index = cursor++;
-      if (!(index in slots)) slots[index] = typeof initial === "function" ? initial() : initial;
-      return [slots[index], (next) => {
-        slots[index] = typeof next === "function" ? next(slots[index]) : next;
-      }];
+      if (!(index in slots))
+        slots[index] = typeof initial === "function" ? initial() : initial;
+      return [
+        slots[index],
+        (next) => {
+          slots[index] = typeof next === "function" ? next(slots[index]) : next;
+        },
+      ];
     },
     useRef(initial) {
       const index = cursor++;
       if (!(index in slots)) slots[index] = { current: initial };
       return slots[index];
     },
-    useCallback(callback) { return callback; },
+    useCallback(callback) {
+      return callback;
+    },
     useEffect(callback, deps) {
-      const index = cursor++, previous = slots[index];
-      if (!previous || deps.some((value, i) => !Object.is(value, previous.deps[i]))) {
+      const index = cursor++,
+        previous = slots[index];
+      if (
+        !previous ||
+        deps.some((value, i) => !Object.is(value, previous.deps[i]))
+      ) {
         effects.push(() => {
           previous?.cleanup?.();
           slots[index] = { deps, cleanup: callback() };
@@ -45,33 +59,127 @@ function hookHarness(file, exportName, dependencies) {
     compilerOptions: { module: ts.ModuleKind.CommonJS },
   }).outputText;
   vm.runInNewContext(source, {
-    exports, require: (name) => name === "react" ? react : dependencies[name],
-    AbortController, console: { error() {}, warn() {} }, __DEV__: false,
+    exports,
+    require: (name) => (name === "react" ? react : dependencies[name]),
+    AbortController,
+    console: { error() {}, warn() {} },
+    __DEV__: false,
   });
   return {
     render(...args) {
       cursor = 0;
       const result = exports[exportName](...args);
-      const pending = effects; effects = [];
+      const pending = effects;
+      effects = [];
       pending.forEach((effect) => effect());
       return result;
     },
-    unmount() { slots.forEach((slot) => slot?.cleanup?.()); },
+    unmount() {
+      slots.forEach((slot) => slot?.cleanup?.());
+    },
   };
 }
 
 const poll = {
-  question: "Winner?", expires_at: null,
-  options: [{ id: 1, text: "Home", vote_count: 3, voted_by_current_user: false }],
+  question: "Winner?",
+  expires_at: null,
+  options: [
+    { id: 1, text: "Home", vote_count: 3, voted_by_current_user: false },
+  ],
 };
 
+function sharedPreviewHarness(getForumPost) {
+  return hookHarness(
+    "hooks/ForumHooks/useSharedForumPostPreview.ts",
+    "useSharedForumPostPreview",
+    {
+      "services/forumApi": { getForumPost },
+      "utils/forums/forumPostShare": {
+        getForumPostPreviewText: (text) => `preview:${text}`,
+        getSharedForumPostFallback: () => ({
+          username: "original",
+          text: "Original message",
+        }),
+      },
+    },
+  );
+}
+
+test("shared post previews load the original author and first available post image", async () => {
+  const hook = sharedPreviewHarness(async () => ({
+    username: "author",
+    text: "Post\n\nbody",
+    profile_image: "https://example.com/avatar.jpg",
+    images: [
+      "",
+      "https://example.com/post.jpg",
+      "https://example.com/second.jpg",
+    ],
+  }));
+  assert.equal(hook.render("post-1", "message").username, "original");
+  await flush();
+  const preview = hook.render("post-1", "message");
+  assert.equal(preview.username, "author");
+  assert.equal(preview.text, "preview:Post body");
+  assert.equal(preview.profileImage, "https://example.com/avatar.jpg");
+  assert.equal(preview.image, "https://example.com/post.jpg");
+});
+
+test("shared post previews keep message content when the post is unavailable", async () => {
+  for (const load of [
+    async () => null,
+    async () => {
+      throw new Error("offline");
+    },
+  ]) {
+    const hook = sharedPreviewHarness(load);
+    hook.render("post-1", "message");
+    await flush();
+    const preview = hook.render("post-1", "message");
+    assert.equal(preview.username, "original");
+    assert.equal(preview.text, "Original message");
+    assert.equal(preview.image, null);
+    assert.equal(preview.profileImage, null);
+  }
+});
+
+test("shared post previews cancel obsolete requests and ignore their responses", async () => {
+  const old = defer();
+  let oldSignal;
+  const hook = sharedPreviewHarness((id, signal) => {
+    if (id === "old") {
+      oldSignal = signal;
+      return old.promise;
+    }
+    return Promise.resolve({ username: "new", text: "", images: [] });
+  });
+  hook.render("old", "message");
+  hook.render("new", "message");
+  assert.equal(oldSignal.aborted, true);
+  await flush();
+  old.resolve({ username: "old", text: "Old body", images: ["old.jpg"] });
+  await flush();
+  const preview = hook.render("new", "message");
+  assert.equal(preview.username, "new");
+  assert.equal(preview.text, "preview:");
+  assert.equal(preview.image, null);
+  hook.unmount();
+});
+
 test("a successful poll vote survives a failed reconciliation fetch", async () => {
-  let fetches = 0, votes = 0;
+  let fetches = 0,
+    votes = 0;
   const vote = defer();
   const hook = hookHarness("hooks/ForumHooks/useForumPoll.ts", "useForumPoll", {
     "services/forumApi": {
-      getPostPoll: async () => { if (++fetches > 1) throw new Error("offline"); return poll; },
-      voteOnPostPoll: () => { votes++; return vote.promise; },
+      getPostPoll: async () => {
+        if (++fetches > 1) throw new Error("offline");
+        return poll;
+      },
+      voteOnPostPoll: () => {
+        votes++;
+        return vote.promise;
+      },
     },
   });
   hook.render("post-1");
@@ -92,10 +200,13 @@ test("a rejected poll vote rolls back the optimistic selection and count", async
   const hook = hookHarness("hooks/ForumHooks/useForumPoll.ts", "useForumPoll", {
     "services/forumApi": {
       getPostPoll: async () => poll,
-      voteOnPostPoll: async () => { throw new Error("rejected"); },
+      voteOnPostPoll: async () => {
+        throw new Error("rejected");
+      },
     },
   });
-  hook.render("post-1"); await flush();
+  hook.render("post-1");
+  await flush();
   await hook.render("post-1").handleVote(1);
   const result = hook.render("post-1");
   assert.equal(result.hasVoted, false);
@@ -107,29 +218,62 @@ test("an older poll fetch cannot populate another post", async () => {
   const old = defer();
   const hook = hookHarness("hooks/ForumHooks/useForumPoll.ts", "useForumPoll", {
     "services/forumApi": {
-      getPostPoll: (id) => id === "old" ? old.promise : Promise.resolve({ ...poll, question: "New" }),
+      getPostPoll: (id) =>
+        id === "old"
+          ? old.promise
+          : Promise.resolve({ ...poll, question: "New" }),
     },
   });
   hook.render("old");
-  hook.render("new"); await flush();
-  old.resolve(poll); await flush();
+  hook.render("new");
+  await flush();
+  old.resolve(poll);
+  await flush();
   assert.equal(hook.render("new").poll.question, "New");
 });
 
 test("post bookmarks suppress duplicate submissions and preserve server reconciliation", async () => {
   const request = defer();
-  let calls = 0, changed;
-  const store = { likes: {}, setLike(id, liked, count) { store.likes[id] = { liked, count }; } };
-  const useStore = (selector) => selector ? selector(store) : store;
-  const hook = hookHarness("hooks/ForumHooks/useForumPostInteractions.ts", "useForumPostInteractions", {
-    axios: { isAxiosError: () => false },
-    "hooks/ForumHooks/useBadgeNotifications": { useBadgeNotifications: () => ({ handleBadgeAwards() {} }) },
-    "store/useLikesStore": { useLikesStore: useStore },
-    "services/forumApi": { setPostBookmark: () => { calls++; return request.promise; } },
-  });
-  const options = { item: { id: "post-1", liked_by_current_user: false, likes: 3,
-    bookmarks: 0, shares: 0, user_id: 7 }, currentUserId: 8,
-    onBookmarkChange: (post) => { changed = post; } };
+  let calls = 0,
+    changed;
+  const store = {
+    likes: {},
+    setLike(id, liked, count) {
+      store.likes[id] = { liked, count };
+    },
+  };
+  const useStore = (selector) => (selector ? selector(store) : store);
+  const hook = hookHarness(
+    "hooks/ForumHooks/useForumPostInteractions.ts",
+    "useForumPostInteractions",
+    {
+      axios: { isAxiosError: () => false },
+      "hooks/ForumHooks/useBadgeNotifications": {
+        useBadgeNotifications: () => ({ handleBadgeAwards() {} }),
+      },
+      "store/useLikesStore": { useLikesStore: useStore },
+      "services/forumApi": {
+        setPostBookmark: () => {
+          calls++;
+          return request.promise;
+        },
+      },
+    },
+  );
+  const options = {
+    item: {
+      id: "post-1",
+      liked_by_current_user: false,
+      likes: 3,
+      bookmarks: 0,
+      shares: 0,
+      user_id: 7,
+    },
+    currentUserId: 8,
+    onBookmarkChange: (post) => {
+      changed = post;
+    },
+  };
   const ready = hook.render(options);
   const first = ready.handleBookmarkPress();
   await ready.handleBookmarkPress();
@@ -142,7 +286,13 @@ test("post bookmarks suppress duplicate submissions and preserve server reconcil
   assert.equal(result.bookmarkPending, false);
   assert.equal(changed.bookmarks, 5);
   const refreshed = hook.render({
-    ...options, item: { ...options.item, bookmarks: 2, shares: 9, bookmarked_by_current_user: false },
+    ...options,
+    item: {
+      ...options.item,
+      bookmarks: 2,
+      shares: 9,
+      bookmarked_by_current_user: false,
+    },
   });
   assert.equal(refreshed.bookmarkCount, 2);
   assert.equal(refreshed.bookmarked, false);
@@ -152,55 +302,156 @@ test("post bookmarks suppress duplicate submissions and preserve server reconcil
 });
 
 test("an older like response cannot overwrite a newer unlike", async () => {
-  const first = defer(), second = defer();
+  const first = defer(),
+    second = defer();
   let calls = 0;
-  const store = { likes: {}, setLike(id, liked, count) { store.likes[id] = { liked, count }; } };
-  const hook = hookHarness("hooks/ForumHooks/useForumPostInteractions.ts", "useForumPostInteractions", {
-    axios: { isAxiosError: () => false },
-    "hooks/ForumHooks/useBadgeNotifications": { useBadgeNotifications: () => ({ handleBadgeAwards() {} }) },
-    "store/useLikesStore": { useLikesStore: (selector) => selector ? selector(store) : store },
-    "services/forumApi": { setPostLike: () => (++calls === 1 ? first.promise : second.promise) },
-  });
-  const options = { item: { id: "post-1", liked_by_current_user: false, likes: 3,
-    shares: 0, user_id: 7 }, currentUserId: 8 };
+  const store = {
+    likes: {},
+    setLike(id, liked, count) {
+      store.likes[id] = { liked, count };
+    },
+  };
+  const hook = hookHarness(
+    "hooks/ForumHooks/useForumPostInteractions.ts",
+    "useForumPostInteractions",
+    {
+      axios: { isAxiosError: () => false },
+      "hooks/ForumHooks/useBadgeNotifications": {
+        useBadgeNotifications: () => ({ handleBadgeAwards() {} }),
+      },
+      "store/useLikesStore": {
+        useLikesStore: (selector) => (selector ? selector(store) : store),
+      },
+      "services/forumApi": {
+        setPostLike: () => (++calls === 1 ? first.promise : second.promise),
+      },
+    },
+  );
+  const options = {
+    item: {
+      id: "post-1",
+      liked_by_current_user: false,
+      likes: 3,
+      shares: 0,
+      user_id: 7,
+    },
+    currentUserId: 8,
+  };
   const like = hook.render(options).toggleLikePress();
   const unlike = hook.render(options).toggleLikePress();
-  second.resolve({ post: { liked_by_current_user: false, likes: 3 } }); await unlike;
-  first.resolve({ post: { liked_by_current_user: true, likes: 4 } }); await like;
+  second.resolve({ post: { liked_by_current_user: false, likes: 3 } });
+  await unlike;
+  first.resolve({ post: { liked_by_current_user: true, likes: 4 } });
+  await like;
   assert.equal(hook.render(options).liked, false);
   assert.equal(store.likes["post-1"].count, 3);
 });
 
 test("a media-like response arriving after unmount cannot update shared likes", async () => {
   const response = defer();
-  const store = { likes: {}, setLike(id, liked, count) { store.likes[id] = { liked, count }; } };
-  const hook = hookHarness("hooks/ForumHooks/useForumMediaLike.ts", "useForumMediaLike", {
-    "hooks/ForumHooks/useBadgeNotifications": { useBadgeNotifications: () => ({ handleBadgeAwards() {} }) },
-    "store/useLikesStore": { useLikesStore: (selector) => selector ? selector(store) : store },
-    "services/forumApi": { setPostLike: () => response.promise },
+  const store = {
+    likes: {},
+    setLike(id, liked, count) {
+      store.likes[id] = { liked, count };
+    },
+  };
+  const hook = hookHarness(
+    "hooks/ForumHooks/useForumMediaLike.ts",
+    "useForumMediaLike",
+    {
+      "hooks/ForumHooks/useBadgeNotifications": {
+        useBadgeNotifications: () => ({ handleBadgeAwards() {} }),
+      },
+      "store/useLikesStore": {
+        useLikesStore: (selector) => (selector ? selector(store) : store),
+      },
+      "services/forumApi": { setPostLike: () => response.promise },
+    },
+  );
+  const ready = hook.render({
+    postId: "post-1",
+    likedByCurrentUser: false,
+    likesCount: 3,
   });
-  const ready = hook.render({ postId: "post-1", likedByCurrentUser: false, likesCount: 3 });
   const pending = ready.toggleLikePress();
   hook.unmount();
-  response.resolve({ post: { liked_by_current_user: true, likes: 99 } }); await pending;
+  response.resolve({ post: { liked_by_current_user: true, likes: 99 } });
+  await pending;
   assert.equal(store.likes["post-1"].count, 4);
 });
 
-function shareHarness({ authorId = 7, smsResult = "sent", available = true, send = async () => true, search = async () => [] } = {}) {
-  let shares = 0, smsCalls = 0;
-  const hook = hookHarness("hooks/ForumHooks/useForumPostShare.ts", "useForumPostShare", {
-    "contexts/MessagesContext": { useMessagesContext: () => ({ createOrGetConversation: async () => ({ conversationId: "dm-1" }), sendDirectMessage: send, getConversationList: () => ({ items: [], loaded: true }), loadConversations: async () => {} }) },
-    "react-native": { Share: { sharedAction: "sharedAction", share: async () => ({ action: "sharedAction" }) } },
-    "expo-sms": { isAvailableAsync: async () => available, sendSMSAsync: async () => { smsCalls++; return { result: smsResult }; } },
-    "hooks/useDebounce": { useDebounce: (value) => value },
-    "services/usersApi": { searchUsers: search },
-    "utils/common/getErrorMessage": { getErrorMessage: (error, fallback) => error.message || fallback },
-    "services/defaultMessagingApp": { getDefaultMessagingApp: async () => null },
-    "utils/forums/forumShareRecipients": { getForumShareRecipients: () => [] },
-    "utils/forums/forumPostShare": { getForumPostShareText: () => "Post from @fan on Tempo\nnbascorestracker://post/post-1" },
-  });
-  const render = () => hook.render({ id: "post-1", username: "fan", text: "Preview", user_id: authorId }, 1, async () => { shares++; });
-  return { render, send: async (user) => { render().requestSend(user); return render().confirmSend(); }, get shares() { return shares; }, get smsCalls() { return smsCalls; } };
+function shareHarness({
+  authorId = 7,
+  smsResult = "sent",
+  available = true,
+  send = async () => true,
+  search = async () => [],
+} = {}) {
+  let shares = 0,
+    smsCalls = 0;
+  const hook = hookHarness(
+    "hooks/ForumHooks/useForumPostShare.ts",
+    "useForumPostShare",
+    {
+      "contexts/MessagesContext": {
+        useMessagesContext: () => ({
+          createOrGetConversation: async () => ({ conversationId: "dm-1" }),
+          sendDirectMessage: send,
+          getConversationList: () => ({ items: [], loaded: true }),
+          loadConversations: async () => {},
+        }),
+      },
+      "react-native": {
+        Share: {
+          sharedAction: "sharedAction",
+          share: async () => ({ action: "sharedAction" }),
+        },
+      },
+      "expo-sms": {
+        isAvailableAsync: async () => available,
+        sendSMSAsync: async () => {
+          smsCalls++;
+          return { result: smsResult };
+        },
+      },
+      "hooks/useDebounce": { useDebounce: (value) => value },
+      "services/usersApi": { searchUsers: search },
+      "utils/common/getErrorMessage": {
+        getErrorMessage: (error, fallback) => error.message || fallback,
+      },
+      "services/defaultMessagingApp": {
+        getDefaultMessagingApp: async () => null,
+      },
+      "utils/forums/forumShareRecipients": {
+        getForumShareRecipients: () => [],
+      },
+      "utils/forums/forumPostShare": {
+        getForumPostShareText: () =>
+          "Post from @fan on Tempo\nnbascorestracker://post/post-1",
+      },
+    },
+  );
+  const render = () =>
+    hook.render(
+      { id: "post-1", username: "fan", text: "Preview", user_id: authorId },
+      1,
+      async () => {
+        shares++;
+      },
+    );
+  return {
+    render,
+    send: async (user) => {
+      render().requestSend(user);
+      return render().confirmSend();
+    },
+    get shares() {
+      return shares;
+    },
+    get smsCalls() {
+      return smsCalls;
+    },
+  };
 }
 
 test("opening the share sheet and cancelled or unknown SMS results never count a share", async () => {
@@ -226,11 +477,14 @@ test("unavailable SMS surfaces feedback and never opens a composer", async () =>
 
 test("failed DMs retain their identifier on retry and only successful sends count", async () => {
   const ids = [];
-  const harness = shareHarness({ send: async (_conversation, payload) => {
-    ids.push(payload.clientId);
-    if (ids.length === 1) throw new Error("DM privacy does not allow this message");
-    return true;
-  } });
+  const harness = shareHarness({
+    send: async (_conversation, payload) => {
+      ids.push(payload.clientId);
+      if (ids.length === 1)
+        throw new Error("DM privacy does not allow this message");
+      return true;
+    },
+  });
   await harness.send({ id: 2, username: "recipient" });
   assert.match(harness.render().error, /privacy/);
   assert.equal(harness.shares, 0);
@@ -242,20 +496,37 @@ test("failed DMs retain their identifier on retry and only successful sends coun
 
 test("recipient search excludes the current user and ignores stale search responses", async () => {
   const older = defer();
-  const harness = shareHarness({ search: async (query) => query === "old" ? older.promise : [{ id: 1, username: "self" }, { id: 2, username: "new" }] });
+  const harness = shareHarness({
+    search: async (query) =>
+      query === "old"
+        ? older.promise
+        : [
+            { id: 1, username: "self" },
+            { id: 2, username: "new" },
+          ],
+  });
   harness.render().open();
-  harness.render().setQuery("old"); harness.render();
-  harness.render().setQuery("new"); harness.render();
+  harness.render().setQuery("old");
+  harness.render();
+  harness.render().setQuery("new");
+  harness.render();
   await flush();
   older.resolve([{ id: 3, username: "old" }]);
   await flush();
-  assert.deepEqual(Array.from(harness.render().users, (user) => user.username), ["new"]);
+  assert.deepEqual(
+    Array.from(harness.render().users, (user) => user.username),
+    ["new"],
+  );
 });
-
 
 test("recipient selection waits for confirmation and cancelling sends nothing", async () => {
   let sends = 0;
-  const harness = shareHarness({ send: async () => { sends++; return true; } });
+  const harness = shareHarness({
+    send: async () => {
+      sends++;
+      return true;
+    },
+  });
   harness.render().requestSend({ id: 2, username: "recipient" });
   assert.equal(harness.render().confirmRecipient.username, "recipient");
   assert.equal(sends, 0);
@@ -273,7 +544,13 @@ test("recipient selection waits for confirmation and cancelling sends nothing", 
 
 test("sharing own post still sends DMs and opens SMS but never records a share", async () => {
   let sends = 0;
-  const harness = shareHarness({ authorId: 1, send: async () => { sends++; return true; } });
+  const harness = shareHarness({
+    authorId: 1,
+    send: async () => {
+      sends++;
+      return true;
+    },
+  });
   await harness.send({ id: 2, username: "recipient" });
   assert.equal(sends, 1);
   assert.equal(harness.render().sentTo, "recipient");

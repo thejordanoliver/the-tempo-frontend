@@ -14,11 +14,16 @@ import {
 import DraftProspectBoard from "./DraftProspectBoard";
 
 type Props = {
+  active?: boolean;
   safeYear: string;
   league: string;
 };
 
-export default function DraftBoardTab({ safeYear, league }: Props) {
+export default function DraftBoardTab({
+  safeYear,
+  league,
+  active = true,
+}: Props) {
   const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -27,13 +32,14 @@ export default function DraftBoardTab({ safeYear, league }: Props) {
   const { draft, loading, error, refreshing, onRefresh } = useDraft(
     league,
     Number(safeYear),
+    { enabled: active },
   );
 
   const current = draft?.current;
   const hasBoardData = Boolean(
     current?.bestAvailable ||
-    current?.bestFit ||
-    current?.bestAvailablePicks?.length,
+      current?.bestFit ||
+      current?.bestAvailablePicks?.length,
   );
 
   if (loading)

@@ -144,7 +144,9 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={navigationContentStyle(styles.scrollContent)}>
+      <ScrollView
+        contentContainerStyle={navigationContentStyle(styles.scrollContent)}
+      >
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
             style={styles.optionButton}
@@ -191,8 +193,14 @@ export default function SettingsScreen() {
         </View>
 
         {[
-          { label: "Privacy Policy", url: "https://thetemposports.com/privacy/" },
-          { label: "Help & Support", url: "https://thetemposports.com/support/" },
+          {
+            label: "Privacy Policy",
+            url: "https://thetemposports.com/privacy/",
+          },
+          {
+            label: "Help & Support",
+            url: "https://thetemposports.com/support/",
+          },
         ].map(({ label, url }) => (
           <View key={url} style={styles.optionButtonContainer}>
             <TouchableOpacity
@@ -278,7 +286,11 @@ export default function SettingsScreen() {
           }}
         />
         {!!deleteError && (
-          <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={sharedStyles.errorText}>
+          <Text
+            accessibilityRole="alert"
+            accessibilityLiveRegion="polite"
+            style={sharedStyles.errorText}
+          >
             {deleteError}
           </Text>
         )}

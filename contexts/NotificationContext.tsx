@@ -100,7 +100,9 @@ type NotificationContextType = {
   clearCenterNotifications: () => void;
   teamSubscriptions: TeamNotificationSubscription[];
   gameSubscriptions: GameNotificationSubscription[];
-  removeUnfavoritedTeamSubscriptions: (teams: readonly FavoriteTeamKey[]) => void;
+  removeUnfavoritedTeamSubscriptions: (
+    teams: readonly FavoriteTeamKey[],
+  ) => void;
   refreshTeamSubscriptions: () => Promise<boolean>;
   toggleTeamNotifications: (
     sport: NotificationTeamSport,
@@ -136,7 +138,10 @@ type NotificationContextType = {
     league: string,
     gameId: string | number,
   ) => boolean;
-  toggleNotifications: (league: string, teamId: string | number) => Promise<void>;
+  toggleNotifications: (
+    league: string,
+    teamId: string | number,
+  ) => Promise<void>;
   isNotified: (league: string, teamId: string | number) => boolean;
 };
 
@@ -643,7 +648,10 @@ export function NotificationProvider({
       const removed = new Set(teams);
       setTeamSubscriptions((current) =>
         current.filter((subscription) => {
-          const key = buildFavoriteTeamKey(subscription.league, subscription.teamId);
+          const key = buildFavoriteTeamKey(
+            subscription.league,
+            subscription.teamId,
+          );
           return !key || !removed.has(key);
         }),
       );

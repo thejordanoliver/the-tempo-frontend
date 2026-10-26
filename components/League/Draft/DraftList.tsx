@@ -22,6 +22,7 @@ import DraftCardSkeleton from "../../Skeletons/DraftCardSkeleton";
 import DraftCard, { DraftPick } from "./DraftCard";
 
 type Props = {
+  active?: boolean;
   year: string;
   team: string;
   round: string;
@@ -80,6 +81,7 @@ export const getDefaultDraftYear = (league: string) => {
 };
 
 export default function DraftList({
+  active = true,
   year,
   team,
   round,
@@ -166,6 +168,7 @@ export default function DraftList({
   const { draft, loading, error, refreshing, onRefresh } = useDraft(
     league,
     Number(safeYear),
+    { enabled: active },
   );
 
   const picks = useMemo(() => draft?.picks ?? [], [draft?.picks]);

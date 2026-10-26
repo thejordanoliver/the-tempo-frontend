@@ -54,10 +54,7 @@ import MyPicksWidget from "./Widgets/MyPicksWidget";
 import FavoriteTeamsWidget from "./Widgets/FavoriteTeamsWidget";
 import FavoriteGamesWidget from "./Widgets/FavoriteGamesWidget";
 import StandingsWidget from "./Widgets/StandingsWidget";
-import {
-  WidgetEditControls,
-  type WidgetSlide,
-} from "./Widgets/WidgetSlider";
+import { WidgetEditControls, type WidgetSlide } from "./Widgets/WidgetSlider";
 
 type ExploreWidgetDashboardProps = {
   isDark: boolean;
@@ -181,7 +178,9 @@ function WidgetFrame({
   );
 }
 
-export default function ExploreWidgetDashboard(props: ExploreWidgetDashboardProps) {
+export default function ExploreWidgetDashboard(
+  props: ExploreWidgetDashboardProps,
+) {
   const { userId } = useFavoriteTeamsContext();
   return <WidgetDashboardContent key={userId ?? "signed-out"} {...props} />;
 }
@@ -349,7 +348,9 @@ function WidgetDashboardContent({
             height={height}
             width={width}
             isDark={isDark}
-            selectedLeagues={widget.favoriteGameLeagues ?? EXPLORE_WIDGET_LEAGUES}
+            selectedLeagues={
+              widget.favoriteGameLeagues ?? EXPLORE_WIDGET_LEAGUES
+            }
             autoPlay={widget.favoriteGamesAutoPlay !== false}
             onChangeLeagues={(leagues) =>
               onSetFavoriteGameLeagues(widget.id, leagues)
@@ -382,7 +383,13 @@ function WidgetDashboardContent({
     } else if (widget.type === "my_picks") {
       content = (
         <View style={dashboardStyles.section}>
-          <MyPicksWidget isDark={isDark} size={widget.size} width={width} height={height} {...editProps} />
+          <MyPicksWidget
+            isDark={isDark}
+            size={widget.size}
+            width={width}
+            height={height}
+            {...editProps}
+          />
         </View>
       );
     } else if (widget.type === "create_post") {
@@ -488,7 +495,9 @@ function WidgetDashboardContent({
         style={[dashboardStyles.scroll, boardLoading && { opacity: 0 }]}
         pointerEvents={boardLoading ? "none" : "auto"}
         accessibilityElementsHidden={boardLoading}
-        importantForAccessibility={boardLoading ? "no-hide-descendants" : "auto"}
+        importantForAccessibility={
+          boardLoading ? "no-hide-descendants" : "auto"
+        }
       >
         <SortableWidgetGrid
           widgets={visibleWidgets}
@@ -501,7 +510,9 @@ function WidgetDashboardContent({
           renderWidget={renderWidget}
           header={dashboardHeader}
           style={dashboardStyles.scroll}
-          contentContainerStyle={navigationContentStyle(dashboardStyles.content)}
+          contentContainerStyle={navigationContentStyle(
+            dashboardStyles.content,
+          )}
           horizontalGap={EXPLORE_WIDGET_GRID_GAP}
           verticalGap={EXPLORE_WIDGET_ROW_GAP}
         />

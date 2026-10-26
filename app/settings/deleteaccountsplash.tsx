@@ -139,7 +139,13 @@ export default function DeleteAccountSplashScreen() {
 
   return (
     <Animated.View style={[styles.container, screenAnimatedStyle]}>
-      <Stack.Screen options={{ headerShown: false, gestureEnabled: false, animation: "fade" }} />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+          animation: "fade",
+        }}
+      />
       <View
         accessibilityLabel="Account deleted. We hate to see you go."
         accessibilityLiveRegion="polite"
@@ -154,7 +160,9 @@ export default function DeleteAccountSplashScreen() {
 
         <Animated.View style={[styles.copy, copyAnimatedStyle]}>
           <Text style={styles.title}>We hate to see you go</Text>
-          <Text style={styles.subtitle}>Your Tempo account has been deleted.</Text>
+          <Text style={styles.subtitle}>
+            Your Tempo account has been deleted.
+          </Text>
         </Animated.View>
       </View>
     </Animated.View>

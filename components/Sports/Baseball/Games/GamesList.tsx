@@ -251,7 +251,9 @@ export default function GamesList({
               />
             ) : null
           }
-          contentContainerStyle={navigationContentStyle(styles.gridListContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.gridListContainer,
+          )}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
@@ -259,7 +261,6 @@ export default function GamesList({
                   ? "No games scheduled"
                   : "No games on this date"}
               </Text>
-
             </View>
           }
         />
@@ -284,7 +285,9 @@ export default function GamesList({
             ) : null
           }
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-          contentContainerStyle={navigationContentStyle(styles.contentContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.contentContainer,
+          )}
           scrollEnabled={scrollEnabled}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
@@ -293,7 +296,6 @@ export default function GamesList({
                   ? "No games scheduled"
                   : "No games on this date"}
               </Text>
-
             </View>
           }
         />

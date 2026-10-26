@@ -47,7 +47,8 @@ export const EXPLORE_WIDGET_REGISTRY: Record<
     icon: "checkmark-circle-outline",
     defaultSize: "medium",
     sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Pick a winner before a game starts to track your predictions here.",
+    emptyCopy:
+      "Pick a winner before a game starts to track your predictions here.",
   },
   favorite_games: {
     title: "Favorite Games",
@@ -98,7 +99,6 @@ export const EXPLORE_WIDGET_REGISTRY: Record<
     sizes: EXPLORE_WIDGET_SIZES,
     emptyCopy: "College rankings are not available right now.",
   },
-
 };
 export const EXPLORE_WIDGET_TYPES = Object.keys(
   EXPLORE_WIDGET_REGISTRY,

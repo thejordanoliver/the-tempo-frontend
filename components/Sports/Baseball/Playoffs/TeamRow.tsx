@@ -56,8 +56,8 @@ export function isKnownBracketTeam(
 ): team is MLBPlayoffTeam {
   return Boolean(
     team &&
-    !team.id.startsWith("placeholder:") &&
-    team.abbreviation !== "TBD" &&
-    !team.abbreviation.includes("/"),
+      !team.id.startsWith("placeholder:") &&
+      team.abbreviation !== "TBD" &&
+      !team.abbreviation.includes("/"),
   );
 }

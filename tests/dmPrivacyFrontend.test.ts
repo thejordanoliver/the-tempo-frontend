@@ -104,9 +104,15 @@ test("uploads are conversation-bound and message wire payloads use attachment ID
     /\/api\/messages\/conversations\/\$\{conversationId\}\/attachments/,
   );
   assert.match(apiSource, /\{ giphyId \}/);
-  assert.match(contextSource, /\.\.\.\(attachmentId \? \{ attachmentId \} : \{\}\)/);
+  assert.match(
+    contextSource,
+    /\.\.\.\(attachmentId \? \{ attachmentId \} : \{\}\)/,
+  );
   assert.match(contextSource, /attachment,\s+timestamp:/);
-  assert.doesNotMatch(contextSource, /requestPayload\s*=\s*\{[^}]*attachment,/s);
+  assert.doesNotMatch(
+    contextSource,
+    /requestPayload\s*=\s*\{[^}]*attachment,/s,
+  );
 });
 
 test("signed URLs stay out of persistent storage and failed images retry once", () => {
@@ -127,6 +133,12 @@ test("text-only message requests remain valid without an attachment ID", () => {
   const contextSource = readProjectFile("contexts/MessagesContext.tsx");
 
   assert.match(contextSource, /const text = payload\.text\?\.trim\(\) \?\? ""/);
-  assert.match(contextSource, /if \(!normalizedConversationId \|\| \(!text && !attachment\)\)/);
-  assert.match(contextSource, /conversationId: normalizedConversationId,\s+text,/);
+  assert.match(
+    contextSource,
+    /if \(!normalizedConversationId \|\| \(!text && !attachment\)\)/,
+  );
+  assert.match(
+    contextSource,
+    /conversationId: normalizedConversationId,\s+text,/,
+  );
 });

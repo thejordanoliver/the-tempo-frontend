@@ -9,9 +9,7 @@ const selectableLeagueSet = new Set<string>(BROWSEABLE_LEAGUES);
 const firstRouteParam = (value: RouteParam) =>
   Array.isArray(value) ? value[0] : value;
 
-export function normalizeForumPostLeague(
-  value: RouteParam,
-): LeagueType | null {
+export function normalizeForumPostLeague(value: RouteParam): LeagueType | null {
   const normalized = firstRouteParam(value)?.trim().toLowerCase();
 
   return normalized && selectableLeagueSet.has(normalized)
@@ -47,9 +45,7 @@ export function parseForumPostDestinationParams({
   return null;
 }
 
-export function getForumPostCreateEndpoint(
-  destination: ForumPostDestination,
-) {
+export function getForumPostCreateEndpoint(destination: ForumPostDestination) {
   return destination.kind === "team"
     ? `/api/forum/team/${encodeURIComponent(destination.teamId)}`
     : `/api/forum/league/${encodeURIComponent(destination.league)}`;

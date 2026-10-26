@@ -1,7 +1,11 @@
+import {
+  useSportsRequestScope,
+  type SportsRequestOptions,
+} from "hooks/Sports/useSportsRequestScope";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { OnScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import type {
@@ -33,7 +37,12 @@ function isCanceledRequest(error: unknown) {
   return value.name === "CanceledError" || value.code === "ERR_CANCELED";
 }
 
-export function useTennisMatches(date?: Date, league: TennisLeague = "atp", onScoreboardCalendar?: OnScoreboardCalendar) {
+export function useTennisMatches(
+  date?: Date,
+  league: TennisLeague = "atp",
+  onScoreboardCalendar?: OnScoreboardCalendar,
+  options: SportsRequestOptions = {},
+) {
   const [matches, setMatches] = useState<TennisMatch[]>([]);
   const [tournaments, setTournaments] = useState<TennisTournament[]>([]);
   const [availableDivisions, setAvailableDivisions] = useState<
@@ -42,12 +51,17 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp", onSc
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
 
   const formattedDate = useMemo(
     () => dayjs(date ?? new Date()).format("YYYYMMDD"),
     [date],
   );
+
+  const scope = useSportsRequestScope(
+    JSON.stringify([league, formattedDate]),
+    options,
+  );
+  const { enabled, begin, isCurrent, accept, finish } = scope;
 
   const applyResponse = useCallback(
     (response?: Partial<TennisScoreboardResponse> | null) => {
@@ -66,11 +80,10 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp", onSc
 
   const fetchMatches = useCallback(
     async ({ silent = false }: FetchOptions = {}) => {
-      abortControllerRef.current?.abort();
-      const abortController = new AbortController();
-      abortControllerRef.current = abortController;
+      const request = begin();
+      if (!request) return;
 
-      if (!silent) setLoading(true);
+      if (!silent) setLoading(!request.hasData);
       setError(null);
 
       try {
@@ -78,14 +91,16 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp", onSc
           `/api/games/tennis/${league}`,
           {
             params: { date: formattedDate },
-            signal: abortController.signal,
+            signal: request.controller.signal,
           },
         );
 
-        onScoreboardCalendar?.(data);
-        applyResponse(data);
+        if (accept(request)) {
+          onScoreboardCalendar?.(data);
+          applyResponse(data);
+        }
       } catch (caughtError: unknown) {
-        if (isCanceledRequest(caughtError)) return;
+        if (!isCurrent(request) || isCanceledRequest(caughtError)) return;
 
         onScoreboardCalendar?.(null);
         setError(
@@ -95,25 +110,35 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp", onSc
         );
         if (!silent) applyResponse(EMPTY_RESPONSE);
       } finally {
-        if (abortControllerRef.current === abortController) {
-          abortControllerRef.current = null;
-          if (!silent) setLoading(false);
+        if (finish(request)) {
+          setLoading(false);
         }
       }
     },
-    [applyResponse, formattedDate, league, onScoreboardCalendar],
+    [
+      applyResponse,
+      formattedDate,
+      league,
+      onScoreboardCalendar,
+      begin,
+      accept,
+      finish,
+      isCurrent,
+    ],
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchMatches());
-
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled && enabled) void fetchMatches();
+    });
     return () => {
-      abortControllerRef.current?.abort();
-      abortControllerRef.current = null;
+      cancelled = true;
     };
-  }, [fetchMatches]);
+  }, [enabled, fetchMatches]);
 
   const refreshMatches = useCallback(async () => {
+    if (!enabled) return;
     setRefreshing(true);
 
     try {
@@ -121,7 +146,7 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp", onSc
     } finally {
       setRefreshing(false);
     }
-  }, [fetchMatches]);
+  }, [enabled, fetchMatches]);
 
   const hasActiveMatch = useMemo(
     () => matches.some(shouldTrackGameUpdates),
@@ -129,23 +154,27 @@ export function useTennisMatches(date?: Date, league: TennisLeague = "atp", onSc
   );
 
   useLiveSportsSubscription<TennisScoreboardResponse>({
-    enabled: !loading && hasActiveMatch,
+    enabled: enabled && scope.hasData && !loading && hasActiveMatch,
     kind: "scoreboard",
     payload: {
       sport: "tennis",
       league,
       date: formattedDate,
     },
-    onUpdate: applyResponse,
+    onUpdate: (data) => {
+      if (!accept()) return;
+      setLoading(false);
+      applyResponse(data);
+    },
   });
 
   return {
-    matches,
-    tournaments,
-    availableDivisions,
-    loading,
-    refreshing,
-    error,
+    matches: scope.hasData ? matches : [],
+    tournaments: scope.hasData ? tournaments : [],
+    availableDivisions: scope.hasData ? availableDivisions : [],
+    loading: enabled && !scope.hasData && (!scope.settled || loading),
+    refreshing: enabled && refreshing,
+    error: enabled && scope.settled ? error : null,
     refreshMatches,
   };
 }

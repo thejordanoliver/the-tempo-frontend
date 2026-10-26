@@ -123,8 +123,10 @@ export default function FootballGameWidget({
   const awayRank = game.away.rank ?? null;
   const football = isDark ? FootballLight : Football;
 
-  const homeHasPossession = inProgress && gameTeamIdsMatch(possessionTeamId, home?.id);
-  const awayHasPossession = inProgress && gameTeamIdsMatch(possessionTeamId, away?.id);
+  const homeHasPossession =
+    inProgress && gameTeamIdsMatch(possessionTeamId, home?.id);
+  const awayHasPossession =
+    inProgress && gameTeamIdsMatch(possessionTeamId, away?.id);
 
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;

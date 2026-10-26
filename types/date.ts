@@ -5,7 +5,6 @@ export type CountdownType = {
   seconds: number;
 };
 
-
 export type CalendarMonth = {
   dateString: string;
   day: number;

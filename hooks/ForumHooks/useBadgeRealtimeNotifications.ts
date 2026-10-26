@@ -46,12 +46,12 @@ export const isBadgeEarnedPayloadForUser = (
   const normalizedUserId = normalizeAuthenticatedUserId(userId);
   return Boolean(
     normalizedUserId &&
-    payload &&
-    typeof payload === "object" &&
-    "recipientUserId" in payload &&
-    Number(payload.recipientUserId) === normalizedUserId &&
-    "notifications" in payload &&
-    Array.isArray(payload.notifications),
+      payload &&
+      typeof payload === "object" &&
+      "recipientUserId" in payload &&
+      Number(payload.recipientUserId) === normalizedUserId &&
+      "notifications" in payload &&
+      Array.isArray(payload.notifications),
   );
 };
 
@@ -99,13 +99,13 @@ const isCanonicalNotificationForUser = (
 ): payload is AppNotification =>
   Boolean(
     payload &&
-    typeof payload === "object" &&
-    "id" in payload &&
-    typeof payload.id === "string" &&
-    "recipientUserId" in payload &&
-    Number(payload.recipientUserId) === userId &&
-    "type" in payload &&
-    typeof payload.type === "string",
+      typeof payload === "object" &&
+      "id" in payload &&
+      typeof payload.id === "string" &&
+      "recipientUserId" in payload &&
+      Number(payload.recipientUserId) === userId &&
+      "type" in payload &&
+      typeof payload.type === "string",
   );
 
 const activeConversationFromPath = (pathname: string | null) => {

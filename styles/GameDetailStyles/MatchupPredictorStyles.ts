@@ -64,7 +64,7 @@ export const MatchupPredictorStyles = (isDark: boolean) =>
     },
     logoMarker: {
       position: "absolute",
-      top: 10,
+      top: "50%",
       zIndex: 2,
       alignItems: "center",
       justifyContent: "center",
@@ -74,7 +74,7 @@ export const MatchupPredictorStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
       borderRadius: 23,
       overflow: "hidden",
-      transform: [{ translateX: -10 }],
+      transform: [{ translateY: -20 }],
     },
     homeLogoMarker: {
       borderColor: Colors.white,
@@ -103,10 +103,10 @@ export const MatchupPredictorStyles = (isDark: boolean) =>
       flexDirection: "row",
       gap: 3,
       height: "100%",
-      minWidth: 360,
     },
     awayStripe: {
       width: 2,
+      flexShrink: 0,
       height: "100%",
       backgroundColor: isDark ? Colors.white : Colors.black,
       opacity: 0.75,

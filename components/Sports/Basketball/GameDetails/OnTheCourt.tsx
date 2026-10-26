@@ -49,10 +49,7 @@ function findTeamGroup(
   playerStats: PlayerStats,
   teamId: number,
 ): PlayerStatsGroup | undefined {
-  return playerStats.find(
-    (group) =>
-      gameTeamIdsMatch(group.team.id, teamId),
-  );
+  return playerStats.find((group) => gameTeamIdsMatch(group.team.id, teamId));
 }
 
 export default function OnTheCourt({

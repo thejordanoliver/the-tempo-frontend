@@ -10,28 +10,22 @@ export const changePasswordSchema = z
       .min(1, "Confirm your new password.")
       .max(128, "Password must be 128 characters or fewer."),
   })
-  .superRefine(
-    ({ confirmPassword, currentPassword, newPassword }, context) => {
-      if (
-        currentPassword &&
-        newPassword &&
-        currentPassword === newPassword
-      ) {
-        context.addIssue({
-          code: "custom",
-          message: "New password cannot be the same as current password.",
-          path: ["newPassword"],
-        });
-      }
+  .superRefine(({ confirmPassword, currentPassword, newPassword }, context) => {
+    if (currentPassword && newPassword && currentPassword === newPassword) {
+      context.addIssue({
+        code: "custom",
+        message: "New password cannot be the same as current password.",
+        path: ["newPassword"],
+      });
+    }
 
-      if (confirmPassword !== newPassword) {
-        context.addIssue({
-          code: "custom",
-          message: "New passwords do not match.",
-          path: ["confirmPassword"],
-        });
-      }
-    },
-  );
+    if (confirmPassword !== newPassword) {
+      context.addIssue({
+        code: "custom",
+        message: "New passwords do not match.",
+        path: ["confirmPassword"],
+      });
+    }
+  });
 
 export type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;

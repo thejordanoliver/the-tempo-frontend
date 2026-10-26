@@ -207,7 +207,8 @@ function getRunnerMovements(
     [...atBatPlays]
       .reverse()
       .map(getBatterId)
-      .find((id): id is string => Boolean(id)) ?? `batter-${activePlay.atBatId}`;
+      .find((id): id is string => Boolean(id)) ??
+    `batter-${activePlay.atBatId}`;
   const batterDestination = findOccupiedBase(end, batterId);
 
   if (batterDestination) {

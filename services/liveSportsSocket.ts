@@ -1,3 +1,4 @@
+import { applyLiveDelta, type LiveDelta } from "utils/games/liveDelta";
 import { AppState } from "react-native";
 import { io, type Socket } from "socket.io-client";
 import type {
@@ -48,6 +49,9 @@ type SubscriptionListener<TPayload = unknown> = (
 ) => void;
 
 type SubscriptionRecord = {
+  revision?: number;
+  snapshot?: unknown;
+  resyncing?: boolean;
   localKey: string;
   serverKey: string | null;
   kind: LiveSubscriptionKind;
@@ -262,7 +266,9 @@ function emitSubscribe(record: SubscriptionRecord) {
 
   (socket as UntypedSportsLiveSocket).emit(
     eventName,
-    record.payload,
+    record.kind === "game"
+      ? { ...record.payload, representation: "delta-v1" }
+      : record.payload,
     (response: LiveSubscriptionReady) => {
       if (!response?.ok || !response.subscriptionKey) {
         return;
@@ -301,11 +307,48 @@ function handleUpdate<TPayload>(envelope: LiveUpdateEnvelope<TPayload>) {
   });
 }
 
+function handleDelta(envelope: LiveUpdateEnvelope & LiveDelta) {
+  let localKey = localKeyByServerKey.get(envelope.subscriptionKey);
+  // A full snapshot can recover an acknowledgement lost during initial joining.
+  if (!localKey && envelope.kind === "game" && envelope.gameId != null) {
+    const candidate = getLocalSubscriptionKey("game", {
+      sport: envelope.sport,
+      league: envelope.league,
+      gameId: envelope.gameId,
+    });
+    const pending = subscriptionsByLocalKey.get(candidate);
+    if (pending && pending.serverKey === null) {
+      pending.serverKey = envelope.subscriptionKey;
+      localKeyByServerKey.set(envelope.subscriptionKey, candidate);
+      localKey = candidate;
+    }
+  }
+  const record = localKey ? subscriptionsByLocalKey.get(localKey) : undefined;
+  if (!record) return;
+  if (record.revision != null && envelope.revision <= record.revision) return;
+  const payload = applyLiveDelta(record.snapshot, record.revision, envelope);
+  if (payload === undefined) {
+    if (!record.resyncing) {
+      record.resyncing = true;
+      emitSubscribe(record);
+    }
+    return;
+  }
+  record.snapshot = payload;
+  record.revision = envelope.revision;
+  record.resyncing = false;
+  handleUpdate({ ...envelope, payload });
+}
+
 function attachSocketHandlers(socket: SportsLiveSocket) {
+  (socket as UntypedSportsLiveSocket).on("sports:game:delta", handleDelta);
   socket.on("sports:game:update", handleUpdate);
   socket.on("sports:scoreboard:update", handleUpdate);
   socket.on("connect", () => {
     subscriptionsByLocalKey.forEach((record) => {
+      record.revision = undefined;
+      record.snapshot = undefined;
+      record.resyncing = true;
       emitSubscribe(record);
     });
   });

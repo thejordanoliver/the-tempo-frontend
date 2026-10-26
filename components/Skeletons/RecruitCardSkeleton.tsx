@@ -1,7 +1,4 @@
-import {
-  SkeletonBlock,
-  SkeletonCircle,
-} from "components/Skeletons/primitives";
+import { SkeletonBlock, SkeletonCircle } from "components/Skeletons/primitives";
 import { StyleSheet, View } from "react-native";
 
 export default function RecruitCardSkeleton() {

@@ -97,7 +97,9 @@ export default function TennisSquareGameCard({ match }: Props) {
             {status}
           </Text>
         </View>
-        <View style={styles.competitors}>{competitors.map(renderCompetitor)}</View>
+        <View style={styles.competitors}>
+          {competitors.map(renderCompetitor)}
+        </View>
         {!!match.venue.court && (
           <Text style={styles.meta} numberOfLines={1}>
             {match.venue.court}

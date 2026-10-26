@@ -1,4 +1,3 @@
-
 import { Team } from "@/types/team";
 import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 import AFCBournemouthLogo from "../assets/Soccer/Logos/AFCBournemouth.png";

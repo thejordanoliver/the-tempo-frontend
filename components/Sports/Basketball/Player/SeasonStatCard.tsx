@@ -173,9 +173,7 @@ export default function SeasonStatCard({
   ];
 
   const displaySeason =
-    latestSeason?.display_season ||
-    latestSeason?.season ||
-    getNBASeason();
+    latestSeason?.display_season || latestSeason?.season || getNBASeason();
 
   return (
     <SeasonStatCardLayout

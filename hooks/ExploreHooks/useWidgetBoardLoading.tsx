@@ -13,7 +13,9 @@ const WidgetReadyContext = createContext<(() => void) | null>(null);
 // Keep widgets mounted so their requests start together, but reveal the board
 // only after every selected widget has finished its initial load.
 export function useWidgetBoardLoading(widgetIds: readonly string[]) {
-  const [readyIds, setReadyIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [readyIds, setReadyIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   const [revealed, setRevealed] = useState(false);
   const allReady = widgetIds.every((id) => readyIds.has(id));
 
@@ -41,7 +43,10 @@ export function WidgetLoadBoundary({
   onReady: (id: string) => void;
   children: ReactNode;
 }) {
-  const reportReady = useMemo(() => () => onReady(widgetId), [onReady, widgetId]);
+  const reportReady = useMemo(
+    () => () => onReady(widgetId),
+    [onReady, widgetId],
+  );
   return (
     <WidgetReadyContext.Provider value={reportReady}>
       {children}

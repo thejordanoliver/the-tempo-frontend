@@ -2,7 +2,10 @@ import { useMemo } from "react";
 import { View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Colors } from "constants/styles";
-import type { TournamentGame, TournamentRegion } from "hooks/BasketballHooks/useTournamentBracket";
+import type {
+  TournamentGame,
+  TournamentRegion,
+} from "hooks/BasketballHooks/useTournamentBracket";
 import {
   getFinalFourDisplayTeams,
   getSourceGameDisplayTeams,
@@ -46,8 +49,7 @@ export function NationalStage({
   );
 
   const orderedFinalFour = useMemo(
-    () =>
-      getOrderedFinalFourGames(finalFourGames, regionalTeamOrderById),
+    () => getOrderedFinalFourGames(finalFourGames, regionalTeamOrderById),
     [finalFourGames, regionalTeamOrderById],
   );
 
@@ -92,24 +94,27 @@ export function NationalStage({
         }}
       >
         <Path
-          d={`M ${semifinalOneX + CARD_WIDTH} ${FINAL_FOUR_Y + CARD_HEIGHT / 2
-            } H ${championshipX}`}
+          d={`M ${semifinalOneX + CARD_WIDTH} ${
+            FINAL_FOUR_Y + CARD_HEIGHT / 2
+          } H ${championshipX}`}
           fill="none"
           stroke={connectorColor}
           strokeWidth={1}
         />
 
         <Path
-          d={`M ${semifinalTwoX} ${FINAL_FOUR_Y + CARD_HEIGHT / 2
-            } H ${championshipX + CARD_WIDTH}`}
+          d={`M ${semifinalTwoX} ${
+            FINAL_FOUR_Y + CARD_HEIGHT / 2
+          } H ${championshipX + CARD_WIDTH}`}
           fill="none"
           stroke={connectorColor}
           strokeWidth={1}
         />
 
         <Path
-          d={`M ${championshipX + CARD_WIDTH / 2} ${FINAL_FOUR_Y + CARD_HEIGHT
-            } V ${championPanelY}`}
+          d={`M ${championshipX + CARD_WIDTH / 2} ${
+            FINAL_FOUR_Y + CARD_HEIGHT
+          } V ${championPanelY}`}
           fill="none"
           stroke={connectorColor}
           strokeWidth={2}

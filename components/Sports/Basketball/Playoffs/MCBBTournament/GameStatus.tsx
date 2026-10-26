@@ -5,7 +5,11 @@ import { getTournamentGameState } from "utils/brackets/tournamentGameStatus";
 import { formatDate, formatTime } from "utils/common/dateUtils";
 import { formatPeriod } from "utils/games/games";
 
-export function GameStatus({ game, isDark, league }: {
+export function GameStatus({
+  game,
+  isDark,
+  league,
+}: {
   game: TournamentGame;
   isDark: boolean;
   league: string;
@@ -13,7 +17,8 @@ export function GameStatus({ game, isDark, league }: {
   const styles = MCBBTournamentBracketStyles(isDark);
   const state = getTournamentGameState(game);
   const { status } = game;
-  const statusText = status.shortDetail || status.detail || status.description || "";
+  const statusText =
+    status.shortDetail || status.detail || status.description || "";
   const date = game.date ? new Date(game.date) : null;
   const validDate = date && !Number.isNaN(date.getTime()) ? date : null;
   const period = formatPeriod({
@@ -26,7 +31,11 @@ export function GameStatus({ game, isDark, league }: {
 
   if (state === "scheduled") {
     primary = validDate ? formatDate(validDate) : "TBD";
-    secondary = validDate ? (/\bTBD\b/i.test(statusText) ? "TBD" : formatTime(validDate)) : null;
+    secondary = validDate
+      ? /\bTBD\b/i.test(statusText)
+        ? "TBD"
+        : formatTime(validDate)
+      : null;
   } else if (state === "live") {
     primary = period || (clock != null ? String(clock) : statusText || "LIVE");
     secondary = period ? clock : null;
@@ -47,7 +56,13 @@ export function GameStatus({ game, isDark, league }: {
       <Text style={textStyle}>{primary}</Text>
       {secondary !== null && secondary !== "" && (
         <>
-          <View style={state === "scheduled" ? styles.statusDivider : styles.finalStatusDivider} />
+          <View
+            style={
+              state === "scheduled"
+                ? styles.statusDivider
+                : styles.finalStatusDivider
+            }
+          />
           <Text style={textStyle}>{secondary}</Text>
         </>
       )}

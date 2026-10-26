@@ -1,4 +1,4 @@
-export const chunkIntoGridRows = <T,>(items: T[], columns = 2) => {
+export const chunkIntoGridRows = <T>(items: T[], columns = 2) => {
   const rows: (T | null)[][] = [];
 
   for (let index = 0; index < items.length; index += columns) {

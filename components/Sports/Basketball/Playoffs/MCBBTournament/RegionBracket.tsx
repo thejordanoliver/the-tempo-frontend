@@ -3,7 +3,10 @@ import { Text, View } from "react-native";
 import Svg from "react-native-svg";
 import { Colors } from "constants/styles";
 import type { TournamentRegion } from "hooks/BasketballHooks/useTournamentBracket";
-import { BRACKET_LAYOUT, getRegionalDisplayTeams } from "utils/brackets/tournamentBracket.utils";
+import {
+  BRACKET_LAYOUT,
+  getRegionalDisplayTeams,
+} from "utils/brackets/tournamentBracket.utils";
 import { buildRegionRoundSlots } from "utils/brackets/tournamentBracketGames";
 import {
   REGIONAL_ROUNDS,

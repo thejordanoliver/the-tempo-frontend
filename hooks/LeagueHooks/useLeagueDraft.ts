@@ -1,3 +1,4 @@
+import { useScreenActivity } from "hooks/useScreenActivity";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -54,10 +55,28 @@ export type DraftProps = {
   breakingNews: BreakingNews[];
 };
 
-export function useDraft(league: string, year: number | string | undefined) {
-  const [draft, setDraft] = useState<DraftProps | null>(null);
+export function useDraft(
+  league: string,
+  year: number | string | undefined,
+  { enabled = true }: { enabled?: boolean } = {},
+) {
+  const { active: screenActive, activeRef } = useScreenActivity();
+  const active = screenActive && enabled;
+  const enabledRef = useRef(enabled);
+  useEffect(() => {
+    enabledRef.current = enabled;
+  }, [enabled]);
+  const key = JSON.stringify([league, year]);
+  const [stored, setStored] = useState<{
+    key: string;
+    data: DraftProps;
+  } | null>(null);
+  const draft = stored?.key === key ? stored.data : null;
+  const requestRef = useRef<AbortController | null>(null);
+  const loadedKey = useRef<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [settledKey, setSettledKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -66,25 +85,44 @@ export function useDraft(league: string, year: number | string | undefined) {
 
   const fetchDraft = useCallback(
     async (mode: FetchMode = "initial") => {
-      if (!year || !league) return;
+      if (!year || !league || !activeRef.current || !enabledRef.current) return;
+      requestRef.current?.abort();
+      const controller = new AbortController();
+      requestRef.current = controller;
       const requestId = ++requestIdRef.current;
       requestInFlightRef.current = true;
 
       try {
         if (mode === "refresh") setRefreshing(true);
-        if (mode === "initial") setLoading(true);
+        if (mode === "initial") {
+          setLoading(loadedKey.current !== key);
+          setRefreshing(false);
+        }
 
         setError(null);
 
         const { data } = await apiClient.get<DraftProps>(
           `api/draft/${league}/${year}`,
+          { signal: controller.signal },
         );
 
-        if (requestId === requestIdRef.current) {
-          setDraft(data);
+        if (
+          requestId === requestIdRef.current &&
+          !controller.signal.aborted &&
+          activeRef.current &&
+          enabledRef.current
+        ) {
+          loadedKey.current = key;
+          setStored({ key, data });
         }
       } catch (err: unknown) {
-        if (requestId !== requestIdRef.current) return;
+        if (
+          requestId !== requestIdRef.current ||
+          controller.signal.aborted ||
+          !activeRef.current ||
+          !enabledRef.current
+        )
+          return;
         const message = err instanceof Error ? err.message : "Unknown error";
 
         console.error("Draft fetch failed:", message);
@@ -92,12 +130,13 @@ export function useDraft(league: string, year: number | string | undefined) {
       } finally {
         if (requestId === requestIdRef.current) {
           requestInFlightRef.current = false;
+          setSettledKey(key);
           if (mode === "refresh") setRefreshing(false);
           if (mode === "initial") setLoading(false);
         }
       }
     },
-    [league, year],
+    [league, year, key, activeRef],
   );
 
   // INITIAL LOAD
@@ -105,13 +144,15 @@ export function useDraft(league: string, year: number | string | undefined) {
   useEffect(() => {
     let cancelled = false;
     void Promise.resolve().then(() => {
-      if (!cancelled) void fetchDraft("initial");
+      if (!cancelled && active) void fetchDraft("initial");
     });
     return () => {
       cancelled = true;
       requestIdRef.current += 1;
+      requestRef.current?.abort();
+      requestInFlightRef.current = false;
     };
-  }, [fetchDraft]);
+  }, [fetchDraft, active]);
 
   // LIVE POLLING (SILENT ONLY)
 
@@ -123,7 +164,7 @@ export function useDraft(league: string, year: number | string | undefined) {
       pollTimerRef.current = null;
     }
 
-    if (state !== "in") return;
+    if (!active || state !== "in") return;
 
     let cancelled = false;
 
@@ -150,7 +191,7 @@ export function useDraft(league: string, year: number | string | undefined) {
         pollTimerRef.current = null;
       }
     };
-  }, [draft?.status?.state, fetchDraft]);
+  }, [active, draft?.status?.state, fetchDraft]);
 
   // MANUAL REFRESH
 
@@ -160,9 +201,11 @@ export function useDraft(league: string, year: number | string | undefined) {
 
   return {
     draft,
-    loading,
-    refreshing,
-    error,
+    isActive: active,
+    loading:
+      Boolean(year && league) && (loading || (!draft && settledKey !== key)),
+    refreshing: active && refreshing,
+    error: settledKey === key ? error : null,
     refresh: fetchDraft,
     onRefresh,
   };

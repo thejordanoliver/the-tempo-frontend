@@ -90,7 +90,9 @@ export default function GameLocation({
       : null;
 
   const formattedCapacity =
-    venueCapacity !== null && venueCapacity !== undefined && Number.isFinite(venueCapacity)
+    venueCapacity !== null &&
+    venueCapacity !== undefined &&
+    Number.isFinite(venueCapacity)
       ? Intl.NumberFormat("en-US").format(venueCapacity)
       : "N/A";
 

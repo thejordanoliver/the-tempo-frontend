@@ -6,7 +6,10 @@ import {
 import { Colors } from "@/constants/styles";
 import { BadgeCardStyles } from "@/styles/ProfileStyles/ProfileBadgeSectionStyles";
 import { BadgeProgress } from "@/types/badges";
-import { capitalizeBadgeTier, formatBadgeNumber } from "@/utils/profile/badgeUtils";
+import {
+  capitalizeBadgeTier,
+  formatBadgeNumber,
+} from "@/utils/profile/badgeUtils";
 import { Text, View } from "react-native";
 import BadgeEmblem from "./BadgeEmblem";
 

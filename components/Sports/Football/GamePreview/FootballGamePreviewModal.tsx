@@ -359,6 +359,7 @@ export default function FootballGamePreviewModal({
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
+                  gameStatus={score?.status}
                   state={state}
                   homeId={homeId}
                   awayId={awayId}

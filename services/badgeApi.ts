@@ -141,12 +141,7 @@ const normalizeNotificationBadge = (
       ? rawEarnedAt
       : null;
 
-  if (
-    !badgeId ||
-    !name ||
-    !tier ||
-    !BADGE_METRICS.includes(metric)
-  ) {
+  if (!badgeId || !name || !tier || !BADGE_METRICS.includes(metric)) {
     return null;
   }
 
@@ -298,7 +293,10 @@ export async function markBadgeNotificationsRead(
     },
   );
 
-  if (!isRecord(response.data) || !Array.isArray(response.data.notificationIds)) {
+  if (
+    !isRecord(response.data) ||
+    !Array.isArray(response.data.notificationIds)
+  ) {
     return [];
   }
 

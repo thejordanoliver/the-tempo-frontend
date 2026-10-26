@@ -10,6 +10,8 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
+import SoccerPlayByPlay from "../GameDetails/SoccerPlayByPlay";
+import type { SoccerPlayByPlayEvent } from "types/soccer/playByPlay";
 
 type GamePreviewContentProps = {
   homeId: any;
@@ -29,6 +31,7 @@ type GamePreviewContentProps = {
   homeLastGames: LastFiveGame[];
   awayLastGames: LastFiveGame[];
   teamStats: any[];
+  playByPlay?: SoccerPlayByPlayEvent[];
   officials: any[];
   venueImage?: any;
   venueName?: string;
@@ -55,6 +58,7 @@ export default function GamePreviewContent({
   homeLastGames,
   awayLastGames,
   teamStats,
+  playByPlay,
   officials,
   venueImage,
   venueName,
@@ -80,6 +84,18 @@ export default function GamePreviewContent({
           awayCode={awayCode}
           homeCode={homeCode}
           league={league}
+          isDark={isDark}
+          state={state}
+        />
+
+        <SoccerPlayByPlay
+          events={playByPlay}
+          awayId={awayId}
+          homeId={homeId}
+          awayCode={awayCode}
+          homeCode={homeCode}
+          awayLogo={awayLogo}
+          homeLogo={homeLogo}
           isDark={isDark}
           state={state}
         />

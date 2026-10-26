@@ -65,8 +65,8 @@ function isValidCompetition(
 
   const hasType = Boolean(
     competition.type?.text ||
-    competition.type?.name ||
-    competition.type?.abbreviation,
+      competition.type?.name ||
+      competition.type?.abbreviation,
   );
 
   const hasDate = Boolean(
@@ -75,8 +75,8 @@ function isValidCompetition(
 
   const hasStatus = Boolean(
     competition.status &&
-    typeof competition.status === "object" &&
-    Object.keys(competition.status).length > 0,
+      typeof competition.status === "object" &&
+      Object.keys(competition.status).length > 0,
   );
 
   const hasDrivers =
@@ -269,7 +269,9 @@ export function useRacingEvents({
 
   const endpoint = getEndpoint(normalizedLeague);
 
-  const canFetch = enabled && (Boolean(formattedDate) || (!date && Boolean(onScoreboardCalendar)));
+  const canFetch =
+    enabled &&
+    (Boolean(formattedDate) || (!date && Boolean(onScoreboardCalendar)));
 
   const fetchEvents = useCallback(
     async ({
@@ -393,7 +395,10 @@ export function useRacingEvents({
 
   useLiveSportsSubscription<RacingEventsResponse>({
     enabled:
-      canFetch && pollLiveEvents && !loading && pollIntervalMs > 0 &&
+      canFetch &&
+      pollLiveEvents &&
+      !loading &&
+      pollIntervalMs > 0 &&
       (hasLiveEvent || games.some(shouldTrackGameUpdates)),
     kind: "scoreboard",
     payload: {

@@ -105,8 +105,14 @@ export default function TennisLeagueScreen() {
   );
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDivision, setSelectedDivision] = useState("");
-  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
-  const { calendar } = useLeagueCalendar(league, "raw", calendarAnchor, scoreboardCalendar);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(
+    league,
+    "raw",
+    calendarAnchor,
+    scoreboardCalendar,
+  );
 
   const {
     matches,

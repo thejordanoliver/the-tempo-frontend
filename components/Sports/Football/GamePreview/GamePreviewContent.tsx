@@ -10,6 +10,7 @@ import {
 import {
   BoxScorePlayerTeam,
   FootballDrive,
+  GameStatus,
   Official,
   PlayObject,
   TeamInjury,
@@ -75,6 +76,7 @@ type GamePreviewContentProps = {
   venueAttendance?: number | null;
   weather?: any;
   state: string;
+  gameStatus?: GameStatus | null;
   league: string;
   isDark: boolean;
 };
@@ -117,6 +119,7 @@ export default function GamePreviewContent({
   highlights,
   weather,
   state,
+  gameStatus,
   league,
   isDark,
 }: GamePreviewContentProps) {
@@ -156,8 +159,7 @@ export default function GamePreviewContent({
         />
 
         <PlayByPlay
-          width={420}
-          height={130}
+          gameStatus={gameStatus}
           awayCode={awayCode}
           homeCode={homeCode}
           awayName={awayName}

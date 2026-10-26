@@ -49,8 +49,14 @@ export default function SoccerLeagueScreen() {
   const [calendarAnchor, setCalendarAnchor] = useState(() =>
     dayjs().format("YYYY-MM-DD"),
   );
-  const { scoreboardCalendar, onScoreboardCalendar } = useScoreboardCalendar(league);
-  const { calendar } = useLeagueCalendar(league, "raw", calendarAnchor, scoreboardCalendar);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(
+    league,
+    "raw",
+    calendarAnchor,
+    scoreboardCalendar,
+  );
 
   const navigation = useNavigation();
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
@@ -69,7 +75,9 @@ export default function SoccerLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const [standingsYears, setStandingsYears] = useState<Record<string, string>>({});
+  const [standingsYears, setStandingsYears] = useState<Record<string, string>>(
+    {},
+  );
 
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -84,21 +92,24 @@ export default function SoccerLeagueScreen() {
     );
   };
 
-  const markedDates = useMemo(() =>
-    calendar.reduce(
-      (acc, dateStr) => {
-        const iso = getLeagueCalendarDateKey(dateStr);
-        if (!iso) return acc;
+  const markedDates = useMemo(
+    () =>
+      calendar.reduce(
+        (acc, dateStr) => {
+          const iso = getLeagueCalendarDateKey(dateStr);
+          if (!iso) return acc;
 
-        acc[iso] = {
-          marked: true,
-          dotColor: isDark ? Colors.white : Colors.black,
-        };
+          acc[iso] = {
+            marked: true,
+            dotColor: isDark ? Colors.white : Colors.black,
+          };
 
-        return acc;
-      },
-      {} as Record<string, { marked: boolean; dotColor: string }>,
-    ), [calendar, isDark]);
+          return acc;
+        },
+        {} as Record<string, { marked: boolean; dotColor: string }>,
+      ),
+    [calendar, isDark],
+  );
   const {
     games,
     error: gamesError,
