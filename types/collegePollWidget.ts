@@ -1,5 +1,4 @@
-import { Image } from "expo-image";
-import type { ComponentProps } from "react";
+import type { ImageSourcePropType } from "react-native";
 
 import type {
   ExploreCollegePollLeague,
@@ -23,7 +22,7 @@ export type CollegePollRow = {
   teamCode: string;
   teamName: string;
   color: string;
-  logo?: ComponentProps<typeof Image>["source"];
+  logo?: ImageSourcePropType;
 };
 
 export type CollegePollTableProps = {

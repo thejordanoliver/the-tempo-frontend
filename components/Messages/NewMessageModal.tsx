@@ -8,7 +8,7 @@ import {
 import SearchBar from "components/SearchBars/SearchBar";
 import { Colors, Fonts, PLACEHOLDER_AVATAR } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { useDebounce } from "hooks/useDebounce";
 import {
   forwardRef,
@@ -22,6 +22,7 @@ import {
 } from "react";
 import type { ListRenderItem } from "react-native";
 import {
+  Image,
   ActivityIndicator,
   Pressable,
   StyleSheet,
@@ -205,7 +206,7 @@ const NewMessageModal = forwardRef<NewMessageModalRef, Props>(
             <Image
               source={{ uri: avatarUri }}
               style={styles.avatar}
-              contentFit="cover"
+              resizeMode="cover"
             />
 
             <View style={styles.userTextWrap}>

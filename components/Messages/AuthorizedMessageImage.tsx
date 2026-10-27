@@ -1,6 +1,7 @@
-import { Image, type ImageContentFit } from "expo-image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Image,
+  type ImageResizeMode,
   ActivityIndicator,
   StyleSheet,
   Text,
@@ -14,13 +15,13 @@ import type { MessageAttachment } from "types/messages";
 
 type Props = {
   attachment: MessageAttachment;
-  contentFit?: ImageContentFit;
+  resizeMode?: ImageResizeMode;
   style: StyleProp<ImageStyle>;
 };
 
 export default function AuthorizedMessageImage({
   attachment,
-  contentFit = "cover",
+  resizeMode = "cover",
   style,
 }: Props) {
   const [url, setUrl] = useState<string | null>(null);
@@ -117,7 +118,7 @@ export default function AuthorizedMessageImage({
       <Image
         source={{ uri: url }}
         style={StyleSheet.absoluteFill}
-        contentFit={contentFit}
+        resizeMode={resizeMode}
         onError={handleImageError}
       />
       {loading && (

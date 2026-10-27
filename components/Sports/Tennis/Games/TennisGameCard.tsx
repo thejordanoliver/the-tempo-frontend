@@ -2,9 +2,9 @@ import { activeOpacity } from "@/constants/styles";
 import { formatDate, formatTime, safeDate } from "@/utils/common/dateUtils";
 import { winnerStyle } from "@/utils/games/games";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import type { TennisCompetitor, TennisMatch } from "types/tennis/tennis";
 
@@ -32,7 +32,7 @@ function FlagStack({
             key={`${flag}-${index}`}
             source={{ uri: flag }}
             style={[styles.flag]}
-            contentFit="cover"
+            resizeMode="cover"
             accessibilityLabel={competitor.country ?? "Country flag"}
           />
         </View>

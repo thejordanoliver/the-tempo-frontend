@@ -6,10 +6,10 @@ import {
   PLACEHOLDER_AVATAR,
 } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { useSharedForumPostPreview } from "hooks/ForumHooks/useSharedForumPostPreview";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   postId: string;
@@ -55,10 +55,10 @@ export default function SharedForumPostCard({
       <View style={styles.author}>
         <Image
           source={{ uri: preview.profileImage || PLACEHOLDER_AVATAR }}
-          placeholder={{ uri: PLACEHOLDER_AVATAR }}
+          defaultSource={{ uri: PLACEHOLDER_AVATAR }}
           style={styles.avatar}
-          contentFit="cover"
-          recyclingKey={`${postId}-${preview.profileImage}`}
+          resizeMode="cover"
+          key={`${postId}-${preview.profileImage}`}
           accessibilityLabel={
             preview.username
               ? `@${preview.username}'s profile picture`
@@ -88,8 +88,8 @@ export default function SharedForumPostCard({
         <Image
           source={{ uri: preview.image }}
           style={styles.image}
-          contentFit="cover"
-          recyclingKey={`${postId}-${preview.image}`}
+          resizeMode="cover"
+          key={`${postId}-${preview.image}`}
           accessibilityLabel="Shared post image"
         />
       )}

@@ -2,10 +2,10 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { MMAChampionItemStyles } from "@/styles/MMAChampionsListStyles";
 import type { MMAChampionship } from "@/types/mma/mma";
 import { activeOpacity, Colors } from "constants/styles";
-import { Image } from "expo-image";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 type MMAChampionItemProps = {
   division: string;
@@ -123,7 +123,7 @@ function MMAChampionItem({ division, champion, isDark }: MMAChampionItemProps) {
               <Image
                 source={{ uri: headshot }}
                 style={styles.headshot}
-                contentFit="cover"
+                resizeMode="cover"
               />
             ) : (
               <View style={styles.headshotFallback}>
@@ -151,7 +151,7 @@ function MMAChampionItem({ division, champion, isDark }: MMAChampionItemProps) {
                   <Image
                     source={{ uri: flag }}
                     style={styles.flag}
-                    contentFit="cover"
+                    resizeMode="cover"
                     accessibilityLabel={`${country} flag`}
                   />
                 </View>

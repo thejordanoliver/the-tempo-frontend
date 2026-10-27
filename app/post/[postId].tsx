@@ -1,7 +1,5 @@
 import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-// post/[postId].tsx
-
 import { CustomHeader } from "@/components/CustomHeader";
 import { PostItem } from "@/components/Forum/PostItem/PostItem";
 import { GiphySearchModal } from "@/components/Messages/GiphySearchModal";
@@ -12,7 +10,6 @@ import { CommentItem } from "components/Forum/CommentItem";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useCommentThread } from "hooks/ForumHooks/useCommentThread";
@@ -25,12 +22,13 @@ import {
   useRef,
   useState,
 } from "react";
-import type { ListRenderItem } from "react-native";
 import {
   Animated,
   Easing,
   FlatList,
+  Image,
   Keyboard,
+  ListRenderItem,
   Platform,
   StyleSheet,
   Text,
@@ -521,7 +519,7 @@ export default function CommentThreadScreen() {
               <Image
                 source={{ uri: selectedAttachment.uri }}
                 style={styles.previewMedia}
-                contentFit="cover"
+                resizeMode="cover"
               />
             )}
 

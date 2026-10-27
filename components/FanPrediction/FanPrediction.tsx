@@ -5,9 +5,9 @@ import {
 import FanPredictionSkeleton from "components/Skeletons/GameDetails/FanPredictionSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import type { ImageProps } from "expo-image";
+
 import { useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { type ImageProps, Pressable, Text, View } from "react-native";
 import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
 import { formatPercentage, isSameTeamId } from "utils/games/fanPredictionVotes";
 import FanPredictionSection from "./FanPredictionSection";
@@ -15,9 +15,9 @@ import FanRankingsLink from "./FanRankingsLink";
 import PredictionCard from "./PredictionCard";
 
 type Props = FanPredictionInput & {
-  awayLogo: ImageProps["source"];
+  awayLogo: ImageProps["source"] | string;
   awayColor?: string | null;
-  homeLogo: ImageProps["source"];
+  homeLogo: ImageProps["source"] | string;
   homeColor?: string | null;
 };
 

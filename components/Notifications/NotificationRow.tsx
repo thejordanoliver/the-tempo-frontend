@@ -12,9 +12,9 @@ import {
 } from "@/utils/notifications/notificationCenter";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistance } from "date-fns/formatDistance";
-import { Image } from "expo-image";
+
 import { memo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 const getNotificationIcon = (
   type: NotificationType,
@@ -151,8 +151,8 @@ export const NotificationRow = memo(function NotificationRow({
           <Image
             source={{ uri: actorProfileImage }}
             style={styles.profileImage}
-            contentFit="cover"
-            transition={150}
+            resizeMode="cover"
+            fadeDuration={150}
           />
         ) : (
           <Ionicons

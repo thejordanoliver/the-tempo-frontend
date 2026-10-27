@@ -16,11 +16,11 @@ import {
   winnerStyle,
 } from "@/utils/games/games";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { getVolleyballGameRoute } from "utils/navigation/volleyballGame";
 import VolleyballSquareGameCard from "./VolleyballSquareGameCard";
 
@@ -182,7 +182,7 @@ function VolleyballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-        <Image source={awayLogo} style={styles.logo} contentFit="contain" />
+        <Image source={awayLogo} style={styles.logo} resizeMode="contain" />
 
         <Text
           style={styles.teamName}
@@ -215,7 +215,7 @@ function VolleyballGameCard({
       </View>
 
       <View style={styles.teamSection}>
-        <Image source={homeLogo} style={styles.logo} contentFit="contain" />
+        <Image source={homeLogo} style={styles.logo} resizeMode="contain" />
         <Text
           style={styles.teamName}
           numberOfLines={1}

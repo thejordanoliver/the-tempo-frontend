@@ -1,3 +1,4 @@
+import type { ImageSourcePropType } from "react-native";
 import { getNBATeam, getTeamBySummerId } from "@/constants/teams";
 import { getCBTeam } from "@/constants/teamsCB";
 import { getCFBTeam } from "@/constants/teamsCFB";
@@ -12,13 +13,12 @@ import { getWCBBTeam } from "@/constants/teamsWCBB";
 import { getWNBATeam } from "@/constants/teamsWNBA";
 import type { AppNotification } from "@/types/notifications";
 import type { Team } from "@/types/team";
-import type { ImageSource } from "expo-image";
 
 export type NotificationTeamPresentation = {
   id: string;
   name: string;
   code: string;
-  logo: ImageSource;
+  logo: ImageSourcePropType;
 };
 
 export type NotificationGameTeams = {
@@ -86,7 +86,9 @@ const presentTeam = (
     id: String(team.id),
     name: team.fullName || team.shortName || team.name,
     code: team.code || team.shortName || team.name,
-    logo: (isDark ? (team.logoLight ?? team.logo) : team.logo) as ImageSource,
+    logo: (isDark
+      ? (team.logoLight ?? team.logo)
+      : team.logo) as ImageSourcePropType,
   };
 };
 

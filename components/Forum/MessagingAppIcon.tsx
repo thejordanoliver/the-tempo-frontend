@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
-import { Image } from "expo-image";
-import { Platform, StyleSheet, View } from "react-native";
+
+import { Image, Platform, StyleSheet, View } from "react-native";
 import Svg, {
   Circle,
   Defs,
@@ -21,7 +21,7 @@ export default function MessagingAppIcon({
       <Image
         source={{ uri: app.iconUri }}
         style={styles.icon}
-        contentFit="contain"
+        resizeMode="contain"
       />
     );
   }

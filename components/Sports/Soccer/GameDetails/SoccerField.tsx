@@ -5,9 +5,9 @@ import type {
   Shot,
   ShotOutcome,
 } from "@/hooks/SoccerHooks/useSoccerGameDetails";
-import { Image } from "expo-image";
+
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import Svg, {
   Circle,
   ClipPath,

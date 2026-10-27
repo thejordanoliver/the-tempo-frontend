@@ -1,7 +1,7 @@
 import type { TennisCompetitor } from "@/types/tennis/tennis";
 import { Colors } from "constants/styles";
-import { Image } from "expo-image";
-import { Text, View } from "react-native";
+
+import { Image, Text, View } from "react-native";
 import {
   CompetitorRowStyles,
   TennisProps,
@@ -30,7 +30,7 @@ function FlagStack({
           <Image
             source={{ uri: flag }}
             style={styles.flag}
-            contentFit="cover"
+            resizeMode="cover"
             accessibilityLabel={competitor.country ?? "Country flag"}
           />
         </View>

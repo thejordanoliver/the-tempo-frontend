@@ -12,10 +12,10 @@ import {
   getDefaultWidgetSize,
 } from "constants/exploreWidgets";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
-import { Image } from "expo-image";
+
 import type { ComponentProps } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   ExploreWidgetConfig,
@@ -70,7 +70,7 @@ function WidgetCatalogCard({
         <Image
           source={leagueLogo}
           style={styles.leagueLogo}
-          contentFit="contain"
+          resizeMode="contain"
         />
       ) : (
         <Ionicons

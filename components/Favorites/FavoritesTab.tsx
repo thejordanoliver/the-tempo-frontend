@@ -1,7 +1,7 @@
 import { Colors } from "constants/styles";
-import { Image } from "expo-image";
+
 import { memo, useCallback, useRef } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import {
   ScaleDecorator,
   type RenderItemParams,
@@ -89,10 +89,9 @@ function FavoritesTabComponent({
             ]}
           >
             <Image
-              source={logo}
+              source={logo ?? undefined}
               style={styles.logo}
-              contentFit="contain"
-              cachePolicy="memory-disk"
+              resizeMode="contain"
             />
           </View>
 

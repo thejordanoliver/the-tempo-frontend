@@ -14,10 +14,10 @@ import {
   getWCBBTeamLogo,
 } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
   formatDate,
@@ -236,7 +236,7 @@ export default function BasketballSquareGameCard({
             <Image
               source={awayLogo}
               style={styles.logo}
-              contentFit="contain"
+              resizeMode="contain"
               accessibilityLabel={`${awayName} logo`}
             />
             <Text
@@ -262,7 +262,7 @@ export default function BasketballSquareGameCard({
             <Image
               source={homeLogo}
               style={styles.logo}
-              contentFit="contain"
+              resizeMode="contain"
               accessibilityLabel={`${homeName} logo`}
             />
             <Text

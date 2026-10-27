@@ -1,6 +1,6 @@
 import { getMLBTeam, getMLBTeamLogo } from "@/constants/teamsMLB";
-import { Image } from "expo-image";
-import { Text, View } from "react-native";
+
+import { Image, Text, View } from "react-native";
 import { ByeTeamCardStyles } from "styles/PlayoffStyles/ByeTeamCardStyles";
 import type { MLBPlayoffTeam } from "types/baseball/baseball";
 
@@ -22,7 +22,7 @@ export function ByeTeamCard({
   return (
     <View style={styles.card}>
       <Text style={styles.seed}>{seed}</Text>
-      <Image source={teamLogo} style={styles.logo} contentFit="contain" />
+      <Image source={teamLogo} style={styles.logo} resizeMode="contain" />
       <Text numberOfLines={1} style={styles.teamName}>
         {teamName}
       </Text>

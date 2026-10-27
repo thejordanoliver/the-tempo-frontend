@@ -1,9 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/styles";
 import { FanPredictionStyles } from "@/styles/GameDetailStyles/FanPredictionStyles";
-import { Image, type ImageProps } from "expo-image";
+
 import { memo, useEffect, useMemo } from "react";
 import {
+  Image,
+  type ImageProps,
   Text,
   TouchableOpacity,
   View,
@@ -25,7 +27,7 @@ const AnimatedTouchableOpacity =
 
 type PredictionCardProps = {
   code: string;
-  logo: ImageProps["source"];
+  logo: ImageProps["source"] | string;
   color: string;
   fillPercentage: number;
   onPress: () => void;
@@ -114,8 +116,8 @@ function PredictionCard({
         <Image
           source={typeof logo === "string" ? { uri: logo } : logo}
           style={styles.teamLogo}
-          contentFit="contain"
-          transition={120}
+          resizeMode="contain"
+          fadeDuration={120}
         />
 
         <Text numberOfLines={1} style={styles.teamLabel}>

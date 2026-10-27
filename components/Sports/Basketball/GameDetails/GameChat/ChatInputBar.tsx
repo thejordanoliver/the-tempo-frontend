@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
-import { Image } from "expo-image";
+
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
+  Image,
   Keyboard,
   LayoutChangeEvent,
   StyleSheet,

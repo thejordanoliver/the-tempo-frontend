@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, PLACEHOLDER_AVATAR, globalStyles } from "constants/styles";
-import { Image } from "expo-image";
+
 import { memo, useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { fanRankingRowStyles } from "styles/FanPredictionStyles/FanRankingRowStyles";
 import type { FanPredictionRanking } from "types/fanPredictions";
 
@@ -48,7 +48,7 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
       <View style={styles.content}>
         <View style={styles.identity}>
           <Image
-            source={entry.profileImage || PLACEHOLDER_AVATAR}
+            source={{ uri: entry.profileImage || PLACEHOLDER_AVATAR }}
             style={styles.avatar}
           />
           <Text numberOfLines={1} style={styles.name}>

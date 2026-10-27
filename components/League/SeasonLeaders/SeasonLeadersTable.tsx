@@ -10,11 +10,12 @@ import { getWCBBTeam } from "@/constants/teamsWCBB";
 import { getWNBATeam } from "@/constants/teamsWNBA";
 import { SeasonLeadersTableStyles } from "@/styles/LeagueStyles/SeasonLeadersTableStyles";
 import { PlayerLeader, SeasonLeaderColumn } from "@/types/stats";
-import { Image } from "expo-image";
+
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useMemo } from "react";
 import {
+  Image,
   ActivityIndicator,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -183,8 +184,8 @@ export default function SeasonLeadersTable({
                 </Text>
                 <Image
                   source={item.headshot ? { uri: item.headshot } : placeholder}
-                  placeholder={placeholder}
-                  contentFit="cover"
+                  defaultSource={placeholder}
+                  resizeMode="cover"
                   style={styles.headshot}
                 />
                 <View style={styles.playerDetails}>
@@ -195,7 +196,7 @@ export default function SeasonLeadersTable({
                     {teamLogo ? (
                       <Image
                         source={teamLogo}
-                        contentFit="contain"
+                        resizeMode="contain"
                         style={styles.teamLogo}
                       />
                     ) : null}

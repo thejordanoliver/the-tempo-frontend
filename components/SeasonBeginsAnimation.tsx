@@ -1,8 +1,9 @@
 import { Colors, Fonts } from "@/constants/styles";
 import * as Haptics from "expo-haptics";
-import { Image } from "expo-image";
+
 import { useCallback, useEffect } from "react";
 import {
+  Image,
   ImageSourcePropType,
   StyleSheet,
   View,
@@ -373,8 +374,8 @@ export default function SeasonBeginsAnimation({
           <Image
             source={teamLogo}
             style={styles.logo}
-            contentFit="contain"
-            transition={100}
+            resizeMode="contain"
+            fadeDuration={100}
           />
         </Animated.View>
       </View>

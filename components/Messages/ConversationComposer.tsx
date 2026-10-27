@@ -57,7 +57,7 @@ export default function ConversationComposer({
           <AuthorizedMessageImage
             attachment={selectedAttachment}
             style={styles.previewMedia}
-            contentFit="cover"
+            resizeMode="cover"
           />
 
           <View style={styles.previewBadge}>

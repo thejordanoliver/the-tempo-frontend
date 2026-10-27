@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import AppVideo from "components/AppVideo";
 import { Colors } from "constants/styles";
-import { Image } from "expo-image";
+
 import React, { useCallback, useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import type { Highlight } from "types/types";
 import { HighlightsStyles } from "./HighlightsStyles";
 
@@ -187,11 +187,11 @@ export const HighlightItem = React.memo(function HighlightItem({
         <View style={styles.thumbnailWrapper}>
           <Image
             accessibilityLabel=""
-            contentFit="cover"
-            recyclingKey={item.id}
-            source={item.thumbnail}
+            resizeMode="cover"
+            key={item.id}
+            source={{ uri: item.thumbnail }}
             style={styles.thumbnail}
-            transition={150}
+            fadeDuration={150}
           />
 
           {videoSource && (

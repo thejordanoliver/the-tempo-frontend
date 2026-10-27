@@ -5,10 +5,10 @@ import ConfirmModal from "components/ConfirmModal";
 import { activeOpacity } from "constants/styles";
 import SafetyActionsModal from "components/SafetyActionsModal";
 import { ConversationScreenStyles } from "@/styles/MessageStyles/ConversationScreenStyles";
-import { Image } from "expo-image";
+
 import { getSharedForumPostId } from "utils/forums/forumPostShare";
 import { memo, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import type { DirectMessageItem } from "types/messages";
 import { getContrastingTextColor } from "utils/ui/color";
@@ -168,7 +168,7 @@ function ConversationMessageItem({
           <Image
             source={{ uri: avatarUrl }}
             style={styles.messageAvatar}
-            contentFit="cover"
+            resizeMode="cover"
           />
         )}
 
@@ -199,7 +199,7 @@ function ConversationMessageItem({
               <AuthorizedMessageImage
                 attachment={item.attachment}
                 style={styles.messageAttachment}
-                contentFit="cover"
+                resizeMode="cover"
               />
             </Pressable>
           )}

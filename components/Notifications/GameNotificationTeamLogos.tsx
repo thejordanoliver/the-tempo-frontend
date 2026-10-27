@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/styles";
 import type { NotificationGameTeams } from "@/utils/notifications/notification-team-presentation";
-import { Image } from "expo-image";
-import { StyleSheet, View } from "react-native";
+
+import { Image, StyleSheet, View } from "react-native";
 
 type Props = {
   teams: NotificationGameTeams;
@@ -34,7 +34,7 @@ export function GameNotificationTeamLogos({ teams, isDark, size = 30 }: Props) {
         >
           <Image
             source={team.logo}
-            contentFit="contain"
+            resizeMode="contain"
             style={{ width: size - 6, height: size - 6 }}
           />
         </View>

@@ -1,7 +1,8 @@
 import { Colors, Fonts, activeOpacity } from "constants/styles";
-import { Image } from "expo-image";
+
 import { memo, useMemo } from "react";
 import {
+  Image,
   Alert,
   Pressable,
   StyleSheet,
@@ -118,7 +119,7 @@ function ChatMessage({
             <Image
               source={{ uri: gifUrl }}
               style={styles.gif}
-              contentFit="cover"
+              resizeMode="cover"
             />
           )}
 

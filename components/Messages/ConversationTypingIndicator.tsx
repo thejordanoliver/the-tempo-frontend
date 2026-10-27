@@ -1,5 +1,4 @@
-import { Image } from "expo-image";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import type { ConversationScreenStyles } from "styles/MessageStyles/ConversationScreenStyles";
 
 type Props = {
@@ -22,7 +21,7 @@ export default function ConversationTypingIndicator({
       <Image
         source={{ uri: displayAvatar }}
         style={styles.messageAvatar}
-        contentFit="cover"
+        resizeMode="cover"
       />
 
       <View

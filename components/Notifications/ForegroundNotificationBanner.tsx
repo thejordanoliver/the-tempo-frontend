@@ -21,10 +21,17 @@ import {
   isGlassEffectAPIAvailable,
   isLiquidGlassAvailable,
 } from "expo-glass-effect";
-import { Image } from "expo-image";
+
 import { Href } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
@@ -206,8 +213,8 @@ export default function ForegroundNotificationBanner({
                   uri: actorProfileImage,
                 }}
                 style={styles.profileImage}
-                contentFit="cover"
-                transition={150}
+                resizeMode="cover"
+                fadeDuration={150}
               />
             ) : (
               <Ionicons name="notifications" size={20} color={Colors.white} />

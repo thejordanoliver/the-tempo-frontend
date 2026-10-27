@@ -3,13 +3,13 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
-import { Image } from "expo-image";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo, useCallback, useMemo, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { collegePollWidgetStyles } from "styles/ExploreStyles/CollegePollWidgetStyles";
 import type { CollegeTeamRank } from "types/collegeRankings";
 import type {
@@ -174,7 +174,7 @@ const CollegePollTable = memo(function CollegePollTable({
                 <Image
                   source={row.logo}
                   style={styles.teamLogo}
-                  contentFit="contain"
+                  resizeMode="contain"
                 />
               ) : (
                 <View style={styles.logoFallback}>
@@ -244,7 +244,7 @@ const CollegePollTable = memo(function CollegePollTable({
         <Image
           source={row.logo}
           style={styles.compactLogo}
-          contentFit="contain"
+          resizeMode="contain"
         />
         {movement !== 0 ? (
           <View style={styles.compactTrend}>
@@ -492,7 +492,7 @@ const CollegePollWidget = memo(function CollegePollWidget({
           <Image
             source={isDark ? leagueConfig.logoLight : leagueConfig.logo}
             style={styles.leagueLogo}
-            contentFit="contain"
+            resizeMode="contain"
           />
           <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
           <Ionicons name="chevron-down" size={13} color={Colors.midTone} />

@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, PLACEHOLDER_AVATAR } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { useCallback, useMemo, useRef } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import ReanimatedSwipeable, {
   type SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -212,7 +212,7 @@ export default function MessageListItem({
               <Image
                 source={{ uri: profileImageUrl }}
                 style={styles.avatar}
-                contentFit="cover"
+                resizeMode="cover"
               />
 
               {item.isOnline && <View style={styles.onlineDot} />}

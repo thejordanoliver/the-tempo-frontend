@@ -7,10 +7,10 @@ import {
 } from "@gorhom/bottom-sheet";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
-import { Image } from "expo-image";
+
 import type { ComponentProps } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   EXPLORE_STANDINGS_LEAGUES,
@@ -101,7 +101,7 @@ export default function StandingsLeagueModal({
           <Image
             source={isDark ? config.logoLight : config.logo}
             style={styles.logo}
-            contentFit="contain"
+            resizeMode="contain"
           />
           <Text style={styles.optionText}>{config.label}</Text>
           <Ionicons

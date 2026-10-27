@@ -15,9 +15,9 @@ import {
   getWCBBTeamLogo,
 } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { LinearGradient } from "expo-linear-gradient";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import {
   formatDate,
@@ -232,7 +232,7 @@ export default function BasketballStackedGameCard({
             <Image
               source={awayLogo}
               style={styles.expoLogo}
-              contentFit="contain"
+              resizeMode="contain"
               accessibilityLabel={`${awayName} logo`}
             />
             <Text
@@ -258,7 +258,7 @@ export default function BasketballStackedGameCard({
             <Image
               source={homeLogo}
               style={styles.expoLogo}
-              contentFit="contain"
+              resizeMode="contain"
               accessibilityLabel={`${homeName} logo`}
             />
             <Text

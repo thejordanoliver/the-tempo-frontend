@@ -24,10 +24,10 @@ import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
 import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import type { ImageSourcePropType } from "react-native";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { ConferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModalStyles";
 import { snapPoints } from "utils/ui/modalUtils";
 
@@ -238,9 +238,13 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
                     <View style={styles.buttonWrapper}>
                       {conference.logo ? (
                         <Image
-                          source={conference.logo}
+                          source={
+                            typeof conference.logo === "string"
+                              ? { uri: conference.logo }
+                              : conference.logo
+                          }
                           style={styles.logo}
-                          contentFit="contain"
+                          resizeMode="contain"
                         />
                       ) : (
                         <View style={styles.logoPlaceholder}>

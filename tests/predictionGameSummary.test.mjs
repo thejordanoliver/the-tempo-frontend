@@ -13,12 +13,12 @@ const modules = {
   "react/jsx-runtime": { jsx, jsxs: jsx, Fragment: "Fragment" },
   react: { useMemo: (factory) => factory() },
   "react-native": {
+    Image: "Image",
     View: "View",
     Text: "Text",
     StyleSheet: { create: (styles) => styles, hairlineWidth: 1 },
   },
   "@expo/vector-icons": { Ionicons: "Icon" },
-  "expo-image": { Image: "Image" },
   "constants/styles": {
     Colors: { dark: colors, light: colors },
     globalStyles: () => ({}),

@@ -8,9 +8,9 @@ import {
 } from "@/utils/common/dateUtils";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
 
@@ -149,7 +149,7 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
                     : secondFighterPhoto
                 }
                 style={styles.fighter}
-                contentFit="contain"
+                resizeMode="contain"
                 accessibilityLabel={`${secondFighterName} headshot`}
               />
             </View>
@@ -180,7 +180,7 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
                     : firstFighterPhoto
                 }
                 style={styles.fighter}
-                contentFit="contain"
+                resizeMode="contain"
                 accessibilityLabel={`${secondFighterName} headshot`}
               />
             </View>

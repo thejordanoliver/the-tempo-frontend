@@ -13,10 +13,16 @@ import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image, type ImageProps } from "expo-image";
+
 import { useCallback, useState } from "react";
 import { useFocusEffect } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  type ImageProps,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type {
   PlayerResult,
@@ -140,7 +146,7 @@ export default function ResultItemRow({
               source={teamLogo}
               fallback={teamPlaceholderImage}
               style={styles.teamLogo}
-              contentFit="contain"
+              resizeMode="contain"
             />
             <View style={styles.resultText}>
               <Text style={styles.name} numberOfLines={1}>
@@ -237,16 +243,10 @@ export default function ResultItemRow({
             <View style={styles.playerAvatarContainer}>
               <ResultImage
                 key={`${player.affiliation}:${player.id}:${cacheKey}`}
-                source={
-                  headshot
-                    ? { uri: headshot, cacheKey }
-                    : playerPlaceholderImage
-                }
+                source={headshot ? { uri: headshot } : playerPlaceholderImage}
                 fallback={playerPlaceholderImage}
                 style={styles.avatar}
-                contentFit="contain"
-                cachePolicy="disk"
-                recyclingKey={`${player.affiliation}:${player.id}:${cacheKey}`}
+                resizeMode="contain"
               />
             </View>
             <View style={styles.resultText}>
@@ -306,7 +306,7 @@ export default function ResultItemRow({
                     : userPlaceholderImage
                 }
                 style={styles.avatar}
-                contentFit="cover"
+                resizeMode="cover"
               />
             </View>
             <View style={styles.resultText}>

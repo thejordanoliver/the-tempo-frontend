@@ -5,9 +5,9 @@ import {
   PLACEHOLDER_AVATAR,
   globalStyles,
 } from "constants/styles";
-import { Image } from "expo-image";
+
 import { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import type {
   FanPredictionRanking,
   FanPredictionSortOrder,
@@ -34,7 +34,7 @@ export default function FanPredictionHistoryHeader({
         <View style={styles.summary}>
           <View style={styles.identity}>
             <Image
-              source={record.profileImage || PLACEHOLDER_AVATAR}
+              source={{ uri: record.profileImage || PLACEHOLDER_AVATAR }}
               style={styles.avatar}
             />
             <View style={styles.copy}>

@@ -8,11 +8,11 @@ import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
@@ -252,7 +252,7 @@ function FootballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-        <Image source={awayLogo} style={styles.logo} contentFit="contain" />
+        <Image source={awayLogo} style={styles.logo} resizeMode="contain" />
 
         <Text
           style={styles.teamName}
@@ -298,7 +298,7 @@ function FootballGameCard({
       </View>
 
       <View style={styles.teamSection}>
-        <Image source={homeLogo} style={styles.logo} contentFit="contain" />
+        <Image source={homeLogo} style={styles.logo} resizeMode="contain" />
         <Text
           style={styles.teamName}
           numberOfLines={1}

@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
+  Image,
   Animated,
   Easing,
   Pressable,
@@ -207,7 +208,7 @@ function PinnedConversations({
                 <Image
                   source={{ uri: avatarUri }}
                   style={styles.avatar}
-                  contentFit="cover"
+                  resizeMode="cover"
                 />
 
                 {conversation.isOnline && <View style={styles.onlineDot} />}

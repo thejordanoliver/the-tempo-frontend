@@ -14,10 +14,10 @@ import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { ChampionshipGameCardStyles } from "styles/GamecardStyles/ChampionshipGameCardStyles";
 import { formatDate, formatTime, safeDate } from "utils/common/dateUtils";
 import {
@@ -342,7 +342,7 @@ export default function ChampionshipGameCard({
             <Image
               source={awayLogo}
               style={styles.logo}
-              contentFit="contain"
+              resizeMode="contain"
               accessibilityLabel={`${awayName} logo`}
             />
 
@@ -378,7 +378,7 @@ export default function ChampionshipGameCard({
             <Image
               source={homeLogo}
               style={styles.logo}
-              contentFit="contain"
+              resizeMode="contain"
               accessibilityLabel={`${homeName} logo`}
             />
 

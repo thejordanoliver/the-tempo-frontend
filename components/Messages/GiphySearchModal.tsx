@@ -7,7 +7,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { useDebounce } from "hooks/useDebounce";
 import { useGiphySearch } from "hooks/useGiphySearch";
 import React, {
@@ -18,6 +18,7 @@ import React, {
   useState,
 } from "react";
 import {
+  Image,
   Alert,
   Keyboard,
   StyleSheet,
@@ -136,7 +137,7 @@ export const GiphySearchModal: React.FC<Props> = ({
         <Image
           source={{ uri: item.images.fixed_width_small.url }}
           style={styles.gifImage}
-          contentFit="cover"
+          resizeMode="cover"
         />
       </TouchableOpacity>
     ),

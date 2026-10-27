@@ -8,9 +8,9 @@ import {
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
 
@@ -161,7 +161,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
                 : secondFighterPhoto
             }
             style={styles.fighter}
-            contentFit="contain"
+            resizeMode="contain"
             accessibilityLabel={`${secondFighterName} headshot`}
           />
         </View>
@@ -217,7 +217,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
                 : firstFighterPhoto
             }
             style={styles.fighter}
-            contentFit="contain"
+            resizeMode="contain"
             accessibilityLabel={`${firstFighterName} headshot`}
           />
         </View>

@@ -14,10 +14,11 @@ import {
   globalStyles,
 } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
+
 import { useForumPostShare } from "hooks/ForumHooks/useForumPostShare";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
 import {
+  Image,
   ActivityIndicator,
   Keyboard,
   Platform,

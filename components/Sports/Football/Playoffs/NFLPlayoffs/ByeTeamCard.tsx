@@ -1,8 +1,8 @@
 import type { NFLPlayoffGame } from "types/football/football";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { ByeTeamCardStyles } from "styles/PlayoffStyles/ByeTeamCardStyles";
-import { Image } from "expo-image";
-import { Text, View } from "react-native";
+
+import { Image, Text, View } from "react-native";
 
 export function ByeTeamCard({
   team,
@@ -28,7 +28,7 @@ export function ByeTeamCard({
       ]}
     >
       <Text style={styles.seed}>1</Text>
-      <Image source={logo} style={styles.logo} contentFit="contain" />
+      <Image source={logo} style={styles.logo} resizeMode="contain" />
       <Text style={styles.teamName} numberOfLines={1}>
         {team?.code || "TBD"}
       </Text>

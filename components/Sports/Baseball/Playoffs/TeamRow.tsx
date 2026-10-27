@@ -1,6 +1,6 @@
 import { getMLBTeam, getMLBTeamLogo } from "@/constants/teamsMLB";
-import { Image } from "expo-image";
-import { Text, View } from "react-native";
+
+import { Image, Text, View } from "react-native";
 import { MLBPlayoffBracketStyles } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type { MLBPlayoffTeam } from "types/baseball/baseball";
 
@@ -33,7 +33,7 @@ export function TeamRow({
           {isKnownTeam && team.seed > 0 ? team.seed : "-"}
         </Text>
 
-        <Image source={teamLogo} style={styles.logo} contentFit="contain" />
+        <Image source={teamLogo} style={styles.logo} resizeMode="contain" />
 
         <Text
           numberOfLines={1}

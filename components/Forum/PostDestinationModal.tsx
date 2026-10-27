@@ -8,10 +8,17 @@ import {
 import { BROWSEABLE_LEAGUES, LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
-import { Image } from "expo-image";
+
 import type { ComponentProps } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FAVORITE_LEAGUES } from "types/favorites";
 import type { ForumPostDestination } from "types/forum";
@@ -222,7 +229,7 @@ export default function PostDestinationModal({
           accessibilityLabel={`Post to ${item.label}`}
           accessibilityState={{ selected }}
         >
-          <Image source={item.logo} style={styles.logo} contentFit="contain" />
+          <Image source={item.logo} style={styles.logo} resizeMode="contain" />
 
           <View style={styles.optionCopy}>
             <Text style={styles.optionTitle} numberOfLines={1}>

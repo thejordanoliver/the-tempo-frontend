@@ -3,9 +3,9 @@ import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import teamPlaceholder from "assets/Placeholders/teamPlaceholder.png";
 import { BasesIndicator } from "components/Sports/Baseball/GameDetails/BasesIndicator";
 import { Colors } from "constants/styles";
-import { Image } from "expo-image";
+
 import { useMemo } from "react";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { FanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import type {
@@ -140,7 +140,7 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
           <Image
             source={logo}
             style={pick.sport === "mma" ? gameStyles.fighter : gameStyles.logo}
-            contentFit="contain"
+            resizeMode="contain"
             accessibilityLabel={name}
           />
         </View>

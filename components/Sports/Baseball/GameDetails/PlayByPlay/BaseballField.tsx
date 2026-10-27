@@ -4,9 +4,9 @@ import type {
   BaseballPlay,
   BaseballSituation,
 } from "@/hooks/BaseballHooks/useBaseballGameDetails";
-import { Image } from "expo-image";
+
 import React, { memo, useEffect, useMemo } from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import Animated, {
   Easing,
   cancelAnimation,
@@ -509,7 +509,7 @@ function BaseballField({
     >
       <Image
         source={fieldImage}
-        contentFit="contain"
+        resizeMode="contain"
         accessible={false}
         style={{ width: "100%", height: "100%" }}
       />

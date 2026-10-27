@@ -7,10 +7,10 @@ import {
 } from "@gorhom/bottom-sheet";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors } from "constants/styles";
-import { Image } from "expo-image";
+
 import type { ComponentProps } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Pressable, Switch, Text, View } from "react-native";
+import { Image, Pressable, Switch, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { collegePollSettingsStyles } from "styles/ExploreStyles/CollegePollSettingsStyles";
 import type { CollegePollSettingsModalProps } from "types/collegePollWidget";
@@ -142,7 +142,7 @@ export default function CollegePollSettingsModal({
                   <Image
                     source={isDark ? config.logoLight : config.logo}
                     style={styles.logo}
-                    contentFit="contain"
+                    resizeMode="contain"
                   />
                   <Text style={styles.sportText}>{league.toUpperCase()}</Text>
                 </Pressable>

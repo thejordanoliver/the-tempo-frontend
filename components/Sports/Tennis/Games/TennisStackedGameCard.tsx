@@ -3,8 +3,8 @@ import { activeOpacity, Colors, Fonts } from "@/constants/styles";
 import { formatDate, formatTime, safeDate } from "@/utils/common/dateUtils";
 import { winnerStyle } from "@/utils/games/games";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { TennisCompetitor, TennisMatch } from "types/tennis/tennis";
 
 type Props = { match: TennisMatch };
@@ -43,7 +43,7 @@ export default function TennisStackedGameCard({ match }: Props) {
           <Image
             source={{ uri: competitor.flag }}
             style={styles.flag}
-            contentFit="cover"
+            resizeMode="cover"
             accessibilityLabel={competitor.country ?? "Country flag"}
           />
         ) : (

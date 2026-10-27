@@ -32,7 +32,7 @@ export default function MessageImageViewer({ attachment, onClose }: Props) {
         </View>
         <AuthorizedMessageImage
           attachment={attachment}
-          contentFit="contain"
+          resizeMode="contain"
           style={styles.image}
         />
       </SafeAreaView>
