@@ -22,9 +22,9 @@ import {
 
 function points(coords: number[][]) {
   return coords
-    .map(([x, y]) => {
+    .map(([x, y, height = 0]) => {
       const p = project(x, y);
-      return `${p.x},${p.y}`;
+      return `${p.x},${p.y - height}`;
     })
     .join(" ");
 }
@@ -56,6 +56,7 @@ const centerBottom = project(47, 50);
 function BasketballCourt({
   homeLogo,
   homeColor,
+  awayColor,
   isDark = false,
   layout = "full",
   homeHalf = true,
@@ -64,6 +65,7 @@ function BasketballCourt({
 }: {
   homeLogo?: ImageSourcePropType;
   homeColor: string;
+  awayColor: string;
   isDark?: boolean;
   layout?: "full" | "half";
   homeHalf?: boolean;
@@ -202,6 +204,7 @@ function BasketballCourt({
           })}
         </G>
         {[false, true].map((right) => {
+          const basketColor = right ? homeColor : awayColor;
           const rim = basketballBasketPoint(right);
           const rimY = rim.y;
           const boardA = projectBasketballRaisedPoint(
@@ -214,28 +217,55 @@ function BasketballCourt({
             28,
             BASKETBALL_RIM_HEIGHT,
           );
-          const support = project(right ? 96 : -2, 27);
+          const support = project(right ? 96.5 : -2.5, 25);
+          const boardCenter = projectBasketballRaisedPoint(
+            right ? 90 : 4,
+            25,
+            BASKETBALL_RIM_HEIGHT,
+          );
+          // Keep every foot outside the baseline, centered on the basket's axis.
+          const supportFace = (coords: number[][]) =>
+            points(
+              coords.map(([x, y, height]) => [right ? 94 - x : x, y, height]),
+            );
+          const supportNearFace = supportFace([
+            [-3, 28, 0],
+            [-1, 28, 0],
+            [-2, 27, BASKETBALL_RIM_HEIGHT],
+            [-3, 27, BASKETBALL_RIM_HEIGHT],
+          ]);
           const inward = right ? -1 : 1;
-          const supportTop = support.y - BASKETBALL_RIM_HEIGHT - 2;
+          const supportTop = support.y - BASKETBALL_RIM_HEIGHT;
           const boardTop = boardA.y - 22;
           const boardBottom = boardA.y + 12;
           return (
             <G key={String(right)}>
               <Polygon
-                points={`${support.x - 8},${support.y} ${support.x + 8},${support.y} ${support.x + 8},${supportTop} ${support.x - 8},${supportTop + 4}`}
-                fill={homeColor}
+                points={supportFace([
+                  [-3, 22, 0],
+                  [-1, 22, 0],
+                  [-2, 23, BASKETBALL_RIM_HEIGHT],
+                  [-3, 23, BASKETBALL_RIM_HEIGHT],
+                ])}
+                fill={basketColor}
               />
               <Polygon
-                points={`${support.x + inward * 8},${support.y} ${support.x + inward * 22},${support.y - 26} ${support.x + inward * 12},${supportTop + 18} ${support.x + inward * 8},${supportTop}`}
-                fill={homeColor}
+                points={supportFace([
+                  [-1, 22, 0],
+                  [-1, 28, 0],
+                  [-2, 27, BASKETBALL_RIM_HEIGHT],
+                  [-2, 23, BASKETBALL_RIM_HEIGHT],
+                ])}
+                fill={basketColor}
               />
+              <Polygon points={supportNearFace} fill={basketColor} />
               <Polygon
-                points={`${support.x - inward * 8},${support.y} ${support.x + inward * 8},${support.y} ${support.x + inward * 8},${supportTop} ${support.x - inward * 8},${supportTop + 4}`}
+                points={supportNearFace}
                 fill={Colors.black}
                 fillOpacity={0.18}
               />
               <Polyline
-                points={`${support.x},${supportTop} ${support.x},${supportTop - 6} ${boardA.x},${boardA.y - 8}`}
+                points={`${support.x},${supportTop} ${support.x},${supportTop - 6} ${boardCenter.x},${boardCenter.y - 8}`}
                 fill="none"
                 stroke={Colors.lightGray}
                 strokeWidth={4}
@@ -279,7 +309,7 @@ function BasketballCourt({
         })}
       </>
     ),
-    [clip, wood, marking, lane, edge, homeLogo, homeColor],
+    [clip, wood, marking, lane, edge, homeLogo, homeColor, awayColor],
   );
   return (
     <View style={{ width: "100%", aspectRatio: viewport.aspectRatio }}>

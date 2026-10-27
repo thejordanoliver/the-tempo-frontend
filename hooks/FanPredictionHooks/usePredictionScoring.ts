@@ -1,4 +1,4 @@
-import { useScreenActivity } from "./useScreenActivity";
+import { useScreenActivity } from "../useScreenActivity";
 import { useCallback, useEffect, useState } from "react";
 import { fetchPredictionScoring } from "services/fanPredictionsApi";
 import type {

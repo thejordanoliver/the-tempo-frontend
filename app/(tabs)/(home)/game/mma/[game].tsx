@@ -4,7 +4,7 @@ import {
   GameLiveChatOverlay,
   GameLocation,
 } from "@/components/Sports/Basketball/GameDetails";
-import { useLiveVotes } from "@/hooks/useLiveVotes";
+import { useLiveVotes } from "@/hooks/FanPredictionHooks/useLiveVotes";
 import { useWeather } from "@/hooks/useWeather";
 import {
   formatDate,

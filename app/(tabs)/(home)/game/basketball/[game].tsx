@@ -1,7 +1,6 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   BasketballPlayByPlay,
-  BasketballGameCharts,
   BoxScore,
   FanPrediction,
   GameHeader,
@@ -28,8 +27,8 @@ import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import { useLiveVotes } from "@/hooks/FanPredictionHooks/useLiveVotes";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeams from "@/hooks/useTeams";
 import { useWeather } from "@/hooks/useWeather";
 import type { BasketballGameCardProps } from "@/types/basketball/basketball";
@@ -513,8 +512,6 @@ export default function GameDetailsScreen(
                 lastPlay={lastPlay}
                 homeId={homeId}
                 awayId={awayId}
-                homeCode={homeCode}
-                awayCode={awayCode}
                 homeLogo={homeLogo}
                 awayLogo={awayLogo}
                 homeColor={homeColor}
@@ -533,21 +530,6 @@ export default function GameDetailsScreen(
                 isDark={isDark}
                 state={state}
               />
-
-              {LEAGUE === "nba" ? (
-                <BasketballGameCharts
-                  scope={`${LEAGUE}:${gameId}`}
-                  league={LEAGUE}
-                  state={state}
-                  plays={plays}
-                  winProbability={score?.winProbability}
-                  homeCode={homeCode}
-                  awayCode={awayCode}
-                  homeColor={homeColor}
-                  awayColor={awayColor}
-                  isDark={isDark}
-                />
-              ) : null}
 
               <FanPrediction
                 scoring={scoring}

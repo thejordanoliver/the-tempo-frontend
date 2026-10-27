@@ -2,7 +2,7 @@ import { formatDate } from "@/utils/common/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import PredictionCard from "components/FanPrediction/PredictionCard";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { useFeedPrediction } from "hooks/useFeedPrediction";
+import { useFeedPrediction } from "hooks/FanPredictionHooks/useFeedPrediction";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";

@@ -1,33 +1,51 @@
 import { Colors, Fonts } from "@/constants/styles";
 import { StyleSheet } from "react-native";
 
-export const ChampionshipGameCardStyles = (isDark: boolean) =>
-  StyleSheet.create({
+export const ChampionshipGameCardStyles = (isDark: boolean) => {
+  const textColor = isDark ? Colors.dark.text : Colors.light.text;
+  const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
+  const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
+  const headlineColor = isDark ? Colors.white : Colors.black;
+
+  return StyleSheet.create({
     container: {
-      marginHorizontal: 12,
+      paddingHorizontal: 12,
       marginBottom: 14,
     },
 
     card: {
       position: "relative",
-      borderRadius: 8,
-      paddingHorizontal: 18,
-      paddingTop: 12,
       overflow: "hidden",
+      padding: 12,
+      paddingBottom: 40,
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
     },
 
-    badgeContainer: {
+    info: {
       alignItems: "center",
       justifyContent: "center",
-      marginBottom: 18,
-      gap: 4,
+      width: 100,
+      marginTop: 4,
     },
 
-    badge: {
+    infoWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    headlineContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 12,
+    },
+
+    headlineText: {
       fontSize: 14,
-      letterSpacing: 2,
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.white : Colors.black,
+      letterSpacing: 1,
+      fontFamily: Fonts.MEDIUM,
+      color: headlineColor,
       textTransform: "uppercase",
     },
 
@@ -37,9 +55,6 @@ export const ChampionshipGameCardStyles = (isDark: boolean) =>
       justifyContent: "space-between",
     },
 
-    /* =========================
-       🏀 TEAM
-    ========================= */
     teamSection: {
       alignItems: "center",
       width: 70,
@@ -56,13 +71,14 @@ export const ChampionshipGameCardStyles = (isDark: boolean) =>
       marginTop: 4,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      color: isDark ? Colors.white : Colors.black,
+      color: textColor,
       textAlign: "center",
     },
 
     rank: {
       fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.REGULAR,
+      color: subTextColor,
     },
 
     teamScore: {
@@ -76,72 +92,82 @@ export const ChampionshipGameCardStyles = (isDark: boolean) =>
       width: 72,
       fontFamily: Fonts.BOLD,
       fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
+      color: textColor,
       textAlign: "center",
     },
 
-    centerColumn: {
-      width: 94,
-      alignItems: "center",
-      justifyContent: "center",
-      paddingHorizontal: 4,
+    date: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: textColor,
     },
 
-    info: {
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 6,
+    period: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: textColor,
     },
 
-    infoWrapper: {
+    finalText: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: accentRed,
+      textAlign: "center",
+    },
+
+    clock: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: accentRed,
+      textAlign: "center",
+    },
+
+    outsContainer: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: 4,
+    },
+
+    outs: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: accentRed,
+      textAlign: "center",
+    },
+
+    basesContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 2,
+    },
+
+    downDistance: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 10,
+      color: subTextColor,
+      textAlign: "center",
+    },
+
+    broadcast: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 10,
+      color: subTextColor,
+      textAlign: "center",
     },
 
     statusDivider: {
       width: 1,
-      height: 14,
-      backgroundColor: isDark ? Colors.white : Colors.black,
+      height: 12,
+      marginHorizontal: 4,
+      backgroundColor: textColor,
     },
 
     finalStatusDivider: {
       width: 1,
       height: 12,
-      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-    },
-
-    period: {
-      fontSize: 14,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    clock: {
-      fontSize: 14,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-    },
-
-    date: {
-      fontSize: 14,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-
-    statusText: {
-      fontSize: 14,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
-    },
-
-    broadcast: {
-      fontSize: 10,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
+      marginHorizontal: 4,
+      backgroundColor: accentRed,
     },
   });
+};

@@ -1,11 +1,11 @@
+import {
+  useFanPrediction,
+  type FanPredictionInput,
+} from "hooks/FanPredictionHooks/useFanPrediction";
 import FanPredictionSkeleton from "components/Skeletons/GameDetails/FanPredictionSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import type { ImageProps } from "expo-image";
-import {
-  useFanPrediction,
-  type FanPredictionInput,
-} from "hooks/useFanPrediction";
 import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";

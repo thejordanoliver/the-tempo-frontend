@@ -1,4 +1,3 @@
-import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 import Dropdown from "@/components/Dropdown";
 import { Play } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
@@ -13,7 +12,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo, useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import NBAShotChart from "./Charts/NBAShotChart";
+import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 
 export interface ShotChartProps {
   plays?: Play[];
@@ -42,15 +41,7 @@ const COURT_WIDTH = 50;
 const NBA_BASKET_OFFSET = 5.25;
 const SHOT_MARKER_EXTENT = 1.65;
 
-export default function ShotChart(props: ShotChartProps) {
-  return props.league === "nba" ? (
-    <NBAShotChart {...props} />
-  ) : (
-    <LegacyShotChart {...props} />
-  );
-}
-
-function LegacyShotChart({
+export default function ShotChart({
   plays = [],
   homeId,
   awayId,

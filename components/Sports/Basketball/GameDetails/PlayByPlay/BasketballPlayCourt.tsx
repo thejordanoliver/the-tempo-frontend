@@ -96,6 +96,7 @@ function BasketballPlayCourt({
         key={eventKey}
         homeLogo={homeLogo}
         homeColor={homeColor}
+        awayColor={awayColor}
         isDark={isDark}
         layout={layout}
         homeHalf={

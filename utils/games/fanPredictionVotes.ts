@@ -1,4 +1,4 @@
-import type { PollResult } from "hooks/useGameVotes";
+import type { PollResult } from "@/hooks/FanPredictionHooks/useGameVotes";
 import type { FanPredictionTeamId as TeamId } from "types/fanPredictions";
 
 export function isSameTeamId(

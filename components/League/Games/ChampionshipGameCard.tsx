@@ -3,11 +3,13 @@ import {
   getNBATeamLogo,
   getTeamBySummerId,
 } from "@/constants/teams";
+import { getCBTeam, getCBTeamLogo } from "@/constants/teamsCB";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getMLBTeam, getMLBTeamLogo } from "@/constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "@/constants/teamsNFL";
+import { getSBTeam, getSBTeamLogo } from "@/constants/teamsSB";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { activeOpacity, Colors } from "constants/styles";
@@ -35,6 +37,8 @@ interface ChampionshipGameCardProps {
   isCFB?: boolean;
   isNHL?: boolean;
   isMLB?: boolean;
+  isCB?: boolean;
+  isSB?: boolean;
 }
 
 type TeamSide = {
@@ -57,6 +61,8 @@ export default function ChampionshipGameCard({
   isCFB = false,
   isMLB = false,
   isNHL = false,
+  isCB = false,
+  isSB = false,
 }: ChampionshipGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -102,7 +108,12 @@ export default function ChampionshipGameCard({
     if (isMLB) {
       return getMLBTeam(teamId);
     }
-
+    if (isCB) {
+      return getCBTeam(teamId);
+    }
+    if (isSB) {
+      return getSBTeam(teamId);
+    }
     return getNBATeam(teamId);
   };
 
@@ -133,6 +144,12 @@ export default function ChampionshipGameCard({
 
     if (isMLB) {
       return getMLBTeamLogo(teamId, isDark);
+    }
+    if (isCB) {
+      return getCBTeamLogo(teamId, isDark);
+    }
+    if (isSB) {
+      return getSBTeamLogo(teamId, isDark);
     }
 
     return getNBATeamLogo(teamId, isDark);
@@ -237,7 +254,7 @@ export default function ChampionshipGameCard({
     }
 
     if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended) {
-      return <Text style={styles.statusText}>{gameStatusDescription}</Text>;
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
     }
 
     if (endOfPeriod) {
@@ -251,9 +268,9 @@ export default function ChampionshipGameCard({
     if (isFinal) {
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.statusText}>{gameStatusDetail}</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
-          <Text style={styles.statusText}>{formattedDate}</Text>
+          <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       );
     }
@@ -299,8 +316,8 @@ export default function ChampionshipGameCard({
   };
 
   const gradientColors = isDark
-    ? ([Colors.dark.gold, "transparent"] as const)
-    : ([Colors.light.gold, "transparent"] as const);
+    ? (["#846f4a", Colors.dark.background] as const)
+    : (["#dbb145", Colors.light.background] as const);
 
   return (
     <TouchableOpacity
@@ -315,8 +332,8 @@ export default function ChampionshipGameCard({
         end={{ x: 0.5, y: 1 }}
         style={styles.card}
       >
-        <View style={styles.badgeContainer}>
-          <Text style={styles.badge}>{headline}</Text>
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headlineText}>{headline}</Text>
         </View>
 
         <View style={styles.matchupRow}>
@@ -341,16 +358,16 @@ export default function ChampionshipGameCard({
           })}
 
           {/* Center */}
-          <View style={styles.centerColumn}>
-            <View style={styles.info}>
-              {renderStatus()}
-              {!isFinal && broadcast ? (
-                <Text style={styles.broadcast} numberOfLines={2}>
-                  {broadcast}
-                </Text>
-              ) : null}
-            </View>
+
+          <View style={styles.info}>
+            {renderStatus()}
+            {!isFinal && broadcast ? (
+              <Text style={styles.broadcast} numberOfLines={2}>
+                {broadcast}
+              </Text>
+            ) : null}
           </View>
+
           {ScoreText({
             score: homeScore,
             record: homeRecord,

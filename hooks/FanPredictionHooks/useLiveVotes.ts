@@ -1,10 +1,9 @@
-import { useScreenActivity } from "./useScreenActivity";
+import { useScreenActivity } from "../useScreenActivity";
 import { usePredictionScoring } from "./usePredictionScoring";
-
-import { castRankedPrediction } from "services/fanPredictionsApi";
-import type { RankedPredictionContext } from "types/fanPredictions";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { castRankedPrediction } from "services/fanPredictionsApi";
 import { io, Socket } from "socket.io-client";
+import type { RankedPredictionContext } from "types/fanPredictions";
 import { apiClient, getAccessToken } from "utils/apiClient";
 import { getSocketNamespaceUrl } from "utils/apiConfig";
 import { fetchVoteResults, PollResult } from "./useGameVotes";

@@ -72,6 +72,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     rank: {
       fontSize: 10,
+      fontFamily: Fonts.REGULAR,
       color: subTextColor,
     },
 
@@ -222,12 +223,6 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       fontSize: 8,
       color: headlineColor,
       textAlign: "center",
-    },
-
-    headlineDivider: {
-      width: 1,
-      height: 8,
-      backgroundColor: headlineColor,
     },
 
     /* =========================

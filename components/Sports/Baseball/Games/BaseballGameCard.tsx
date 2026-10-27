@@ -87,7 +87,10 @@ function BaseballGameCard({
 
   const league = game?.league?.code ?? "mlb";
 
-  const isChampionship = game?.season.slug === "championship-series";
+  const headline = game.headline ?? holidayLabel;
+  const isChampionship =
+    game?.season.slug === "championship-series" ||
+    headline?.includes("World Series");
   const styles = GameCardStyles(isDark, isChampionship);
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
@@ -113,7 +116,7 @@ function BaseballGameCard({
   const awayRank = away?.awayRank;
   const isTopInning = gameStatusDetail.includes("Top");
   const isBottomInning = gameStatusDetail.includes("Bot");
-  const headline = game.headline ?? holidayLabel;
+
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
   const getOuts = [1, 2, 3].map((i) => (

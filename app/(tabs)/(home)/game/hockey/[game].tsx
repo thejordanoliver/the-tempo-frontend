@@ -17,9 +17,9 @@ import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
 import HockeyPlayByPlay from "@/components/Sports/Hockey/GameDetails/PlayByPlay/HockeyPlayByPlay";
 import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { Colors } from "@/constants/styles";
+import { useLiveVotes } from "@/hooks/FanPredictionHooks/useLiveVotes";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeams from "@/hooks/useTeams";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {

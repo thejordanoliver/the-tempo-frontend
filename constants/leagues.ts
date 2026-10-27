@@ -418,6 +418,8 @@ export type FavoriteSportId = (typeof LEAGUE_CONFIG)[BrowseableLeague]["id"];
 export const HOME_SCORE_LEAGUES = [
   "nba",
   "nfl",
+  "cb",
+  "sb",
   "ufl",
   "mlb",
   "nhl",

@@ -27,8 +27,6 @@ type Props = {
   isDark: boolean;
   league: string;
   scope?: string;
-  homeCode?: string;
-  awayCode?: string;
 };
 
 function ParticipantAvatar({
@@ -71,8 +69,6 @@ function BasketballPlayByPlay({
   isDark,
   league,
   scope = "",
-  homeCode = "Home",
-  awayCode = "Away",
 }: Props) {
   const styles = useMemo(() => PlayByPlayStyles(isDark), [isDark]);
   const playback = useBasketballPlayback(plays, lastPlay, scope);
@@ -100,7 +96,8 @@ function BasketballPlayByPlay({
   const isTurnover = /turnover/i.test(latest?.type?.text ?? "");
 
   if (league.toLowerCase() !== "nba") return null;
-  if (state !== "in" && state !== "post") return null;
+  if (state !== "in") return null;
+
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Play By Play</HeadingTwo>
@@ -120,11 +117,7 @@ function BasketballPlayByPlay({
               adjustsFontSizeToFit
               minimumFontScale={0.85}
             >
-              {latest?.shortDescription ||
-                latest?.type?.text ||
-                (state === "post"
-                  ? "Coverage unavailable"
-                  : "Waiting for updates")}
+              {latest?.shortDescription || latest?.type?.text}
             </Text>
           </View>
           <View style={styles.headerMeta}>
@@ -161,9 +154,7 @@ function BasketballPlayByPlay({
             {latest?.text ||
               latest?.shortDescription ||
               latest?.type?.text ||
-              (state === "post"
-                ? "Play-by-play is unavailable for this game."
-                : "The latest play will appear when game coverage is available.")}
+              "The latest play will appear when game coverage is available."}
           </Text>
         </View>
 

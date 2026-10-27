@@ -14,7 +14,7 @@ import {
   Officials,
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
-import { useLiveVotes } from "@/hooks/useLiveVotes";
+import { useLiveVotes } from "@/hooks/FanPredictionHooks/useLiveVotes";
 import useTeams from "@/hooks/useTeams";
 import {
   formatDate,

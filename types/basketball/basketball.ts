@@ -58,7 +58,7 @@ export type BasketballGame = {
     logo: string;
     primaryColor: string;
     secondaryColor: string;
-    nbaAPIID: number;
+    alt_id: number;
     rank: number;
     score: number;
     record: string;
@@ -76,7 +76,7 @@ export type BasketballGame = {
     logo: string;
     primaryColor: string;
     secondaryColor: string;
-    nbaAPIID: number;
+    alt_id: number;
     rank: number;
     score: number;
     record: string;

@@ -25,7 +25,7 @@ import BaseballStackedGameCard from "components/Sports/Baseball/Games/BaseballSt
 import VolleyballGameCard from "components/Sports/Volleyball/VolleyballGameCard";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactElement, type ReactNode } from "react";
 import { SectionList, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { leagueGamesListStyles } from "styles/GamecardStyles/LeagueGamesListStyles";
@@ -57,6 +57,7 @@ const BASKETBALL_LEAGUES = new Set<HomeLeagueId>([
   "wcbb",
   "wnba",
 ]);
+const BASEBALL_LEAGUES = new Set<HomeLeagueId>(["mlb", "cb", "sb"]);
 const FOOTBALL_LEAGUES = new Set<HomeLeagueId>(["nfl", "cfb", "ufl"]);
 const SOCCER_LEAGUES = new Set<HomeLeagueId>([
   "mls",
@@ -87,6 +88,7 @@ const isChampionshipGame = (item: HomeGameItem): boolean => {
     "headline" in item.game ? String(item.game.headline ?? "") : "";
   return (
     headline.includes("NBA Finals") ||
+    headline.includes("World Series") ||
     headline.includes("Finals") ||
     headline.includes("Championship") ||
     headline.includes("Final")
@@ -126,7 +128,7 @@ const getSectionTitle = (section: HomeGameSection): string => {
     const hasPlayoffGame = section.data.some((item) => {
       const game = item.game as BaseballGame;
 
-      return game.season?.type === 3;
+      return game.season?.type === 3 && !game.headline.includes("World Series");
     });
 
     if (hasPlayoffGame) return "MLB Playoffs";
@@ -210,7 +212,7 @@ export default function LeagueGamesList({
     setModalVisible(true);
   };
 
-  const renderGameCard = (item: HomeGameItem) => {
+  const renderGameCard = (item: HomeGameItem): ReactElement | null => {
     const wrapper = (child: ReactNode) => {
       return (
         <LongPressGestureHandler
@@ -359,6 +361,8 @@ export default function LeagueGamesList({
         return wrapper(<TennisGameCard match={match} />);
       }
     }
+
+    return null;
   };
 
   const renderSkeletons = (count: number) => {
@@ -447,30 +451,21 @@ export default function LeagueGamesList({
                     isMCBB={game.league === "mcbb"}
                     isWCBB={game.league === "wcbb"}
                     isWNBA={game.league === "wnba"}
-                    isSL={false}
-                    isGLEAGUE={false}
                   />
                 )}
-                {game.league === "nfl" ||
-                  (game.league === "cfb" && (
-                    <ChampionshipGameCard
-                      game={game.game}
-                      isMCBB={false}
-                      isWCBB={false}
-                      isWNBA={false}
-                      isSL={false}
-                      isGLEAGUE={false}
-                    />
-                  ))}
-                {game.league === "mlb" && (
+                {game.league && FOOTBALL_LEAGUES.has(game.league) && (
                   <ChampionshipGameCard
                     game={game.game}
-                    isMCBB={false}
-                    isWCBB={false}
-                    isWNBA={false}
-                    isSL={false}
-                    isGLEAGUE={false}
-                    isNHL={true}
+                    isNFL={game.league === "nfl"}
+                    isCFB={game.league === "cfb"}
+                  />
+                )}
+                {game.league && BASEBALL_LEAGUES.has(game.league) && (
+                  <ChampionshipGameCard
+                    game={game.game}
+                    isMLB={game.league === "mlb"}
+                    isCB={game.league === "cb"}
+                    isSB={game.league === "sb"}
                   />
                 )}
               </View>

@@ -203,7 +203,7 @@ export type BaseballPlayTeam = {
   primaryColor?: string | null;
   secondaryColor?: string | null;
   established?: number | null;
-  mlbId?: number | null;
+  alt_id?: number | null;
 };
 
 export type BaseballPlayAthlete = {

@@ -14,9 +14,9 @@ import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
 import SoccerPlayByPlay from "@/components/Sports/Soccer/GameDetails/SoccerPlayByPlay";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
+import { useLiveVotes } from "@/hooks/FanPredictionHooks/useLiveVotes";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import { useLiveVotes } from "@/hooks/useLiveVotes";
 import { SoccerGameCardProps } from "@/types/soccer/soccer";
 import {
   formatDate,

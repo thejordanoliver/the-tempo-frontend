@@ -25,9 +25,9 @@ import {
 } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { useLiveVotes } from "@/hooks/FanPredictionHooks/useLiveVotes";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
-import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeams from "@/hooks/useTeams";
 import { FootballGameCardProps } from "@/types/football/football";
 import {

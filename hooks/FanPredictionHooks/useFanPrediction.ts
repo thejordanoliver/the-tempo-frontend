@@ -1,11 +1,11 @@
-import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   fetchVoteResults,
   type PollResult,
   type VoteResponse,
-} from "hooks/useGameVotes";
-import type { CastVoteAck } from "hooks/useLiveVotes";
+} from "@/hooks/FanPredictionHooks/useGameVotes";
+import type { CastVoteAck } from "@/hooks/FanPredictionHooks/useLiveVotes";
+import * as Haptics from "expo-haptics";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   FanPredictionScoring,
   FanPredictionTeamId as TeamId,
