@@ -114,9 +114,6 @@ function BaseballGameCard({
   const awayRecord = away?.record;
   const homeRank = home?.homeRank;
   const awayRank = away?.awayRank;
-  const isTopInning = gameStatusDetail.includes("Top");
-  const isBottomInning = gameStatusDetail.includes("Bot");
-
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
   const getOuts = [1, 2, 3].map((i) => (
@@ -174,54 +171,44 @@ function BaseballGameCard({
   const renderStatus = () => {
     return (
       <View>
-        {/* ⚾ Scheduled */}
+        {/* Scheduled */}
         {isScheduled && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.date}>{formattedDate}</Text>
-            <View style={styles.statusDivider} />
-            <Text style={styles.date}>{tbd || formattedTime}</Text>
-          </View>
+          <>
+            <View style={styles.infoWrapper}>
+              <Text style={styles.date}>{formattedDate}</Text>
+              <View style={styles.statusDivider} />
+              <Text style={styles.date}>{tbd || formattedTime}</Text>
+            </View>
+            <Text style={styles.broadcast}>{broadcast}</Text>
+          </>
         )}
 
-        {/* 🕒 In Progress */}
+        {/* In Progress */}
         {inProgress && !isDelayed && !isEndOfInning && (
-          <View>
+          <>
             <View style={styles.infoWrapper}>
-              {isTopInning && (
-                <Ionicons
-                  name={"caret-up"}
-                  size={10}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              )}
-              {isBottomInning && (
-                <Ionicons
-                  name={"caret-down"}
-                  size={10}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              )}
               <Text style={styles.date}>{gameStatusDetail}</Text>
-
               <View style={styles.statusDivider} />
               <View style={styles.outsContainer}>{getOuts}</View>
             </View>
             <View style={styles.basesContainer}>
               <BasesIndicator size={8} bases={bases} isDark={isDark} />
             </View>
-          </View>
+            <Text style={styles.broadcast}>{broadcast}</Text>
+          </>
         )}
 
-        {/* 🕒 In Progress */}
+        {/* End of Inning */}
         {isEndOfInning && (
-          <View>
+          <>
             <View style={styles.infoWrapper}>
               <Text style={styles.finalText}>{gameStatusDetail}</Text>
             </View>
-          </View>
+            <Text style={styles.broadcast}>{broadcast}</Text>
+          </>
         )}
 
-        {/* 🏁 Final */}
+        {/* Final */}
         {isFinal && (
           <View style={styles.infoWrapper}>
             <Text style={styles.finalText}>{gameStatusDetail}</Text>
@@ -230,39 +217,12 @@ function BaseballGameCard({
           </View>
         )}
 
-        {/* ❌ Canceled */}
-        {isCanceled && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Canceled</Text>
-          </View>
-        )}
-
-        {/* ❌ Forfeited */}
-        {isForfeited && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Forfeited</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Suspended */}
-        {isSuspended && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Suspended</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Postponed */}
-        {isPostponed && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Postponed</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Delayed */}
-        {isDelayed && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Delayed</Text>
-          </View>
+        {(isDelayed ||
+          isCanceled ||
+          isPostponed ||
+          isForfeited ||
+          isSuspended) && (
+          <Text style={styles.finalText}>{gameStatusDescription}</Text>
         )}
       </View>
     );
@@ -293,12 +253,7 @@ function BaseballGameCard({
         <Text style={[styles.headlineText]}>{headline}</Text>
       </View>
 
-      <View style={styles.info}>
-        {renderStatus()}
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
-      </View>
+      <View style={styles.info}>{renderStatus()}</View>
 
       <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 

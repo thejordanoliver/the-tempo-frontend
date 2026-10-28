@@ -1,3 +1,4 @@
+import { BasesIndicator } from "@/components/Sports/Baseball/GameDetails/BasesIndicator";
 import {
   getNBATeam,
   getNBATeamLogo,
@@ -12,6 +13,7 @@ import { getNFLTeam, getNFLTeamLogo } from "@/constants/teamsNFL";
 import { getSBTeam, getSBTeamLogo } from "@/constants/teamsSB";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
+import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 
@@ -28,6 +30,7 @@ import {
 
 interface ChampionshipGameCardProps {
   game: any;
+  isNBA?: boolean;
   isMCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
@@ -52,6 +55,7 @@ type TeamSide = {
 
 export default function ChampionshipGameCard({
   game,
+  isNBA = false,
   isMCBB = false,
   isWCBB = false,
   isWNBA = false,
@@ -114,10 +118,16 @@ export default function ChampionshipGameCard({
     if (isSB) {
       return getSBTeam(teamId);
     }
-    return getNBATeam(teamId);
+    if (isNBA) {
+      return getNBATeam(teamId);
+    }
+    return null;
   };
 
   const getTeamLogo = (teamId?: string | number) => {
+    if (isNBA) {
+      return getNBATeamLogo(teamId, isDark);
+    }
     if (isMCBB) {
       return getMCBBTeamLogo(teamId, isDark);
     }
@@ -152,7 +162,7 @@ export default function ChampionshipGameCard({
       return getSBTeamLogo(teamId, isDark);
     }
 
-    return getNBATeamLogo(teamId, isDark);
+    return null;
   };
 
   const homeTeam = getTeam(homeId);
@@ -186,30 +196,46 @@ export default function ChampionshipGameCard({
   const status = game?.status ?? {};
   const headline = game.headline;
 
+  const state = status.state;
   const gameStatusDescription = status.description;
   const gameStatusDetail = status.shortDetail;
   const tbd = gameStatusDetail?.includes("TBD") ? "TBD" : null;
 
-  const isFinal = gameStatusDescription === "Final";
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-
-  const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isScheduled = state === "pre";
+  const inProgress = state === "in" && !isDelayed && !isSuspended;
+  const isFinal = state === "post";
+  const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeit";
-  const isSuspended = gameStatusDescription === "Suspended";
-
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
+  const isEndOfInning = gameStatusDetail.includes("End");
+
+  const outs = game?.situation.outs;
+  const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
+  const getOuts = [1, 2, 3].map((i) => (
+    <Ionicons
+      key={i}
+      size={8}
+      name={i <= countOuts ? "ellipse" : "ellipse-outline"}
+      color={isDark ? Colors.dark.lightRed : Colors.light.red}
+    />
+  ));
+  const bases = {
+    onFirst: game?.situation?.onFirst,
+    onSecond: game?.situation?.onSecond,
+    onThird: game?.situation?.onThird,
+  };
 
   const period = formatPeriod({
     period: status.period,
-    isMCBB: isMCBB || isWCBB,
+    isMCBB: isMCBB,
+    isNHL: isNHL,
   });
 
   const clock = status.displayClock;
-
   const broadcast = getBroadcastDisplay(game?.broadcasts);
 
   const showRecordAsScore =
@@ -242,35 +268,127 @@ export default function ChampionshipGameCard({
     });
   };
 
-  const renderStatus = () => {
-    if (inProgress) {
+  const renderStatus = (
+    isMLB: boolean,
+    isNBA: boolean,
+    isMCBB: boolean,
+    isWCBB: boolean,
+    isNHL: boolean,
+  ) => {
+    if (isMLB) {
       return (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{period}</Text>
-          <View style={styles.statusDivider} />
-          <Text style={styles.clock}>{clock}</Text>
+        <View>
+          {/* ⚾ Scheduled */}
+          {isScheduled && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.date}>{formattedDate}</Text>
+              <View style={styles.statusDivider} />
+              <Text style={styles.date}>{tbd || formattedTime}</Text>
+            </View>
+          )}
+
+          {/* 🕒 In Progress */}
+          {inProgress && !isDelayed && !isEndOfInning && (
+            <View>
+              <View style={styles.infoWrapper}>
+                <Text style={styles.date}>{gameStatusDetail}</Text>
+
+                <View style={styles.statusDivider} />
+                <View style={styles.outsContainer}>{getOuts}</View>
+              </View>
+              <View style={styles.basesContainer}>
+                <BasesIndicator size={8} bases={bases} isDark={isDark} />
+              </View>
+            </View>
+          )}
+
+          {/* 🕒 In Progress */}
+          {isEndOfInning && (
+            <View>
+              <View style={styles.infoWrapper}>
+                <Text style={styles.finalText}>{gameStatusDetail}</Text>
+              </View>
+            </View>
+          )}
+
+          {/* 🏁 Final */}
+          {isFinal && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>{gameStatusDetail}</Text>
+              <View style={styles.finalStatusDivider} />
+              <Text style={styles.finalText}>{formattedDate}</Text>
+            </View>
+          )}
+
+          {/* ❌ Canceled */}
+          {isCanceled && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>Canceled</Text>
+            </View>
+          )}
+
+          {/* ❌ Forfeited */}
+          {isForfeited && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>Forfeited</Text>
+            </View>
+          )}
+
+          {/* ⏸️ Suspended */}
+          {isSuspended && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>Suspended</Text>
+            </View>
+          )}
+
+          {/* ⏸️ Postponed */}
+          {isPostponed && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>Postponed</Text>
+            </View>
+          )}
+
+          {/* ⏸️ Delayed */}
+          {isDelayed && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>Delayed</Text>
+            </View>
+          )}
         </View>
       );
     }
 
-    if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended) {
-      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
-    }
+    if (isNBA || isMCBB || isWCBB || isWNBA || isNHL) {
+      if (inProgress)
+        return (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.period}>{period}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.clock}>{clock}</Text>
+          </View>
+        );
 
-    if (endOfPeriod) {
-      return <Text style={styles.clock}>End of {period}</Text>;
-    }
+      if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
+        return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
-    if (isHalftime) {
-      return <Text style={styles.clock}>Halftime</Text>;
-    }
+      if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
-    if (isFinal) {
+      if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+
+      if (isFinal)
+        return (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>{gameStatusDetail}</Text>
+            <View style={styles.finalStatusDivider} />
+            <Text style={styles.finalText}>{formattedDate}</Text>
+          </View>
+        );
+
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
-          <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{formattedDate}</Text>
+          <Text style={styles.date}>{formattedDate}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{tbd || formattedTime}</Text>
         </View>
       );
     }
@@ -278,9 +396,7 @@ export default function ChampionshipGameCard({
     return (
       <View style={styles.infoWrapper}>
         <Text style={styles.date}>{formattedDate}</Text>
-
         <View style={styles.statusDivider} />
-
         <Text style={styles.date}>{tbd || formattedTime}</Text>
       </View>
     );
@@ -360,7 +476,7 @@ export default function ChampionshipGameCard({
           {/* Center */}
 
           <View style={styles.info}>
-            {renderStatus()}
+            {renderStatus(isMLB, isNBA, isMCBB, isWCBB, isNHL)}
             {!isFinal && broadcast ? (
               <Text style={styles.broadcast} numberOfLines={2}>
                 {broadcast}

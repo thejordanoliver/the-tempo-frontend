@@ -100,6 +100,143 @@ test("court themes and half-court layouts render real SVG primitives with shared
   h.stop();
 });
 
+test("free throws show the pulsing shot marker on the line instead of a missing-location zone", () => {
+  const h = setup();
+  h.modules["./BasketballCourt"] = {
+    default: "BasketballCourt",
+    __esModule: true,
+  };
+  h.modules["components/Sports/PlayByPlay/PlayLocationPulse"] = {
+    default: "PlayLocationPulse",
+    __esModule: true,
+  };
+  const Court = h.load(
+    "components/Sports/Basketball/GameDetails/PlayByPlay/BasketballPlayCourt.tsx",
+  ).default;
+  for (const [team, x] of [
+    [20, 75],
+    [6, 19],
+  ]) {
+    h.start(Court, [
+      {
+        play: {
+          team: { id: team },
+          type: { text: "Free Throw" },
+          courtPosition: null,
+          scoringPlay: true,
+          scoreValue: 1,
+        },
+        homeId: 20,
+        awayId: 6,
+        homeColor: "#552583",
+        awayColor: "#007ac1",
+        markerColor: "#552583",
+        active: true,
+      },
+    ]);
+    const point = geometry.projectBasketballCourtPoint(x, 25);
+    const all = nodes(h.state);
+    const marker = all.find(
+      (node) =>
+        node.type === "Ellipse" &&
+        node.props.fill === "#1d1d1d" &&
+        node.props.stroke === "#ffffff",
+    );
+    assert.ok(marker);
+    assert.equal(marker.props.cx, point.x);
+    assert.equal(marker.props.cy, point.y);
+    assert.ok(
+      all.some(
+        (node) =>
+          node.type === "PlayLocationPulse" &&
+          node.props.x === point.x &&
+          node.props.y === point.y,
+      ),
+    );
+    assert.equal(
+      all.some((node) => node.props?.strokeDasharray === "6 5"),
+      false,
+    );
+  }
+  h.stop();
+});
+
+test("made shots pass through either rim and exit below the net; misses stay above the rim", () => {
+  const h = setup();
+  const progress = { value: 0 };
+  h.modules["hooks/BasketballHooks/useBasketballAnimation"] = {
+    useBasketballAnimation: () => ({ progress, reducedMotion: false }),
+  };
+  h.modules["./BasketballCourt"] = {
+    default: "BasketballCourt",
+    BasketballNet: "BasketballNet",
+    __esModule: true,
+  };
+  h.modules["components/Sports/PlayByPlay/PlayLocationPulse"] = {
+    default: "PlayLocationPulse",
+    __esModule: true,
+  };
+  const Court = h.load(
+    "components/Sports/Basketball/GameDetails/PlayByPlay/BasketballPlayCourt.tsx",
+  ).default;
+  for (const [team, x] of [
+    [20, 75],
+    [6, 19],
+  ]) {
+    const rim = geometry.basketballBasketPoint(team === 20);
+    for (const made of [true, false]) {
+      const play = {
+        team: { id: team },
+        type: { text: "Jump Shot" },
+        courtPosition: { x, y: 25 },
+        shootingPlay: true,
+        scoringPlay: made,
+        scoreValue: made ? 2 : 0,
+      };
+      let previousY = -Infinity;
+      for (const value of [0.78, 0.85, 0.93, 1]) {
+        progress.value = value;
+        h.start(Court, [
+          {
+            play,
+            homeId: 20,
+            awayId: 6,
+            homeColor: "#552583",
+            awayColor: "#007ac1",
+            markerColor: "#552583",
+          },
+        ]);
+        const all = nodes(h.state);
+        const ball = all.find(
+          (node) =>
+            node.type === "G" &&
+            node.props.animatedProps &&
+            nodes(node.props.children).some(
+              (child) => child.type === "Circle" && child.props.r === 7,
+            ),
+        );
+        assert.ok(ball?.props.animatedProps);
+        const [, , , , ballX, ballY] = ball.props.animatedProps.matrix;
+        if (made) {
+          assert.ok(Math.abs(ballX - rim.x) < 1e-8);
+          assert.ok(ballY > previousY);
+          previousY = ballY;
+          if (value === 0.85) assert.ok(ballY > rim.y && ballY < rim.y + 15);
+          if (value === 1) assert.ok(ballY - 7 > rim.y + 15);
+          assert.ok(all.some((node) => node.type === "BasketballNet"));
+        } else if (value === 1) {
+          assert.equal(ballY, rim.y - 7);
+          assert.equal(
+            all.some((node) => node.type === "BasketballNet"),
+            false,
+          );
+        }
+      }
+    }
+  }
+  h.stop();
+});
+
 test("chart touch selection, screen reader adjustment, and resizing inspect actual observations", async () => {
   const h = setup();
   const points = [

@@ -112,10 +112,10 @@ export default function BasketballGameWidget({
   const gameDate = safeDate(game?.date);
   const holidayLabel = getHolidayLabel(gameDate);
 
-  const clock = game?.status.clock;
+  const clock = game?.status.displayClock;
   const period = formatPeriod({
     period: game?.status.period ?? 0,
-    isMCBB: isMCBB || isWCBB,
+    isMCBB: isMCBB,
   });
 
   const state = game.status.state ?? "";
@@ -132,6 +132,8 @@ export default function BasketballGameWidget({
   const endOfPeriod = gameStatusDescription === "End of Period";
   const headlineText = game?.headline;
   const headline = headlineText || holidayLabel;
+    const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;
+    const isSuspended = gameStatusDescription === "Suspended";
   const broadcast = getBroadcastDisplay(game.broadcasts);
   const showBroadcast = Boolean(broadcast) && (!isSmallLayout || height >= 180);
 
@@ -206,40 +208,41 @@ export default function BasketballGameWidget({
     </View>
   );
 
-  const renderStatus = () => {
-    if (inProgress)
-      return (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{period}</Text>
-          <View style={styles.divider} />
-          <Text style={styles.clock}>{clock}</Text>
-        </View>
-      );
+   const renderStatus = () => {
+     if (inProgress)
+       return (
+         <View style={styles.infoWrapper}>
+           <Text style={styles.period}>{period}</Text>
+           <View style={styles.divider} />
+           <Text style={styles.clock}>{clock}</Text>
+         </View>
+       );
 
-    if (isDelayed || isCanceled || isPostponed || isForfeited)
-      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
+     if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
+       return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
-    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+     if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
-    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
+     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
 
-    if (isFinal)
-      return (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
-          <View style={styles.finalDivder} />
-          <Text style={styles.finalText}>{formattedDate}</Text>
-        </View>
-      );
+     if (isFinal)
+       return (
+         <View style={styles.infoWrapper}>
+           <Text style={styles.finalText}>{gameStatusDetail}</Text>
+           <View style={styles.finalDivder} />
+           <Text style={styles.finalText}>{formattedDate}</Text>
+         </View>
+       );
 
-    return (
-      <View style={styles.infoWrapper}>
-        <Text style={styles.dateTime}>{formattedDate}</Text>
-        <View style={styles.divider} />
-        <Text style={styles.dateTime}>{formattedTime}</Text>
-      </View>
-    );
-  };
+     return (
+       <View style={styles.infoWrapper}>
+         <Text style={styles.dateTime}>{formattedDate}</Text>
+         <View style={styles.divider} />
+         <Text style={styles.dateTime}>{tbd || formattedTime}</Text>
+       </View>
+     );
+   };
+
 
   // -------------------------
   // Render widget

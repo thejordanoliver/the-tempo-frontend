@@ -1,4 +1,3 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -17,6 +16,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
@@ -107,8 +107,6 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const awayRecord = game.away.record;
   const homeRank = game.home.homeRank;
   const awayRank = game.away.awayRank;
-  const isTopInning = gameStatusDetail.includes("Top");
-  const isBottomInning = gameStatusDetail.includes("Bot");
   const headline = game.headline ?? holidayLabel;
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
@@ -167,54 +165,44 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const renderStatus = () => {
     return (
       <View>
-        {/* ⚾ Scheduled */}
+        {/* Scheduled */}
         {isScheduled && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.date}>{formattedDate}</Text>
-            <View style={styles.statusDivider} />
-            <Text style={styles.date}>{tbd || formattedTime}</Text>
-          </View>
+          <>
+            <View style={styles.infoWrapper}>
+              <Text style={styles.date}>{formattedDate}</Text>
+              <View style={styles.statusDivider} />
+              <Text style={styles.date}>{tbd || formattedTime}</Text>
+            </View>
+            <Text style={styles.broadcast}>{broadcast}</Text>
+          </>
         )}
 
-        {/* 🕒 In Progress */}
+        {/* In Progress */}
         {inProgress && !isDelayed && !isEndOfInning && (
-          <View>
+          <>
             <View style={styles.infoWrapper}>
-              {isTopInning && (
-                <Ionicons
-                  name={"caret-up"}
-                  size={10}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              )}
-              {isBottomInning && (
-                <Ionicons
-                  name={"caret-down"}
-                  size={10}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              )}
               <Text style={styles.date}>{gameStatusDetail}</Text>
-
               <View style={styles.statusDivider} />
               <View style={styles.outsContainer}>{getOuts}</View>
             </View>
             <View style={styles.basesContainer}>
               <BasesIndicator size={8} bases={bases} isDark={isDark} />
             </View>
-          </View>
+            <Text style={styles.broadcast}>{broadcast}</Text>
+          </>
         )}
 
-        {/* 🕒 In Progress */}
+        {/* End of Inning */}
         {isEndOfInning && (
-          <View>
+          <>
             <View style={styles.infoWrapper}>
               <Text style={styles.finalText}>{gameStatusDetail}</Text>
             </View>
-          </View>
+            <Text style={styles.broadcast}>{broadcast}</Text>
+          </>
         )}
 
-        {/* 🏁 Final */}
+        {/* Final */}
         {isFinal && (
           <View style={styles.infoWrapper}>
             <Text style={styles.finalText}>{gameStatusDetail}</Text>
@@ -223,39 +211,12 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
           </View>
         )}
 
-        {/* ❌ Canceled */}
-        {isCanceled && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Canceled</Text>
-          </View>
-        )}
-
-        {/* ❌ Forfeited */}
-        {isForfeited && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Forfeited</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Suspended */}
-        {isSuspended && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Suspended</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Postponed */}
-        {isPostponed && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Postponed</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Delayed */}
-        {isDelayed && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Delayed</Text>
-          </View>
+        {(isDelayed ||
+          isCanceled ||
+          isPostponed ||
+          isForfeited ||
+          isSuspended) && (
+          <Text style={styles.finalText}>{gameStatusDescription}</Text>
         )}
       </View>
     );
@@ -319,12 +280,7 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
       </View>
 
       {/* Game Info */}
-      <View style={styles.info}>
-        {renderStatus()}
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
-      </View>
+      <View style={styles.info}>{renderStatus()}</View>
     </>
   );
 

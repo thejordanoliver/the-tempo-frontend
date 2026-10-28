@@ -108,6 +108,50 @@ test("only valid normalized positions become accurate markers; missing positions
   assert.equal(assist.trajectory, null);
 });
 
+test("free throws use the correct fixed line for either team without requiring feed coordinates", () => {
+  for (const [team, x] of [
+    [20, 75],
+    [6, 19],
+  ]) {
+    for (const courtPosition of [null, { x: 0, y: 0 }, { x: -1, y: 25 }]) {
+      const freeThrow = basketballAnimationScene(
+        event("ft", {
+          team: { id: team },
+          type: { id: "1", text: "Free Throw 1 of 2" },
+          scoreValue: 1,
+          shootingPlay: false,
+          courtPosition,
+        }),
+        20,
+        6,
+      );
+      assert.equal(freeThrow.atFreeThrowLine, true);
+      assert.deepEqual(freeThrow.point, projectBasketballCourtPoint(x, 25));
+      assert.deepEqual(freeThrow.trajectory?.start, freeThrow.point);
+      assert.deepEqual(
+        freeThrow.trajectory?.end,
+        basketballBasketPoint(team === 20),
+      );
+      assert.equal(
+        freeThrow.locationLabel,
+        "Free-throw line · Illustrative arc",
+      );
+    }
+  }
+  const unknown = basketballAnimationScene(
+    event("ft", {
+      team: { id: 99 },
+      type: { id: "1", text: "Free Throw" },
+      courtPosition: null,
+    }),
+    20,
+    6,
+  );
+  assert.equal(unknown.atFreeThrowLine, false);
+  assert.equal(unknown.point, null);
+  assert.equal(unknown.trajectory, null);
+});
+
 test("full and half courts share geometry and keep the shot target aligned with the elevated rim", () => {
   assert.equal(basketballCourtViewport("full").viewBox, "-20 -8 1040 266");
   assert.equal(basketballCourtViewport("half", true).viewBox, "500 -8 520 266");

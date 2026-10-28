@@ -6,15 +6,8 @@ import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import React, { useMemo, useState } from "react";
-import {
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-  ViewStyle,
-} from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import { MMAFight } from "types/mma/mma";
@@ -93,68 +86,50 @@ export default function GamesList({
     return wrapper(<MMAStackedGameCard game={game as MMAFight} />);
   };
 
-  const renderSkeletons = (count: number) => {
-    if (viewMode === "list") {
+  const renderSkeletons = useCallback(
+    (count: number) => {
+      if (viewMode === "list") {
+        return (
+          <View style={styles.skeletonWrapper}>
+            {Array.from({ length: count }).map((_, i) => (
+              <GameCardSkeleton key={`list-skel-${i}`} />
+            ))}
+          </View>
+        );
+      }
+
+      if (viewMode === "grid") {
+        const pairs: number[][] = [];
+        for (let i = 0; i < count; i += 2) {
+          pairs.push(i + 1 < count ? [i, i + 1] : [i]);
+        }
+
+        return (
+          <View style={styles.skeletonGridWrapper}>
+            {pairs.map((pair, rowIndex) => (
+              <View key={`skel-row-${rowIndex}`} style={styles.gridRow}>
+                <SquareGameCardSkeleton style={{ flex: 1 }} />
+                {pair.length === 2 ? (
+                  <SquareGameCardSkeleton style={{ flex: 1 }} />
+                ) : (
+                  <View style={{ flex: 1 }} />
+                )}
+              </View>
+            ))}
+          </View>
+        );
+      }
+
       return (
         <View style={styles.skeletonWrapper}>
           {Array.from({ length: count }).map((_, i) => (
-            <GameCardSkeleton key={`list-skel-${i}`} />
+            <StackedGameCardSkeleton key={`stack-skel-${i}`} />
           ))}
         </View>
       );
-    }
-
-    if (viewMode === "grid") {
-      const skeletons = Array.from({ length: count }).map((_, i) => ({
-        _id: `grid-skel-${i}`,
-      }));
-
-      // Add placeholder if odd count
-      const dataWithPlaceholder =
-        count % 2 === 1
-          ? [...skeletons, { _id: `grid-skel-placeholder` }]
-          : skeletons;
-
-      return (
-        <FlatList
-          data={dataWithPlaceholder}
-          keyExtractor={(item) => item._id}
-          numColumns={2}
-          renderItem={({ item, index }) => {
-            if (item._id.includes("placeholder")) {
-              return (
-                <View
-                  style={[styles.gridItem, { backgroundColor: "transparent" }]}
-                />
-              );
-            }
-
-            const isLastOdd = count % 2 === 1 && index === count - 1;
-
-            const itemStyle: ViewStyle = {
-              flex: 1,
-              marginLeft: isLastOdd ? 12 : index % 2 === 0 ? 12 : 6,
-              marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
-            };
-
-            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
-          }}
-          scrollEnabled={false}
-          contentContainerStyle={navigationContentStyle(
-            styles.skeletonGridWrapper,
-          )}
-        />
-      );
-    }
-
-    return (
-      <View style={styles.skeletonWrapper}>
-        {Array.from({ length: count }).map((_, i) => (
-          <StackedGameCardSkeleton key={`stack-skel-${i}`} />
-        ))}
-      </View>
-    );
-  };
+    },
+    [viewMode, styles],
+  );
 
   // Wait for the saved layout before mounting cards in the wrong layout.
   if (!viewModeReady) return null;

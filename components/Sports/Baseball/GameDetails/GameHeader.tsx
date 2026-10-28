@@ -97,17 +97,15 @@ export default function GameHeader({
         />
 
         <CenterInfo
-          state={state}
-          gameStatusDescription={gameStatusDescription}
-          gameStatusDetail={gameStatusDetail}
           date={date}
           time={time}
-          isDark={isDark}
-          broadcast={broadcast}
-          isTopInning={isTopInning}
-          isBottomInning={isBottomInning}
           outs={outs}
           bases={bases}
+          state={state}
+          isDark={isDark}
+          broadcast={broadcast}
+          gameStatusDescription={gameStatusDescription}
+          gameStatusDetail={gameStatusDetail}
         />
 
         <TeamRow

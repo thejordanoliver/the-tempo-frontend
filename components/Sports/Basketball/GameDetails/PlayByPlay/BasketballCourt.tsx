@@ -53,6 +53,17 @@ const centerTop = project(47, 0);
 
 const centerBottom = project(47, 50);
 
+export function BasketballNet({ x, y }: { x: number; y: number }) {
+  return (
+    <Path
+      d={`M${x - 8} ${y + 1} L${x - 5} ${y + 15} H${x + 5} L${x + 8} ${y + 1} M${x - 5} ${y + 2} L${x + 3} ${y + 15} M${x} ${y + 2} L${x - 4} ${y + 15} M${x + 5} ${y + 2} L${x - 2} ${y + 15} M${x - 7} ${y + 6} H${x + 7} M${x - 6} ${y + 11} H${x + 6}`}
+      fill="none"
+      stroke={Colors.white}
+      strokeWidth={1.3}
+    />
+  );
+}
+
 function BasketballCourt({
   homeLogo,
   homeColor,
@@ -289,12 +300,7 @@ function BasketballCourt({
                 fill={Colors.white}
                 fillOpacity={0.7}
               />
-              <Path
-                d={`M${rim.x - 8} ${rimY + 1} L${rim.x - 5} ${rimY + 15} H${rim.x + 5} L${rim.x + 8} ${rimY + 1} M${rim.x - 5} ${rimY + 2} L${rim.x + 3} ${rimY + 15} M${rim.x} ${rimY + 2} L${rim.x - 4} ${rimY + 15} M${rim.x + 5} ${rimY + 2} L${rim.x - 2} ${rimY + 15} M${rim.x - 7} ${rimY + 6} H${rim.x + 7} M${rim.x - 6} ${rimY + 11} H${rim.x + 6}`}
-                fill="none"
-                stroke={Colors.white}
-                strokeWidth={1.3}
-              />
+              <BasketballNet x={rim.x} y={rimY} />
               <Ellipse
                 cx={rim.x}
                 cy={rimY}

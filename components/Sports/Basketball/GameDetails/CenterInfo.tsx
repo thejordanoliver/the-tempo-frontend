@@ -29,7 +29,7 @@ export function CenterInfo({
   const inProgress = state === "in";
   const isFinal = state === "post";
   const isScheduled = gameStatusDescription === "Scheduled";
-  const endOfPeriod = gameStatusDescription === "End of Period";
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isForfeited = gameStatusDescription === "Forfeit";
@@ -46,7 +46,7 @@ export function CenterInfo({
         </View>
       )}
 
-      {inProgress && !endOfPeriod && !isHalftime && (
+      {inProgress && !isEndOfPeriod && !isHalftime && (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{period}</Text>
           <View style={styles.statusDivider} />
@@ -62,7 +62,7 @@ export function CenterInfo({
         </View>
       )}
 
-      {endOfPeriod && (
+      {isEndOfPeriod && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>End of {period}</Text>
         </View>
@@ -72,24 +72,9 @@ export function CenterInfo({
           <Text style={styles.finalText}>Halftime</Text>
         </View>
       )}
-      {isCanceled && (
+      {(isCanceled || isForfeited || isDelayed || isPostponed) && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Canceled</Text>
-        </View>
-      )}
-      {isForfeited && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Forfeited</Text>
-        </View>
-      )}
-      {isDelayed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Delayed</Text>
-        </View>
-      )}
-      {isPostponed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
+          <Text style={styles.finalText}>{gameStatusShortDescription}</Text>
         </View>
       )}
 

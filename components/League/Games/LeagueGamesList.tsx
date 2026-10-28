@@ -448,6 +448,7 @@ export default function LeagueGamesList({
                 {game.league && BASKETBALL_LEAGUES.has(game.league) && (
                   <ChampionshipGameCard
                     game={game.game as BasketballGame}
+                    isNBA={game.league === "nba"}
                     isMCBB={game.league === "mcbb"}
                     isWCBB={game.league === "wcbb"}
                     isWNBA={game.league === "wnba"}

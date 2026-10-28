@@ -135,8 +135,9 @@ export default function BasketballSquareGameCard({
 
   const period = formatPeriod({
     period: game.status.period,
-    isMCBB: isMCBB || isWCBB,
+    isMCBB: isMCBB,
   });
+
   const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;

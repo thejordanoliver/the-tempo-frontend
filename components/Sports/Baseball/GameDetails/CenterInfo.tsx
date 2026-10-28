@@ -11,8 +11,6 @@ type CenterInfoProps = {
   date: string;
   time: string;
   isDark: boolean;
-  isTopInning: boolean;
-  isBottomInning: boolean;
   broadcast?: string;
   outs: number;
   bases: {
@@ -30,8 +28,6 @@ export function CenterInfo({
   time,
   isDark,
   broadcast,
-  isTopInning,
-  isBottomInning,
   outs,
   bases,
 }: CenterInfoProps) {
@@ -73,22 +69,7 @@ export function CenterInfo({
       {inProgress && !isDelayed && !isEndOfInning && (
         <View>
           <View style={styles.infoWrapper}>
-            {isTopInning && (
-              <Ionicons
-                name={"caret-up"}
-                size={10}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            )}
-            {isBottomInning && (
-              <Ionicons
-                name={"caret-down"}
-                size={10}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            )}
             <Text style={styles.date}>{gameStatusDetail}</Text>
-
             <View style={styles.statusDivider} />
             <View style={styles.outsContainer}>{getOuts}</View>
           </View>
@@ -116,39 +97,17 @@ export function CenterInfo({
         </View>
       )}
 
-      {/* ❌ Canceled */}
-      {isCanceled && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Canceled</Text>
-        </View>
+      {(isDelayed ||
+        isCanceled ||
+        isPostponed ||
+        isForfeited ||
+        isSuspended) && (
+        <Text style={styles.finalText}>{gameStatusDescription}</Text>
       )}
 
-      {/* ❌ Forfeited */}
-      {isForfeited && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Forfeited</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Suspended */}
-      {isSuspended && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Suspended</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Postponed */}
-      {isPostponed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Delayed */}
-      {isDelayed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Delayed</Text>
-        </View>
+      {/* 📺 Broadcast */}
+      {broadcast && (inProgress || isScheduled) && (
+        <Text style={styles.broadcasts}>{broadcast}</Text>
       )}
     </View>
   );

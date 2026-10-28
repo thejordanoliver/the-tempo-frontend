@@ -147,7 +147,7 @@ export default function BasketballGameCard({
 
   const period = formatPeriod({
     period: game.status.period,
-    isMCBB: isMCBB || isWCBB,
+    isMCBB: isMCBB,
   });
 
   const clock = game.status.displayClock;

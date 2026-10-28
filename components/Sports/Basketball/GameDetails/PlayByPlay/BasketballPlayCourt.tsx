@@ -8,9 +8,37 @@ import Animated, { useAnimatedProps } from "react-native-reanimated";
 import { Circle, Ellipse, G, Path, Text as SvgText } from "react-native-svg";
 import { basketballAnimationScene } from "utils/sports/basketball/basketballAnimationScene";
 import { projectBasketballCourtPoint as project } from "utils/sports/basketball/basketballCourtGeometry";
-import BasketballCourt from "./BasketballCourt";
+import BasketballCourt, { BasketballNet } from "./BasketballCourt";
 
 const AnimatedGroup = Animated.createAnimatedComponent(G);
+
+function MissMarker({
+  x,
+  y,
+  isDark,
+}: {
+  x: number;
+  y: number;
+  isDark: boolean;
+}) {
+  const cross = "M-6 -6L6 6M6 -6L-6 6";
+  return (
+    <G transform={`translate(${x} ${y})`}>
+      <Path
+        d={cross}
+        stroke={isDark ? Colors.black : Colors.white}
+        strokeWidth={6}
+        strokeLinecap="round"
+      />
+      <Path
+        d={cross}
+        stroke={isDark ? Colors.dark.lightRed : Colors.light.red}
+        strokeWidth={3.5}
+        strokeLinecap="round"
+      />
+    </G>
+  );
+}
 
 function BasketballPlayCourt({
   play,
@@ -49,19 +77,23 @@ function BasketballPlayCourt({
   const endY = trajectory?.end.y ?? startY;
   const controlX = trajectory?.control.x ?? startX;
   const controlY = trajectory?.control.y ?? startY;
+  const madeShot = scene.isShot && scene.made && !scene.blocked;
   const movingBall = useAnimatedProps(() => {
-    const t = progress.value,
+    // Reserve the last part of a make for a downward pass through the net.
+    const t = madeShot ? Math.min(progress.value / 0.78, 1) : progress.value,
       inverse = 1 - t;
     const rimOffset = 7 * Math.max(0, (t - 0.85) / 0.15);
     const x =
       inverse * inverse * startX + 2 * inverse * t * controlX + t * t * endX;
+    const drop = madeShot ? Math.max(0, (progress.value - 0.78) / 0.22) : 0;
     const y =
       inverse * inverse * startY +
       2 * inverse * t * controlY +
       t * t * endY -
-      rimOffset;
+      rimOffset +
+      drop * 34;
     return { matrix: [1, 0, 0, 1, x, y], opacity: 1 };
-  }, [startX, startY, endX, endY, controlX, controlY]);
+  }, [startX, startY, endX, endY, controlX, controlY, madeShot]);
   const eventGlow = useAnimatedProps(() => ({
     opacity: 0.12 + (1 - progress.value) * 0.24,
   }));
@@ -80,6 +112,7 @@ function BasketballPlayCourt({
         : awayColor
       : markerColor;
   const textColor = isDark ? Colors.white : Colors.black;
+  const missedShot = scene.isShot && !scene.made && !scene.blocked;
   const result = scene.isShot
     ? scene.blocked
       ? "BLOCKED"
@@ -131,12 +164,12 @@ function BasketballPlayCourt({
               </AnimatedGroup>
             </G>
           ) : null}
-          {point && !scene.located ? (
+          {point && !scene.located && !scene.atFreeThrowLine ? (
             <AnimatedGroup animatedProps={eventGlow}>
               <Ellipse
                 cx={point.x}
                 cy={point.y}
-                rx={scene.kind === "free-throw" ? 32 : 70}
+                rx={70}
                 ry={28}
                 fill={color}
                 stroke={color}
@@ -157,7 +190,7 @@ function BasketballPlayCourt({
               />
               <AnimatedGroup
                 animatedProps={movingBall}
-                transform={`translate(${endX} ${endY - 7})`}
+                transform={`translate(${endX} ${endY + (madeShot ? 27 : -7)})`}
               >
                 <Circle
                   r={7}
@@ -172,7 +205,24 @@ function BasketballPlayCourt({
                   strokeWidth={0.6}
                 />
               </AnimatedGroup>
-              {!scene.made ? (
+              {madeShot ? (
+                <G>
+                  <BasketballNet x={endX} y={endY} />
+                  <Path
+                    d={`M${endX - 9} ${endY} A9 3.2 0 0 0 ${endX + 9} ${endY}`}
+                    fill="none"
+                    stroke={Colors.light.orange}
+                    strokeWidth={2.2}
+                  />
+                </G>
+              ) : null}
+              {missedShot ? (
+                <MissMarker
+                  x={endX + (scene.home ? -22 : 22)}
+                  y={endY - 14}
+                  isDark={isDark}
+                />
+              ) : scene.blocked ? (
                 <SvgText
                   x={endX + (scene.home ? -12 : 12)}
                   y={endY - 12}
@@ -199,7 +249,7 @@ function BasketballPlayCourt({
               ) : null}
             </G>
           ) : null}
-          {point && scene.located ? (
+          {point && (scene.located || scene.atFreeThrowLine) ? (
             <G>
               {active && !reducedMotion ? (
                 <PlayLocationPulse
@@ -236,19 +286,30 @@ function BasketballPlayCourt({
                   fill={color}
                 />
               </AnimatedGroup>
-              <SvgText
-                x={
-                  point?.x ??
-                  (layout === "half" ? (scene.home ? 730 : 270) : 500)
-                }
-                y={(point?.y ?? 140) - 18}
-                textAnchor="middle"
-                fill={textColor}
-                fontWeight="bold"
-                fontSize={16}
-              >
-                {result}
-              </SvgText>
+              {missedShot ? (
+                <MissMarker
+                  x={
+                    point?.x ??
+                    (layout === "half" ? (scene.home ? 730 : 270) : 500)
+                  }
+                  y={(point?.y ?? 140) - 18}
+                  isDark={isDark}
+                />
+              ) : (
+                <SvgText
+                  x={
+                    point?.x ??
+                    (layout === "half" ? (scene.home ? 730 : 270) : 500)
+                  }
+                  y={(point?.y ?? 140) - 18}
+                  textAnchor="middle"
+                  fill={textColor}
+                  fontWeight="bold"
+                  fontSize={16}
+                >
+                  {result}
+                </SvgText>
+              )}
             </G>
           ) : null}
         </G>

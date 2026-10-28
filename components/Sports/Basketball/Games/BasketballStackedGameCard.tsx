@@ -1,8 +1,6 @@
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import {
-  getMCBBTeam,
   getMCBBRivalry,
+  getMCBBTeam,
   getMCBBTeamLogo,
 } from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
@@ -10,11 +8,13 @@ import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import {
-  getWCBBTeam,
   getWCBBRivalry,
+  getWCBBTeam,
   getWCBBTeamLogo,
 } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useScopedRouter } from "hooks/useScopedRouter";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -130,8 +130,9 @@ export default function BasketballStackedGameCard({
 
   const period = formatPeriod({
     period: game.status.period,
-    isMCBB: isMCBB || isWCBB,
+    isMCBB: isMCBB,
   });
+
   const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;

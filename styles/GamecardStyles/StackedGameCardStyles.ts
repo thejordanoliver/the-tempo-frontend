@@ -92,7 +92,6 @@ export const stackedGameCardStyles = (
       fontSize: 14,
       color: textColor,
       textAlign: "right",
-      fontVariant: ["tabular-nums"],
     },
     teamRecord: {
       flexShrink: 0,
@@ -100,7 +99,6 @@ export const stackedGameCardStyles = (
       fontSize: 14,
       color: textColor,
       textAlign: "right",
-      fontVariant: ["tabular-nums"],
     },
     info: {
       alignItems: "center",

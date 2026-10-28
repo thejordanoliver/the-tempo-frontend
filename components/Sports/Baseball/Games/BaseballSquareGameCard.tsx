@@ -108,8 +108,6 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const awayRecord = game.away.record;
   const homeRank = game.home.homeRank;
   const awayRank = game.away.awayRank;
-  const isTopInning = gameStatusDetail.includes("Top");
-  const isBottomInning = gameStatusDetail.includes("Bot");
   const headline = game.headline ?? holidayLabel;
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
@@ -173,6 +171,7 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
           <>
             <Text style={styles.date}>{formattedDate}</Text>
             <Text style={styles.date}>{tbd || formattedTime}</Text>
+            <Text style={styles.broadcast}>{broadcast}</Text>
           </>
         )}
 
@@ -180,35 +179,21 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
         {inProgress && !isDelayed && !isEndOfInning && (
           <>
             <View style={styles.infoWrapper}>
-              {isTopInning && (
-                <Ionicons
-                  name={"caret-up"}
-                  size={10}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              )}
-              {isBottomInning && (
-                <Ionicons
-                  name={"caret-down"}
-                  size={10}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              )}
               <Text style={styles.date}>{gameStatusDetail}</Text>
             </View>
             <View style={styles.basesContainer}>
               <BasesIndicator size={8} bases={bases} isDark={isDark} />
             </View>
             <View style={styles.infoWrapper}>{getOuts}</View>
+            <Text style={styles.broadcast}>{broadcast}</Text>
           </>
         )}
 
         {/* 🕒 In Progress */}
         {isEndOfInning && (
-          <View>
-            <View style={styles.infoWrapper}>
-              <Text style={styles.finalText}>{gameStatusDetail}</Text>
-            </View>
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>{gameStatusDetail}</Text>
+            <Text style={styles.broadcast}>{broadcast}</Text>
           </View>
         )}
 
@@ -220,39 +205,12 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
           </>
         )}
 
-        {/* ❌ Canceled */}
-        {isCanceled && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Canceled</Text>
-          </View>
-        )}
-
-        {/* ❌ Forfeited */}
-        {isForfeited && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Forfeited</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Suspended */}
-        {isSuspended && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Suspended</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Postponed */}
-        {isPostponed && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Postponed</Text>
-          </View>
-        )}
-
-        {/* ⏸️ Delayed */}
-        {isDelayed && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Delayed</Text>
-          </View>
+        {(isDelayed ||
+          isCanceled ||
+          isPostponed ||
+          isForfeited ||
+          isSuspended) && (
+          <Text style={styles.finalText}>{gameStatusDescription}</Text>
         )}
       </View>
     );
@@ -316,12 +274,7 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
       </View>
 
       {/* Game Info */}
-      <View style={styles.info}>
-        {renderStatus()}
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
-      </View>
+      <View style={styles.info}>{renderStatus()}</View>
     </>
   );
 

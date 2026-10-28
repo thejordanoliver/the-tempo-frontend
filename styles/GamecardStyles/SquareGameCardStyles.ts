@@ -93,15 +93,13 @@ export const SquareGameCardStyles = (
       fontSize: 14,
       color: textColor,
       textAlign: "right",
-      fontVariant: ["tabular-nums"],
     },
     teamRecord: {
       flexShrink: 0,
-      fontFamily: Fonts.REGULAR,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: textColor,
       textAlign: "right",
-      fontVariant: ["tabular-nums"],
     },
     info: {
       alignItems: "center",

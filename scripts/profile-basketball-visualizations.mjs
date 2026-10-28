@@ -1,4 +1,4 @@
-// Usage: node --import tsx scripts/profile-basketball-visualizations.mjs <normalized-game.json>
+import { Buffer } from "node:buffer";
 import fs from "node:fs";
 import { performance } from "node:perf_hooks";
 import {
