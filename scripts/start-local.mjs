@@ -61,9 +61,49 @@ export function updateEnvContents(contents, url) {
 }
 
 function main() {
-  const envPath = resolve(projectRoot, ".env.local");
+  // Expo must not automatically pick this up in subsequent hosted sessions.
+  const envPath = resolve(projectRoot, ".env.tempo-local");
   let lastIp;
   let lastError;
+  let child;
+  let stopping = false;
+  let restarting = false;
+  let timer;
+
+  const startExpo = () => {
+    const nextChild = spawn(
+      process.execPath,
+      [
+        resolve(projectRoot, "node_modules/expo/bin/cli"),
+        "start",
+        ...process.argv.slice(2),
+      ],
+      {
+        cwd: projectRoot,
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          EXPO_PUBLIC_API_URL: `http://${lastIp}:4000`,
+        },
+      },
+    );
+    child = nextChild;
+    nextChild.on("error", (error) => {
+      clearInterval(timer);
+      console.error(error.message);
+      process.exitCode = 1;
+    });
+    nextChild.on("exit", (code, signal) => {
+      if (restarting && !stopping) {
+        restarting = false;
+        startExpo();
+        return;
+      }
+      clearInterval(timer);
+      process.exitCode = code ?? (signal === "SIGINT" ? 130 : 1);
+    });
+  };
+
   const update = () => {
     const ip = detectLocalIp();
     if (ip === lastIp) return;
@@ -75,34 +115,23 @@ function main() {
       if (error.code !== "ENOENT") throw error;
     }
     writeFileSync(envPath, updateEnvContents(contents, url), { mode: 0o600 });
-    console.log(`[local API] .env.local updated: ${url}`);
-    if (lastIp)
-      console.log(
-        "[local API] Network address changed. Reload the app to use the new URL; reconnect to Expo if needed.",
-      );
+    console.log(`[local API] Using ${url} (saved to .env.tempo-local)`);
     lastIp = ip;
     lastError = undefined;
+    if (child && !restarting) {
+      console.log(
+        "[local API] Network address changed. Restarting Expo; reconnect the app using the new URL.",
+      );
+      restarting = true;
+      child.kill("SIGTERM");
+    }
   };
   update();
   if (process.argv.includes("--update-only")) return;
 
-  // Let Expo load the generated file, even if the parent shell had a stale URL.
-  const env = { ...process.env };
-  delete env.EXPO_PUBLIC_API_URL;
-  const child = spawn(
-    process.execPath,
-    [
-      resolve(projectRoot, "node_modules/expo/bin/cli"),
-      "start",
-      ...process.argv.slice(2),
-    ],
-    {
-      cwd: projectRoot,
-      stdio: "inherit",
-      env,
-    },
-  );
-  const timer = setInterval(() => {
+  // Expo preserves this process-only override while loading the normal .env files.
+  startExpo();
+  timer = setInterval(() => {
     try {
       update();
     } catch (error) {
@@ -113,19 +142,11 @@ function main() {
   }, 5000);
   for (const signal of ["SIGINT", "SIGTERM"]) {
     process.on(signal, () => {
+      stopping = true;
       clearInterval(timer);
       child.kill(signal);
     });
   }
-  child.on("error", (error) => {
-    clearInterval(timer);
-    console.error(error.message);
-    process.exitCode = 1;
-  });
-  child.on("exit", (code, signal) => {
-    clearInterval(timer);
-    process.exitCode = code ?? (signal === "SIGINT" ? 130 : 1);
-  });
 }
 
 if (

@@ -49,6 +49,7 @@ const TAB_ROUTE_FAMILIES = new Set([
   "season-leaders",
   "settings",
   "team",
+  "ticker",
   "user",
 ]);
 

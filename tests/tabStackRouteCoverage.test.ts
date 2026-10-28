@@ -190,3 +190,18 @@ test("external, relative, qualified, and unsupported paths remain unchanged", ()
   }
   assert.equal(scopeHrefToTab("/team/nfl/12", null), "/team/nfl/12?league=nfl");
 });
+
+expectRoutes("Profile exposes the ticker dashboard, discovery and settings", [
+  "app/(tabs)/(profile)/ticker/index.tsx",
+  "app/(tabs)/(profile)/ticker/add.tsx",
+  "app/(tabs)/(profile)/ticker/settings.tsx",
+]);
+
+test("ticker navigation stays in the Profile stack", () => {
+  for (const path of ["/ticker", "/ticker/add", "/ticker/settings"]) {
+    assert.equal(
+      scopeHrefToTab(path as Href, "(profile)"),
+      `/(tabs)/(profile)${path}`,
+    );
+  }
+});

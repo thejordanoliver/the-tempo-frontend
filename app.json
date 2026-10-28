@@ -11,7 +11,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.jordanoliver.thetempo",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSBluetoothAlwaysUsageDescription": "Tempo uses Bluetooth to discover and connect to your nearby Tempo Ticker."
       }
     },
     "android": {
