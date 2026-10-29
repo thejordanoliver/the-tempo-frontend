@@ -456,6 +456,21 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
+            <LineScore
+              linescore={lineScore}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeHits={homeHits}
+              awayHits={awayHits}
+              homeRuns={homeRuns}
+              awayRuns={awayRuns}
+              awayErrors={awayErrors}
+              homeErrors={homeErrors}
+              isDark={isDark}
+              state={state}
+              league={LEAGUE}
+            />
+
             <FanPrediction
               scoring={scoring}
               scoringError={scoringError}
@@ -490,21 +505,6 @@ export default function GameDetailsScreen(
               size={180}
               isDark={isDark}
               state={state}
-            />
-
-            <LineScore
-              linescore={lineScore}
-              homeCode={homeCode}
-              awayCode={awayCode}
-              homeHits={homeHits}
-              awayHits={awayHits}
-              homeRuns={homeRuns}
-              awayRuns={awayRuns}
-              awayErrors={awayErrors}
-              homeErrors={homeErrors}
-              isDark={isDark}
-              state={state}
-              league={LEAGUE}
             />
 
             <GameTeamStats

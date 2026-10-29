@@ -490,7 +490,14 @@ function PlayByPlay({
     return null;
   }
 
-  const outLabel = playInfo.outs === 1 ? "OUT" : "OUTS";
+  const half =
+    playInfo.half === "Bottom"
+      ? "Bot"
+      : playInfo.half === "Top"
+        ? "Top"
+        : playInfo.half;
+
+  const inning = playInfo.inning;
 
   return (
     <View style={styles.container}>
@@ -511,20 +518,13 @@ function PlayByPlay({
               />
             ) : null}
 
-            <Animated.Text
-              key={`header-${playInfo.playKey}`}
-              entering={reducedMotion ? undefined : FadeInDown.duration(180)}
-              exiting={reducedMotion ? undefined : FadeOutUp.duration(140)}
-              style={styles.titleText}
-              numberOfLines={1}
-              selectable
-            >
-              {playInfo.half ?? ""} {playInfo.inning ?? ""}
-              {" • "}
+            <Text style={styles.titleText}>
+              {half} {inning}
+            </Text>
+            <View style={styles.divider} />
+            <Text style={styles.titleText}>
               {playInfo.balls}-{playInfo.strikes}
-              {" • "}
-              {playInfo.outs ?? 0} {outLabel}
-            </Animated.Text>
+            </Text>
           </View>
 
           <View style={styles.headerMeta}>

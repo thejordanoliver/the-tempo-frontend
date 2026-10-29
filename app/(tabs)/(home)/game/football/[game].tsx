@@ -521,6 +521,27 @@ export default function GameDetailsScreen(
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
+            <PlayByPlay
+              gameStatus={score?.status}
+              awayCode={awayCode}
+              homeCode={homeCode}
+              awayName={awayName}
+              homeName={homeName}
+              awayLogo={awayLogo}
+              homeLogo={homeLogo}
+              awayTeamId={awayId}
+              homeTeamId={homeId}
+              awayColor={awayColor}
+              homeColor={homeColor}
+              drives={drives}
+              play={fieldPlay}
+              showPlay={Boolean(fieldPlay)}
+              isDark={isDark}
+              state={state}
+              league={LEAGUE}
+              neutralSite={neutralSite}
+            />
+
             <LineScore
               linescore={lineScore}
               homeCode={homeCode}
@@ -546,27 +567,6 @@ export default function GameDetailsScreen(
               homeLogo={homeLogo}
               homeColor={homeColor}
               state={state}
-            />
-
-            <PlayByPlay
-              gameStatus={score?.status}
-              awayCode={awayCode}
-              homeCode={homeCode}
-              awayName={awayName}
-              homeName={homeName}
-              awayLogo={awayLogo}
-              homeLogo={homeLogo}
-              awayTeamId={awayId}
-              homeTeamId={homeId}
-              awayColor={awayColor}
-              homeColor={homeColor}
-              drives={drives}
-              play={fieldPlay}
-              showPlay={Boolean(fieldPlay)}
-              isDark={isDark}
-              state={state}
-              league={LEAGUE}
-              neutralSite={neutralSite}
             />
 
             <MatchupPredictor

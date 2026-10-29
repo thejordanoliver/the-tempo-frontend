@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { memo, useId, useMemo, type ReactNode } from "react";
-import { type ImageSourcePropType, View } from "react-native";
+import { View, type ImageSourcePropType } from "react-native";
 import Svg, {
   ClipPath,
   Defs,
@@ -16,8 +16,8 @@ import {
   BASKETBALL_RIM_HEIGHT,
   basketballBasketPoint,
   basketballCourtViewport,
-  projectBasketballRaisedPoint,
   projectBasketballCourtPoint as project,
+  projectBasketballRaisedPoint,
 } from "utils/sports/basketball/basketballCourtGeometry";
 
 function points(coords: number[][]) {
@@ -332,4 +332,5 @@ function BasketballCourt({
     </View>
   );
 }
+
 export default memo(BasketballCourt);

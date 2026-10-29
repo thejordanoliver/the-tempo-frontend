@@ -118,7 +118,8 @@ export const PlayByPlayStyles = (isDark: boolean) =>
 
     divider: {
       width: 1,
-      height: 14,
+      height: 22,
+      marginHorizontal: 2,
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
     eyebrow: {

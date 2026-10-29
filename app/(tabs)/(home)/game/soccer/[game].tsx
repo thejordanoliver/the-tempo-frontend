@@ -215,6 +215,7 @@ export default function GameDetailsScreen(
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
   const shotMap = score?.shotMap ?? [];
+  const events = score?.playByPlay;
   const keyEvents = score?.keyEvents ?? [];
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
@@ -350,6 +351,19 @@ export default function GameDetailsScreen(
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
+            <SoccerPlayByPlay
+              key={gameId}
+              events={events}
+              awayId={awayId}
+              homeId={homeId}
+              awayCode={awayCode}
+              homeCode={homeCode}
+              awayLogo={awayLogo}
+              homeLogo={homeLogo}
+              isDark={isDark}
+              state={state}
+            />
+
             <LineScore
               linescore={lineScore}
               homeCode={homeCode}
@@ -374,19 +388,6 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               homeLogo={homeLogo}
               homeColor={homeColor}
-              state={state}
-            />
-
-            <SoccerPlayByPlay
-              key={gameId}
-              events={score?.playByPlay}
-              awayId={awayId}
-              homeId={homeId}
-              awayCode={awayCode}
-              homeCode={homeCode}
-              awayLogo={awayLogo}
-              homeLogo={homeLogo}
-              isDark={isDark}
               state={state}
             />
 
