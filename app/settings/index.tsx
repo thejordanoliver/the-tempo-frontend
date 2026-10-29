@@ -180,6 +180,23 @@ export default function SettingsScreen() {
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
             style={styles.optionButton}
+            accessibilityRole="button"
+            accessibilityLabel="My Ticker"
+            onPress={() => router.push("/(tabs)/(profile)/ticker")}
+          >
+            <Text style={styles.optionText}>My Ticker</Text>
+
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.optionButtonContainer}>
+          <TouchableOpacity
+            style={styles.optionButton}
             onPress={() => router.push("/settings/blocked-users")}
           >
             <Text style={styles.optionText}>Blocked Accounts</Text>

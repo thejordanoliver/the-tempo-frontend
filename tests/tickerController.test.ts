@@ -4,13 +4,13 @@ import { createTickerController } from "../services/ticker/controller";
 import type { TickerTransport } from "../services/ticker/transport";
 import type { TickerBluetoothState, TickerDevice } from "../types/ticker";
 
-const device = { id: "iphone-peripheral-id", name: "Tempo-Ticker-A1B2" };
+const device = { id: "device-peripheral-id", name: "Tempo-Ticker-A1B2" };
 const tick = () => new Promise<void>((resolve) => setImmediate(resolve));
 const statusFrame = () =>
   Uint8Array.from([
     1, 3, 0, 0, 0, 0, 15, 50, 1, 1, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0,
   ]);
-function harness(authorized = true) {
+function harness(authorized = true, extended = false) {
   let notify: (bytes: Uint8Array) => void = () => {};
   let lose: () => void = () => {};
   let stateChange: (state: TickerBluetoothState) => void = () => {};
@@ -24,6 +24,16 @@ function harness(authorized = true) {
   let removed = 0;
   let connects = 0;
   const live = statusFrame();
+  if (extended) {
+    live[0] = 2;
+    live[6] = 127;
+    live[11] = 0;
+    live[12] = 3;
+    live[13] = 0;
+    live[14] = 2;
+    live[15] = 6;
+    live[16] = 1;
+  }
   const transport: TickerTransport = {
     async prepare(callback) {
       stateChange = callback;
@@ -58,6 +68,9 @@ function harness(authorized = true) {
       if (!ack) return;
       if (frame[4] === 3) live[7] = frame[5];
       if (frame[4] === 4) live[8] = frame[5];
+      if (frame[4] === 7) live[14] = frame[5] ? 2 : 1;
+      if (frame[4] === 8) live[15] = frame[5];
+      if (frame[4] === 9) live[16] = frame[5] ? 2 : 1;
       const response = live.slice();
       response[1] = 2;
       response[2] = frame[2];
@@ -75,6 +88,7 @@ function harness(authorized = true) {
     transport,
     { verify: async () => authorized },
     { command: 50, connection: 150, scan: 100 },
+    { authorizeOnConnect: true },
   );
   return {
     controller,
@@ -129,7 +143,7 @@ test("production authorization defaults to denied despite valid UUID and protoco
     false,
   );
   assert.equal(h.writes.length, before);
-  assert.match(production.store.getState().error!, /Authorization required/);
+  assert.match(production.store.getState().error!, /Unlock controls/);
   await production.dispose();
 });
 test("brightness waits for matching acknowledgment and updates only on confirmation", async () => {
@@ -272,7 +286,7 @@ test("permission denied and Bluetooth off have actionable messages", async () =>
     assert.equal(h.controller.store.getState().bluetooth, state);
     assert.match(
       h.controller.store.getState().error!,
-      /Settings|physical iPhone/,
+      /Settings|physical device/,
     );
     await h.controller.dispose();
   }
@@ -400,5 +414,170 @@ test("malformed notifications fail closed and clear authorization", async () => 
   assert.equal(h.controller.store.getState().connection, "error");
   assert.equal(h.controller.store.getState().authorized, false);
   assert.equal(h.controller.store.getState().settings, null);
+  await h.controller.dispose();
+});
+
+test("production connection waits for explicit Unlock controls before authorization", async () => {
+  const h = harness();
+  let verifications = 0;
+  const c = createTickerController(h.transport, {
+    verify: async () => {
+      verifications++;
+      return true;
+    },
+  });
+  assert.equal(await c.connect(device), true);
+  assert.equal(c.store.getState().authorized, false);
+  assert.equal(verifications, 0);
+  assert.equal(await c.command({ type: "set_brightness", value: 75 }), false);
+  assert.equal(await c.authorize(), true);
+  assert.equal(c.store.getState().authorized, true);
+  assert.equal(verifications, 1);
+  assert.equal(await c.command({ type: "set_brightness", value: 75 }), true);
+  await c.dispose();
+});
+
+test("failed or cancelled pairing stays locked and supports retry", async () => {
+  const h = harness();
+  let allow = false;
+  const c = createTickerController(h.transport, {
+    verify: async () => {
+      if (!allow) throw new Error("Pairing cancelled");
+      return true;
+    },
+  });
+  await c.connect(device);
+  assert.equal(await c.authorize(), false);
+  assert.equal(c.store.getState().authorized, false);
+  assert.equal(c.store.getState().authorizing, false);
+  assert.match(c.store.getState().error!, /Pairing cancelled/);
+  allow = true;
+  assert.equal(await c.authorize(), true);
+  await c.dispose();
+});
+
+test("pairing timeout and a late native result never unlock controls", async () => {
+  const h = harness();
+  let release: (verified: boolean) => void = () => {};
+  const c = createTickerController(
+    h.transport,
+    {
+      verify: () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    },
+    undefined,
+    { authorizationTimeoutMs: 10 },
+  );
+  await c.connect(device);
+  assert.equal(await c.authorize(), false);
+  assert.match(c.store.getState().error!, /Pairing timed out/);
+  release(true);
+  await tick();
+  assert.equal(c.store.getState().authorized, false);
+  await c.dispose();
+});
+
+test("disconnect during pairing invalidates verification for a new connection", async () => {
+  const h = harness();
+  let release: (verified: boolean) => void = () => {};
+  const c = createTickerController(h.transport, {
+    verify: () =>
+      new Promise((resolve) => {
+        release = resolve;
+      }),
+  });
+  await c.connect(device);
+  const pairing = c.authorize();
+  assert.equal(c.store.getState().authorizing, true);
+  assert.equal(await c.command({ type: "get_status" }), false);
+  await c.disconnect();
+  await c.connect({ ...device, id: "other" });
+  release(true);
+  assert.equal(await pairing, false);
+  assert.equal(c.store.getState().authorized, false);
+  assert.equal(c.store.getState().authorizing, false);
+  await c.dispose();
+});
+
+test("pairing deadline also covers the post-pairing status read", async () => {
+  const h = harness();
+  const c = createTickerController(
+    h.transport,
+    { verify: async () => true },
+    undefined,
+    { authorizationTimeoutMs: 10 },
+  );
+  await c.connect(device);
+  h.transport.readStatus = () => new Promise(() => {});
+  assert.equal(await c.authorize(), false);
+  assert.equal(c.store.getState().authorized, false);
+  assert.equal(c.store.getState().authorizing, false);
+  await c.dispose();
+});
+
+test("rank labels, duration and Top 25 filter commit only after firmware ACK", async () => {
+  const h = harness(true, true);
+  await h.controller.connect(device);
+  assert.equal(
+    await h.controller.command({ type: "set_show_rankings", value: false }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.showRankings, false);
+  assert.equal(
+    await h.controller.command({ type: "set_duration", value: 30 }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.durationSeconds, 30);
+  assert.equal(h.writes.at(-1)![0], 2);
+  assert.equal(
+    await h.controller.command({ type: "set_top25_only", value: true }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.top25Only, true);
+  h.result(4);
+  assert.equal(
+    await h.controller.command({ type: "set_duration", value: 60 }),
+    false,
+  );
+  assert.equal(h.controller.store.getState().settings?.durationSeconds, 30);
+  await h.controller.dispose();
+});
+test("legacy firmware and unauthorized sessions cannot receive new setting writes", async () => {
+  for (const [authorized, extended] of [
+    [true, false],
+    [false, true],
+  ]) {
+    const h = harness(authorized, extended);
+    await h.controller.connect(device);
+    const count = h.writes.length;
+    assert.equal(
+      await h.controller.command({ type: "set_top25_only", value: true }),
+      false,
+    );
+    assert.equal(
+      await h.controller.command({ type: "set_duration", value: 10 }),
+      false,
+    );
+    assert.equal(h.writes.length, count);
+    await h.controller.dispose();
+  }
+});
+test("wrong confirmed duration does not commit a locally requested value", async () => {
+  const h = harness(true, true);
+  await h.controller.connect(device);
+  h.ack(false);
+  const command = h.controller.command({ type: "set_duration", value: 20 });
+  assert.equal(h.controller.store.getState().settings?.durationSeconds, 6);
+  const request = h.writes.at(-1)!;
+  const ack = h.live.slice();
+  ack[1] = 2;
+  ack[2] = request[2];
+  ack[3] = request[3];
+  ack[4] = 8; // Still 6 seconds.
+  h.emit(ack);
+  assert.equal(await command, false);
+  assert.equal(h.controller.store.getState().settings?.durationSeconds, 6);
   await h.controller.dispose();
 });

@@ -1,4 +1,3 @@
-import Button from "components/Buttons/Button";
 import BadgePreviewSection from "@/components/Badges/ProfileBadgeSection";
 import ProfilePredictions from "@/components/FanPrediction/ProfilePredictions";
 import ProfileFavoritesSection from "@/components/Favorites/ProfileFavoritesSection";
@@ -461,17 +460,6 @@ export default function ProfileScreen() {
         />
 
         <BioSection bio={bio} isDark={isDark} />
-
-        <Button
-          isDark={isDark}
-          variant="outline"
-          style={{ marginHorizontal: 12, marginVertical: 12 }}
-          accessibilityRole="button"
-          accessibilityLabel="My Ticker"
-          onPress={() => router.push("/ticker")}
-        >
-          My Ticker
-        </Button>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <TabBar

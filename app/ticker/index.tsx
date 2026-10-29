@@ -25,7 +25,7 @@ export default function TickerDashboard() {
       {!device ? (
         <View style={text.emptyContainer}>
           <Ionicons
-            name="desktop-outline"
+            name="bluetooth-outline"
             size={48}
             color={colors.icon}
             accessibilityElementsHidden
@@ -59,6 +59,14 @@ export default function TickerDashboard() {
             value={
               state.settings?.brightness != null
                 ? `${state.settings.brightness}%`
+                : "Not reported"
+            }
+          />
+          <TickerRow
+            label="Time per game"
+            value={
+              state.settings?.durationSeconds != null
+                ? `${state.settings.durationSeconds} seconds`
                 : "Not reported"
             }
           />
@@ -108,11 +116,12 @@ export default function TickerDashboard() {
         </Text>
       )}
       <TickerCard>
-        <Text style={text.subtitle}>Firmware integration pending</Text>
+        <Text style={text.subtitle}>Firmware and authorization</Text>
         <Text style={text.secondaryText}>
-          The current Matrix Portal firmware does not expose the proposed Tempo
-          Bluetooth service yet. Discovery and controls require compatible
-          firmware; no hardware pairing or control has been verified.
+          Firmware 0.3.0 adds college ranking labels, a Top 25 game filter, and
+          adjustable rotation duration. Connect, choose Unlock controls, and
+          enter the code shown on your ticker in the device Bluetooth pairing
+          prompt.
         </Text>
       </TickerCard>
     </TickerPage>

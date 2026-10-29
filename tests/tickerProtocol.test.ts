@@ -57,6 +57,9 @@ test("status decodes capabilities, settings, firmware and optional unknown value
     brightness: 50,
     selectedLeague: "nba",
     displayOn: true,
+    showRankings: null,
+    durationSeconds: null,
+    top25Only: null,
   });
   assert.equal(decoded.status.firmwareVersion, "1.2.3");
   frame[7] = 255;
@@ -73,7 +76,7 @@ test("status decodes capabilities, settings, firmware and optional unknown value
 test("unsupported version, lengths, malformed fields and reserved bits are rejected", () => {
   assert.throws(() => decodeFrame(new Uint8Array(21)), /Unsupported/);
   for (const [index, value] of [
-    [0, 2],
+    [0, 3],
     [1, 5],
     [6, 16],
     [7, 101],
@@ -104,4 +107,81 @@ test("acknowledgments retain request and command correlation", () => {
     assert.equal(rejected.response.result, "unauthorized");
   frame[4] = 99;
   assert.throws(() => decodeFrame(frame));
+});
+
+function extendedStatus() {
+  return Uint8Array.from([
+    2, 3, 0, 0, 0, 0, 127, 50, 3, 1, 2, 0, 3, 0, 2, 6, 1, 0, 0, 0,
+  ]);
+}
+test("v2 reports ranking options/duration; v1 stays compatible without fabricated settings", () => {
+  const modern = decodeFrame(extendedStatus());
+  assert.equal(modern.kind, "status");
+  if (modern.kind !== "status") return;
+  assert.equal(modern.status.protocolVersion, 2);
+  assert.equal(modern.status.settings.showRankings, true);
+  assert.equal(modern.status.settings.durationSeconds, 6);
+  assert.equal(modern.status.settings.top25Only, false);
+  for (const type of [
+    "set_show_rankings",
+    "set_duration",
+    "set_top25_only",
+  ] as const)
+    assert.ok(modern.status.capabilities.includes(type));
+  const old = decodeFrame(statusFrame());
+  if (old.kind === "status") {
+    assert.equal(old.status.settings.showRankings, null);
+    assert.equal(old.status.settings.durationSeconds, null);
+    assert.equal(old.status.settings.top25Only, null);
+    assert.equal(old.status.capabilities.includes("set_duration"), false);
+  }
+});
+test("new commands use negotiated version, stable opcodes and bounded duration", () => {
+  assert.deepEqual(
+    Array.from(
+      encodeCommand(7, { type: "set_show_rankings", value: true }, 2).slice(
+        0,
+        6,
+      ),
+    ),
+    [2, 1, 7, 0, 7, 1],
+  );
+  assert.equal(
+    encodeCommand(8, { type: "set_top25_only", value: false }, 2)[4],
+    9,
+  );
+  for (const value of [3, 6, 60])
+    assert.equal(
+      encodeCommand(9, { type: "set_duration", value }, 2)[5],
+      value,
+    );
+  for (const value of [0, 2, 61, 3.5, NaN])
+    assert.throws(() => encodeCommand(9, { type: "set_duration", value }, 2));
+  assert.throws(
+    () => encodeCommand(9, { type: "set_duration", value: 6 }, 1),
+    /0.3.0/,
+  );
+});
+test("v2 rejects unknown capability bits, invalid option enums and reserved data", () => {
+  for (const [byte, value] of [
+    [6, 128],
+    [14, 3],
+    [15, 2],
+    [15, 61],
+    [16, 3],
+    [17, 1],
+  ]) {
+    const bytes = extendedStatus();
+    bytes[byte] = value;
+    assert.throws(() => decodeFrame(bytes));
+  }
+  const response = extendedStatus();
+  response[1] = 2;
+  response[2] = 9;
+  response[4] = 8;
+  const parsed = decodeFrame(response);
+  if (parsed.kind === "response")
+    assert.equal(parsed.response.command, "set_duration");
+  response[0] = 1;
+  assert.throws(() => decodeFrame(response));
 });

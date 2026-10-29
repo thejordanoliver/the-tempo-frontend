@@ -12,6 +12,9 @@ export interface TickerTransport {
   connect(id: string): Promise<void>;
   discover(id: string): Promise<void>;
   readStatus(id: string): Promise<Uint8Array>;
+  // Native ATT read of firmware's encrypted/authenticated authorization
+  // characteristic. iOS owns the pairing UI and bond keys, never JavaScript.
+  readAuthorization?(id: string): Promise<Uint8Array>;
   monitor(
     id: string,
     onFrame: (bytes: Uint8Array) => void,
@@ -22,8 +25,8 @@ export interface TickerTransport {
   disconnect(id: string): Promise<void>;
   destroy(): Promise<void>;
 }
-// Implement only after firmware's security design and a trusted native verification path exist.
-// Never authorize using a name, advertised UUID, or a self-reported authorization flag.
+// Authorization comes from the native protected GATT operation and OS pairing,
+// never from an advertised name/UUID or a device-reported authorization bit.
 export interface TickerAuthorizer {
   verify(device: TickerDevice): Promise<boolean>;
 }

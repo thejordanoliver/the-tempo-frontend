@@ -1,5 +1,17 @@
 # Tempo Ticker frontend — Phase 1
 
+## Current update: rankings and duration (firmware 0.3.0)
+
+Firmware 0.3.0 adds **Show Top 25 rank labels**, **Top 25 games only**, and **Time per game** in Ticker Settings. Rank labels and filtering use backend-reported CFB team ranks 1–25; a game qualifies if either team is ranked. The filter is off by default and leaves the full cached slate intact. Missing ranks are never invented. An empty filtered slate shows NO TOP 25 GAMES. Ranking options have no effect on NBA/NFL. Labels default on.
+
+Duration is 3–60 seconds (integer seconds, default 6), applies to every league, and is committed on slider release. The device ACK must confirm the requested duration before confirmed app state changes. Rejection or timeout preserves the previous confirmed setting. It changes game hold time, not the backend refresh interval. HTTP remains synchronous and can extend a hold during a slow fetch. These preferences are session settings and reset to defaults on firmware reboot.
+
+This introduces **wire protocol v2**, still exactly 20 bytes and the same GATT UUIDs. Firmware reports 0.3.0 and capability mask 127. New opcodes: 7 `set_show_rankings` (0/1), 8 `set_duration` (3–60), 9 `set_top25_only` (0/1). Status/ACK bytes 14, 15 and 16 report rank-label enum (0 unknown/1 hidden/2 shown), duration (0 unknown, otherwise 3–60), and filter enum (0 unknown/1 all games/2 Top 25 only). Bytes 17–19 stay reserved zero. Capability bits 4/5/6 correspond to these controls. Command bytes 6–19 remain zero. Protected pairing and per-connection firmware authorization checks are unchanged.
+
+The updated app decodes both **v1 and v2** and writes commands using the device's negotiated frame version. For v1 firmware, new settings are null/unavailable, not guessed; new controls stay disabled with an update explanation, while existing controls continue working. Firmware 0.3.0 accepts v2 commands. Upload the new sketch/headers, **fully reload the app JavaScript**, reconnect and pair/unlock. No new iPhone native dependency or binary build is needed. The remainder of this document describes the original v1/base control contract; this section defines the explicit v2 extension.
+
+Validation: 41 ticker tests pass, including v1 compatibility, v2 bounds/encoding, ACK failures and authorization gates. Native C++ tests cover ranking/filter rotation and duration boundaries; the MatrixPortal sketch compiles. Physical display verification remains required after upload. The existing nine unrelated TypeScript errors remain.
+
 ## Scope and architecture audit
 
 Implemented in the **frontend only**, on `feat/tempo-ticker-ble`. The starting frontend working tree was clean. No firmware, backend, sports endpoints, auth flows, branches, or commits were changed.
@@ -35,16 +47,17 @@ Maintainer references:
 
 ## Provisional GATT contract
 
-**Not implemented by current firmware.** This is a proposal for the next firmware phase, not a claim of successful hardware pairing/control. A matching advertisement is a discovery candidate, not evidence of authenticity.
+**Firmware 0.2.0 implements usable paired controls** in the sibling LED ticker repository. Upload that firmware and reload the app. Discovery and read-only status still work before pairing; choose **Unlock controls** to perform an OS-protected authorization read and enter the code shown on the physical ticker in the native iPhone prompt. Firmware independently enforces authenticated, encrypted Secure Connections bonding on every mutation. Version 0.1.0 devices remain read-only until updated. The v1 wire format stays provisional for future extensions; the supported operations below are now implemented. Physical 0.2.0 pairing/control verification is still required.
 
 Canonical code: `services/ticker/protocol.ts`; shared types: `types/ticker.ts`.
 
-| Attribute                               | UUID                                   | Required property              |
-| --------------------------------------- | -------------------------------------- | ------------------------------ |
-| Tempo service                           | `d69a0001-7a9b-4b28-95d3-09a1f487e001` | Advertise this 128-bit service |
-| Device info/status                      | `d69a0002-7a9b-4b28-95d3-09a1f487e001` | Read                           |
-| Commands                                | `d69a0003-7a9b-4b28-95d3-09a1f487e001` | Write with response            |
-| Command acknowledgments / status events | `d69a0004-7a9b-4b28-95d3-09a1f487e001` | Notify or indicate, with CCCD  |
+| Attribute                               | UUID                                   | Required property                                                 |
+| --------------------------------------- | -------------------------------------- | ----------------------------------------------------------------- |
+| Tempo service                           | `d69a0001-7a9b-4b28-95d3-09a1f487e001` | Advertise this 128-bit service                                    |
+| Device info/status                      | `d69a0002-7a9b-4b28-95d3-09a1f487e001` | Read                                                              |
+| Commands                                | `d69a0003-7a9b-4b28-95d3-09a1f487e001` | Write with response                                               |
+| Command acknowledgments / status events | `d69a0004-7a9b-4b28-95d3-09a1f487e001` | Notify or indicate, with CCCD                                     |
+| Protected authorization                 | `d69a0005-7a9b-4b28-95d3-09a1f487e001` | Read; native encryption, authentication and SC-bond authorization |
 
 Advertise a local name such as `Tempo-Ticker` or `Tempo-Ticker-A1B2`. The app filters by the service UUID and verifies the service, characteristic properties, frame version and capabilities after connecting. It does not trust the name alone. The identifier shown is the OS peripheral identifier (an opaque UUID on iOS), not a guaranteed hardware MAC address.
 
@@ -91,19 +104,19 @@ Examples (hex, all 20 bytes):
 
 One command is in flight at a time. Request IDs are monotonically increasing and not reused during a controller lifetime. At 65535 requests a new controller/app session is required instead of wrapping and risking a stale ACK. Responses must match both ID and opcode on the current connection generation. Late, unrelated or mismatched ACKs are ignored. Unsolicited status frames use kind 3 / ID 0.
 
-The app subscribes before issuing `get_settings`. A successful local BLE write only means the ATT write completed: it does not commit UI settings. Brightness writes occur on slider release, league selection sends exactly one league, and success requires a matching ACK whose snapshot confirms the requested value. Errors/timeouts retain the last confirmed setting and show retry/refresh guidance. Unsolicited valid status can independently update confirmed state. No automatic mutation retries occur; after a timeout, the user should read status to reconcile a possible applied-but-unacknowledged command.
+The app subscribes before issuing public `get_settings`. The separate protected authorization read is triggered only by Unlock controls. A successful local BLE write only means the ATT write completed: it does not commit UI settings. Brightness writes occur on slider release, league selection sends exactly one league, and success requires a matching ACK whose snapshot confirms the requested value. Errors/timeouts retain the last confirmed setting and show retry/refresh guidance. Unsolicited valid status can independently update confirmed state. No automatic mutation retries occur; after a timeout, the user should read status to reconcile a possible applied-but-unacknowledged command.
 
 `refresh_scores` ACK means the firmware accepted the request; it does not claim ESPN data or the display is already refreshed. No sports scores are displayed by this frontend feature.
 
-## Security integration gate
+## Native pairing and control authorization
 
-BLE connection, OS pairing/bonding, and device authorization are separate states. `ble-plx` does not expose a trusted explicit bonding API. iOS may prompt for pairing when firmware requires protected GATT access, but the app does not label that as verified bonding.
+Production now supplies `createProtectedGattAuthorizer(transport)` to the controller. Merely connecting or receiving a valid status frame keeps controls locked. The user chooses **Unlock controls**; `readAuthorization` reads `d69a0005-7a9b-4b28-95d3-09a1f487e001` through the existing native BLE library. That firmware characteristic requires encrypted/authenticated GATT access and native authorization. iOS handles the Bluetooth pairing prompt. The owner enters the fresh six-digit passkey shown on the LED panel. No PIN field, bond key, shared secret, homemade challenge scheme or authorization flag is passed through JavaScript/AsyncStorage.
 
-`TickerAuthorizer.verify(device)` in `services/ticker/transport.ts` is the integration point for a future trusted native/firmware security implementation. Production uses `pendingFirmwareAuthorization`, which **always denies authorization**. No screen toggle, AsyncStorage flag, device name, UUID, or self-reported field can unlock it. Tests inject an authorizer solely to exercise gated command paths. Read-only protocol inspection is allowed without authorization; state-changing commands are blocked before any write.
+The firmware configures Display Only, bonding, MITM and Secure Connections. It checks native GAP encryption/authentication/bonding flags and a 16-byte key, plus the SC/authenticated metadata in the native bond store. Every state-changing command repeats that check against the actual requesting connection handle. An app bypass does not bypass firmware enforcement. Read-only commands remain public. The protected characteristic returns a normal status frame, not a trusted self-reported authorization bit.
 
-Before replacing this gate, agree on and verify authenticated BLE LE Secure Connections/bonding with MITM protection appropriate to the device's actual input/output capabilities and an ownership/physical approval flow. Require encrypted/authenticated characteristic access and firmware-side authorization for all mutations. A physical confirm or other vetted security design may require firmware and trusted native integration work. Do not substitute a hardcoded PIN, custom challenge scheme, or trust in an advertised UUID. Firmware must independently enforce authorization even if a client bypasses its own UI.
+The app's native ATT read must complete before its per-connection control gate opens. The protected-read flow depends on the firmware GATT protection contract and the OS pairing ceremony with the physical device; CoreBluetooth/ble-plx does not expose independent device attestation or direct bond-state inspection. The app therefore labels its state as control access, not independently verified hardware identity. Sensitive account/Wi-Fi provisioning is outside this protocol; no such payload is sent. Do not turn advertised UUIDs, names or returned capability bits into identity proofs.
 
-No Wi-Fi credentials, tokens, account identifiers, or other sensitive payloads belong in v1. Future provisioning requires a separately reviewed secure protocol. Do not place secrets in AsyncStorage.
+Cancellation, rejection, a 90-second pairing deadline, Bluetooth shutdown or disconnect keep controls locked. Late callbacks cannot authorize a new connection. Authorization is not persisted in the Zustand store; native OS/device bond keys can support a subsequent protected read without another code prompt. Retrying **Unlock controls** is available after failure. The default controller authorizer remains deny-by-default for unsupported transports/tests; production explicitly wires the protected native implementation.
 
 ## Run on a physical iPhone
 
@@ -112,32 +125,30 @@ No Wi-Fi credentials, tokens, account identifiers, or other sensitive payloads b
    For a local backend instead, use `npm run start:local -- --dev-client`.
 3. Use an SDK 57-compatible toolchain; the BLE maintainer documents iOS 16.4+, RN 0.86 and Xcode 26.4+ for Expo 57.
 4. Open the development build, sign into Tempo normally, then **Profile → My Ticker → Add Ticker**. Allow Bluetooth. Turn Bluetooth on in iPhone Settings if prompted; recover a denied permission through **Open iPhone Settings**.
-5. Current firmware should yield no compatible devices. Once proposed firmware exists, it must advertise the service and pass GATT/frame verification. A protocol-compatible device can show reported information, but controls remain locked until the security integration above is implemented.
+5. Upload `TempoScoreboard.ino` **0.2.0** and its adjacent headers, reload the iPhone development app, and reconnect. Choose **Unlock controls**, then enter the code displayed on the panel into the native iOS Bluetooth pairing prompt. Successful protected access enables supported controls. No new phone native dependency/build is needed beyond the existing BLE development build.
 6. Test brightness 0/100, all three leagues, rejected and missing ACKs, Bluetooth toggling, app background/foreground, disconnect/reconnect, connection cancellation and two different tickers. Test small iPhone layouts and both app themes. Verify actual panel behavior independently of UI ACKs.
 
 **Expo Go cannot load this BLE native module. iOS Simulator does not validate physical BLE.** No physical device pairing, native iOS build, or panel controls have been verified as part of this implementation.
 
-## Exact next-phase firmware requirements
+## Firmware behavior and physical verification
 
-1. Add BLE central-connectable peripheral support on the Matrix Portal S3 without breaking existing Wi-Fi/ESPN rendering. Advertise the dedicated 128-bit service and optional unique local name.
-2. Implement all three characteristics with the properties above and a CCCD on the response characteristic. Use 20-byte frames even at the minimum MTU.
-3. Provide a fresh kind-3 status on read, protocol version 1, accurate capability bits, actual settings, optional real Wi-Fi and firmware version; use unknown sentinels for unavailable data.
-4. Implement correlated `get_status`, `get_settings`, brightness, single selected league (`nba`/`nfl`/`cfb`) and refresh commands. Reject out-of-range values, unsupported commands, malformed/reserved bytes and unknown versions. Optional display power must not be advertised until implemented.
-5. Notify/indicate a matching ACK within eight seconds. Apply settings before a success snapshot; echo ID/opcode exactly. Use error result codes instead of false success. Refresh work may continue after accepting the request. Expose unsolicited status updates with ID/opcode/result zero.
-6. Define and enforce secure authenticated pairing/ownership authorization, characteristic protection and revocation/disconnect behavior. Integrate the trusted frontend authorizer only once verification is possible. A valid v1 status frame alone never unlocks control.
-7. Validate the wire contract and security on a physical iPhone; test service discovery, notification subscription timing, radio loss, repeated connections, MTU 23, power cycling and concurrent Wi-Fi/LED operation. Align changes to the provisional contract in firmware and frontend together.
+Firmware 0.2.0 advertises the existing service and adds the protected authorization read. Capability byte 6 is 15. `set_brightness`, one active `set_league`, `refresh_scores` and `set_display` are implemented. Native firmware checks secure bond state per command; invalid/unauthorized requests cannot invoke control callbacks. Settings success ACKs are sent after applying changes. A refresh ACK means accepted/queued, with requests coalesced while HTTP is busy.
+
+An unscaled RGB565 frame cache in PSRAM makes 0% → 100% and off → on reversible without repeatedly dimming already-scaled pixels. A display mutex coordinates BLE rendering with the Arduino loop. Pairing codes temporarily override display-off/zero brightness at a readable level. Network calls stay in the Arduino loop; old-league HTTP responses are discarded after a league change. BLE controls do not send sports API requests directly from callbacks. Score fetching remains on the Tempo backend.
+
+After upload, physically verify the new code prompt, failed/cancelled pairing, native bonded reconnection, 0/100% brightness, all leagues, display off/on, refresh acceptance, Wi-Fi loss and radio shutdown. Check that an unpaired BLE client cannot change settings. Existing 0.1.0 discovery and backend HTTPS fetching were confirmed by the user's Serial logs; new 0.2.0 security/control operation remains unverified on hardware until that check.
 
 ## Files
 
 Created:
 
 - `types/ticker.ts`
-- `services/ticker/{protocol,transport,nativeTransport,controller}.ts`
+- `services/ticker/{protocol,transport,nativeTransport,controller,authorization}.ts`
 - `store/tickerStore.ts`
 - `components/Ticker/TickerUI.tsx`
 - `app/ticker/{index,add,settings}.tsx`
 - `app/(tabs)/(profile)/ticker/{index,add,settings}.tsx`
-- `tests/tickerProtocol.test.ts`, `tests/tickerController.test.ts`
+- `tests/tickerProtocol.test.ts`, `tests/tickerController.test.ts`, `tests/tickerAuthorization.test.ts`
 - `docs/tempo-ticker-ble.md`
 
 Modified:
@@ -150,14 +161,14 @@ Modified:
 
 ## Validation
 
-- `npm run test:ticker`: **27 passed**, with injected BLE transport/authorization mocks; no hardware required.
-- `npm run test:navigation`: **13 passed**, including the new Profile ticker routes.
+- `npm run test:ticker`: **41 passed**, with injected BLE transport/authorization mocks; no hardware required.
+- `npm run test:navigation`: **13 passed**, including the Profile ticker routes.
 - `npm run lint`: passed with no warnings or errors.
 - `npx tsc --noEmit`: nine pre-existing errors, with no new feature errors; error output matched the pre-change baseline.
 - `npx expo config --type introspect --json`: passed; Bluetooth usage text is present. No new BLE background modes or Android BLE permissions were introduced (existing audio/background and Android media configuration remain).
-- `CI=1 npx expo export --platform ios --output-dir /tmp/tempo-ticker-ios-export`: passed; iOS Hermes JavaScript bundle generated. This checks bundling, not native compilation or physical radio operation.
+- `CI=1 npx expo export --platform ios --max-workers 2 --output-dir /tmp/tempo-controls-ios-export`: passed; iOS Hermes JavaScript bundle generated. This checks bundling, not native compilation or physical radio operation.
 - `git diff --check`: passed. No commits, pushes, merges or branch switches.
 
-Physical iPhone BLE, native binary compilation, visual device/simulator QA and real firmware controls remain unverified. The sandbox could not access CoreSimulator services; no successful UI runtime check is claimed.
+Firmware 0.2.0 compiles for the MatrixPortal S3 with QSPI PSRAM. New native passkey pairing, physical control effects and visual device QA remain unverified. The sandbox could not access CoreSimulator services; no successful UI runtime check is claimed.
 
 The initial TypeScript check already had **nine errors**: missing `hooks/useFanPredictionAnalytics` and five resulting implicit-any errors in `FanPredictionAnalysis.tsx`, two volleyball route-type mismatches (`ProfileFavoritesSection` and `useFavoriteTeams`), and missing `cb`/`sb` keys in `useHomeData`. These are unrelated to the ticker. Lint passed before changes.

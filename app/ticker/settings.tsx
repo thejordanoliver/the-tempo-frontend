@@ -62,12 +62,59 @@ function BrightnessControl({
     </View>
   );
 }
+function DurationControl({
+  confirmed,
+  disabled,
+}: {
+  confirmed: number | null;
+  disabled: boolean;
+}) {
+  const [draft, setDraft] = useState<number | null>(null);
+  const { colors, text } = useTickerTheme();
+  const value = draft ?? confirmed;
+  return (
+    <View style={{ gap: 10 }}>
+      <TickerRow
+        label="Time per game"
+        value={value == null ? "Not reported" : `${value} seconds`}
+      />
+      <Slider
+        accessibilityLabel="Seconds to show each game"
+        accessibilityValue={
+          value == null
+            ? { text: "Not reported" }
+            : { min: 3, max: 60, now: value }
+        }
+        minimumValue={3}
+        maximumValue={60}
+        step={1}
+        value={value ?? 6}
+        disabled={disabled || confirmed == null}
+        minimumTrackTintColor={colors.text}
+        maximumTrackTintColor={colors.gray}
+        thumbTintColor={colors.text}
+        onValueChange={setDraft}
+        onSlidingComplete={(next) => {
+          void ticker
+            .command({ type: "set_duration", value: Math.round(next) })
+            .finally(() => setDraft(null));
+        }}
+      />
+      <Text style={text.caption}>
+        {confirmed == null
+          ? "Upload firmware 0.3.0 or newer to change game duration."
+          : "Choose 3–60 seconds per matchup. Release to apply; the device confirms the saved duration."}
+      </Text>
+    </View>
+  );
+}
 export default function TickerSettingsScreen() {
   const state = useTickerStore();
   const { text, colors } = useTickerTheme();
   const [showInfo, setShowInfo] = useState(false);
   const connected = state.connection === "connected";
-  const pending = Object.keys(state.pendingCommands).length > 0;
+  const pending =
+    state.authorizing || Object.keys(state.pendingCommands).length > 0;
   const busy = connectionBusy(state.connection);
   const supported = (type: TickerCommandType) =>
     state.status?.capabilities.includes(type) ?? false;
@@ -105,6 +152,14 @@ export default function TickerSettingsScreen() {
         )}
       </TickerCard>
       <TickerCard>
+        <Text style={text.title}>Game rotation</Text>
+        <DurationControl
+          key={`${device?.id ?? "none"}:${state.connection}:${state.settings?.durationSeconds ?? "unknown"}`}
+          confirmed={state.settings?.durationSeconds ?? null}
+          disabled={!enabled("set_duration")}
+        />
+      </TickerCard>
+      <TickerCard>
         <Text style={text.title}>Sports preferences</Text>
         <Text style={text.secondaryText}>
           Choose one active league. Current:{" "}
@@ -113,7 +168,7 @@ export default function TickerSettingsScreen() {
         {LEAGUES.map((league) => (
           <TickerAction
             key={league}
-            label={`${league === "cfb" ? "College Football (CFB)" : league.toUpperCase()}${state.settings?.selectedLeague === league ? " · Selected" : ""}`}
+            label={`${league === "cfb" ? "College Football" : league.toUpperCase()}${state.settings?.selectedLeague === league ? " · Selected" : ""}`}
             secondary={state.settings?.selectedLeague !== league}
             disabled={
               !enabled("set_league") ||
@@ -131,10 +186,57 @@ export default function TickerSettingsScreen() {
         )}
       </TickerCard>
       <TickerCard>
+        <Text style={text.title}>College Football rankings</Text>
+        <View style={tickerStyles.row}>
+          <Text style={[text.text, { flex: 1 }]}>Show Top 25 rank labels</Text>
+          <Switch
+            accessibilityLabel="Show college football rank labels"
+            value={state.settings?.showRankings ?? false}
+            disabled={
+              !enabled("set_show_rankings") ||
+              state.settings?.showRankings == null
+            }
+            trackColor={{ true: colors.blue, false: colors.gray }}
+            onValueChange={(value) =>
+              void ticker.command({ type: "set_show_rankings", value })
+            }
+          />
+        </View>
+        <Text style={text.caption}>
+          Show backend-reported rankings such as #12 beside ranked teams.
+          Unranked teams have no rank label.
+        </Text>
+        <View style={tickerStyles.row}>
+          <Text style={[text.text, { flex: 1 }]}>Top 25 games only</Text>
+          <Switch
+            accessibilityLabel="Only games involving Top 25 college football teams"
+            value={state.settings?.top25Only ?? false}
+            disabled={
+              !enabled("set_top25_only") || state.settings?.top25Only == null
+            }
+            trackColor={{ true: colors.blue, false: colors.gray }}
+            onValueChange={(value) =>
+              void ticker.command({ type: "set_top25_only", value })
+            }
+          />
+        </View>
+        <Text style={text.caption}>
+          When College Football is selected, rotate only games with at least one
+          team ranked 1–25. These options do not affect NBA or NFL.
+        </Text>
+        {(!supported("set_show_rankings") || !supported("set_top25_only")) && (
+          <Text style={text.caption}>
+            Upload firmware 0.3.0 or newer to use ranking options.
+          </Text>
+        )}
+      </TickerCard>
+      <TickerCard>
         <Text style={text.title}>Device controls</Text>
         <TickerAction
           label="Refresh scores"
-          disabled={!enabled("refresh_scores")}
+          disabled={
+            !enabled("refresh_scores") || state.status?.wifi === "disconnected"
+          }
           onPress={() => void ticker.command({ type: "refresh_scores" })}
         />
         {!enabled("refresh_scores") && (
@@ -179,15 +281,15 @@ export default function TickerSettingsScreen() {
           <TickerRow label="BLE" value={connectionLabel[state.connection]} />
           <TickerRow
             label="Authorization"
-            value={
-              state.authorized
-                ? "Verified by security integration"
-                : "Not verified"
-            }
+            value={state.authorized ? "Paired control access" : "Not verified"}
           />
           <TickerRow
             label="OS pairing / bonding"
-            value="Not verified by this app"
+            value={
+              state.authorized
+                ? "Protected GATT access completed"
+                : "Pair using Unlock controls"
+            }
           />
           <TickerRow
             label="Wi-Fi"
@@ -200,8 +302,8 @@ export default function TickerSettingsScreen() {
             }
           />
           <Text style={text.caption}>
-            Protocol v1 is provisional. No device controls have been verified
-            against the current Matrix Portal firmware.
+            Firmware 0.2.0 supports paired controls. Acknowledgments confirm
+            applied settings; score refresh confirms an accepted request.
           </Text>
         </TickerCard>
       )}

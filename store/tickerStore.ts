@@ -1,11 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useStore } from "zustand";
 import { createTickerController } from "services/ticker/controller";
+import { createProtectedGattAuthorizer } from "services/ticker/authorization";
 import { createNativeTickerTransport } from "services/ticker/nativeTransport";
 import type { TickerDevice } from "types/ticker";
 
 // One controller/manager for all routes; native objects never enter persisted state.
-export const ticker = createTickerController(createNativeTickerTransport());
+const transport = createNativeTickerTransport();
+export const ticker = createTickerController(
+  transport,
+  createProtectedGattAuthorizer(transport),
+);
 export const useTickerStore = () => useStore(ticker.store);
 const storageKey = "tempo:ticker:last-device:v1";
 let hydrated = false;

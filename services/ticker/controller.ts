@@ -25,6 +25,7 @@ export interface TickerState {
   settings: TickerSettings | null;
   status: TickerStatus | null;
   authorized: boolean;
+  authorizing: boolean;
   pendingCommands: Record<number, TickerCommand["type"]>;
   error: string | null;
 }
@@ -38,9 +39,9 @@ const bluetoothMessage = (state: TickerBluetoothState) =>
   ({
     PoweredOff: "Bluetooth is off. Turn it on in Settings, then retry.",
     Unauthorized:
-      "Bluetooth permission denied. Allow Tempo to use Bluetooth in iPhone Settings.",
+      "Bluetooth permission denied. Allow Tempo to use Bluetooth in device Settings.",
     Unsupported:
-      "Bluetooth is unavailable. Use a physical iPhone with a development build.",
+      "Bluetooth is unavailable. Use a physical device with a development build.",
     Unknown: "Bluetooth is starting. Please retry.",
     Resetting: "Bluetooth is resetting. Please retry.",
     PoweredOn: "",
@@ -50,6 +51,10 @@ export function createTickerController(
   transport: TickerTransport,
   authorizer: TickerAuthorizer = pendingFirmwareAuthorization,
   timeouts = { command: 8000, connection: 20000, scan: 12000 },
+  options: {
+    authorizeOnConnect?: boolean;
+    authorizationTimeoutMs?: number;
+  } = {},
 ) {
   const store = createStore<TickerState>(() => ({
     devices: [],
@@ -61,6 +66,7 @@ export function createTickerController(
     settings: null,
     status: null,
     authorized: false,
+    authorizing: false,
     pendingCommands: {},
     error: null,
   }));
@@ -102,6 +108,7 @@ export function createTickerController(
     store.setState({
       connection: "disconnected",
       authorized: false,
+      authorizing: false,
       status: null,
       settings: null,
     });
@@ -196,6 +203,8 @@ export function createTickerController(
         throw new Error(
           "Device disconnected. Reconnect before sending commands.",
         );
+      if (state.authorizing)
+        throw new Error("Finish Bluetooth pairing before sending commands.");
       if (pending.size)
         throw new Error("Wait for the current ticker command to finish.");
       if (!state.status?.capabilities.includes(command.type))
@@ -205,10 +214,14 @@ export function createTickerController(
         !state.authorized
       )
         throw new Error(
-          "Authorization required. Secure device verification is awaiting firmware integration.",
+          "Pair your ticker using Unlock controls before changing its settings.",
         );
       id = ++requestId;
-      const frame = encodeCommand(id, command);
+      const frame = encodeCommand(
+        id,
+        command,
+        state.status?.protocolVersion ?? 1,
+      );
       store.setState({ error: null, pendingCommands: { [id]: command.type } });
       const response = new Promise<TickerStatus>((resolve, reject) => {
         const timer = setTimeout(() => {
@@ -238,7 +251,13 @@ export function createTickerController(
         (command.type === "set_league" &&
           confirmed.settings.selectedLeague !== command.value) ||
         (command.type === "set_display" &&
-          confirmed.settings.displayOn !== command.value)
+          confirmed.settings.displayOn !== command.value) ||
+        (command.type === "set_show_rankings" &&
+          confirmed.settings.showRankings !== command.value) ||
+        (command.type === "set_duration" &&
+          confirmed.settings.durationSeconds !== command.value) ||
+        (command.type === "set_top25_only" &&
+          confirmed.settings.top25Only !== command.value)
       )
         throw new Error(
           "Device acknowledgment did not confirm the requested setting. Refresh status and retry.",
@@ -363,7 +382,9 @@ export function createTickerController(
           },
         ),
       );
-      const authorized = await authorizer.verify(device);
+      const authorized = options.authorizeOnConnect
+        ? await authorizer.verify(device)
+        : false;
       if (!current()) throw new Error("Connection cancelled.");
       store.setState({
         connection: "connected",
@@ -401,11 +422,70 @@ export function createTickerController(
       clearTimeout(timer);
     }
   };
+  const authorize = async (): Promise<boolean> => {
+    const state = store.getState();
+    const token = generation;
+    if (
+      state.connection !== "connected" ||
+      !state.selectedDevice ||
+      state.authorizing ||
+      pending.size
+    )
+      return false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    store.setState({ authorizing: true, authorized: false, error: null });
+    try {
+      const verifyAndRefresh = async () => {
+        if (!(await authorizer.verify(state.selectedDevice!))) {
+          throw new Error(
+            "Pairing was not completed. Upload firmware 0.2.0 or newer, then try Unlock controls again.",
+          );
+        }
+        if (token !== generation)
+          throw new Error("Connection changed during pairing.");
+        const frame = decodeFrame(
+          await transport.readStatus(state.selectedDevice!.id),
+        );
+        if (frame.kind !== "status")
+          throw new Error("Invalid device status after pairing.");
+        return frame;
+      };
+      const frame = await Promise.race([
+        verifyAndRefresh(),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(
+            () =>
+              reject(
+                new Error(
+                  "Pairing timed out. Try Unlock controls again and enter the code shown on the ticker in the device Bluetooth prompt.",
+                ),
+              ),
+            options.authorizationTimeoutMs ?? 90000,
+          );
+        }),
+      ]);
+      if (token !== generation) return false;
+      applyStatus(frame.status);
+      store.setState({ authorized: true });
+      return true;
+    } catch (error) {
+      if (token === generation)
+        store.setState({
+          authorized: false,
+          error: `Unable to unlock ticker: ${message(error)}`,
+        });
+      return false;
+    } finally {
+      clearTimeout(timer);
+      if (token === generation) store.setState({ authorizing: false });
+    }
+  };
   return {
     store,
     startScan,
     stopScan,
     connect,
+    authorize,
     command,
     disconnect,
     reconnect: async () => {

@@ -80,7 +80,7 @@ export default function AddTicker() {
           <Text style={text.secondaryText}>
             {state.scanning
               ? "Looking for devices with the Tempo service…"
-              : "No compatible tickers found. Current firmware needs the proposed BLE service before it can appear here."}
+              : "No compatible tickers found. Upload BLE-enabled TempoScoreboard firmware and keep your ticker powered on nearby."}
           </Text>
         )}
         <TickerAction
@@ -100,12 +100,12 @@ export default function AddTicker() {
         )}
         {state.bluetooth === "Unauthorized" && (
           <TickerAction
-            label="Open iPhone Settings"
+            label="Open device Settings"
             secondary
             onPress={() => {
               void Linking.openSettings().catch(() =>
                 ticker.store.setState({
-                  error: "Open iPhone Settings and allow Bluetooth for Tempo.",
+                  error: "Open device Settings and allow Bluetooth for Tempo.",
                 }),
               );
             }}
@@ -113,7 +113,7 @@ export default function AddTicker() {
         )}
       </TickerCard>
       <Text style={text.caption}>
-        Requires a physical iPhone and a Tempo development build. Expo Go and
+        Requires a physical device and a Tempo development build. Expo Go and
         iOS Simulator cannot test physical BLE. A BLE connection alone does not
         establish OS bonding or device authorization.
       </Text>

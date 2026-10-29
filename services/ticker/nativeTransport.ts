@@ -28,7 +28,7 @@ export function createNativeTickerTransport(): TickerTransport {
   const getManager = async () => {
     if (Platform.OS !== "ios")
       throw new Error(
-        "Ticker Bluetooth is currently supported on physical iPhones in a development build.",
+        "Ticker Bluetooth is currently supported on physical devices in a development build.",
       );
     if (Constants.executionEnvironment === "storeClient")
       throw new Error(
@@ -43,7 +43,7 @@ export function createNativeTickerTransport(): TickerTransport {
         .catch(() => {
           loading = undefined;
           throw new Error(
-            "Bluetooth native module unavailable. Rebuild and install Tempo on a physical iPhone.",
+            "Bluetooth native module unavailable. Rebuild and install Tempo on a physical device.",
           );
         });
     return loading;
@@ -169,6 +169,36 @@ export function createNativeTickerTransport(): TickerTransport {
         ).value,
       );
     },
+    async readAuthorization(id) {
+      const revision = deviceRevisions.get(id);
+      const ble = await getManager();
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed during pairing.");
+      const characteristics = await ble.characteristicsForDevice(
+        id,
+        TICKER_GATT.service,
+      );
+      if (
+        !characteristics.some(
+          (c) =>
+            c.uuid.toLowerCase() === TICKER_GATT.authorization && c.isReadable,
+        )
+      ) {
+        throw new Error(
+          "Upload TempoScoreboard firmware 0.2.0 or newer to unlock controls.",
+        );
+      }
+      // Access protection is enforced by firmware/NimBLE. On iOS this ATT read
+      // triggers the system passkey prompt and waits for pairing/encryption.
+      const characteristic = await ble.readCharacteristicForDevice(
+        id,
+        TICKER_GATT.service,
+        TICKER_GATT.authorization,
+      );
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed during pairing.");
+      return decode(characteristic.value);
+    },
     monitor(id, onFrame, onError) {
       if (!manager) throw new Error("Bluetooth is unavailable.");
       const subscription = manager.monitorCharacteristicForDevice(
@@ -205,9 +235,13 @@ export function createNativeTickerTransport(): TickerTransport {
     async write(id, frame) {
       if (frame.length !== FRAME_BYTES)
         throw new Error("Invalid command payload size.");
-      await (
-        await getManager()
-      ).writeCharacteristicWithResponseForDevice(
+      const revision = deviceRevisions.get(id);
+      const ble = await getManager();
+      if (revision !== deviceRevisions.get(id))
+        throw new Error(
+          "Device disconnected before the command could be sent.",
+        );
+      await ble.writeCharacteristicWithResponseForDevice(
         id,
         TICKER_GATT.service,
         TICKER_GATT.command,

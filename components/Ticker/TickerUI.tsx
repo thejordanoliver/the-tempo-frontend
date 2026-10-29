@@ -14,7 +14,11 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { hydrateTickerPreference, useTickerStore } from "store/tickerStore";
+import {
+  hydrateTickerPreference,
+  ticker,
+  useTickerStore,
+} from "store/tickerStore";
 import type { TickerConnectionState } from "types/ticker";
 
 export function useTickerTheme() {
@@ -109,20 +113,29 @@ export function TickerRow({ label, value }: { label: string; value: string }) {
   );
 }
 export function TickerFeedback() {
-  const { error, authorized, connection, pendingCommands } = useTickerStore();
+  const {
+    error,
+    authorized,
+    authorizing,
+    connection,
+    pendingCommands,
+    status,
+  } = useTickerStore();
   const { text, colors } = useTickerTheme();
   const busy = connection === "connecting" || connection === "verifying";
   return (
     <>
-      {(busy || Object.keys(pendingCommands).length > 0) && (
+      {(busy || authorizing || Object.keys(pendingCommands).length > 0) && (
         <View style={tickerStyles.busy} accessibilityLiveRegion="polite">
           <ActivityIndicator color={colors.text} />
           <Text style={text.secondaryText}>
-            {busy
-              ? connection === "verifying"
-                ? "Verifying firmware protocol…"
-                : "Connecting to ticker…"
-              : "Waiting for device acknowledgment…"}
+            {authorizing
+              ? "Enter the code shown on your ticker in the device Bluetooth pairing prompt…"
+              : busy
+                ? connection === "verifying"
+                  ? "Verifying firmware protocol…"
+                  : "Connecting to ticker…"
+                : "Waiting for device acknowledgment…"}
           </Text>
         </View>
       )}
@@ -132,9 +145,28 @@ export function TickerFeedback() {
         </Text>
       )}
       {connection === "connected" && !authorized && (
+        <>
+          <Text style={text.secondaryText}>
+            {status?.capabilities.some(
+              (type) => !["get_status", "get_settings"].includes(type),
+            )
+              ? "Unlock controls using Bluetooth pairing. Enter the six-digit code displayed on your physical ticker in the device system prompt. Bond keys stay in iOS and on the ticker."
+              : "Upload TempoScoreboard firmware 0.2.0 or newer, then reconnect to enable controls."}
+          </Text>
+          {status?.capabilities.some(
+            (type) => !["get_status", "get_settings"].includes(type),
+          ) && (
+            <TickerAction
+              label={authorizing ? "Pairing…" : "Unlock controls"}
+              disabled={authorizing || Object.keys(pendingCommands).length > 0}
+              onPress={() => void ticker.authorize()}
+            />
+          )}
+        </>
+      )}
+      {connection === "connected" && authorized && (
         <Text style={text.secondaryText}>
-          BLE connected • Authorization required. Secure verification is
-          awaiting firmware integration. Device controls remain locked.
+          Controls unlocked for this connection.
         </Text>
       )}
     </>
