@@ -1,3 +1,4 @@
+import { normalizeTickerName, TickerNameUnavailableError } from "./name";
 import { createStore } from "zustand/vanilla";
 import type {
   TickerBluetoothState,
@@ -7,7 +8,12 @@ import type {
   TickerSettings,
   TickerStatus,
 } from "../../types/ticker";
-import { decodeFrame, encodeCommand } from "./protocol";
+import {
+  decodeFrame,
+  encodeCommand,
+  LEAGUES,
+  tickerSupportsExpandedLeagues,
+} from "./protocol";
 import {
   pendingFirmwareAuthorization,
   type TickerAuthorizer,
@@ -26,6 +32,9 @@ export interface TickerState {
   status: TickerStatus | null;
   authorized: boolean;
   authorizing: boolean;
+  renaming: boolean;
+  nameAvailable: boolean;
+  nameIssue: string | null;
   pendingCommands: Record<number, TickerCommand["type"]>;
   error: string | null;
 }
@@ -47,6 +56,11 @@ const bluetoothMessage = (state: TickerBluetoothState) =>
     PoweredOn: "",
   })[state];
 
+type LiveSetting = Extract<
+  TickerCommand,
+  { type: "set_brightness" | "set_league" }
+>;
+
 export function createTickerController(
   transport: TickerTransport,
   authorizer: TickerAuthorizer = pendingFirmwareAuthorization,
@@ -67,6 +81,9 @@ export function createTickerController(
     status: null,
     authorized: false,
     authorizing: false,
+    renaming: false,
+    nameAvailable: false,
+    nameIssue: null,
     pendingCommands: {},
     error: null,
   }));
@@ -76,6 +93,15 @@ export function createTickerController(
   let requestId = 0; // Never reused in a manager lifetime, including reconnects.
   let subscriptions: Unsubscribe[] = [];
   let disposed = false;
+  let drainingSettings = false;
+  const queuedSettings = new Map<
+    LiveSetting["type"],
+    { command: LiveSetting; resolve: (applied: boolean) => void }
+  >();
+  const cancelQueuedSettings = () => {
+    queuedSettings.forEach(({ resolve }) => resolve(false));
+    queuedSettings.clear();
+  };
   let cleanup: Promise<void> = Promise.resolve();
   const cancelDevice = (id: string) => {
     const next = cleanup.then(() => transport.disconnect(id));
@@ -102,6 +128,7 @@ export function createTickerController(
     store.setState({ pendingCommands: {} });
   };
   const clearConnection = () => {
+    cancelQueuedSettings();
     subscriptions.forEach((unsubscribe) => unsubscribe());
     subscriptions = [];
     rejectPending("Device disconnected. Reconnect before sending commands.");
@@ -109,6 +136,9 @@ export function createTickerController(
       connection: "disconnected",
       authorized: false,
       authorizing: false,
+      renaming: false,
+      nameAvailable: false,
+      nameIssue: null,
       status: null,
       settings: null,
     });
@@ -205,8 +235,14 @@ export function createTickerController(
         );
       if (state.authorizing)
         throw new Error("Finish Bluetooth pairing before sending commands.");
-      if (pending.size)
+      if (pending.size || state.renaming)
         throw new Error("Wait for the current ticker command to finish.");
+      if (
+        command.type === "set_league" &&
+        LEAGUES.indexOf(command.value) > 2 &&
+        !tickerSupportsExpandedLeagues(state.status?.firmwareVersion)
+      )
+        throw new Error("This league requires firmware 0.4.0 or newer.");
       if (!state.status?.capabilities.includes(command.type))
         throw new Error("This control is not supported by the firmware.");
       if (
@@ -277,7 +313,64 @@ export function createTickerController(
             [...pending].map(([key, entry]) => [key, entry.type]),
           ),
         });
+      void drainSettings();
     }
+  };
+  // Keep BLE writes serialized, retaining only the newest unsent value for
+  // each live control. Rapid slider events and sport taps must not race ACKs.
+  const drainSettings = async () => {
+    if (
+      drainingSettings ||
+      store.getState().renaming ||
+      Object.keys(store.getState().pendingCommands).length
+    )
+      return;
+    drainingSettings = true;
+    const token = generation;
+    try {
+      while (queuedSettings.size && token === generation) {
+        const [type, entry] = queuedSettings.entries().next().value!;
+        queuedSettings.delete(type);
+        const state = store.getState();
+        const alreadyApplied =
+          state.connection === "connected" &&
+          state.authorized &&
+          (entry.command.type === "set_brightness"
+            ? state.settings?.brightness === entry.command.value
+            : state.settings?.selectedLeague === entry.command.value);
+        const applied = alreadyApplied || (await command(entry.command));
+        entry.resolve(applied);
+        if (!applied && token === generation) cancelQueuedSettings();
+      }
+    } finally {
+      drainingSettings = false;
+      // A reconnect may have queued new intent while an old command settled.
+      if (queuedSettings.size) void drainSettings();
+    }
+  };
+  const updateSetting = (next: LiveSetting): Promise<boolean> => {
+    const state = store.getState();
+    if (
+      state.connection !== "connected" ||
+      !state.authorized ||
+      state.authorizing ||
+      state.renaming
+    )
+      return Promise.resolve(false);
+    // Validate before replacing valid queued intent or skipping a no-op.
+    try {
+      encodeCommand(1, next, state.status?.protocolVersion ?? 1);
+      if (!state.status?.capabilities.includes(next.type))
+        throw new Error("This control is not supported by the firmware.");
+    } catch (error) {
+      store.setState({ error: message(error) });
+      return Promise.resolve(false);
+    }
+    return new Promise((resolve) => {
+      queuedSettings.get(next.type)?.resolve(false);
+      queuedSettings.set(next.type, { command: next, resolve });
+      void drainSettings();
+    });
   };
   const connect = async (device: TickerDevice): Promise<boolean> => {
     if (
@@ -337,6 +430,25 @@ export function createTickerController(
         throw new Error(
           "Unsupported firmware/protocol: missing device status.",
         );
+      let confirmedDevice = device;
+      let nameAvailable = false;
+      let nameIssue: string | null = null;
+      if (frame.status.canRename) {
+        if (!transport.readName)
+          throw new Error("Ticker name reading is unavailable in this build.");
+        try {
+          const name = normalizeTickerName(await transport.readName(device.id));
+          if (!current()) throw new Error("Connection cancelled.");
+          confirmedDevice = { ...device, name };
+          nameAvailable = true;
+        } catch (error) {
+          if (!current() || !(error instanceof TickerNameUnavailableError))
+            throw error;
+          // Name support is optional: a cached pre-rename GATT table must not
+          // disconnect a ticker whose status and ordinary controls are valid.
+          nameIssue = error.message;
+        }
+      }
       applyStatus(frame.status);
       subscriptions.push(
         transport.monitor(
@@ -389,7 +501,10 @@ export function createTickerController(
       store.setState({
         connection: "connected",
         authorized,
-        lastDevice: { id: device.id, name: device.name },
+        nameAvailable,
+        nameIssue,
+        selectedDevice: confirmedDevice,
+        lastDevice: { id: confirmedDevice.id, name: confirmedDevice.name },
       });
       // Read-only synchronization is permitted before device authorization.
       await command({ type: "get_settings" });
@@ -429,6 +544,7 @@ export function createTickerController(
       state.connection !== "connected" ||
       !state.selectedDevice ||
       state.authorizing ||
+      state.renaming ||
       pending.size
     )
       return false;
@@ -480,13 +596,107 @@ export function createTickerController(
       if (token === generation) store.setState({ authorizing: false });
     }
   };
+  const rename = async (value: string): Promise<boolean> => {
+    const state = store.getState();
+    const token = generation;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let timedOut = false;
+    let started = false;
+    try {
+      const name = normalizeTickerName(value);
+      if (
+        state.connection !== "connected" ||
+        !state.selectedDevice ||
+        state.bluetooth !== "PoweredOn"
+      )
+        throw new Error("Connect your ticker before renaming it.");
+      if (!state.authorized || state.authorizing)
+        throw new Error("Unlock controls before renaming your ticker.");
+      if (
+        state.renaming ||
+        pending.size ||
+        queuedSettings.size ||
+        drainingSettings
+      )
+        throw new Error("Wait for the current ticker change to finish.");
+      if (
+        !state.status?.canRename ||
+        !state.nameAvailable ||
+        !transport.readName ||
+        !transport.writeName
+      )
+        throw new Error(
+          state.nameIssue ??
+            "Renaming requires ticker firmware 0.6.0 or newer.",
+        );
+      if (state.selectedDevice.name === name) {
+        store.setState({ error: null });
+        return true;
+      }
+      started = true;
+      store.setState({ renaming: true, error: null });
+      const device = state.selectedDevice;
+      const saveAndRead = async () => {
+        await transport.writeName!(device.id, name);
+        if (token !== generation)
+          throw new Error("Connection changed while renaming.");
+        const confirmed = await transport.readName!(device.id);
+        if (token !== generation)
+          throw new Error("Connection changed while renaming.");
+        if (confirmed !== name)
+          throw new Error(
+            "The ticker did not confirm the new name. Please try again.",
+          );
+        return confirmed;
+      };
+      const confirmed = await Promise.race([
+        saveAndRead(),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => {
+            timedOut = true;
+            reject(
+              new Error(
+                "Name change was not confirmed. Reconnect to check your ticker’s name.",
+              ),
+            );
+          }, timeouts.command);
+        }),
+      ]);
+      if (token !== generation) return false;
+      store.setState((latest) => ({
+        selectedDevice: { ...device, name: confirmed },
+        lastDevice: { id: device.id, name: confirmed },
+        devices: latest.devices.map((item) =>
+          item.id === device.id ? { ...item, name: confirmed } : item,
+        ),
+      }));
+      return true;
+    } catch (error) {
+      if (token === generation) {
+        if (timedOut) {
+          generation++;
+          clearConnection();
+          store.setState({ connection: "error", error: message(error) });
+          if (state.selectedDevice)
+            void cancelDevice(state.selectedDevice.id).catch(() => {});
+        } else store.setState({ error: message(error) });
+      }
+      return false;
+    } finally {
+      clearTimeout(timer);
+      if (started && token === generation) store.setState({ renaming: false });
+      if (started) void drainSettings();
+    }
+  };
   return {
     store,
     startScan,
     stopScan,
     connect,
     authorize,
+    rename,
     command,
+    updateSetting,
     disconnect,
     reconnect: async () => {
       const device =

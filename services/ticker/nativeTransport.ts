@@ -11,6 +11,11 @@ import {
   isCompatibleAdvertisement,
   TICKER_GATT,
 } from "./protocol";
+import {
+  decodeTickerName,
+  encodeTickerName,
+  TickerNameUnavailableError,
+} from "./name";
 import type { TickerTransport } from "./transport";
 
 export function createNativeTickerTransport(): TickerTransport {
@@ -168,6 +173,63 @@ export function createNativeTickerTransport(): TickerTransport {
           )
         ).value,
       );
+    },
+    async readName(id) {
+      const revision = deviceRevisions.get(id);
+      const ble = await getManager();
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading the name.");
+      const characteristics = await ble.characteristicsForDevice(
+        id,
+        TICKER_GATT.service,
+      );
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading the name.");
+      if (
+        !characteristics.some(
+          (item) =>
+            item.uuid.toLowerCase() === TICKER_GATT.name && item.isReadable,
+        )
+      )
+        throw new TickerNameUnavailableError();
+      let result;
+      try {
+        result = await ble.readCharacteristicForDevice(
+          id,
+          TICKER_GATT.service,
+          TICKER_GATT.name,
+        );
+      } catch (error) {
+        // CoreBluetooth may retain an older service table after a firmware update.
+        if (
+          error &&
+          typeof error === "object" &&
+          "errorCode" in error &&
+          error.errorCode === 404
+        )
+          throw new TickerNameUnavailableError();
+        throw error;
+      }
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading the name.");
+      if (!result.value || result.value.length > 28)
+        throw new Error("The ticker reported an invalid name.");
+      return decodeTickerName(toByteArray(result.value));
+    },
+    async writeName(id, name) {
+      const bytes = encodeTickerName(name);
+      const revision = deviceRevisions.get(id);
+      const ble = await getManager();
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed before renaming.");
+      await ble.writeCharacteristicWithResponseForDevice(
+        id,
+        TICKER_GATT.service,
+        TICKER_GATT.name,
+        fromByteArray(bytes),
+      );
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while renaming.");
     },
     async readAuthorization(id) {
       const revision = deviceRevisions.get(id);

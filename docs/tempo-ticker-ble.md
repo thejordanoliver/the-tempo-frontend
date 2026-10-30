@@ -1,3 +1,119 @@
+## Recovery after adding the rename characteristic
+
+A phone may retain an older Bluetooth service table after firmware 0.6.0 adds the
+name characteristic. Native discovery now verifies that it is readable and maps
+CharacteristicNotFound to a specific optional-feature error. The controller keeps
+the core connection and controls working, marks nameAvailable false, and displays
+recovery guidance on Rename ticker. Ordinary status ACKs cannot re-enable it;
+a successful name read on a new connection is required. Other connection/read
+errors retain the normal failure behavior.
+
+To refresh the iPhone service cache, forget the ticker in Settings → Bluetooth,
+restart the ticker, then reconnect and pair in the app. Reload the updated app
+bundle to receive this graceful fallback; no firmware or native app rebuild is
+required for the fallback itself.
+
+## Rename ticker (firmware 0.6.0)
+
+Device → Rename ticker opens the shared confirm dialog and input. Names use 1–20
+printable ASCII characters; surrounding whitespace is trimmed. A connected,
+unlocked device must explicitly advertise rename support. Older firmware disables
+the action with an upgrade hint. All UI names and the reconnect hint update only
+after the saved name is read back exactly. The immutable peripheral ID stays the
+same. Connect reads the canonical device name rather than a cached advertisement.
+
+Status capability bit 7 (128) of v3 advertises this feature; v1/v2 reserved capability
+rules are unchanged. Existing command frames and opcodes stay unchanged. Name GATT
+UUID is `d69a0006-7a9b-4b28-95d3-09a1f487e001`, with public read and native protected
+write-with-response. Writes require the same SC/MITM native bond as other controls.
+The frontend bounds payloads and read results to 20 printable bytes, serializes
+renames with other mutations, and verifies readback. Timeouts disconnect to prevent
+unconfirmed writes from racing a later operation. Stale completions never rename
+a newly connected device. Reconnect reads the persisted name after ambiguous errors.
+
+The ticker commits names to NVS before publishing them, restores them on reboot,
+and updates advertising from loop(). CoreBluetooth may cache a display name; the
+app's canonical read still uses the durable value. Upload the new firmware and
+reload the JavaScript bundle; there are no new native dependencies or backend calls.
+
+## Ticker UI code organization
+
+The three `app/ticker` screens compose shared UI and connect it to the ticker store.
+`TickerUI` contains page/action/status/feedback primitives; `TickerSettingsSection`
+contains sections, choices and switches. `TickerIcon` defines typed Ionicons names
+and hides decorative glyphs from screen readers. Labels remain the accessible source
+of meaning. `TickerDisplayControls` owns slider drafts and commit behavior;
+`TickerDeviceSummary` owns the common connection summary. Content selection and
+its bottom-sheet picker remain separate. Each component keeps static layout in named
+StyleSheets, while theme colors and measurements remain dynamic. BLE commands,
+ACK handling and authorization continue to live in the existing controller.
+
+## My Ticker and discovery layout
+
+My Ticker shares its connection summary with Settings and shows current content,
+rotation and display state only while connected. The main action opens Ticker
+Settings; connect/unlock guidance appears next to the device. Raw IDs and firmware
+information stay in Device details. First-time setup has a single Add ticker action.
+
+Add Ticker separates searching, nearby results, connection progress, no-results,
+Bluetooth-off, permission-denied and unsupported states. Names are the main device
+identity; a short suffix disambiguates duplicate names. Backgrounding or leaving
+stops scans, and late connection results cannot redirect after the screen loses
+focus. Existing connection/authentication checks stay in the shared controller.
+
+## Ticker Settings layout
+
+The settings screen follows this order: connection summary, Content, Rotation,
+Display, then Device. Content keeps the selected league in a single row and offers
+Scores / Schedule / Rankings. Rankings is available for college leagues. League
+and schedule team selection use searchable/scrollable bottom sheets with the
+shared SelectionCard artwork and shared search styling. A team becomes selected
+only after the ticker acknowledges the command; closing a picker without selecting changes nothing.
+
+Show only the active content's controls: a team row for Schedule, poll options for
+Rankings, college rank labels for Scores/Schedule, and Top 25 game filtering only
+for college Scores. Connection/unlock guidance is shown once near the top. Device
+IDs, firmware, Wi-Fi and status refresh are collapsed under Device details. Rotation
+uses Time per game or Time per team according to the active view.
+
+## Firmware 0.5.0 / protocol v3: content views
+
+Ticker Settings has a Display content card with League scores, Choose a team schedule,
+and college poll choices. Schedule teams come from the app's existing league registries
+and are searchable by name or abbreviation. Confirmed mode/team comes from device ACKs;
+selection is not persisted as device truth. Team schedules use the current season and
+include completed/upcoming games. CFB offers AP, Coaches, CFP; MCBB/WCBB offer AP/Coaches.
+Missing polls are shown as unavailable, never replaced with a different poll.
+
+The frame stays 20 bytes. v3 retains bytes 0–13 and duration byte 15. Byte 14 is a
+bitmask: bit 0 rank labels, bit 1 Top 25 games. Byte 16 is mode (0 league scores,
+1 team schedule, 2 AP, 3 Coaches, 4 CFP). Bytes 17–19 are unsigned 24-bit team ID,
+little endian, required nonzero in schedule mode and zero in all other modes.
+Opcode 10 set_view uses argument 0/2/3/4. Opcode 11 set_team_schedule uses bytes 5–7
+as the team ID; bytes 8–19 must be zero. Other commands keep bytes 6–19 reserved zero.
+Base capability bits remain unchanged; v3 additionally supports both content commands.
+Changing league resets mode to scores and team to zero. New firmware accepts v3 commands;
+the updated app still negotiates and supports v1/v2 firmware, where new controls are disabled.
+
+Upload firmware 0.5.0 with headers and reload the app. No native phone build or backend
+deployment is required. The existing paired BLE authorization policy applies to the
+new commands. Duration applies to each game or poll team. Poll rank labels are always
+shown. The game rank-label switch applies to college scores and schedules; the
+Top 25 game filter applies only to league scores.
+
+## Firmware 0.4.0: additional leagues
+
+The v2 frame remains 20 bytes. League IDs 1 NBA, 2 NFL, 3 CFB stay unchanged;
+4 MLB, 5 MCBB, 6 WNBA, 7 WCBB extend the same status byte 8 and set_league argument.
+New league controls require firmware >=0.4.0; existing v1/v2 tickers retain their
+original controls. Reload the app after uploading firmware 0.4.0; these changes
+require no additional native dependencies.
+
+The Sports preferences grid wraps into rows of three. College ranking labels and
+Top 25 filtering also apply to men's and women's college basketball; the duration
+setting applies to every league. The ticker fetches normalized hosted Tempo feeds,
+with daily MLB/basketball slates and existing weekly football selection.
+
 # Tempo Ticker frontend — Phase 1
 
 ## Current update: rankings and duration (firmware 0.3.0)

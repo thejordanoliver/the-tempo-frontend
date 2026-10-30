@@ -7,6 +7,7 @@ import {
   isCompatibleAdvertisement,
   LEAGUES,
   TICKER_GATT,
+  tickerSupportsExpandedLeagues,
 } from "../services/ticker/protocol";
 
 export function statusFrame() {
@@ -40,12 +41,15 @@ test("brightness and request identifiers are strictly validated", () => {
   for (const id of [0, -1, 65536, 1.5])
     assert.throws(() => encodeCommand(id, { type: "get_status" }));
 });
-test("single-league encoding matches NBA/NFL/CFB identifiers", () => {
+test("single-league encoding preserves original identifiers and adds four leagues", () => {
   LEAGUES.forEach((value, index) =>
-    assert.equal(encodeCommand(1, { type: "set_league", value })[5], index + 1),
+    assert.equal(
+      encodeCommand(1, { type: "set_league", value }, 2)[5],
+      index + 1,
+    ),
   );
   assert.throws(() =>
-    encodeCommand(1, { type: "set_league", value: "mlb" as never }),
+    encodeCommand(1, { type: "set_league", value: "nhl" as never }),
   );
 });
 test("status decodes capabilities, settings, firmware and optional unknown values", () => {
@@ -60,6 +64,8 @@ test("status decodes capabilities, settings, firmware and optional unknown value
     showRankings: null,
     durationSeconds: null,
     top25Only: null,
+    viewMode: null,
+    teamId: null,
   });
   assert.equal(decoded.status.firmwareVersion, "1.2.3");
   frame[7] = 255;
@@ -76,7 +82,7 @@ test("status decodes capabilities, settings, firmware and optional unknown value
 test("unsupported version, lengths, malformed fields and reserved bits are rejected", () => {
   assert.throws(() => decodeFrame(new Uint8Array(21)), /Unsupported/);
   for (const [index, value] of [
-    [0, 3],
+    [0, 4],
     [1, 5],
     [6, 16],
     [7, 101],
@@ -184,4 +190,79 @@ test("v2 rejects unknown capability bits, invalid option enums and reserved data
     assert.equal(parsed.response.command, "set_duration");
   response[0] = 1;
   assert.throws(() => decodeFrame(response));
+});
+
+test("expanded leagues require new firmware and round-trip stable v2 identifiers", () => {
+  assert.deepEqual(LEAGUES, [
+    "nba",
+    "nfl",
+    "cfb",
+    "mlb",
+    "mcbb",
+    "wnba",
+    "wcbb",
+  ]);
+  for (const version of [null, "0.2.0", "0.3.0"])
+    assert.equal(tickerSupportsExpandedLeagues(version), false);
+  for (const version of ["0.4.0", "0.5.0", "1.0.0"])
+    assert.equal(tickerSupportsExpandedLeagues(version), true);
+  for (const league of LEAGUES.slice(3)) {
+    assert.throws(() =>
+      encodeCommand(1, { type: "set_league", value: league }, 1),
+    );
+    const frame = extendedStatus();
+    frame[8] = encodeCommand(1, { type: "set_league", value: league }, 2)[5];
+    frame[12] = 4;
+    const result = decodeFrame(frame);
+    assert.equal(
+      result.kind === "status" && result.status.settings.selectedLeague,
+      league,
+    );
+  }
+});
+
+test("v3 carries schedule team IDs over 16 bits and explicit poll modes in 20 bytes", () => {
+  assert.deepEqual(
+    Array.from(
+      encodeCommand(1, { type: "set_team_schedule", value: 129689 }, 3).slice(
+        4,
+        8,
+      ),
+    ),
+    [11, 0x99, 0xfa, 1],
+  );
+  for (const value of [0, -1, 1.5, 0x1000000, NaN])
+    assert.throws(() =>
+      encodeCommand(1, { type: "set_team_schedule", value }, 3),
+    );
+  for (const version of [1, 2] as const)
+    assert.throws(() =>
+      encodeCommand(1, { type: "set_view", value: "cfp" }, version),
+    );
+  for (const [value, id] of [
+    ["scores", 0],
+    ["ap", 2],
+    ["coaches", 3],
+    ["cfp", 4],
+  ] as const)
+    assert.equal(encodeCommand(1, { type: "set_view", value }, 3)[5], id);
+  const frame = Uint8Array.from([
+    3, 3, 0, 0, 0, 0, 127, 50, 6, 1, 2, 0, 5, 0, 3, 6, 1, 0x99, 0xfa, 1,
+  ]);
+  const parsed = decodeFrame(frame);
+  assert.equal(parsed.kind, "status");
+  if (parsed.kind !== "status") return;
+  assert.equal(parsed.status.settings.teamId, 129689);
+  assert.equal(parsed.status.settings.viewMode, "schedule");
+  assert.equal(parsed.status.settings.top25Only, true);
+  assert.equal(parsed.status.settings.showRankings, true);
+  assert.ok(parsed.status.capabilities.includes("set_view"));
+  frame[16] = 4;
+  assert.throws(() => decodeFrame(frame)); // Poll cannot retain a team ID.
+  frame.fill(0, 17);
+  assert.throws(() => decodeFrame(frame)); // CFP cannot be a WNBA view.
+  frame[8] = 3;
+  assert.equal(decodeFrame(frame).kind, "status");
+  frame[14] = 4;
+  assert.throws(() => decodeFrame(frame));
 });

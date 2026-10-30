@@ -28,6 +28,7 @@ type Props = {
   itemWidth: number;
   onImageLoad?: () => void;
   showSportTag?: boolean;
+  disabled?: boolean;
 };
 
 function SelectionCard({
@@ -38,6 +39,7 @@ function SelectionCard({
   itemWidth,
   onImageLoad,
   showSportTag = false,
+  disabled = false,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
 
@@ -89,9 +91,13 @@ function SelectionCard({
 
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={displayName}
+      accessibilityState={{ selected: isSelected, disabled }}
+      disabled={disabled}
       onPress={handlePress}
       style={({ pressed }) => ({
-        opacity: pressed ? 0.7 : 1,
+        opacity: disabled ? 0.5 : pressed ? 0.7 : 1,
         width: itemWidth,
         marginBottom: 0,
       })}
@@ -163,9 +169,14 @@ export default React.memo(
     prevProps.item.league === nextProps.item.league &&
     prevProps.item.name === nextProps.item.name &&
     prevProps.item.fullName === nextProps.item.fullName &&
+    prevProps.item.shortName === nextProps.item.shortName &&
+    prevProps.item.code === nextProps.item.code &&
     prevProps.item.primaryColor === nextProps.item.primaryColor &&
     prevProps.logo === nextProps.logo &&
     prevProps.isSelected === nextProps.isSelected &&
     prevProps.itemWidth === nextProps.itemWidth &&
+    prevProps.onPress === nextProps.onPress &&
+    prevProps.onImageLoad === nextProps.onImageLoad &&
+    prevProps.disabled === nextProps.disabled &&
     prevProps.showSportTag === nextProps.showSportTag,
 );

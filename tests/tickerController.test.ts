@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { TickerNameUnavailableError } from "../services/ticker/name";
 import test from "node:test";
 import { createTickerController } from "../services/ticker/controller";
 import type { TickerTransport } from "../services/ticker/transport";
@@ -10,7 +11,12 @@ const statusFrame = () =>
   Uint8Array.from([
     1, 3, 0, 0, 0, 0, 15, 50, 1, 1, 2, 1, 2, 3, 0, 0, 0, 0, 0, 0,
   ]);
-function harness(authorized = true, extended = false) {
+function harness(
+  authorized = true,
+  extended = false,
+  content = false,
+  rename = false,
+) {
   let notify: (bytes: Uint8Array) => void = () => {};
   let lose: () => void = () => {};
   let stateChange: (state: TickerBluetoothState) => void = () => {};
@@ -34,6 +40,22 @@ function harness(authorized = true, extended = false) {
     live[15] = 6;
     live[16] = 1;
   }
+  if (content) {
+    live[0] = 3;
+    live[6] = 127;
+    live[11] = 0;
+    live[12] = 5;
+    live[13] = 0;
+    live[14] = 1;
+    live[15] = 6;
+    live[16] = 0;
+  }
+  let currentName = "Living Room Ticker";
+  const nameWrites: string[] = [];
+  if (rename) {
+    live[6] |= 128;
+    live[12] = 6;
+  }
   const transport: TickerTransport = {
     async prepare(callback) {
       stateChange = callback;
@@ -48,6 +70,13 @@ function harness(authorized = true, extended = false) {
       connects++;
     },
     async discover() {},
+    async readName() {
+      return currentName;
+    },
+    async writeName(_, value) {
+      nameWrites.push(value);
+      currentName = value;
+    },
     async readStatus() {
       return live;
     },
@@ -71,6 +100,18 @@ function harness(authorized = true, extended = false) {
       if (frame[4] === 7) live[14] = frame[5] ? 2 : 1;
       if (frame[4] === 8) live[15] = frame[5];
       if (frame[4] === 9) live[16] = frame[5] ? 2 : 1;
+      if (content && frame[4] === 4) {
+        live[16] = 0;
+        live.fill(0, 17);
+      }
+      if (content && frame[4] === 10) {
+        live[16] = frame[5];
+        live.fill(0, 17);
+      }
+      if (content && frame[4] === 11) {
+        live[16] = 1;
+        live.set(frame.slice(5, 8), 17);
+      }
       const response = live.slice();
       response[1] = 2;
       response[2] = frame[2];
@@ -94,9 +135,22 @@ function harness(authorized = true, extended = false) {
     controller,
     transport,
     writes,
+    nameWrites,
     disconnected,
     live,
     emit: (frame: Uint8Array) => notify(frame),
+    confirmLastWrite: () => {
+      const request = writes.at(-1)!;
+      if (request[4] === 3) live[7] = request[5];
+      if (request[4] === 4) live[8] = request[5];
+      const response = live.slice();
+      response[1] = 2;
+      response[2] = request[2];
+      response[3] = request[3];
+      response[4] = request[4];
+      response[5] = result;
+      notify(response);
+    },
     loss: () => lose(),
     oldLoss: () => lose,
     change: (next: TickerBluetoothState) => stateChange(next),
@@ -188,6 +242,128 @@ test("league success commits one active league", async () => {
     true,
   );
   assert.equal(h.controller.store.getState().settings?.selectedLeague, "cfb");
+  await h.controller.dispose();
+});
+
+test("live brightness sends immediately, coalesces drag events and confirms the final value", async () => {
+  const h = harness();
+  await h.controller.connect(device);
+  h.ack(false);
+  const before = h.writes.length;
+  const first = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 60,
+  });
+  assert.equal(h.writes.length, before + 1);
+  const skipped = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 70,
+  });
+  const last = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 90,
+  });
+  assert.equal(await skipped, false);
+  assert.equal(h.writes.length, before + 1);
+  h.confirmLastWrite();
+  assert.equal(await first, true);
+  await tick();
+  assert.equal(h.writes.length, before + 2);
+  assert.equal(h.writes.at(-1)![5], 90);
+  h.confirmLastWrite();
+  assert.equal(await last, true);
+  const count = h.writes.length;
+  assert.equal(
+    await h.controller.updateSetting({ type: "set_brightness", value: 90 }),
+    true,
+  );
+  assert.equal(h.writes.length, count); // Releasing at the last ACKed value is a no-op.
+  assert.equal(h.controller.store.getState().settings?.brightness, 90);
+  assert.equal(h.controller.store.getState().error, null);
+  await h.controller.dispose();
+});
+
+test("sport changes serialize behind brightness and retain the latest sport including a return to the current sport", async () => {
+  const h = harness();
+  await h.controller.connect(device);
+  h.ack(false);
+  const brightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 30,
+  });
+  const skipped = h.controller.updateSetting({
+    type: "set_league",
+    value: "nfl",
+  });
+  const college = h.controller.updateSetting({
+    type: "set_league",
+    value: "cfb",
+  });
+  assert.equal(await skipped, false);
+  h.confirmLastWrite();
+  await brightness;
+  await tick();
+  assert.equal(h.writes.at(-1)![4], 4);
+  assert.equal(h.writes.at(-1)![5], 3);
+  const nba = h.controller.updateSetting({ type: "set_league", value: "nba" });
+  h.confirmLastWrite();
+  assert.equal(await college, true);
+  await tick();
+  assert.equal(h.writes.at(-1)![5], 1);
+  h.confirmLastWrite();
+  assert.equal(await nba, true);
+  assert.equal(h.controller.store.getState().settings?.selectedLeague, "nba");
+  assert.equal(h.controller.store.getState().error, null);
+  await h.controller.dispose();
+});
+
+test("live settings wait for other commands and never cross a disconnect", async () => {
+  const h = harness();
+  await h.controller.connect(device);
+  h.ack(false);
+  const status = h.controller.command({ type: "get_status" });
+  const league = h.controller.updateSetting({
+    type: "set_league",
+    value: "nfl",
+  });
+  h.confirmLastWrite();
+  await status;
+  await tick();
+  assert.equal(h.writes.at(-1)![4], 4);
+  const queued = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 10,
+  });
+  const count = h.writes.length;
+  await h.controller.disconnect();
+  assert.equal(await league, false);
+  assert.equal(await queued, false);
+  assert.equal(h.writes.length, count);
+  h.ack(true);
+  await h.controller.reconnect();
+  assert.equal(h.controller.store.getState().settings?.brightness, 50);
+  await h.controller.dispose();
+});
+
+test("failed live settings stop queued writes and preserve confirmed values", async () => {
+  const h = harness();
+  await h.controller.connect(device);
+  h.ack(false);
+  const brightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 40,
+  });
+  const league = h.controller.updateSetting({
+    type: "set_league",
+    value: "cfb",
+  });
+  const count = h.writes.length;
+  assert.equal(await brightness, false);
+  assert.equal(await league, false);
+  assert.equal(h.writes.length, count);
+  assert.equal(h.controller.store.getState().settings?.brightness, 50);
+  assert.equal(h.controller.store.getState().settings?.selectedLeague, "nba");
+  assert.match(h.controller.store.getState().error!, /timed out/);
   await h.controller.dispose();
 });
 test("unsupported capability and invalid brightness never write to BLE", async () => {
@@ -579,5 +755,213 @@ test("wrong confirmed duration does not commit a locally requested value", async
   h.emit(ack);
   assert.equal(await command, false);
   assert.equal(h.controller.store.getState().settings?.durationSeconds, 6);
+  await h.controller.dispose();
+});
+
+test("new leagues require firmware 0.4 and confirm all four selections through ACKs", async () => {
+  const old = harness(true, true);
+  await old.controller.connect(device);
+  const previousWrites = old.writes.length;
+  assert.equal(
+    await old.controller.command({ type: "set_league", value: "mlb" }),
+    false,
+  );
+  assert.equal(old.writes.length, previousWrites);
+  assert.match(old.controller.store.getState().error!, /0.4.0/);
+  await old.controller.dispose();
+  const current = harness(true, true);
+  current.live[12] = 4;
+  await current.controller.connect(device);
+  for (const value of ["mlb", "mcbb", "wnba", "wcbb"] as const) {
+    assert.equal(
+      await current.controller.updateSetting({ type: "set_league", value }),
+      true,
+    );
+    assert.equal(
+      current.controller.store.getState().settings?.selectedLeague,
+      value,
+    );
+  }
+  await current.controller.dispose();
+});
+
+test("team schedule and CFP views require authorization and commit only confirmed settings", async () => {
+  const locked = harness(false, true, true);
+  await locked.controller.connect(device);
+  const writes = locked.writes.length;
+  assert.equal(
+    await locked.controller.command({
+      type: "set_team_schedule",
+      value: 129689,
+    }),
+    false,
+  );
+  assert.equal(locked.writes.length, writes);
+  await locked.controller.dispose();
+  const h = harness(true, true, true);
+  await h.controller.connect(device);
+  assert.equal(
+    await h.controller.command({ type: "set_team_schedule", value: 129689 }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.teamId, 129689);
+  assert.equal(h.controller.store.getState().settings?.viewMode, "schedule");
+  assert.equal(
+    await h.controller.command({ type: "set_league", value: "cfb" }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.viewMode, "scores");
+  assert.equal(h.controller.store.getState().settings?.teamId, null);
+  assert.equal(
+    await h.controller.command({ type: "set_view", value: "cfp" }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.viewMode, "cfp");
+  await h.controller.dispose();
+});
+
+test("rename uses the canonical device name on connect and commits only confirmed durable names", async () => {
+  const h = harness(true, true, true, true);
+  await h.controller.connect(device);
+  assert.equal(
+    h.controller.store.getState().selectedDevice?.name,
+    "Living Room Ticker",
+  );
+  assert.equal(await h.controller.rename("  Bedroom Ticker  "), true);
+  assert.deepEqual(h.nameWrites, ["Bedroom Ticker"]);
+  assert.equal(
+    h.controller.store.getState().selectedDevice?.name,
+    "Bedroom Ticker",
+  );
+  assert.equal(
+    h.controller.store.getState().lastDevice?.name,
+    "Bedroom Ticker",
+  );
+  await h.controller.disconnect();
+  await h.controller.connect(device); // Advertisement can be cached with its old name.
+  assert.equal(
+    h.controller.store.getState().selectedDevice?.name,
+    "Bedroom Ticker",
+  );
+  await h.controller.dispose();
+});
+
+test("rename rejects locked, unsupported, and invalid requests before native writes", async () => {
+  for (const authorized of [false, true]) {
+    const h = harness(authorized, true, true, !authorized);
+    await h.controller.connect(device);
+    assert.equal(await h.controller.rename("Bedroom"), false);
+    assert.deepEqual(h.nameWrites, []);
+    await h.controller.dispose();
+  }
+  const h = harness(true, true, true, true);
+  await h.controller.connect(device);
+  assert.equal(await h.controller.rename(""), false);
+  assert.deepEqual(h.nameWrites, []);
+  await h.controller.dispose();
+});
+
+test("rename mismatch or native failure cannot replace the confirmed name", async () => {
+  const h = harness(true, true, true, true);
+  await h.controller.connect(device);
+  h.transport.writeName = async () => {};
+  assert.equal(await h.controller.rename("Bedroom"), false);
+  assert.equal(
+    h.controller.store.getState().lastDevice?.name,
+    "Living Room Ticker",
+  );
+  h.transport.writeName = async () => {
+    throw new Error("Write denied");
+  };
+  assert.equal(await h.controller.rename("Bedroom"), false);
+  assert.equal(
+    h.controller.store.getState().selectedDevice?.name,
+    "Living Room Ticker",
+  );
+  assert.equal(h.controller.store.getState().renaming, false);
+  await h.controller.dispose();
+});
+
+test("rename serializes mutations and ignores completion after disconnect", async () => {
+  const h = harness(true, true, true, true);
+  await h.controller.connect(device);
+  let finish!: () => void;
+  h.transport.writeName = () =>
+    new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+  const save = h.controller.rename("Bedroom");
+  assert.equal(h.controller.store.getState().renaming, true);
+  assert.equal(await h.controller.command({ type: "refresh_scores" }), false);
+  assert.equal(
+    await h.controller.updateSetting({ type: "set_brightness", value: 70 }),
+    false,
+  );
+  assert.equal(await h.controller.rename("Other"), false);
+  h.loss();
+  finish();
+  assert.equal(await save, false);
+  assert.equal(
+    h.controller.store.getState().lastDevice?.name,
+    "Living Room Ticker",
+  );
+  assert.equal(h.controller.store.getState().renaming, false);
+  await h.controller.dispose();
+});
+
+test("unconfirmed rename timeout disconnects and cannot publish a late result", async () => {
+  const h = harness(true, true, true, true);
+  await h.controller.connect(device);
+  let finish!: () => void;
+  h.transport.writeName = () =>
+    new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+  assert.equal(await h.controller.rename("Bedroom"), false);
+  assert.equal(h.controller.store.getState().connection, "error");
+  assert.equal(h.controller.store.getState().renaming, false);
+  finish();
+  await tick();
+  assert.equal(
+    h.controller.store.getState().lastDevice?.name,
+    "Living Room Ticker",
+  );
+  await h.controller.dispose();
+});
+
+test("a cached service table missing the optional name keeps ordinary controls connected", async () => {
+  const h = harness(true, true, true, true);
+  h.transport.readName = async () => {
+    throw new TickerNameUnavailableError();
+  };
+  assert.equal(await h.controller.connect(device), true);
+  assert.equal(h.controller.store.getState().connection, "connected");
+  assert.equal(h.controller.store.getState().nameAvailable, false);
+  assert.match(h.controller.store.getState().nameIssue!, /Forget this ticker/);
+  assert.equal(
+    await h.controller.command({ type: "set_brightness", value: 70 }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().nameAvailable, false); // ACK must not re-enable rename.
+  assert.equal(await h.controller.rename("Bedroom"), false);
+  assert.deepEqual(h.nameWrites, []);
+  await h.controller.disconnect();
+  h.transport.readName = async () => "Living Room Ticker";
+  assert.equal(await h.controller.connect(device), true);
+  assert.equal(h.controller.store.getState().nameAvailable, true);
+  assert.equal(h.controller.store.getState().nameIssue, null);
+  assert.equal(await h.controller.rename("Bedroom"), false); // Fake readback intentionally unchanged.
+  await h.controller.dispose();
+});
+
+test("unrelated name read errors are not mistaken for a cached optional characteristic", async () => {
+  const h = harness(true, true, true, true);
+  h.transport.readName = async () => {
+    throw new Error("Read failed");
+  };
+  assert.equal(await h.controller.connect(device), false);
+  assert.equal(h.controller.store.getState().connection, "error");
+  assert.equal(h.controller.store.getState().nameAvailable, false);
+  assert.match(h.controller.store.getState().error!, /Read failed/);
   await h.controller.dispose();
 });

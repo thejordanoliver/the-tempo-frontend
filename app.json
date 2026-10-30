@@ -10,6 +10,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.jordanoliver.thetempo",
+      "appleTeamId": "L89JT5BLN3",
+      "deploymentTarget": "17.0",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSBluetoothAlwaysUsageDescription": "Tempo uses Bluetooth to discover and connect to your nearby Tempo Ticker."
@@ -28,6 +30,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/withIosDeploymentTarget",
       "expo-router",
       [
         "expo-splash-screen",

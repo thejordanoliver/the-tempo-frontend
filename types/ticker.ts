@@ -1,4 +1,12 @@
-export type SupportedTickerLeague = "nba" | "nfl" | "cfb";
+export type SupportedTickerLeague =
+  | "nba"
+  | "nfl"
+  | "cfb"
+  | "mlb"
+  | "mcbb"
+  | "wnba"
+  | "wcbb";
+export type TickerViewMode = "scores" | "schedule" | "ap" | "coaches" | "cfp";
 export type TickerConnectionState =
   | "disconnected"
   | "connecting"
@@ -24,6 +32,8 @@ export interface TickerSettings {
   showRankings: boolean | null;
   durationSeconds: number | null;
   top25Only: boolean | null;
+  viewMode: TickerViewMode | null;
+  teamId: number | null;
 }
 export type TickerCommand =
   | { type: "get_status" | "get_settings" | "refresh_scores" }
@@ -31,10 +41,13 @@ export type TickerCommand =
   | { type: "set_league"; value: SupportedTickerLeague }
   | { type: "set_display"; value: boolean }
   | { type: "set_show_rankings" | "set_top25_only"; value: boolean }
-  | { type: "set_duration"; value: number };
+  | { type: "set_duration"; value: number }
+  | { type: "set_view"; value: Exclude<TickerViewMode, "schedule"> }
+  | { type: "set_team_schedule"; value: number };
 export type TickerCommandType = TickerCommand["type"];
 export interface TickerStatus {
-  protocolVersion: 1 | 2;
+  canRename?: boolean;
+  protocolVersion: 1 | 2 | 3;
   settings: TickerSettings;
   capabilities: TickerCommandType[];
   wifi: "unknown" | "connected" | "disconnected";

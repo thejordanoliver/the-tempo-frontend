@@ -39,6 +39,7 @@ type Props<T extends string = string> = {
   animationDuration?: number;
   scrollable?: boolean;
   minTabWidth?: number;
+  disabled?: boolean;
 };
 
 export default function PillTabs<T extends string = string>({
@@ -54,6 +55,7 @@ export default function PillTabs<T extends string = string>({
   animationDuration = 220,
   scrollable,
   minTabWidth = 112,
+  disabled = false,
 }: Props<T>) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -131,7 +133,11 @@ export default function PillTabs<T extends string = string>({
 
   return (
     <View
-      style={[styles.seasonTabsPill, containerStyle]}
+      style={[
+        styles.seasonTabsPill,
+        disabled && { opacity: 0.5 },
+        containerStyle,
+      ]}
       onLayout={(event) => {
         setContainerWidth(event.nativeEvent.layout.width);
       }}
@@ -170,7 +176,8 @@ export default function PillTabs<T extends string = string>({
               <Pressable
                 key={String(tab.value)}
                 accessibilityRole="tab"
-                accessibilityState={{ selected: active }}
+                accessibilityState={{ selected: active, disabled }}
+                disabled={disabled}
                 onLayout={handleTabLayout(tab.value)}
                 onPress={() => {
                   if (!active) {
