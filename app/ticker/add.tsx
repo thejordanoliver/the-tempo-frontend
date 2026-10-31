@@ -1,3 +1,5 @@
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
+import { addTickerStyles as styles } from "styles/TickerStyles/AddTickerStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -7,7 +9,6 @@ import {
   AppState,
   Linking,
   Pressable,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
@@ -17,7 +18,6 @@ import {
   TickerAction,
   TickerFeedback,
   TickerPage,
-  useTickerTheme,
 } from "components/Ticker/TickerUI";
 import { TickerSettingsSection } from "components/Ticker/TickerSettingsSection";
 import type { TickerDevice } from "types/ticker";
@@ -261,30 +261,3 @@ function NearbyTickerRow({
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  introduction: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    padding: 14,
-    borderRadius: 8,
-  },
-  copy: { flex: 1, gap: 3 },
-  guidance: { gap: 12 },
-  guidanceCopy: { gap: 4 },
-  scanStatus: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  deviceRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    minHeight: 64,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-});

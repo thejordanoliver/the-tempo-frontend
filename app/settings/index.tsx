@@ -194,6 +194,34 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
+        {__DEV__ &&
+          [
+            {
+              label: "Ticker Design Preview",
+              href: "/design-preview/ticker" as const,
+            },
+            {
+              label: "Notification Banner Preview",
+              href: "/design-preview/notification-banners" as const,
+            },
+          ].map(({ label, href }) => (
+            <View key={href} style={styles.optionButtonContainer}>
+              <TouchableOpacity
+                style={styles.optionButton}
+                accessibilityRole="button"
+                accessibilityLabel={label}
+                onPress={() => router.push(href)}
+              >
+                <Text style={styles.optionText}>{label}</Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={isDark ? Colors.white : Colors.black}
+                />
+              </TouchableOpacity>
+            </View>
+          ))}
+
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
             style={styles.optionButton}

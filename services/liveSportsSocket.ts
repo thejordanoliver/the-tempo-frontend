@@ -49,6 +49,7 @@ type SubscriptionListener<TPayload = unknown> = (
 ) => void;
 
 type SubscriptionRecord = {
+  latestUpdate?: LiveUpdateEnvelope;
   revision?: number;
   snapshot?: unknown;
   resyncing?: boolean;
@@ -302,6 +303,7 @@ function handleUpdate<TPayload>(envelope: LiveUpdateEnvelope<TPayload>) {
 
   if (!record) return;
 
+  record.latestUpdate = envelope;
   record.listeners.forEach((listener) => {
     listener(envelope);
   });
@@ -435,6 +437,11 @@ export function subscribeSportsLive<TPayload = unknown>({
     emitSubscribe(record);
   } else {
     record.listeners.add(listener as SubscriptionListener);
+    // Multiple screens share one server subscription. Joining listeners still
+    // need its latest snapshot even if the server payload has not changed.
+    if (record.latestUpdate) {
+      listener(record.latestUpdate as LiveUpdateEnvelope<TPayload>);
+    }
   }
   getSportsLiveSocket();
 

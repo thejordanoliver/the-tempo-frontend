@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   decodeFrame,
+  DATE_FORMATS,
   encodeCommand,
   FRAME_BYTES,
   isCompatibleAdvertisement,
@@ -64,8 +65,15 @@ test("status decodes capabilities, settings, firmware and optional unknown value
     showRankings: null,
     durationSeconds: null,
     top25Only: null,
+    smartGamePriority: null,
     viewMode: null,
     teamId: null,
+    dateFormat: null,
+    showBroadcast: null,
+    favoritesSignature: null,
+    rotationSignature: null,
+    headerMode: null,
+    headerColor: null,
   });
   assert.equal(decoded.status.firmwareVersion, "1.2.3");
   frame[7] = 255;
@@ -82,7 +90,7 @@ test("status decodes capabilities, settings, firmware and optional unknown value
 test("unsupported version, lengths, malformed fields and reserved bits are rejected", () => {
   assert.throws(() => decodeFrame(new Uint8Array(21)), /Unsupported/);
   for (const [index, value] of [
-    [0, 4],
+    [0, 11],
     [1, 5],
     [6, 16],
     [7, 101],
@@ -265,4 +273,105 @@ test("v3 carries schedule team IDs over 16 bits and explicit poll modes in 20 by
   assert.equal(decodeFrame(frame).kind, "status");
   frame[14] = 4;
   assert.throws(() => decodeFrame(frame));
+});
+
+test("v4 date and broadcast preferences round-trip independently of rankings and content", () => {
+  for (const [index, value] of DATE_FORMATS.entries()) {
+    const command = encodeCommand(513, { type: "set_date_format", value }, 4);
+    assert.deepEqual(Array.from(command.slice(0, 6)), [4, 1, 1, 2, 12, index]);
+    assert.ok(command.slice(6).every((byte) => byte === 0));
+    for (const showBroadcast of [false, true]) {
+      const toggle = encodeCommand(
+        1,
+        { type: "set_show_broadcast", value: showBroadcast },
+        4,
+      );
+      assert.equal(toggle[4], 13);
+      assert.equal(toggle[5], showBroadcast ? 1 : 0);
+      const frame = Uint8Array.from([
+        4,
+        3,
+        0,
+        0,
+        0,
+        0,
+        255,
+        50,
+        3,
+        1,
+        2,
+        0,
+        7,
+        0,
+        3 | (index << 2) | (showBroadcast ? 0 : 16),
+        6,
+        1,
+        57,
+        0,
+        0,
+      ]);
+      const decoded = decodeFrame(frame);
+      if (decoded.kind !== "status") return assert.fail();
+      assert.equal(decoded.status.settings.dateFormat, value);
+      assert.equal(decoded.status.settings.showBroadcast, showBroadcast);
+      assert.equal(decoded.status.settings.showRankings, true);
+      assert.equal(decoded.status.settings.top25Only, true);
+      assert.equal(decoded.status.settings.teamId, 57);
+      assert.equal(decoded.status.canRename, true);
+      assert.ok(decoded.status.capabilities.includes("set_date_format"));
+      assert.ok(decoded.status.capabilities.includes("set_show_broadcast"));
+      for (const opcode of [12, 13]) {
+        const ack = frame.slice();
+        ack[1] = 2;
+        ack[2] = 1;
+        ack[4] = opcode;
+        assert.equal(decodeFrame(ack).kind, "response");
+      }
+      frame[14] |= 32;
+      assert.throws(() => decodeFrame(frame));
+    }
+  }
+  assert.throws(() =>
+    encodeCommand(1, { type: "set_date_format", value: "bad" as never }, 4),
+  );
+  assert.throws(() =>
+    encodeCommand(1, { type: "set_show_broadcast", value: 2 as never }, 4),
+  );
+  for (const version of [1, 2, 3] as const) {
+    for (const command of [
+      { type: "set_date_format", value: "dd/mm" },
+      { type: "set_show_broadcast", value: false },
+    ] as const)
+      assert.throws(() => encodeCommand(1, command, version), /0.7.0/);
+    const frame = Uint8Array.from([
+      version,
+      3,
+      0,
+      0,
+      0,
+      0,
+      15,
+      50,
+      1,
+      1,
+      2,
+      0,
+      6,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+    ]);
+    const decoded = decodeFrame(frame);
+    if (decoded.kind !== "status") return assert.fail();
+    assert.equal(decoded.status.settings.dateFormat, null);
+    assert.equal(decoded.status.settings.showBroadcast, null);
+    assert.equal(
+      decoded.status.capabilities.includes("set_date_format"),
+      false,
+    );
+  }
 });

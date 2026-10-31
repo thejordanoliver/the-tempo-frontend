@@ -14,6 +14,7 @@ type League = "nhl" | "mch";
 
 type FetchGamesOptions = {
   forceRefresh?: boolean;
+  silent?: boolean;
 };
 
 type HockeyGamesResponse = {
@@ -45,7 +46,10 @@ export function useHockeyGames(
   );
 
   const fetchGames = useCallback(
-    async ({ forceRefresh = false }: FetchGamesOptions = {}) => {
+    async ({
+      forceRefresh = false,
+      silent = false,
+    }: FetchGamesOptions = {}) => {
       const request = begin();
       if (!request) return;
       const endpoint =
@@ -55,7 +59,7 @@ export function useHockeyGames(
         setError(null);
 
         // Keep pull-to-refresh from showing the full page loading skeleton.
-        if (!forceRefresh) {
+        if (!forceRefresh && !silent) {
           setLoading(!request.hasData);
         }
 
@@ -75,7 +79,7 @@ export function useHockeyGames(
         onScoreboardCalendar?.(null);
         console.error(err);
         setError(new Error(`Failed to fetch ${league} games`));
-        if (!forceRefresh) setGames([]);
+        if (!forceRefresh && !silent) setGames([]);
       } finally {
         if (finish(request)) {
           setLoading(false);
@@ -113,6 +117,9 @@ export function useHockeyGames(
 
   useLiveSportsSubscription<HockeyGamesResponse>({
     enabled: enabled && scope.settled && !loading && hasActiveGame,
+    onResume: () => {
+      void fetchGames({ silent: true });
+    },
     kind: "scoreboard",
     payload: {
       sport: "hockey",

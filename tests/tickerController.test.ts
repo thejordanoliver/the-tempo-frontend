@@ -1,9 +1,21 @@
+import { TickerRotationUnavailableError } from "../services/ticker/rotation";
 import assert from "node:assert/strict";
 import { TickerNameUnavailableError } from "../services/ticker/name";
 import test from "node:test";
-import { createTickerController } from "../services/ticker/controller";
+import {
+  createTickerController,
+  hasBlockingTickerCommand,
+} from "../services/ticker/controller";
 import type { TickerTransport } from "../services/ticker/transport";
-import type { TickerBluetoothState, TickerDevice } from "../types/ticker";
+import { favoriteTeamsSignature } from "../services/ticker/favorites";
+import { TickerCustomHeaderUnavailableError } from "../services/ticker/customHeader";
+import type {
+  TickerBluetoothState,
+  TickerCommand,
+  TickerDevice,
+  TickerFavoriteTeam,
+  TickerRotationEntry,
+} from "../types/ticker";
 
 const device = { id: "device-peripheral-id", name: "Tempo-Ticker-A1B2" };
 const tick = () => new Promise<void>((resolve) => setImmediate(resolve));
@@ -16,6 +28,13 @@ function harness(
   extended = false,
   content = false,
   rename = false,
+  displayPreferences = false,
+  favoritesMode = false,
+  headerOptions = false,
+  headerColors = false,
+  customHeaders = false,
+  rotationMode = false,
+  smartPriority = false,
 ) {
   let notify: (bytes: Uint8Array) => void = () => {};
   let lose: () => void = () => {};
@@ -56,7 +75,49 @@ function harness(
     live[6] |= 128;
     live[12] = 6;
   }
+  if (displayPreferences) {
+    live[0] = 4;
+    live[12] = 7;
+  }
+  if (favoritesMode) {
+    live[0] = 5;
+    live[12] = 8;
+  }
+  if (headerOptions) {
+    live[0] = 6;
+    live[12] = 9;
+  }
+  if (headerColors) {
+    live[0] = 7;
+    live[12] = 10;
+  }
+  if (customHeaders) {
+    live[0] = 8;
+    live[12] = 11;
+  }
+  if (rotationMode) {
+    live[0] = 9;
+    live[12] = 12;
+  }
+  if (smartPriority) {
+    live[0] = 10;
+    live[12] = 14;
+  }
+  let currentRotation = new Uint8Array();
+  let stagedRotation = new Uint8Array();
+  let currentCustomHeader = "";
+  const customHeaderWrites: string[] = [];
   const transport: TickerTransport = {
+    async readRotation() {
+      return currentRotation;
+    },
+    async readCustomHeader() {
+      return currentCustomHeader;
+    },
+    async writeCustomHeader(_, text) {
+      customHeaderWrites.push(text);
+      currentCustomHeader = text;
+    },
     async prepare(callback) {
       stateChange = callback;
       return state;
@@ -97,9 +158,18 @@ function harness(
       if (!ack) return;
       if (frame[4] === 3) live[7] = frame[5];
       if (frame[4] === 4) live[8] = frame[5];
-      if (frame[4] === 7) live[14] = frame[5] ? 2 : 1;
+      if (frame[4] === 6) live[10] = (live[10] & ~3) | (frame[5] ? 2 : 1);
+      if (frame[4] === 7)
+        live[14] = content
+          ? (live[14] & ~1) | (frame[5] ? 1 : 0)
+          : frame[5]
+            ? 2
+            : 1;
       if (frame[4] === 8) live[15] = frame[5];
-      if (frame[4] === 9) live[16] = frame[5] ? 2 : 1;
+      if (frame[4] === 9) {
+        if (content) live[14] = (live[14] & ~2) | (frame[5] ? 2 : 0);
+        else live[16] = frame[5] ? 2 : 1;
+      }
       if (content && frame[4] === 4) {
         live[16] = 0;
         live.fill(0, 17);
@@ -110,6 +180,26 @@ function harness(
       }
       if (content && frame[4] === 11) {
         live[16] = 1;
+        live.set(frame.slice(5, 8), 17);
+      }
+      if (frame[4] === 12) live[14] = (live[14] & ~12) | (frame[5] << 2);
+      if (frame[4] === 13) live[14] = (live[14] & ~16) | (frame[5] ? 0 : 16);
+      if (frame[4] === 16) {
+        live[16] = 5;
+        live.set(frame.slice(5, 8), 17);
+      }
+      if (frame[4] === 17) live[14] = (live[14] & ~96) | (frame[5] << 5);
+      if (frame[4] === 18) live[10] = (live[10] & 3) | (frame[5] << 2);
+      if (frame[4] === 22) live[14] = (live[14] & ~128) | (frame[5] ? 128 : 0);
+      if (frame[4] === 19) {
+        stagedRotation = new Uint8Array(2 + frame[5] * 6);
+        stagedRotation.set([1, frame[5]]);
+      }
+      if (frame[4] === 20)
+        stagedRotation.set(frame.slice(7, 7 + frame[6] * 6), 2 + frame[5] * 6);
+      if (frame[4] === 21) {
+        currentRotation = stagedRotation;
+        live[16] = 6;
         live.set(frame.slice(5, 8), 17);
       }
       const response = live.slice();
@@ -136,6 +226,7 @@ function harness(
     transport,
     writes,
     nameWrites,
+    customHeaderWrites,
     disconnected,
     live,
     emit: (frame: Uint8Array) => notify(frame),
@@ -143,6 +234,10 @@ function harness(
       const request = writes.at(-1)!;
       if (request[4] === 3) live[7] = request[5];
       if (request[4] === 4) live[8] = request[5];
+      if (request[4] === 19) {
+        stagedRotation = new Uint8Array(2 + request[5] * 6);
+        stagedRotation.set([1, request[5]]);
+      }
       const response = live.slice();
       response[1] = 2;
       response[2] = request[2];
@@ -317,6 +412,145 @@ test("sport changes serialize behind brightness and retain the latest sport incl
   await h.controller.dispose();
 });
 
+test("live brightness leaves controls available while exclusive commands block them", () => {
+  assert.equal(hasBlockingTickerCommand({}), false);
+  assert.equal(hasBlockingTickerCommand({ 1: "set_brightness" }), false);
+  assert.equal(hasBlockingTickerCommand({ 2: "set_display" }), true);
+  assert.equal(
+    hasBlockingTickerCommand({ 1: "set_brightness", 2: "set_league" }),
+    true,
+  );
+});
+
+test("other controls wait behind live brightness and still apply successfully", async () => {
+  const commands: TickerCommand[] = [
+    { type: "set_display", value: false },
+    { type: "set_duration", value: 12 },
+    { type: "set_show_rankings", value: false },
+    { type: "set_top25_only", value: true },
+    { type: "set_view", value: "ap" },
+    { type: "set_team_schedule", value: 57 },
+    { type: "refresh_scores" },
+    { type: "get_status" },
+    { type: "set_date_format", value: "dd/mm" },
+    { type: "set_show_broadcast", value: false },
+    { type: "set_header", value: "device_name" },
+    { type: "set_header_color", value: "blue" },
+  ];
+  for (const next of commands) {
+    const h = harness(true, true, true, true, true, true, true, true);
+    h.live[8] = 3; // College football supports every poll/filter in this table.
+    await h.controller.connect(device);
+    h.ack(false);
+    const brightness = h.controller.updateSetting({
+      type: "set_brightness",
+      value: 30,
+    });
+    const count = h.writes.length;
+    const change = h.controller.command(next);
+    assert.equal(h.writes.length, count, next.type);
+    assert.equal(h.controller.store.getState().error, null, next.type);
+    h.ack(true);
+    h.confirmLastWrite();
+    assert.equal(await brightness, true, next.type);
+    assert.equal(await change, true, next.type);
+    assert.equal(h.writes.length, count + 1, next.type);
+    assert.equal(h.controller.store.getState().error, null, next.type);
+    await h.controller.dispose();
+  }
+});
+
+test("rename waits for brightness and preserves the last queued slider value", async () => {
+  const h = harness(true, true, true, true);
+  await h.controller.connect(device);
+  h.ack(false);
+  const brightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 30,
+  });
+  const rename = h.controller.rename("Bedroom Ticker");
+  const finalBrightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 80,
+  });
+  assert.deepEqual(h.nameWrites, []);
+  h.ack(true);
+  h.confirmLastWrite();
+  assert.equal(await brightness, true);
+  assert.equal(await rename, true);
+  assert.equal(await finalBrightness, true);
+  assert.deepEqual(h.nameWrites, ["Bedroom Ticker"]);
+  assert.equal(h.controller.store.getState().settings?.brightness, 80);
+  assert.equal(h.controller.store.getState().error, null);
+  await h.controller.dispose();
+});
+
+test("date and broadcast settings require matching confirmations and preserve values on failure", async () => {
+  const h = harness(true, true, true, true, true);
+  await h.controller.connect(device);
+  assert.equal(
+    await h.controller.command({ type: "set_date_format", value: "mmm d" }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.dateFormat, "mmm d");
+  assert.equal(
+    await h.controller.command({ type: "set_show_broadcast", value: false }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.showBroadcast, false);
+  h.ack(false);
+  for (const next of [
+    { type: "set_date_format", value: "yyyy-mm-dd" },
+    { type: "set_show_broadcast", value: true },
+  ] as const) {
+    const change = h.controller.command(next);
+    h.confirmLastWrite(); // Same opcode/ID, but the snapshot retains the previous value.
+    assert.equal(await change, false);
+    assert.match(h.controller.store.getState().error!, /did not confirm/);
+  }
+  assert.equal(h.controller.store.getState().settings?.dateFormat, "mmm d");
+  assert.equal(h.controller.store.getState().settings?.showBroadcast, false);
+  await h.controller.dispose();
+  for (const authorized of [false, true]) {
+    const old = harness(authorized, true, true, true, !authorized);
+    await old.controller.connect(device);
+    const writes = old.writes.length;
+    for (const next of [
+      { type: "set_date_format", value: "dd/mm" },
+      { type: "set_show_broadcast", value: false },
+    ] as const)
+      assert.equal(await old.controller.command(next), false);
+    assert.equal(old.writes.length, writes);
+    await old.controller.dispose();
+  }
+});
+
+test("brightness failure or disconnect cancels waiting actions", async () => {
+  for (const disconnect of [false, true]) {
+    const h = harness(true, true, true, true);
+    await h.controller.connect(device);
+    h.ack(false);
+    const brightness = h.controller.command({
+      type: "set_brightness",
+      value: 30,
+    });
+    const display = h.controller.command({ type: "set_display", value: false });
+    const rename = h.controller.rename("Bedroom Ticker");
+    const count = h.writes.length;
+    if (disconnect) await h.controller.disconnect();
+    else {
+      h.result(4);
+      h.confirmLastWrite();
+    }
+    assert.equal(await brightness, false);
+    assert.equal(await display, false);
+    assert.equal(await rename, false);
+    assert.equal(h.writes.length, count);
+    assert.deepEqual(h.nameWrites, []);
+    await h.controller.dispose();
+  }
+});
+
 test("live settings wait for other commands and never cross a disconnect", async () => {
   const h = harness();
   await h.controller.connect(device);
@@ -445,7 +679,7 @@ test("Bluetooth off clears live data and authorization; reconnect rereads settin
 });
 test("unsupported protocol fails verification and removes connection subscriptions", async () => {
   const h = harness();
-  h.live[0] = 9;
+  h.live[0] = 11;
   assert.equal(await h.controller.connect(device), false);
   assert.equal(h.controller.store.getState().connection, "error");
   assert.match(h.controller.store.getState().error!, /Unsupported firmware/);
@@ -963,5 +1197,621 @@ test("unrelated name read errors are not mistaken for a cached optional characte
   assert.equal(h.controller.store.getState().connection, "error");
   assert.equal(h.controller.store.getState().nameAvailable, false);
   assert.match(h.controller.store.getState().error!, /Read failed/);
+  await h.controller.dispose();
+});
+
+test("favorites sync reserves the connection and atomically activates all 50 saved teams", async () => {
+  const h = harness(true, true, true, true, true, true);
+  await h.controller.connect(device);
+  const teams: TickerFavoriteTeam[] = Array.from({ length: 50 }, (_, i) => ({
+    league: i % 2 ? "nfl" : "nba",
+    teamId: i + 1,
+  }));
+  const before = h.writes.length;
+  const sync = h.controller.showFavorites(teams);
+  assert.equal(h.controller.store.getState().syncingFavorites, true);
+  assert.equal(h.controller.store.getState().settings?.viewMode, "scores");
+  assert.equal(await h.controller.rename("Other"), false);
+  assert.equal(await sync, true);
+  assert.equal(h.writes.length - before, 19);
+  assert.equal(h.writes[before][4], 14);
+  assert.equal(h.writes.at(-1)![4], 16);
+  assert.equal(
+    h.controller.store.getState().settings?.favoritesSignature,
+    favoriteTeamsSignature(teams),
+  );
+  assert.equal(h.controller.store.getState().settings?.viewMode, "favorites");
+  assert.equal(h.controller.store.getState().syncingFavorites, false);
+  assert.equal(
+    await h.controller.command({ type: "set_view", value: "scores" }),
+    true,
+  );
+  assert.equal(
+    h.controller.store.getState().settings?.favoritesSignature,
+    null,
+  );
+  await h.controller.dispose();
+});
+
+test("failed or interrupted favorites sync never commits or leaks into a reconnect", async () => {
+  const teams: TickerFavoriteTeam[] = [
+    { league: "nba", teamId: 1 },
+    { league: "nfl", teamId: 1 },
+  ];
+  for (const disconnect of [true, false]) {
+    const h = harness(true, true, true, true, true, true);
+    await h.controller.connect(device);
+    h.ack(false);
+    const before = h.writes.length;
+    const sync = h.controller.showFavorites(teams);
+    h.confirmLastWrite();
+    await tick();
+    assert.equal(h.writes.at(-1)![4], 15);
+    if (disconnect) await h.controller.disconnect();
+    else {
+      h.result(4);
+      h.confirmLastWrite();
+    }
+    assert.equal(await sync, false);
+    assert.equal(h.writes.length - before, 2);
+    assert.equal(h.controller.store.getState().syncingFavorites, false);
+    h.ack(true);
+    h.result(0);
+    if (disconnect) await h.controller.reconnect();
+    assert.equal(h.controller.store.getState().settings?.viewMode, "scores");
+    await h.controller.dispose();
+  }
+  const old = harness(true, true, true, true, true);
+  await old.controller.connect(device);
+  const writes = old.writes.length;
+  assert.equal(await old.controller.showFavorites(teams), false);
+  assert.equal(old.writes.length, writes);
+  await old.controller.dispose();
+});
+
+test("favorites selection queues behind live brightness", async () => {
+  const h = harness(true, true, true, true, true, true);
+  await h.controller.connect(device);
+  h.ack(false);
+  const brightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 30,
+  });
+  const teams: TickerFavoriteTeam[] = [{ league: "nba", teamId: 1 }];
+  const sync = h.controller.showFavorites(teams);
+  h.ack(true);
+  h.confirmLastWrite();
+  assert.equal(await brightness, true);
+  assert.equal(await sync, true);
+  assert.equal(h.controller.store.getState().settings?.viewMode, "favorites");
+  await h.controller.dispose();
+});
+
+test("a favorites commit ACK must confirm the actual list signature", async () => {
+  const h = harness(true, true, true, true, true, true);
+  await h.controller.connect(device);
+  h.ack(false);
+  const sync = h.controller.showFavorites([{ league: "nba", teamId: 1 }]);
+  h.confirmLastWrite();
+  await tick();
+  h.confirmLastWrite();
+  await tick();
+  assert.equal(h.writes.at(-1)![4], 16);
+  h.confirmLastWrite(); // ACK claims success, but still reports the original view.
+  assert.equal(await sync, false);
+  assert.equal(h.controller.store.getState().settings?.viewMode, "scores");
+  assert.equal(
+    h.controller.store.getState().settings?.favoritesSignature,
+    null,
+  );
+  assert.equal(h.controller.store.getState().syncingFavorites, false);
+  await h.controller.dispose();
+});
+
+test("header changes require confirmed snapshots and preserve the last header on mismatch", async () => {
+  const h = harness(true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  for (const value of ["device_name", "hidden", "tempo"] as const) {
+    assert.equal(
+      await h.controller.command({ type: "set_header", value }),
+      true,
+    );
+    assert.equal(h.controller.store.getState().settings?.headerMode, value);
+  }
+  h.ack(false);
+  const save = h.controller.command({ type: "set_header", value: "hidden" });
+  h.confirmLastWrite();
+  assert.equal(await save, false);
+  assert.equal(h.controller.store.getState().settings?.headerMode, "tempo");
+  await h.controller.dispose();
+});
+
+test("header color requires confirmation and preserves power, mode and prior color on failure", async () => {
+  const h = harness(true, true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  assert.equal(
+    await h.controller.command({ type: "set_header", value: "device_name" }),
+    true,
+  );
+  assert.equal(
+    await h.controller.command({ type: "set_header_color", value: "purple" }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.headerColor, "purple");
+  assert.equal(h.controller.store.getState().settings?.displayOn, true);
+  assert.equal(
+    await h.controller.command({ type: "set_display", value: false }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.headerColor, "purple");
+  assert.equal(
+    h.controller.store.getState().settings?.headerMode,
+    "device_name",
+  );
+  h.ack(false);
+  const save = h.controller.command({ type: "set_header_color", value: "red" });
+  h.confirmLastWrite();
+  assert.equal(await save, false);
+  assert.equal(h.controller.store.getState().settings?.headerColor, "purple");
+  await h.controller.dispose();
+});
+
+test("custom header saves and activates independently of the Bluetooth name", async () => {
+  const h = harness(true, true, true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  assert.equal(h.controller.store.getState().customHeader, "");
+  assert.equal(h.controller.store.getState().customHeaderAvailable, true);
+  assert.equal(await h.controller.setCustomHeader("  Game Room  "), true);
+  assert.deepEqual(h.customHeaderWrites, ["Game Room"]);
+  assert.equal(h.controller.store.getState().customHeader, "Game Room");
+  assert.equal(h.controller.store.getState().settings?.headerMode, "custom");
+  assert.equal(
+    h.controller.store.getState().selectedDevice?.name,
+    "Living Room Ticker",
+  );
+  assert.equal(h.controller.store.getState().savingCustomHeader, false);
+  h.controller.store.setState({ error: "An earlier error" });
+  assert.equal(await h.controller.setCustomHeader("Game Room"), true);
+  assert.equal(h.controller.store.getState().error, null);
+  assert.equal(h.customHeaderWrites.length, 1);
+  await h.controller.disconnect();
+  await h.controller.reconnect();
+  assert.equal(h.controller.store.getState().customHeader, "Game Room");
+  assert.equal(h.controller.store.getState().settings?.headerMode, "custom");
+  await h.controller.dispose();
+});
+
+test("custom header rejects invalid, locked and older-firmware writes", async () => {
+  for (const [authorized, modern] of [
+    [false, true],
+    [true, false],
+  ]) {
+    const h = harness(
+      authorized,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      modern,
+    );
+    await h.controller.connect(device);
+    assert.equal(await h.controller.setCustomHeader("Game Room"), false);
+    assert.deepEqual(h.customHeaderWrites, []);
+    await h.controller.dispose();
+  }
+  const h = harness(true, true, true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  for (const text of ["", " ", "🏆", "123456789012345678901"])
+    assert.equal(await h.controller.setCustomHeader(text), false);
+  assert.deepEqual(h.customHeaderWrites, []);
+  await h.controller.dispose();
+});
+
+test("emoji headers require supported firmware and preserve the device name", async () => {
+  const h = harness(true, true, true, true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  assert.equal(await h.controller.setCustomHeader("GO 🏆"), false);
+  assert.match(h.controller.store.getState().error!, /0.13.0/);
+  assert.deepEqual(h.customHeaderWrites, []);
+  assert.equal(await h.controller.setCustomHeader("Game Room"), true);
+  await h.controller.disconnect();
+  h.live[12] = 13;
+  await h.controller.connect(device);
+  assert.equal(await h.controller.setCustomHeader("🏆 GAME ROOM 🔥"), true);
+  assert.equal(h.controller.store.getState().customHeader, "🏆 GAME ROOM 🔥");
+  assert.equal(h.controller.store.getState().settings?.headerMode, "custom");
+  assert.deepEqual(h.nameWrites, []);
+  assert.equal(await h.controller.setCustomHeader("GO ❤"), true);
+  assert.equal(h.controller.store.getState().customHeader, "GO ❤️");
+  await h.controller.disconnect();
+  await h.controller.connect(device);
+  assert.equal(h.controller.store.getState().customHeader, "GO ❤️");
+  await h.controller.dispose();
+});
+
+test("custom header readback mismatch or failed persistence preserves confirmed text and mode", async () => {
+  const h = harness(true, true, true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  assert.equal(await h.controller.setCustomHeader("First"), true);
+  h.transport.writeCustomHeader = async () => {};
+  assert.equal(await h.controller.setCustomHeader("Unconfirmed"), false);
+  assert.equal(h.controller.store.getState().customHeader, "First");
+  assert.equal(h.controller.store.getState().settings?.headerMode, "custom");
+  h.transport.writeCustomHeader = async () => {
+    throw new Error("Save failed");
+  };
+  assert.equal(await h.controller.setCustomHeader("Failure"), false);
+  assert.equal(h.controller.store.getState().customHeader, "First");
+  await h.controller.dispose();
+});
+
+test("custom header operation reserves the connection and ignores late work after disconnect", async () => {
+  const h = harness(true, true, true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  let finish!: () => void;
+  h.transport.writeCustomHeader = () =>
+    new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+  const save = h.controller.setCustomHeader("Game Room");
+  assert.equal(h.controller.store.getState().savingCustomHeader, true);
+  assert.equal(await h.controller.rename("Other device"), false);
+  assert.equal(await h.controller.command({ type: "refresh_scores" }), false);
+  const writes = h.writes.length;
+  await h.controller.disconnect();
+  finish();
+  assert.equal(await save, false);
+  assert.equal(h.writes.length, writes);
+  assert.equal(h.controller.store.getState().customHeader, null);
+  assert.equal(h.controller.store.getState().savingCustomHeader, false);
+  await h.controller.dispose();
+});
+
+test("custom header timeout clears the connection and cannot publish a late save", async () => {
+  const h = harness(true, true, true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  let finish!: () => void;
+  h.transport.writeCustomHeader = () =>
+    new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+  assert.equal(await h.controller.setCustomHeader("Game Room"), false);
+  assert.equal(h.controller.store.getState().connection, "error");
+  finish();
+  await tick();
+  assert.equal(h.controller.store.getState().customHeader, null);
+  assert.equal(h.controller.store.getState().savingCustomHeader, false);
+  await h.controller.dispose();
+});
+
+test("missing cached custom-header characteristic keeps ordinary controls working", async () => {
+  const h = harness(true, true, true, true, true, true, true, true, true);
+  h.transport.readCustomHeader = async () => {
+    throw new TickerCustomHeaderUnavailableError();
+  };
+  assert.equal(await h.controller.connect(device), true);
+  assert.equal(h.controller.store.getState().customHeaderAvailable, false);
+  assert.match(h.controller.store.getState().customHeaderIssue!, /Forget/);
+  assert.equal(
+    await h.controller.command({ type: "set_header_color", value: "blue" }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().customHeaderAvailable, false);
+  assert.equal(await h.controller.setCustomHeader("Game Room"), false);
+  await h.controller.dispose();
+});
+
+test("custom header queues behind live brightness", async () => {
+  const h = harness(true, true, true, true, true, true, true, true, true);
+  await h.controller.connect(device);
+  h.ack(false);
+  const brightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 30,
+  });
+  const save = h.controller.setCustomHeader("Game Room");
+  assert.deepEqual(h.customHeaderWrites, []);
+  h.ack(true);
+  h.confirmLastWrite();
+  assert.equal(await brightness, true);
+  assert.equal(await save, true);
+  assert.equal(h.controller.store.getState().settings?.headerMode, "custom");
+  await h.controller.dispose();
+});
+
+const rotationEntries: TickerRotationEntry[] = [
+  { league: "nba", view: "scores", teamId: null, seconds: 6 },
+  { league: "cfb", view: "schedule", teamId: 129689, seconds: 8 },
+  { league: "wcbb", view: "ap", teamId: null, seconds: 3 },
+];
+const rotationHarness = () =>
+  harness(true, true, true, true, true, true, true, true, true, true);
+
+test("custom rotation commits bounded chunks, confirms signature, and restores metadata on reconnect", async () => {
+  const h = rotationHarness();
+  assert.equal(await h.controller.connect(device), true);
+  assert.deepEqual(h.controller.store.getState().rotationEntries, []);
+  h.writes.length = 0;
+  assert.equal(await h.controller.saveRotation(rotationEntries), true);
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [19, 20, 20, 21],
+  );
+  assert.equal(h.controller.store.getState().settings?.viewMode, "rotation");
+  assert.equal(
+    h.controller.store.getState().settings?.rotationSignature,
+    4834019,
+  );
+  assert.deepEqual(
+    h.controller.store.getState().rotationEntries,
+    rotationEntries,
+  );
+  await h.controller.disconnect();
+  assert.equal(h.controller.store.getState().rotationEntries, null);
+  await h.controller.connect(device);
+  assert.deepEqual(
+    h.controller.store.getState().rotationEntries,
+    rotationEntries,
+  );
+  assert.equal(h.controller.store.getState().settings?.viewMode, "rotation");
+  await h.controller.command({ type: "set_view", value: "scores" });
+  assert.equal(h.controller.store.getState().settings?.rotationSignature, null);
+  assert.deepEqual(
+    h.controller.store.getState().rotationEntries,
+    rotationEntries,
+  );
+  await h.controller.dispose();
+});
+test("rotation transfer snapshots input and reserves the whole command sequence", async () => {
+  const h = rotationHarness();
+  await h.controller.connect(device);
+  h.ack(false);
+  const entries = rotationEntries.map((entry) => ({ ...entry }));
+  const saving = h.controller.saveRotation(entries);
+  entries[0].seconds = 60;
+  assert.equal(h.controller.store.getState().savingRotation, true);
+  assert.equal(await h.controller.rename("Office"), false);
+  assert.equal(
+    await h.controller.command({ type: "set_display", value: false }),
+    false,
+  );
+  h.ack(true);
+  h.confirmLastWrite();
+  assert.equal(await saving, true);
+  assert.equal(h.controller.store.getState().rotationEntries?.[0].seconds, 6);
+  assert.equal(h.controller.store.getState().savingRotation, false);
+  await h.controller.dispose();
+});
+test("failed or interrupted rotation transfers preserve the saved list and stop before commit", async () => {
+  const h = rotationHarness();
+  await h.controller.connect(device);
+  await h.controller.saveRotation(rotationEntries);
+  const original = h.controller.store.getState().rotationEntries;
+  h.writes.length = 0;
+  const write = h.transport.write;
+  h.transport.write = async (id, frame) => {
+    if (frame[4] === 20) h.result(4);
+    await write(id, frame);
+  };
+  assert.equal(
+    await h.controller.saveRotation(rotationEntries.slice(1)),
+    false,
+  );
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [19, 20],
+  );
+  assert.equal(h.controller.store.getState().rotationEntries, original);
+  assert.equal(h.controller.store.getState().savingRotation, false);
+  h.result(0);
+  h.transport.write = write;
+  h.ack(false);
+  const pending = h.controller.saveRotation(rotationEntries);
+  h.loss();
+  assert.equal(await pending, false);
+  assert.equal(h.controller.store.getState().rotationEntries, null);
+  await h.controller.dispose();
+});
+test("rotation waits behind brightness and disconnect cancels waiting intent", async () => {
+  const h = rotationHarness();
+  await h.controller.connect(device);
+  h.writes.length = 0;
+  h.ack(false);
+  const brightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 65,
+  });
+  const saving = h.controller.saveRotation(rotationEntries);
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [3],
+  );
+  h.ack(true);
+  h.confirmLastWrite();
+  assert.equal(await brightness, true);
+  assert.equal(await saving, true);
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [3, 19, 20, 20, 21],
+  );
+  h.ack(false);
+  const secondBrightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 70,
+  });
+  const cancelled = h.controller.saveRotation(rotationEntries);
+  h.loss();
+  assert.equal(await secondBrightness, false);
+  assert.equal(await cancelled, false);
+  await h.controller.dispose();
+});
+test("rotation handles cached GATT and old firmware without disabling other controls", async () => {
+  const h = rotationHarness();
+  h.transport.readRotation = async () => {
+    throw new TickerRotationUnavailableError();
+  };
+  assert.equal(await h.controller.connect(device), true);
+  assert.equal(h.controller.store.getState().rotationAvailable, false);
+  assert.match(
+    h.controller.store.getState().rotationIssue!,
+    /forget this ticker/,
+  );
+  assert.equal(await h.controller.saveRotation(rotationEntries), false);
+  assert.equal(
+    await h.controller.command({ type: "set_brightness", value: 55 }),
+    true,
+  );
+  await h.controller.dispose();
+  const old = harness(true, true, true, true, true, true, true, true, true);
+  await old.controller.connect(device);
+  assert.equal(await old.controller.saveRotation(rotationEntries), false);
+  assert.match(old.controller.store.getState().error!, /0.12.0/);
+  await old.controller.dispose();
+});
+test("rotation rejects mismatched commit acknowledgments and times out incomplete transfers", async () => {
+  const h = rotationHarness();
+  await h.controller.connect(device);
+  const write = h.transport.write;
+  h.transport.write = async (id, frame) => {
+    if (frame[4] !== 21) return write(id, frame);
+    const response = h.live.slice();
+    response[1] = 2;
+    response.set(frame.slice(2, 5), 2);
+    response[5] = 0;
+    h.emit(response);
+  };
+  assert.equal(await h.controller.saveRotation(rotationEntries), false);
+  assert.deepEqual(h.controller.store.getState().rotationEntries, []);
+  assert.match(h.controller.store.getState().error!, /did not confirm/);
+  h.transport.write = async () => new Promise(() => {});
+  assert.equal(await h.controller.saveRotation(rotationEntries), false);
+  assert.equal(h.controller.store.getState().savingRotation, false);
+  await h.controller.dispose();
+});
+
+const smartPriorityHarness = (authorized = true) =>
+  harness(
+    authorized,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+  );
+test("smart priority requires matching device confirmation and preserves other settings", async () => {
+  const h = smartPriorityHarness();
+  assert.equal(await h.controller.connect(device), true);
+  assert.equal(
+    h.controller.store.getState().settings?.smartGamePriority,
+    false,
+  );
+  assert.equal(
+    await h.controller.command({ type: "set_smart_priority", value: true }),
+    true,
+  );
+  assert.equal(h.controller.store.getState().settings?.smartGamePriority, true);
+  await h.controller.command({ type: "set_header", value: "hidden" });
+  await h.controller.command({ type: "set_date_format", value: "dd/mm" });
+  await h.controller.command({ type: "set_header_color", value: "purple" });
+  assert.equal(h.controller.store.getState().settings?.smartGamePriority, true);
+  h.ack(false);
+  const mismatch = h.controller.command({
+    type: "set_smart_priority",
+    value: false,
+  });
+  h.confirmLastWrite();
+  assert.equal(await mismatch, false);
+  assert.equal(h.controller.store.getState().settings?.smartGamePriority, true);
+  assert.match(h.controller.store.getState().error!, /did not confirm/);
+  h.ack(true);
+  h.result(4);
+  assert.equal(
+    await h.controller.command({ type: "set_smart_priority", value: false }),
+    false,
+  );
+  assert.equal(h.controller.store.getState().settings?.smartGamePriority, true);
+  await h.controller.dispose();
+});
+test("smart priority stays locked without authorization and is gated on old firmware", async () => {
+  const h = smartPriorityHarness(false);
+  await h.controller.connect(device);
+  h.writes.length = 0;
+  assert.equal(
+    await h.controller.command({ type: "set_smart_priority", value: true }),
+    false,
+  );
+  assert.equal(h.writes.length, 0);
+  assert.equal(
+    h.controller.store.getState().settings?.smartGamePriority,
+    false,
+  );
+  await h.controller.dispose();
+  const old = rotationHarness();
+  await old.controller.connect(device);
+  old.writes.length = 0;
+  assert.equal(
+    await old.controller.command({ type: "set_smart_priority", value: true }),
+    false,
+  );
+  assert.equal(old.writes.length, 0);
+  assert.equal(
+    old.controller.store.getState().settings?.smartGamePriority,
+    null,
+  );
+  await old.controller.dispose();
+});
+test("smart priority queues behind live brightness and cancels on brightness failure", async () => {
+  const h = smartPriorityHarness();
+  await h.controller.connect(device);
+  h.writes.length = 0;
+  h.ack(false);
+  const brightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 65,
+  });
+  const priority = h.controller.command({
+    type: "set_smart_priority",
+    value: true,
+  });
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [3],
+  );
+  h.ack(true);
+  h.confirmLastWrite();
+  assert.equal(await brightness, true);
+  assert.equal(await priority, true);
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [3, 22],
+  );
+  assert.equal(h.controller.store.getState().settings?.smartGamePriority, true);
+  h.writes.length = 0;
+  h.ack(false);
+  const failedBrightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 70,
+  });
+  const cancelled = h.controller.command({
+    type: "set_smart_priority",
+    value: false,
+  });
+  h.result(4);
+  h.confirmLastWrite();
+  assert.equal(await failedBrightness, false);
+  assert.equal(await cancelled, false);
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [3],
+  );
+  assert.equal(h.controller.store.getState().settings?.smartGamePriority, true);
   await h.controller.dispose();
 });

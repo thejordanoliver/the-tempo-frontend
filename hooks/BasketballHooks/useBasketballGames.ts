@@ -190,6 +190,9 @@ export function useBasketballGames(
   useLiveSportsSubscription<BasketballGamesResponse>({
     enabled: enabled && scope.settled && !loading && hasActiveGame,
 
+    onResume: () => {
+      void fetchGames({ silent: true });
+    },
     kind: "scoreboard",
 
     payload: {

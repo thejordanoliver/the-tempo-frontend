@@ -372,6 +372,9 @@ export const useHockeyGameDetails = (
 
   useLiveSportsSubscription<HockeyGameDetailsResponse>({
     enabled: !skipFetch && shouldTrackGameUpdates(score),
+    onResume: () => {
+      void fetchDetails(true);
+    },
     kind: "game",
     payload: {
       sport: "hockey",

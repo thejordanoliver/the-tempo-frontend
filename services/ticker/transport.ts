@@ -14,6 +14,9 @@ export interface TickerTransport {
   readStatus(id: string): Promise<Uint8Array>;
   readName?(id: string): Promise<string>;
   writeName?(id: string, name: string): Promise<void>;
+  readRotation?(id: string): Promise<Uint8Array>;
+  readCustomHeader?(id: string): Promise<string>;
+  writeCustomHeader?(id: string, text: string): Promise<void>;
   // Native ATT read of firmware's encrypted/authenticated authorization
   // characteristic. iOS owns the pairing UI and bond keys, never JavaScript.
   readAuthorization?(id: string): Promise<Uint8Array>;

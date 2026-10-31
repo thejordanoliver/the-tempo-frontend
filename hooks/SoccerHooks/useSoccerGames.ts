@@ -113,6 +113,9 @@ export function useSoccerGames(
 
   useLiveSportsSubscription<SoccerGamesResponse>({
     enabled: enabled && scope.settled && !loading && hasActiveGame,
+    onResume: () => {
+      void fetchGames({ silent: true });
+    },
     kind: "scoreboard",
     payload: {
       sport: "soccer",

@@ -1,14 +1,15 @@
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import ConfirmModal from "components/ConfirmModal";
 import TextInputComponent from "components/TextInput";
 import { useState } from "react";
 import { Text } from "react-native";
+import { hasBlockingTickerCommand } from "services/ticker/controller";
 import {
   MAX_TICKER_NAME_LENGTH,
   normalizeTickerName,
 } from "services/ticker/name";
-import { ticker, useTickerStore } from "store/tickerStore";
+import { useTickerController, useTickerStore } from "store/tickerStore";
 import { TickerSettingOption } from "./TickerSettingsSection";
-import { useTickerTheme } from "./TickerUI";
 
 export default function TickerRenameControl() {
   const state = useTickerStore();
@@ -23,6 +24,7 @@ export default function TickerRenameControl() {
 
 function RenameControl() {
   const state = useTickerStore();
+  const ticker = useTickerController();
   const { text } = useTickerTheme();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -35,8 +37,11 @@ function RenameControl() {
     !state.authorized ||
     state.authorizing ||
     state.renaming ||
+    state.syncingFavorites ||
+    state.savingCustomHeader ||
+    state.savingRotation ||
     !supported ||
-    Object.keys(state.pendingCommands).length > 0;
+    hasBlockingTickerCommand(state.pendingCommands);
 
   const saveName = async () => {
     setValidationError(null);

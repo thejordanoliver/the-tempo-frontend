@@ -502,6 +502,19 @@ export const useFootballGameDetails = (
 
   useLiveSportsSubscription<FootballGameDetailsResponse>({
     enabled: !skipFetch && shouldTrackGameUpdates(score),
+    onResume: () => {
+      void requestDetails()
+        .then((data) => {
+          if (!data?.score) return;
+          setScore(data.score);
+          setDetails(data.details);
+          setWarning(null);
+          setLastRefresh(new Date());
+        })
+        .catch((error: unknown) => {
+          console.warn(`[${league}] game details fetch failed`, error);
+        });
+    },
     kind: "game",
     payload: {
       sport: "football",

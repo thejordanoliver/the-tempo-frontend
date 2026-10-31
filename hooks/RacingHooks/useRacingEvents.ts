@@ -400,6 +400,9 @@ export function useRacingEvents({
       !loading &&
       pollIntervalMs > 0 &&
       (hasLiveEvent || games.some(shouldTrackGameUpdates)),
+    onResume: () => {
+      void fetchEvents({ silent: true });
+    },
     kind: "scoreboard",
     payload: {
       sport: "racing",

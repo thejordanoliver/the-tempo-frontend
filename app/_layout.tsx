@@ -109,9 +109,15 @@ function AppLayout() {
 
   const [checkingStoredSession, setCheckingStoredSession] = useState(true);
 
-  const isPublicRoute = publicRoutes.some(
-    (route) => pathname === route || pathname === `${route}/`,
-  );
+  const isDesignPreview =
+    __DEV__ &&
+    (pathname === "/design-preview/ticker" ||
+      pathname === "/design-preview/notification-banners");
+  const isPublicRoute =
+    isDesignPreview ||
+    publicRoutes.some(
+      (route) => pathname === route || pathname === `${route}/`,
+    );
 
   useEffect(() => {
     let isMounted = true;

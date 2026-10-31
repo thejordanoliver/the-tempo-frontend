@@ -52,6 +52,32 @@ function setup(sport, name, initialArgs) {
   });
 }
 for (const [sport, name, league] of definitions) {
+  test(`${sport}: resuming silently updates scheduled games and preserves live data on failure`, async () => {
+    const h = setup(sport, name, args(sport, league));
+    try {
+      await flush();
+      h.requests[0].resolve({ data: fixture("game") });
+      await flush();
+      assert.equal(h.rows()[0].status.state, "pre");
+      h.subscription.onResume();
+      await flush();
+      assert.equal(h.state.loading, false);
+      assert.equal(h.state.refreshing ?? false, false);
+      const live = fixture("game");
+      live.games[0].status.state = "in";
+      h.requests[1].resolve({ data: live });
+      await flush();
+      assert.equal(h.rows()[0].status.state, "in");
+      h.subscription.onResume();
+      await flush();
+      h.requests[2].reject(new Error("offline"));
+      await flush();
+      assert.equal(h.rows()[0].status.state, "in");
+      assert.equal(h.state.loading, false);
+    } finally {
+      h.stop();
+    }
+  });
   test(`${sport}: disabled hooks and refreshes do no network/subscription work; enabling fetches once`, async () => {
     const h = setup(sport, name, args(sport, league, { enabled: false }));
     try {

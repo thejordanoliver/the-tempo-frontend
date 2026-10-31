@@ -90,6 +90,7 @@ export function useVolleyballResource<T>(
     };
   }, [request, enabled, identity, path]);
   const refresh = useCallback(() => request(true), [request]);
+  const silentRefresh = useCallback(() => request(), [request]);
   const replace = useCallback(
     (data: T) => {
       if (!enabled || !path || activeIdentity.current !== identity) return;
@@ -112,6 +113,7 @@ export function useVolleyballResource<T>(
     refreshing: enabled && state.identity === identity && state.refreshing,
     error: enabled && state.identity === identity ? state.error : null,
     refresh,
+    silentRefresh,
     replace,
   };
 }
@@ -131,6 +133,9 @@ export function useVolleyballGames(
     if (resource.data || resource.error) onCalendar?.(resource.data);
   }, [onCalendar, resource.data, resource.error]);
   useLiveSportsSubscription<VolleyballScoreboard>({
+    onResume: () => {
+      void resource.silentRefresh();
+    },
     enabled: options.enabled ?? true,
     kind: "scoreboard",
     payload: { sport: "volleyball", league, date: day },
@@ -154,6 +159,9 @@ export function useVolleyballSchedule(
       : null,
   );
   useLiveSportsSubscription<VolleyballSchedule>({
+    onResume: () => {
+      void resource.silentRefresh();
+    },
     enabled: !!teamId,
     kind: "scoreboard",
     payload: {
@@ -175,6 +183,9 @@ export function useVolleyballGame(league: string, gameId: string) {
       : null,
   );
   useLiveSportsSubscription<VolleyballGameDetails>({
+    onResume: () => {
+      void resource.silentRefresh();
+    },
     enabled: !!gameId,
     kind: "game",
     payload: { sport: "volleyball", league, gameId },

@@ -1,5 +1,7 @@
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
+import { tickerDashboardStyles as styles } from "styles/TickerStyles/TickerDashboardStyles";
 import { Ionicons } from "@expo/vector-icons";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { TICKER_TEAMS } from "constants/tickerTeams";
@@ -16,7 +18,6 @@ import {
   TickerFeedback,
   TickerPage,
   TickerRow,
-  useTickerTheme,
 } from "components/Ticker/TickerUI";
 
 export default function TickerDashboard() {
@@ -83,7 +84,7 @@ export default function TickerDashboard() {
           {connected && (
             <TickerSettingsSection title="Your display" icon="tv-outline">
               <View style={styles.contentSummary}>
-                {league && (
+                {league && mode !== "favorites" && mode !== "rotation" && (
                   <Image
                     source={
                       isDark
@@ -97,9 +98,13 @@ export default function TickerDashboard() {
                 )}
                 <View style={styles.summaryCopy}>
                   <Text style={text.subtitle}>
-                    {league
-                      ? LEAGUE_CONFIG[league].label
-                      : "League not reported"}
+                    {mode === "rotation"
+                      ? `${state.rotationEntries?.length ?? 0} rotation items`
+                      : mode === "favorites"
+                        ? "Across your leagues"
+                        : league
+                          ? LEAGUE_CONFIG[league].label
+                          : "League not reported"}
                   </Text>
                   <Text style={text.secondaryText}>{contentLabel}</Text>
                   {mode === "schedule" && (
@@ -175,34 +180,11 @@ export default function TickerDashboard() {
 }
 
 const CONTENT_LABELS: Record<TickerViewMode, string> = {
+  favorites: "Favorite teams",
+  rotation: "Custom rotation",
   scores: "League scores",
   schedule: "Team schedule",
   ap: "AP Top 25",
   coaches: "Coaches Top 25",
   cfp: "College Football Playoff",
 };
-
-const styles = StyleSheet.create({
-  emptyState: {
-    alignItems: "center",
-    gap: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 28,
-  },
-  emptyIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  centeredText: { textAlign: "center" },
-  contentSummary: {
-    flexDirection: "row",
-    gap: 14,
-    alignItems: "center",
-    paddingVertical: 4,
-  },
-  leagueLogo: { width: 44, height: 44 },
-  summaryCopy: { flex: 1, gap: 3 },
-});

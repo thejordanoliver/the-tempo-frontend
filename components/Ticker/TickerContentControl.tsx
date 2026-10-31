@@ -1,9 +1,13 @@
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
+import { tickerContentControlStyles as styles } from "styles/TickerStyles/TickerContentControlStyles";
 import { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { TICKER_TEAMS } from "constants/tickerTeams";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import PillTabs from "components/TabBars/PillTabs";
-import { ticker, useTickerStore } from "store/tickerStore";
+import { useTickerFavorites } from "hooks/TickerHooks/useTickerFavorites";
+import { useTickerController, useTickerStore } from "store/tickerStore";
+import { hasBlockingTickerCommand } from "services/ticker/controller";
 import {
   LEAGUES,
   tickerSupportsExpandedLeagues,
@@ -14,7 +18,6 @@ import {
   TickerSettingToggle,
 } from "./TickerSettingsSection";
 import TickerSelectionSheet from "./TickerSelectionSheet";
-import { useTickerTheme } from "./TickerUI";
 import type { SupportedTickerLeague, TickerCommandType } from "types/ticker";
 
 const POLL_OPTIONS = [
@@ -49,19 +52,29 @@ function getScoreDescription(
 
 export default function TickerContentControl() {
   const state = useTickerStore();
+  const ticker = useTickerController();
+  const favorites = useTickerFavorites();
   const { isDark, text } = useTickerTheme();
   const [picker, setPicker] = useState<"league" | "team" | null>(null);
   const league = state.settings?.selectedLeague;
   const mode = state.settings?.viewMode ?? "scores";
   const contentType =
-    mode === "scores" || mode === "schedule" ? mode : "rankings";
+    mode === "scores" ||
+    mode === "schedule" ||
+    mode === "favorites" ||
+    mode === "rotation"
+      ? mode
+      : "rankings";
   const college = league === "cfb" || league === "mcbb" || league === "wcbb";
   const unlocked =
     state.connection === "connected" &&
     state.authorized &&
     !state.authorizing &&
     !state.renaming &&
-    Object.keys(state.pendingCommands).length === 0;
+    !state.syncingFavorites &&
+    !state.savingCustomHeader &&
+    !state.savingRotation &&
+    !hasBlockingTickerCommand(state.pendingCommands);
   const supported = (command: TickerCommandType) =>
     state.status?.capabilities.includes(command) ?? false;
   const enabled = (command: TickerCommandType) =>
@@ -95,6 +108,10 @@ export default function TickerContentControl() {
   const closePicker = () => setPicker(null);
   const changeContentType = (value: string) => {
     if (!enabled("set_view")) return;
+    if (value === "favorites") {
+      void favorites.show();
+      return;
+    }
     if (value === "schedule") setPicker("team");
     else
       void ticker.command({
@@ -110,21 +127,23 @@ export default function TickerContentControl() {
   };
 
   return (
-    <TickerSettingsSection title="Content" icon="albums-outline">
-      <TickerSettingOption
-        label="League"
-        icon={league ? undefined : "trophy-outline"}
-        value={league ? LEAGUE_CONFIG[league].label : "Choose a league"}
-        logo={
-          league
-            ? isDark
-              ? LEAGUE_CONFIG[league].logoLight
-              : LEAGUE_CONFIG[league].logo
-            : undefined
-        }
-        disabled={!enabled("set_league")}
-        onPress={() => setPicker("league")}
-      />
+    <TickerSettingsSection title="Content">
+      {contentType !== "favorites" && contentType !== "rotation" && (
+        <TickerSettingOption
+          label="League"
+          icon={league ? undefined : "trophy-outline"}
+          value={league ? LEAGUE_CONFIG[league].label : "Choose a league"}
+          logo={
+            league
+              ? isDark
+                ? LEAGUE_CONFIG[league].logoLight
+                : LEAGUE_CONFIG[league].logo
+              : undefined
+          }
+          disabled={!enabled("set_league")}
+          onPress={() => setPicker("league")}
+        />
+      )}
       <View style={styles.contentType}>
         <Text style={text.label}>Show on your ticker</Text>
         <PillTabs
@@ -132,6 +151,9 @@ export default function TickerContentControl() {
             { label: "Scores", value: "scores" },
             { label: "Schedule", value: "schedule" },
             ...(college ? [{ label: "Rankings", value: "rankings" }] : []),
+            ...(supported("favorites_commit")
+              ? [{ label: "Favorites", value: "favorites" }]
+              : []),
           ]}
           selectedValue={contentType}
           containerStyle={styles.contentTabs}
@@ -140,6 +162,56 @@ export default function TickerContentControl() {
           onChange={changeContentType}
         />
       </View>
+      {contentType === "rotation" && (
+        <Text style={text.caption}>
+          Custom rotation is active. Edit its list in Rotation below, or select
+          other content to stop it.
+        </Text>
+      )}
+      {supported("favorites_commit") &&
+        favorites.ready &&
+        favorites.count === 0 && (
+          <Text style={text.caption}>
+            Add favorite teams from NBA, NFL, CFB, MLB, MCBB, WNBA or WCBB in
+            Tempo to use Favorites.
+          </Text>
+        )}
+      {contentType === "favorites" && (
+        <>
+          <Text style={text.caption}>
+            Games involving your saved Tempo teams across supported leagues.
+            Basketball and baseball show today’s games; football shows this
+            week’s games.
+          </Text>
+          <TickerSettingOption
+            icon="heart-outline"
+            label={
+              state.syncingFavorites
+                ? "Syncing favorite teams…"
+                : "Sync favorite teams"
+            }
+            value={`${favorites.count} teams`}
+            description={
+              favorites.signature !== state.settings?.favoritesSignature
+                ? "Your favorites changed. Sync to update the ticker."
+                : "Your favorite teams are synced to this ticker."
+            }
+            disabled={
+              !enabled("favorites_commit") ||
+              !favorites.ready ||
+              favorites.count === 0
+            }
+            onPress={() => void favorites.show()}
+          />
+          {favorites.unsupportedCount > 0 && (
+            <Text style={text.caption}>
+              {favorites.unsupportedCount} saved{" "}
+              {favorites.unsupportedCount === 1 ? "team is" : "teams are"} in
+              leagues this ticker doesn’t support.
+            </Text>
+          )}
+        </>
+      )}
       {contentType === "scores" && (
         <Text style={text.caption}>
           {getScoreDescription(league, college && !!state.settings?.top25Only)}
@@ -185,26 +257,33 @@ export default function TickerContentControl() {
           </Text>
         </View>
       )}
-      {college && contentType !== "rankings" && (
-        <TickerSettingToggle
-          label="Show team rankings"
-          icon="ribbon-outline"
-          description="Add Top 25 ranks beside team names."
-          value={state.settings?.showRankings ?? false}
-          disabled={
-            !enabled("set_show_rankings") ||
-            state.settings?.showRankings == null
-          }
-          onValueChange={(value) =>
-            void ticker.command({ type: "set_show_rankings", value })
-          }
-        />
-      )}
-      {college && contentType === "scores" && (
+      {(college || contentType === "favorites" || contentType === "rotation") &&
+        contentType !== "rankings" && (
+          <TickerSettingToggle
+            label="Show team rankings"
+            icon="ribbon-outline"
+            description="Add Top 25 ranks beside team names."
+            value={state.settings?.showRankings ?? false}
+            disabled={
+              !enabled("set_show_rankings") ||
+              state.settings?.showRankings == null
+            }
+            onValueChange={(value) =>
+              void ticker.command({ type: "set_show_rankings", value })
+            }
+          />
+        )}
+      {((college && contentType === "scores") ||
+        contentType === "rotation") && (
         <TickerSettingToggle
           label="Top 25 games only"
+          hideBottomBorder
           icon="funnel-outline"
-          description="Only games featuring a ranked team."
+          description={
+            contentType === "rotation"
+              ? "Only games featuring a ranked team in college score items."
+              : "Only games featuring a ranked team."
+          }
           value={state.settings?.top25Only ?? false}
           disabled={
             !enabled("set_top25_only") || state.settings?.top25Only == null
@@ -253,11 +332,3 @@ export default function TickerContentControl() {
     </TickerSettingsSection>
   );
 }
-
-const styles = StyleSheet.create({
-  contentType: { gap: 8 },
-  contentTabs: { marginTop: 0, marginBottom: 0 },
-  contentTab: { paddingHorizontal: 8, minHeight: 44 },
-  pollOptions: { gap: 2 },
-  pollDescription: { marginTop: 8 },
-});

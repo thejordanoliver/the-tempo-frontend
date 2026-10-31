@@ -544,6 +544,9 @@ export function useNBAPlayoffGames({
       !loading &&
       pollIntervalMs > 0 &&
       (hasLiveGame || games.some(shouldTrackGameUpdates)),
+    onResume: () => {
+      void fetchPlayoffGames({ silent: true });
+    },
     kind: "scoreboard",
     payload: {
       sport: "basketball",

@@ -66,6 +66,7 @@ function setup() {
     service: exports,
     events,
     socket,
+    send: (name, update) => handlers.get(name)(update),
     stats: () => ({ connects, disconnects, clients }),
     changeState(state) {
       appState.currentState = state;
@@ -111,4 +112,62 @@ test("shared sports subscriptions disconnect in background and rejoin once on fo
     connects,
     "no subscriptions means no reconnect",
   );
+});
+
+test("screens joining a shared scoreboard receive its current live status immediately", () => {
+  const h = setup();
+  const payload = { sport: "basketball", league: "nba", date: "20261031" };
+  const firstUpdates = [],
+    secondUpdates = [];
+  const first = h.service.subscribeSportsLive({
+    kind: "scoreboard",
+    payload,
+    listener: (update) => firstUpdates.push(update),
+  });
+  const live = {
+    subscriptionKey: "nba:scoreboard",
+    payload: { games: [{ id: "1", status: { state: "in" } }] },
+    emittedAt: "2026-10-31T20:00:00Z",
+  };
+  h.send("sports:scoreboard:update", live);
+  const second = h.service.subscribeSportsLive({
+    kind: "scoreboard",
+    payload,
+    listener: (update) => secondUpdates.push(update),
+  });
+  assert.deepEqual(secondUpdates, [live]);
+  assert.deepEqual(
+    firstUpdates,
+    [live],
+    "joining does not notify existing listeners again",
+  );
+  assert.equal(
+    h.events.filter(({ name }) => name.endsWith(":subscribe")).length,
+    1,
+  );
+  first();
+  const final = {
+    ...live,
+    payload: { games: [{ id: "1", status: { state: "post" } }] },
+  };
+  h.send("sports:scoreboard:update", final);
+  assert.deepEqual(secondUpdates, [live, final]);
+  assert.deepEqual(
+    firstUpdates,
+    [live],
+    "departed screens stop receiving updates",
+  );
+  second();
+  const thirdUpdates = [];
+  const third = h.service.subscribeSportsLive({
+    kind: "scoreboard",
+    payload,
+    listener: (update) => thirdUpdates.push(update),
+  });
+  assert.deepEqual(
+    thirdUpdates,
+    [],
+    "unused feeds do not retain stale snapshots",
+  );
+  third();
 });

@@ -69,6 +69,12 @@ function setup(ack = true) {
     handlers,
     events,
     updates,
+    subscribe: (listener) =>
+      api.subscribeSportsLive({
+        kind: "game",
+        payload: { sport: "football", league: "nfl", gameId: "401" },
+        listener,
+      }),
     stop,
     send: (extra) => handlers.get("sports:game:delta")(frame(extra)),
   };
@@ -136,4 +142,32 @@ test("legacy server full updates remain supported", () => {
   } finally {
     h.stop();
   }
+});
+
+test("joining game screens receive the reconstructed latest delta snapshot", () => {
+  const h = setup();
+  h.send({
+    revision: 1,
+    snapshot: { score: { status: { state: "pre" }, clock: "0:00" } },
+  });
+  h.send({
+    revision: 2,
+    baseRevision: 1,
+    changes: [
+      { path: ["score", "status"], value: { state: "in" } },
+      { path: ["score", "clock"], value: "14:59" },
+    ],
+    removed: [],
+  });
+  const received = [];
+  const stop = h.subscribe((update) => received.push(update.payload));
+  assert.equal(received.length, 1);
+  assert.equal(received[0].score.status.state, "in");
+  assert.equal(received[0].score.clock, "14:59");
+  assert.equal(
+    h.events.filter(({ name }) => name === "sports:game:subscribe").length,
+    1,
+  );
+  stop();
+  h.stop();
 });

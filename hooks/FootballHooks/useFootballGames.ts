@@ -291,6 +291,9 @@ export function useFootballGames({
   useLiveSportsSubscription<FootballGamesResponse>({
     enabled: enabled && scope.hasData && !loading && hasActiveGame,
 
+    onResume: () => {
+      void fetchGames({ silent: true });
+    },
     kind: "scoreboard",
 
     payload: {

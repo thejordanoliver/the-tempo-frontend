@@ -155,6 +155,9 @@ export function useTennisMatches(
 
   useLiveSportsSubscription<TennisScoreboardResponse>({
     enabled: enabled && scope.hasData && !loading && hasActiveMatch,
+    onResume: () => {
+      void fetchMatches({ silent: true });
+    },
     kind: "scoreboard",
     payload: {
       sport: "tennis",

@@ -1,17 +1,17 @@
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import type { PropsWithChildren } from "react";
 import {
   Image,
   type ImageSourcePropType,
   Pressable,
-  StyleSheet,
   Switch,
   Text,
   View,
 } from "react-native";
 import { settingsStyles } from "styles/SettingsStyles";
+import { tickerSettingsSectionStyles } from "styles/TickerStyles/TickerSettingsSectionStyles";
 import TickerIcon, { type TickerIconName } from "./TickerIcon";
-import { useTickerTheme } from "./TickerUI";
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -24,9 +24,11 @@ type OptionProps = {
   description?: string;
   icon?: TickerIconName;
   logo?: ImageSourcePropType;
+  swatchColor?: string;
   selected?: boolean;
   expanded?: boolean;
   disabled?: boolean;
+  hideBottomBorder?: boolean;
   onPress: () => void;
 };
 
@@ -36,13 +38,14 @@ type ToggleProps = {
   icon?: TickerIconName;
   value: boolean;
   disabled: boolean;
+  hideBottomBorder?: boolean;
   onValueChange: (value: boolean) => void;
 };
 
 export function TickerSettingsSection({ title, icon, children }: SectionProps) {
   const { isDark, colors } = useTickerTheme();
   return (
-    <View>
+    <View style={tickerSettingsSectionStyles.wrapper}>
       <HeadingTwo isDark={isDark}>
         {icon && (
           <>
@@ -51,7 +54,7 @@ export function TickerSettingsSection({ title, icon, children }: SectionProps) {
         )}
         {title}
       </HeadingTwo>
-      <View style={styles.sectionContent}>{children}</View>
+      <View style={tickerSettingsSectionStyles.sectionContent}>{children}</View>
     </View>
   );
 }
@@ -62,9 +65,11 @@ export function TickerSettingOption({
   description,
   icon,
   logo,
+  swatchColor,
   selected,
   expanded,
   disabled = false,
+  hideBottomBorder = false,
   onPress,
 }: OptionProps) {
   const { isDark, colors, text } = useTickerTheme();
@@ -81,8 +86,9 @@ export function TickerSettingOption({
     <View
       style={[
         preferences.optionButtonContainer,
-        styles.optionContainer,
+        tickerSettingsSectionStyles.optionContainer,
         selected && { borderBottomColor: colors.text },
+        hideBottomBorder && tickerSettingsSectionStyles.noBottomBorder,
       ]}
     >
       <Pressable
@@ -97,26 +103,41 @@ export function TickerSettingOption({
         onPress={onPress}
         style={({ pressed }) => [
           preferences.optionButton,
-          styles.option,
-          (disabled || pressed) && styles.muted,
+          tickerSettingsSectionStyles.option,
+          (disabled || pressed) && tickerSettingsSectionStyles.muted,
         ]}
       >
-        {logo ? (
+        {swatchColor ? (
+          <View
+            accessibilityElementsHidden
+            style={[
+              tickerSettingsSectionStyles.swatch,
+              { backgroundColor: swatchColor, borderColor: colors.icon },
+            ]}
+          />
+        ) : logo ? (
           <Image
             source={logo}
-            style={styles.logo}
+            style={tickerSettingsSectionStyles.logo}
             resizeMode="contain"
             accessibilityElementsHidden
           />
         ) : (
           icon && <TickerIcon name={icon} color={colors.icon} />
         )}
-        <View style={styles.optionCopy}>
+        <View style={tickerSettingsSectionStyles.optionCopy}>
           <Text style={preferences.optionText}>{label}</Text>
           {description && <Text style={text.caption}>{description}</Text>}
         </View>
         {value && (
-          <Text style={[text.secondaryText, styles.optionValue]}>{value}</Text>
+          <Text
+            style={[
+              text.secondaryText,
+              tickerSettingsSectionStyles.optionValue,
+            ]}
+          >
+            {value}
+          </Text>
         )}
         {accessory && (
           <TickerIcon
@@ -136,15 +157,24 @@ export function TickerSettingToggle({
   icon,
   value,
   disabled,
+  hideBottomBorder = false,
   onValueChange,
 }: ToggleProps) {
   const { isDark, colors, text } = useTickerTheme();
   const preferences = settingsStyles(isDark);
   return (
-    <View style={[preferences.optionButtonContainer, styles.optionContainer]}>
-      <View style={[preferences.optionButton, styles.toggle]}>
+    <View
+      style={[
+        preferences.optionButtonContainer,
+        tickerSettingsSectionStyles.optionContainer,
+        hideBottomBorder && tickerSettingsSectionStyles.noBottomBorder,
+      ]}
+    >
+      <View
+        style={[preferences.optionButton, tickerSettingsSectionStyles.toggle]}
+      >
         {icon && <TickerIcon name={icon} color={colors.icon} />}
-        <View style={styles.toggleCopy}>
+        <View style={tickerSettingsSectionStyles.toggleCopy}>
           <Text style={preferences.optionText}>{label}</Text>
           {description && <Text style={text.caption}>{description}</Text>}
         </View>
@@ -159,15 +189,3 @@ export function TickerSettingToggle({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionContent: { gap: 12 },
-  optionContainer: { flex: 0, marginBottom: 0 },
-  option: { minHeight: 44, gap: 12 },
-  optionCopy: { flex: 1, gap: 2 },
-  optionValue: { flexShrink: 1, textAlign: "right", maxWidth: "55%" },
-  toggle: { minHeight: 48, gap: 16 },
-  toggleCopy: { flex: 1, gap: 3 },
-  logo: { width: 32, height: 32 },
-  muted: { opacity: 0.5 },
-});

@@ -166,3 +166,28 @@ test("disabled and blurred screens clean up and resume with the latest selection
   hook.render({ ...options, payload: { ...options.payload, gameId: "2" } });
   assert.equal(hook.subscriptions.at(-1).payload.gameId, "2");
 });
+
+test("returning screens silently reload once with the latest callback", () => {
+  const hook = setup();
+  const refreshed = [];
+  const options = {
+    kind: "scoreboard",
+    payload: { sport: "basketball", league: "nba", date: "20261031" },
+    onUpdate() {},
+    onResume: () => refreshed.push("old"),
+  };
+  hook.render(options);
+  assert.deepEqual(refreshed, [], "initial loading belongs to the data hook");
+  hook.render(options, false);
+  assert.equal(hook.subscriptions[0].active, false);
+  const latest = { ...options, onResume: () => refreshed.push("current") };
+  hook.render(latest);
+  assert.deepEqual(refreshed, ["current"]);
+  hook.render(latest);
+  assert.deepEqual(refreshed, ["current"], "rerenders do not refresh again");
+  hook.render(latest, false);
+  hook.render({ ...latest, enabled: false });
+  assert.deepEqual(refreshed, ["current"], "disabled feeds stay idle");
+  hook.render({ ...latest, payload: { ...latest.payload, league: "wnba" } });
+  assert.deepEqual(refreshed, ["current"], "new selections load themselves");
+});

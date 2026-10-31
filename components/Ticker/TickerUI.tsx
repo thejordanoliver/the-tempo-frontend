@@ -1,45 +1,43 @@
+import {
+  TickerReorderScrollContext,
+  useTickerReorderPageScroll,
+} from "hooks/TickerHooks/useTickerReorderScroll";
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
+import { tickerStyles } from "styles/TickerStyles/TickerUIStyles";
 import Button from "components/Buttons/Button";
 import { CustomHeader } from "components/CustomHeader";
-import { Colors, globalStyles } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useEffect, useLayoutEffect, type PropsWithChildren } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   hydrateTickerPreference,
-  ticker,
+  ticker as liveTicker,
+  useTickerController,
   useTickerStore,
 } from "store/tickerStore";
 import TickerIcon, { type TickerIconName } from "./TickerIcon";
 import type { TickerConnectionState } from "types/ticker";
 
-export function useTickerTheme() {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  return {
-    isDark,
-    colors: Colors[isDark ? "dark" : "light"],
-    text: globalStyles(isDark),
-  };
-}
 export function TickerPage({
   title,
   children,
-}: PropsWithChildren<{ title: string }>) {
+  reorderable = false,
+  scrollResetKey,
+}: PropsWithChildren<{
+  title: string;
+  reorderable?: boolean;
+  scrollResetKey?: string;
+}>) {
   const { colors } = useTickerTheme();
+  const ticker = useTickerController();
   const navigation = useNavigation();
   const router = useScopedRouter();
   const insetContent = useNavigationBarContentStyle();
   const insets = useSafeAreaInsets();
+  const dragScroll = useTickerReorderPageScroll(scrollResetKey);
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -53,10 +51,19 @@ export function TickerPage({
     });
   }, [navigation, router, title]);
   useEffect(() => {
-    void hydrateTickerPreference();
-  }, []);
-  return (
+    if (ticker === liveTicker) void hydrateTickerPreference();
+  }, [ticker]);
+  const page = (
     <ScrollView
+      key={scrollResetKey}
+      ref={reorderable ? dragScroll.scrollRef : undefined}
+      scrollEnabled={!reorderable || dragScroll.scrollEnabled}
+      onScroll={reorderable ? dragScroll.onScroll : undefined}
+      onLayout={reorderable ? dragScroll.onLayout : undefined}
+      onContentSizeChange={
+        reorderable ? dragScroll.onContentSizeChange : undefined
+      }
+      scrollEventThrottle={16}
       keyboardShouldPersistTaps="handled"
       style={[tickerStyles.page, { backgroundColor: colors.background }]}
       contentContainerStyle={insetContent([
@@ -66,6 +73,13 @@ export function TickerPage({
     >
       {children}
     </ScrollView>
+  );
+  return reorderable ? (
+    <TickerReorderScrollContext.Provider value={dragScroll}>
+      {page}
+    </TickerReorderScrollContext.Provider>
+  ) : (
+    page
   );
 }
 export function TickerCard({ children }: PropsWithChildren) {
@@ -137,11 +151,15 @@ export function TickerRow({ label, value, icon }: TickerRowProps) {
 export function TickerFeedback({
   compact = false,
 }: { compact?: boolean } = {}) {
+  const ticker = useTickerController();
   const {
     error,
     authorized,
     authorizing,
     renaming,
+    syncingFavorites,
+    savingCustomHeader,
+    savingRotation,
     connection,
     pendingCommands,
     status,
@@ -155,14 +173,26 @@ export function TickerFeedback({
     status?.capabilities.some(
       (type) => !["get_status", "get_settings"].includes(type),
     ) ?? false;
-  const progressMessage = renaming
-    ? "Saving ticker name…"
-    : getProgressMessage(authorizing, connection, compact);
+  const progressMessage = savingRotation
+    ? "Saving custom rotation…"
+    : savingCustomHeader
+      ? "Saving custom header…"
+      : syncingFavorites
+        ? "Syncing favorite teams…"
+        : renaming
+          ? "Saving ticker name…"
+          : getProgressMessage(authorizing, connection, compact);
   const pairingMessage = getPairingMessage(hasControls, compact);
 
   return (
     <>
-      {(busy || authorizing || renaming || waitingForCommand) && (
+      {(busy ||
+        authorizing ||
+        renaming ||
+        syncingFavorites ||
+        savingRotation ||
+        savingCustomHeader ||
+        waitingForCommand) && (
         <View style={tickerStyles.busy} accessibilityLiveRegion="polite">
           <ActivityIndicator color={colors.text} />
           <Text style={[text.secondaryText, tickerStyles.feedbackCopy]}>
@@ -188,6 +218,9 @@ export function TickerFeedback({
               disabled={
                 authorizing ||
                 renaming ||
+                syncingFavorites ||
+                savingRotation ||
+                savingCustomHeader ||
                 Object.keys(pendingCommands).length > 0
               }
               onPress={() => void ticker.authorize()}
@@ -231,30 +264,3 @@ export const connectionLabel: Record<TickerConnectionState, string> = {
   connected: "BLE connected",
   error: "Connection failed",
 };
-export const tickerStyles = StyleSheet.create({
-  page: { flex: 1 },
-  action: { gap: 8 },
-  rowLabel: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    flexShrink: 1,
-  },
-  label: { flexShrink: 1 },
-  feedbackCopy: { flex: 1 },
-  content: { padding: 12, paddingTop: 20, gap: 16 },
-  card: { borderRadius: 12, padding: 16, gap: 14 },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-  },
-  value: { flex: 1, textAlign: "right" },
-  busy: { flexDirection: "row", alignItems: "center", gap: 10 },
-  device: {
-    paddingVertical: 14,
-    gap: 6,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-});

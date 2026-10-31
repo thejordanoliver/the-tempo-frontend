@@ -1,8 +1,10 @@
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
+import { tickerDisplayControlsStyles as styles } from "styles/TickerStyles/TickerDisplayControlsStyles";
 import Slider from "@react-native-community/slider";
 import { useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { ticker } from "store/tickerStore";
-import { TickerRow, useTickerTheme } from "./TickerUI";
+import { Text, View } from "react-native";
+import { useTickerController } from "store/tickerStore";
+import { TickerRow } from "./TickerUI";
 
 export function BrightnessControl({
   confirmed,
@@ -11,6 +13,7 @@ export function BrightnessControl({
   confirmed: number | null;
   disabled: boolean;
 }) {
+  const ticker = useTickerController();
   const [draft, setDraft] = useState<number | null>(null);
   const dragging = useRef(false);
   const revision = useRef(0);
@@ -24,6 +27,7 @@ export function BrightnessControl({
     });
   };
   const { colors } = useTickerTheme();
+
   const value = draft ?? confirmed;
   return (
     <View style={styles.control}>
@@ -71,6 +75,7 @@ export function DurationControl({
   disabled: boolean;
   poll: boolean;
 }) {
+  const ticker = useTickerController();
   const [draft, setDraft] = useState<number | null>(null);
   const { colors, text } = useTickerTheme();
   const value = draft ?? confirmed;
@@ -110,6 +115,3 @@ export function DurationControl({
     </View>
   );
 }
-const styles = StyleSheet.create({
-  control: { gap: 10 },
-});

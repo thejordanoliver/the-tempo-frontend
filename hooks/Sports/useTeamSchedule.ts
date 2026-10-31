@@ -172,6 +172,9 @@ export function useTeamSchedule<
 
   useLiveSportsSubscription<TResponse>({
     enabled,
+    onResume: () => {
+      void fetchSchedule("silent");
+    },
     kind: "scoreboard",
     payload: {
       sport,

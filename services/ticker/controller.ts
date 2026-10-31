@@ -1,3 +1,8 @@
+import {
+  decodeRotation,
+  rotationSignature,
+  TickerRotationUnavailableError,
+} from "./rotation";
 import { normalizeTickerName, TickerNameUnavailableError } from "./name";
 import { createStore } from "zustand/vanilla";
 import type {
@@ -6,6 +11,8 @@ import type {
   TickerConnectionState,
   TickerDevice,
   TickerSettings,
+  TickerFavoriteTeam,
+  TickerRotationEntry,
   TickerStatus,
 } from "../../types/ticker";
 import {
@@ -20,6 +27,13 @@ import {
   type TickerTransport,
   type Unsubscribe,
 } from "./transport";
+import { favoriteTeamsSignature } from "./favorites";
+import {
+  normalizeCustomHeader,
+  encodeCustomHeader,
+  supportsHeaderEmoji,
+  TickerCustomHeaderUnavailableError,
+} from "./customHeader";
 
 export interface TickerState {
   devices: TickerDevice[];
@@ -33,6 +47,15 @@ export interface TickerState {
   authorized: boolean;
   authorizing: boolean;
   renaming: boolean;
+  syncingFavorites: boolean;
+  savingRotation: boolean;
+  rotationEntries: TickerRotationEntry[] | null;
+  rotationAvailable: boolean;
+  rotationIssue: string | null;
+  savingCustomHeader: boolean;
+  customHeader: string | null;
+  customHeaderAvailable: boolean;
+  customHeaderIssue: string | null;
   nameAvailable: boolean;
   nameIssue: string | null;
   pendingCommands: Record<number, TickerCommand["type"]>;
@@ -40,6 +63,9 @@ export interface TickerState {
 }
 export const connectionBusy = (state: TickerConnectionState) =>
   state === "connecting" || state === "verifying";
+export const hasBlockingTickerCommand = (
+  pendingCommands: TickerState["pendingCommands"],
+) => Object.values(pendingCommands).some((type) => type !== "set_brightness");
 const message = (error: unknown) =>
   error instanceof Error
     ? error.message
@@ -82,6 +108,15 @@ export function createTickerController(
     authorized: false,
     authorizing: false,
     renaming: false,
+    syncingFavorites: false,
+    savingRotation: false,
+    rotationEntries: null,
+    rotationAvailable: false,
+    rotationIssue: null,
+    savingCustomHeader: false,
+    customHeader: null,
+    customHeaderAvailable: false,
+    customHeaderIssue: null,
     nameAvailable: false,
     nameIssue: null,
     pendingCommands: {},
@@ -94,10 +129,22 @@ export function createTickerController(
   let subscriptions: Unsubscribe[] = [];
   let disposed = false;
   let drainingSettings = false;
+  type QueuedChange =
+    | TickerCommand
+    | { type: "rename"; value: string }
+    | { type: "custom_header"; value: string }
+    | { type: "save_rotation"; entries: TickerRotationEntry[] }
+    | { type: "show_favorites"; teams: TickerFavoriteTeam[] };
   const queuedSettings = new Map<
-    LiveSetting["type"],
-    { command: LiveSetting; resolve: (applied: boolean) => void }
+    QueuedChange["type"],
+    { command: QueuedChange; resolve: (applied: boolean) => void }
   >();
+  const enqueueChange = (next: QueuedChange): Promise<boolean> =>
+    new Promise((resolve) => {
+      queuedSettings.get(next.type)?.resolve(false);
+      queuedSettings.set(next.type, { command: next, resolve });
+      void drainSettings();
+    });
   const cancelQueuedSettings = () => {
     queuedSettings.forEach(({ resolve }) => resolve(false));
     queuedSettings.clear();
@@ -137,6 +184,15 @@ export function createTickerController(
       authorized: false,
       authorizing: false,
       renaming: false,
+      syncingFavorites: false,
+      savingRotation: false,
+      rotationEntries: null,
+      rotationAvailable: false,
+      rotationIssue: null,
+      savingCustomHeader: false,
+      customHeader: null,
+      customHeaderAvailable: false,
+      customHeaderIssue: null,
       nameAvailable: false,
       nameIssue: null,
       status: null,
@@ -220,10 +276,14 @@ export function createTickerController(
       }
     }
   };
-  const command = async (command: TickerCommand): Promise<boolean> => {
+  const executeCommand = async (
+    command: TickerCommand,
+    exclusiveChange = false,
+  ): Promise<boolean> => {
     const state = store.getState();
     const token = generation;
     let id = 0;
+    let applied = false;
     try {
       if (
         state.connection !== "connected" ||
@@ -235,7 +295,14 @@ export function createTickerController(
         );
       if (state.authorizing)
         throw new Error("Finish Bluetooth pairing before sending commands.");
-      if (pending.size || state.renaming)
+      if (
+        pending.size ||
+        state.renaming ||
+        ((state.syncingFavorites ||
+          state.savingCustomHeader ||
+          state.savingRotation) &&
+          !exclusiveChange)
+      )
         throw new Error("Wait for the current ticker command to finish.");
       if (
         command.type === "set_league" &&
@@ -292,13 +359,30 @@ export function createTickerController(
           confirmed.settings.showRankings !== command.value) ||
         (command.type === "set_duration" &&
           confirmed.settings.durationSeconds !== command.value) ||
+        (command.type === "set_smart_priority" &&
+          confirmed.settings.smartGamePriority !== command.value) ||
         (command.type === "set_top25_only" &&
-          confirmed.settings.top25Only !== command.value)
+          confirmed.settings.top25Only !== command.value) ||
+        (command.type === "set_date_format" &&
+          confirmed.settings.dateFormat !== command.value) ||
+        (command.type === "set_show_broadcast" &&
+          confirmed.settings.showBroadcast !== command.value) ||
+        (command.type === "set_header" &&
+          confirmed.settings.headerMode !== command.value) ||
+        (command.type === "set_header_color" &&
+          confirmed.settings.headerColor !== command.value) ||
+        (command.type === "rotation_commit" &&
+          (confirmed.settings.viewMode !== "rotation" ||
+            confirmed.settings.rotationSignature !== command.value)) ||
+        (command.type === "favorites_commit" &&
+          (confirmed.settings.viewMode !== "favorites" ||
+            confirmed.settings.favoritesSignature !== command.value))
       )
         throw new Error(
           "Device acknowledgment did not confirm the requested setting. Refresh status and retry.",
         );
       applyStatus(confirmed);
+      applied = true;
       return true;
     } catch (error) {
       if (token === generation) store.setState({ error: message(error) });
@@ -313,15 +397,23 @@ export function createTickerController(
             [...pending].map(([key, entry]) => [key, entry.type]),
           ),
         });
+      if (id !== 0 && !applied && token === generation) cancelQueuedSettings();
       void drainSettings();
     }
   };
+  const brightnessPending = () =>
+    Object.values(store.getState().pendingCommands).includes("set_brightness");
+  const command = (next: TickerCommand): Promise<boolean> =>
+    brightnessPending() ? enqueueChange(next) : executeCommand(next);
   // Keep BLE writes serialized, retaining only the newest unsent value for
-  // each live control. Rapid slider events and sport taps must not race ACKs.
+  // each control. Other actions can wait behind a live brightness update.
   const drainSettings = async () => {
     if (
       drainingSettings ||
       store.getState().renaming ||
+      store.getState().syncingFavorites ||
+      store.getState().savingCustomHeader ||
+      store.getState().savingRotation ||
       Object.keys(store.getState().pendingCommands).length
     )
       return;
@@ -337,8 +429,21 @@ export function createTickerController(
           state.authorized &&
           (entry.command.type === "set_brightness"
             ? state.settings?.brightness === entry.command.value
-            : state.settings?.selectedLeague === entry.command.value);
-        const applied = alreadyApplied || (await command(entry.command));
+            : entry.command.type === "set_league" &&
+              state.settings?.selectedLeague === entry.command.value &&
+              (state.settings.viewMode == null ||
+                state.settings.viewMode === "scores"));
+        const applied =
+          alreadyApplied ||
+          (await (entry.command.type === "save_rotation"
+            ? executeSaveRotation(entry.command.entries, true)
+            : entry.command.type === "custom_header"
+              ? executeCustomHeader(entry.command.value, true)
+              : entry.command.type === "show_favorites"
+                ? executeShowFavorites(entry.command.teams, true)
+                : entry.command.type === "rename"
+                  ? executeRename(entry.command.value, true)
+                  : executeCommand(entry.command)));
         entry.resolve(applied);
         if (!applied && token === generation) cancelQueuedSettings();
       }
@@ -354,7 +459,10 @@ export function createTickerController(
       state.connection !== "connected" ||
       !state.authorized ||
       state.authorizing ||
-      state.renaming
+      state.renaming ||
+      state.syncingFavorites ||
+      state.savingCustomHeader ||
+      state.savingRotation
     )
       return Promise.resolve(false);
     // Validate before replacing valid queued intent or skipping a no-op.
@@ -366,11 +474,67 @@ export function createTickerController(
       store.setState({ error: message(error) });
       return Promise.resolve(false);
     }
-    return new Promise((resolve) => {
-      queuedSettings.get(next.type)?.resolve(false);
-      queuedSettings.set(next.type, { command: next, resolve });
-      void drainSettings();
-    });
+    return enqueueChange(next);
+  };
+  const executeShowFavorites = async (
+    teams: TickerFavoriteTeam[],
+    fromQueue = false,
+  ): Promise<boolean> => {
+    const token = generation;
+    let started = false;
+    try {
+      const signature = favoriteTeamsSignature(teams);
+      const state = store.getState();
+      if (
+        state.connection !== "connected" ||
+        !state.authorized ||
+        state.authorizing
+      )
+        throw new Error(
+          "Connect and unlock your ticker before syncing favorite teams.",
+        );
+      if (!state.status?.capabilities.includes("favorites_commit"))
+        throw new Error("Favorites mode requires firmware 0.8.0 or newer.");
+      if (
+        state.renaming ||
+        state.syncingFavorites ||
+        state.savingCustomHeader ||
+        state.savingRotation ||
+        pending.size ||
+        (!fromQueue && drainingSettings)
+      )
+        throw new Error("Wait for the current ticker change to finish.");
+      started = true;
+      store.setState({ syncingFavorites: true, error: null });
+      const commands: TickerCommand[] = [
+        { type: "favorites_begin", value: teams.length },
+      ];
+      for (let offset = 0; offset < teams.length; offset += 3)
+        commands.push({
+          type: "favorites_chunk",
+          offset,
+          teams: teams.slice(offset, offset + 3),
+        });
+      commands.push({ type: "favorites_commit", value: signature });
+      for (const command of commands) {
+        if (token !== generation || !(await executeCommand(command, true)))
+          return false;
+      }
+      return token === generation;
+    } catch (error) {
+      if (token === generation) store.setState({ error: message(error) });
+      return false;
+    } finally {
+      if (started && token === generation)
+        store.setState({ syncingFavorites: false });
+      if (started) void drainSettings();
+    }
+  };
+  const showFavorites = (teams: TickerFavoriteTeam[]): Promise<boolean> => {
+    const snapshot = teams.map((team) => ({ ...team }));
+    return brightnessPending()
+      ? enqueueChange({ type: "show_favorites", teams: snapshot })
+      : executeShowFavorites(snapshot);
   };
   const connect = async (device: TickerDevice): Promise<boolean> => {
     if (
@@ -449,6 +613,56 @@ export function createTickerController(
           nameIssue = error.message;
         }
       }
+      let customHeader: string | null = null;
+      let customHeaderAvailable = false;
+      let customHeaderIssue: string | null = null;
+      if (frame.status.canCustomHeader) {
+        try {
+          if (!transport.readCustomHeader)
+            throw new TickerCustomHeaderUnavailableError();
+          const reported = await transport.readCustomHeader(device.id);
+          if (!current()) throw new Error("Connection cancelled.");
+          if (reported && normalizeCustomHeader(reported) !== reported)
+            throw new Error("The ticker reported an invalid custom header.");
+          customHeader = reported;
+          customHeaderAvailable = true;
+        } catch (error) {
+          if (
+            !current() ||
+            !(error instanceof TickerCustomHeaderUnavailableError)
+          )
+            throw error;
+          customHeaderIssue = error.message;
+        }
+      }
+      let rotationEntries: TickerRotationEntry[] | null = null;
+      let rotationAvailable = false;
+      let rotationIssue: string | null = null;
+      if (frame.status.protocolVersion >= 9) {
+        try {
+          if (!transport.readRotation)
+            throw new TickerRotationUnavailableError();
+          const reported = decodeRotation(
+            await transport.readRotation(device.id),
+          );
+          if (!current()) throw new Error("Connection cancelled.");
+          if (
+            frame.status.settings.viewMode === "rotation" &&
+            (!reported.enabled ||
+              rotationSignature(reported.entries) !==
+                frame.status.settings.rotationSignature)
+          )
+            throw new Error(
+              "The ticker’s active rotation did not match its saved list.",
+            );
+          rotationEntries = reported.entries;
+          rotationAvailable = true;
+        } catch (error) {
+          if (!current() || !(error instanceof TickerRotationUnavailableError))
+            throw error;
+          rotationIssue = error.message;
+        }
+      }
       applyStatus(frame.status);
       subscriptions.push(
         transport.monitor(
@@ -503,6 +717,12 @@ export function createTickerController(
         authorized,
         nameAvailable,
         nameIssue,
+        customHeader,
+        customHeaderAvailable,
+        customHeaderIssue,
+        rotationEntries,
+        rotationAvailable,
+        rotationIssue,
         selectedDevice: confirmedDevice,
         lastDevice: { id: confirmedDevice.id, name: confirmedDevice.name },
       });
@@ -545,6 +765,9 @@ export function createTickerController(
       !state.selectedDevice ||
       state.authorizing ||
       state.renaming ||
+      state.syncingFavorites ||
+      state.savingCustomHeader ||
+      state.savingRotation ||
       pending.size
     )
       return false;
@@ -596,7 +819,10 @@ export function createTickerController(
       if (token === generation) store.setState({ authorizing: false });
     }
   };
-  const rename = async (value: string): Promise<boolean> => {
+  const executeRename = async (
+    value: string,
+    fromQueue = false,
+  ): Promise<boolean> => {
     const state = store.getState();
     const token = generation;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -614,9 +840,11 @@ export function createTickerController(
         throw new Error("Unlock controls before renaming your ticker.");
       if (
         state.renaming ||
+        state.syncingFavorites ||
+        state.savingCustomHeader ||
+        state.savingRotation ||
         pending.size ||
-        queuedSettings.size ||
-        drainingSettings
+        (!fromQueue && (queuedSettings.size || drainingSettings))
       )
         throw new Error("Wait for the current ticker change to finish.");
       if (
@@ -688,6 +916,188 @@ export function createTickerController(
       if (started) void drainSettings();
     }
   };
+  const rename = (value: string): Promise<boolean> =>
+    brightnessPending()
+      ? enqueueChange({ type: "rename", value })
+      : executeRename(value);
+  const executeCustomHeader = async (
+    value: string,
+    fromQueue = false,
+  ): Promise<boolean> => {
+    const state = store.getState();
+    const token = generation;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let timedOut = false;
+    let started = false;
+    const current = () => token === generation && !timedOut;
+    try {
+      const text = normalizeCustomHeader(value);
+      if (
+        state.connection !== "connected" ||
+        !state.selectedDevice ||
+        state.bluetooth !== "PoweredOn"
+      )
+        throw new Error(
+          "Connect your ticker before changing its custom header.",
+        );
+      if (!state.authorized || state.authorizing)
+        throw new Error("Unlock controls before changing the header.");
+      if (
+        state.renaming ||
+        state.syncingFavorites ||
+        state.savingCustomHeader ||
+        state.savingRotation ||
+        pending.size ||
+        (!fromQueue && (queuedSettings.size || drainingSettings))
+      )
+        throw new Error("Wait for the current ticker change to finish.");
+      if (
+        !state.status?.canCustomHeader ||
+        !state.customHeaderAvailable ||
+        !transport.readCustomHeader ||
+        !transport.writeCustomHeader
+      )
+        throw new Error(
+          state.customHeaderIssue ??
+            "Custom headers require firmware 0.11.0 or newer.",
+        );
+      if (
+        encodeCustomHeader(text).some((byte) => byte >= 0x80) &&
+        !supportsHeaderEmoji(state.status?.firmwareVersion)
+      )
+        throw new Error("Header emojis require firmware 0.13.0 or newer.");
+      if (
+        state.customHeader === text &&
+        state.settings?.headerMode === "custom"
+      ) {
+        store.setState({ error: null });
+        return true;
+      }
+      started = true;
+      store.setState({ savingCustomHeader: true, error: null });
+      const device = state.selectedDevice;
+      const saveAndRead = async () => {
+        await transport.writeCustomHeader!(device.id, text);
+        if (!current())
+          throw new Error("Connection changed while saving the header.");
+        const confirmed = await transport.readCustomHeader!(device.id);
+        if (!current())
+          throw new Error("Connection changed while saving the header.");
+        if (confirmed !== text)
+          throw new Error(
+            "The ticker did not confirm the custom header. Please try again.",
+          );
+        return confirmed;
+      };
+      const confirmed = await Promise.race([
+        saveAndRead(),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => {
+            timedOut = true;
+            reject(
+              new Error(
+                "Custom header was not confirmed. Reconnect to check your ticker’s header.",
+              ),
+            );
+          }, timeouts.command);
+        }),
+      ]);
+      clearTimeout(timer);
+      if (!current()) return false;
+      store.setState({ customHeader: confirmed });
+      return await executeCommand(
+        { type: "set_header", value: "custom" },
+        true,
+      );
+    } catch (error) {
+      if (token === generation) {
+        if (timedOut) {
+          generation++;
+          clearConnection();
+          store.setState({ connection: "error", error: message(error) });
+          if (state.selectedDevice)
+            void cancelDevice(state.selectedDevice.id).catch(() => {});
+        } else store.setState({ error: message(error) });
+      }
+      return false;
+    } finally {
+      clearTimeout(timer);
+      if (started && token === generation)
+        store.setState({ savingCustomHeader: false });
+      if (started) void drainSettings();
+    }
+  };
+  const setCustomHeader = (value: string): Promise<boolean> =>
+    brightnessPending()
+      ? enqueueChange({ type: "custom_header", value })
+      : executeCustomHeader(value);
+  const executeSaveRotation = async (
+    entries: TickerRotationEntry[],
+    fromQueue = false,
+  ): Promise<boolean> => {
+    const token = generation;
+    let started = false;
+    try {
+      const signature = rotationSignature(entries);
+      const state = store.getState();
+      if (
+        state.connection !== "connected" ||
+        !state.authorized ||
+        state.authorizing
+      )
+        throw new Error(
+          "Connect and unlock your ticker before saving a rotation.",
+        );
+      if (
+        !state.status?.capabilities.includes("rotation_commit") ||
+        !state.rotationAvailable
+      )
+        throw new Error(
+          state.rotationIssue ??
+            "Custom rotation requires firmware 0.12.0 or newer.",
+        );
+      if (
+        state.renaming ||
+        state.syncingFavorites ||
+        state.savingCustomHeader ||
+        state.savingRotation ||
+        pending.size ||
+        (!fromQueue && drainingSettings)
+      )
+        throw new Error("Wait for the current ticker change to finish.");
+      started = true;
+      store.setState({ savingRotation: true, error: null });
+      const commands: TickerCommand[] = [
+        { type: "rotation_begin", value: entries.length },
+      ];
+      for (let offset = 0; offset < entries.length; offset += 2)
+        commands.push({
+          type: "rotation_chunk",
+          offset,
+          entries: entries.slice(offset, offset + 2),
+        });
+      commands.push({ type: "rotation_commit", value: signature });
+      for (const command of commands)
+        if (token !== generation || !(await executeCommand(command, true)))
+          return false;
+      if (token !== generation) return false;
+      store.setState({ rotationEntries: entries });
+      return true;
+    } catch (error) {
+      if (token === generation) store.setState({ error: message(error) });
+      return false;
+    } finally {
+      if (started && token === generation)
+        store.setState({ savingRotation: false });
+      if (started) void drainSettings();
+    }
+  };
+  const saveRotation = (entries: TickerRotationEntry[]): Promise<boolean> => {
+    const snapshot = entries.map((entry) => ({ ...entry }));
+    return brightnessPending()
+      ? enqueueChange({ type: "save_rotation", entries: snapshot })
+      : executeSaveRotation(snapshot);
+  };
   return {
     store,
     startScan,
@@ -697,6 +1107,9 @@ export function createTickerController(
     rename,
     command,
     updateSetting,
+    showFavorites,
+    setCustomHeader,
+    saveRotation,
     disconnect,
     reconnect: async () => {
       const device =

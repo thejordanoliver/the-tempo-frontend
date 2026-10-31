@@ -16,6 +16,8 @@ type UseLiveSportsSubscriptionOptions<TPayload> = {
   kind: LiveSubscriptionKind;
   payload: LiveGameSubscriptionInput | LiveScoreboardSubscriptionInput;
   onUpdate: (payload: TPayload, envelope: LiveUpdateEnvelope<TPayload>) => void;
+  /** Silently reload retained data when a screen rejoins this feed. */
+  onResume?: () => void;
 };
 
 export function useLiveSportsSubscription<TPayload = unknown>({
@@ -23,11 +25,15 @@ export function useLiveSportsSubscription<TPayload = unknown>({
   kind,
   payload,
   onUpdate,
+  onResume,
 }: UseLiveSportsSubscriptionOptions<TPayload>) {
   const onUpdateRef = useRef(onUpdate);
+  const onResumeRef = useRef(onResume);
+  const previousSubscriptionKey = useRef<string | null>(null);
   useEffect(() => {
     onUpdateRef.current = onUpdate;
-  }, [onUpdate]);
+    onResumeRef.current = onResume;
+  }, [onUpdate, onResume]);
 
   const stableSubscriptionKey = getSportsLiveSubscriptionLocalKey(
     kind,
@@ -43,6 +49,12 @@ export function useLiveSportsSubscription<TPayload = unknown>({
     useCallback(() => {
       if (!enabled) return undefined;
 
+      // The owning hook loads on mount/selection changes. A retained screen
+      // needs another snapshot after missing updates while it was blurred.
+      const resuming =
+        previousSubscriptionKey.current === stableSubscriptionKey;
+      previousSubscriptionKey.current = stableSubscriptionKey;
+
       let active = true;
       const unsubscribe = subscribeSportsLive<TPayload>({
         kind,
@@ -52,6 +64,7 @@ export function useLiveSportsSubscription<TPayload = unknown>({
             onUpdateRef.current(envelope.payload, envelope);
         },
       });
+      if (resuming) onResumeRef.current?.();
 
       return () => {
         active = false;

@@ -1,3 +1,4 @@
+import { TickerRotationUnavailableError } from "./rotation";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
 import { fromByteArray, toByteArray } from "base64-js";
@@ -17,6 +18,11 @@ import {
   TickerNameUnavailableError,
 } from "./name";
 import type { TickerTransport } from "./transport";
+import {
+  decodeCustomHeader,
+  encodeCustomHeader,
+  TickerCustomHeaderUnavailableError,
+} from "./customHeader";
 
 export function createNativeTickerTransport(): TickerTransport {
   let manager: BleManager | undefined;
@@ -230,6 +236,102 @@ export function createNativeTickerTransport(): TickerTransport {
       );
       if (revision !== deviceRevisions.get(id))
         throw new Error("Connection changed while renaming.");
+    },
+    async readRotation(id) {
+      const revision = deviceRevisions.get(id);
+      const ble = await getManager();
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading rotation.");
+      const characteristics = await ble.characteristicsForDevice(
+        id,
+        TICKER_GATT.service,
+      );
+      if (
+        !characteristics.some(
+          (item) =>
+            item.uuid.toLowerCase() === TICKER_GATT.rotation && item.isReadable,
+        )
+      )
+        throw new TickerRotationUnavailableError();
+      let result;
+      try {
+        result = await ble.readCharacteristicForDevice(
+          id,
+          TICKER_GATT.service,
+          TICKER_GATT.rotation,
+        );
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "errorCode" in error &&
+          error.errorCode === 404
+        )
+          throw new TickerRotationUnavailableError();
+        throw error;
+      }
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading rotation.");
+      if (result.value == null || result.value.length > 68)
+        throw new Error("Invalid ticker rotation length.");
+      return toByteArray(result.value);
+    },
+    async readCustomHeader(id) {
+      const revision = deviceRevisions.get(id);
+      const ble = await getManager();
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading the header.");
+      const characteristics = await ble.characteristicsForDevice(
+        id,
+        TICKER_GATT.service,
+      );
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading the header.");
+      if (
+        !characteristics.some(
+          (item) =>
+            item.uuid.toLowerCase() === TICKER_GATT.customHeader &&
+            item.isReadable,
+        )
+      )
+        throw new TickerCustomHeaderUnavailableError();
+      let result;
+      try {
+        result = await ble.readCharacteristicForDevice(
+          id,
+          TICKER_GATT.service,
+          TICKER_GATT.customHeader,
+        );
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "errorCode" in error &&
+          error.errorCode === 404
+        )
+          throw new TickerCustomHeaderUnavailableError();
+        throw error;
+      }
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading the header.");
+      if (result.value == null || result.value.length > 28)
+        throw new Error("The ticker reported an invalid custom header.");
+      return decodeCustomHeader(toByteArray(result.value));
+    },
+    async writeCustomHeader(id, text) {
+      const bytes = encodeCustomHeader(text);
+      const revision = deviceRevisions.get(id);
+      const ble = await getManager();
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed before saving the header.");
+      await ble.writeCharacteristicWithResponseForDevice(
+        id,
+        TICKER_GATT.service,
+        TICKER_GATT.customHeader,
+        fromByteArray(bytes),
+      );
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while saving the header.");
     },
     async readAuthorization(id) {
       const revision = deviceRevisions.get(id);

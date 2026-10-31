@@ -442,6 +442,9 @@ export function useMMAEvents({
       !loading &&
       pollIntervalMs > 0 &&
       (hasLiveEvent || games.some(shouldTrackGameUpdates)),
+    onResume: () => {
+      void fetchGames({ silent: true });
+    },
     kind: "scoreboard",
     payload: {
       sport: "mma",

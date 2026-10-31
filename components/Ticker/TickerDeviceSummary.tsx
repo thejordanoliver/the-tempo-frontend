@@ -1,17 +1,15 @@
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
+import { tickerDeviceSummaryStyles as styles } from "styles/TickerStyles/TickerDeviceSummaryStyles";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { ticker, useTickerStore } from "store/tickerStore";
+import { useTickerController, useTickerStore } from "store/tickerStore";
 import { connectionBusy, type TickerState } from "services/ticker/controller";
-import {
-  TickerAction,
-  TickerFeedback,
-  connectionLabel,
-  useTickerTheme,
-} from "./TickerUI";
+import { TickerAction, TickerFeedback, connectionLabel } from "./TickerUI";
 
 export default function TickerDeviceSummary() {
   const state = useTickerStore();
+  const ticker = useTickerController();
   const { colors, text } = useTickerTheme();
   const router = useScopedRouter();
   const device = state.selectedDevice ?? state.lastDevice;
@@ -77,10 +75,3 @@ function getDeviceStatus(state: TickerState) {
   if (state.status?.wifi === "disconnected") return "Connected · Wi-Fi offline";
   return state.authorized ? "Connected · Ready" : "Connected · Controls locked";
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 14, gap: 12, borderRadius: 8 },
-  heading: { flexDirection: "row", alignItems: "center", gap: 12 },
-  copy: { flex: 1, gap: 2 },
-  statusDot: { width: 8, height: 8, borderRadius: 4 },
-});

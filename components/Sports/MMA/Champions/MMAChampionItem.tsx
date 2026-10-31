@@ -101,7 +101,7 @@ function MMAChampionItem({ division, champion, isDark }: MMAChampionItemProps) {
                 Colors.white,
               ] as const)
         }
-        locations={[0, 0.2, 1]}
+        locations={[0, 0.5, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.cardGradient}

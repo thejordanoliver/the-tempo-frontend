@@ -1,6 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createContext, useContext } from "react";
 import { useStore } from "zustand";
-import { createTickerController } from "services/ticker/controller";
+import {
+  createTickerController,
+  type TickerController,
+} from "services/ticker/controller";
 import { createProtectedGattAuthorizer } from "services/ticker/authorization";
 import { createNativeTickerTransport } from "services/ticker/nativeTransport";
 import type { TickerDevice } from "types/ticker";
@@ -11,7 +15,13 @@ export const ticker = createTickerController(
   transport,
   createProtectedGattAuthorizer(transport),
 );
-export const useTickerStore = () => useStore(ticker.store);
+// Preview routes supply a local controller; normal screens use the live singleton.
+export const TickerControllerContext = createContext<TickerController | null>(
+  null,
+);
+export const useTickerController = () =>
+  useContext(TickerControllerContext) ?? ticker;
+export const useTickerStore = () => useStore(useTickerController().store);
 const storageKey = "tempo:ticker:last-device:v1";
 let hydrated = false;
 export async function hydrateTickerPreference() {

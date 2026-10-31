@@ -449,6 +449,9 @@ export const useSoccerGameDetails = (
       pollLiveGames &&
       pollIntervalMs > 0 &&
       shouldTrackGameUpdates(score),
+    onResume: () => {
+      void fetchDetails({ silent: true });
+    },
     kind: "game",
     payload: {
       sport: "soccer",

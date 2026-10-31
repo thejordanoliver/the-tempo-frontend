@@ -17,6 +17,9 @@ export function useVolleyballGameDetails(
       : null,
   );
   useLiveSportsSubscription<VolleyballGameDetailsResponse>({
+    onResume: () => {
+      void resource.silentRefresh();
+    },
     enabled,
     kind: "game",
     payload: { sport: "volleyball", league: leagueKey ?? "wcvb", gameId: id },

@@ -1,3 +1,8 @@
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
+import {
+  tickerSelectionSheetStyles as styles,
+  tickerSelectionColumnGap as columnGap,
+} from "styles/TickerStyles/TickerSelectionSheetStyles";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -6,7 +11,6 @@ import {
 } from "@gorhom/bottom-sheet";
 import SelectionCard from "components/Favorites/SelectionCard";
 import SearchBar from "components/SearchBars/SearchBar";
-import { activeOpacity } from "constants/styles";
 import type { ComponentProps } from "react";
 import {
   useCallback,
@@ -20,14 +24,13 @@ import {
   ActivityIndicator,
   Keyboard,
   Pressable,
-  StyleSheet,
   Text,
   View,
   type ImageSourcePropType,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { collegePollSettingsStyles } from "styles/ExploreStyles/CollegePollSettingsStyles";
-import { useTickerTheme } from "./TickerUI";
+import { snapPoints } from "@/utils/ui/modalUtils";
 
 export type TickerSelectionItem = {
   id: string;
@@ -49,9 +52,6 @@ type Props = {
   searchable?: boolean;
   error?: string | null;
 };
-
-const selectionSnapPoints = ["80%"];
-const columnGap = 10;
 
 export default function TickerSelectionSheet(props: Props) {
   // A fresh mounted instance owns each presentation. Hidden sheets cannot have
@@ -186,7 +186,7 @@ function ActiveTickerSelectionSheet({
     <BottomSheetModal
       ref={sheetRef}
       index={0}
-      snapPoints={selectionSnapPoints}
+      snapPoints={snapPoints}
       stackBehavior="push"
       topInset={top}
       enableDynamicSizing={false}
@@ -302,33 +302,3 @@ function ActiveTickerSelectionSheet({
 function SelectionRowSeparator() {
   return <View style={styles.rowSeparator} />;
 }
-
-const styles = StyleSheet.create({
-  header: { alignItems: "center" },
-  headerText: { textAlign: "left" },
-  closeButton: {
-    minHeight: 44,
-    minWidth: 44,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  pressed: { opacity: activeOpacity },
-  searchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 12,
-  },
-  searchField: { flex: 1 },
-  message: { paddingBottom: 12 },
-  progress: {
-    flexDirection: "row",
-    gap: 8,
-    alignItems: "center",
-    paddingBottom: 12,
-  },
-  progressText: { flex: 1 },
-  columns: { gap: columnGap },
-  rowSeparator: { height: columnGap },
-  emptyMessage: { paddingVertical: 24, textAlign: "center" },
-});
