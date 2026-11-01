@@ -255,7 +255,7 @@ export default function FavoritesScroll({
         kind: "league",
         id: sport,
         league: sport,
-        name: config.label,
+        name: config.shortName,
         logo: config.logoLight,
         color: config.color,
         key: `league:${sport}`,
@@ -370,7 +370,7 @@ export default function FavoritesScroll({
           params: {
             sport,
             league: item.id,
-            leagueLabel: config.label,
+            leagueLabel: config.shortName,
           },
         } as Href);
         return;

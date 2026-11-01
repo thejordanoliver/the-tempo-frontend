@@ -15,7 +15,7 @@ vm.runInNewContext(source, {
   require(name) {
     if (name === "constants/leagues") {
       return {
-        LEAGUE_CONFIG: new Proxy({}, { get: (_, id) => ({ label: id }) }),
+        LEAGUE_CONFIG: new Proxy({}, { get: (_, id) => ({ shortName: id }) }),
         MY_TEAMS_SECTION_ID: "my-teams",
         MY_TEAMS_SECTION_TITLE: "My Teams",
         isFavoriteSportId: () => true,

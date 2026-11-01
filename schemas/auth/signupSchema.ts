@@ -5,7 +5,7 @@ import {
   USERNAME_MIN_LENGTH,
   USERNAME_MAX_LENGTH,
 } from "./credentialRules";
-import { BROWSEABLE_LEAGUES } from "constants/leagueIds";
+import { BROWSEABLE_LEAGUES } from "constants/leagues";
 import type { FavoriteSportId } from "constants/leagues";
 import {
   normalizeFavoriteTeamKey,

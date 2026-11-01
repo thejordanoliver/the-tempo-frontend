@@ -95,7 +95,7 @@ export default function StandingsLeagueModal({
             pressed && styles.pressed,
           ]}
           accessibilityRole="button"
-          accessibilityLabel={`Show ${config.label} standings`}
+          accessibilityLabel={`Show ${config.shortName} standings`}
           accessibilityState={{ selected }}
         >
           <Image
@@ -103,7 +103,7 @@ export default function StandingsLeagueModal({
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.optionText}>{config.label}</Text>
+          <Text style={styles.optionText}>{config.shortName}</Text>
           <Ionicons
             name={selected ? "checkmark-circle" : "chevron-forward"}
             size={selected ? 22 : 18}

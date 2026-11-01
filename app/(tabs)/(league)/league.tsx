@@ -48,7 +48,7 @@ export default function LeagueScreen() {
         params: {
           sport,
           league,
-          leagueLabel: config.label,
+          leagueLabel: config.shortName,
         },
       } as any);
     },

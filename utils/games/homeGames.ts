@@ -303,7 +303,7 @@ export function buildHomeGameSections({
 
     sections.push({
       id: league,
-      title: LEAGUE_CONFIG[league].label,
+      title: LEAGUE_CONFIG[league].shortName,
       data,
     });
   }

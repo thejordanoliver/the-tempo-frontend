@@ -136,7 +136,7 @@ export default function CollegePollSettingsModal({
                     pressed && styles.pressed,
                   ]}
                   accessibilityRole="button"
-                  accessibilityLabel={`Show ${config.label} polls`}
+                  accessibilityLabel={`Show ${config.shortName} polls`}
                   accessibilityState={{ selected }}
                 >
                   <Image

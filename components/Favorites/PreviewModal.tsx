@@ -99,7 +99,7 @@ export default function PreviewModal({
   const logo = team ? getTeamLogo(team, isDark) : sport?.logoLight;
   const name = team
     ? (team.fullName ?? team.name ?? team.shortName)
-    : sport?.label;
+    : sport?.shortName;
   const established = team
     ? typeof team.established === "string" ||
       typeof team.established === "number"

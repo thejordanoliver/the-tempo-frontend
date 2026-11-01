@@ -97,7 +97,7 @@ export default function PostDestinationModal({
         return {
           key: `league:${league}`,
           destination: { kind: "league", league },
-          label: config.label,
+          label: config.shortName,
           meta: "League forum",
           logo: isDark ? config.logoLight : config.logo,
           isFavorite: false,
@@ -137,7 +137,7 @@ export default function PostDestinationModal({
             key,
             destination: { kind: "team", league, teamId },
             label: team.fullName ?? team.name,
-            meta: `${LEAGUE_CONFIG[league].label}${isFavorite ? " · Favorite" : ""}`,
+            meta: `${LEAGUE_CONFIG[league].shortName}${isFavorite ? " · Favorite" : ""}`,
             logo: isDark ? (team.logoLight ?? team.logo) : team.logo,
             isFavorite,
           } satisfies DestinationOption,

@@ -32,7 +32,7 @@ export default function LeagueList({
   const leagues = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     return BROWSEABLE_LEAGUES.filter((league) => {
-      const label = LEAGUE_CONFIG[league].label;
+      const label = LEAGUE_CONFIG[league].shortName;
       return [league, label, label.replace(/[^a-zA-Z0-9 ]/g, "")]
         .join(" ")
         .toLowerCase()
@@ -63,7 +63,7 @@ export default function LeagueList({
           >
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={config.label}
+              accessibilityLabel={config.shortName}
               onPress={() => onSelect(league)}
               style={({ pressed }) => [
                 styles.button,
@@ -76,7 +76,7 @@ export default function LeagueList({
                   style={styles.logo}
                   resizeMode="contain"
                 />
-                <Text style={styles.buttonText}>{config.label}</Text>
+                <Text style={styles.buttonText}>{config.shortName}</Text>
               </View>
               <Ionicons
                 name="chevron-forward"
