@@ -1,5 +1,4 @@
 import HeadingTwo from "@/components/Headings/HeadingTwo";
-import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import type {
   BaseballPlay,
   BaseballPlayAthlete,
@@ -7,6 +6,7 @@ import type {
   BaseballSituation,
 } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { PlayByPlayStyles } from "@/styles/GameDetailStyles/PlayByPlayStyles";
+import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import {
   Image,
@@ -17,17 +17,10 @@ import {
   type LayoutChangeEvent,
 } from "react-native";
 import Animated, {
-  Easing,
   FadeInDown,
   FadeOutUp,
   FadingTransition,
-  cancelAnimation,
-  useAnimatedStyle,
   useReducedMotion,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
 } from "react-native-reanimated";
 import { getActiveAtBatPlays } from "../../../../../utils/sports/baseball/baseball-play-animation-utils";
 import BaseballFieldPlay, {
@@ -38,13 +31,6 @@ const VIEWBOX_WIDTH = 600;
 const INITIAL_FIELD_HORIZONTAL_INSET = 26;
 
 type PlayBadgeVariant = "hit" | "homeRun" | "strikeout" | "walk";
-
-const PLAY_BADGE_LABELS: Record<PlayBadgeVariant, string> = {
-  hit: "HIT",
-  homeRun: "HOME RUN",
-  strikeout: "STRIKEOUT",
-  walk: "WALK",
-};
 
 const PARTICIPANT_LABELS: Record<string, string> = {
   batter: "Batter",
@@ -283,98 +269,6 @@ export function getLatestDescriptivePlay(
   return lastPlay ?? null;
 }
 
-function PlayStatusBadge({
-  playKey,
-  styles,
-  variant,
-}: {
-  playKey: string;
-  styles: ReturnType<typeof PlayByPlayStyles>;
-
-  variant: PlayBadgeVariant;
-}) {
-  const reducedMotion = useReducedMotion();
-  const pulse = useSharedValue(1);
-
-  const glowOpacity = useSharedValue(0.25);
-
-  React.useEffect(() => {
-    if (reducedMotion) {
-      pulse.value = 1;
-      glowOpacity.value = 0.25;
-      return;
-    }
-
-    pulse.value = withRepeat(
-      withSequence(
-        withTiming(1.06, {
-          duration: 420,
-          easing: Easing.out(Easing.cubic),
-        }),
-        withTiming(1, {
-          duration: 420,
-          easing: Easing.inOut(Easing.cubic),
-        }),
-      ),
-      -1,
-      false,
-    );
-
-    glowOpacity.value = withRepeat(
-      withSequence(
-        withTiming(0.8, {
-          duration: 420,
-          easing: Easing.out(Easing.cubic),
-        }),
-        withTiming(0.2, {
-          duration: 420,
-          easing: Easing.inOut(Easing.cubic),
-        }),
-      ),
-      -1,
-      false,
-    );
-
-    return () => {
-      cancelAnimation(pulse);
-      cancelAnimation(glowOpacity);
-    };
-  }, [glowOpacity, playKey, pulse, reducedMotion]);
-
-  const badgeStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        scale: pulse.value,
-      },
-    ],
-  }));
-
-  const glowStyle = useAnimatedStyle(() => ({
-    opacity: glowOpacity.value,
-  }));
-
-  return (
-    <Animated.View
-      entering={FadeInDown.duration(180)}
-      exiting={FadeOutUp.duration(140)}
-    >
-      <Animated.View
-        style={[styles.playStatusBadge, styles.baseballBadge, badgeStyle]}
-        accessibilityLabel={PLAY_BADGE_LABELS[variant]}
-      >
-        <Animated.View
-          pointerEvents="none"
-          style={[styles.playStatusGlow, styles.baseballGlow, glowStyle]}
-        />
-
-        <Text style={styles.playStatusText} numberOfLines={1}>
-          {PLAY_BADGE_LABELS[variant]}
-        </Text>
-      </Animated.View>
-    </Animated.View>
-  );
-}
-
 function PlayByPlay({
   width = VIEWBOX_WIDTH,
   awayCode = "AWAY",
@@ -517,16 +411,6 @@ function PlayByPlay({
             .filter((value) => value != null && value !== "")
             .join(" ")}
           isLive={state === "in"}
-          badge={
-            playInfo.playBadgeVariant ? (
-              <PlayStatusBadge
-                key={`${playInfo.playKey}-${playInfo.playBadgeVariant}`}
-                playKey={playInfo.playKey}
-                styles={styles}
-                variant={playInfo.playBadgeVariant}
-              />
-            ) : null
-          }
         />
         <View style={styles.situationRow}>
           <View style={styles.situationItem}>
