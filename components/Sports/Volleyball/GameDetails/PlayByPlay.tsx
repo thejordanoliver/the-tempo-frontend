@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { globalStyles } from "constants/styles";
+import { PlayByPlayStyles } from "styles/GameDetailStyles/PlayByPlayStyles";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 import type { VolleyballPlay } from "types/volleyball/volleyball";
 
@@ -12,28 +12,39 @@ export default function PlayByPlay({
   isDark: boolean;
 }) {
   const styles = lastPlayStyles(isDark);
-  const global = globalStyles(isDark);
+  const playStyles = PlayByPlayStyles(isDark);
   if (!plays.length) return null;
+  const recentPlays = plays.slice(-20).reverse();
   return (
     <View>
       <HeadingTwo isDark={isDark}>Recent Plays</HeadingTwo>
       <View style={styles.wrapper}>
-        {plays
-          .slice(-20)
-          .reverse()
-          .map((play) => (
-            <View key={play.id} style={styles.row}>
-              <View>
-                <Text style={global.caption}>
-                  {play.period ? `Set ${play.period}` : "Play"}
-                  {play.homeScore !== null && play.awayScore !== null
-                    ? ` · ${play.awayScore} – ${play.homeScore}`
-                    : ""}
+        {recentPlays.map((play, index) => (
+          <View
+            key={play.id}
+            style={[
+              playStyles.recentPlay,
+              index < recentPlays.length - 1 && playStyles.recentPlayDivider,
+            ]}
+          >
+            <View style={playStyles.recentPlayMeta}>
+              <Text style={playStyles.eyebrow}>
+                {play.period ? `Set ${play.period}` : "Play"}
+              </Text>
+              {play.homeScore !== null && play.awayScore !== null ? (
+                <Text
+                  style={playStyles.situationValue}
+                  accessibilityLabel={`Away ${play.awayScore}, home ${play.homeScore}`}
+                >
+                  {play.awayScore} – {play.homeScore}
                 </Text>
-                <Text style={global.text}>{play.text ?? "Point recorded"}</Text>
-              </View>
+              ) : null}
             </View>
-          ))}
+            <Text style={playStyles.recentPlayText}>
+              {play.text ?? "Point recorded"}
+            </Text>
+          </View>
+        ))}
       </View>
     </View>
   );

@@ -128,7 +128,8 @@ const FIRST_DOWN_COLOR = "#E2CE23";
 const GOAL_POST_COLOR = "#E2CE23";
 const MISSED_KICK_COLOR = "#FF5A5F";
 const GOAL_POST_BASE_COLOR = "#6C6E6F";
-const GOAL_POST_INSET_X = FIELD_LEFT - 22;
+// Keep the padded bases outside the sloped end lines, with room to spare.
+const GOAL_POST_OFFSET_X = 12;
 const FOOTBALL_COLOR = "#7A4528";
 const POSSESSION_MARKER_CENTER_X = 15;
 const POSSESSION_MARKER_TIP_Y = 52.32;
@@ -656,8 +657,8 @@ function createDriveShape({
 
   const kickTargetX = isKick
     ? isHomePossession
-      ? GOAL_POST_INSET_X + 17
-      : VIEWBOX_WIDTH - GOAL_POST_INSET_X - 17
+      ? GOAL_POST_OFFSET_X + 17
+      : VIEWBOX_WIDTH - GOAL_POST_OFFSET_X - 17
     : null;
 
   const kickTargetY = isKick ? KICK_TARGET_Y : null;
@@ -1106,7 +1107,7 @@ function FootballField({
       {/* Goal posts */}
       <G>
         {/* Away goal post */}
-        <G transform={`translate(${GOAL_POST_INSET_X} 0)`}>
+        <G transform={`translate(${GOAL_POST_OFFSET_X} 0)`}>
           <Path
             fill={GOAL_POST_BASE_COLOR}
             d="M6,48.75s0-.75,2-.75,2,.75,2,.75v8.5s0,.75-2,.75-2-.75-2-.75v-8.5Z"
@@ -1122,7 +1123,7 @@ function FootballField({
         {/* Home goal post */}
         <G
           transform={`translate(${
-            VIEWBOX_WIDTH - GOAL_POST_INSET_X
+            VIEWBOX_WIDTH - GOAL_POST_OFFSET_X
           } 0) scale(-1 1)`}
         >
           <Path

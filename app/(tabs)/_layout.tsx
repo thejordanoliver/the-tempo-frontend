@@ -29,7 +29,8 @@ export default function TabLayout() {
           )
         }
         screenOptions={{
-          freezeOnBlur: true,
+          // Inactive tabs still need to receive app-wide theme changes.
+          freezeOnBlur: false,
           tabBarStyle: { position: "absolute", backgroundColor: "transparent" },
         }}
       >

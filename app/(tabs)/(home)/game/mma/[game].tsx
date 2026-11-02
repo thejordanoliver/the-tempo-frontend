@@ -110,7 +110,8 @@ export default function GameDetailsScreen(
   const showGameChat = useGameChatAvailability(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
 
-  const gameId = game?.id ?? 0;
+  // Backend fight IDs can be strings; prediction scoring requires a number.
+  const gameId = Number(game?.id ?? 0);
   const {
     votes: liveVotes,
     castVote: castLiveVote,
@@ -121,7 +122,8 @@ export default function GameDetailsScreen(
     sport: "mma",
     league: game?.league?.code ?? "ufc",
     state: game?.status?.state,
-    date: game?.date ?? undefined,
+    // A main-card bout can start on the next UTC day; look up its parent card.
+    date: game?.parentEvent?.date ?? game?.date ?? undefined,
   });
 
   const firstFighter = game?.competitors?.[0];

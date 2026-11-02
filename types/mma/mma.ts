@@ -34,7 +34,7 @@ export type MMAAthlete = {
 };
 
 export type MMAFight = {
-  id?: number | null;
+  id?: string | number | null;
   uid?: string | null;
   name?: string | null;
   shortName?: string | null;

@@ -27,6 +27,7 @@ import {
 } from "expo-router/react-navigation";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import * as SystemUI from "expo-system-ui";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -63,6 +64,8 @@ const CustomDarkTheme = {
     ...NavigationDarkTheme.colors,
     background: Colors.black,
     text: Colors.white,
+    card: Colors.dark.background,
+    border: Colors.dark.gray,
   },
 };
 
@@ -72,6 +75,8 @@ const CustomLightTheme = {
     ...NavigationLightTheme.colors,
     background: Colors.white,
     text: Colors.black,
+    card: Colors.light.background,
+    border: Colors.light.gray,
   },
 };
 
@@ -102,6 +107,12 @@ function AppLayout() {
     useNotifications();
 
   const isDark = resolvedColorScheme === "dark";
+
+  useEffect(() => {
+    void SystemUI.setBackgroundColorAsync(
+      Colors[resolvedColorScheme].background,
+    ).catch((error) => console.warn("Failed to update app background:", error));
+  }, [resolvedColorScheme]);
 
   const router = useScopedRouter();
 
@@ -229,6 +240,11 @@ function AppLayout() {
             const isProfileScreen = route.name === "profile";
 
             return {
+              // Keep mounted screens in sync with app-wide preferences.
+              freezeOnBlur: false,
+              contentStyle: {
+                backgroundColor: Colors[resolvedColorScheme].background,
+              },
               headerShown: !isSplashScreen && !isTabScreen,
 
               header: !isSplashScreen

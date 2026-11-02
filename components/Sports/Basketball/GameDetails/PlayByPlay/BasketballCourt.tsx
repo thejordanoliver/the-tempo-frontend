@@ -73,6 +73,7 @@ function BasketballCourt({
   homeHalf = true,
   accessibilityLabel = "Basketball court",
   children,
+  neutralSite,
 }: {
   homeLogo?: ImageSourcePropType;
   homeColor: string;
@@ -82,6 +83,7 @@ function BasketballCourt({
   homeHalf?: boolean;
   accessibilityLabel?: string;
   children?: ReactNode;
+  neutralSite?: boolean;
 }) {
   const clip = `basketball-court-${useId().replace(/[^\w-]/g, "")}`;
   const wood = isDark ? "#79694f" : "#dec8a9";
@@ -129,7 +131,7 @@ function BasketballCourt({
             strokeWidth={1.5}
             opacity={0.08}
           />
-          {homeLogo ? (
+          {homeLogo && !neutralSite ? (
             <G transform={`translate(${center.x} ${center.y}) scale(1 0.52)`}>
               <Image
                 href={homeLogo}
@@ -315,7 +317,17 @@ function BasketballCourt({
         })}
       </>
     ),
-    [clip, wood, marking, lane, edge, homeLogo, homeColor, awayColor],
+    [
+      clip,
+      wood,
+      marking,
+      lane,
+      edge,
+      homeLogo,
+      homeColor,
+      awayColor,
+      neutralSite,
+    ],
   );
   return (
     <View style={{ width: "100%", aspectRatio: viewport.aspectRatio }}>

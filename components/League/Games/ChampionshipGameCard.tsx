@@ -213,7 +213,7 @@ export default function ChampionshipGameCard({
   const endOfPeriod = gameStatusDescription === "End of Period";
   const isEndOfInning = gameStatusDetail.includes("End");
 
-  const outs = game?.situation.outs;
+  const outs = game?.situation?.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
   const getOuts = [1, 2, 3].map((i) => (
     <Ionicons

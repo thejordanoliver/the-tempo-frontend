@@ -3,9 +3,14 @@ import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { subscribeSportsLive } from "services/liveSportsSocket";
 import type { ExploreWidgetDataCache, ExploreWidgetGame } from "types/widgets";
+import {
+  mergeExploreFavoriteGameUpdate,
+  selectExploreFavoriteGames,
+} from "utils/widgets/exploreFavoriteGames";
 
 type TeamLatestPayload = {
   game?: unknown;
+  games?: unknown;
 };
 
 type UseExploreWidgetLiveUpdatesOptions = {
@@ -25,7 +30,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
-function isWidgetGame(game: unknown): boolean {
+function isWidgetGame(game: unknown): game is ExploreWidgetGame["game"] {
   if (!isRecord(game)) return false;
 
   return (
@@ -72,14 +77,14 @@ export function useExploreWidgetLiveUpdates({
     const entries = new Map<string, [string, ExploreWidgetGame]>();
 
     cache?.response.games.forEach((envelope) => {
-      if (!shouldTrackGameUpdates(envelope.game)) return;
+      // Hockey only provides teamLatest; the other sports provide full schedules.
+      if (envelope.sport === "hockey" && !shouldTrackGameUpdates(envelope.game))
+        return;
 
-      const favoriteKey = envelope.favoriteTeamKeys.find((key) =>
-        relevantFavoriteKeySet.has(key),
-      );
-
-      if (favoriteKey) {
-        entries.set(envelope.key, [favoriteKey, envelope]);
+      for (const favoriteKey of envelope.favoriteTeamKeys) {
+        if (relevantFavoriteKeySet.has(favoriteKey)) {
+          entries.set(favoriteKey, [favoriteKey, envelope]);
+        }
       }
     });
 
@@ -105,39 +110,59 @@ export function useExploreWidgetLiveUpdates({
           payload: {
             sport: envelope.sport,
             league: envelope.league,
-            feed: "teamLatest",
+            feed: envelope.sport === "hockey" ? "teamLatest" : "teamSchedule",
             teamId: getFavoriteTeamId(favoriteKey),
           },
           listener: ({ payload }) => {
             if (!listening) return;
+            let game = payload.game;
+            if (envelope.sport !== "hockey") {
+              if (
+                !Array.isArray(payload.games) ||
+                !payload.games.every(isWidgetGame)
+              )
+                return;
+              game = selectExploreFavoriteGames(
+                payload.games.map(
+                  (game) =>
+                    ({
+                      ...envelope,
+                      key: `${envelope.sport}:${envelope.league}:${game.id}`,
+                      gameId: String(game.id),
+                      favoriteTeamKeys: [favoriteKey],
+                      game,
+                    }) as ExploreWidgetGame,
+                ),
+              )[0]?.game;
+            }
             let updatedEnvelope: ExploreWidgetGame;
 
             switch (envelope.sport) {
               case "basketball":
-                if (!isBasketballWidgetGame(payload.game)) return;
-                updatedEnvelope = { ...envelope, game: payload.game };
+                if (!isBasketballWidgetGame(game)) return;
+                updatedEnvelope = { ...envelope, game };
                 break;
               case "baseball":
-                if (!isBaseballWidgetGame(payload.game)) return;
-                updatedEnvelope = { ...envelope, game: payload.game };
+                if (!isBaseballWidgetGame(game)) return;
+                updatedEnvelope = { ...envelope, game };
                 break;
               case "football":
-                if (!isFootballWidgetGame(payload.game)) return;
-                updatedEnvelope = { ...envelope, game: payload.game };
+                if (!isFootballWidgetGame(game)) return;
+                updatedEnvelope = { ...envelope, game };
                 break;
               case "volleyball":
-                if (!isWidgetGame(payload.game)) return;
+                if (!isWidgetGame(game)) return;
                 updatedEnvelope = {
                   ...envelope,
-                  game: payload.game as Extract<
+                  game: game as Extract<
                     ExploreWidgetGame,
                     { sport: "volleyball" }
                   >["game"],
                 };
                 break;
               case "hockey":
-                if (!isHockeyWidgetGame(payload.game)) return;
-                updatedEnvelope = { ...envelope, game: payload.game };
+                if (!isHockeyWidgetGame(game)) return;
+                updatedEnvelope = { ...envelope, game };
                 break;
             }
 
@@ -148,47 +173,23 @@ export function useExploreWidgetLiveUpdates({
             setCache((current) => {
               if (!current || current.key !== dataKey) return current;
 
-              let favoriteKeysForUpdatedGame = [favoriteKey];
-              const gamesWithoutPreviousFavorite = current.response.games
-                .map((gameEnvelope) => {
-                  if (gameEnvelope.key === updatedKey) {
-                    favoriteKeysForUpdatedGame = Array.from(
-                      new Set([
-                        ...favoriteKeysForUpdatedGame,
-                        ...gameEnvelope.favoriteTeamKeys,
-                      ]),
-                    );
-                    return null;
-                  }
-
-                  if (!gameEnvelope.favoriteTeamKeys.includes(favoriteKey)) {
-                    return gameEnvelope;
-                  }
-
-                  const remainingKeys = gameEnvelope.favoriteTeamKeys.filter(
-                    (key) => key !== favoriteKey,
-                  );
-
-                  return remainingKeys.length
-                    ? { ...gameEnvelope, favoriteTeamKeys: remainingKeys }
-                    : null;
-                })
-                .filter(
-                  (gameEnvelope): gameEnvelope is ExploreWidgetGame =>
-                    gameEnvelope !== null,
-                );
               const nextEnvelope: ExploreWidgetGame = {
                 ...updatedEnvelope,
                 key: updatedKey,
                 gameId: updatedGameId,
-                favoriteTeamKeys: favoriteKeysForUpdatedGame,
+                favoriteTeamKeys: [favoriteKey],
               };
 
               return {
                 ...current,
                 response: {
                   ...current.response,
-                  games: [nextEnvelope, ...gamesWithoutPreviousFavorite],
+                  games: mergeExploreFavoriteGameUpdate(
+                    current.response.games,
+                    nextEnvelope,
+                    Date.now(),
+                    { replaceTeamSelection: envelope.sport !== "hockey" },
+                  ),
                 },
               };
             });

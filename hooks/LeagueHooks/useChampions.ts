@@ -4,7 +4,6 @@ import { apiClient } from "utils/apiClient";
 export type ChampionSeason = {
   id: number;
   season: string | number;
-  team_name: string;
   selector?: string | null;
   era?: string | null;
   league?: string | null;
@@ -12,8 +11,10 @@ export type ChampionSeason = {
     id: number;
     code: string;
     name: string;
-    short_name?: string;
+    shortName?: string;
     color?: string;
+    logo?: string;
+    logoDark?: string;
   } | null;
   notes: string;
 };
@@ -44,7 +45,7 @@ export function useChampions({
 
       const endpoint = `api/champions/${league}/seasons`;
 
-      const res = await apiClient.get(endpoint, {
+      const res = await apiClient.get<ChampionSeason[]>(endpoint, {
         params: {
           ...(season ? { season } : {}),
           _refresh: refreshToken ?? Date.now(), // cache buster

@@ -1,9 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
+import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import { Colors } from "constants/styles";
-import type {
-  GameStatus,
-  Play,
-} from "hooks/BasketballHooks/useBasketballGameDetails";
+import type { Play } from "hooks/BasketballHooks/useBasketballGameDetails";
 import { useBasketballPlayback } from "hooks/BasketballHooks/useBasketballPlayback";
 import { useScreenActivity } from "hooks/useScreenActivity";
 import { memo, useMemo, useState } from "react";
@@ -23,10 +21,10 @@ type Props = {
   awayColor?: string;
   homeColor?: string;
   state?: string | null;
-  gameStatus?: GameStatus | null;
   isDark: boolean;
   league: string;
   scope?: string;
+  neutralSite: boolean;
 };
 
 function ParticipantAvatar({
@@ -65,10 +63,9 @@ function BasketballPlayByPlay({
   awayColor,
   homeColor,
   state,
-  gameStatus,
   isDark,
-  league,
   scope = "",
+  neutralSite,
 }: Props) {
   const styles = useMemo(() => PlayByPlayStyles(isDark), [isDark]);
   const playback = useBasketballPlayback(plays, lastPlay, scope);
@@ -95,61 +92,27 @@ function BasketballPlayByPlay({
     latest?.scoringPlay === true && (latest?.scoreValue ?? 0) > 0;
   const isTurnover = /turnover/i.test(latest?.type?.text ?? "");
 
-  if (league.toLowerCase() !== "nba") return null;
   if (state !== "in") return null;
 
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Play By Play</HeadingTwo>
       <View style={[styles.wrapper, styles.basketballWrapper]}>
-        <View style={styles.headerContainer}>
-          <View style={styles.headerRow}>
-            {teamLogo ? (
-              <Image
-                source={teamLogo}
-                style={styles.headerLogo}
-                resizeMode="contain"
-              />
-            ) : null}
-            <Text
-              style={styles.titleText}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.85}
-            >
-              {latest?.shortDescription || latest?.type?.text}
-            </Text>
-          </View>
-          <View style={styles.headerMeta}>
-            {isScoring ? (
-              <View style={[styles.playStatusBadge, styles.scoreBadge]}>
-                <Text style={styles.playStatusText}>
-                  +{latest?.scoreValue} PTS
-                </Text>
-              </View>
-            ) : null}
-            {latest ? (
-              <View style={styles.liveRow}>
-                {playback.followingLatest &&
-                isBasketballPlayLive(state, gameStatus) ? (
-                  <View style={styles.liveDot} />
-                ) : null}
-                {period ? <Text style={styles.gameTime}>{period}</Text> : null}
-                {period && clock ? <View style={styles.divider} /> : null}
-                {clock ? <Text style={styles.gameTime}>{clock}</Text> : null}
-              </View>
-            ) : null}
-          </View>
-        </View>
-        <View style={[styles.detailRow, styles.basketballDetailRow]}>
+        <PlayByPlayHeader
+          isDark={isDark}
+          title={latest?.type?.text || "Waiting for updates"}
+          logo={teamLogo}
+          period={latest ? period : null}
+          clock={latest ? clock : null}
+          isLive={playback.followingLatest && isBasketballPlayLive(state)}
+        />
+        <View style={styles.detailRow}>
           <Text
             style={[
               styles.detailText,
               isScoring && styles.scoringPlay,
               isTurnover && styles.turnover,
             ]}
-            numberOfLines={3}
-            ellipsizeMode="tail"
           >
             {latest?.text ||
               latest?.shortDescription ||
@@ -164,19 +127,19 @@ function BasketballPlayByPlay({
             homeId={homeId}
             awayId={awayId}
             homeLogo={homeLogo}
-            homeColor={homeColor || Colors.midTone}
+            homeColor={homeColor ?? Colors.midTone}
             markerColor={markerColor}
-            awayColor={awayColor}
+            awayColor={awayColor ?? Colors.midTone}
             isDark={isDark}
             active={active}
             eventKey={playback.animationKey}
+            neutralSite={neutralSite}
             layout="full"
           />
         </View>
+
         {Array.isArray(latest?.participants) && latest.participants.length ? (
-          <View
-            style={[styles.participantsRow, styles.basketballParticipantsRow]}
-          >
+          <View style={styles.participantsRow}>
             {latest.participants
               .filter((participant) => participant?.athlete)
               .slice(0, 3)

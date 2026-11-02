@@ -428,6 +428,7 @@ export default function LeagueGamesList({
   const visibleSections = regularSections.filter(
     (section) => section.data.length > 0,
   );
+  
   const previewLeague = previewItem?.league;
   const previewGame = previewItem?.game;
 

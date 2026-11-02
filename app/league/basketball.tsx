@@ -57,6 +57,7 @@ import { useNBAPlayoffGames } from "../../hooks/BasketballHooks/useNBAPlayoffGam
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "@/components/League/ConferenceListModal";
+import TransactionList from "@/components/League/Transactions/TransactionList";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import { getWCBBConferenceSelectionName } from "@/constants/conferences/wcbbConferences";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
@@ -538,6 +539,19 @@ function NBALeagueScreen() {
                 categories={categories}
                 league={league}
                 season={currentSeason}
+              />
+            ) : null}
+          </View>
+
+          <View
+            collapsable={false}
+            key="transactions"
+            style={styles.contentArea}
+          >
+            {hasVisitedTab("transactions") ? (
+              <TransactionList
+                league={league}
+                active={selectedTab === "transactions"}
               />
             ) : null}
           </View>

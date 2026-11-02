@@ -6,7 +6,7 @@ import type {
   GameStatus,
   PlayObject,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import {
   Image,
   ImageSourcePropType,
@@ -15,22 +15,12 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import Animated, {
-  Easing,
-  FadeInDown,
-  FadeOutUp,
-  cancelAnimation,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
-} from "react-native-reanimated";
 
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { PlayByPlayStyles } from "@/styles/GameDetailStyles/PlayByPlayStyles";
 import { formatPeriod } from "@/utils/games/games";
 import { isFootballRedZonePlay } from "@/utils/sports/football/footballRedZone";
+import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import FootballFieldPlay from "./FootballField";
 
 type FootballFieldProps = {
@@ -63,19 +53,11 @@ type FootballFieldProps = {
   neutralSite?: boolean;
 };
 
-type PlayByPlayStyleSheet = ReturnType<typeof PlayByPlayStyles>;
-
 // Preserve the phone layout's proportions while filling the card on any device.
 const FIELD_ASPECT_RATIO = 420 / 130;
 const INITIAL_FIELD_HORIZONTAL_INSET = 26;
 
 type PlayBadgeVariant = "redZone" | "touchdown" | "fieldGoal";
-
-const PLAY_BADGE_LABELS: Record<PlayBadgeVariant, string> = {
-  redZone: "RED ZONE",
-  touchdown: "TOUCHDOWN",
-  fieldGoal: "FIELD GOAL",
-};
 
 const PARTICIPANT_LABELS: Record<string, string> = {
   passer: "Passer",
@@ -261,95 +243,6 @@ function getPlayBadgeVariant(
   return null;
 }
 
-function PlayStatusBadge({
-  styles,
-  variant,
-}: {
-  styles: PlayByPlayStyleSheet;
-  variant: PlayBadgeVariant;
-}) {
-  const pulse = useSharedValue(1);
-  const glowOpacity = useSharedValue(0.25);
-
-  useEffect(() => {
-    pulse.value = withRepeat(
-      withSequence(
-        withTiming(1.06, {
-          duration: 420,
-          easing: Easing.out(Easing.cubic),
-        }),
-        withTiming(1, {
-          duration: 420,
-          easing: Easing.inOut(Easing.cubic),
-        }),
-      ),
-      -1,
-      false,
-    );
-
-    glowOpacity.value = withRepeat(
-      withSequence(
-        withTiming(0.8, {
-          duration: 420,
-          easing: Easing.out(Easing.cubic),
-        }),
-        withTiming(0.2, {
-          duration: 420,
-          easing: Easing.inOut(Easing.cubic),
-        }),
-      ),
-      -1,
-      false,
-    );
-
-    return () => {
-      cancelAnimation(pulse);
-      cancelAnimation(glowOpacity);
-    };
-  }, [glowOpacity, pulse]);
-
-  const badgeStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulse.value }],
-  }));
-
-  const glowStyle = useAnimatedStyle(() => ({
-    opacity: glowOpacity.value,
-  }));
-
-  return (
-    <Animated.View
-      entering={FadeInDown.duration(180)}
-      exiting={FadeOutUp.duration(140)}
-    >
-      <Animated.View
-        style={[
-          styles.playStatusBadge,
-          variant === "redZone" && styles.redZoneBadge,
-          variant === "touchdown" && styles.scoreBadge,
-          variant === "fieldGoal" && styles.scoreBadge,
-          badgeStyle,
-        ]}
-        accessibilityLabel={PLAY_BADGE_LABELS[variant]}
-      >
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.playStatusGlow,
-            variant === "redZone" && styles.redZoneGlow,
-            variant === "touchdown" && styles.scoreGlow,
-            variant === "fieldGoal" && styles.scoreGlow,
-            glowStyle,
-          ]}
-        />
-
-        <Text style={styles.playStatusText} numberOfLines={1}>
-          {PLAY_BADGE_LABELS[variant]}
-        </Text>
-      </Animated.View>
-    </Animated.View>
-  );
-}
-
 function PlayByPlay({
   awayCode = "AWAY",
   homeCode = "HOME",
@@ -412,6 +305,7 @@ function PlayByPlay({
     const playBadgeVariant = getPlayBadgeVariant(playData, state, gameStatus);
     const fieldPosition = playData.start?.possessionText ?? null;
     const playText = playData.text ?? playData.shortText ?? null;
+
     const isScoringPlay = playData.scoringPlay;
     const isTurnover = playData.isTurnover;
     const isPenalty = playData.isPenalty;
@@ -466,16 +360,9 @@ function PlayByPlay({
   const isTurnover = playInfo?.isTurnover;
   const isScoringPlay = playInfo?.isScoringPlay;
   const playText = playInfo?.playText;
-  const possessionText =
-    playInfo &&
-    ([playInfo.downDistance, playInfo.fieldPosition]
-      .filter(Boolean)
-      .join(" @ ") ||
-      playInfo.playType);
   const period = playInfo?.period;
   const clock = playInfo?.clock;
   const playParticipants = playInfo?.participants ?? [];
-  const playBadgeVariant = playInfo?.playBadgeVariant ?? null;
 
   if (state !== "in") return null;
 
@@ -484,48 +371,39 @@ function PlayByPlay({
       <HeadingTwo isDark={isDark}>Play By Play</HeadingTwo>
 
       <View style={styles.wrapper}>
-        <View style={styles.headerContainer}>
-          {playInfo && (
-            <View style={styles.headerRow}>
-              {possessionLogo && (
-                <Image
-                  source={possessionLogo}
-                  style={styles.headerLogo}
-                  resizeMode="contain"
-                />
-              )}
-              <Text
-                style={[styles.titleText, isFourthDown && styles.fourthDown]}
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                minimumFontScale={0.85}
-              >
-                {possessionText}
-              </Text>
-            </View>
-          )}
-          <View style={styles.headerMeta}>
-            {playBadgeVariant ? (
-              <PlayStatusBadge
-                key={playBadgeVariant}
-                styles={styles}
-                variant={playBadgeVariant}
-              />
+        <PlayByPlayHeader
+          isDark={isDark}
+          title={playInfo?.playType ?? "Waiting for updates"}
+          logo={possessionLogo}
+          period={period}
+          clock={clock}
+          isLive={isLive}
+        />
+        {playInfo?.downDistance || playInfo?.fieldPosition ? (
+          <View style={styles.situationRow}>
+            {playInfo.downDistance ? (
+              <View style={styles.situationItem}>
+                <Text style={styles.eyebrow}>Down & distance</Text>
+                <Text
+                  style={[
+                    styles.situationValue,
+                    isFourthDown && styles.fourthDown,
+                  ]}
+                >
+                  {playInfo.downDistance}
+                </Text>
+              </View>
             ) : null}
-
-            <View style={styles.liveRow}>
-              {isLive ? <View style={styles.liveDot} /> : null}
-
-              {period && clock && (
-                <>
-                  <Text style={styles.gameTime}>{period}</Text>
-                  <View style={styles.divider} />
-                  <Text style={styles.gameTime}>{clock}</Text>
-                </>
-              )}
-            </View>
+            {playInfo.fieldPosition ? (
+              <View style={styles.situationItem}>
+                <Text style={styles.eyebrow}>Field position</Text>
+                <Text style={styles.situationValue}>
+                  {playInfo.fieldPosition}
+                </Text>
+              </View>
+            ) : null}
           </View>
-        </View>
+        ) : null}
 
         <View style={styles.detailRow}>
           {playText && state === "in" && (
@@ -535,8 +413,6 @@ function PlayByPlay({
                 isScoringPlay && styles.scoringPlay,
                 isTurnover && styles.turnover,
               ]}
-              numberOfLines={3}
-              ellipsizeMode="tail"
             >
               {playText}
             </Text>

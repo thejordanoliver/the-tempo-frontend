@@ -1,4 +1,5 @@
 import HeadingTwo from "@/components/Headings/HeadingTwo";
+import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import type {
   BaseballPlay,
   BaseballPlayAthlete,
@@ -508,34 +509,38 @@ function PlayByPlay({
         layout={reducedMotion ? undefined : FadingTransition.duration(180)}
       >
         {/* Header */}
-        <View style={styles.headerContainer}>
-          <View style={styles.headerRow}>
-            {possessionLogo ? (
-              <Image
-                source={possessionLogo}
-                style={styles.headerLogo}
-                resizeMode="contain"
-              />
-            ) : null}
-
-            <Text style={styles.titleText}>
-              {half} {inning}
-            </Text>
-            <View style={styles.divider} />
-            <Text style={styles.titleText}>
-              {playInfo.balls}-{playInfo.strikes}
-            </Text>
-          </View>
-
-          <View style={styles.headerMeta}>
-            {playInfo.playBadgeVariant ? (
+        <PlayByPlayHeader
+          isDark={isDark}
+          title={descriptivePlay?.type?.text || play?.type?.text || "At bat"}
+          logo={possessionLogo}
+          period={[half, inning]
+            .filter((value) => value != null && value !== "")
+            .join(" ")}
+          isLive={state === "in"}
+          badge={
+            playInfo.playBadgeVariant ? (
               <PlayStatusBadge
                 key={`${playInfo.playKey}-${playInfo.playBadgeVariant}`}
                 playKey={playInfo.playKey}
                 styles={styles}
                 variant={playInfo.playBadgeVariant}
               />
-            ) : null}
+            ) : null
+          }
+        />
+        <View style={styles.situationRow}>
+          <View style={styles.situationItem}>
+            <Text style={styles.eyebrow}>Count</Text>
+            <Text
+              style={styles.situationValue}
+              accessibilityLabel={`${playInfo.balls} balls, ${playInfo.strikes} strikes`}
+            >
+              {playInfo.balls}–{playInfo.strikes}
+            </Text>
+          </View>
+          <View style={styles.situationItem}>
+            <Text style={styles.eyebrow}>Outs</Text>
+            <Text style={styles.situationValue}>{playInfo.outs}</Text>
           </View>
         </View>
 
@@ -548,7 +553,7 @@ function PlayByPlay({
             layout={reducedMotion ? undefined : FadingTransition.duration(180)}
             style={styles.detailRow}
           >
-            <Text style={styles.detailText} numberOfLines={3} selectable>
+            <Text style={styles.detailText} selectable>
               {playInfo.playText}
             </Text>
           </Animated.View>

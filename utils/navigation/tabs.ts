@@ -7,6 +7,7 @@ export const LEAGUE_TABS = {
     "standings",
     "playoffs",
     "stats",
+    "transactions",
     "draft",
     "awards",
     "forum",
@@ -31,6 +32,7 @@ export const LEAGUE_TABS = {
     "standings",
     "playoffs",
     "stats",
+    "transactions",
     "draft",
     "awards",
     "forum",
@@ -38,7 +40,16 @@ export const LEAGUE_TABS = {
 
   ufl: ["scores", "news", "standings", "forum"],
 
-  mlb: ["scores", "news", "standings", "playoffs", "stats", "awards", "forum"],
+  mlb: [
+    "scores",
+    "news",
+    "standings",
+    "playoffs",
+    "stats",
+    "transactions",
+    "awards",
+    "forum",
+  ],
 
   nhl: ["scores", "news", "standings", "stats", "awards", "forum"],
 

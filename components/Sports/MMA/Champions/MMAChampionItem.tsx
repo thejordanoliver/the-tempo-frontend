@@ -1,9 +1,8 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { MMAChampionItemStyles } from "@/styles/MMAChampionsListStyles";
 import type { MMAChampionship } from "@/types/mma/mma";
-import { activeOpacity, Colors } from "constants/styles";
+import { activeOpacity } from "constants/styles";
+import { useScopedRouter } from "hooks/useScopedRouter";
 
-import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -87,25 +86,7 @@ function MMAChampionItem({ division, champion, isDark }: MMAChampionItemProps) {
       style={styles.card}
       onPress={handlePress}
     >
-      <LinearGradient
-        colors={
-          isDark
-            ? ([
-                Colors.dark.gold,
-                Colors.light.transparentBlack,
-                Colors.black,
-              ] as const)
-            : ([
-                Colors.light.gold,
-                Colors.dark.transparentWhite,
-                Colors.white,
-              ] as const)
-        }
-        locations={[0, 0.2, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.cardGradient}
-      >
+      <View style={styles.wrapper}>
         <View style={styles.divisionRow}>
           <View>
             <Text style={styles.divisionEyebrow}>UFC</Text>
@@ -177,7 +158,7 @@ function MMAChampionItem({ division, champion, isDark }: MMAChampionItemProps) {
 
           <StatItem label="Camp" value={camp} isDark={isDark} />
         </View>
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 }

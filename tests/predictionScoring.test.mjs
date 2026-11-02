@@ -119,7 +119,7 @@ function harness() {
       setTimeout,
       clearTimeout,
       require(name) {
-        if (name === "./useScreenActivity")
+        if (name === "../useScreenActivity")
           return load("hooks/useScreenActivity.ts");
         if (name.startsWith("assets/")) return name;
         assert.ok(name in modules, `Unexpected import: ${name}`);
@@ -174,10 +174,11 @@ function scoringHarness() {
     },
   };
   const context = { sport: "basketball", league: "mcbb", state: "pre" };
-  h.start(h.load("hooks/usePredictionScoring.ts").usePredictionScoring, [
-    99,
-    context,
-  ]);
+  h.start(
+    h.load("hooks/FanPredictionHooks/usePredictionScoring.ts")
+      .usePredictionScoring,
+    [99, context],
+  );
   return Object.assign(h, { requests, context });
 }
 const regular = { pointsValue: 1, bonusReason: null };

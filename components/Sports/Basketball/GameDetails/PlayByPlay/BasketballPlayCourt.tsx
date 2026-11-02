@@ -1,5 +1,5 @@
 import PlayLocationPulse from "components/Sports/PlayByPlay/PlayLocationPulse";
-import { Colors } from "constants/styles";
+import { Colors, Fonts } from "constants/styles";
 import { useBasketballAnimation } from "hooks/BasketballHooks/useBasketballAnimation";
 import type { Play } from "hooks/BasketballHooks/useBasketballGameDetails";
 import { memo, useMemo } from "react";
@@ -52,6 +52,7 @@ function BasketballPlayCourt({
   active = false,
   eventKey = "",
   layout = "full",
+  neutralSite,
 }: {
   play?: Play | null;
   homeId: string | number;
@@ -64,6 +65,7 @@ function BasketballPlayCourt({
   active?: boolean;
   eventKey?: string;
   layout?: "full" | "half";
+  neutralSite?: boolean;
 }) {
   const scene = useMemo(
     () => basketballAnimationScene(play, homeId, awayId),
@@ -132,6 +134,7 @@ function BasketballPlayCourt({
         awayColor={awayColor}
         isDark={isDark}
         layout={layout}
+        neutralSite={neutralSite}
         homeHalf={
           scene.isShot && scene.knownTeam
             ? scene.home
@@ -164,6 +167,7 @@ function BasketballPlayCourt({
               </AnimatedGroup>
             </G>
           ) : null}
+
           {point && !scene.located && !scene.atFreeThrowLine ? (
             <AnimatedGroup animatedProps={eventGlow}>
               <Ellipse
@@ -178,6 +182,7 @@ function BasketballPlayCourt({
               />
             </AnimatedGroup>
           ) : null}
+
           {trajectory ? (
             <G>
               <Path
@@ -236,20 +241,10 @@ function BasketballPlayCourt({
                   {result}
                 </SvgText>
               ) : null}
-              {scene.assisted && scene.made ? (
-                <SvgText
-                  x={startX}
-                  y={startY - 18}
-                  textAnchor="middle"
-                  fill={textColor}
-                  fontSize={15}
-                >
-                  ASSIST
-                </SvgText>
-              ) : null}
             </G>
           ) : null}
-          {point && (scene.located || scene.atFreeThrowLine) ? (
+
+          {point && (scene.located || scene.atFreeThrowLine) && (
             <G>
               {active && !reducedMotion ? (
                 <PlayLocationPulse
@@ -271,8 +266,9 @@ function BasketballPlayCourt({
                 strokeWidth={5}
               />
             </G>
-          ) : null}
-          {!trajectory && scene.kind !== "other" ? (
+          )}
+
+          {!trajectory && scene.kind !== "other" && (
             <G>
               <AnimatedGroup animatedProps={eventGlow}>
                 <Ellipse
@@ -304,14 +300,15 @@ function BasketballPlayCourt({
                   y={(point?.y ?? 140) - 18}
                   textAnchor="middle"
                   fill={textColor}
-                  fontWeight="bold"
-                  fontSize={16}
+                  fontFamily={Fonts.MEDIUM}
+                  letterSpacing={2}
+                  fontSize={20}
                 >
                   {result}
                 </SvgText>
               )}
             </G>
-          ) : null}
+          )}
         </G>
       </BasketballCourt>
     </View>
