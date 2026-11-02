@@ -11,7 +11,11 @@ type Props = {
 export default function HeadingTwo({ children, isDark, style }: Props) {
   const styles = headerStyles(isDark);
 
-  return <Text style={[styles.heading, style]}>{children}</Text>;
+  return (
+    <Text accessibilityRole="header" style={[styles.heading, style]}>
+      {children}
+    </Text>
+  );
 }
 
 const headerStyles = (isDark: boolean) =>

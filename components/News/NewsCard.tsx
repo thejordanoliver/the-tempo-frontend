@@ -54,7 +54,15 @@ export default function NewsCard({
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={activeOpacity}>
+    <TouchableOpacity
+      onPress={handlePress}
+      activeOpacity={activeOpacity}
+      accessibilityRole="link"
+      accessibilityLabel={[title, source, published, contextLabel]
+        .filter(Boolean)
+        .join(". ")}
+      accessibilityHint="Opens the full article"
+    >
       <View style={styles.card}>
         {thumbnail && (
           <Image source={{ uri: thumbnail }} style={styles.thumbnail} />
@@ -70,9 +78,7 @@ export default function NewsCard({
             </View>
           ))}
         <View style={styles.details}>
-          <Text numberOfLines={2} style={styles.title}>
-            {title}
-          </Text>
+          <Text style={styles.title}>{title}</Text>
           {source && <Text style={styles.source}>{source}</Text>}
           <View style={styles.timeContainer}>
             <Text style={styles.source}>{published}</Text>

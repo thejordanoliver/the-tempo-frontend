@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import AuthFormLayout from "./AuthFormLayout";
 import { LEAGUE_CONFIG, type FavoriteSportId } from "@/constants/leagues";
 import { useFavoriteTeamsContext } from "@/contexts/FavoriteTeamsContext";
@@ -113,6 +114,7 @@ export default function SignUpForm({
   isValidating,
   onSubmit,
 }: SignupStepsProps) {
+  const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const { width: screenWidth } = useWindowDimensions();
 
@@ -155,11 +157,11 @@ export default function SignUpForm({
   useEffect(() => {
     Animated.timing(progress, {
       toValue: signupStep / TOTAL_STEPS,
-      duration: 300,
+      duration: reduceMotion ? 0 : 300,
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
     }).start();
-  }, [progress, signupStep]);
+  }, [progress, signupStep, reduceMotion]);
 
   useEffect(() => {
     return () => {
@@ -508,7 +510,18 @@ export default function SignUpForm({
       {renderStep()}
 
       {showProgress && (
-        <View style={styles.progressContainer}>
+        <View
+          accessible
+          accessibilityRole="progressbar"
+          accessibilityLabel="Sign up progress"
+          accessibilityValue={{
+            min: 0,
+            max: TOTAL_STEPS,
+            now: signupStep,
+            text: `Step ${signupStep} of ${TOTAL_STEPS}`,
+          }}
+          style={styles.progressContainer}
+        >
           <View style={styles.progressMeta}>
             <Text style={styles.progressLabel}>
               Step {signupStep} of {TOTAL_STEPS}

@@ -18,7 +18,7 @@ export const ForgotPasswordStyles = (isDark: boolean) => {
     kicker: {
       fontFamily: Fonts.REGULAR,
       fontSize: 13,
-      color: Colors.midTone,
+      color: secondaryText,
       textAlign: "center",
       textTransform: "uppercase",
     },
@@ -67,6 +67,7 @@ export const ForgotPasswordStyles = (isDark: boolean) => {
       marginTop: 8,
     },
     linkButton: {
+      minHeight: 48,
       alignSelf: "center",
       paddingVertical: 12,
       paddingHorizontal: 16,
@@ -75,7 +76,7 @@ export const ForgotPasswordStyles = (isDark: boolean) => {
     linkText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
-      color: Colors.midTone,
+      color: secondaryText,
     },
     disabledLinkText: {
       opacity: 0.6,

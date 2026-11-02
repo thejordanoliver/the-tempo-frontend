@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { BlurView } from "expo-blur";
 import { memo, useContext, useEffect, useMemo, useState } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
@@ -9,10 +10,17 @@ import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 type Props = {
   isOpen: boolean;
   onPress: () => void;
+  accessibilityLabel?: string;
   icon?: keyof typeof Ionicons.glyphMap;
 };
 
-function FloatingButton({ isOpen, onPress, icon = "chatbubble" }: Props) {
+function FloatingButton({
+  isOpen,
+  onPress,
+  icon = "chatbubble",
+  accessibilityLabel,
+}: Props) {
+  const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigationBarInset = useContext(NavigationBarInsetContext);
@@ -25,13 +33,16 @@ function FloatingButton({ isOpen, onPress, icon = "chatbubble" }: Props) {
   useEffect(() => {
     Animated.timing(opacityAnim, {
       toValue: isOpen ? 0 : 1,
-      duration: 200,
+      duration: reduceMotion ? 0 : 200,
       useNativeDriver: true,
     }).start();
-  }, [isOpen, opacityAnim]);
+  }, [isOpen, opacityAnim, reduceMotion]);
 
   return (
     <Animated.View
+      accessibilityElementsHidden={isOpen}
+      importantForAccessibility={isOpen ? "no-hide-descendants" : "auto"}
+      aria-hidden={isOpen}
       pointerEvents={isOpen ? "none" : "box-none"}
       style={[
         styles.floatingButtonWrapper,
@@ -41,7 +52,14 @@ function FloatingButton({ isOpen, onPress, icon = "chatbubble" }: Props) {
       ]}
     >
       <TouchableOpacity
+        disabled={isOpen}
+        focusable={!isOpen}
         style={styles.floatingButton}
+        accessibilityRole="button"
+        accessibilityLabel={
+          accessibilityLabel ??
+          (icon === "create" ? "Create post" : "Open game chat")
+        }
         onPress={onPress}
         activeOpacity={activeOpacity}
       >

@@ -11,7 +11,11 @@ export default function HeadingThree({ children }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = headingStyles(isDark);
-  return <Text style={styles.heading}>{children}</Text>;
+  return (
+    <Text accessibilityRole="header" style={styles.heading}>
+      {children}
+    </Text>
+  );
 }
 
 const headingStyles = (isDark: boolean) =>

@@ -1,5 +1,6 @@
 // components/Tabs/PillTabs.tsx
-import { Colors, Fonts } from "constants/styles";
+import { useReducedMotion } from "hooks/useReducedMotion";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -59,6 +60,7 @@ export default function PillTabs<T extends string = string>({
 }: Props<T>) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const reduceMotion = useReducedMotion();
   const styles = useMemo(() => pillTabsStyles(isDark), [isDark]);
 
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -78,7 +80,7 @@ export default function PillTabs<T extends string = string>({
   useEffect(() => {
     if (!selectedTabLayout) return;
 
-    if (!hasPlacedIndicator.current) {
+    if (!hasPlacedIndicator.current || reduceMotion) {
       translateX.setValue(selectedTabLayout.x);
       animatedWidth.setValue(selectedTabLayout.width);
       hasPlacedIndicator.current = true;
@@ -99,7 +101,13 @@ export default function PillTabs<T extends string = string>({
         useNativeDriver: false,
       }),
     ]).start();
-  }, [selectedTabLayout, translateX, animatedWidth, animationDuration]);
+  }, [
+    selectedTabLayout,
+    translateX,
+    animatedWidth,
+    animationDuration,
+    reduceMotion,
+  ]);
 
   useEffect(() => {
     if (!shouldScroll || !selectedTabLayout || containerWidth <= 0) return;
@@ -109,9 +117,9 @@ export default function PillTabs<T extends string = string>({
 
     scrollViewRef.current?.scrollTo({
       x: Math.max(centeredX, 0),
-      animated: true,
+      animated: !reduceMotion,
     });
-  }, [containerWidth, selectedTabLayout, shouldScroll]);
+  }, [containerWidth, selectedTabLayout, shouldScroll, reduceMotion]);
 
   const handleTabLayout = (value: T) => (event: LayoutChangeEvent) => {
     const { x, width } = event.nativeEvent.layout;
@@ -154,7 +162,10 @@ export default function PillTabs<T extends string = string>({
           contentContainerStyle,
         ]}
       >
-        <View style={[styles.tabsTrack, !shouldScroll && styles.tabsTrackFull]}>
+        <View
+          accessibilityRole="tablist"
+          style={[styles.tabsTrack, !shouldScroll && styles.tabsTrackFull]}
+        >
           {selectedTabLayout ? (
             <Animated.View
               pointerEvents="none"
@@ -176,6 +187,7 @@ export default function PillTabs<T extends string = string>({
               <Pressable
                 key={String(tab.value)}
                 accessibilityRole="tab"
+                accessibilityLabel={tab.label}
                 accessibilityState={{ selected: active, disabled }}
                 disabled={disabled}
                 onLayout={handleTabLayout(tab.value)}
@@ -194,7 +206,6 @@ export default function PillTabs<T extends string = string>({
                 ]}
               >
                 <Text
-                  numberOfLines={1}
                   style={[
                     styles.tabLabel,
                     labelStyle,
@@ -249,6 +260,7 @@ const pillTabsStyles = (isDark: boolean) =>
     },
 
     tabContainer: {
+      minHeight: MIN_TOUCH_TARGET,
       zIndex: 1,
       alignItems: "center",
       justifyContent: "center",
@@ -277,6 +289,7 @@ const pillTabsStyles = (isDark: boolean) =>
     },
 
     tabLabel: {
+      textAlign: "center",
       fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },

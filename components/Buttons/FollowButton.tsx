@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "@/constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo } from "react";
 import {
@@ -35,7 +35,7 @@ export default function FollowButton({
     () =>
       compact
         ? {
-            width: 80,
+            minWidth: 80,
             marginVertical: 4,
             borderRadius: 8,
           }
@@ -66,6 +66,13 @@ export default function FollowButton({
 
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={isFollowing ? "Unfollow" : "Follow"}
+      accessibilityState={{
+        disabled: loading || isFollowing === null,
+        busy: loading || isFollowing === null,
+        selected: isFollowing === true,
+      }}
       onPress={handlePress}
       disabled={loading || isFollowing === null}
       style={[styles.followButtonContainer, compactContainerStyle]}
@@ -119,7 +126,9 @@ export const FollowButtonStyles = (isDark: boolean, isFollowing?: boolean) => {
   return StyleSheet.create({
     followButtonContainer: {
       position: "relative",
-      width: 120,
+      minWidth: 120,
+      minHeight: MIN_TOUCH_TARGET,
+      justifyContent: "center",
       borderRadius: 10,
       overflow: "hidden",
       borderWidth: 1,

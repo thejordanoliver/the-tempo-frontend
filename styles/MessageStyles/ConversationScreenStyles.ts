@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "@/constants/styles";
 import { StyleSheet } from "react-native";
 
 export const ConversationScreenStyles = (isDark: boolean) =>
@@ -239,6 +239,10 @@ export const ConversationScreenStyles = (isDark: boolean) =>
     },
 
     previewCloseButton: {
+      minWidth: MIN_TOUCH_TARGET,
+      minHeight: MIN_TOUCH_TARGET,
+      alignItems: "center",
+      justifyContent: "center",
       position: "absolute",
       top: 6,
       right: 6,
@@ -270,8 +274,8 @@ export const ConversationScreenStyles = (isDark: boolean) =>
     attachmentButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: 38,
-      height: 38,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       borderRadius: 19,
       backgroundColor: "transparent",
     },
@@ -283,8 +287,8 @@ export const ConversationScreenStyles = (isDark: boolean) =>
     themeButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: 38,
-      height: 38,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 19,
@@ -306,8 +310,8 @@ export const ConversationScreenStyles = (isDark: boolean) =>
     sendButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: 38,
-      height: 38,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       borderRadius: 19,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },

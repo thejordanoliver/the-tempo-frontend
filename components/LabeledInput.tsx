@@ -54,7 +54,11 @@ export default function LabeledInput({
         multiline={multiline}
         maxLength={multiline ? MAX_LENGTH : undefined}
         placeholder={placeholder}
-        placeholderTextColor={Colors.midTone}
+        placeholderTextColor={
+          isDark ? Colors.dark.secondaryText : Colors.light.secondaryText
+        }
+        accessibilityLabel={label}
+        accessibilityHint={hint ?? undefined}
         style={[
           styles.input,
 
@@ -69,7 +73,11 @@ export default function LabeledInput({
             {inputValue.length}/{MAX_LENGTH}
           </Text>
         )}
-        {!!hint && <Text style={styles.errorText}>{hint}</Text>}
+        {!!hint && (
+          <Text accessibilityLiveRegion="polite" style={styles.errorText}>
+            {hint}
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -83,7 +91,7 @@ const labeledInputStyles = (isDark: boolean) =>
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       letterSpacing: 0.3,
-      color: isDark ? Colors.transparentLightGray : Colors.transparentDarkGray,
+      color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText,
       textTransform: "uppercase",
     },
     input: {
@@ -116,6 +124,6 @@ const labeledInputStyles = (isDark: boolean) =>
     count: {
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
-      color: Colors.midTone,
+      color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText,
     },
   });

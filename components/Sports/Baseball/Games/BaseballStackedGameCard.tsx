@@ -1,3 +1,4 @@
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -285,7 +286,18 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={getGameAccessibilityLabel(game, {
+        homeName,
+        awayName,
+        date: formattedDate,
+        time: formattedTime,
+      })}
+      accessibilityHint="Opens game details"
+    >
       {isChampionship ? (
         <LinearGradient
           colors={

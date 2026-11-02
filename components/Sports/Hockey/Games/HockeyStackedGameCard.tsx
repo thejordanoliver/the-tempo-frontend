@@ -1,3 +1,4 @@
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
@@ -232,7 +233,18 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
      RENDER
   =============================== */
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={getGameAccessibilityLabel(game, {
+        homeName,
+        awayName,
+        date: formattedDate,
+        time: formattedTime,
+      })}
+      accessibilityHint="Opens game details"
+    >
       {isChampionship ? (
         <LinearGradient
           colors={

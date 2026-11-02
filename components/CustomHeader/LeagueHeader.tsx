@@ -53,6 +53,13 @@ export function LeagueHeader({
     <View style={styles.leagueHeaderContainer}>
       <TouchableOpacity
         activeOpacity={activeOpacity}
+        accessibilityRole={onOpenLeagueModal ? "button" : "header"}
+        accessibilityLabel={selectedConferenceName || tabName}
+        accessibilityHint={
+          onOpenLeagueModal
+            ? "Opens the league or conference selector"
+            : undefined
+        }
         onPress={onOpenLeagueModal}
         style={styles.leagueHeaderButton}
         disabled={!onOpenLeagueModal}

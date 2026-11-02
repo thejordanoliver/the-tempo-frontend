@@ -1,6 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { Colors, Fonts, activeOpacity } from "constants/styles";
+import {
+  Colors,
+  Fonts,
+  activeOpacity,
+  MIN_TOUCH_TARGET,
+} from "constants/styles";
 
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
@@ -116,6 +121,8 @@ function ChatInputBar({
           <Image source={{ uri: selectedGifUrl }} style={styles.previewGif} />
 
           <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Remove GIF"
             onPress={handleRemoveGif}
             style={styles.previewCloseButton}
             activeOpacity={activeOpacity}
@@ -128,6 +135,9 @@ function ChatInputBar({
 
       <View style={styles.inputRow}>
         <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Choose a GIF"
+          accessibilityState={{ disabled: inputDisabled }}
           onPress={handleOpenGifPicker}
           style={styles.iconButton}
           activeOpacity={activeOpacity}
@@ -148,6 +158,9 @@ function ChatInputBar({
         </TouchableOpacity>
 
         <BottomSheetTextInput
+          accessibilityLabel={
+            selectedGifUrl ? "GIF caption" : "Game chat message"
+          }
           style={styles.input}
           placeholder={selectedGifUrl ? "Add a caption..." : "Message..."}
           placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
@@ -166,6 +179,9 @@ function ChatInputBar({
         />
 
         <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Send message"
+          accessibilityState={{ disabled: sendDisabled, busy: isSending }}
           onPress={handleSend}
           style={[styles.sendButton, sendDisabled && styles.sendButtonDisabled]}
           disabled={sendDisabled}
@@ -225,15 +241,15 @@ const ChatInputBarStyles = (isDark: boolean) =>
     iconButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: 38,
-      height: 38,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       borderRadius: 19,
     },
     sendButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: 38,
-      height: 38,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       borderRadius: 19,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
@@ -257,6 +273,10 @@ const ChatInputBarStyles = (isDark: boolean) =>
       height: 112,
     },
     previewCloseButton: {
+      minWidth: MIN_TOUCH_TARGET,
+      minHeight: MIN_TOUCH_TARGET,
+      alignItems: "center",
+      justifyContent: "center",
       position: "absolute",
       top: 6,
       right: 6,

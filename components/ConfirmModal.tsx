@@ -1,9 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useReducedMotion } from "hooks/useReducedMotion";
 import type { ReactNode } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  AccessibilityInfo,
+  findNodeHandle,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -50,6 +53,8 @@ export default function ConfirmModal({
   showConfirm = true,
   testID = "confirm-modal",
 }: ConfirmModalProps) {
+  const reduceMotion = useReducedMotion();
+  const titleRef = useRef<Text>(null);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => confirmModalStyles(isDark), [isDark]);
@@ -94,14 +99,20 @@ export default function ConfirmModal({
     <Modal
       isVisible={visible}
       onModalHide={onDismiss}
+      onModalShow={() => {
+        if (Platform.OS !== "web") {
+          const titleNode = findNodeHandle(titleRef.current);
+          if (titleNode) AccessibilityInfo.setAccessibilityFocus(titleNode);
+        }
+      }}
       onBackdropPress={handleCancel}
       onBackButtonPress={handleCancel}
       animationIn="zoomIn"
       animationOut="zoomOut"
-      animationInTiming={220}
-      animationOutTiming={160}
-      backdropTransitionInTiming={220}
-      backdropTransitionOutTiming={160}
+      animationInTiming={reduceMotion ? 0 : 220}
+      animationOutTiming={reduceMotion ? 0 : 160}
+      backdropTransitionInTiming={reduceMotion ? 0 : 220}
+      backdropTransitionOutTiming={reduceMotion ? 0 : 160}
       backdropOpacity={isDark ? 0.66 : 0.48}
       useNativeDriver
       useNativeDriverForBackdrop
@@ -121,7 +132,11 @@ export default function ConfirmModal({
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.scrollContent}
         >
-          <View style={styles.card}>
+          <View
+            accessibilityViewIsModal
+            onAccessibilityEscape={handleCancel}
+            style={styles.card}
+          >
             {isDanger && (
               <View style={[styles.iconWrap, styles.dangerIconWrap]}>
                 <Ionicons
@@ -133,7 +148,15 @@ export default function ConfirmModal({
             )}
 
             <View style={styles.messageContainer}>
-              {!!title && <Text style={styles.title}>{title}</Text>}
+              {!!title && (
+                <Text
+                  ref={titleRef}
+                  accessibilityRole="header"
+                  style={styles.title}
+                >
+                  {title}
+                </Text>
+              )}
 
               {!!message && <Text style={styles.message}>{message}</Text>}
             </View>
@@ -182,9 +205,19 @@ export default function ConfirmModal({
                   ]}
                 >
                   {isSubmitting ? (
-                    <ActivityIndicator size="small" color={Colors.white} />
+                    <ActivityIndicator
+                      size="small"
+                      color={isDanger && isDark ? Colors.black : Colors.white}
+                    />
                   ) : (
-                    <Text style={styles.confirmText}>{confirmText}</Text>
+                    <Text
+                      style={[
+                        styles.confirmText,
+                        isDanger && isDark && { color: Colors.black },
+                      ]}
+                    >
+                      {confirmText}
+                    </Text>
                   )}
                 </Pressable>
               )}
@@ -216,7 +249,7 @@ const confirmModalStyles = (isDark: boolean) =>
     },
     card: {
       width: "100%",
-      minWidth: 300,
+      maxWidth: 480,
       paddingHorizontal: 20,
       paddingTop: 22,
       paddingBottom: 18,
@@ -272,12 +305,14 @@ const confirmModalStyles = (isDark: boolean) =>
     },
     buttonRow: {
       flexDirection: "row",
+      flexWrap: "wrap",
       gap: 10,
       width: "100%",
       marginTop: 2,
     },
     button: {
-      flex: 1,
+      flexGrow: 1,
+      flexBasis: 120,
       alignItems: "center",
       justifyContent: "center",
       minHeight: 48,
@@ -300,7 +335,7 @@ const confirmModalStyles = (isDark: boolean) =>
       elevation: 5,
     },
     defaultConfirmButton: {
-      backgroundColor: isDark ? Colors.dark.blue : Colors.light.blue,
+      backgroundColor: Colors.light.actionBackground,
     },
     dangerConfirmButton: {
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,

@@ -1,4 +1,5 @@
-import { Colors, Fonts } from "constants/styles";
+import { useReducedMotion } from "hooks/useReducedMotion";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import React, {
   useCallback,
   useEffect,
@@ -54,7 +55,13 @@ function getDefaultLabelStyle(
   isDark: boolean,
 ): TextStyle {
   return {
-    color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.midTone,
+    color: isSelected
+      ? isDark
+        ? Colors.white
+        : Colors.black
+      : isDark
+        ? Colors.dark.secondaryText
+        : Colors.light.secondaryText,
     fontFamily: Fonts.REGULAR,
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,
   };
@@ -67,8 +74,10 @@ export default function MainScrollTabBar<T extends string>({
   onTabPress,
   renderLabel,
   style,
-  scrollProgress,
+  scrollProgress: suppliedScrollProgress,
 }: TabBarProps<T>) {
+  const reduceMotion = useReducedMotion();
+  const scrollProgress = reduceMotion ? undefined : suppliedScrollProgress;
   const styles = MainScrollTabBarStyles;
   const scrollRef = useRef<ScrollView>(null);
   const [underlineX] = useState(() => new Animated.Value(0));
@@ -100,31 +109,37 @@ export default function MainScrollTabBar<T extends string>({
     };
   }, []);
 
-  const scrollToTab = useCallback((tab: T, animated: boolean) => {
-    const measurement = tabMeasurements.current.get(tab);
-    const visibleWidth = viewportWidth.current;
+  const scrollToTab = useCallback(
+    (tab: T, animated: boolean) => {
+      const measurement = tabMeasurements.current.get(tab);
+      const visibleWidth = viewportWidth.current;
 
-    if (!measurement || visibleWidth <= 0) {
-      return;
-    }
+      if (!measurement || visibleWidth <= 0) {
+        return;
+      }
 
-    const requestKey = [
-      tab,
-      measurement.x,
-      measurement.width,
-      visibleWidth,
-    ].join(":");
+      const requestKey = [
+        tab,
+        measurement.x,
+        measurement.width,
+        visibleWidth,
+      ].join(":");
 
-    if (lastScrollRequest.current === requestKey) {
-      return;
-    }
+      if (lastScrollRequest.current === requestKey) {
+        return;
+      }
 
-    lastScrollRequest.current = requestKey;
-    scrollRef.current?.scrollTo({
-      x: Math.max(measurement.x + measurement.width / 2 - visibleWidth / 2, 0),
-      animated,
-    });
-  }, []);
+      lastScrollRequest.current = requestKey;
+      scrollRef.current?.scrollTo({
+        x: Math.max(
+          measurement.x + measurement.width / 2 - visibleWidth / 2,
+          0,
+        ),
+        animated: animated && !reduceMotion,
+      });
+    },
+    [reduceMotion],
+  );
 
   const requestLayoutSync = useCallback(() => {
     if (layoutFrame.current != null) {
@@ -266,7 +281,7 @@ export default function MainScrollTabBar<T extends string>({
     underlineX.stopAnimation();
     underlineWidth.stopAnimation();
 
-    if (!isUnderlineInitialized.current) {
+    if (!isUnderlineInitialized.current || reduceMotion) {
       underlineX.setValue(metrics.x);
       underlineWidth.setValue(metrics.width);
       isUnderlineInitialized.current = true;
@@ -298,6 +313,7 @@ export default function MainScrollTabBar<T extends string>({
   }, [
     getUnderlineMetrics,
     measuredLayout,
+    reduceMotion,
     scrollProgress,
     scrollToTab,
     selected,
@@ -397,7 +413,7 @@ export default function MainScrollTabBar<T extends string>({
         onLayout={handleViewportLayout}
         showsHorizontalScrollIndicator={false}
       >
-        <View style={styles.tabs}>
+        <View accessibilityRole="tablist" style={styles.tabs}>
           {tabItems}
 
           <Animated.View
@@ -431,6 +447,8 @@ export const MainScrollTabBarStyles = StyleSheet.create({
     position: "relative",
   },
   tabPressable: {
+    minHeight: MIN_TOUCH_TARGET,
+    justifyContent: "center",
     alignItems: "center",
     paddingBottom: 4,
     paddingHorizontal: 16,

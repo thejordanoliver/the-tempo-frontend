@@ -1,6 +1,7 @@
 import { SelectionCardStyles } from "@/styles/TeamStyles/SelectionCardStyles";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { getContrastingTextColor } from "utils/ui/color";
 import React, { useCallback } from "react";
 import {
   Image,
@@ -71,7 +72,7 @@ function SelectionCard({
       : Colors.light.itemBackground;
 
   const textColor = isSelected
-    ? Colors.dark.text
+    ? getContrastingTextColor(backgroundColor)
     : isDark
       ? Colors.dark.text
       : Colors.light.text;
@@ -91,9 +92,9 @@ function SelectionCard({
 
   return (
     <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={displayName}
-      accessibilityState={{ selected: isSelected, disabled }}
+      accessibilityRole="checkbox"
+      accessibilityLabel={`${displayName}, ${item.league.toUpperCase()}`}
+      accessibilityState={{ checked: isSelected, disabled }}
       disabled={disabled}
       onPress={handlePress}
       style={({ pressed }) => ({

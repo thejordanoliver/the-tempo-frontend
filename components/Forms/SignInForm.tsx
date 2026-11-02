@@ -2,6 +2,7 @@ import Button from "@/components/Buttons/Button";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useReducedMotion } from "hooks/useReducedMotion";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, TextInput, View } from "react-native";
 import { formStyles } from "styles/FormStyles";
@@ -20,6 +21,7 @@ type SignInFormProps = {
 };
 
 export default function SignInForm({ ...props }: SignInFormProps) {
+  const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = formStyles(isDark);
@@ -27,6 +29,11 @@ export default function SignInForm({ ...props }: SignInFormProps) {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
+    if (reduceMotion) {
+      scaleAnim.stopAnimation();
+      scaleAnim.setValue(1);
+      return;
+    }
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
@@ -43,7 +50,7 @@ export default function SignInForm({ ...props }: SignInFormProps) {
         useNativeDriver: true,
       }).start(),
     );
-  }, [props.showPassword, scaleAnim]);
+  }, [props.showPassword, scaleAnim, reduceMotion]);
 
   return (
     <AuthFormLayout>
@@ -51,6 +58,7 @@ export default function SignInForm({ ...props }: SignInFormProps) {
         <View style={styles.formWrapper}>
           <View style={styles.input}>
             <TextInput
+              accessibilityLabel="Username"
               placeholder="Username"
               editable={!props.isSubmitting}
               autoCorrect={false}
@@ -58,13 +66,16 @@ export default function SignInForm({ ...props }: SignInFormProps) {
               value={props.username}
               onChangeText={props.onUsernameChange}
               style={styles.inputText}
-              placeholderTextColor={Colors.midTone}
+              placeholderTextColor={
+                isDark ? Colors.dark.secondaryText : Colors.light.secondaryText
+              }
               autoCapitalize="none"
             />
           </View>
 
           <View style={styles.input}>
             <TextInput
+              accessibilityLabel="Password"
               placeholder="Password"
               editable={!props.isSubmitting}
               autoCapitalize="none"
@@ -74,9 +85,20 @@ export default function SignInForm({ ...props }: SignInFormProps) {
               onChangeText={props.onPasswordChange}
               secureTextEntry={!props.showPassword}
               style={styles.inputText}
-              placeholderTextColor={Colors.midTone}
+              placeholderTextColor={
+                isDark ? Colors.dark.secondaryText : Colors.light.secondaryText
+              }
             />
             <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ disabled: !!props.isSubmitting }}
+              disabled={props.isSubmitting}
+              style={{
+                minWidth: 48,
+                minHeight: 48,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
               onPress={props.onToggleShowPassword}
               accessibilityLabel={
                 props.showPassword ? "Hide password" : "Show password"

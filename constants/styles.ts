@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export const activeOpacity = 0.7;
+export const MIN_TOUCH_TARGET = 48;
 export const PLACEHOLDER_COLOR = "#888";
 export const PLACEHOLDER_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";
@@ -10,6 +11,8 @@ export const PLACEHOLDER_BANNER =
 export const Colors = {
   light: {
     text: "#1d1d1d",
+    secondaryText: "#555555",
+    actionBackground: "#0062cc",
     transparentText: "#1d1d1d50",
 
     gray: "#aaaaaa",
@@ -61,6 +64,7 @@ export const Colors = {
 
   dark: {
     text: "#ffffff",
+    secondaryText: "#bbbbbb",
     transparentText: "#ffffff50",
 
     gray: "#555555",

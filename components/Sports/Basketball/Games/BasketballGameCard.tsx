@@ -1,3 +1,4 @@
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import {
   getMCBBRivalry,
@@ -304,7 +305,18 @@ export default function BasketballGameCard({
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={getGameAccessibilityLabel(game, {
+        homeName,
+        awayName,
+        date: formattedDate,
+        time: formattedTime,
+      })}
+      accessibilityHint="Opens game details"
+    >
       {isChampionship ? (
         <LinearGradient
           colors={

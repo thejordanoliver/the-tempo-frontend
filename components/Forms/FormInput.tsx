@@ -42,7 +42,8 @@ export default function FormInput<T extends FieldValues>({
   ...inputProps
 }: FormInputProps<T>) {
   const { resolvedColorScheme } = usePreferences();
-  const styles = formStyles(resolvedColorScheme === "dark");
+  const isDark = resolvedColorScheme === "dark";
+  const styles = formStyles(isDark);
 
   return (
     <Controller
@@ -58,9 +59,20 @@ export default function FormInput<T extends FieldValues>({
             ]}
           >
             <TextInput
-              placeholderTextColor={Colors.midTone}
+              placeholderTextColor={
+                isDark ? Colors.dark.secondaryText : Colors.light.secondaryText
+              }
               accessibilityLabel={inputProps.placeholder}
               {...inputProps}
+              accessibilityHint={
+                [
+                  inputProps.accessibilityHint,
+                  fieldState.error?.message ?? helperText,
+                ]
+                  .filter(Boolean)
+                  .join(". ") || undefined
+              }
+              aria-invalid={!!fieldState.error}
               ref={field.ref}
               value={field.value}
               onChangeText={(value) => {
@@ -73,7 +85,12 @@ export default function FormInput<T extends FieldValues>({
             {trailing}
           </View>
           {!!fieldState.error?.message && (
-            <Text selectable style={styles.fieldErrorText}>
+            <Text
+              selectable
+              accessibilityRole="alert"
+              accessibilityLiveRegion="polite"
+              style={styles.fieldErrorText}
+            >
               {fieldState.error.message}
             </Text>
           )}

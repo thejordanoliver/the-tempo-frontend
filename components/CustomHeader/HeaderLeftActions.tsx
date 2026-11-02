@@ -33,6 +33,8 @@ export function HeaderLeftActions({
     return onProfileMessages ? (
       <TouchableOpacity
         activeOpacity={activeOpacity}
+        accessibilityRole="button"
+        accessibilityLabel="Open messages"
         onPress={onProfileMessages}
         style={styles.profileHeaderActionButton}
         hitSlop={8}
@@ -52,6 +54,9 @@ export function HeaderLeftActions({
     return (
       <TouchableOpacity
         activeOpacity={activeOpacity}
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+        style={styles.headerActionButton}
         onPress={onBack}
         hitSlop={8}
       >

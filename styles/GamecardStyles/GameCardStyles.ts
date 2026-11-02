@@ -22,7 +22,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       alignItems: "center",
       justifyContent: "space-between",
       padding: 8,
-      height: 80,
+      minHeight: 80,
       borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground

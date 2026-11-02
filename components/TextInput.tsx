@@ -34,7 +34,10 @@ export default function TextInputComponent({
         onChangeText={onChangeText}
         multiline={multiline}
         placeholder={placeholder}
-        placeholderTextColor={Colors.midTone}
+        accessibilityLabel={placeholder}
+        placeholderTextColor={
+          isDark ? Colors.dark.secondaryText : Colors.light.secondaryText
+        }
         style={[styles.input, multiline && styles.bioInput, inputStyle]}
         {...rest}
       />
@@ -56,7 +59,7 @@ const inputStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     bioInput: {
-      height: 100,
+      minHeight: 100,
       textAlignVertical: "top",
     },
   });

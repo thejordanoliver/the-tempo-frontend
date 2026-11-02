@@ -1,3 +1,4 @@
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   getMCBBRivalry,
   getMCBBTeam,
@@ -297,7 +298,18 @@ export default function BasketballStackedGameCard({
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={getGameAccessibilityLabel(game, {
+        homeName,
+        awayName,
+        date: formattedDate,
+        time: formattedTime,
+      })}
+      accessibilityHint="Opens game details"
+    >
       {isChampionship ? (
         <LinearGradient
           colors={

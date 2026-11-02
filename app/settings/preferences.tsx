@@ -40,8 +40,8 @@ const PreferencesScreen = () => {
   const textColor = isDark ? Colors.white : Colors.black;
   const selectedBorderColor = isDark ? Colors.white : Colors.black;
   const notSelected = isDark
-    ? Colors.transparentLightGray
-    : Colors.transparentDarkGray;
+    ? Colors.dark.secondaryText
+    : Colors.light.secondaryText;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -213,6 +213,9 @@ const PreferencesScreen = () => {
           ]}
         >
           <TouchableOpacity
+            accessibilityRole="radio"
+            accessibilityLabel="Light theme"
+            accessibilityState={{ checked: colorScheme === "light" }}
             onPress={() => setColorScheme("light")}
             style={styles.optionButton}
           >
@@ -242,6 +245,9 @@ const PreferencesScreen = () => {
           ]}
         >
           <TouchableOpacity
+            accessibilityRole="radio"
+            accessibilityLabel="Dark theme"
+            accessibilityState={{ checked: colorScheme === "dark" }}
             onPress={() => setColorScheme("dark")}
             style={styles.optionButton}
           >
@@ -271,6 +277,9 @@ const PreferencesScreen = () => {
           ]}
         >
           <TouchableOpacity
+            accessibilityRole="radio"
+            accessibilityLabel="System theme"
+            accessibilityState={{ checked: colorScheme === "system" }}
             onPress={() => setColorScheme("system")}
             style={styles.optionButton}
           >

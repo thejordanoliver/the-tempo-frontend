@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ export default function CustomActivityIndicator({
   size = 28,
   thickness = 3,
 }: Props) {
+  const reduceMotion = useReducedMotion();
   const [rotateAnim] = useState(() => new Animated.Value(0));
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -20,6 +22,10 @@ export default function CustomActivityIndicator({
   const gradientEnd = gradientStart;
 
   useEffect(() => {
+    if (reduceMotion) {
+      rotateAnim.setValue(0);
+      return;
+    }
     const animation = Animated.loop(
       Animated.timing(rotateAnim, {
         toValue: 1,
@@ -30,7 +36,7 @@ export default function CustomActivityIndicator({
     );
     animation.start();
     return () => animation.stop();
-  }, [rotateAnim]);
+  }, [rotateAnim, reduceMotion]);
 
   const spin = rotateAnim.interpolate({
     inputRange: [0, 1],
@@ -42,6 +48,8 @@ export default function CustomActivityIndicator({
 
   return (
     <View
+      accessible
+      accessibilityRole="progressbar"
       accessibilityLabel="Loading"
       accessibilityState={{ busy: true }}
       style={[styles.container, { width: size, height: size }]}

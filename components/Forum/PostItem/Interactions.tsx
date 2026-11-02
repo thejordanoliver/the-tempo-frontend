@@ -79,6 +79,10 @@ export const Interactions = memo(function Interactions({
           <View style={styles.leftSide}>
             {/* Like */}
             <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={liked ? "Unlike post" : "Like post"}
+              accessibilityValue={{ text: `${likeCount} likes` }}
+              accessibilityState={{ selected: liked }}
               onPress={toggleLikePress}
               style={styles.buttonContainer}
             >
@@ -93,6 +97,10 @@ export const Interactions = memo(function Interactions({
 
             {/* Comment */}
             <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="View comments"
+              accessibilityValue={{ text: `${item.comments_count} comments` }}
+              accessibilityState={{ disabled: !!disableCommentNavigation }}
               onPress={handleCommentPress}
               disabled={disableCommentNavigation}
               style={[
@@ -119,6 +127,15 @@ export const Interactions = memo(function Interactions({
           <View style={styles.rightSide}>
             {/* Bookmark */}
             <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={
+                bookmarked ? "Remove bookmark" : "Bookmark post"
+              }
+              accessibilityState={{
+                selected: bookmarked,
+                disabled: bookmarkPending,
+                busy: bookmarkPending,
+              }}
               onPress={handleBookmarkPress}
               disabled={bookmarkPending}
               style={[
@@ -142,6 +159,10 @@ export const Interactions = memo(function Interactions({
               onPress={() => shareSheet.current?.present()}
               accessibilityRole="button"
               accessibilityLabel="Share post"
+              accessibilityState={{
+                disabled: sharePending,
+                busy: sharePending,
+              }}
               disabled={sharePending}
               style={[
                 styles.buttonContainer,

@@ -11,7 +11,9 @@ import {
 } from "react";
 import { useExploreWidgetConfiguration } from "hooks/ExploreHooks/useExploreWidgetConfiguration";
 import { useExploreWidgetLiveUpdates } from "hooks/ExploreHooks/useExploreWidgetLiveUpdates";
+import { useDeviceGameWidgets } from "hooks/useDeviceGameWidgets";
 import { getExploreWidgets } from "services/exploreWidgetsApi";
+import { deviceGameWidgetsSupported } from "services/deviceGameWidgets";
 import type { FavoriteTeamKey } from "types/favorites";
 import { prepareExploreFavoriteGames } from "utils/widgets/exploreFavoriteGames";
 import {
@@ -152,7 +154,13 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
   } | null>(null);
   const currentIdentityRef = useRef("");
 
-  const requestedLeaguesKey = getRequestedLeagues(widgets).join(",");
+  // Home Screen widgets stay useful even when the Explore board has no game card.
+  const requestedLeaguesKey = (
+    deviceGameWidgetsSupported
+      ? EXPLORE_WIDGET_LEAGUES
+      : getRequestedLeagues(widgets)
+  ).join(",");
+  const gamesVisible = boardVisible || deviceGameWidgetsSupported;
   const requestedLeagues = useMemo(
     () =>
       EXPLORE_WIDGET_LEAGUES.filter((league) =>
@@ -218,7 +226,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
   const loadWidgetData = useCallback(
     async (forceRefresh: boolean) => {
       if (
-        !widgetsReady ||
+        (!widgetsReady && !deviceGameWidgetsSupported) ||
         !favoritesReady ||
         favoritesLoading ||
         !userId ||
@@ -393,7 +401,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => {
     let cancelled = false;
-    if (!boardVisible || !foreground) {
+    if (!gamesVisible || !foreground) {
       requestGenerationRef.current += 1;
       pendingRequestRef.current?.controller.abort();
       pendingRequestRef.current = null;
@@ -401,7 +409,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
 
     void Promise.resolve().then(() => {
       if (cancelled) return;
-      if (boardVisible && foreground) {
+      if (gamesVisible && foreground) {
         void ensureWidgetData();
       } else {
         setLoading(false);
@@ -412,15 +420,25 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [boardVisible, foreground, ensureWidgetData]);
+  }, [gamesVisible, foreground, ensureWidgetData]);
 
   useExploreWidgetLiveUpdates({
-    enabled: boardVisible && foreground,
+    enabled: gamesVisible && foreground,
     cache,
     dataKey,
     relevantFavoriteKeySet,
     setCache,
     userId,
+  });
+
+  useDeviceGameWidgets({
+    cache,
+    dataKey,
+    userId,
+    favoriteKeys: relevantFavoriteKeySet,
+    ready: favoritesReady && !favoritesLoading,
+    foreground,
+    error,
   });
 
   const games = useMemo(() => {
@@ -442,7 +460,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
   // during the render before that effect starts the request.
   const initialGamesPending =
     requestedLeagues.length > 0 &&
-    (!widgetsReady ||
+    ((!widgetsReady && !deviceGameWidgetsSupported) ||
       !favoritesReady ||
       favoritesLoading ||
       (Boolean(userId) &&

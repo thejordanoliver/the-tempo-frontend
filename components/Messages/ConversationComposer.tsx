@@ -49,7 +49,9 @@ export default function ConversationComposer({
   return (
     <>
       {isUploadingImage && (
-        <Text style={styles.uploadStatusText}>Uploading attachment...</Text>
+        <Text accessibilityLiveRegion="polite" style={styles.uploadStatusText}>
+          Uploading attachment...
+        </Text>
       )}
 
       {selectedAttachment && (
@@ -67,6 +69,8 @@ export default function ConversationComposer({
           </View>
 
           <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Remove attachment"
             onPress={handleRemoveAttachment}
             style={styles.previewCloseButton}
             activeOpacity={activeOpacity}
@@ -88,6 +92,9 @@ export default function ConversationComposer({
 
           <TouchableOpacity
             activeOpacity={activeOpacity}
+            accessibilityRole="button"
+            accessibilityLabel="Message attachments"
+            accessibilityState={{ expanded: attachmentMenuVisible }}
             onPress={handleToggleAttachmentMenu}
             style={[
               styles.attachmentButton,
@@ -104,6 +111,9 @@ export default function ConversationComposer({
         </View>
 
         <TextInput
+          accessibilityLabel={
+            selectedAttachment ? "Attachment caption" : "Message"
+          }
           ref={inputRef}
           value={draftMessage}
           onChangeText={handleDraftChange}
@@ -128,6 +138,9 @@ export default function ConversationComposer({
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onPress={handleSend}
+          accessibilityRole="button"
+          accessibilityLabel="Send message"
+          accessibilityState={{ disabled: isSendDisabled }}
           disabled={isSendDisabled}
           style={[
             styles.sendButton,
@@ -143,7 +156,15 @@ export default function ConversationComposer({
         </TouchableOpacity>
       </View>
 
-      {!!sendError && <Text style={styles.sendError}>{sendError}</Text>}
+      {!!sendError && (
+        <Text
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
+          style={styles.sendError}
+        >
+          {sendError}
+        </Text>
+      )}
     </>
   );
 }

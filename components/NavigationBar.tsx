@@ -1,5 +1,5 @@
 import { activeOpacity, Colors, Fonts } from "constants/styles";
-import { NAVIGATION_BAR_ROW_HEIGHT } from "contexts/NavigationBarInsetContext";
+import { useNavigationBarRowHeight } from "contexts/NavigationBarInsetContext";
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
 import { useMemo, type ComponentProps } from "react";
@@ -24,9 +24,10 @@ export default function NavigationBar({
   isDark,
 }: NavigationBarProps) {
   const iconColor = isDark ? Colors.white : Colors.black;
+  const rowHeight = useNavigationBarRowHeight();
   const styles = useMemo(
-    () => CustomTabBarStyles(isDark, insets.bottom),
-    [isDark, insets.bottom],
+    () => CustomTabBarStyles(isDark, insets.bottom, rowHeight),
+    [isDark, insets.bottom, rowHeight],
   );
 
   return (
@@ -37,7 +38,7 @@ export default function NavigationBar({
         style={styles.blurBackground}
       />
 
-      <View style={styles.tabRow}>
+      <View accessibilityRole="tablist" style={styles.tabRow}>
         {state.routes.map((route, index) => {
           const tab = TAB_DETAILS[route.name as keyof typeof TAB_DETAILS];
           if (!tab) return null;
@@ -91,7 +92,11 @@ export default function NavigationBar({
   );
 }
 
-const CustomTabBarStyles = (isDark: boolean, bottomInset: number) =>
+const CustomTabBarStyles = (
+  isDark: boolean,
+  bottomInset: number,
+  rowHeight: number,
+) =>
   StyleSheet.create({
     tabBarWrapper: {
       position: "absolute",
@@ -118,7 +123,7 @@ const CustomTabBarStyles = (isDark: boolean, bottomInset: number) =>
       left: 0,
     },
     tabRow: {
-      height: NAVIGATION_BAR_ROW_HEIGHT,
+      height: rowHeight,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-around",
@@ -127,11 +132,12 @@ const CustomTabBarStyles = (isDark: boolean, bottomInset: number) =>
     },
     tabButton: {
       flex: 1,
+      minHeight: 48,
       alignItems: "center",
       justifyContent: "center",
     },
     tabLabel: {
-      color: Colors.midTone,
+      color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText,
       marginTop: 4,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,

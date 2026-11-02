@@ -41,7 +41,7 @@ function main() {
   }
   const url = getHostedApiUrl(contents);
   // Expo preserves existing process variables when loading dotenv files.
-  // Override only the API URL so other .env.local settings still work.
+  // Use the API URL from .env even if the parent shell has a stale value.
   const env = { ...process.env, EXPO_PUBLIC_API_URL: url };
   console.log(`[hosted API] Using EXPO_PUBLIC_API_URL from .env: ${url}`);
   const child = spawn(

@@ -5,7 +5,10 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/appIcon.png",
-    "scheme": ["tempo", "nbascorestracker"],
+    "scheme": [
+      "tempo",
+      "nbascorestracker"
+    ],
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
@@ -14,7 +17,8 @@
       "deploymentTarget": "17.0",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSBluetoothAlwaysUsageDescription": "Tempo uses Bluetooth to discover and connect to your nearby Tempo Ticker."
+        "NSBluetoothAlwaysUsageDescription": "Tempo uses Bluetooth to discover and connect to your nearby Tempo Ticker.",
+        "NSLocalNetworkUsageDescription": "Tempo connects to your Mac on the local network to load the app during development."
       }
     },
     "android": {
@@ -64,6 +68,92 @@
           "ios": {
             "enableSceneSupport": true
           }
+        }
+      ],
+      "./plugins/withDeviceWidgetEntitlements",
+      [
+        "expo-widgets",
+        {
+          "enablePushNotifications": false,
+          "widgets": [
+            {
+              "name": "TempoFavoriteGames",
+              "displayName": "Favorite Games",
+              "description": "Scores and upcoming games for your favorite teams on Tempo.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge"
+                ],
+                "configuration": {
+                  "title": "Favorite Games",
+                  "description": "Show all favorite teams or choose a league.",
+                  "parameters": {
+                    "league": {
+                      "title": "League",
+                      "type": "enum",
+                      "default": "all",
+                      "values": [
+                        {
+                          "name": "All Leagues",
+                          "value": "all"
+                        },
+                        {
+                          "name": "NBA",
+                          "value": "nba"
+                        },
+                        {
+                          "name": "WNBA",
+                          "value": "wnba"
+                        },
+                        {
+                          "name": "Men\u2019s College Basketball",
+                          "value": "mcbb"
+                        },
+                        {
+                          "name": "Women\u2019s College Basketball",
+                          "value": "wcbb"
+                        },
+                        {
+                          "name": "MLB",
+                          "value": "mlb"
+                        },
+                        {
+                          "name": "College Baseball",
+                          "value": "cb"
+                        },
+                        {
+                          "name": "NFL",
+                          "value": "nfl"
+                        },
+                        {
+                          "name": "College Football",
+                          "value": "cfb"
+                        },
+                        {
+                          "name": "UFL",
+                          "value": "ufl"
+                        },
+                        {
+                          "name": "NHL",
+                          "value": "nhl"
+                        },
+                        {
+                          "name": "Men\u2019s College Volleyball",
+                          "value": "mcvb"
+                        },
+                        {
+                          "name": "Women\u2019s College Volleyball",
+                          "value": "wcvb"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
         }
       ]
     ],
