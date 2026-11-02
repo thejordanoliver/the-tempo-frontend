@@ -1,5 +1,5 @@
 // components/DateNavigator.tsx
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -26,6 +26,8 @@ export default function DateNavigator({
   return (
     <View style={styles.dateNavContainer}>
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel="Previous day"
         onPress={() => onChangeDate(-1)}
         style={styles.dateNavButton}
         activeOpacity={0.7}
@@ -41,6 +43,11 @@ export default function DateNavigator({
       </TouchableOpacity>
 
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={dayjs(selectedDate)
+          .tz("America/New_York")
+          .format("dddd, MMMM D, YYYY")}
+        accessibilityHint="Opens the calendar to choose a date"
         onPress={onOpenCalendar}
         style={styles.dateNavButton}
         activeOpacity={0.7}
@@ -51,6 +58,8 @@ export default function DateNavigator({
       </TouchableOpacity>
 
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel="Next day"
         onPress={() => onChangeDate(1)}
         style={styles.dateNavButton}
         activeOpacity={0.7}
@@ -77,6 +86,10 @@ const getStyles = (isDark: boolean) =>
       marginVertical: 12,
     },
     dateNavButton: {
+      minWidth: MIN_TOUCH_TARGET,
+      minHeight: MIN_TOUCH_TARGET,
+      alignItems: "center",
+      justifyContent: "center",
       marginHorizontal: 12,
       paddingHorizontal: 16,
       paddingVertical: 8,

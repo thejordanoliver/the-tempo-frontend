@@ -14,7 +14,10 @@ type RawRecord = Record<string, any>;
 type ApiRequestError = {
   response?: {
     status?: number;
-    data?: unknown;
+    data?: {
+      code?: string;
+      error?: string;
+    };
   };
   message?: string;
 };
@@ -496,12 +499,22 @@ export const getConversations = async (
       params,
     });
   } catch (error) {
-    if (__DEV__) {
-      const requestError = error as ApiRequestError;
+    const requestError = error as ApiRequestError;
+    const status = requestError.response?.status;
+    const data = requestError.response?.data;
+    const isSessionExpiration =
+      status === 401 ||
+      (status === 403 &&
+        (data?.code === "ACCESS_TOKEN_INVALID" ||
+          data?.error === "Invalid or expired token" ||
+          data?.error === "Invalid or expired refresh token"));
 
+    // apiClient handles expired sessions by clearing auth and opening login.
+    // The background conversation preload should not also raise a dev overlay.
+    if (__DEV__ && !isSessionExpiration) {
       console.error("Failed to fetch conversations", {
-        status: requestError.response?.status,
-        data: requestError.response?.data,
+        status,
+        data,
         message: requestError.message,
       });
     }

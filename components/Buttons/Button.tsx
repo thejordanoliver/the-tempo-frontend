@@ -1,7 +1,13 @@
-import { activeOpacity, Colors, Fonts } from "constants/styles";
+import {
+  activeOpacity,
+  Colors,
+  Fonts,
+  MIN_TOUCH_TARGET,
+} from "constants/styles";
 import React, { ReactNode } from "react";
 import {
   AccessibilityRole,
+  AccessibilityProps,
   Pressable,
   StyleProp,
   StyleSheet,
@@ -11,7 +17,7 @@ import {
 
 type ButtonVariant = "filled" | "outline" | "text";
 
-type ButtonProps = {
+type ButtonProps = AccessibilityProps & {
   onPress: () => void;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -30,18 +36,22 @@ export default function Button({
   isDark,
   variant = "filled",
   children,
-  accessibilityRole,
-  accessibilityLabel = "Button",
+  accessibilityRole = "button",
+  accessibilityLabel,
+  accessibilityState,
   hitSlop,
+  ...accessibilityProps
 }: ButtonProps) {
   const styles = buttonStyles(isDark, variant);
 
   return (
     <Pressable
+      {...accessibilityProps}
       onPress={onPress}
       disabled={disabled}
       accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ ...accessibilityState, disabled }}
       hitSlop={hitSlop}
       style={({ pressed }) => [
         styles.button,
@@ -68,6 +78,8 @@ const buttonStyles = (isDark: boolean, variant: ButtonVariant) => {
 
   return StyleSheet.create({
     button: {
+      minHeight: MIN_TOUCH_TARGET,
+      minWidth: MIN_TOUCH_TARGET,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
@@ -86,7 +98,9 @@ const buttonStyles = (isDark: boolean, variant: ButtonVariant) => {
         variant === "filled"
           ? primaryText
           : variant === "text"
-            ? Colors.midTone
+            ? isDark
+              ? Colors.dark.secondaryText
+              : Colors.light.secondaryText
             : primary,
     },
   });

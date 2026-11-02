@@ -1,4 +1,5 @@
-import { Colors, Fonts } from "constants/styles";
+import { useReducedMotion } from "hooks/useReducedMotion";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -36,8 +37,10 @@ export default function TabBar<T extends string>({
   renderLabel,
   style,
   isDark,
-  scrollProgress,
+  scrollProgress: suppliedScrollProgress,
 }: TabBarProps<T>) {
+  const reduceMotion = useReducedMotion();
+  const scrollProgress = reduceMotion ? undefined : suppliedScrollProgress;
   // Animated values
   const [underlineX] = useState(() => new Animated.Value(0));
   const [underlineWidth] = useState(() => new Animated.Value(0));
@@ -90,6 +93,12 @@ export default function TabBar<T extends string>({
 
       if (!metrics) return;
 
+      if (reduceMotion) {
+        underlineX.setValue(metrics.x);
+        underlineWidth.setValue(metrics.width);
+        return;
+      }
+
       Animated.parallel([
         Animated.spring(underlineX, {
           ...UNDERLINE_SPRING_CONFIG,
@@ -101,14 +110,18 @@ export default function TabBar<T extends string>({
         }),
       ]).start();
     },
-    [getUnderlineMetrics, underlineWidth, underlineX],
+    [getUnderlineMetrics, underlineWidth, underlineX, reduceMotion],
   );
 
   const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
     textMeasurements.current[index] = {
       width: event.nativeEvent.layout.width,
     };
-    checkInitialization();
+    if (initialized.current) {
+      setUnderlineProgress(tabs.indexOf(selected));
+    } else {
+      checkInitialization();
+    }
   };
 
   const onPressableLayout = (index: number) => (event: LayoutChangeEvent) => {
@@ -116,7 +129,11 @@ export default function TabBar<T extends string>({
       x: event.nativeEvent.layout.x,
       width: event.nativeEvent.layout.width,
     };
-    checkInitialization();
+    if (initialized.current) {
+      setUnderlineProgress(tabs.indexOf(selected));
+    } else {
+      checkInitialization();
+    }
   };
 
   const checkInitialization = () => {
@@ -169,12 +186,18 @@ export default function TabBar<T extends string>({
 
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,
-    color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.midTone,
+    color: isSelected
+      ? isDark
+        ? Colors.white
+        : Colors.black
+      : isDark
+        ? Colors.dark.secondaryText
+        : Colors.light.secondaryText,
     fontFamily: Fonts.REGULAR,
   });
 
   return (
-    <View style={[styles.tabs, style]}>
+    <View accessibilityRole="tablist" style={[styles.tabs, style]}>
       {tabs.map((tab, index) => {
         const isSelected = selected === tab;
         return (
@@ -223,6 +246,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   tabPressable: {
+    flexShrink: 1,
+    minHeight: MIN_TOUCH_TARGET,
+    justifyContent: "center",
     alignItems: "center",
     paddingTop: 10,
     paddingBottom: 4,

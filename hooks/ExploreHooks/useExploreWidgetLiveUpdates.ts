@@ -182,6 +182,7 @@ export function useExploreWidgetLiveUpdates({
 
               return {
                 ...current,
+                updatedAt: Date.now(),
                 response: {
                   ...current.response,
                   games: mergeExploreFavoriteGameUpdate(

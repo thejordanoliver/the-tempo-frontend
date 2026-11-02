@@ -162,6 +162,8 @@ export function HeaderRightActions({
         {!isPlayerScreen && onOpenInfo ? (
           <TouchableOpacity
             activeOpacity={activeOpacity}
+            accessibilityRole="button"
+            accessibilityLabel="Team information"
             onPress={onOpenInfo}
             style={styles.teamHeaderActionButton}
           >
@@ -238,6 +240,9 @@ export function HeaderRightActions({
 
         <TouchableOpacity
           activeOpacity={activeOpacity}
+          accessibilityRole="button"
+          accessibilityLabel="Profile actions"
+          accessibilityState={{ expanded: profileMenuVisible }}
           onPress={onToggleProfileMenu}
           style={[
             styles.profileHeaderActionButton,
@@ -270,6 +275,7 @@ export function HeaderRightActions({
     return (
       <TouchableOpacity
         activeOpacity={activeOpacity}
+        style={styles.headerActionButton}
         onPress={onSearchToggle}
         hitSlop={8}
         accessibilityRole="button"
@@ -365,6 +371,7 @@ export function HeaderRightActions({
     return (
       <TouchableOpacity
         activeOpacity={activeOpacity}
+        style={styles.headerActionButton}
         onPress={onOpenThemesSettings}
         hitSlop={8}
         accessibilityRole="button"
@@ -404,6 +411,9 @@ export function HeaderRightActions({
     return (
       <TouchableOpacity
         activeOpacity={activeOpacity}
+        accessibilityRole="button"
+        accessibilityLabel={isGrid ? "Use list layout" : "Use grid layout"}
+        style={styles.headerActionButton}
         onPress={onToggleLayout}
         hitSlop={8}
       >

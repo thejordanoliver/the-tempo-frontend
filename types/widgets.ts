@@ -128,5 +128,7 @@ export type ExploreWidgetDataCache = {
   key: string;
   userId: number;
   fetchedAt: number;
+  /** Last socket update; HTTP freshness still uses fetchedAt. */
+  updatedAt?: number;
   response: ExploreWidgetsResponse;
 };

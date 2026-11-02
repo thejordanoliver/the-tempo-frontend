@@ -1,3 +1,4 @@
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import {
   formatDate,
@@ -217,7 +218,18 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={getGameAccessibilityLabel(game, {
+        homeName,
+        awayName,
+        date: formattedDate,
+        time: formattedTime,
+      })}
+      accessibilityHint="Opens game details"
+    >
       {isChampionship ? (
         <LinearGradient
           colors={isDark ? ["#846f4a", "#50412a"] : ["#dbb145ff", "#CDA765"]}

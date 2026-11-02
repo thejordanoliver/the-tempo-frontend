@@ -24,7 +24,9 @@ export default function PollBlock({
   return (
     <View style={styles.pollContainer}>
       {/* Question */}
-      <Text style={styles.pollQuestion}>{poll.question}</Text>
+      <Text accessibilityRole="header" style={styles.pollQuestion}>
+        {poll.question}
+      </Text>
 
       {/* Options */}
       {poll.options.map((opt) => {
@@ -36,6 +38,18 @@ export default function PollBlock({
         return (
           <TouchableOpacity
             key={opt.id}
+            accessibilityRole="button"
+            accessibilityLabel={opt.text}
+            accessibilityState={{
+              selected: isSelected,
+              disabled: hasVoted || isExpired || voting,
+              busy: voting,
+            }}
+            accessibilityValue={
+              showResults
+                ? { text: `${pct} percent, ${opt.vote_count} votes` }
+                : undefined
+            }
             onPress={() => handleVote(opt.id)}
             disabled={hasVoted || isExpired || voting}
             activeOpacity={hasVoted || isExpired ? 1 : 0.7}

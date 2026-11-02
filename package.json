@@ -21,6 +21,7 @@
     "test:profile-forms": "tsx --test tests/editProfileSchema.test.ts",
     "android": "expo start --android",
     "ios": "expo start --ios",
+    "ios:device": "node ./scripts/run-ios-device.mjs",
     "web": "expo start --web",
     "lint": "expo lint",
     "test:navigation": "node --import tsx --test tests/tabStackRouteCoverage.test.ts",
@@ -30,6 +31,7 @@
   "dependencies": {
     "@expo-google-fonts/barlow-condensed": "^0.4.1",
     "@expo-google-fonts/oswald": "^0.4.2",
+    "@expo/ui": "~57.0.26",
     "@expo/vector-icons": "^15.0.2",
     "@gorhom/bottom-sheet": "^5.2.6",
     "@hookform/resolvers": "^5.9.1",
@@ -58,6 +60,7 @@
     "expo-video": "~57.0.5",
     "expo-video-thumbnails": "~57.0.2",
     "expo-web-browser": "~57.0.3",
+    "expo-widgets": "~57.0.27",
     "lottie-react-native": "~7.3.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",

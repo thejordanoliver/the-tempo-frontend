@@ -36,7 +36,9 @@ export const formStyles = (isDark: boolean) => {
 
   const focusBorder = isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)";
 
-  const subtleText = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)";
+  const subtleText = isDark
+    ? Colors.dark.secondaryText
+    : Colors.light.secondaryText;
 
   const divider = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)";
 
@@ -99,7 +101,7 @@ export const formStyles = (isDark: boolean) => {
     // ─── Inputs ──────────────────────────────────────────────────────────────
 
     input: {
-      height: INPUT_HEIGHT,
+      minHeight: INPUT_HEIGHT,
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: SPACING.lg,
@@ -119,6 +121,8 @@ export const formStyles = (isDark: boolean) => {
 
     inputText: {
       flex: 1,
+      minHeight: INPUT_HEIGHT,
+      paddingVertical: SPACING.md,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: text,

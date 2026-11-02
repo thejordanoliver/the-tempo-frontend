@@ -207,7 +207,7 @@ test("tab navigation and its bar respond to theme changes without remounting", (
       useSafeAreaInsets: () => ({ bottom: 20 }),
     },
     "contexts/NavigationBarInsetContext": {
-      NAVIGATION_BAR_ROW_HEIGHT: 60,
+      useNavigationBarRowHeight: () => 70,
       NavigationBarInsetContext: { Provider: "InsetProvider" },
     },
     "../../components/NavigationBar": { default: "NavigationBar" },

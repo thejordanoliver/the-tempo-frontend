@@ -30,8 +30,6 @@ import BaseballFieldPlay, {
 const VIEWBOX_WIDTH = 600;
 const INITIAL_FIELD_HORIZONTAL_INSET = 26;
 
-type PlayBadgeVariant = "hit" | "homeRun" | "strikeout" | "walk";
-
 const PARTICIPANT_LABELS: Record<string, string> = {
   batter: "Batter",
   pitcher: "Pitcher",
@@ -163,81 +161,6 @@ function getPlayParticipants(participants?: BaseballPlayParticipant[]) {
   return unique;
 }
 
-function getPlaySearchText(play: BaseballPlay): string {
-  return [
-    play.text,
-    play.type?.text,
-    play.type?.type,
-    play.alternativeType?.text,
-    play.alternativeType?.type,
-    play.alternativeType?.alternativeText,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-}
-
-function getPlayBadgeVariant(
-  play?: BaseballPlay | null,
-): PlayBadgeVariant | null {
-  if (!play) {
-    return null;
-  }
-
-  const text = getPlaySearchText(play);
-  const playTypes = [play.type?.type, play.alternativeType?.type]
-    .filter((value): value is string => Boolean(value))
-    .map((value) => value.toLowerCase());
-  const resultCount = play.resultCount ?? play.pitchCount;
-  const isStrikeType = playTypes.some((type) =>
-    ["strike-looking", "strike-swinging"].includes(type),
-  );
-  const isBallType = playTypes.includes("ball");
-
-  if (
-    playTypes.includes("home-run") ||
-    text.includes("home run") ||
-    text.includes("home-run") ||
-    text.includes("homered")
-  ) {
-    return "homeRun";
-  }
-
-  if (
-    (isStrikeType && (resultCount?.strikes ?? 0) >= 3) ||
-    text.includes("strikeout") ||
-    text.includes("struck out") ||
-    text.includes("struckout")
-  ) {
-    return "strikeout";
-  }
-
-  if (
-    playTypes.includes("automatic-ball---ibb") ||
-    (isBallType && (resultCount?.balls ?? 0) >= 4) ||
-    text.includes("intentional walk") ||
-    text.includes("walked")
-  ) {
-    return "walk";
-  }
-
-  if (
-    playTypes.some((type) =>
-      ["single", "bunt-single", "double", "triple"].includes(type),
-    ) ||
-    text.includes("single") ||
-    text.includes("singled") ||
-    text.includes("double") ||
-    text.includes("doubled") ||
-    text.includes("triple") ||
-    text.includes("tripled")
-  ) {
-    return "hit";
-  }
-
-  return null;
-}
-
 export function getLatestDescriptivePlay(
   plays: BaseballPlay[],
   lastPlay?: BaseballPlay | null,
@@ -337,8 +260,6 @@ function PlayByPlay({
       playKey: descriptivePlay?.id ?? play.id,
 
       playText: descriptivePlay?.text?.trim() || null,
-
-      playBadgeVariant: getPlayBadgeVariant(descriptivePlay),
 
       participants: getPlayParticipants(participantSource ?? undefined),
 

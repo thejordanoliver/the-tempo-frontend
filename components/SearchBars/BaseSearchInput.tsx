@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { forwardRef } from "react";
 import { StyleSheet, TextInput, TextInputProps } from "react-native";
@@ -13,9 +13,13 @@ const BaseSearchInput = forwardRef<TextInput, BaseSearchInputProps>(
     return (
       <TextInput
         ref={ref}
+        accessibilityRole="search"
         {...props}
+        accessibilityLabel={props.accessibilityLabel ?? placeholder}
         placeholder={placeholder}
-        placeholderTextColor={Colors.midTone}
+        placeholderTextColor={
+          isDark ? Colors.dark.secondaryText : Colors.light.secondaryText
+        }
         style={[styles.input, getThemeStyle(isDark), style]}
         autoCapitalize={props.autoCapitalize ?? "none"}
       />
@@ -28,7 +32,8 @@ BaseSearchInput.displayName = "BaseSearchInput";
 const styles = StyleSheet.create({
   input: {
     width: "100%",
-    height: 40,
+    minHeight: MIN_TOUCH_TARGET,
+    paddingVertical: 10,
     paddingHorizontal: 10,
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 8,

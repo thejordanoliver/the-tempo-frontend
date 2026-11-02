@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 const TABLET_BREAKPOINT = 768;
@@ -51,8 +51,8 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     headerActionButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: isTablet ? 46 : 40,
-      height: isTablet ? 46 : 40,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       borderRadius: isTablet ? 23 : 20,
     },
 
@@ -79,8 +79,8 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     exploreHeaderActionButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: isTablet ? 38 : 34,
-      height: isTablet ? 38 : 34,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       borderRadius: isTablet ? 19 : 17,
     },
 
@@ -101,6 +101,7 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     },
 
     leagueHeaderButton: {
+      minHeight: MIN_TOUCH_TARGET,
       zIndex: 2,
       flexDirection: "row",
       alignItems: "center",
@@ -125,6 +126,10 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     },
 
     teamHeaderActionButton: {
+      minWidth: MIN_TOUCH_TARGET,
+      minHeight: MIN_TOUCH_TARGET,
+      alignItems: "center",
+      justifyContent: "center",
       padding: isTablet ? 10 : 8,
     },
 
@@ -253,7 +258,7 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     /* ---------------------------------------------------------------- */
 
     profileHeaderPlaceholder: {
-      width: isTablet ? 40 : 32,
+      width: MIN_TOUCH_TARGET,
     },
 
     profileMenuAnchor: {
@@ -261,22 +266,22 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
       zIndex: 50,
       alignItems: "center",
       justifyContent: "center",
-      width: isTablet ? 40 : 32,
-      height: isTablet ? 40 : 32,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       elevation: 50,
     },
 
     profileHeaderActionButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: isTablet ? 40 : 32,
-      height: isTablet ? 40 : 32,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
       borderRadius: isTablet ? 20 : 16,
     },
 
     profileSubmenu: {
       position: "absolute",
-      top: isTablet ? 46 : 38,
+      top: MIN_TOUCH_TARGET + 4,
       right: 0,
       width: isTablet ? 180 : 150,
       borderWidth: StyleSheet.hairlineWidth,
@@ -301,6 +306,7 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     },
 
     profileSubmenuItem: {
+      minHeight: MIN_TOUCH_TARGET,
       flexDirection: "row",
       alignItems: "center",
       gap: isTablet ? 10 : 8,
@@ -337,8 +343,8 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
       position: "relative",
       alignItems: "center",
       justifyContent: "center",
-      width: isTablet ? 40 : 32,
-      height: isTablet ? 40 : 32,
+      width: MIN_TOUCH_TARGET,
+      height: MIN_TOUCH_TARGET,
     },
 
     notificationBadge: {

@@ -47,7 +47,9 @@ export default function ForgotPasswordForm({
     <AuthFormLayout contentContainerStyle={[styles.content, { padding: 12 }]}>
       <View style={styles.header}>
         <Text style={styles.kicker}>Step {STEPS[step].number} of 3</Text>
-        <Text style={styles.title}>Forgot Password</Text>
+        <Text accessibilityRole="header" style={styles.title}>
+          Forgot Password
+        </Text>
         <Text style={styles.subtitle}>{STEPS[step].subtitle}</Text>
       </View>
       <View style={styles.form}>
@@ -95,6 +97,7 @@ export default function ForgotPasswordForm({
             </Button>
             <Pressable
               onPress={() => form.requestCode({ isResend: true })}
+              accessibilityState={{ disabled: isBusy || resendCooldown > 0 }}
               disabled={isBusy || resendCooldown > 0}
               accessibilityRole="button"
               style={styles.linkButton}
@@ -128,6 +131,12 @@ export default function ForgotPasswordForm({
                   accessibilityLabel={
                     showPassword ? "Hide password" : "Show password"
                   }
+                  style={{
+                    minWidth: 48,
+                    minHeight: 48,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                   hitSlop={8}
                 >
                   <Ionicons
@@ -156,17 +165,27 @@ export default function ForgotPasswordForm({
           </>
         )}
         {!!form.globalError && (
-          <Text selectable style={styles.errorText}>
+          <Text
+            selectable
+            accessibilityRole="alert"
+            accessibilityLiveRegion="polite"
+            style={styles.errorText}
+          >
             {form.globalError}
           </Text>
         )}
         {!!form.success && (
-          <Text selectable style={styles.successText}>
+          <Text
+            selectable
+            accessibilityLiveRegion="polite"
+            style={styles.successText}
+          >
             {form.success}
           </Text>
         )}
         <Pressable
           onPress={onBack}
+          accessibilityState={{ disabled: isRequestBusy }}
           disabled={isRequestBusy}
           accessibilityRole="button"
           style={({ pressed }) => [

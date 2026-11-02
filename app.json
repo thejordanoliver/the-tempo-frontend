@@ -11,7 +11,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.jordanoliver.thetempo",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocalNetworkUsageDescription": "Tempo connects to your Mac on the local network to load the app during development."
       }
     },
     "android": {
@@ -53,7 +54,60 @@
       ],
       "@react-native-community/datetimepicker",
       "expo-status-bar",
-      "expo-secure-store"
+      "expo-secure-store",
+      "./plugins/withDeviceWidgetEntitlements",
+      [
+        "expo-widgets",
+        {
+          "enablePushNotifications": false,
+          "widgets": [
+            {
+              "name": "TempoFavoriteGames",
+              "displayName": "Favorite Games",
+              "description": "Scores and upcoming games for your favorite teams on Tempo.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "systemMedium",
+                  "systemLarge"
+                ],
+                "configuration": {
+                  "title": "Favorite Games",
+                  "description": "Show all favorite teams or choose a league.",
+                  "parameters": {
+                    "league": {
+                      "title": "League",
+                      "type": "enum",
+                      "default": "all",
+                      "values": [
+                        { "name": "All Leagues", "value": "all" },
+                        { "name": "NBA", "value": "nba" },
+                        { "name": "WNBA", "value": "wnba" },
+                        { "name": "Men’s College Basketball", "value": "mcbb" },
+                        {
+                          "name": "Women’s College Basketball",
+                          "value": "wcbb"
+                        },
+                        { "name": "MLB", "value": "mlb" },
+                        { "name": "College Baseball", "value": "cb" },
+                        { "name": "NFL", "value": "nfl" },
+                        { "name": "College Football", "value": "cfb" },
+                        { "name": "UFL", "value": "ufl" },
+                        { "name": "NHL", "value": "nhl" },
+                        { "name": "Men’s College Volleyball", "value": "mcvb" },
+                        {
+                          "name": "Women’s College Volleyball",
+                          "value": "wcvb"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

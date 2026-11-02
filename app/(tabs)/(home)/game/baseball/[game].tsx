@@ -106,18 +106,53 @@ export default function GameDetailsScreen(
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
-  const game = useMemo(() => {
+  const routeGame = useMemo(() => {
     return (
       props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
     );
   }, [params.data, params.game, props.game]);
 
-  const LEAGUE = game?.league?.code ?? "mlb";
+  const routeLeague =
+    getFirstParam(params.league) ?? getFirstParam(params.leagueId);
+  const LEAGUE =
+    routeGame?.league?.code ??
+    (routeLeague && ["mlb", "cb", "sb"].includes(routeLeague)
+      ? routeLeague
+      : "mlb");
   const isCB = LEAGUE === "cb";
   const isSB = LEAGUE === "sb";
-  const gameId = Number(game?.id) ?? 0;
+  const parsedGameId = Number(routeGame?.id ?? getFirstParam(params.game));
+  const gameId =
+    Number.isFinite(parsedGameId) && parsedGameId > 0 ? parsedGameId : 0;
 
   const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
+
+  // Home Screen widgets open with an id and league, without a serialized card.
+  const game = useMemo(() => {
+    if (routeGame) return routeGame;
+    if (!score) return undefined;
+    return {
+      id: Number(score.gameId),
+      league: { code: LEAGUE },
+      date: score.date,
+      headline: details?.headline,
+      attendance: details?.attendance,
+      home: {
+        ...score.home,
+        id: Number(score.home.id),
+        homeRank: score.home.rank,
+        primaryColor: undefined,
+        secondaryColor: undefined,
+      },
+      away: {
+        ...score.away,
+        id: Number(score.away.id),
+        awayRank: score.away.rank,
+        primaryColor: undefined,
+        secondaryColor: undefined,
+      },
+    };
+  }, [LEAGUE, details?.attendance, details?.headline, routeGame, score]);
 
   const gameDateObj = score?.date ? new Date(score.date) : null;
   const gameDate = safeDate(game?.date);

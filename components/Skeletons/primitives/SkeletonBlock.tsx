@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { ReactNode, useEffect, useState } from "react";
@@ -26,11 +27,16 @@ export default function SkeletonBlock({
   radius = 6,
   style,
 }: SkeletonBlockProps) {
+  const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const [opacity] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
+    if (reduceMotion) {
+      opacity.setValue(0.7);
+      return;
+    }
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(opacity, {
@@ -54,10 +60,14 @@ export default function SkeletonBlock({
       animation.stop();
       opacity.stopAnimation();
     };
-  }, [opacity]);
+  }, [opacity, reduceMotion]);
 
   return (
     <Animated.View
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      aria-hidden
       style={[
         styles.block,
         {

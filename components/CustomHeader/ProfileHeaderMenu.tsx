@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ export function ProfileHeaderMenu({
   onLogout,
   onEdit,
 }: ProfileHeaderMenuProps) {
+  const reduceMotion = useReducedMotion();
   const [progress] = useState(() => new Animated.Value(0));
   const [shouldRender, setShouldRender] = useState(visible);
 
@@ -37,6 +39,13 @@ export function ProfileHeaderMenu({
 
     void Promise.resolve().then(() => {
       if (cancelled) return;
+
+      if (reduceMotion) {
+        progress.stopAnimation();
+        progress.setValue(visible ? 1 : 0);
+        setShouldRender(visible);
+        return;
+      }
 
       if (visible) {
         setShouldRender(true);
@@ -67,7 +76,7 @@ export function ProfileHeaderMenu({
     return () => {
       cancelled = true;
     };
-  }, [progress, visible]);
+  }, [progress, visible, reduceMotion]);
 
   if (!shouldRender) {
     return null;
@@ -75,6 +84,9 @@ export function ProfileHeaderMenu({
 
   return (
     <Animated.View
+      accessibilityElementsHidden={!visible}
+      importantForAccessibility={visible ? "auto" : "no-hide-descendants"}
+      aria-hidden={!visible}
       pointerEvents={visible ? "auto" : "none"}
       style={[
         styles.profileSubmenu,
@@ -109,6 +121,8 @@ export function ProfileHeaderMenu({
         <TouchableOpacity
           activeOpacity={activeOpacity}
           style={styles.profileSubmenuItem}
+          accessibilityRole="button"
+          accessibilityLabel="Settings"
           onPress={onSettings}
         >
           <View style={styles.profileSubmenuIconWrap}>
@@ -130,6 +144,8 @@ export function ProfileHeaderMenu({
           <TouchableOpacity
             activeOpacity={activeOpacity}
             style={styles.profileSubmenuItem}
+            accessibilityRole="button"
+            accessibilityLabel="Log out"
             onPress={onLogout}
           >
             <View style={styles.profileSubmenuIconWrap}>

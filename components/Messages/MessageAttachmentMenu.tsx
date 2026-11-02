@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -23,6 +24,7 @@ function MessageAttachmentMenu({
   onPickImage,
   onOpenGifPicker,
 }: Props) {
+  const reduceMotion = useReducedMotion();
   const styles = useMemo(() => attachmentMenuStyles(isDark), [isDark]);
 
   const [opacity] = useState(() => new Animated.Value(0));
@@ -36,6 +38,17 @@ function MessageAttachmentMenu({
 
     void Promise.resolve().then(() => {
       if (cancelled) return;
+
+      if (reduceMotion) {
+        opacity.stopAnimation();
+        scale.stopAnimation();
+        translateY.stopAnimation();
+        opacity.setValue(visible ? 1 : 0);
+        scale.setValue(1);
+        translateY.setValue(0);
+        setShouldRender(visible);
+        return;
+      }
 
       if (visible) {
         setShouldRender(true);
@@ -99,7 +112,7 @@ function MessageAttachmentMenu({
     return () => {
       cancelled = true;
     };
-  }, [opacity, scale, translateY, visible]);
+  }, [opacity, scale, translateY, visible, reduceMotion]);
 
   const handlePickImage = useCallback(() => {
     onPickImage();
@@ -113,6 +126,9 @@ function MessageAttachmentMenu({
 
   return (
     <Animated.View
+      accessibilityElementsHidden={!visible}
+      importantForAccessibility={visible ? "auto" : "no-hide-descendants"}
+      aria-hidden={!visible}
       pointerEvents={visible ? "auto" : "none"}
       style={[
         styles.menu,
@@ -123,6 +139,8 @@ function MessageAttachmentMenu({
       ]}
     >
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel="Add a photo from your library"
         onPress={handlePickImage}
         style={styles.menuItem}
         activeOpacity={activeOpacity}
@@ -144,6 +162,8 @@ function MessageAttachmentMenu({
       <View style={styles.separator} />
 
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel="Search for a GIF"
         onPress={handleOpenGifPicker}
         style={styles.menuItem}
         activeOpacity={activeOpacity}

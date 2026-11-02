@@ -102,11 +102,28 @@ export default function GameDetailsScreen(
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
-  const game = useMemo(() => {
+  const routeGame = useMemo(() => {
     return (
       props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
     );
   }, [params.data, params.game, props.game]);
+
+  const LEAGUE = routeGame?.league?.code ?? "nhl";
+  const parsedGameId = Number(routeGame?.id ?? getFirstParam(params.game));
+  const gameId =
+    Number.isFinite(parsedGameId) && parsedGameId > 0 ? parsedGameId : 0;
+  const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
+  const game = useMemo(() => {
+    if (routeGame) return routeGame;
+    if (!score) return undefined;
+    return {
+      id: Number(score.gameId),
+      league: { code: LEAGUE },
+      date: score.date ?? "",
+      home: { ...score.home, id: Number(score.home.id) },
+      away: { ...score.away, id: Number(score.away.id) },
+    };
+  }, [LEAGUE, routeGame, score]);
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
@@ -117,9 +134,6 @@ export default function GameDetailsScreen(
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
   const showGameChat = useGameChatAvailability(gameDateObj);
-
-  const LEAGUE = game?.league?.code ?? "nhl";
-  const gameId = game?.id ?? 0;
 
   const home = game?.home;
   const away = game?.away;
@@ -159,7 +173,6 @@ export default function GameDetailsScreen(
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
   const {
     votes: liveVotes,
     castVote: castLiveVote,

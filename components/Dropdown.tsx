@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { BlurView } from "expo-blur";
 import { useMemo, useState } from "react";
 import {
@@ -20,6 +21,7 @@ export type DropdownOption = {
 
 type DropdownProps = {
   options: DropdownOption[];
+  accessibilityLabel?: string;
   selectedValue?: string;
   onSelect: (value: string) => void;
   isDark: boolean;
@@ -29,12 +31,14 @@ type DropdownProps = {
 
 export default function Dropdown({
   options,
+  accessibilityLabel = "Select option",
   selectedValue,
   onSelect,
   isDark,
   width = 180,
   style,
 }: DropdownProps) {
+  const reduceMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
   const [anim] = useState(() => new Animated.Value(0));
 
@@ -69,7 +73,7 @@ export default function Dropdown({
 
     Animated.timing(anim, {
       toValue: 1,
-      duration: 250,
+      duration: reduceMotion ? 0 : 250,
       useNativeDriver: true,
     }).start();
   };
@@ -79,7 +83,7 @@ export default function Dropdown({
 
     Animated.timing(anim, {
       toValue: 0,
-      duration: 180,
+      duration: reduceMotion ? 0 : 180,
       useNativeDriver: true,
     }).start(({ finished }) => {
       if (finished) {
@@ -122,6 +126,9 @@ export default function Dropdown({
         return (
           <TouchableOpacity
             key={option.value}
+            accessibilityRole="button"
+            accessibilityLabel={option.label}
+            accessibilityState={{ selected: isSelected }}
             activeOpacity={0.7}
             onPress={() => handleSelect(option.value)}
             style={[
@@ -131,7 +138,6 @@ export default function Dropdown({
             ]}
           >
             <Text
-              numberOfLines={1}
               style={[
                 styles.optionText,
                 isSelected && styles.selectedOptionText,
@@ -144,7 +150,11 @@ export default function Dropdown({
               <Ionicons
                 name="checkmark"
                 size={18}
-                color={isDark ? Colors.dark.blue : Colors.light.blue}
+                color={
+                  isDark
+                    ? Colors.dark.secondaryText
+                    : Colors.light.actionBackground
+                }
               />
             ) : null}
           </TouchableOpacity>
@@ -157,12 +167,15 @@ export default function Dropdown({
     <View style={[styles.container, style]}>
       <TouchableOpacity
         activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityValue={{ text: selectedLabel }}
+        accessibilityState={{ expanded: visible }}
+        onAccessibilityEscape={closeDropdown}
         onPress={toggleDropdown}
         style={styles.toggleButton}
       >
-        <Text numberOfLines={1} style={styles.selectedLabel}>
-          {selectedLabel}
-        </Text>
+        <Text style={styles.selectedLabel}>{selectedLabel}</Text>
 
         <Animated.View
           style={[
@@ -182,6 +195,7 @@ export default function Dropdown({
 
       {visible ? (
         <Animated.View
+          onAccessibilityEscape={closeDropdown}
           style={[
             styles.dropdownPanel,
             {
@@ -224,7 +238,7 @@ export const dropDownStyles = ({
       alignItems: "center",
       justifyContent: "space-between",
       width: "100%",
-      minHeight: 42,
+      minHeight: MIN_TOUCH_TARGET,
       paddingVertical: 8,
       paddingHorizontal: 16,
       borderWidth: 1,
@@ -247,7 +261,8 @@ export const dropDownStyles = ({
 
     dropdownPanel: {
       position: "absolute",
-      top: 48,
+      top: "100%",
+      marginTop: 6,
       left: 0,
       zIndex: 9999,
       width,
@@ -301,7 +316,7 @@ export const dropDownStyles = ({
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      minHeight: 44,
+      minHeight: MIN_TOUCH_TARGET,
       paddingVertical: 12,
       paddingHorizontal: 16,
     },
@@ -329,6 +344,6 @@ export const dropDownStyles = ({
     },
 
     selectedOptionText: {
-      color: isDark ? Colors.dark.blue : Colors.light.blue,
+      color: isDark ? Colors.dark.secondaryText : Colors.light.actionBackground,
     },
   });

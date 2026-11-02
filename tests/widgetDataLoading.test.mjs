@@ -6,7 +6,7 @@ import ts from "typescript";
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-function setup(initialFavorites = {}) {
+function setup(initialFavorites = {}, deviceSupported = false) {
   const slots = [];
   const effects = [];
   const requests = [];
@@ -104,10 +104,12 @@ function setup(initialFavorites = {}) {
         liveEnabled = enabled;
       },
     },
+    "hooks/useDeviceGameWidgets": { useDeviceGameWidgets() {} },
+    "services/deviceGameWidgets": { deviceGameWidgetsSupported: deviceSupported },
     "utils/widgets/exploreFavoriteGames": {
       prepareExploreFavoriteGames: (games) => games,
     },
-    "types/widgets": { EXPLORE_WIDGET_LEAGUES: ["nba"] },
+    "types/widgets": { EXPLORE_WIDGET_LEAGUES: ["nba", "nfl"] },
     "services/exploreWidgetsApi": {
       getExploreWidgets: (options) =>
         new Promise((resolve, reject) =>
@@ -254,6 +256,49 @@ test("the widget board cancels invisible requests, rejects late results and rest
     await flush();
     assert.equal(h.requests.length, 2);
     assert.equal(h.liveEnabled, true);
+  } finally {
+    h.stop();
+  }
+});
+
+test("native device widgets load every supported favorite league without opening Explore", async () => {
+  const h = setup({ favorites: ["nba:1", "nfl:30"] }, true);
+  try {
+    await flush();
+    assert.equal(h.requests.length, 1);
+    assert.equal(Array.from(h.requests[0].leagues).join(","), "nba,nfl");
+    assert.equal(h.liveEnabled, true);
+    h.requests[0].resolve(emptyResponse);
+    await flush();
+    h.state.setBoardVisible(false);
+    await flush();
+    assert.equal(h.liveEnabled, true);
+    h.app("background");
+    await flush();
+    assert.equal(h.liveEnabled, false);
+  } finally {
+    h.stop();
+  }
+});
+
+test("device widgets discard a previous account's late request", async () => {
+  const h = setup({}, true);
+  try {
+    await flush();
+    const previous = h.requests[0];
+    h.updateFavorites({ userId: 2, favorites: ["nfl:30"] });
+    await flush();
+    assert.equal(previous.signal.aborted, true);
+    previous.resolve({
+      ...emptyResponse,
+      games: [{ league: "nba", favoriteTeamKeys: ["nba:1"] }],
+    });
+    await flush();
+    assert.equal(h.state.games.length, 0);
+    assert.equal(h.requests.length, 2);
+    h.requests[1].resolve(emptyResponse);
+    await flush();
+    assert.equal(h.state.games.length, 0);
   } finally {
     h.stop();
   }

@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -45,6 +46,7 @@ function HomeAwayTabBar({
   showHomeAwayLabel = false,
   showAllTab = true,
 }: HomeAwayTabBarProps) {
+  const reduceMotion = useReducedMotion();
   const styles = useMemo(() => homeAwayTabBarStyles(isDark), [isDark]);
 
   const [underlineX] = useState(() => new Animated.Value(0));
@@ -78,6 +80,11 @@ function HomeAwayTabBar({
       return;
     }
 
+    if (reduceMotion) {
+      underlineX.setValue(selectedIndex * tabWidth);
+      return;
+    }
+
     const animation = Animated.timing(underlineX, {
       toValue: selectedIndex * tabWidth,
       duration: 200,
@@ -89,7 +96,7 @@ function HomeAwayTabBar({
     return () => {
       animation.stop();
     };
-  }, [selected, tabWidth, tabs, underlineX]);
+  }, [selected, tabWidth, tabs, underlineX, reduceMotion]);
 
   const handleLayout = useCallback((event: LayoutChangeEvent) => {
     const width = event.nativeEvent.layout.width;

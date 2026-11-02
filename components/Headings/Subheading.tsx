@@ -47,7 +47,9 @@ export default function Subheading({
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.heading, style]}>{children}</Text>
+      <Text accessibilityRole="header" style={[styles.heading, style]}>
+        {children}
+      </Text>
     </View>
   );
 }

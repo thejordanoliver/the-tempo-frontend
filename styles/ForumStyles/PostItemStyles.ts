@@ -181,6 +181,7 @@ export function PostItemStyles(isDark: boolean) {
 
     interactionWrapper: {
       flexDirection: "row",
+      flexWrap: "wrap",
       alignItems: "center",
       justifyContent: "space-between",
       width: "100%",
@@ -197,8 +198,8 @@ export function PostItemStyles(isDark: boolean) {
       alignItems: "center",
       justifyContent: "center",
       gap: 5,
-      minWidth: 44,
-      minHeight: 40,
+      minWidth: 48,
+      minHeight: 48,
       paddingHorizontal: 4,
     },
 

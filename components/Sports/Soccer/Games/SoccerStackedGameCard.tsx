@@ -1,3 +1,4 @@
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
@@ -218,7 +219,18 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={getGameAccessibilityLabel(game, {
+        homeName,
+        awayName,
+        date: formattedDate,
+        time: formattedTime,
+      })}
+      accessibilityHint="Opens game details"
+    >
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

@@ -1,7 +1,7 @@
 import { Tabs, usePathname } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-  NAVIGATION_BAR_ROW_HEIGHT,
+  useNavigationBarRowHeight,
   NavigationBarInsetContext,
 } from "contexts/NavigationBarInsetContext";
 import NavigationBar from "../../components/NavigationBar";
@@ -11,6 +11,7 @@ export default function TabLayout() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
+  const navigationBarRowHeight = useNavigationBarRowHeight();
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
   const hideNavigationBar =
@@ -20,7 +21,7 @@ export default function TabLayout() {
 
   return (
     <NavigationBarInsetContext.Provider
-      value={hideNavigationBar ? 0 : NAVIGATION_BAR_ROW_HEIGHT + insets.bottom}
+      value={hideNavigationBar ? 0 : navigationBarRowHeight + insets.bottom}
     >
       <Tabs
         tabBar={(props) =>
