@@ -1,7 +1,7 @@
 import {
   FanPrediction,
   GameLiveChatOverlay,
-  GameLocation,
+  Venue,
   GameTeamStats,
   Highlights,
   LastFiveGames,
@@ -464,7 +464,7 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
-            <GameLocation
+            <Venue
               venueImage={venueImage}
               venueName={venueName}
               location={venueLocation}

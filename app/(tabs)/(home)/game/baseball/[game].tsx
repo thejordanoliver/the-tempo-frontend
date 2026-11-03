@@ -4,7 +4,7 @@ import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/Play
 import {
   FanPrediction,
   GameLiveChatOverlay,
-  GameLocation,
+  Venue,
   GameTeamStats,
   HeadCoaches,
   Highlights,
@@ -617,7 +617,7 @@ export default function GameDetailsScreen(
 
             <Officials officials={officials} isDark={isDark} state={state} />
 
-            <GameLocation
+            <Venue
               venueImage={venueImage}
               venueName={venueName}
               location={venueLocation}

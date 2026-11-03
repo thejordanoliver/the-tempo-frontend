@@ -2,7 +2,7 @@ import { CustomHeader } from "@/components/CustomHeader";
 import {
   FanPrediction,
   GameLiveChatOverlay,
-  GameLocation,
+  Venue,
 } from "@/components/Sports/Basketball/GameDetails";
 import { useLiveVotes } from "@/hooks/FanPredictionHooks/useLiveVotes";
 import { useWeather } from "@/hooks/useWeather";
@@ -351,7 +351,7 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
-            <GameLocation
+            <Venue
               venueImage={venueImage}
               venueName={venueName}
               location={venueLocation}

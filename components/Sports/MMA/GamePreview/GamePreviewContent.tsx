@@ -1,4 +1,4 @@
-import { GameLocation } from "@/components/Sports/Basketball/GameDetails";
+import { Venue } from "@/components/Sports/Basketball/GameDetails";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
@@ -120,7 +120,7 @@ export default function GamePreviewContent({
           isDark={isDark}
         />
 
-        <GameLocation
+        <Venue
           venueImage={venueImage}
           venueName={venueName}
           location={venueLocation}

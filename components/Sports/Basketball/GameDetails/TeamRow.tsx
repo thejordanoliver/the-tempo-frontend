@@ -86,8 +86,10 @@ export const TeamRow = ({
   /* -----------------------------------------------------
    * Render Helpers
    * --------------------------------------------------- */
-  const renderTimeouts = (remaining: number) => {
+  const renderTimeouts = (remaining: number, league: string) => {
     const total = 7;
+
+    if (league !== "nba" && league !== "wnba") return null;
 
     return (
       <View style={{ flexDirection: "row", marginTop: 4 }}>
@@ -159,7 +161,7 @@ export const TeamRow = ({
 
           {inProgress && timeouts != null && (
             <View style={styles.timeoutsContainer}>
-              {renderTimeouts(timeouts)}
+              {renderTimeouts(timeouts, league)}
             </View>
           )}
         </View>

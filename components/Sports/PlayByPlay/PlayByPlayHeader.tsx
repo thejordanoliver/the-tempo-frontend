@@ -19,6 +19,9 @@ export default function PlayByPlayHeader({
   isLive = false,
 }: Props) {
   const styles = PlayByPlayStyles(isDark);
+  const displayTitle = title
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2");
 
   return (
     <View style={styles.headerContainer}>
@@ -50,7 +53,7 @@ export default function PlayByPlayHeader({
             </View>
           ) : null}
           <Text style={styles.titleText} numberOfLines={2}>
-            {title}
+            {displayTitle}
           </Text>
         </View>
       </View>

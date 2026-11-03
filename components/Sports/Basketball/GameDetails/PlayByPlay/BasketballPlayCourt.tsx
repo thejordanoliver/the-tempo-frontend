@@ -1,11 +1,11 @@
 import PlayLocationPulse from "components/Sports/PlayByPlay/PlayLocationPulse";
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
 import { useBasketballAnimation } from "hooks/BasketballHooks/useBasketballAnimation";
 import type { Play } from "hooks/BasketballHooks/useBasketballGameDetails";
 import { memo, useMemo } from "react";
 import { View, type ImageSourcePropType } from "react-native";
 import Animated, { useAnimatedProps } from "react-native-reanimated";
-import { Circle, Ellipse, G, Path, Text as SvgText } from "react-native-svg";
+import { Circle, Ellipse, G, Path } from "react-native-svg";
 import { basketballAnimationScene } from "utils/sports/basketball/basketballAnimationScene";
 import { projectBasketballCourtPoint as project } from "utils/sports/basketball/basketballCourtGeometry";
 import BasketballCourt, { BasketballNet } from "./BasketballCourt";
@@ -113,17 +113,7 @@ function BasketballPlayCourt({
         ? homeColor
         : awayColor
       : markerColor;
-  const textColor = isDark ? Colors.white : Colors.black;
   const missedShot = scene.isShot && !scene.made && !scene.blocked;
-  const result = scene.isShot
-    ? scene.blocked
-      ? "BLOCKED"
-      : scene.made
-        ? `+${scene.points}`
-        : "MISS"
-    : scene.stolen
-      ? "STEAL / TURNOVER"
-      : scene.label.toUpperCase();
   const point = scene.point;
   return (
     <View style={{ width: "100%" }}>
@@ -227,19 +217,6 @@ function BasketballPlayCourt({
                   y={endY - 14}
                   isDark={isDark}
                 />
-              ) : scene.blocked ? (
-                <SvgText
-                  x={endX + (scene.home ? -12 : 12)}
-                  y={endY - 12}
-                  textAnchor={scene.home ? "end" : "start"}
-                  fill={textColor}
-                  stroke={isDark ? Colors.black : Colors.white}
-                  strokeWidth={0.3}
-                  fontWeight="bold"
-                  fontSize={17}
-                >
-                  {result}
-                </SvgText>
               ) : null}
             </G>
           ) : null}
@@ -291,22 +268,7 @@ function BasketballPlayCourt({
                   y={(point?.y ?? 140) - 18}
                   isDark={isDark}
                 />
-              ) : (
-                <SvgText
-                  x={
-                    point?.x ??
-                    (layout === "half" ? (scene.home ? 730 : 270) : 500)
-                  }
-                  y={(point?.y ?? 140) - 18}
-                  textAnchor="middle"
-                  fill={textColor}
-                  fontFamily={Fonts.MEDIUM}
-                  letterSpacing={2}
-                  fontSize={20}
-                >
-                  {result}
-                </SvgText>
-              )}
+              ) : null}
             </G>
           )}
         </G>

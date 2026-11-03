@@ -48,7 +48,7 @@ for (const id of [401234567, "401234567"]) {
         "@/components/Sports/Basketball/GameDetails": {
           FanPrediction,
           GameLiveChatOverlay: "GameLiveChatOverlay",
-          GameLocation: "GameLocation",
+          Venue: "Venue",
         },
         "@/hooks/useWeather": { useWeather: () => ({}) },
         "@/utils/common/dateUtils": {
