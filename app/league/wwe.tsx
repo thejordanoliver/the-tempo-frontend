@@ -36,6 +36,7 @@ export default function WweLeagueScreen() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reload, setReload] = useState(0);
   const generation = useRef(0);
   const busy = useRef(false);
 
@@ -74,7 +75,7 @@ export default function WweLeagueScreen() {
         busy.current = false;
       });
     return () => { generation.current += 1; };
-  }, [query, brand]);
+  }, [query, brand, reload]);
 
   const loadMore = useCallback(() => {
     if (loading || busy.current || rows.length >= total || error) return;
@@ -162,10 +163,12 @@ export default function WweLeagueScreen() {
         onEndReachedThreshold={0.4}
         contentContainerStyle={styles.list}
         ListEmptyComponent={!loading ? (
-          <Text style={[styles.message, { color: palette.text }]}>{error || "No superstars found."}</Text>
+          <Pressable disabled={!error} onPress={() => setReload((value) => value + 1)}>
+            <Text style={[styles.message, { color: palette.text }]}>{error ? error + " Tap to retry." : "No superstars found."}</Text>
+          </Pressable>
         ) : <ActivityIndicator style={styles.message} />}
         ListFooterComponent={loadingMore ? <ActivityIndicator style={styles.message} /> : error && rows.length > 0 ?
-          <Pressable onPress={loadMore}><Text style={[styles.message, { color: palette.text }]}>{error} Tap to retry.</Text></Pressable> : null}
+          <Pressable onPress={() => setReload((value) => value + 1)}><Text style={[styles.message, { color: palette.text }]}>{error} Tap to retry.</Text></Pressable> : null}
         keyboardShouldPersistTaps="handled"
       />
     </View>
