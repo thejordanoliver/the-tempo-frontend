@@ -152,6 +152,27 @@ export default function LeagueScreen() {
         keyExtractor={(league) => league}
         renderItem={renderLeague}
         ListEmptyComponent={renderEmptyResults}
+        ListFooterComponent={
+          !searchQuery.trim() || "wwe wrestling".includes(searchQuery.trim().toLowerCase()) ? (
+            <View style={styles.buttonContainer}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Browse WWE Superstars"
+                onPress={() => router.push("/league/wwe" as any)}
+                style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+              >
+                <View style={styles.buttonWrapper}>
+                  <View style={{ width: 44, alignItems: "center" }}>
+                    <Text style={{ color: isDark ? Colors.white : Colors.black, fontWeight: "900", fontSize: 19 }}>WWE</Text>
+                  </View>
+                  <Text style={styles.buttonText}>WWE Superstars</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={isDark ? Colors.white : Colors.black} />
+              </Pressable>
+            </View>
+          ) : null
+        }
+
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
