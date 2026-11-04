@@ -1,3 +1,56 @@
+## Quiet hours — firmware 0.15.0 / protocol v11
+
+The Quiet hours section adds an optional weekly schedule with local start/end
+times, selected start days, 30 time zones, display-off or a 1–50% brightness cap,
+and a temporary Stay on override. New schedules suggest the phone's supported
+time zone. The selected day is the day a period starts; overnight periods end
+the following morning. DST adjusts automatically for the selected zone. During
+a repeated hour, starts use the first occurrence and ends use the second;
+nonexistent spring times move forward by the gap. The scoreboard's own date
+format/timezone is independent of quiet-hours conversion.
+
+The schedule defaults off. A new 10 PM–7 AM/all-days/off draft is suggested.
+The app saves all fields together and verifies the complete metadata readback.
+Schedule edits take effect only after Save quiet hours. Same saved values skip
+both the app command and the firmware flash write. Stay on skips the current
+period through its end; Resume quiet hours cancels it. A phone disconnect keeps
+the skip; a reboot or schedule change clears it. Manual display-off continues
+to apply, dimming never raises a lower manual brightness, and the latest normal
+brightness returns at the end of the period. Pairing codes stay visible.
+
+| Wire field | Meaning |
+| --- | --- |
+| Version / firmware | Byte 0 is 11; bytes 11–13 are `0,15,0`; frames stay 20 bytes. |
+| Opcode 23 | `set_quiet_hours`; bytes 5–13 contain the nine schedule fields below; bytes 14–19 zero. |
+| Opcode 24 | `set_quiet_override`; byte 5 is boolean; bytes 6–19 zero. Setting true requires an active period. |
+| Status byte 10, bits 5/6/7 | Schedule enabled / current quiet period active / temporary skip active. Lower five bits preserve power/color meanings. |
+| Status byte 9, bit 2 | Clock synchronized; lower two bits retain Wi-Fi state. Bits 3–7 remain zero. |
+| Characteristic `d69a0009-7a9b-4b28-95d3-09a1f487e001` | Read-only 11-byte metadata: `[configured,1,...scheduleFields]`. |
+
+Schedule fields are `[enabled,startMinuteLo,startMinuteHi,endMinuteLo,
+endMinuteHi,daysMask,behavior,dimPercent,timeZoneId]`. Times are minutes since
+midnight, 0–1439, and must differ. The nonempty 7-bit day mask uses Sunday bit 0
+through Saturday bit 6. Behavior 0 is off and 1 is dim; dimPercent is 1–50 even
+when off. Stable zone IDs 0–29 follow `constants/tickerTimeZones.ts` and
+`QUIET_ZONES` in firmware; append new IDs without reordering. Firmware stores
+`[1,...scheduleFields]` as one `tempo-quiet/schedule` blob before publishing the
+new settings. Rejected or failed writes preserve the previous saved schedule.
+The temporary override is RAM-only.
+
+The ticker evaluates the schedule on a dedicated half-second task, even while
+HTTP blocks the main loop. It publishes status changes over the existing
+response characteristic; ACK/status notifications share a transmit mutex.
+After a cold boot, Wi-Fi/NTP must synchronize the clock before quiet hours can
+start. Manual power/brightness apply until then. Once synchronized, a powered
+ticker can follow the schedule without the app or continuous Wi-Fi.
+
+The app supports v1–v11. Older frames retain their reserved-bit checks and
+report null quiet-hours state with no quiet-hours capabilities. A missing cached
+metadata characteristic disables only this editor with forget/re-pair guidance.
+Save operations queue behind brightness and reserve the connection through ACK
+and exact readback; disconnects/timeouts cannot publish late metadata into a new
+connection. No native dependency or backend changes are required.
+
 ## Smart game priority — firmware 0.14.0 / protocol v10
 
 Rotation settings now includes a Smart game priority toggle. It defaults off,

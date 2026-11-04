@@ -171,3 +171,30 @@ test("preview smart priority updates independently and resets off", async () => 
   reset();
   assert.equal(controller.store.getState().settings?.smartGamePriority, false);
 });
+
+test("quiet-hours preview saves and overrides independently, then resets", async () => {
+  const { DEFAULT_QUIET_HOURS } = await import("../services/ticker/quietHours");
+  const { controller, reset } = createTickerPreviewController();
+  const other = createTickerPreviewController();
+  assert.equal(
+    await controller.setQuietHours({
+      ...DEFAULT_QUIET_HOURS,
+      enabled: true,
+      behavior: "dim",
+    }),
+    true,
+  );
+  assert.equal(controller.store.getState().settings?.quietHoursEnabled, true);
+  assert.equal(
+    await controller.command({ type: "set_quiet_override", value: true }),
+    true,
+  );
+  assert.equal(controller.store.getState().settings?.quietHoursOverride, true);
+  assert.equal(
+    other.controller.store.getState().settings?.quietHoursEnabled,
+    false,
+  );
+  reset();
+  assert.equal(controller.store.getState().quietHoursConfigured, false);
+  assert.equal(controller.store.getState().settings?.quietHoursOverride, false);
+});

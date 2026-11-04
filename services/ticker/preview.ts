@@ -1,3 +1,4 @@
+import { DEFAULT_QUIET_HOURS, quietHoursBytes } from "./quietHours";
 import { rotationSignature } from "./rotation";
 import { createStore } from "zustand/vanilla";
 import type { TickerController, TickerState } from "./controller";
@@ -22,6 +23,10 @@ function initialState(): TickerState {
     durationSeconds: 8,
     top25Only: false,
     smartGamePriority: false,
+    quietHoursEnabled: false,
+    quietHoursActive: false,
+    quietHoursOverride: false,
+    quietHoursClockReady: true,
     viewMode: "scores",
     teamId: 57,
     dateFormat: "mm/dd",
@@ -40,8 +45,8 @@ function initialState(): TickerState {
     scanning: false,
     settings,
     status: {
-      protocolVersion: 10,
-      firmwareVersion: "0.14.0",
+      protocolVersion: 11,
+      firmwareVersion: "0.15.0",
       canCustomHeader: true,
       canRename: true,
       wifi: "connected",
@@ -69,12 +74,19 @@ function initialState(): TickerState {
         "rotation_chunk",
         "rotation_commit",
         "set_smart_priority",
+        "set_quiet_hours",
+        "set_quiet_override",
       ],
     },
     authorized: true,
     authorizing: false,
     renaming: false,
     syncingFavorites: false,
+    savingQuietHours: false,
+    quietHoursConfig: { ...DEFAULT_QUIET_HOURS },
+    quietHoursConfigured: false,
+    quietHoursAvailable: true,
+    quietHoursIssue: null,
     savingRotation: false,
     rotationEntries: [],
     rotationAvailable: true,
@@ -124,7 +136,13 @@ export function createTickerPreviewController() {
       !state.customHeader
     )
       return false;
+    if (input.type === "set_quiet_hours")
+      return controller.setQuietHours(input.value);
     switch (input.type) {
+      case "set_quiet_override":
+        if (input.value && !settings.quietHoursActive) return false;
+        settings.quietHoursOverride = input.value;
+        break;
       case "set_header_color":
         settings.headerColor = input.value;
         break;
@@ -190,6 +208,39 @@ export function createTickerPreviewController() {
     store,
     command,
     updateSetting: command,
+    setQuietHours: async (config) => {
+      const state = store.getState();
+      if (
+        !state.authorized ||
+        state.connection !== "connected" ||
+        !state.settings ||
+        !state.status
+      )
+        return false;
+      try {
+        quietHoursBytes(config);
+        const settings = {
+          ...state.settings,
+          quietHoursEnabled: config.enabled,
+          quietHoursActive: config.enabled,
+          quietHoursOverride: false,
+        };
+        store.setState({
+          quietHoursConfig: { ...config },
+          quietHoursConfigured: true,
+          settings,
+          status: { ...state.status, settings },
+          error: null,
+        });
+        return true;
+      } catch (error) {
+        store.setState({
+          error:
+            error instanceof Error ? error.message : "Enter a valid schedule.",
+        });
+        return false;
+      }
+    },
     saveRotation: async (entries) => {
       const state = store.getState();
       if (

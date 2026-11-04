@@ -1,6 +1,3 @@
-import TickerRotationControl from "./TickerRotationControl";
-import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
-import { tickerSettingsViewStyles as styles } from "styles/TickerStyles/TickerSettingsViewStyles";
 import TickerContentControl from "components/Ticker/TickerContentControl";
 import TickerCustomHeaderControl from "components/Ticker/TickerCustomHeaderControl";
 import TickerDeviceSummary from "components/Ticker/TickerDeviceSummary";
@@ -20,6 +17,7 @@ import {
   connectionLabel,
 } from "components/Ticker/TickerUI";
 import { TICKER_HEADER_COLORS } from "constants/tickerHeaderColors";
+import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import { useState, type PropsWithChildren } from "react";
 import { Text, View } from "react-native";
 import {
@@ -32,7 +30,10 @@ import {
   HEADER_MODES,
 } from "services/ticker/protocol";
 import { useTickerController, useTickerStore } from "store/tickerStore";
+import { tickerSettingsViewStyles as styles } from "styles/TickerStyles/TickerSettingsViewStyles";
 import type { TickerCommandType } from "types/ticker";
+import TickerQuietHoursControl from "./TickerQuietHoursControl";
+import TickerRotationControl from "./TickerRotationControl";
 
 const HEADER_LABELS = {
   tempo: "THE TEMPO",
@@ -59,6 +60,7 @@ export default function TickerSettingsView({
     state.syncingFavorites ||
     state.savingCustomHeader ||
     state.savingRotation ||
+    state.savingQuietHours ||
     hasBlockingTickerCommand(state.pendingCommands);
   const busy = connectionBusy(state.connection);
   const supported = (type: TickerCommandType) =>
@@ -74,6 +76,7 @@ export default function TickerSettingsView({
     !state.syncingFavorites &&
     !state.savingCustomHeader &&
     !state.savingRotation &&
+    !state.savingQuietHours &&
     Object.values(state.pendingCommands).every(
       (command) => command === "set_brightness" || command === "set_league",
     );
@@ -209,33 +212,6 @@ export default function TickerSettingsView({
         />
         {showHeaderColors && (
           <>
-            {state.settings?.headerMode === "hidden" ? (
-              <Text style={text.caption}>
-                Your color will appear when the header is visible.
-              </Text>
-            ) : (
-              <View
-                style={[
-                  styles.headerPreview,
-                  { borderBottomColor: headerColorHex },
-                ]}
-              >
-                <Text
-                  numberOfLines={1}
-                  style={[
-                    text.text,
-                    styles.headerPreviewTitle,
-                    { color: headerColorHex },
-                  ]}
-                >
-                  {state.settings?.headerMode === "custom"
-                    ? state.customHeader || "Custom name"
-                    : state.settings?.headerMode === "device_name"
-                      ? (device?.name ?? "Your ticker")
-                      : "THE TEMPO"}
-                </Text>
-              </View>
-            )}
             {HEADER_COLORS.map((color) => (
               <TickerSettingOption
                 key={color}
@@ -303,6 +279,7 @@ export default function TickerSettingsView({
           }
         />
       </TickerSettingsSection>
+      <TickerQuietHoursControl />
       <TickerSettingsSection title="Device">
         <TickerRenameControl />
         <TickerSettingOption

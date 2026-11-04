@@ -40,6 +40,7 @@ function RenameControl() {
     state.syncingFavorites ||
     state.savingCustomHeader ||
     state.savingRotation ||
+    state.savingQuietHours ||
     !supported ||
     hasBlockingTickerCommand(state.pendingCommands);
 

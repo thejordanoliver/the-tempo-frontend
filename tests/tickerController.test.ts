@@ -1,3 +1,9 @@
+import {
+  DEFAULT_QUIET_HOURS,
+  quietHoursBytes,
+  decodeQuietHours,
+  TickerQuietHoursUnavailableError,
+} from "../services/ticker/quietHours";
 import { TickerRotationUnavailableError } from "../services/ticker/rotation";
 import assert from "node:assert/strict";
 import { TickerNameUnavailableError } from "../services/ticker/name";
@@ -35,6 +41,7 @@ function harness(
   customHeaders = false,
   rotationMode = false,
   smartPriority = false,
+  quietHours = false,
 ) {
   let notify: (bytes: Uint8Array) => void = () => {};
   let lose: () => void = () => {};
@@ -105,9 +112,33 @@ function harness(
   }
   let currentRotation = new Uint8Array();
   let stagedRotation = new Uint8Array();
+  if (quietHours) {
+    live[0] = 11;
+    live[12] = 15;
+    live[9] |= 4;
+  }
+  let quietConfig = { ...DEFAULT_QUIET_HOURS };
+  let quietConfigured = false;
+  const applyQuietFrame = (frame: Uint8Array) => {
+    if (frame[4] === 23) {
+      quietConfig = decodeQuietHours(
+        Uint8Array.of(1, 1, ...frame.slice(5, 14)),
+      ).config;
+      quietConfigured = true;
+      live[10] = (live[10] & 31) | (quietConfig.enabled ? 96 : 0);
+    }
+    if (frame[4] === 24) live[10] = (live[10] & ~128) | (frame[5] ? 128 : 0);
+  };
   let currentCustomHeader = "";
   const customHeaderWrites: string[] = [];
   const transport: TickerTransport = {
+    async readQuietHours() {
+      return Uint8Array.of(
+        quietConfigured ? 1 : 0,
+        1,
+        ...quietHoursBytes(quietConfig),
+      );
+    },
     async readRotation() {
       return currentRotation;
     },
@@ -202,6 +233,7 @@ function harness(
         live[16] = 6;
         live.set(frame.slice(5, 8), 17);
       }
+      applyQuietFrame(frame);
       const response = live.slice();
       response[1] = 2;
       response[2] = frame[2];
@@ -232,6 +264,7 @@ function harness(
     emit: (frame: Uint8Array) => notify(frame),
     confirmLastWrite: () => {
       const request = writes.at(-1)!;
+      applyQuietFrame(request);
       if (request[4] === 3) live[7] = request[5];
       if (request[4] === 4) live[8] = request[5];
       if (request[4] === 19) {
@@ -679,7 +712,7 @@ test("Bluetooth off clears live data and authorization; reconnect rereads settin
 });
 test("unsupported protocol fails verification and removes connection subscriptions", async () => {
   const h = harness();
-  h.live[0] = 11;
+  h.live[0] = 12;
   assert.equal(await h.controller.connect(device), false);
   assert.equal(h.controller.store.getState().connection, "error");
   assert.match(h.controller.store.getState().error!, /Unsupported firmware/);
@@ -1813,5 +1846,191 @@ test("smart priority queues behind live brightness and cancels on brightness fai
     [3],
   );
   assert.equal(h.controller.store.getState().settings?.smartGamePriority, true);
+  await h.controller.dispose();
+});
+
+const quietHarness = () =>
+  harness(
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+  );
+const quietConfig = {
+  ...DEFAULT_QUIET_HOURS,
+  enabled: true,
+  days: 62,
+  behavior: "dim" as const,
+  dimPercent: 8,
+};
+
+test("quiet hours saves and reads back the whole schedule, skips identical writes and restores on reconnect", async () => {
+  const h = quietHarness();
+  assert.equal(await h.controller.connect(device), true);
+  assert.equal(h.controller.store.getState().quietHoursConfigured, false);
+  assert.deepEqual(
+    h.controller.store.getState().quietHoursConfig,
+    DEFAULT_QUIET_HOURS,
+  );
+  h.writes.length = 0;
+  assert.equal(await h.controller.setQuietHours(quietConfig), true);
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [23],
+  );
+  assert.deepEqual(h.controller.store.getState().quietHoursConfig, quietConfig);
+  assert.equal(h.controller.store.getState().settings?.quietHoursEnabled, true);
+  assert.equal(await h.controller.setQuietHours({ ...quietConfig }), true);
+  assert.equal(h.writes.length, 1);
+  assert.equal(
+    await h.controller.command({ type: "set_quiet_override", value: true }),
+    true,
+  );
+  assert.equal(
+    h.controller.store.getState().settings?.quietHoursOverride,
+    true,
+  );
+  assert.equal(
+    await h.controller.command({ type: "set_quiet_override", value: false }),
+    true,
+  );
+  await h.controller.disconnect();
+  assert.equal(h.controller.store.getState().quietHoursConfig, null);
+  await h.controller.connect(device);
+  assert.deepEqual(h.controller.store.getState().quietHoursConfig, quietConfig);
+  await h.controller.dispose();
+});
+test("quiet-hours save queues a snapshot behind brightness and reserves writes through readback", async () => {
+  const h = quietHarness();
+  await h.controller.connect(device);
+  h.writes.length = 0;
+  h.ack(false);
+  const brightness = h.controller.updateSetting({
+    type: "set_brightness",
+    value: 65,
+  });
+  const draft = { ...quietConfig };
+  const saving = h.controller.setQuietHours(draft);
+  draft.dimPercent = 40;
+  assert.deepEqual(
+    h.writes.map((frame) => frame[4]),
+    [3],
+  );
+  let finishRead: ((value: Uint8Array) => void) | undefined;
+  const read = h.transport.readQuietHours!;
+  h.transport.readQuietHours = () =>
+    new Promise((resolve) => {
+      finishRead = resolve;
+    });
+  h.ack(true);
+  h.confirmLastWrite();
+  assert.equal(await brightness, true);
+  await tick();
+  assert.equal(h.controller.store.getState().savingQuietHours, true);
+  assert.equal(
+    await h.controller.command({ type: "set_display", value: false }),
+    false,
+  );
+  finishRead!(await read(device.id));
+  assert.equal(await saving, true);
+  assert.equal(h.controller.store.getState().quietHoursConfig?.dimPercent, 8);
+  assert.equal(h.controller.store.getState().savingQuietHours, false);
+  await h.controller.dispose();
+});
+test("quiet-hours failures and unsupported devices preserve the confirmed schedule", async () => {
+  const h = quietHarness();
+  await h.controller.connect(device);
+  h.result(4);
+  assert.equal(await h.controller.setQuietHours(quietConfig), false);
+  assert.deepEqual(
+    h.controller.store.getState().quietHoursConfig,
+    DEFAULT_QUIET_HOURS,
+  );
+  h.result(0);
+  h.transport.readQuietHours = async () =>
+    Uint8Array.of(0, 1, ...quietHoursBytes(DEFAULT_QUIET_HOURS));
+  assert.equal(await h.controller.setQuietHours(quietConfig), false);
+  assert.equal(h.controller.store.getState().quietHoursAvailable, false);
+  assert.match(h.controller.store.getState().error!, /did not confirm/);
+  await h.controller.dispose();
+  const old = harness();
+  await old.controller.connect(device);
+  assert.equal(await old.controller.setQuietHours(quietConfig), false);
+  assert.match(old.controller.store.getState().error!, /0.15.0/);
+  await old.controller.dispose();
+});
+test("quiet-hours metadata is optional for cached GATT and cannot unlock unpaired writes", async () => {
+  const h = quietHarness();
+  h.transport.readQuietHours = async () => {
+    throw new TickerQuietHoursUnavailableError();
+  };
+  assert.equal(await h.controller.connect(device), true);
+  assert.equal(h.controller.store.getState().quietHoursAvailable, false);
+  assert.equal(
+    await h.controller.command({ type: "set_brightness", value: 55 }),
+    true,
+  );
+  await h.controller.dispose();
+  const locked = harness(
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+  );
+  await locked.controller.connect(device);
+  const writes = locked.writes.length;
+  assert.equal(await locked.controller.setQuietHours(quietConfig), false);
+  assert.equal(locked.writes.length, writes);
+  await locked.controller.dispose();
+});
+test("quiet-hours readback timeouts and disconnects discard late metadata", async () => {
+  const h = quietHarness();
+  await h.controller.connect(device);
+  h.transport.readQuietHours = async () => new Promise(() => {});
+  assert.equal(await h.controller.setQuietHours(quietConfig), false);
+  assert.equal(h.controller.store.getState().connection, "error");
+  assert.equal(h.controller.store.getState().quietHoursConfig, null);
+  await h.controller.dispose();
+  const other = quietHarness();
+  await other.controller.connect(device);
+  other.ack(false);
+  const saving = other.controller.setQuietHours(quietConfig);
+  other.loss();
+  assert.equal(await saving, false);
+  assert.equal(other.controller.store.getState().savingQuietHours, false);
+  assert.equal(other.controller.store.getState().quietHoursConfig, null);
+  await other.controller.dispose();
+});
+
+test("quiet-hours boundary notifications clear the temporary override without losing the saved schedule", async () => {
+  const h = quietHarness();
+  await h.controller.connect(device);
+  await h.controller.setQuietHours(quietConfig);
+  await h.controller.command({ type: "set_quiet_override", value: true });
+  h.live[10] &= ~192;
+  h.emit(h.live.slice());
+  assert.equal(h.controller.store.getState().settings?.quietHoursActive, false);
+  assert.equal(
+    h.controller.store.getState().settings?.quietHoursOverride,
+    false,
+  );
+  assert.equal(h.controller.store.getState().settings?.quietHoursEnabled, true);
+  assert.deepEqual(h.controller.store.getState().quietHoursConfig, quietConfig);
   await h.controller.dispose();
 });

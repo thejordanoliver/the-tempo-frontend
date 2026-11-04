@@ -1,0 +1,63 @@
+// IDs are persisted by firmware; append new zones without reordering this list.
+export const TICKER_TIME_ZONES = [
+  { id: "UTC", label: "UTC" },
+  { id: "America/New_York", label: "Eastern · New York" },
+  { id: "America/Chicago", label: "Central · Chicago" },
+  { id: "America/Denver", label: "Mountain · Denver" },
+  { id: "America/Los_Angeles", label: "Pacific · Los Angeles" },
+  { id: "America/Anchorage", label: "Alaska · Anchorage" },
+  { id: "Pacific/Honolulu", label: "Hawaii · Honolulu" },
+  { id: "America/Phoenix", label: "Arizona · Phoenix" },
+  { id: "America/Halifax", label: "Atlantic · Halifax" },
+  { id: "America/St_Johns", label: "Newfoundland" },
+  { id: "Europe/London", label: "London" },
+  { id: "Europe/Berlin", label: "Central Europe · Berlin" },
+  { id: "Europe/Helsinki", label: "Eastern Europe · Helsinki" },
+  { id: "Asia/Dubai", label: "Dubai" },
+  { id: "Asia/Kolkata", label: "India · Kolkata" },
+  { id: "Asia/Bangkok", label: "Bangkok" },
+  { id: "Asia/Singapore", label: "Singapore" },
+  { id: "Asia/Tokyo", label: "Tokyo" },
+  { id: "Australia/Sydney", label: "Sydney" },
+  { id: "Australia/Adelaide", label: "Adelaide" },
+  { id: "Australia/Brisbane", label: "Brisbane" },
+  { id: "Australia/Darwin", label: "Darwin" },
+  { id: "Australia/Perth", label: "Perth" },
+  { id: "Pacific/Auckland", label: "Auckland" },
+  { id: "Africa/Johannesburg", label: "Johannesburg" },
+  { id: "America/Sao_Paulo", label: "São Paulo" },
+  { id: "America/Mexico_City", label: "Mexico City" },
+  { id: "America/Puerto_Rico", label: "Puerto Rico" },
+  { id: "Pacific/Guam", label: "Guam" },
+  { id: "Asia/Shanghai", label: "China · Shanghai" },
+] as const;
+export function tickerPhoneTimeZone(
+  zone = Intl.DateTimeFormat().resolvedOptions().timeZone,
+): number | null {
+  const aliases: Record<string, string> = {
+    "US/Eastern": "America/New_York",
+    "America/Toronto": "America/New_York",
+    "America/Detroit": "America/New_York",
+    "America/Winnipeg": "America/Chicago",
+    "America/Vancouver": "America/Los_Angeles",
+    "Asia/Calcutta": "Asia/Kolkata",
+    "Europe/Paris": "Europe/Berlin",
+    "Europe/Madrid": "Europe/Berlin",
+    "Europe/Rome": "Europe/Berlin",
+    "Europe/Amsterdam": "Europe/Berlin",
+    "Europe/Dublin": "Europe/London",
+    "Europe/Lisbon": "Europe/London",
+    "Europe/Athens": "Europe/Helsinki",
+    "Europe/Bucharest": "Europe/Helsinki",
+    "Australia/Melbourne": "Australia/Sydney",
+    "Australia/Hobart": "Australia/Sydney",
+    "Australia/Broken_Hill": "Australia/Adelaide",
+    "Asia/Hong_Kong": "Asia/Singapore",
+    "Etc/UTC": "UTC",
+    "Etc/GMT": "UTC",
+  };
+  const index = TICKER_TIME_ZONES.findIndex(
+    (value) => value.id === (aliases[zone] ?? zone),
+  );
+  return index < 0 ? null : index;
+}

@@ -74,6 +74,7 @@ export default function TickerContentControl() {
     !state.syncingFavorites &&
     !state.savingCustomHeader &&
     !state.savingRotation &&
+    !state.savingQuietHours &&
     !hasBlockingTickerCommand(state.pendingCommands);
   const supported = (command: TickerCommandType) =>
     state.status?.capabilities.includes(command) ?? false;

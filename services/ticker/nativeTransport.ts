@@ -1,3 +1,4 @@
+import { TickerQuietHoursUnavailableError } from "./quietHours";
 import { TickerRotationUnavailableError } from "./rotation";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
@@ -236,6 +237,46 @@ export function createNativeTickerTransport(): TickerTransport {
       );
       if (revision !== deviceRevisions.get(id))
         throw new Error("Connection changed while renaming.");
+    },
+    async readQuietHours(id) {
+      const revision = deviceRevisions.get(id);
+      const ble = await getManager();
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading quiet hours.");
+      const characteristics = await ble.characteristicsForDevice(
+        id,
+        TICKER_GATT.service,
+      );
+      if (
+        !characteristics.some(
+          (item) =>
+            item.uuid.toLowerCase() === TICKER_GATT.quietHours &&
+            item.isReadable,
+        )
+      )
+        throw new TickerQuietHoursUnavailableError();
+      let result;
+      try {
+        result = await ble.readCharacteristicForDevice(
+          id,
+          TICKER_GATT.service,
+          TICKER_GATT.quietHours,
+        );
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "errorCode" in error &&
+          error.errorCode === 404
+        )
+          throw new TickerQuietHoursUnavailableError();
+        throw error;
+      }
+      if (revision !== deviceRevisions.get(id))
+        throw new Error("Connection changed while reading quiet hours.");
+      if (result.value == null || result.value.length > 16)
+        throw new Error("Invalid ticker quiet-hours length.");
+      return toByteArray(result.value);
     },
     async readRotation(id) {
       const revision = deviceRevisions.get(id);

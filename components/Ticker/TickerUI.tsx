@@ -160,6 +160,7 @@ export function TickerFeedback({
     syncingFavorites,
     savingCustomHeader,
     savingRotation,
+    savingQuietHours,
     connection,
     pendingCommands,
     status,
@@ -173,15 +174,17 @@ export function TickerFeedback({
     status?.capabilities.some(
       (type) => !["get_status", "get_settings"].includes(type),
     ) ?? false;
-  const progressMessage = savingRotation
-    ? "Saving custom rotation…"
-    : savingCustomHeader
-      ? "Saving custom header…"
-      : syncingFavorites
-        ? "Syncing favorite teams…"
-        : renaming
-          ? "Saving ticker name…"
-          : getProgressMessage(authorizing, connection, compact);
+  const progressMessage = savingQuietHours
+    ? "Saving quiet hours…"
+    : savingRotation
+      ? "Saving custom rotation…"
+      : savingCustomHeader
+        ? "Saving custom header…"
+        : syncingFavorites
+          ? "Syncing favorite teams…"
+          : renaming
+            ? "Saving ticker name…"
+            : getProgressMessage(authorizing, connection, compact);
   const pairingMessage = getPairingMessage(hasControls, compact);
 
   return (
@@ -191,8 +194,9 @@ export function TickerFeedback({
         renaming ||
         syncingFavorites ||
         savingRotation ||
+        savingQuietHours ||
         savingCustomHeader ||
-        waitingForCommand) && (
+        (!compact && waitingForCommand)) && (
         <View style={tickerStyles.busy} accessibilityLiveRegion="polite">
           <ActivityIndicator color={colors.text} />
           <Text style={[text.secondaryText, tickerStyles.feedbackCopy]}>
@@ -220,6 +224,7 @@ export function TickerFeedback({
                 renaming ||
                 syncingFavorites ||
                 savingRotation ||
+                savingQuietHours ||
                 savingCustomHeader ||
                 Object.keys(pendingCommands).length > 0
               }
@@ -246,7 +251,7 @@ function getProgressMessage(
   if (connection === "connecting") return "Connecting to ticker…";
   if (connection === "verifying")
     return compact ? "Checking your ticker…" : "Verifying firmware protocol…";
-  return compact ? "Saving changes…" : "Waiting for device acknowledgment…";
+  return "Waiting for device acknowledgment…";
 }
 
 function getPairingMessage(hasControls: boolean, compact: boolean) {

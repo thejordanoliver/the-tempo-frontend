@@ -98,6 +98,7 @@ function RotationEditor() {
     state.syncingFavorites ||
     state.savingCustomHeader ||
     state.savingRotation ||
+    state.savingQuietHours ||
     hasBlockingTickerCommand(state.pendingCommands);
   const locked = disabled || dragging;
   const active = state.settings?.viewMode === "rotation";

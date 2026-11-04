@@ -1,3 +1,4 @@
+import { quietHoursBytes } from "./quietHours";
 import { MAX_ROTATION_ENTRIES, rotationEntryBytes } from "./rotation";
 import type {
   SupportedTickerLeague,
@@ -22,6 +23,7 @@ export const TICKER_GATT = {
   name: "d69a0006-7a9b-4b28-95d3-09a1f487e001",
   customHeader: "d69a0007-7a9b-4b28-95d3-09a1f487e001",
   rotation: "d69a0008-7a9b-4b28-95d3-09a1f487e001",
+  quietHours: "d69a0009-7a9b-4b28-95d3-09a1f487e001",
 } as const;
 export const FRAME_BYTES = 20;
 export const HEADER_MODES = [
@@ -73,6 +75,8 @@ export const OPCODES: Record<TickerCommandType, number> = {
   rotation_chunk: 20,
   rotation_commit: 21,
   set_smart_priority: 22,
+  set_quiet_hours: 23,
+  set_quiet_override: 24,
 };
 const results = [
   "ok",
@@ -110,7 +114,7 @@ export function encodeCommand(
 ): Uint8Array {
   if (!Number.isInteger(id) || id < 1 || id > 65535)
     throw new Error("Invalid request identifier.");
-  if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(version))
+  if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].includes(version))
     throw new Error("Unsupported ticker protocol version.");
   if (
     command.type === "set_header" &&
@@ -118,6 +122,8 @@ export function encodeCommand(
     version < 8
   )
     throw new Error("Custom headers require firmware 0.11.0 or newer.");
+  if (version < 11 && OPCODES[command.type] >= 23)
+    throw new Error("Quiet hours requires firmware 0.15.0 or newer.");
   if (version < 10 && command.type === "set_smart_priority")
     throw new Error("Smart game priority requires firmware 0.14.0 or newer.");
   if (version < 9 && OPCODES[command.type] > 18)
@@ -280,6 +286,13 @@ export function encodeCommand(
     bytes[6] = (command.value >> 8) & 255;
     bytes[7] = (command.value >> 16) & 255;
   }
+  if (command.type === "set_quiet_hours")
+    bytes.set(quietHoursBytes(command.value), 5);
+  if (command.type === "set_quiet_override") {
+    if (typeof command.value !== "boolean")
+      throw new Error("Quiet-hours override must be on or off.");
+    bytes[5] = command.value ? 1 : 0;
+  }
   return bytes;
 }
 export function decodeFrame(
@@ -289,11 +302,11 @@ export function decodeFrame(
   | { kind: "response"; response: TickerCommandResponse } {
   if (
     bytes.length !== FRAME_BYTES ||
-    ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(bytes[0]) ||
+    ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].includes(bytes[0]) ||
     ![2, 3].includes(bytes[1])
   )
     throw new Error(
-      "Unsupported firmware/protocol. Expected a Tempo v1–v10 20-byte frame.",
+      "Unsupported firmware/protocol. Expected a Tempo v1–v11 20-byte frame.",
     );
   const extended = bytes[0] >= 2;
   const content = bytes[0] >= 3;
@@ -304,6 +317,8 @@ export function decodeFrame(
   const customHeaders = bytes[0] >= 8;
   const rotation = bytes[0] >= 9;
   const smartPriority = bytes[0] >= 10;
+  const quietHours = bytes[0] >= 11;
+  const wifiState = quietHours ? bytes[9] & 3 : bytes[9];
   const displayState = headerColors ? bytes[10] & 3 : bytes[10];
   if (
     bytes.slice(content ? 20 : extended ? 17 : 14).some((b) => b !== 0) ||
@@ -325,8 +340,9 @@ export function decodeFrame(
         (bytes[15] !== 0 && (bytes[15] < 3 || bytes[15] > 60)))) ||
     (bytes[7] > 100 && bytes[7] !== 255) ||
     bytes[8] > (extended ? 7 : 3) ||
-    bytes[9] > 2 ||
-    bytes[10] > (headerColors ? 31 : 2) ||
+    bytes[9] > (quietHours ? 6 : 2) ||
+    wifiState > 2 ||
+    bytes[10] > (quietHours ? 255 : headerColors ? 31 : 2) ||
     displayState > 2
   )
     throw new Error("Invalid ticker status payload.");
@@ -340,6 +356,12 @@ export function decodeFrame(
       (bytes[16] === 4 && bytes[8] !== 3))
   )
     throw new Error("Invalid ticker content settings.");
+  if (
+    quietHours &&
+    (((bytes[10] & 64) !== 0 && (!(bytes[10] & 32) || !(bytes[9] & 4))) ||
+      ((bytes[10] & 128) !== 0 && !(bytes[10] & 64)))
+  )
+    throw new Error("Invalid ticker quiet-hours state.");
   const firmware = bytes.slice(11, 14);
   if (firmware.some((b) => b === 255) && !firmware.every((b) => b === 255))
     throw new Error("Invalid firmware version.");
@@ -361,11 +383,18 @@ export function decodeFrame(
       ...(headerOptions ? (["set_header"] as const) : []),
       ...(headerColors ? (["set_header_color"] as const) : []),
       ...(smartPriority ? (["set_smart_priority"] as const) : []),
+      ...(quietHours
+        ? (["set_quiet_hours", "set_quiet_override"] as const)
+        : []),
       ...(rotation
         ? (["rotation_begin", "rotation_chunk", "rotation_commit"] as const)
         : []),
     ],
     settings: {
+      quietHoursEnabled: quietHours ? !!(bytes[10] & 32) : null,
+      quietHoursActive: quietHours ? !!(bytes[10] & 64) : null,
+      quietHoursOverride: quietHours ? !!(bytes[10] & 128) : null,
+      quietHoursClockReady: quietHours ? !!(bytes[9] & 4) : null,
       brightness: bytes[7] === 255 ? null : bytes[7],
       selectedLeague: LEAGUES[bytes[8] - 1] ?? null,
       displayOn: displayState === 0 ? null : displayState === 2,
@@ -413,7 +442,7 @@ export function decodeFrame(
           ? bytes[17] | (bytes[18] << 8) | (bytes[19] << 16)
           : null,
     },
-    wifi: (["unknown", "connected", "disconnected"] as const)[bytes[9]],
+    wifi: (["unknown", "connected", "disconnected"] as const)[wifiState],
     firmwareVersion:
       firmware[0] === 255 ? null : Array.from(firmware).join("."),
   };
@@ -437,6 +466,7 @@ export function decodeFrame(
     (!headerColors && OPCODES[command] > 17) ||
     (!rotation && OPCODES[command] > 18) ||
     (!smartPriority && OPCODES[command] > 21) ||
+    (!quietHours && OPCODES[command] > 22) ||
     !results[bytes[5]]
   )
     throw new Error("Invalid command acknowledgment.");

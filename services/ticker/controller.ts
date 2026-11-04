@@ -1,4 +1,10 @@
 import {
+  decodeQuietHours,
+  quietHoursBytes,
+  quietHoursEqual,
+  TickerQuietHoursUnavailableError,
+} from "./quietHours";
+import {
   decodeRotation,
   rotationSignature,
   TickerRotationUnavailableError,
@@ -14,6 +20,7 @@ import type {
   TickerFavoriteTeam,
   TickerRotationEntry,
   TickerStatus,
+  TickerQuietHoursConfig,
 } from "../../types/ticker";
 import {
   decodeFrame,
@@ -48,6 +55,11 @@ export interface TickerState {
   authorizing: boolean;
   renaming: boolean;
   syncingFavorites: boolean;
+  savingQuietHours: boolean;
+  quietHoursConfig: TickerQuietHoursConfig | null;
+  quietHoursConfigured: boolean;
+  quietHoursAvailable: boolean;
+  quietHoursIssue: string | null;
   savingRotation: boolean;
   rotationEntries: TickerRotationEntry[] | null;
   rotationAvailable: boolean;
@@ -109,6 +121,11 @@ export function createTickerController(
     authorizing: false,
     renaming: false,
     syncingFavorites: false,
+    savingQuietHours: false,
+    quietHoursConfig: null,
+    quietHoursConfigured: false,
+    quietHoursAvailable: false,
+    quietHoursIssue: null,
     savingRotation: false,
     rotationEntries: null,
     rotationAvailable: false,
@@ -185,6 +202,11 @@ export function createTickerController(
       authorizing: false,
       renaming: false,
       syncingFavorites: false,
+      savingQuietHours: false,
+      quietHoursConfig: null,
+      quietHoursConfigured: false,
+      quietHoursAvailable: false,
+      quietHoursIssue: null,
       savingRotation: false,
       rotationEntries: null,
       rotationAvailable: false,
@@ -300,7 +322,8 @@ export function createTickerController(
         state.renaming ||
         ((state.syncingFavorites ||
           state.savingCustomHeader ||
-          state.savingRotation) &&
+          state.savingRotation ||
+          state.savingQuietHours) &&
           !exclusiveChange)
       )
         throw new Error("Wait for the current ticker command to finish.");
@@ -359,6 +382,10 @@ export function createTickerController(
           confirmed.settings.showRankings !== command.value) ||
         (command.type === "set_duration" &&
           confirmed.settings.durationSeconds !== command.value) ||
+        (command.type === "set_quiet_hours" &&
+          confirmed.settings.quietHoursEnabled !== command.value.enabled) ||
+        (command.type === "set_quiet_override" &&
+          confirmed.settings.quietHoursOverride !== command.value) ||
         (command.type === "set_smart_priority" &&
           confirmed.settings.smartGamePriority !== command.value) ||
         (command.type === "set_top25_only" &&
@@ -403,8 +430,15 @@ export function createTickerController(
   };
   const brightnessPending = () =>
     Object.values(store.getState().pendingCommands).includes("set_brightness");
-  const command = (next: TickerCommand): Promise<boolean> =>
-    brightnessPending() ? enqueueChange(next) : executeCommand(next);
+  const command = (next: TickerCommand): Promise<boolean> => {
+    if (next.type === "set_quiet_hours") {
+      const snapshot = { ...next.value };
+      return brightnessPending()
+        ? enqueueChange({ type: "set_quiet_hours", value: snapshot })
+        : executeQuietHours(snapshot);
+    }
+    return brightnessPending() ? enqueueChange(next) : executeCommand(next);
+  };
   // Keep BLE writes serialized, retaining only the newest unsent value for
   // each control. Other actions can wait behind a live brightness update.
   const drainSettings = async () => {
@@ -414,6 +448,7 @@ export function createTickerController(
       store.getState().syncingFavorites ||
       store.getState().savingCustomHeader ||
       store.getState().savingRotation ||
+      store.getState().savingQuietHours ||
       Object.keys(store.getState().pendingCommands).length
     )
       return;
@@ -435,15 +470,17 @@ export function createTickerController(
                 state.settings.viewMode === "scores"));
         const applied =
           alreadyApplied ||
-          (await (entry.command.type === "save_rotation"
-            ? executeSaveRotation(entry.command.entries, true)
-            : entry.command.type === "custom_header"
-              ? executeCustomHeader(entry.command.value, true)
-              : entry.command.type === "show_favorites"
-                ? executeShowFavorites(entry.command.teams, true)
-                : entry.command.type === "rename"
-                  ? executeRename(entry.command.value, true)
-                  : executeCommand(entry.command)));
+          (await (entry.command.type === "set_quiet_hours"
+            ? executeQuietHours(entry.command.value, true)
+            : entry.command.type === "save_rotation"
+              ? executeSaveRotation(entry.command.entries, true)
+              : entry.command.type === "custom_header"
+                ? executeCustomHeader(entry.command.value, true)
+                : entry.command.type === "show_favorites"
+                  ? executeShowFavorites(entry.command.teams, true)
+                  : entry.command.type === "rename"
+                    ? executeRename(entry.command.value, true)
+                    : executeCommand(entry.command)));
         entry.resolve(applied);
         if (!applied && token === generation) cancelQueuedSettings();
       }
@@ -462,7 +499,8 @@ export function createTickerController(
       state.renaming ||
       state.syncingFavorites ||
       state.savingCustomHeader ||
-      state.savingRotation
+      state.savingRotation ||
+      state.savingQuietHours
     )
       return Promise.resolve(false);
     // Validate before replacing valid queued intent or skipping a no-op.
@@ -500,6 +538,7 @@ export function createTickerController(
         state.syncingFavorites ||
         state.savingCustomHeader ||
         state.savingRotation ||
+        state.savingQuietHours ||
         pending.size ||
         (!fromQueue && drainingSettings)
       )
@@ -663,6 +702,36 @@ export function createTickerController(
           rotationIssue = error.message;
         }
       }
+      let quietHoursConfig: TickerQuietHoursConfig | null = null;
+      let quietHoursConfigured = false;
+      let quietHoursAvailable = false;
+      let quietHoursIssue: string | null = null;
+      if (frame.status.protocolVersion >= 11) {
+        try {
+          if (!transport.readQuietHours)
+            throw new TickerQuietHoursUnavailableError();
+          const reported = decodeQuietHours(
+            await transport.readQuietHours(device.id),
+          );
+          if (!current()) throw new Error("Connection cancelled.");
+          if (
+            reported.config.enabled !== frame.status.settings.quietHoursEnabled
+          )
+            throw new Error(
+              "The ticker's quiet-hours schedule did not match its status.",
+            );
+          quietHoursConfig = reported.config;
+          quietHoursConfigured = reported.configured;
+          quietHoursAvailable = true;
+        } catch (error) {
+          if (
+            !current() ||
+            !(error instanceof TickerQuietHoursUnavailableError)
+          )
+            throw error;
+          quietHoursIssue = error.message;
+        }
+      }
       applyStatus(frame.status);
       subscriptions.push(
         transport.monitor(
@@ -723,6 +792,10 @@ export function createTickerController(
         rotationEntries,
         rotationAvailable,
         rotationIssue,
+        quietHoursConfig,
+        quietHoursConfigured,
+        quietHoursAvailable,
+        quietHoursIssue,
         selectedDevice: confirmedDevice,
         lastDevice: { id: confirmedDevice.id, name: confirmedDevice.name },
       });
@@ -768,6 +841,7 @@ export function createTickerController(
       state.syncingFavorites ||
       state.savingCustomHeader ||
       state.savingRotation ||
+      state.savingQuietHours ||
       pending.size
     )
       return false;
@@ -843,6 +917,7 @@ export function createTickerController(
         state.syncingFavorites ||
         state.savingCustomHeader ||
         state.savingRotation ||
+        state.savingQuietHours ||
         pending.size ||
         (!fromQueue && (queuedSettings.size || drainingSettings))
       )
@@ -947,6 +1022,7 @@ export function createTickerController(
         state.syncingFavorites ||
         state.savingCustomHeader ||
         state.savingRotation ||
+        state.savingQuietHours ||
         pending.size ||
         (!fromQueue && (queuedSettings.size || drainingSettings))
       )
@@ -1061,6 +1137,7 @@ export function createTickerController(
         state.syncingFavorites ||
         state.savingCustomHeader ||
         state.savingRotation ||
+        state.savingQuietHours ||
         pending.size ||
         (!fromQueue && drainingSettings)
       )
@@ -1098,6 +1175,126 @@ export function createTickerController(
       ? enqueueChange({ type: "save_rotation", entries: snapshot })
       : executeSaveRotation(snapshot);
   };
+  const executeQuietHours = async (
+    config: TickerQuietHoursConfig,
+    fromQueue = false,
+  ): Promise<boolean> => {
+    const token = generation,
+      state = store.getState();
+    let started = false,
+      timedOut = false;
+    let readingBack = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      quietHoursBytes(config);
+      if (
+        state.connection !== "connected" ||
+        !state.selectedDevice ||
+        !state.authorized ||
+        state.authorizing
+      )
+        throw new Error(
+          "Connect and unlock your ticker before changing quiet hours.",
+        );
+      if (
+        !state.status?.capabilities.includes("set_quiet_hours") ||
+        !state.quietHoursAvailable ||
+        !transport.readQuietHours
+      )
+        throw new Error(
+          state.quietHoursIssue ??
+            "Quiet hours requires firmware 0.15.0 or newer.",
+        );
+      if (
+        state.renaming ||
+        state.syncingFavorites ||
+        state.savingRotation ||
+        state.savingCustomHeader ||
+        state.savingQuietHours ||
+        pending.size ||
+        (!fromQueue && drainingSettings)
+      )
+        throw new Error("Wait for the current ticker change to finish.");
+      if (
+        state.quietHoursConfigured &&
+        state.quietHoursConfig &&
+        quietHoursEqual(config, state.quietHoursConfig)
+      ) {
+        store.setState({ error: null });
+        return true;
+      }
+      started = true;
+      store.setState({ savingQuietHours: true, error: null });
+      if (
+        !(await executeCommand(
+          { type: "set_quiet_hours", value: config },
+          true,
+        )) ||
+        token !== generation
+      )
+        return false;
+      readingBack = true;
+      const bytes = await Promise.race([
+        transport.readQuietHours(state.selectedDevice.id),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => {
+            timedOut = true;
+            reject(
+              new Error(
+                "Quiet hours was not confirmed. Reconnect to check the schedule.",
+              ),
+            );
+          }, timeouts.command);
+        }),
+      ]);
+      clearTimeout(timer);
+      if (token !== generation) return false;
+      const reported = decodeQuietHours(bytes);
+      if (!reported.configured || !quietHoursEqual(reported.config, config)) {
+        store.setState({
+          quietHoursAvailable: false,
+          quietHoursIssue:
+            "The quiet-hours schedule did not match. Reconnect to load the ticker's saved schedule.",
+        });
+        throw new Error(
+          "The ticker did not confirm the requested quiet-hours schedule. Reconnect and try again.",
+        );
+      }
+      store.setState({
+        quietHoursConfig: reported.config,
+        quietHoursConfigured: true,
+      });
+      return true;
+    } catch (error) {
+      if (token === generation) {
+        if (timedOut) {
+          generation++;
+          clearConnection();
+          store.setState({ connection: "error", error: message(error) });
+          if (state.selectedDevice)
+            void cancelDevice(state.selectedDevice.id).catch(() => {});
+        } else
+          store.setState({
+            error: message(error),
+            ...(readingBack
+              ? {
+                  quietHoursAvailable: false,
+                  quietHoursIssue:
+                    "Reconnect to confirm the ticker's saved quiet-hours schedule.",
+                }
+              : {}),
+          });
+      }
+      return false;
+    } finally {
+      clearTimeout(timer);
+      if (started && token === generation)
+        store.setState({ savingQuietHours: false });
+      if (started) void drainSettings();
+    }
+  };
+  const setQuietHours = (config: TickerQuietHoursConfig): Promise<boolean> =>
+    command({ type: "set_quiet_hours", value: config });
   return {
     store,
     startScan,
@@ -1110,6 +1307,7 @@ export function createTickerController(
     showFavorites,
     setCustomHeader,
     saveRotation,
+    setQuietHours,
     disconnect,
     reconnect: async () => {
       const device =

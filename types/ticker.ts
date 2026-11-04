@@ -20,6 +20,15 @@ export interface TickerRotationEntry {
   teamId: number | null;
   seconds: number;
 }
+export interface TickerQuietHoursConfig {
+  enabled: boolean;
+  startMinute: number;
+  endMinute: number;
+  days: number;
+  behavior: "off" | "dim";
+  dimPercent: number;
+  timeZone: number;
+}
 export type TickerDateFormat = "mm/dd" | "dd/mm" | "mmm d" | "yyyy-mm-dd";
 export type TickerHeaderMode = "tempo" | "device_name" | "hidden" | "custom";
 export type TickerHeaderColor =
@@ -61,6 +70,10 @@ export interface TickerSettings {
   durationSeconds: number | null;
   top25Only: boolean | null;
   smartGamePriority: boolean | null;
+  quietHoursEnabled: boolean | null;
+  quietHoursActive: boolean | null;
+  quietHoursOverride: boolean | null;
+  quietHoursClockReady: boolean | null;
   viewMode: TickerViewMode | null;
   teamId: number | null;
   dateFormat: TickerDateFormat | null;
@@ -94,12 +107,14 @@ export type TickerCommand =
   | { type: "set_header_color"; value: TickerHeaderColor }
   | { type: "rotation_begin"; value: number }
   | { type: "rotation_chunk"; offset: number; entries: TickerRotationEntry[] }
-  | { type: "rotation_commit"; value: number };
+  | { type: "rotation_commit"; value: number }
+  | { type: "set_quiet_hours"; value: TickerQuietHoursConfig }
+  | { type: "set_quiet_override"; value: boolean };
 export type TickerCommandType = TickerCommand["type"];
 export interface TickerStatus {
   canRename?: boolean;
   canCustomHeader?: boolean;
-  protocolVersion: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+  protocolVersion: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
   settings: TickerSettings;
   capabilities: TickerCommandType[];
   wifi: "unknown" | "connected" | "disconnected";

@@ -66,6 +66,10 @@ test("status decodes capabilities, settings, firmware and optional unknown value
     durationSeconds: null,
     top25Only: null,
     smartGamePriority: null,
+    quietHoursEnabled: null,
+    quietHoursActive: null,
+    quietHoursOverride: null,
+    quietHoursClockReady: null,
     viewMode: null,
     teamId: null,
     dateFormat: null,
@@ -90,7 +94,7 @@ test("status decodes capabilities, settings, firmware and optional unknown value
 test("unsupported version, lengths, malformed fields and reserved bits are rejected", () => {
   assert.throws(() => decodeFrame(new Uint8Array(21)), /Unsupported/);
   for (const [index, value] of [
-    [0, 11],
+    [0, 12],
     [1, 5],
     [6, 16],
     [7, 101],

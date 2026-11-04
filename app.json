@@ -5,10 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/appIcon.png",
-    "scheme": [
-      "tempo",
-      "nbascorestracker"
-    ],
+    "scheme": ["tempo", "nbascorestracker"],
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
@@ -18,7 +15,8 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSBluetoothAlwaysUsageDescription": "Tempo uses Bluetooth to discover and connect to your nearby Tempo Ticker.",
-        "NSLocalNetworkUsageDescription": "Tempo connects to your Mac on the local network to load the app during development."
+        "NSLocalNetworkUsageDescription": "Tempo connects to your Mac on the local network to load the app during development.",
+        "NSBonjourServices": ["_expo._tcp"]
       }
     },
     "android": {
@@ -66,7 +64,8 @@
         "expo-build-properties",
         {
           "ios": {
-            "enableSceneSupport": true
+            "enableSceneSupport": true,
+            "usePrecompiledModules": false
           }
         }
       ],

@@ -14,6 +14,7 @@ export interface TickerTransport {
   readStatus(id: string): Promise<Uint8Array>;
   readName?(id: string): Promise<string>;
   writeName?(id: string, name: string): Promise<void>;
+  readQuietHours?(id: string): Promise<Uint8Array>;
   readRotation?(id: string): Promise<Uint8Array>;
   readCustomHeader?(id: string): Promise<string>;
   writeCustomHeader?(id: string, text: string): Promise<void>;
