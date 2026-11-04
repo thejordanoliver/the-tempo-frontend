@@ -67,12 +67,11 @@ export default function WweSuperstarProfile() {
     </View>;
   }
 
-  const image = superstar.profile_image_url || superstar.headshot_url;
+  const image = superstar.headshot_url;
   const metadata: Array<[string, string | number | null]> = [
     ["Brand", superstar.brand_memberships.join(", ") || superstar.brand],
-    ["Division", superstar.division],
     ["Height", superstar.height],
-    ["Weight", superstar.weight_lbs != null ? `${superstar.weight_lbs} lbs` : null],
+    ["Weight", superstar.weight != null ? `${superstar.weight} lbs` : null],
     ["Billed from", superstar.billed_from],
     ["Debut year", superstar.debut_year],
   ];
