@@ -16,7 +16,7 @@ export interface WweSuperstarSummary {
 }
 
 export interface WweSuperstar extends WweSuperstarSummary {
-  wwe_id: string | null;
+  alt_id: string | null;
   first_name: string | null;
   last_name: string | null;
   nickname: string | null;
