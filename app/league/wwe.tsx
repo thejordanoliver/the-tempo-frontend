@@ -102,7 +102,7 @@ export default function WweLeagueScreen() {
   }, [brand, error, loading, query, rows.length, total]);
 
   const renderItem = useCallback(({ item }: { item: WweSuperstarSummary }) => {
-    const image = item.headshot_url || item.profile_image_url;
+    const image = item.headshot_url;
     return (
       <Pressable
         onPress={() => router.push({ pathname: "/player/wwe/[slug]", params: { slug: item.slug } } as any)}
