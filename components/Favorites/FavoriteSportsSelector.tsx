@@ -55,7 +55,7 @@ export default function FavoriteSportsSelector({
     return FAVORITE_SPORT_OPTIONS.filter((item) => {
       const id = item.id.toLowerCase();
 
-      const label = item.label.toLowerCase();
+      const label = item.shortName.toLowerCase();
 
       const league = item.league.toLowerCase();
 
@@ -99,8 +99,8 @@ export default function FavoriteSportsSelector({
           item={{
             id: item.id,
             league: item.id,
-            name: item.label,
-            fullName: item.label,
+            name: item.shortName,
+            fullName: item.shortName,
             primaryColor: item.color,
           }}
           logo={logo}

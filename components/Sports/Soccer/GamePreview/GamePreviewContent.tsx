@@ -1,5 +1,5 @@
 import {
-  GameLocation,
+  Venue,
   GameTeamStats,
   LastFiveGames,
   LineScore,
@@ -126,7 +126,7 @@ export default function GamePreviewContent({
 
         <Officials officials={officials} state={state} isDark />
 
-        <GameLocation
+        <Venue
           venueImage={venueImage}
           venueName={venueName}
           location={venueLocation}

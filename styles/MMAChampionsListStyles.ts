@@ -26,7 +26,7 @@ export const MMAChampionItemStyles = (isDark: boolean) =>
       overflow: "hidden",
     },
 
-    cardGradient: {
+    wrapper: {
       position: "relative",
       gap: 18,
       padding: 18,

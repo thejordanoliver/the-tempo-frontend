@@ -1,3 +1,4 @@
+import "./helpers/registerAssets";
 import { passwordRules, usernameRules } from "../schemas/auth/credentialRules";
 import assert from "node:assert/strict";
 import test from "node:test";

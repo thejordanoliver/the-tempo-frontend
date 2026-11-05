@@ -10,6 +10,7 @@ import WeekSelector, {
   FootballWeekGroup,
 } from "@/components/League/Selectors/WeekSelector";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
+import TransactionList from "@/components/League/Transactions/TransactionList";
 import NewsList from "@/components/News/NewsList";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
@@ -153,13 +154,11 @@ function NFLLeagueScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const { scoreboardCalendar, onScoreboardCalendar } =
-    useScoreboardCalendar(league);
-  const { calendar } = useLeagueCalendar(
+  // Resolve the week before loading games so the initial request matches
+  // the week shown in the selector, just like college football.
+  const { calendar, loading: calendarLoading } = useLeagueCalendar(
     league,
     "football",
-    undefined,
-    scoreboardCalendar,
   );
 
   const weekGroups = useMemo<FootballWeekGroup[]>(() => {
@@ -232,12 +231,11 @@ function NFLLeagueScreen() {
     refreshing: gamesRefreshing,
     refreshGames,
   } = useFootballGames({
-    onScoreboardCalendar,
     league,
     season: currentSeason,
     week: selectedWeekNumber,
     seasontype: selectedSeasonType,
-    enabled: true,
+    enabled: !calendarLoading,
   });
 
   const {
@@ -328,7 +326,7 @@ function NFLLeagueScreen() {
           <View key="scores" style={styles.contentArea}>
             <WeekSelector
               groups={weekGroups}
-              loading={gamesLoading}
+              loading={gamesLoading || calendarLoading}
               selectedWeekIndex={resolvedWeekIndex}
               onSelectWeek={setSelectedWeekIndex}
               isDark={isDark}
@@ -336,7 +334,7 @@ function NFLLeagueScreen() {
 
             <GamesList
               games={selectedWeekGames}
-              loading={gamesLoading}
+              loading={gamesLoading || calendarLoading}
               refreshing={screenRefreshing || gamesRefreshing}
               onRefresh={handleRefresh}
               showHeaders={false}
@@ -387,6 +385,19 @@ function NFLLeagueScreen() {
                 categories={categories}
                 league={league}
                 season={currentSeason}
+              />
+            ) : null}
+          </View>
+
+          <View
+            collapsable={false}
+            key="transactions"
+            style={styles.contentArea}
+          >
+            {hasVisitedTab("transactions") ? (
+              <TransactionList
+                league={league}
+                active={selectedTab === "transactions"}
               />
             ) : null}
           </View>

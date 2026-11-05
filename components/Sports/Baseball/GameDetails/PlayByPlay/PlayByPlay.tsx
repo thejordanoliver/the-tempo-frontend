@@ -6,6 +6,7 @@ import type {
   BaseballSituation,
 } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { PlayByPlayStyles } from "@/styles/GameDetailStyles/PlayByPlayStyles";
+import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import {
   Image,
@@ -16,17 +17,10 @@ import {
   type LayoutChangeEvent,
 } from "react-native";
 import Animated, {
-  Easing,
   FadeInDown,
   FadeOutUp,
   FadingTransition,
-  cancelAnimation,
-  useAnimatedStyle,
   useReducedMotion,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
 } from "react-native-reanimated";
 import { getActiveAtBatPlays } from "../../../../../utils/sports/baseball/baseball-play-animation-utils";
 import BaseballFieldPlay, {
@@ -35,15 +29,6 @@ import BaseballFieldPlay, {
 
 const VIEWBOX_WIDTH = 600;
 const INITIAL_FIELD_HORIZONTAL_INSET = 26;
-
-type PlayBadgeVariant = "hit" | "homeRun" | "strikeout" | "walk";
-
-const PLAY_BADGE_LABELS: Record<PlayBadgeVariant, string> = {
-  hit: "HIT",
-  homeRun: "HOME RUN",
-  strikeout: "STRIKEOUT",
-  walk: "WALK",
-};
 
 const PARTICIPANT_LABELS: Record<string, string> = {
   batter: "Batter",
@@ -176,81 +161,6 @@ function getPlayParticipants(participants?: BaseballPlayParticipant[]) {
   return unique;
 }
 
-function getPlaySearchText(play: BaseballPlay): string {
-  return [
-    play.text,
-    play.type?.text,
-    play.type?.type,
-    play.alternativeType?.text,
-    play.alternativeType?.type,
-    play.alternativeType?.alternativeText,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-}
-
-function getPlayBadgeVariant(
-  play?: BaseballPlay | null,
-): PlayBadgeVariant | null {
-  if (!play) {
-    return null;
-  }
-
-  const text = getPlaySearchText(play);
-  const playTypes = [play.type?.type, play.alternativeType?.type]
-    .filter((value): value is string => Boolean(value))
-    .map((value) => value.toLowerCase());
-  const resultCount = play.resultCount ?? play.pitchCount;
-  const isStrikeType = playTypes.some((type) =>
-    ["strike-looking", "strike-swinging"].includes(type),
-  );
-  const isBallType = playTypes.includes("ball");
-
-  if (
-    playTypes.includes("home-run") ||
-    text.includes("home run") ||
-    text.includes("home-run") ||
-    text.includes("homered")
-  ) {
-    return "homeRun";
-  }
-
-  if (
-    (isStrikeType && (resultCount?.strikes ?? 0) >= 3) ||
-    text.includes("strikeout") ||
-    text.includes("struck out") ||
-    text.includes("struckout")
-  ) {
-    return "strikeout";
-  }
-
-  if (
-    playTypes.includes("automatic-ball---ibb") ||
-    (isBallType && (resultCount?.balls ?? 0) >= 4) ||
-    text.includes("intentional walk") ||
-    text.includes("walked")
-  ) {
-    return "walk";
-  }
-
-  if (
-    playTypes.some((type) =>
-      ["single", "bunt-single", "double", "triple"].includes(type),
-    ) ||
-    text.includes("single") ||
-    text.includes("singled") ||
-    text.includes("double") ||
-    text.includes("doubled") ||
-    text.includes("triple") ||
-    text.includes("tripled")
-  ) {
-    return "hit";
-  }
-
-  return null;
-}
-
 export function getLatestDescriptivePlay(
   plays: BaseballPlay[],
   lastPlay?: BaseballPlay | null,
@@ -280,98 +190,6 @@ export function getLatestDescriptivePlay(
   }
 
   return lastPlay ?? null;
-}
-
-function PlayStatusBadge({
-  playKey,
-  styles,
-  variant,
-}: {
-  playKey: string;
-  styles: ReturnType<typeof PlayByPlayStyles>;
-
-  variant: PlayBadgeVariant;
-}) {
-  const reducedMotion = useReducedMotion();
-  const pulse = useSharedValue(1);
-
-  const glowOpacity = useSharedValue(0.25);
-
-  React.useEffect(() => {
-    if (reducedMotion) {
-      pulse.value = 1;
-      glowOpacity.value = 0.25;
-      return;
-    }
-
-    pulse.value = withRepeat(
-      withSequence(
-        withTiming(1.06, {
-          duration: 420,
-          easing: Easing.out(Easing.cubic),
-        }),
-        withTiming(1, {
-          duration: 420,
-          easing: Easing.inOut(Easing.cubic),
-        }),
-      ),
-      -1,
-      false,
-    );
-
-    glowOpacity.value = withRepeat(
-      withSequence(
-        withTiming(0.8, {
-          duration: 420,
-          easing: Easing.out(Easing.cubic),
-        }),
-        withTiming(0.2, {
-          duration: 420,
-          easing: Easing.inOut(Easing.cubic),
-        }),
-      ),
-      -1,
-      false,
-    );
-
-    return () => {
-      cancelAnimation(pulse);
-      cancelAnimation(glowOpacity);
-    };
-  }, [glowOpacity, playKey, pulse, reducedMotion]);
-
-  const badgeStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        scale: pulse.value,
-      },
-    ],
-  }));
-
-  const glowStyle = useAnimatedStyle(() => ({
-    opacity: glowOpacity.value,
-  }));
-
-  return (
-    <Animated.View
-      entering={FadeInDown.duration(180)}
-      exiting={FadeOutUp.duration(140)}
-    >
-      <Animated.View
-        style={[styles.playStatusBadge, styles.baseballBadge, badgeStyle]}
-        accessibilityLabel={PLAY_BADGE_LABELS[variant]}
-      >
-        <Animated.View
-          pointerEvents="none"
-          style={[styles.playStatusGlow, styles.baseballGlow, glowStyle]}
-        />
-
-        <Text style={styles.playStatusText} numberOfLines={1}>
-          {PLAY_BADGE_LABELS[variant]}
-        </Text>
-      </Animated.View>
-    </Animated.View>
-  );
 }
 
 function PlayByPlay({
@@ -443,8 +261,6 @@ function PlayByPlay({
 
       playText: descriptivePlay?.text?.trim() || null,
 
-      playBadgeVariant: getPlayBadgeVariant(descriptivePlay),
-
       participants: getPlayParticipants(participantSource ?? undefined),
 
       inning: play.period?.number ?? null,
@@ -490,7 +306,14 @@ function PlayByPlay({
     return null;
   }
 
-  const outLabel = playInfo.outs === 1 ? "OUT" : "OUTS";
+  const half =
+    playInfo.half === "Bottom"
+      ? "Bot"
+      : playInfo.half === "Top"
+        ? "Top"
+        : playInfo.half;
+
+  const inning = playInfo.inning;
 
   return (
     <View style={styles.container}>
@@ -501,41 +324,28 @@ function PlayByPlay({
         layout={reducedMotion ? undefined : FadingTransition.duration(180)}
       >
         {/* Header */}
-        <View style={styles.headerContainer}>
-          <View style={styles.headerRow}>
-            {possessionLogo ? (
-              <Image
-                source={possessionLogo}
-                style={styles.headerLogo}
-                resizeMode="contain"
-              />
-            ) : null}
-
-            <Animated.Text
-              key={`header-${playInfo.playKey}`}
-              entering={reducedMotion ? undefined : FadeInDown.duration(180)}
-              exiting={reducedMotion ? undefined : FadeOutUp.duration(140)}
-              style={styles.titleText}
-              numberOfLines={1}
-              selectable
+        <PlayByPlayHeader
+          isDark={isDark}
+          title={descriptivePlay?.type?.text || play?.type?.text || "At bat"}
+          logo={possessionLogo}
+          period={[half, inning]
+            .filter((value) => value != null && value !== "")
+            .join(" ")}
+          isLive={state === "in"}
+        />
+        <View style={styles.situationRow}>
+          <View style={styles.situationItem}>
+            <Text style={styles.eyebrow}>Count</Text>
+            <Text
+              style={styles.situationValue}
+              accessibilityLabel={`${playInfo.balls} balls, ${playInfo.strikes} strikes`}
             >
-              {playInfo.half ?? ""} {playInfo.inning ?? ""}
-              {" • "}
-              {playInfo.balls}-{playInfo.strikes}
-              {" • "}
-              {playInfo.outs ?? 0} {outLabel}
-            </Animated.Text>
+              {playInfo.balls}–{playInfo.strikes}
+            </Text>
           </View>
-
-          <View style={styles.headerMeta}>
-            {playInfo.playBadgeVariant ? (
-              <PlayStatusBadge
-                key={`${playInfo.playKey}-${playInfo.playBadgeVariant}`}
-                playKey={playInfo.playKey}
-                styles={styles}
-                variant={playInfo.playBadgeVariant}
-              />
-            ) : null}
+          <View style={styles.situationItem}>
+            <Text style={styles.eyebrow}>Outs</Text>
+            <Text style={styles.situationValue}>{playInfo.outs}</Text>
           </View>
         </View>
 
@@ -548,7 +358,7 @@ function PlayByPlay({
             layout={reducedMotion ? undefined : FadingTransition.duration(180)}
             style={styles.detailRow}
           >
-            <Text style={styles.detailText} numberOfLines={3} selectable>
+            <Text style={styles.detailText} selectable>
               {playInfo.playText}
             </Text>
           </Animated.View>

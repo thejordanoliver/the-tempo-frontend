@@ -34,6 +34,7 @@ export default function NavigationBar({
     <View style={styles.tabBarWrapper}>
       <BlurView
         intensity={100}
+        tint={isDark ? "dark" : "light"}
         pointerEvents="none"
         style={styles.blurBackground}
       />

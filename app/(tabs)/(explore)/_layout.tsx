@@ -15,7 +15,7 @@ export default function ExploreStackLayout() {
             onBack={navigation.canGoBack() ? navigation.goBack : undefined}
           />
         ),
-        freezeOnBlur: true,
+        freezeOnBlur: false,
         gestureEnabled: true,
         gestureDirection: "horizontal",
       })}

@@ -73,7 +73,7 @@ export function buildDeviceGameWidgetSnapshot({
 }: SnapshotOptions): DeviceGameWidgetProps {
   // Never serialize a previous account's games into the shared widget container.
   const visibleGames =
-    userId && hasFavorites ? prepareExploreFavoriteGames(games) : [];
+    userId && hasFavorites ? prepareExploreFavoriteGames(games, now) : [];
   const title = !userId
     ? "Sign in to Tempo"
     : !hasFavorites

@@ -31,6 +31,7 @@ import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
+import TransactionList from "@/components/League/Transactions/TransactionList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { getMLBSeason, getMLBStandingsSeason } from "@/utils/common/dateUtils";
@@ -319,6 +320,17 @@ function MLBLeagueScreen() {
     </View>
   );
 
+  const transactionsPage = (
+    <View collapsable={false} key="transactions" style={styles.contentArea}>
+      {hasVisitedTab("transactions") ? (
+        <TransactionList
+          league={league}
+          active={selectedTab === "transactions"}
+        />
+      ) : null}
+    </View>
+  );
+
   const awardsPage = (
     <View key="awards" style={styles.contentArea}>
       {hasVisitedTab("awards") ? <AwardSeasons league={league} /> : null}
@@ -337,6 +349,7 @@ function MLBLeagueScreen() {
     standingsPage,
     playoffsPage,
     statsPage,
+    transactionsPage,
     awardsPage,
     forumPage,
   ];

@@ -200,7 +200,7 @@ export default function GamePreviewModal({
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({
     period: game.status.period,
-    isMCBB: isMCBB || isWCBB,
+    isMCBB: isMCBB,
   });
   const clock = score?.status?.displayClock ?? "0:00";
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";

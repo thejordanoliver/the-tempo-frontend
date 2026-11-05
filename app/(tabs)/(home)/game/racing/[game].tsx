@@ -1,6 +1,6 @@
 import {
   GameLiveChatOverlay,
-  GameLocation,
+  Venue,
 } from "@/components/Sports/Basketball/GameDetails";
 import DriversHeader from "@/components/Sports/Racing/GameDetails/DriversHeader";
 import { RacingEventCardProps } from "@/types/racing/racing";
@@ -142,7 +142,7 @@ export default function GameDetailsScreen(
         />
 
         <View style={styles.innerContainer}>
-          <GameLocation
+          <Venue
             venueImage={circuitDiagram}
             venueName={circuitName}
             location={venueLocation}

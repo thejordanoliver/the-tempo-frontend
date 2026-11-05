@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
-import type { Play } from "./useBasketballGameDetails";
 import {
   basketballEventKey,
   basketballHistorySelection,
   relevantBasketballEvents,
 } from "utils/sports/basketball/basketballEvents";
+import type { Play } from "./useBasketballGameDetails";
 
 const EMPTY_PLAYS: Play[] = [];
 

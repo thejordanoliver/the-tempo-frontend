@@ -8,9 +8,10 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
-import { Appearance } from "react-native";
+import { Appearance, Platform } from "react-native";
 
 export type ViewMode = GameCardLayout;
 export type ColorSchemePreference = "light" | "dark" | "system";
@@ -55,8 +56,9 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [colorScheme, setColorSchemeState] =
     useState<ColorSchemePreference>("system");
+  const themeChanged = useRef(false);
 
-  const [systemScheme, setSystemScheme] = useState<ResolvedColorScheme>(
+  const [systemScheme, setSystemScheme] = useState<ResolvedColorScheme>(() =>
     Appearance.getColorScheme() === "dark" ? "dark" : "light",
   );
 
@@ -67,20 +69,39 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => listener.remove();
   }, []);
 
+  useEffect(() => {
+    // Native controls (keyboards, dialogs, pickers) must follow the app theme too.
+    // React Native Web exposes only the system appearance listener.
+    if (Platform.OS !== "web") {
+      Appearance.setColorScheme(
+        colorScheme === "system" ? "unspecified" : colorScheme,
+      );
+    }
+
+    if (colorScheme === "system") {
+      setSystemScheme(
+        Appearance.getColorScheme() === "dark" ? "dark" : "light",
+      );
+    }
+  }, [colorScheme]);
+
   const resolvedColorScheme: ResolvedColorScheme =
     colorScheme === "system" ? systemScheme : colorScheme;
 
   /* ---------------- Load persisted settings ---------------- */
 
   useEffect(() => {
+    let active = true;
     const load = async () => {
       try {
         const storedTheme = await AsyncStorage.getItem(COLOR_SCHEME_KEY);
 
         if (
-          storedTheme === "light" ||
-          storedTheme === "dark" ||
-          storedTheme === "system"
+          active &&
+          !themeChanged.current &&
+          (storedTheme === "light" ||
+            storedTheme === "dark" ||
+            storedTheme === "system")
         ) {
           setColorSchemeState(storedTheme);
         }
@@ -90,6 +111,9 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     void load();
+    return () => {
+      active = false;
+    };
   }, []);
 
   /* ---------------- Persist helpers ---------------- */
@@ -109,6 +133,7 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const setColorScheme = useCallback(
     (scheme: ColorSchemePreference) => {
+      themeChanged.current = true;
       setColorSchemeState(scheme);
       void persistColorScheme(scheme);
     },
@@ -124,6 +149,7 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [setViewMode, viewMode]);
 
   const toggleColorScheme = useCallback(() => {
+    themeChanged.current = true;
     setColorSchemeState((currentScheme) => {
       const nextScheme: ColorSchemePreference =
         currentScheme === "light"

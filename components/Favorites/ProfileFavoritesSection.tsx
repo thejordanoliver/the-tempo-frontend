@@ -247,7 +247,7 @@ export default function ProfileFavoritesSection({
           params: {
             sport: sportRoute,
             league: sport,
-            leagueLabel: config.label,
+            leagueLabel: config.shortName,
           },
         } as any);
         return;
@@ -259,7 +259,7 @@ export default function ProfileFavoritesSection({
           params: {
             sport: sportRoute,
             league: sport,
-            leagueLabel: config.label,
+            leagueLabel: config.shortName,
           },
         } as any);
         return;
@@ -269,7 +269,7 @@ export default function ProfileFavoritesSection({
         pathname: config.route,
         params: {
           league: sport,
-          leagueLabel: config.label,
+          leagueLabel: config.shortName,
         },
       });
     },
@@ -341,7 +341,7 @@ export default function ProfileFavoritesSection({
       <Pressable
         key={`sport:${sport}`}
         accessibilityRole="button"
-        accessibilityLabel={`Open ${config.label}`}
+        accessibilityLabel={`Open ${config.shortName}`}
         delayLongPress={300}
         onLongPress={() => {
           setPreviewSport(sport);
@@ -360,7 +360,7 @@ export default function ProfileFavoritesSection({
         <View style={styles.teamItem}>
           <Image source={config.logoLight} style={styles.logo} />
 
-          <Text style={styles.name}>{config.label}</Text>
+          <Text style={styles.name}>{config.shortName}</Text>
         </View>
       </Pressable>
     );

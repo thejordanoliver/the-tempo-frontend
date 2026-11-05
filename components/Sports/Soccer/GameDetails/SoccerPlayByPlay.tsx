@@ -1,3 +1,4 @@
+import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { memo, useMemo } from "react";
 import { Image, type ImageSourcePropType, Text, View } from "react-native";
@@ -48,55 +49,30 @@ function SoccerPlayByPlay({
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Play By Play</HeadingTwo>
       <View style={styles.wrapper}>
-        <View style={styles.headerContainer}>
-          <View style={styles.headerRow}>
-            {teamLogo ? (
-              <Image
-                source={teamLogo}
-                style={styles.headerLogo}
-                resizeMode="contain"
-              />
-            ) : null}
-            <Text
-              style={styles.titleText}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.85}
-            >
-              {latest?.typeText ??
-                (state === "post"
-                  ? "Coverage unavailable"
-                  : "Waiting for updates")}
-            </Text>
-          </View>
-          <View style={styles.headerMeta}>
-            {latest?.scoringPlay ? (
+        <PlayByPlayHeader
+          isDark={isDark}
+          title={
+            latest?.typeText ??
+            (state === "post" ? "Coverage unavailable" : "Waiting for updates")
+          }
+          logo={teamLogo}
+          period={latest ? period : null}
+          clock={latest?.clock}
+          isLive={Boolean(latest) && state === "in"}
+          badge={
+            latest?.scoringPlay ? (
               <View style={[styles.playStatusBadge, styles.scoreBadge]}>
                 <Text style={styles.playStatusText}>GOAL</Text>
               </View>
-            ) : null}
-            {latest ? (
-              <View style={styles.liveRow}>
-                {state === "in" ? <View style={styles.liveDot} /> : null}
-                {period ? <Text style={styles.gameTime}>{period}</Text> : null}
-                {period && latest.clock ? (
-                  <View style={styles.divider} />
-                ) : null}
-                {latest.clock ? (
-                  <Text style={styles.gameTime}>{latest.clock}</Text>
-                ) : null}
-              </View>
-            ) : null}
-          </View>
-        </View>
+            ) : null
+          }
+        />
         <View style={styles.detailRow}>
           <Text
             style={[
               styles.detailText,
               latest?.scoringPlay && styles.scoringPlay,
             ]}
-            numberOfLines={3}
-            ellipsizeMode="tail"
           >
             {latest?.text ??
               (state === "post"

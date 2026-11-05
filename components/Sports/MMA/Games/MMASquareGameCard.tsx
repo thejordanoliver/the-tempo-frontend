@@ -55,6 +55,7 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   const isForfeited = gameStatusDescription === "Forfeited";
   const isEndOfRound = gameStatusDescription === "End of Round";
   const inProgress = gameStatusDescription === "In Progress";
+  const isPreFight = gameStatusDescription === "Pre-fight";
   const inWalkouts = gameStatusDescription === "Walkouts";
   const isIntros = gameStatusDescription === "Intros";
   const broadcasts = game.broadcasts;
@@ -106,16 +107,22 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.period}>{period}</Text>
+          <View style={styles.divider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>
       );
 
-    if (inWalkouts) return <Text style={styles.finalText}>Walkouts</Text>;
-    if (isIntros) return <Text style={styles.finalText}>Intros</Text>;
-    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
-    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
-    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
+    if (
+      isPreFight ||
+      inWalkouts ||
+      isIntros ||
+      inWalkouts ||
+      isDelayed ||
+      isCanceled ||
+      isPostponed ||
+      isForfeited
+    )
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
     if (isEndOfRound) return <Text style={styles.clock}>End of {period}</Text>;
 

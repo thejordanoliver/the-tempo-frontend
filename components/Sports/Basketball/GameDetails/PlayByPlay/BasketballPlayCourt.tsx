@@ -5,7 +5,7 @@ import type { Play } from "hooks/BasketballHooks/useBasketballGameDetails";
 import { memo, useMemo } from "react";
 import { View, type ImageSourcePropType } from "react-native";
 import Animated, { useAnimatedProps } from "react-native-reanimated";
-import { Circle, Ellipse, G, Path, Text as SvgText } from "react-native-svg";
+import { Circle, Ellipse, G, Path } from "react-native-svg";
 import { basketballAnimationScene } from "utils/sports/basketball/basketballAnimationScene";
 import { projectBasketballCourtPoint as project } from "utils/sports/basketball/basketballCourtGeometry";
 import BasketballCourt, { BasketballNet } from "./BasketballCourt";
@@ -52,6 +52,7 @@ function BasketballPlayCourt({
   active = false,
   eventKey = "",
   layout = "full",
+  neutralSite,
 }: {
   play?: Play | null;
   homeId: string | number;
@@ -64,6 +65,7 @@ function BasketballPlayCourt({
   active?: boolean;
   eventKey?: string;
   layout?: "full" | "half";
+  neutralSite?: boolean;
 }) {
   const scene = useMemo(
     () => basketballAnimationScene(play, homeId, awayId),
@@ -111,17 +113,7 @@ function BasketballPlayCourt({
         ? homeColor
         : awayColor
       : markerColor;
-  const textColor = isDark ? Colors.white : Colors.black;
   const missedShot = scene.isShot && !scene.made && !scene.blocked;
-  const result = scene.isShot
-    ? scene.blocked
-      ? "BLOCKED"
-      : scene.made
-        ? `+${scene.points}`
-        : "MISS"
-    : scene.stolen
-      ? "STEAL / TURNOVER"
-      : scene.label.toUpperCase();
   const point = scene.point;
   return (
     <View style={{ width: "100%" }}>
@@ -132,6 +124,7 @@ function BasketballPlayCourt({
         awayColor={awayColor}
         isDark={isDark}
         layout={layout}
+        neutralSite={neutralSite}
         homeHalf={
           scene.isShot && scene.knownTeam
             ? scene.home
@@ -164,6 +157,7 @@ function BasketballPlayCourt({
               </AnimatedGroup>
             </G>
           ) : null}
+
           {point && !scene.located && !scene.atFreeThrowLine ? (
             <AnimatedGroup animatedProps={eventGlow}>
               <Ellipse
@@ -178,6 +172,7 @@ function BasketballPlayCourt({
               />
             </AnimatedGroup>
           ) : null}
+
           {trajectory ? (
             <G>
               <Path
@@ -222,34 +217,11 @@ function BasketballPlayCourt({
                   y={endY - 14}
                   isDark={isDark}
                 />
-              ) : scene.blocked ? (
-                <SvgText
-                  x={endX + (scene.home ? -12 : 12)}
-                  y={endY - 12}
-                  textAnchor={scene.home ? "end" : "start"}
-                  fill={textColor}
-                  stroke={isDark ? Colors.black : Colors.white}
-                  strokeWidth={0.3}
-                  fontWeight="bold"
-                  fontSize={17}
-                >
-                  {result}
-                </SvgText>
-              ) : null}
-              {scene.assisted && scene.made ? (
-                <SvgText
-                  x={startX}
-                  y={startY - 18}
-                  textAnchor="middle"
-                  fill={textColor}
-                  fontSize={15}
-                >
-                  ASSIST
-                </SvgText>
               ) : null}
             </G>
           ) : null}
-          {point && (scene.located || scene.atFreeThrowLine) ? (
+
+          {point && (scene.located || scene.atFreeThrowLine) && (
             <G>
               {active && !reducedMotion ? (
                 <PlayLocationPulse
@@ -271,8 +243,9 @@ function BasketballPlayCourt({
                 strokeWidth={5}
               />
             </G>
-          ) : null}
-          {!trajectory && scene.kind !== "other" ? (
+          )}
+
+          {!trajectory && scene.kind !== "other" && (
             <G>
               <AnimatedGroup animatedProps={eventGlow}>
                 <Ellipse
@@ -295,23 +268,9 @@ function BasketballPlayCourt({
                   y={(point?.y ?? 140) - 18}
                   isDark={isDark}
                 />
-              ) : (
-                <SvgText
-                  x={
-                    point?.x ??
-                    (layout === "half" ? (scene.home ? 730 : 270) : 500)
-                  }
-                  y={(point?.y ?? 140) - 18}
-                  textAnchor="middle"
-                  fill={textColor}
-                  fontWeight="bold"
-                  fontSize={16}
-                >
-                  {result}
-                </SvgText>
-              )}
+              ) : null}
             </G>
-          ) : null}
+          )}
         </G>
       </BasketballCourt>
     </View>

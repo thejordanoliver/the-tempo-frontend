@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { memo, useId, useMemo, type ReactNode } from "react";
-import { type ImageSourcePropType, View } from "react-native";
+import { View, type ImageSourcePropType } from "react-native";
 import Svg, {
   ClipPath,
   Defs,
@@ -16,8 +16,8 @@ import {
   BASKETBALL_RIM_HEIGHT,
   basketballBasketPoint,
   basketballCourtViewport,
-  projectBasketballRaisedPoint,
   projectBasketballCourtPoint as project,
+  projectBasketballRaisedPoint,
 } from "utils/sports/basketball/basketballCourtGeometry";
 
 function points(coords: number[][]) {
@@ -73,6 +73,7 @@ function BasketballCourt({
   homeHalf = true,
   accessibilityLabel = "Basketball court",
   children,
+  neutralSite,
 }: {
   homeLogo?: ImageSourcePropType;
   homeColor: string;
@@ -82,6 +83,7 @@ function BasketballCourt({
   homeHalf?: boolean;
   accessibilityLabel?: string;
   children?: ReactNode;
+  neutralSite?: boolean;
 }) {
   const clip = `basketball-court-${useId().replace(/[^\w-]/g, "")}`;
   const wood = isDark ? "#79694f" : "#dec8a9";
@@ -129,7 +131,7 @@ function BasketballCourt({
             strokeWidth={1.5}
             opacity={0.08}
           />
-          {homeLogo ? (
+          {homeLogo && !neutralSite ? (
             <G transform={`translate(${center.x} ${center.y}) scale(1 0.52)`}>
               <Image
                 href={homeLogo}
@@ -315,7 +317,17 @@ function BasketballCourt({
         })}
       </>
     ),
-    [clip, wood, marking, lane, edge, homeLogo, homeColor, awayColor],
+    [
+      clip,
+      wood,
+      marking,
+      lane,
+      edge,
+      homeLogo,
+      homeColor,
+      awayColor,
+      neutralSite,
+    ],
   );
   return (
     <View style={{ width: "100%", aspectRatio: viewport.aspectRatio }}>
@@ -332,4 +344,5 @@ function BasketballCourt({
     </View>
   );
 }
+
 export default memo(BasketballCourt);

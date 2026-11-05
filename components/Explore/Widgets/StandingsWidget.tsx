@@ -398,7 +398,7 @@ export default function StandingsWidget({
               pressed && !isEditing && styles.pressed,
             ]}
             accessibilityRole="button"
-            accessibilityLabel={`Change standings league. Currently ${leagueConfig.label}`}
+            accessibilityLabel={`Change standings league. Currently ${leagueConfig.shortName}`}
             accessibilityState={{ disabled: isEditing }}
           >
             {size === "small" ? (
@@ -428,7 +428,7 @@ export default function StandingsWidget({
                 pressed && !isEditing && styles.pressed,
               ]}
               accessibilityRole="button"
-              accessibilityLabel={`Change standings league. Currently ${leagueConfig.label}`}
+              accessibilityLabel={`Change standings league. Currently ${leagueConfig.shortName}`}
               accessibilityState={{ disabled: isEditing }}
             >
               <Image

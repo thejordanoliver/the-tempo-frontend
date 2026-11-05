@@ -8,7 +8,6 @@ export { default as GameLiveChatOverlay } from "./GameChat/GameLiveChatOverlay";
 export { default as LiveChat } from "./GameChat/LiveChat";
 export { default as GameHeader } from "./GameHeader";
 export { default as GameLeaders } from "./GameLeaders";
-export { default as GameLocation } from "./GameLocation";
 export { default as GameSummary } from "./GameSummary/GameSummary";
 export { default as GameTeamStats } from "./GameTeamStats";
 export { default as HeadCoaches } from "./HeadCoaches";
@@ -22,3 +21,4 @@ export { default as BasketballPlayByPlay } from "./PlayByPlay/BasketballPlayByPl
 export { default as PlayersInFoulTrouble } from "./PlayersInFoulTrouble";
 export { default as ShotChart } from "./ShotChart";
 export { TeamRow } from "./TeamRow";
+export { default as Venue } from "./Venue";

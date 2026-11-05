@@ -114,7 +114,7 @@ const OrbitCard = memo(function OrbitCard({
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Open ${config.label}`}
+        accessibilityLabel={`Open ${config.shortName}`}
         onPress={() => onSelect(league)}
         style={[
           styles.cardContent,
@@ -156,7 +156,7 @@ const OrbitCard = memo(function OrbitCard({
           ]}
           numberOfLines={3}
         >
-          {config.label}
+          {config.shortName}
         </Text>
         <View
           style={[
@@ -218,7 +218,7 @@ export default function LeagueCarousel({
   const matches = useMemo(() => {
     if (!query) return [];
     return BROWSEABLE_LEAGUES.filter((league) => {
-      const label = LEAGUE_CONFIG[league].label.toLowerCase();
+      const label = LEAGUE_CONFIG[league].shortName.toLowerCase();
       return `${league} ${label} ${label.replace(/[^a-z0-9 ]/g, "")}`.includes(
         query,
       );
@@ -485,7 +485,7 @@ export default function LeagueCarousel({
             style={[typography.subtitle, styles.selectedTitle]}
             numberOfLines={2}
           >
-            {LEAGUE_CONFIG[selected].label}
+            {LEAGUE_CONFIG[selected].shortName}
           </Text>
           <Text style={typography.caption}>
             {index + 1} / {COUNT}
@@ -553,7 +553,7 @@ export default function LeagueCarousel({
                 ]}
               >
                 <Text style={typography.text}>
-                  {LEAGUE_CONFIG[league].label}
+                  {LEAGUE_CONFIG[league].shortName}
                 </Text>
               </Pressable>
             ))}

@@ -59,8 +59,12 @@ export default function MatchupPredictor({
   state,
 }: Props) {
   const styles = useMemo(() => MatchupPredictorStyles(isDark), [isDark]);
-  const animatedSplitPercent = useSharedValue(50);
+  const homePct = clampPercentage(homeChance);
+  const awayPct = clampPercentage(awayChance);
+  const isHomeFavorite = homePct >= awayPct;
+  const animatedSplitPercent = useSharedValue(isHomeFavorite ? 100 : 0);
   const [trackWidth, setTrackWidth] = useState(0);
+  const isTrackReady = trackWidth > 0;
   const awayStripes = useMemo(
     () =>
       Array.from(
@@ -74,13 +78,9 @@ export default function MatchupPredictor({
     setTrackWidth(event.nativeEvent.layout.width);
   }, []);
 
-  const homePct = clampPercentage(homeChance);
-  const awayPct = clampPercentage(awayChance);
   const totalChance = homePct + awayPct;
 
   const awayTrackPct = totalChance > 0 ? (awayPct / totalChance) * 100 : 50;
-
-  const isHomeFavorite = homePct >= awayPct;
 
   const favoriteCode = isHomeFavorite ? homeCode : awayCode;
   const favoriteLogo = isHomeFavorite ? homeHeaderLogo : awayHeaderLogo;
@@ -89,11 +89,16 @@ export default function MatchupPredictor({
   const edge = Math.abs(homePct - awayPct);
 
   useEffect(() => {
+    if (!isTrackReady) {
+      animatedSplitPercent.value = isHomeFavorite ? 100 : 0;
+      return;
+    }
+
     animatedSplitPercent.value = withTiming(awayTrackPct, {
       duration: ANIMATION_DURATION,
       easing: Easing.out(Easing.cubic),
     });
-  }, [animatedSplitPercent, awayTrackPct]);
+  }, [animatedSplitPercent, awayTrackPct, isHomeFavorite, isTrackReady]);
 
   const awayMeterStyle = useAnimatedStyle(() => ({
     width: `${animatedSplitPercent.value}%`,
@@ -104,6 +109,7 @@ export default function MatchupPredictor({
   }));
 
   const markerStyle = useAnimatedStyle(() => ({
+    opacity: isTrackReady ? 1 : 0,
     left: Math.max(
       0,
       Math.min(

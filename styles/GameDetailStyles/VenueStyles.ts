@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const GameLocationStyles = (isDark: boolean) =>
+export const VenueStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
       borderWidth: 1,
@@ -11,7 +11,7 @@ export const GameLocationStyles = (isDark: boolean) =>
     },
     venueImage: {
       width: "100%",
-      height: 220,
+      aspectRatio: 16 / 9,
     },
     content: {
       padding: 14,

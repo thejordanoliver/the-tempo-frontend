@@ -102,7 +102,13 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
     const isWCBB = league === "wcbb";
 
     useImperativeHandle(ref, () => ({
-      present: () => modalRef.current?.present(),
+      present: () => {
+        if (!modalRef.current) return;
+
+        // Update the header arrow before the sheet starts opening.
+        onOpen?.();
+        modalRef.current.present();
+      },
       close: () => modalRef.current?.close(),
     }));
 
@@ -192,13 +198,14 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         index={2}
         enableDynamicSizing={false}
         snapPoints={snapPoints}
-        onChange={(index) => {
-          if (index >= 0) {
+        onAnimate={(_fromIndex, toIndex) => {
+          if (toIndex >= 0) {
             onOpen?.();
           } else {
             onClose?.();
           }
         }}
+        onDismiss={onClose}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}

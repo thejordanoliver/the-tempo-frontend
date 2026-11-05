@@ -171,7 +171,6 @@ function homeHarness(tab = "scores") {
   h.modules["./useForYouFeed"] = {
     useForYouFeed: () => ({ loading: false, refresh: () => request("feed") }),
   };
-  h.modules["constants/leagueIds"] = h.load("constants/leagueIds.ts");
   h.modules["constants/leagues"] = h.load("constants/leagues.ts");
   h.modules["@/utils/common/dateUtils"] = { filterByDate: (games) => games };
   h.modules["utils/games/games"] = { normalizeGames: (games) => games };

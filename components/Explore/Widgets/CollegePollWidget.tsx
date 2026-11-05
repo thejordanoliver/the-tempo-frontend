@@ -485,7 +485,7 @@ const CollegePollWidget = memo(function CollegePollWidget({
             pressed && !isEditing && styles.pressed,
           ]}
           accessibilityRole="button"
-          accessibilityLabel={`Change college poll. Currently ${leagueConfig.label}, ${pollLabel}`}
+          accessibilityLabel={`Change college poll. Currently ${leagueConfig.shortName}, ${pollLabel}`}
           accessibilityState={{ disabled: isEditing }}
         >
           <BlurView intensity={100} style={[StyleSheet.absoluteFill]} />

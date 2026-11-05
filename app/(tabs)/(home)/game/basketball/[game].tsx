@@ -6,7 +6,7 @@ import {
   GameHeader,
   GameLeaders,
   GameLiveChatOverlay,
-  GameLocation,
+  Venue,
   GameSummary,
   GameTeamStats,
   HeadCoaches,
@@ -352,7 +352,7 @@ export default function GameDetailsScreen(
   const foulTrouble = score?.foulTrouble ?? [];
   const homeBonus = score?.home?.fouls?.bonusState ?? null;
   const awayBonus = score?.away?.fouls?.bonusState ?? null;
-  const neutralSite = details?.neutralSite;
+  const neutralSite = details?.neutralSite ?? false;
   const venue = details?.venueInfo;
   const { weather } = useWeather({
     lat: venue?.latitude,
@@ -517,9 +517,9 @@ export default function GameDetailsScreen(
                 homeColor={homeColor}
                 awayColor={awayColor}
                 state={state}
-                gameStatus={score?.status}
                 isDark={isDark}
                 league={LEAGUE}
+                neutralSite={neutralSite}
               />
 
               <LineScore
@@ -692,7 +692,7 @@ export default function GameDetailsScreen(
 
               <Officials officials={officials} isDark={isDark} state={state} />
 
-              <GameLocation
+              <Venue
                 venueImage={venueImage}
                 venueName={venueName}
                 location={venueLocation}

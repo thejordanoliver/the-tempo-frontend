@@ -1,5 +1,5 @@
 import ConfirmModal from "@/components/ConfirmModal";
-import { GameLocationStyles } from "@/styles/GameDetailStyles/GameLocationStyles";
+import { VenueStyles } from "@/styles/GameDetailStyles/VenueStyles";
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { activeOpacity } from "constants/styles";
@@ -45,7 +45,7 @@ const DetailRow: React.FC<DetailRowProps> = ({
   isDark,
   isLast = false,
 }) => {
-  const styles = GameLocationStyles(isDark);
+  const styles = VenueStyles(isDark);
 
   return (
     <View style={[styles.detailRow, isLast && styles.lastDetailRow]}>
@@ -61,7 +61,7 @@ const DetailRow: React.FC<DetailRowProps> = ({
   );
 };
 
-export default function GameLocation({
+export default function Venue({
   weather,
   venueImage,
   venueName,
@@ -72,7 +72,7 @@ export default function GameLocation({
   isDark = false,
   grass,
 }: Props) {
-  const styles = GameLocationStyles(isDark);
+  const styles = VenueStyles(isDark);
   const [showMapsConfirmModal, setShowMapsConfirmModal] = useState(false);
 
   const desc = weather?.main?.toLowerCase();
@@ -209,7 +209,7 @@ export default function GameLocation({
 
   return (
     <View>
-      <HeadingTwo isDark={isDark}>Location</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Venue</HeadingTwo>
 
       <View style={styles.wrapper}>
         {venueImage && (

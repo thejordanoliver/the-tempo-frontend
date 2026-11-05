@@ -1,7 +1,5 @@
 import type { ImageSourcePropType } from "react-native";
 
-import { BROWSEABLE_LEAGUES, type BrowseableLeague } from "constants/leagueIds";
-
 import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBLogo from "assets/College_Logos/Conference_Logos/CB.png";
 import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
@@ -63,7 +61,8 @@ export type LeagueRoute =
 
 type LeagueDefinition = {
   id: string;
-  label: string;
+  shortName: string;
+  name: string;
   color: string;
   secondaryColor?: string;
   logo: ImageSourcePropType;
@@ -71,13 +70,48 @@ type LeagueDefinition = {
   route: LeagueRoute;
 };
 
-export { BROWSEABLE_LEAGUES } from "constants/leagueIds";
-export type { BrowseableLeague } from "constants/leagueIds";
+export const BROWSEABLE_LEAGUES = [
+  "atp",
+  "bundesliga",
+  "ligue1",
+  "ligue2",
+  "laliga",
+  "cb",
+  "mcbb",
+  "cfb",
+  "champions",
+  "epl",
+  "europa",
+  "f1",
+  "fifa",
+  "fifaw",
+  "gleague",
+  "leaguescup",
+  "mlb",
+  "mls",
+  "msoc",
+  "wsoc",
+  "nascarpremier",
+  "nba",
+  "nfl",
+  "nhl",
+  "sb",
+  "mcvb",
+  "wcvb",
+  "ufc",
+  "ufl",
+  "wcbb",
+  "wnba",
+  "wta",
+] as const satisfies readonly LeagueType[];
+
+export type BrowseableLeague = (typeof BROWSEABLE_LEAGUES)[number];
 
 export const LEAGUE_CONFIG = {
   atp: {
     id: "atp",
-    label: "ATP Tennis",
+    shortName: "ATP Tennis",
+    name: "ATP Tour",
     color: "#002865",
     secondaryColor: "#00AFF0",
     logo: ATPLogo,
@@ -87,7 +121,8 @@ export const LEAGUE_CONFIG = {
 
   bundesliga: {
     id: "bundesliga",
-    label: "German Bundesliga",
+    shortName: "German Bundesliga",
+    name: "German Bundesliga",
     color: "#D20515",
     secondaryColor: "#000000",
     logo: BundesligaLogo,
@@ -97,7 +132,8 @@ export const LEAGUE_CONFIG = {
 
   cb: {
     id: "cb",
-    label: "College Baseball",
+    shortName: "College Baseball",
+    name: "College Baseball",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: CBLogo,
@@ -107,7 +143,8 @@ export const LEAGUE_CONFIG = {
 
   mcvb: {
     id: "mcvb",
-    label: "M. College Volleyball",
+    shortName: "M. College Volleyball",
+    name: "Men's College Volleyball",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: MCVBLogo,
@@ -116,7 +153,8 @@ export const LEAGUE_CONFIG = {
   },
   wcvb: {
     id: "wcvb",
-    label: "W. College Volleyball",
+    shortName: "W. College Volleyball",
+    name: "Women's College Volleyball",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: WCVBLogo,
@@ -125,7 +163,8 @@ export const LEAGUE_CONFIG = {
   },
   mcbb: {
     id: "mcbb",
-    label: "M. College Basketball",
+    shortName: "M. College Basketball",
+    name: "Men's College Basketball",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: MCBBLogo,
@@ -135,7 +174,8 @@ export const LEAGUE_CONFIG = {
 
   cfb: {
     id: "cfb",
-    label: "College Football",
+    shortName: "College Football",
+    name: "College Football",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: CFBLogo,
@@ -145,7 +185,8 @@ export const LEAGUE_CONFIG = {
 
   champions: {
     id: "champions",
-    label: "UEFA Champions League",
+    shortName: "UEFA Champions League",
+    name: "UEFA Champions League",
     color: "#0E1E5B",
     secondaryColor: "#FFFFFF",
     logo: UEFAChampionsLogo,
@@ -155,7 +196,8 @@ export const LEAGUE_CONFIG = {
 
   epl: {
     id: "epl",
-    label: "English Premier League",
+    shortName: "English Premier League",
+    name: "English Premier League",
     color: "#37003C",
     secondaryColor: "#00FF85",
     logo: EPLLogo,
@@ -165,7 +207,8 @@ export const LEAGUE_CONFIG = {
 
   europa: {
     id: "europa",
-    label: "UEFA Europa League",
+    shortName: "UEFA Europa League",
+    name: "UEFA Europa League",
     color: "#F57C00",
     secondaryColor: "#000000",
     logo: UEFAEuropaLogo,
@@ -175,7 +218,8 @@ export const LEAGUE_CONFIG = {
 
   f1: {
     id: "f1",
-    label: "F1",
+    shortName: "F1",
+    name: "Formula 1",
     color: "#E10600",
     secondaryColor: "#15151E",
     logo: F1Logo,
@@ -185,7 +229,8 @@ export const LEAGUE_CONFIG = {
 
   fifa: {
     id: "fifa",
-    label: "FIFA World Cup",
+    shortName: "FIFA World Cup",
+    name: "FIFA World Cup",
     color: "#326295",
     secondaryColor: "#8A1538",
     logo: WorldCupLogo,
@@ -195,7 +240,8 @@ export const LEAGUE_CONFIG = {
 
   fifaw: {
     id: "fifaw",
-    label: "FIFA Women's World Cup",
+    shortName: "FIFA Women's World Cup",
+    name: "FIFA Women's World Cup",
     color: "#A50064",
     secondaryColor: "#FFB81C",
     logo: WorldCupLogo,
@@ -205,7 +251,8 @@ export const LEAGUE_CONFIG = {
 
   gleague: {
     id: "gleague",
-    label: "NBA G League",
+    shortName: "NBA G League",
+    name: "NBA G League",
     color: "#000000",
     secondaryColor: "#C8102E",
     logo: GLeagueLogo,
@@ -215,7 +262,8 @@ export const LEAGUE_CONFIG = {
 
   laliga: {
     id: "laliga",
-    label: "Spanish LALIGA",
+    shortName: "Spanish LALIGA",
+    name: "Spanish LALIGA",
     color: "#FF4B44",
     secondaryColor: "#ffffff",
     logo: LaLigaLogo,
@@ -225,7 +273,8 @@ export const LEAGUE_CONFIG = {
 
   leaguescup: {
     id: "leaguescup",
-    label: "Leagues Cup",
+    shortName: "Leagues Cup",
+    name: "Leagues Cup",
     color: "#6A1B9A",
     secondaryColor: "#00C2FF",
     logo: LeaguesCupLogo,
@@ -235,7 +284,8 @@ export const LEAGUE_CONFIG = {
 
   ligue1: {
     id: "ligue1",
-    label: "French Ligue",
+    shortName: "French Ligue",
+    name: "French Ligue 1",
     color: "#FF4B44",
     secondaryColor: "#ffffff",
     logo: Ligue1Logo,
@@ -245,7 +295,8 @@ export const LEAGUE_CONFIG = {
 
   ligue2: {
     id: "ligue2",
-    label: "French Ligue 2",
+    shortName: "French Ligue 2",
+    name: "French Ligue 2",
     color: "#FF4B44",
     secondaryColor: "#ffffff",
     logo: Ligue2Logo,
@@ -255,7 +306,8 @@ export const LEAGUE_CONFIG = {
 
   mlb: {
     id: "mlb",
-    label: "MLB",
+    shortName: "MLB",
+    name: "Major League Baseball",
     color: "#002D72",
     secondaryColor: "#D50032",
     logo: MLBLogo,
@@ -265,7 +317,8 @@ export const LEAGUE_CONFIG = {
 
   mls: {
     id: "mls",
-    label: "MLS",
+    shortName: "MLS",
+    name: "Major League Soccer",
     color: "#111111",
     secondaryColor: "#E2231A",
     logo: MLSLogo,
@@ -275,7 +328,8 @@ export const LEAGUE_CONFIG = {
 
   msoc: {
     id: "msoc",
-    label: "Men's College Soccer",
+    shortName: "Men's College Soccer",
+    name: "Men's College Soccer",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: MCSLogo,
@@ -285,7 +339,8 @@ export const LEAGUE_CONFIG = {
 
   wsoc: {
     id: "wsoc",
-    label: "Women's College Soccer",
+    shortName: "Women's College Soccer",
+    name: "Women's College Soccer",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: WCSLogo,
@@ -295,7 +350,8 @@ export const LEAGUE_CONFIG = {
 
   nascarpremier: {
     id: "nascarpremier",
-    label: "NASCAR Premier",
+    shortName: "NASCAR Premier",
+    name: "NASCAR Cup Series",
     color: "#007AC2",
     secondaryColor: "#FFD659",
     logo: NascarLogo,
@@ -305,7 +361,8 @@ export const LEAGUE_CONFIG = {
 
   nba: {
     id: "nba",
-    label: "NBA",
+    shortName: "NBA",
+    name: "National Basketball Association",
     color: "#1D428A",
     secondaryColor: "#C8102E",
     logo: NBALogo,
@@ -315,7 +372,8 @@ export const LEAGUE_CONFIG = {
 
   nfl: {
     id: "nfl",
-    label: "NFL",
+    shortName: "NFL",
+    name: "National Football League",
     color: "#013369",
     secondaryColor: "#D50A0A",
     logo: NFLLogo,
@@ -325,7 +383,8 @@ export const LEAGUE_CONFIG = {
 
   nhl: {
     id: "nhl",
-    label: "NHL",
+    shortName: "NHL",
+    name: "National Hockey League",
     color: "#000000",
     secondaryColor: "#FFFFFF",
     logo: NHLLogo,
@@ -335,7 +394,8 @@ export const LEAGUE_CONFIG = {
 
   sb: {
     id: "sb",
-    label: "College Softball",
+    shortName: "College Softball",
+    name: "College Softball",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: SBLogo,
@@ -345,7 +405,8 @@ export const LEAGUE_CONFIG = {
 
   ufc: {
     id: "ufc",
-    label: "UFC",
+    shortName: "UFC",
+    name: "Ultimate Fighting Championship",
     color: "#D20A0A",
     secondaryColor: "#000000",
     logo: UFCLogo,
@@ -355,7 +416,8 @@ export const LEAGUE_CONFIG = {
 
   ufl: {
     id: "ufl",
-    label: "UFL",
+    shortName: "UFL",
+    name: "United Football League",
     color: "#003B71",
     secondaryColor: "#D71920",
     logo: UFLLogo,
@@ -365,7 +427,8 @@ export const LEAGUE_CONFIG = {
 
   wcbb: {
     id: "wcbb",
-    label: "W. College Basketball",
+    shortName: "W. College Basketball",
+    name: "Women's College Basketball",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: WCBBLogo,
@@ -375,7 +438,8 @@ export const LEAGUE_CONFIG = {
 
   wnba: {
     id: "wnba",
-    label: "WNBA",
+    shortName: "WNBA",
+    name: "Women's National Basketball Association",
     color: "#FF6B00",
     secondaryColor: "#FFFFFF",
     logo: WNBALogo,
@@ -385,7 +449,8 @@ export const LEAGUE_CONFIG = {
 
   wta: {
     id: "wta",
-    label: "WTA Tennis",
+    shortName: "WTA Tennis",
+    name: "WTA Tour",
     color: "#3B1C56",
     secondaryColor: "#C6ED2C",
     logo: WTALogo,
@@ -408,7 +473,8 @@ export function resolveLeagueConfig(
     ([leagueId, config]) =>
       leagueId === normalizedValue ||
       config.id.toLowerCase() === normalizedValue ||
-      config.label.toLowerCase() === normalizedValue,
+      config.shortName.toLowerCase() === normalizedValue ||
+      config.name.toLowerCase() === normalizedValue,
   );
 
   return leagueEntry?.[1] ?? null;

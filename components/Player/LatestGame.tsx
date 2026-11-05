@@ -290,6 +290,10 @@ export default function LatestGame(props: Props) {
   }
 
   if (error) {
+    if (league === "mma" || league === "ufc") {
+      return null;
+    }
+
     return <Text style={global.errorText}>Couldn’t load recent game</Text>;
   }
 

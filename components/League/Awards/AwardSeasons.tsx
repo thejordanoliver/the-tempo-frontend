@@ -191,7 +191,7 @@ export default function AwardSeasons({ league }: Props) {
         <TopThreeTeams
           teams={championTeams.map((t) => ({
             team: t.team,
-            value: t.total_championships,
+            value: t.totalChampionships,
             logo:
               league === "nba"
                 ? getNBATeamLogo(t.team.id, isDark)

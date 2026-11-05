@@ -1,12 +1,15 @@
 import { isExploreWidgetType } from "constants/exploreWidgets";
+import { CanceledError } from "axios";
 import { normalizeStoredWidgets } from "utils/widgets/exploreWidgetStorage";
 import type { WidgetSettings } from "utils/widgets/exploreWidgetSync";
 import type {
   ExploreWidgetConfig,
+  ExploreWidgetGame,
   ExploreWidgetLeague,
   ExploreWidgetsResponse,
 } from "types/widgets";
 import { apiClient } from "utils/apiClient";
+import { selectExploreFavoriteGames } from "utils/widgets/exploreFavoriteGames";
 
 type GetExploreWidgetsOptions = {
   forceRefresh?: boolean;
@@ -15,9 +18,122 @@ type GetExploreWidgetsOptions = {
 };
 
 const EXPLORE_WIDGET_REQUEST_TIMEOUT_MS = 20_000;
+const SCHEDULE_REQUEST_TIMEOUT_MS = 8_000;
+const SCHEDULE_CONCURRENCY = 6;
+const WIDGET_SPORTS: Record<ExploreWidgetLeague, ExploreWidgetGame["sport"]> = {
+  nba: "basketball",
+  wnba: "basketball",
+  mcbb: "basketball",
+  wcbb: "basketball",
+  mlb: "baseball",
+  cb: "baseball",
+  nfl: "football",
+  cfb: "football",
+  ufl: "football",
+  nhl: "hockey",
+  mcvb: "volleyball",
+  wcvb: "volleyball",
+};
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function isWidgetGame(value: unknown): value is ExploreWidgetGame["game"] {
+  return (
+    isRecord(value) &&
+    (typeof value.id === "string" || typeof value.id === "number") &&
+    isRecord(value.status) &&
+    isRecord(value.home) &&
+    isRecord(value.away)
+  );
+}
+
+async function selectFavoriteScheduleGames(
+  response: ExploreWidgetsResponse,
+  signal?: AbortSignal,
+): Promise<ExploreWidgetsResponse> {
+  const favorites = Array.from(new Set(response.favoriteTeamKeys));
+  const results = new Map<string, ExploreWidgetGame[]>();
+  const failures = new Map(
+    response.failures.map((failure) => [failure.favoriteTeamKey, failure]),
+  );
+  let nextIndex = 0;
+
+  const worker = async () => {
+    while (nextIndex < favorites.length) {
+      if (signal?.aborted) throw new CanceledError();
+      const favoriteTeamKey = favorites[nextIndex++];
+      const [leagueValue, teamId] = favoriteTeamKey.split(":");
+      const league = response.requestedLeagues.find(
+        (value) => value === leagueValue,
+      );
+      if (!league || !teamId) continue;
+      const sport = WIDGET_SPORTS[league];
+
+      try {
+        const schedule = await apiClient.get<unknown>(
+          `/api/games/${sport}/team/${league}/${encodeURIComponent(teamId)}`,
+          { signal, timeout: SCHEDULE_REQUEST_TIMEOUT_MS },
+        );
+        if (
+          !isRecord(schedule.data) ||
+          !Array.isArray(schedule.data.games) ||
+          !schedule.data.games.every(isWidgetGame)
+        ) {
+          throw new Error("Invalid team schedule response");
+        }
+
+        results.set(
+          favoriteTeamKey,
+          schedule.data.games.map(
+            (game) =>
+              ({
+                key: `${sport}:${league}:${game.id}`,
+                gameId: String(game.id),
+                favoriteTeamKeys: [favoriteTeamKey],
+                sport,
+                league,
+                game,
+              }) as ExploreWidgetGame,
+          ),
+        );
+        failures.delete(favoriteTeamKey);
+      } catch {
+        if (signal?.aborted) throw new CanceledError();
+        // Retain the aggregate game's fallback if this team's schedule fails.
+        results.set(
+          favoriteTeamKey,
+          response.games
+            .filter((envelope) =>
+              envelope.favoriteTeamKeys.includes(favoriteTeamKey),
+            )
+            .map((envelope) => ({
+              ...envelope,
+              favoriteTeamKeys: [favoriteTeamKey],
+            })),
+        );
+        failures.set(favoriteTeamKey, {
+          favoriteTeamKey,
+          code: "upstream_unavailable",
+        });
+      }
+    }
+  };
+
+  await Promise.all(
+    Array.from(
+      { length: Math.min(SCHEDULE_CONCURRENCY, favorites.length) },
+      worker,
+    ),
+  );
+  if (signal?.aborted) throw new CanceledError();
+
+  return {
+    ...response,
+    games: selectExploreFavoriteGames(Array.from(results.values()).flat()),
+    failures: Array.from(failures.values()),
+  };
 }
 
 function isExploreWidgetsResponse(
@@ -68,7 +184,7 @@ export async function getExploreWidgets({
     throw new Error("The widget service returned an invalid response.");
   }
 
-  return response.data;
+  return selectFavoriteScheduleGames(response.data, signal);
 }
 
 const WIDGET_SETTINGS_ENDPOINT = "/api/widgets/explore/settings";

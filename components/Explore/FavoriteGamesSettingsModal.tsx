@@ -179,7 +179,7 @@ export default function FavoriteGamesSettingsModal({
                   pressed && styles.pressed,
                 ]}
                 accessibilityRole="checkbox"
-                accessibilityLabel={`Show ${config.label} favorite-team games`}
+                accessibilityLabel={`Show ${config.shortName} favorite-team games`}
                 accessibilityHint={
                   !hasFavoriteTeam
                     ? "Add a favorite team from this league to enable it"
@@ -195,7 +195,7 @@ export default function FavoriteGamesSettingsModal({
                   resizeMode="contain"
                 />
                 <View style={styles.pollCopy}>
-                  <Text style={styles.pollText}>{config.label}</Text>
+                  <Text style={styles.pollText}>{config.shortName}</Text>
                   {!hasFavoriteTeam && (
                     <Text style={styles.optionMeta}>No favorite teams</Text>
                   )}

@@ -471,8 +471,8 @@ export default function SignUpForm({
 
                 const leagueItem = {
                   id: config.id,
-                  name: config.label,
-                  league: config.label,
+                  name: config.shortName,
+                  league: config.shortName,
                   color: config.color,
                   logo: config.logo,
                   logoLight: config.logoLight,

@@ -2,7 +2,7 @@ import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
   GameLiveChatOverlay,
-  GameLocation,
+  Venue,
   GameTeamStats,
   HeadCoaches,
   Highlights,
@@ -480,7 +480,7 @@ export default function GameDetailsScreen(
 
             <Officials officials={officials} isDark={isDark} state={state} />
 
-            <GameLocation
+            <Venue
               venueImage={venueImage}
               venueName={venueName}
               location={venueLocation}

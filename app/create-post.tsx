@@ -157,7 +157,7 @@ export default function CreatePostScreen() {
   const destinationLabel = useMemo(() => {
     if (!destination) return "Choose destination";
 
-    const leagueLabel = LEAGUE_CONFIG[destination.league].label;
+    const leagueLabel = LEAGUE_CONFIG[destination.league].shortName;
     if (destination.kind === "league") return leagueLabel;
 
     const team = allTeams.find((candidate) => {

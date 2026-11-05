@@ -2,7 +2,7 @@ import {
   BoxScore,
   BasketballPlayByPlay,
   GameLeaders,
-  GameLocation,
+  Venue,
   GameTeamStats,
   HeadCoaches,
   Highlights,
@@ -217,7 +217,7 @@ export default function GamePreviewContent({
 
         <Officials officials={officials} isDark={isDark} state={state} />
 
-        <GameLocation
+        <Venue
           venueImage={venueImage}
           venueName={venueName}
           location={venueLocation}

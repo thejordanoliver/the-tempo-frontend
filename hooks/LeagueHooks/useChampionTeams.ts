@@ -6,15 +6,17 @@ export type ChampionTeam = {
     id: number;
     code: string;
     name: string;
-    full_name?: string;
+    shortName?: string;
+    logo?: string | null;
+    logoDark?: string | null;
     color?: string;
   };
-  total_championships: number;
+  totalChampionships: number;
 };
 
 type ChampionTeamsResponse = {
   champions?: ChampionTeam[];
-  top_champions?: ChampionTeam[];
+  topChampions?: ChampionTeam[];
 };
 
 type Options = {
@@ -49,8 +51,8 @@ export function useChampionTeams({
       const rankedTeams = Array.isArray(res.data?.champions)
         ? res.data.champions
         : [];
-      const topTeams = Array.isArray(res.data?.top_champions)
-        ? res.data.top_champions
+      const topTeams = Array.isArray(res.data?.topChampions)
+        ? res.data.topChampions
         : rankedTeams.slice(0, 3);
 
       setChampions(rankedTeams);

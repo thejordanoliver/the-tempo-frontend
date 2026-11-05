@@ -4,7 +4,7 @@ import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import {
   BoxScore,
   GameHeader,
-  GameLocation,
+  Venue,
   GameTeamStats,
   Highlights,
   LineScore,
@@ -195,7 +195,7 @@ export default function VolleyballGameScreen(
           </>
         )}
         {(venue || details.venue) && (
-          <GameLocation
+          <Venue
             isDark={isDark}
             weather={null}
             venueName={venue?.name ?? details.venue?.fullName}

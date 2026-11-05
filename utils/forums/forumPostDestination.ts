@@ -1,4 +1,4 @@
-import { BROWSEABLE_LEAGUES } from "constants/leagueIds";
+import { BROWSEABLE_LEAGUES } from "constants/leagues";
 import type { ForumPostDestination } from "types/forum";
 import type { LeagueType } from "types/types";
 
