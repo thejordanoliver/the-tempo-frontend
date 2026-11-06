@@ -100,7 +100,14 @@ export default function TennisMatchDetailsScreen() {
   const leftCompetitorRank = leftCompetitor?.rank ?? null;
   const rightCompetitorRank = rightCompetitor?.rank ?? null;
 
+  const isLoading = !match;
+
   useLayoutEffect(() => {
+    if (isLoading) {
+      navigation.setOptions({ header: () => null });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -109,7 +116,7 @@ export default function TennisMatchDetailsScreen() {
         />
       ),
     });
-  }, [match?.tournamentShortName, navigation]);
+  }, [isLoading, match?.tournamentShortName, navigation]);
 
   if (!match) return <View />;
 

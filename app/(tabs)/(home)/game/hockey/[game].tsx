@@ -186,7 +186,7 @@ export default function GameDetailsScreen(
     date: game?.date ?? undefined,
   });
 
-  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
+  const isLoading = !score || !details || !game || !home || !away;
   const gameStatusDescription = score?.status?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status?.gameStatusDetail ?? "";
   const state = score?.status?.state ?? null;
@@ -253,7 +253,7 @@ export default function GameDetailsScreen(
       : (venueCity ?? "");
 
   useLayoutEffect(() => {
-    if (!game || !home || !away) {
+    if (isLoading) {
       navigation.setOptions({
         header: () => null,
       });
@@ -288,6 +288,7 @@ export default function GameDetailsScreen(
     homeCode,
     awayColor,
     homeColor,
+    isLoading,
     navigation,
     neutralSite,
   ]);

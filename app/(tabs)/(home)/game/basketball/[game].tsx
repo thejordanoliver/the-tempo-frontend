@@ -303,7 +303,7 @@ export default function GameDetailsScreen(
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE).games;
-  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
+  const isLoading = !score || !details || !game || !home || !away;
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
   const homeWins = score?.home.winner ?? false;
@@ -388,7 +388,7 @@ export default function GameDetailsScreen(
     : undefined;
 
   useLayoutEffect(() => {
-    if (isLoading || !home || !away) {
+    if (isLoading) {
       navigation.setOptions({
         header: () => null,
       });
@@ -452,7 +452,7 @@ export default function GameDetailsScreen(
     );
   }
 
-  if (!game || !homeTeam || !awayTeam) return <View />;
+  if (isLoading || !homeTeam || !awayTeam) return <View />;
 
   /* ---------------- Render ---------------- */
 

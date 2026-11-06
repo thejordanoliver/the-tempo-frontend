@@ -185,7 +185,7 @@ export default function GameDetailsScreen(
   const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE).games;
 
   const headline = details?.headline ?? holidayLabel;
-  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
+  const isLoading = !score || !details || !game || !home || !away;
   const broadcasts = getBroadcastDisplay(details?.broadcasts);
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.gameStatusDetail ?? "";
@@ -249,7 +249,7 @@ export default function GameDetailsScreen(
       : (venueCity ?? "");
 
   useLayoutEffect(() => {
-    if (isLoading || !score || !details || !home || !away) {
+    if (isLoading) {
       navigation.setOptions({
         header: () => null,
       });
