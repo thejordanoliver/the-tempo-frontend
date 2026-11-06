@@ -358,7 +358,7 @@ export default function GameDetailsScreen(
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
 
-  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
+  const isLoading = !score || !details || !game || !home || !away;
 
   useLayoutEffect(() => {
     if (isLoading) {

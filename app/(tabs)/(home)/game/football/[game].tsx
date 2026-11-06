@@ -400,7 +400,7 @@ export default function GameDetailsScreen(
       : (venueCity ?? "");
 
   useLayoutEffect(() => {
-    if (isLoading || !game || !home || !away) {
+    if (isLoading) {
       navigation.setOptions({
         header: () => null,
       });

@@ -62,7 +62,14 @@ export default function VolleyballGameScreen(
       ? getVolleyballTeamLogo(game.away.id, league, true)
       : undefined;
 
+  const isLoading = !score || !details;
+
   useLayoutEffect(() => {
+    if (isLoading && loading) {
+      navigation.setOptions({ header: () => null });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -79,9 +86,9 @@ export default function VolleyballGameScreen(
         />
       ),
     });
-  }, [navigation, router.back, league, game, homeLogo, awayLogo]);
+  }, [navigation, router.back, league, game, homeLogo, awayLogo, isLoading, loading]);
 
-  if (!score || !details)
+  if (isLoading)
     return (
       <View style={[styles.screen, styles.content]}>
         {loading ? (
