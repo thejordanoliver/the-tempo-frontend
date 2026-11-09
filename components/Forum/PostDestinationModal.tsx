@@ -5,7 +5,7 @@ import {
   BottomSheetFlatList,
   BottomSheetModal,
 } from "@gorhom/bottom-sheet";
-import { BROWSEABLE_LEAGUES, LEAGUE_CONFIG } from "constants/leagues";
+import { FORUM_LEAGUES, LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 
@@ -91,7 +91,7 @@ export default function PostDestinationModal({
 
   const leagueOptions = useMemo<DestinationOption[]>(
     () =>
-      BROWSEABLE_LEAGUES.map((league) => {
+      FORUM_LEAGUES.map((league) => {
         const config = LEAGUE_CONFIG[league];
 
         return {

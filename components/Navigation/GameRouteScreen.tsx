@@ -7,7 +7,7 @@ import HockeyGameScreen from "app/(tabs)/(home)/game/hockey/[game]";
 import MMAGameScreen from "app/(tabs)/(home)/game/mma/[game]";
 import RacingGameScreen from "app/(tabs)/(home)/game/racing/[game]";
 import SoccerGameScreen from "app/(tabs)/(home)/game/soccer/[game]";
-import TennisGameScreen from "app/(tabs)/(home)/game/tennis/[game]";
+import GameDetailsScreen from "app/(tabs)/(home)/game/tennis/[game]";
 
 import VolleyballGameScreen from "app/(tabs)/(home)/game/volleyball/[game]";
 
@@ -20,7 +20,7 @@ const GAME_SCREENS = {
   mma: MMAGameScreen,
   racing: RacingGameScreen,
   soccer: SoccerGameScreen,
-  tennis: TennisGameScreen,
+  tennis: GameDetailsScreen,
 } as const;
 
 export default function GameRouteScreen() {

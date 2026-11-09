@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import EventSelector, {
   getDefaultUFCEventIndex,
 } from "@/components/League/Selectors/EventSelector";
@@ -174,7 +177,17 @@ export default function RacingLeagueScreen() {
     [sortedCalendar.length],
   );
 
+  const entryLoading = useLeagueEntryLoading(
+    calendarLoading || loadingGames,
+    league,
+  );
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -185,7 +198,9 @@ export default function RacingLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league, leagueLabel]);
+  }, [entryLoading, favoriteHeaderProps, navigation, league, leagueLabel]);
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

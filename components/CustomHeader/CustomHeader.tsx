@@ -1,11 +1,13 @@
-import { resolveMCBBConferenceselection } from "@/constants/conferences/mcbbConferences";
 import {
   cfbConferences,
   resolveCFBConferenceSelection,
 } from "@/constants/conferences/cfbConferences";
+import { resolveMCBBConferenceselection } from "@/constants/conferences/mcbbConferences";
 import { resolveWCBBConferenceselection } from "@/constants/conferences/wcbbConferences";
-import { mcbbTeams, getMCBBTeam } from "@/constants/teamsMCBB";
+import { getMCBBTeam, mcbbTeams } from "@/constants/teamsMCBB";
 import { getWCBBTeam, wcbbTeams } from "@/constants/teamsWCBB";
+import { resolveRacingLeague } from "@/utils/customheader/racingConfig";
+import { CustomHeaderProps, HeaderTeamLike } from "@/utils/customheader/types";
 import { resolveLeagueConfig } from "constants/leagues";
 import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
@@ -39,9 +41,7 @@ import { HomeHeader } from "./HomeHeader";
 import { LeagueHeader } from "./LeagueHeader";
 import { MessageThreadHeader } from "./MessageThreadHeader";
 import { NotificationsHeaderMenu } from "./NotificationsHeaderMenu";
-import { resolveRacingLeague } from "./racingConfig";
 import { TeamBackground } from "./TeamBackground";
-import type { CustomHeaderProps, HeaderTeamLike } from "./types";
 
 const isConferenceSelectorTab = (tabName?: string) =>
   tabName === "College Football" ||

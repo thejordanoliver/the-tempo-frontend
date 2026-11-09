@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import GamesList from "@/components/Sports/Volleyball/VolleyballGamesList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { Colors } from "@/constants/styles";
@@ -169,7 +172,14 @@ function MCVBLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -180,7 +190,7 @@ function MCVBLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league]);
+  }, [entryLoading, favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -260,6 +270,8 @@ function MCVBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>
@@ -396,7 +408,14 @@ function WCVBLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -407,7 +426,7 @@ function WCVBLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league]);
+  }, [entryLoading, favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -487,6 +506,8 @@ function WCVBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

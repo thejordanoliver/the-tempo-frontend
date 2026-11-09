@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useBaseballGames } from "@/hooks/BaseballHooks/useBaseballGames";
 import { useMLBPlayoffBracket } from "@/hooks/BaseballHooks/useMLBPlayoffBracket";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
@@ -204,7 +207,14 @@ function MLBLeagueScreen() {
     enabled: hasVisitedTab("playoffs"),
   });
 
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -215,7 +225,7 @@ function MLBLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league]);
+  }, [entryLoading, favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -358,6 +368,8 @@ function MLBLeagueScreen() {
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
 
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
+
   return (
     <>
       <MainScrollTabBar
@@ -493,7 +505,14 @@ function CBLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -504,7 +523,7 @@ function CBLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league]);
+  }, [entryLoading, favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -586,6 +605,8 @@ function CBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>
@@ -724,7 +745,14 @@ function SBLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -735,7 +763,7 @@ function SBLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league]);
+  }, [entryLoading, favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -816,6 +844,8 @@ function SBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

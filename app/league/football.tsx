@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import ConferenceListModal, {
@@ -277,7 +280,17 @@ function NFLLeagueScreen() {
     };
   }, [weekGroups.length]);
 
+  const entryLoading = useLeagueEntryLoading(
+    calendarLoading || gamesLoading,
+    league,
+  );
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -288,7 +301,7 @@ function NFLLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, league, navigation]);
+  }, [entryLoading, favoriteHeaderProps, league, navigation]);
 
   const handleRefresh = useCallback(async () => {
     setScreenRefreshing(true);
@@ -301,6 +314,8 @@ function NFLLeagueScreen() {
       setScreenRefreshing(false);
     }
   }, [league, refreshGames, setScreenRefreshing]);
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>
@@ -648,7 +663,17 @@ function CFBLeagueScreen() {
     };
   }, [currentSeason, league]);
 
+  const entryLoading = useLeagueEntryLoading(
+    calendarLoading || gamesLoading,
+    league,
+  );
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -664,6 +689,7 @@ function CFBLeagueScreen() {
       ),
     });
   }, [
+    entryLoading,
     favoriteHeaderProps,
     isConferenceModalOpen,
     league,
@@ -682,6 +708,8 @@ function CFBLeagueScreen() {
       setScreenRefreshing(false);
     }
   }, [league, refreshGames]);
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>
@@ -972,7 +1000,14 @@ function UFLLeagueScreen() {
     };
   }, [calendar, weekGroups]);
 
+  const entryLoading = useLeagueEntryLoading(gamesLoading, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -983,7 +1018,7 @@ function UFLLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, league, navigation]);
+  }, [entryLoading, favoriteHeaderProps, league, navigation]);
 
   const handleRefresh = useCallback(async () => {
     setScreenRefreshing(true);
@@ -996,6 +1031,8 @@ function UFLLeagueScreen() {
       setScreenRefreshing(false);
     }
   }, [league, refreshGames]);
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

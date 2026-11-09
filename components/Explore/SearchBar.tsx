@@ -16,12 +16,13 @@ type Props = {
   value: string;
   onChangeText: (text: string) => void;
   visible: boolean;
-  onFocus: () => void;
-  onBlur: () => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   tabs?: string[];
   selectedTab?: string;
   onTabPress?: (tab: string) => void;
   placeholder?: string;
+  accessibilityLabel?: string;
 };
 
 export default function SearchBar({
@@ -31,6 +32,7 @@ export default function SearchBar({
   onFocus,
   onBlur,
   placeholder,
+  accessibilityLabel = "Explore search",
   tabs = [],
   selectedTab,
   onTabPress,
@@ -91,7 +93,7 @@ export default function SearchBar({
             autoCorrect={false}
             onFocus={onFocus}
             onBlur={onBlur}
-            accessibilityLabel="Explore search"
+            accessibilityLabel={accessibilityLabel}
           />
           {value.length > 0 && (
             <Pressable

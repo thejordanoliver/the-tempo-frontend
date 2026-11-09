@@ -1,7 +1,7 @@
 import React from "react";
 import { Animated, StyleSheet } from "react-native";
 import TabBar from "../TabBars/TabBar";
-import type { EditFavoritesHeaderTab } from "./types";
+import type { EditFavoritesHeaderTab } from "@/utils/customheader/types";
 
 const EDIT_FAVORITES_HEADER_TABS = ["teams", "sports"] as const;
 

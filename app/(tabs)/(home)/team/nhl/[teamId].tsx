@@ -30,7 +30,21 @@ export default function TeamDetailScreen() {
   const teamName = team?.name;
   const currentSeason = getNHLSeason();
   const [standingsYear, setStandingsYear] = useState(currentSeason);
+  const {
+    games,
+    months,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    error: gamesError,
+    refresh: refreshTeamGames,
+    selectedMonthKey,
+    selectMonth,
+    firstSeasonGame,
+    showCountdown,
+  } = useTeamGames("nhl", teamIdNum);
+
   const screen = useTeamDetailScreen({
+    loading: Boolean(team) && gamesLoading,
     tabLeague: league,
     header: {
       league,
@@ -61,19 +75,6 @@ export default function TeamDetailScreen() {
     error: playersError,
     refreshPlayers,
   } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
-
-  const {
-    games,
-    months,
-    loading: gamesLoading,
-    refreshing: gamesRefreshing,
-    error: gamesError,
-    refresh: refreshTeamGames,
-    selectedMonthKey,
-    selectMonth,
-    firstSeasonGame,
-    showCountdown,
-  } = useTeamGames("nhl", teamIdNum);
 
   const handleRefresh = () =>
     runRefresh(async () => {

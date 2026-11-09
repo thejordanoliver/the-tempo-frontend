@@ -12,12 +12,12 @@ import {
 import { BROWSEABLE_LEAGUES, LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, globalStyles } from "constants/styles";
 import { LeagueScreenStyles } from "styles/LeagueStyles/LeagueStyles";
-import type { LeagueType } from "types/types";
+import type { BrowseableLeague } from "constants/leagues";
 
 type Props = {
   isDark: boolean;
   searchQuery: string;
-  onSelect: (league: LeagueType) => void;
+  onSelect: (league: BrowseableLeague) => void;
   contentContainerStyle: StyleProp<ViewStyle>;
 };
 

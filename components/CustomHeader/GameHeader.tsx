@@ -1,3 +1,5 @@
+import { HeaderImageSource, RacingLeague } from "@/utils/customheader/types";
+import { resolveImage } from "@/utils/customheader/utils";
 import { Colors } from "constants/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -11,8 +13,6 @@ import {
   View,
 } from "react-native";
 import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
-import type { HeaderImageSource, RacingLeague } from "./types";
-import { resolveImage } from "./utils";
 
 type GameHeaderProps = {
   tabName?: string;
@@ -133,10 +133,6 @@ export function GameHeader({
       animation.setValue(0);
     });
 
-    if (!isTeamGameHeader) {
-      return;
-    }
-
     const gameAnimation = Animated.sequence([
       Animated.parallel([
         Animated.timing(opacity, {
@@ -214,15 +210,15 @@ export function GameHeader({
     scaleHome,
   ]);
 
-  if (!isTeamGameHeader) {
-    return null;
-  }
-
   const resolvedAwayColor = awayColor || Colors.midTone;
   const resolvedHomeColor = homeColor || Colors.darkGray;
 
   const awayLogoSource = resolveImage(awayLogo);
   const homeLogoSource = resolveImage(homeLogo);
+
+  if (!isTeamGameHeader) {
+    return;
+  }
 
   return (
     <Animated.View

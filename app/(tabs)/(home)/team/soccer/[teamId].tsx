@@ -31,7 +31,19 @@ export default function TeamDetailScreen() {
   const teamLogo = getSOCCTeamLogo(teamIdNum, true);
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamName = team?.name;
+  const {
+    games: teamGames,
+    months,
+    selectedMonthKey,
+    selectMonth,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    error: gamesError,
+    refresh: refreshTeamGames,
+  } = useSoccerTeamGames(teamIdNum, league);
+
   const screen = useTeamDetailScreen({
+    loading: Boolean(team) && gamesLoading,
     tabLeague: league === "msoc" || league === "wsoc" ? league : "SOCC",
     header: {
       league,
@@ -56,17 +68,6 @@ export default function TeamDetailScreen() {
   } = useTeamNews(league, teamIdNum, 10, {
     enabled: hasVisitedTab("news"),
   });
-
-  const {
-    games: teamGames,
-    months,
-    selectedMonthKey,
-    selectMonth,
-    loading: gamesLoading,
-    refreshing: gamesRefreshing,
-    error: gamesError,
-    refresh: refreshTeamGames,
-  } = useSoccerTeamGames(teamIdNum, league);
 
   const {
     sections,

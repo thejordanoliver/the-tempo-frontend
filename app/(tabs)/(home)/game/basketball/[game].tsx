@@ -6,7 +6,6 @@ import {
   GameHeader,
   GameLeaders,
   GameLiveChatOverlay,
-  Venue,
   GameSummary,
   GameTeamStats,
   HeadCoaches,
@@ -19,6 +18,7 @@ import {
   PlayersOnCourt,
   ShotChart,
   TeamInjuries,
+  Venue,
 } from "@/components/Sports/Basketball/GameDetails";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
@@ -33,6 +33,7 @@ import useTeams from "@/hooks/useTeams";
 import { useWeather } from "@/hooks/useWeather";
 import type { BasketballGameCardProps } from "@/types/basketball/basketball";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -389,11 +390,10 @@ export default function GameDetailsScreen(
 
   useLayoutEffect(() => {
     if (isLoading) {
-      navigation.setOptions({
-        header: () => null,
-      });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -507,7 +507,6 @@ export default function GameDetailsScreen(
           {!dontShowDetails && (
             <>
               <BasketballPlayByPlay
-                scope={`${LEAGUE}:${gameId}`}
                 plays={plays}
                 lastPlay={lastPlay}
                 homeId={homeId}

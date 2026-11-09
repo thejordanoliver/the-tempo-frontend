@@ -480,7 +480,10 @@ export function resolveLeagueConfig(
   return leagueEntry?.[1] ?? null;
 }
 
-export type FavoriteSportId = (typeof LEAGUE_CONFIG)[BrowseableLeague]["id"];
+export const FORUM_LEAGUES = BROWSEABLE_LEAGUES;
+
+export type FavoriteSportId = BrowseableLeague;
+export const FAVORITE_SPORT_LEAGUES = BROWSEABLE_LEAGUES;
 export const HOME_SCORE_LEAGUES = [
   "nba",
   "nfl",
@@ -517,7 +520,7 @@ export type HomeLeagueId = (typeof HOME_SCORE_LEAGUES)[number];
 export const MY_TEAMS_SECTION_ID = "my-teams" as const;
 export const MY_TEAMS_SECTION_TITLE = "My Teams";
 
-export const FAVORITE_SPORT_OPTIONS = BROWSEABLE_LEAGUES.map((league) => ({
+export const FAVORITE_SPORT_OPTIONS = FAVORITE_SPORT_LEAGUES.map((league) => ({
   league,
   ...LEAGUE_CONFIG[league],
 }));

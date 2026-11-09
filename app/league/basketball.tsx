@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
 import WNBAPlayoffBracket from "components/Sports/Basketball/Playoffs/WNBAPlayoffs/WNBAPlayoffBracket";
 import dayjs from "dayjs";
@@ -365,7 +368,14 @@ function NBALeagueScreen() {
     }
   }, [calendarError]);
 
+  const entryLoading = useLeagueEntryLoading(combinedGamesLoading, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -376,7 +386,7 @@ function NBALeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, league, navigation]);
+  }, [entryLoading, favoriteHeaderProps, league, navigation]);
 
   /* ------------------------------------------------------------------------ */
   /*                                Handlers                                  */
@@ -454,6 +464,8 @@ function NBALeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>
@@ -727,7 +739,14 @@ function WNBALeagueScreen() {
     }
   }, [calendarError]);
 
+  const entryLoading = useLeagueEntryLoading(loadingWNBAGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -738,7 +757,7 @@ function WNBALeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, league, navigation]);
+  }, [entryLoading, favoriteHeaderProps, league, navigation]);
 
   /* ------------------------------------------------------------------------ */
   /*                                Handlers                                  */
@@ -804,6 +823,8 @@ function WNBALeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>
@@ -1048,7 +1069,14 @@ function GLeagueScreen() {
     }
   }, [calendarError]);
 
+  const entryLoading = useLeagueEntryLoading(loadingGLeagueGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -1059,7 +1087,7 @@ function GLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, league, navigation]);
+  }, [entryLoading, favoriteHeaderProps, league, navigation]);
 
   /* ------------------------------------------------------------------------ */
   /*                                Handlers                                  */
@@ -1125,6 +1153,8 @@ function GLeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>
@@ -1373,7 +1403,14 @@ function MCBBLeagueScreen() {
   /*                                  Header                                  */
   /* ------------------------------------------------------------------------ */
 
+  const entryLoading = useLeagueEntryLoading(mcbbGamesLoading, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -1389,6 +1426,7 @@ function MCBBLeagueScreen() {
       ),
     });
   }, [
+    entryLoading,
     favoriteHeaderProps,
     isConferenceModalOpen,
     league,
@@ -1541,6 +1579,8 @@ function MCBBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>
@@ -1752,7 +1792,14 @@ function WCBBLeagueScreen() {
   /*                                  Header                                  */
   /* ------------------------------------------------------------------------ */
 
+  const entryLoading = useLeagueEntryLoading(wcbbGamesLoading, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -1768,6 +1815,7 @@ function WCBBLeagueScreen() {
       ),
     });
   }, [
+    entryLoading,
     favoriteHeaderProps,
     isConferenceModalOpen,
     league,
@@ -1903,6 +1951,8 @@ function WCBBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

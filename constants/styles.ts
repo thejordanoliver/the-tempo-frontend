@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export const activeOpacity = 0.7;
-export const MIN_TOUCH_TARGET = 48;
+export const MIN_TOUCH_TARGET = 36;
 export const PLACEHOLDER_COLOR = "#888";
 export const PLACEHOLDER_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";

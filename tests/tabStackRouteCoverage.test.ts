@@ -7,6 +7,7 @@ import {
   getTabGroup,
   scopeHrefToTab,
 } from "../utils/navigation/tabStackNavigation";
+import { LEAGUE_TABS } from "../utils/navigation/tabs";
 
 const root = process.cwd();
 

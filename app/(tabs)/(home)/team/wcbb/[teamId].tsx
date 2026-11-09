@@ -30,7 +30,21 @@ export default function TeamDetailScreen() {
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const teamLogo = getWCBBTeamLogo(teamIdNum, true);
+  const {
+    games,
+    months,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    error: gamesError,
+    refresh: refreshTeamGames,
+    selectedMonthKey,
+    selectMonth,
+    firstSeasonGame,
+    showCountdown,
+  } = useBasketballTeamGames("wcbb", teamIdNum);
+
   const screen = useTeamDetailScreen({
+    loading: Boolean(team) && gamesLoading,
     tabLeague: league,
     header: {
       league,
@@ -94,19 +108,6 @@ export default function TeamDetailScreen() {
     error: playersError,
     refreshPlayers,
   } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
-
-  const {
-    games,
-    months,
-    loading: gamesLoading,
-    refreshing: gamesRefreshing,
-    error: gamesError,
-    refresh: refreshTeamGames,
-    selectedMonthKey,
-    selectMonth,
-    firstSeasonGame,
-    showCountdown,
-  } = useBasketballTeamGames("wcbb", teamIdNum);
 
   const handleRefresh = async () => {
     await screen.runRefresh(async () => {

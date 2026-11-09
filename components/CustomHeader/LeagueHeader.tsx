@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
-import type { HeaderImageSource } from "./types";
+import { HeaderImageSource } from "@/utils/customheader/types";
 
 type LeagueHeaderProps = {
   selectedConference?: unknown | null;
