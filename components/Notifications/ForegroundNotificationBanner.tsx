@@ -1,12 +1,11 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { GameNotificationTeamLogos } from "@/components/Notifications/GameNotificationTeamLogos";
 import { Colors, Fonts, PLACEHOLDER_AVATAR } from "@/constants/styles";
 import {
   useNotificationBanners,
+  type Notification,
   useNotifications,
 } from "@/contexts/NotificationContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { parseImageUrl } from "@/utils/ui/imageUtils";
 import { getNotificationGameTeams } from "@/utils/notifications/notification-team-presentation";
 import {
   getNotificationActorProfileImage,
@@ -14,6 +13,7 @@ import {
   getNotificationLeagueLabel,
   shouldShowNotificationActorProfileImage,
 } from "@/utils/notifications/notificationCenter";
+import { parseImageUrl } from "@/utils/ui/imageUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import {
@@ -21,26 +21,80 @@ import {
   isGlassEffectAPIAvailable,
   isLiquidGlassAvailable,
 } from "expo-glass-effect";
+import { useScopedRouter } from "hooks/useScopedRouter";
 
 import { Href } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Image,
   Animated,
+  Easing,
+  Image,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import type { AppNotification } from "types/notifications";
 
 type Props = {
   preview?: boolean;
+  previewNotification?: AppNotification;
+  inline?: boolean;
+  onPreviewDismiss?: () => void;
+  autoDismissAfterMs?: number;
 };
 
-export default function ForegroundNotificationBanner({
+const EXIT_DURATION_MS = 240;
+
+export default function ForegroundNotificationBanner(props: Props) {
+  const { notifications, onDismiss } = useNotificationBanners();
+  const currentBanner = notifications.at(-1);
+  const [retainedBanner, setRetainedBanner] = useState(currentBanner);
+  const isPreview = props.preview || !!props.previewNotification;
+
+  // The provider removes expired banners immediately. Retain the last one
+  // until its exit animation finishes.
+  if (currentBanner && currentBanner !== retainedBanner) {
+    setRetainedBanner(currentBanner);
+  }
+
+  const banner = currentBanner ?? retainedBanner;
+  if (!banner && !isPreview) return null;
+
+  return (
+    <AnimatedNotificationBanner
+      key={
+        isPreview ? (props.previewNotification?.id ?? "preview") : banner?.id
+      }
+      {...props}
+      banner={isPreview ? undefined : banner}
+      expired={!isPreview && !currentBanner}
+      onDismiss={() => {
+        if (!banner) return;
+        onDismiss(banner.id);
+        setRetainedBanner((current) =>
+          current?.id === banner.id ? undefined : current,
+        );
+      }}
+    />
+  );
+}
+
+function AnimatedNotificationBanner({
   preview = false,
-}: Props) {
+  previewNotification,
+  inline = false,
+  onPreviewDismiss,
+  autoDismissAfterMs,
+  banner,
+  expired,
+  onDismiss,
+}: Props & {
+  banner?: Notification;
+  expired: boolean;
+  onDismiss: () => void;
+}) {
   const router = useScopedRouter();
   const insets = useSafeAreaInsets();
 
@@ -48,13 +102,56 @@ export default function ForegroundNotificationBanner({
 
   const isDark = resolvedColorScheme === "dark";
 
-  const { notifications, onDismiss } = useNotificationBanners();
-
   const { markCenterNotificationRead } = useNotifications();
 
-  const banner = notifications.at(-1);
+  const isPreview = preview || !!previewNotification;
+  const previewId = previewNotification?.id;
 
   const [progress] = useState(() => new Animated.Value(0));
+  const [exitProgress] = useState(() => new Animated.Value(0));
+  const [exiting, setExiting] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [bannerHeight, setBannerHeight] = useState(90);
+  const exitingRef = useRef(false);
+
+  const dismiss = useCallback(
+    (afterExit?: () => void) => {
+      if (exitingRef.current) return;
+      exitingRef.current = true;
+      setExiting(true);
+      Animated.timing(exitProgress, {
+        toValue: 1,
+        duration: EXIT_DURATION_MS,
+        easing: Easing.inOut(Easing.cubic),
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (!finished) return;
+        setHidden(true);
+        if (isPreview) onPreviewDismiss?.();
+        else onDismiss();
+        afterExit?.();
+      });
+    },
+    [exitProgress, isPreview, onDismiss, onPreviewDismiss],
+  );
+
+  useEffect(() => {
+    if (expired) dismiss();
+  }, [expired, dismiss]);
+
+  useEffect(() => {
+    if (!isPreview || autoDismissAfterMs == null) return;
+    const timer = setTimeout(() => dismiss(), autoDismissAfterMs);
+    return () => clearTimeout(timer);
+  }, [isPreview, autoDismissAfterMs, dismiss]);
+
+  useEffect(
+    () => () => {
+      progress.stopAnimation();
+      exitProgress.stopAnimation();
+    },
+    [progress, exitProgress],
+  );
 
   const styles = ForegroundNotificationBannerStyles(isDark);
 
@@ -68,7 +165,7 @@ export default function ForegroundNotificationBanner({
   useEffect(() => {
     progress.setValue(0);
 
-    if (!banner && !preview) {
+    if (!banner && !isPreview) {
       return;
     }
 
@@ -79,18 +176,21 @@ export default function ForegroundNotificationBanner({
       stiffness: 180,
       mass: 0.8,
     }).start();
-  }, [banner, preview, progress]);
+  }, [banner, isPreview, progress, previewId]);
 
   /*
    * IMPORTANT:
    *
    * We DO NOT put opacity on the parent containing GlassView.
    *
-   * Only the banner content is animated.
+   * Fade the content separately and dissolve glass through its native effect API.
    */
   const animatedContentStyle = useMemo(
     () => ({
-      opacity: progress,
+      opacity: Animated.multiply(
+        progress,
+        exitProgress.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }),
+      ),
 
       transform: [
         {
@@ -101,36 +201,40 @@ export default function ForegroundNotificationBanner({
         },
       ],
     }),
-    [progress],
+    [progress, exitProgress],
   );
 
-  if (!banner && !preview) {
+  if (hidden || (!banner && !isPreview)) {
     return null;
   }
 
-  const canonical = preview ? null : banner?.notification;
+  const canonical =
+    previewNotification ?? (isPreview ? null : banner?.notification);
 
-  const leagueLabel = preview
-    ? previewLeagueLabel
-    : canonical
-      ? getNotificationLeagueLabel(canonical)
+  const leagueLabel = canonical
+    ? getNotificationLeagueLabel(canonical)
+    : isPreview
+      ? previewLeagueLabel
       : null;
 
-  const gameTeams =
-    !preview && canonical ? getNotificationGameTeams(canonical, isDark) : null;
+  const gameTeams = canonical
+    ? getNotificationGameTeams(canonical, isDark)
+    : null;
 
   const actorProfileImage =
-    !preview && canonical && shouldShowNotificationActorProfileImage(canonical)
+    canonical && shouldShowNotificationActorProfileImage(canonical)
       ? (parseImageUrl(getNotificationActorProfileImage(canonical)) ??
         PLACEHOLDER_AVATAR)
       : null;
 
-  const title = preview ? previewTitle : (canonical?.title ?? "Tempo");
+  const title = canonical?.title ?? (isPreview ? previewTitle : "Tempo");
 
-  const message = preview ? previewMessage : (banner?.message ?? "");
+  const message =
+    previewNotification?.body ??
+    (isPreview ? previewMessage : (banner?.message ?? ""));
 
   const open = () => {
-    if (preview) {
+    if (isPreview) {
       return;
     }
 
@@ -138,57 +242,74 @@ export default function ForegroundNotificationBanner({
       return;
     }
 
-    onDismiss(banner.id);
-
-    if (!canonical) {
-      return;
-    }
-
-    if (!canonical.readAt) {
-      void markCenterNotificationRead(canonical.id);
-    }
-
-    const href = getNotificationCenterHref(canonical);
-
-    if (href) {
-      router.push(href as Href);
-    }
-  };
-
-  const dismiss = () => {
-    if (preview) {
-      return;
-    }
-
-    if (!banner) {
-      return;
-    }
-
-    onDismiss(banner.id);
+    dismiss(() => {
+      if (!canonical) return;
+      if (!canonical.readAt) {
+        void markCenterNotificationRead(canonical.id);
+      }
+      const href = getNotificationCenterHref(canonical);
+      if (href) router.push(href as Href);
+    });
   };
 
   return (
-    <View
-      pointerEvents="box-none"
+    <Animated.View
+      pointerEvents={exiting ? "none" : "box-none"}
+      onLayout={(event) => setBannerHeight(event.nativeEvent.layout.height)}
       style={[
         styles.positioner,
         {
-          top: insets.top + 8,
+          transform: [
+            {
+              translateY: exitProgress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, -(bannerHeight + insets.top + 16)],
+              }),
+            },
+          ],
         },
+        inline && isPreview
+          ? { position: "relative", left: 0, right: 0 }
+          : { top: insets.top + 8 },
       ]}
     >
-      {/* Glass remains at opacity 1 at all times */}
+      {/* Dissolve native glass through its effect API; parent opacity stays at 1. */}
       {liquid ? (
         <GlassView
-          glassEffectStyle="regular"
+          colorScheme={resolvedColorScheme}
+          glassEffectStyle={
+            exiting
+              ? {
+                  style: "none",
+                  animate: true,
+                  animationDuration: EXIT_DURATION_MS / 1000,
+                }
+              : "regular"
+          }
           isInteractive
           style={styles.glassBackground}
         />
       ) : (
-        <BlurView intensity={80} style={styles.glassBackground} />
+        <Animated.View
+          style={[
+            styles.glassBackground,
+            {
+              opacity: exitProgress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0],
+              }),
+            },
+          ]}
+        >
+          <BlurView
+            tint={resolvedColorScheme}
+            intensity={80}
+            style={styles.glassBackground}
+          />
+        </Animated.View>
       )}
 
-      {/* Only content animates */}
+      {/* Fade the copy and controls while the whole banner slides upward. */}
       <Animated.View style={[styles.contentContainer, animatedContentStyle]}>
         <Pressable
           onPress={open}
@@ -244,7 +365,10 @@ export default function ForegroundNotificationBanner({
           </View>
 
           <Pressable
-            onPress={dismiss}
+            onPress={(event) => {
+              event.stopPropagation();
+              dismiss();
+            }}
             accessibilityRole="button"
             accessibilityLabel="Dismiss notification"
             hitSlop={10}
@@ -257,7 +381,7 @@ export default function ForegroundNotificationBanner({
           </Pressable>
         </Pressable>
       </Animated.View>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -382,19 +506,15 @@ const ForegroundNotificationBannerStyles = (isDark: boolean) =>
 
     body: {
       color: isDark ? Colors.white : Colors.black,
-
       fontSize: 13,
       lineHeight: 18,
-
       fontFamily: Fonts.REGULAR,
     },
 
     teamNames: {
-      color: isDark ? Colors.darkGray : Colors.lightGray,
-
+      color: isDark ? Colors.white : Colors.black,
       fontSize: 12,
       lineHeight: 16,
-
       fontFamily: Fonts.MEDIUM,
     },
   });
