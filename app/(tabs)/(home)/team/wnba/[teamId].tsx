@@ -32,7 +32,21 @@ export default function TeamDetailScreen() {
   const teamName = team?.name;
   const teamLogo = getWNBATeamLogo(teamIdNum, true);
   const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
+  const {
+    games,
+    months,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    error: gamesError,
+    refresh: refreshTeamGames,
+    selectedMonthKey,
+    selectMonth,
+    firstSeasonGame,
+    showCountdown,
+  } = useBasketballTeamGames("wnba", teamIdNum);
+
   const screen = useTeamDetailScreen({
+    loading: Boolean(team) && gamesLoading,
     tabLeague: league,
     header: {
       league,
@@ -82,19 +96,6 @@ export default function TeamDetailScreen() {
     error: playersError,
     refreshPlayers,
   } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
-
-  const {
-    games,
-    months,
-    loading: gamesLoading,
-    refreshing: gamesRefreshing,
-    error: gamesError,
-    refresh: refreshTeamGames,
-    selectedMonthKey,
-    selectMonth,
-    firstSeasonGame,
-    showCountdown,
-  } = useBasketballTeamGames("wnba", teamIdNum);
 
   const handleRefresh = async () => {
     await screen.runRefresh(async () => {

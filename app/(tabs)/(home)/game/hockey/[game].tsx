@@ -2,7 +2,6 @@ import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
   GameLiveChatOverlay,
-  Venue,
   GameTeamStats,
   HeadCoaches,
   Highlights,
@@ -10,6 +9,7 @@ import {
   LineScore,
   MatchupPredictor,
   TeamInjuries,
+  Venue,
 } from "@/components/Sports/Basketball/GameDetails";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
@@ -29,8 +29,11 @@ import {
   safeDate,
 } from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNotifications } from "contexts/NotificationContext";
+import { isGameFinalStatus } from "utils/games/gameStatus";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameChatAvailability } from "hooks/useGameChatAvailability";
@@ -100,6 +103,7 @@ export default function GameDetailsScreen(
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
+  const { isGameNotified, openGameNotificationSettings } = useNotifications();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
   const routeGame = useMemo(() => {
@@ -173,23 +177,19 @@ export default function GameDetailsScreen(
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const {
-    votes: liveVotes,
-    castVote: castLiveVote,
-    scoring,
-    scoringError,
-    retryScoring,
-  } = useLiveVotes(gameId, {
-    sport: "hockey",
-    league: LEAGUE,
-    state: score?.status?.state ?? undefined,
-    date: game?.date ?? undefined,
-  });
-
   const isLoading = !score || !details || !game || !home || !away;
-  const gameStatusDescription = score?.status?.gameStatusDescription ?? "";
-  const gameStatusDetail = score?.status?.gameStatusDetail ?? "";
-  const state = score?.status?.state ?? null;
+  const status = score?.status;
+  const gameStatusDescription = status?.gameStatusDescription ?? "";
+  const gameStatusDetail = status?.gameStatusDetail ?? "";
+  const state = status?.state ?? null;
+  const isFinal = isGameFinalStatus(status);
+  const gameNotificationsEnabled = isGameNotified(
+    "hockey",
+    LEAGUE,
+    gameId,
+    homeId,
+    awayId,
+  );
   const plays = score?.plays;
   const lastPlay = score?.lastPlay;
   // const playerStats = score?.playerStats ?? [];
@@ -224,6 +224,19 @@ export default function GameDetailsScreen(
       }
     : undefined;
 
+  const {
+    votes: liveVotes,
+    castVote: castLiveVote,
+    scoring,
+    scoringError,
+    retryScoring,
+  } = useLiveVotes(gameId, {
+    sport: "hockey",
+    league: LEAGUE,
+    state: state ?? undefined,
+    date: game?.date ?? undefined,
+  });
+
   const neutralSite = details?.neutralSite;
   const venue = details?.venueInfo;
   const { weather } = useWeather({
@@ -254,9 +267,7 @@ export default function GameDetailsScreen(
 
   useLayoutEffect(() => {
     if (isLoading) {
-      navigation.setOptions({
-        header: () => null,
-      });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 
@@ -272,6 +283,20 @@ export default function GameDetailsScreen(
           homeColor={homeColor}
           awayColor={awayColor}
           isNeutralSite={neutralSite}
+          league={LEAGUE}
+          isNotified={gameNotificationsEnabled}
+          onToggleNotifications={
+            isFinal
+              ? undefined
+              : () =>
+                  openGameNotificationSettings(
+                    "hockey",
+                    LEAGUE,
+                    gameId,
+                    homeId,
+                    awayId,
+                  )
+          }
         />
       ),
     });
@@ -288,9 +313,13 @@ export default function GameDetailsScreen(
     homeCode,
     awayColor,
     homeColor,
+    gameId,
+    gameNotificationsEnabled,
+    isFinal,
     isLoading,
     navigation,
     neutralSite,
+    openGameNotificationSettings,
   ]);
 
   if (isLoading) {

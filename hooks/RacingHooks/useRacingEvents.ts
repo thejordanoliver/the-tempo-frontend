@@ -272,6 +272,12 @@ export function useRacingEvents({
   const canFetch =
     enabled &&
     (Boolean(formattedDate) || (!date && Boolean(onScoreboardCalendar)));
+  const requestKey = canFetch
+    ? `${normalizedLeague}:${formattedDate ?? ""}`
+    : null;
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
+    null,
+  );
 
   const fetchEvents = useCallback(
     async ({
@@ -283,6 +289,7 @@ export function useRacingEvents({
       latestRequestIdRef.current = requestId;
 
       if (!canFetch) {
+        setResolvedRequestKey(null);
         setGames([]);
         setWeekendEvents([]);
         setResponse(null);
@@ -368,6 +375,7 @@ export function useRacingEvents({
         setResponse(null);
       } finally {
         if (requestId === latestRequestIdRef.current) {
+          setResolvedRequestKey(requestKey);
           if (!silent) {
             setLoading(false);
           }
@@ -376,7 +384,14 @@ export function useRacingEvents({
         }
       }
     },
-    [canFetch, endpoint, formattedDate, normalizedLeague, onScoreboardCalendar],
+    [
+      canFetch,
+      endpoint,
+      formattedDate,
+      normalizedLeague,
+      onScoreboardCalendar,
+      requestKey,
+    ],
   );
 
   const refreshEvents = useCallback(async () => {
@@ -429,7 +444,7 @@ export function useRacingEvents({
 
     response,
 
-    loading,
+    loading: canFetch && (loading || resolvedRequestKey !== requestKey),
     refreshing,
     error,
 

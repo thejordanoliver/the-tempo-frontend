@@ -1,4 +1,5 @@
 import { CustomHeader } from "components/CustomHeader";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import type { HeaderImageSource } from "components/CustomHeader/types";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useNotifications } from "contexts/NotificationContext";
@@ -25,9 +26,14 @@ type TeamHeaderConfig = {
 type TeamDetailConfig = {
   tabLeague: string;
   header: TeamHeaderConfig;
+  loading: boolean;
 };
 
-export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
+export function useTeamDetailScreen({
+  tabLeague,
+  header,
+  loading,
+}: TeamDetailConfig) {
   const navigation = useNavigation();
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -99,6 +105,11 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
       : false;
 
   useLayoutEffect(() => {
+    if (loading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -126,6 +137,7 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
       ),
     });
   }, [
+    loading,
     navigation,
     router,
     isDark,
@@ -145,6 +157,7 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
   ]);
 
   return {
+    loading,
     teamDetails,
     teamDetailsLoading,
     teamDetailsError,

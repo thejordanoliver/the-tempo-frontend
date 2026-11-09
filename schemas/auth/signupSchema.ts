@@ -5,7 +5,7 @@ import {
   USERNAME_MIN_LENGTH,
   USERNAME_MAX_LENGTH,
 } from "./credentialRules";
-import { BROWSEABLE_LEAGUES } from "constants/leagues";
+import { FAVORITE_SPORT_LEAGUES } from "constants/leagues";
 import type { FavoriteSportId } from "constants/leagues";
 import {
   normalizeFavoriteTeamKey,
@@ -14,7 +14,7 @@ import {
 import { z } from "zod";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const FAVORITE_SPORT_IDS = new Set<string>(BROWSEABLE_LEAGUES);
+const FAVORITE_SPORT_IDS = new Set<string>(FAVORITE_SPORT_LEAGUES);
 
 export const SIGNUP_PASSWORD_REQUIREMENTS = PASSWORD_REQUIREMENTS;
 

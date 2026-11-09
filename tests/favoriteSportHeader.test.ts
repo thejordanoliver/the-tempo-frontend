@@ -4,7 +4,7 @@ import type { FavoriteSportId } from "../constants/leagues";
 
 // prettier-ignore
 // @ts-ignore Node's type-stripping test runner requires the .ts extension.
-import { getFavoriteHeaderAccessibilityLabel, getFavoriteHeaderIconName } from "../components/CustomHeader/favoriteAction.ts";
+import { getFavoriteHeaderAccessibilityLabel, getFavoriteHeaderIconName } from "../utils/customheader/favoriteAction.ts";
 // prettier-ignore
 // @ts-ignore Node's type-stripping test runner requires the .ts extension.
 import { executeFavoriteSportToggle, restoreFavoriteSportMembership } from "../utils/favorites/favoriteSports.ts";

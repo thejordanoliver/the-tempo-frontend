@@ -132,7 +132,7 @@ test("loads profile identity without requesting stats", async () => {
   const h = setup();
   assert.equal(h.requests[0].url, "api/roster/cfb/player/100");
   h.requests[0].resolve({
-    data: { player: { id: 200 }, playerId: "200", league: "nfl" },
+    data: { player: { id: 200, cfb_player_id: 100 } },
   });
   await flush();
   assert.equal(h.state.player.id, 200);
@@ -146,23 +146,47 @@ test("ignores late profile results after switching players", async () => {
   h.update([300, "mcbb"]);
   assert.equal(h.requests[0].signal.aborted, true);
   h.requests[1].resolve({
-    data: { player: { id: 400 }, playerId: "400", league: "nba" },
+    data: { player: { id: 400, mcbb_player_id: 300 } },
   });
   await flush();
   h.requests[0].resolve({
-    data: { player: { id: 200 }, playerId: "200", league: "nfl" },
+    data: { player: { id: 200, cfb_player_id: 100 } },
   });
   await flush();
   assert.equal(h.state.resolvedLeague, "nba");
   assert.equal(h.state.player.id, 400);
   h.stop();
 });
-test("preserves noncollege routes and legacy response fallback", async () => {
+test("preserves noncollege routes and resolves identity from player.id", async () => {
   const h = setup([1, "nba"]);
-  assert.equal(h.requests[0].url, "api/roster/player/1");
+  assert.equal(h.requests[0].url, "api/roster/nba/player/1");
   h.requests[0].resolve({ data: { player: { id: 1 } } });
   await flush();
   assert.equal(h.state.resolvedLeague, "nba");
   assert.equal(h.state.resolvedPlayerId, 1);
   h.stop();
 });
+
+for (const [college, pro, column] of [
+  ["cfb", "nfl", "cfb_player_id"],
+  ["mcbb", "nba", "mcbb_player_id"],
+  ["wcbb", "wnba", "wcbb_player_id"],
+]) {
+  test(`resolves ${college} profiles from existing player fields without envelope metadata`, async () => {
+    for (const linked of [true, false]) {
+      const h = setup([100, college]);
+      h.requests[0].resolve({
+        data: {
+          player: {
+            id: linked ? 200 : 100,
+            ...(linked ? { [column]: 100 } : {}),
+          },
+        },
+      });
+      await flush();
+      assert.equal(h.state.resolvedLeague, linked ? pro : college);
+      assert.equal(h.state.resolvedPlayerId, linked ? 200 : 100);
+      h.stop();
+    }
+  });
+}

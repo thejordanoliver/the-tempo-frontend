@@ -10,7 +10,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { LeagueScreenStyles } from "styles/LeagueStyles/LeagueStyles";
-import { LeagueType } from "types/types";
+import type { BrowseableLeague } from "constants/leagues";
 
 export default function LeagueScreen() {
   const navigation = useNavigation();
@@ -34,7 +34,7 @@ export default function LeagueScreen() {
   }, [handleSearchToggle, navigation]);
 
   const goToLeague = useCallback(
-    (league: LeagueType) => {
+    (league: BrowseableLeague) => {
       const config = LEAGUE_CONFIG[league];
 
       const sport = config.route.split("/").at(-1);

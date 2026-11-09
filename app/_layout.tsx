@@ -33,6 +33,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import BadgeUnlockedModal from "../components/Badges/BadgeUnlockedModal";
 import { CustomHeader } from "../components/CustomHeader";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import ForegroundNotificationBanner from "../components/Notifications/ForegroundNotificationBanner";
 import { Colors } from "../constants/styles";
 import { ExploreWidgetsProvider } from "../contexts/ExploreWidgetsContext";
@@ -254,14 +255,17 @@ function AppLayout() {
               headerShown: !isSplashScreen && !isTabScreen,
 
               header: !isSplashScreen
-                ? ({ options }) => (
-                    <CustomHeader
-                      title={options.title ?? route.name}
-                      onBack={
-                        navigation.canGoBack() ? navigation.goBack : undefined
-                      }
-                    />
-                  )
+                ? ({ options }) =>
+                    route.name.startsWith("league/") ? (
+                      <GameHeaderPlaceholder />
+                    ) : (
+                      <CustomHeader
+                        title={options.title ?? route.name}
+                        onBack={
+                          navigation.canGoBack() ? navigation.goBack : undefined
+                        }
+                      />
+                    )
                 : undefined,
 
               gestureEnabled: !isTabScreen,

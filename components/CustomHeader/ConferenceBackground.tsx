@@ -1,8 +1,11 @@
+import type {
+  HeaderImageSource,
+  HeaderTeamLike,
+} from "@/utils/customheader/types";
+import { resolveImage } from "@/utils/customheader/utils";
 import { Colors } from "constants/styles";
 import { Image, StyleSheet, View, useWindowDimensions } from "react-native";
 import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
-import type { HeaderImageSource, HeaderTeamLike } from "./types";
-import { resolveImage } from "./utils";
 type ConferenceBackgroundProps = {
   insets: {
     top: number;

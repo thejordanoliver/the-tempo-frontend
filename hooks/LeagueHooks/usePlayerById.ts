@@ -36,10 +36,7 @@ export function usePlayerById(
         setIdentity(null);
         setResolvedRequestKey(null);
 
-        const url =
-          league === "nba"
-            ? `api/roster/player/${playerId}`
-            : `api/roster/${league}/player/${playerId}`;
+        const url = `api/roster/${league}/player/${playerId}`;
 
         const res = await apiClient.get(url, {
           signal: controller.signal,
@@ -47,12 +44,19 @@ export function usePlayerById(
 
         if (controller.signal.aborted) return;
 
-        const resolvedId = Number(
-          res.data.playerId ?? res.data.player?.id ?? playerId,
-        );
+        const resolvedId = Number(res.data.player?.id ?? playerId);
+        const profileLinks: Record<string, { league: string; column: string }> =
+          {
+            cfb: { league: "nfl", column: "cfb_player_id" },
+            mcbb: { league: "nba", column: "mcbb_player_id" },
+            wcbb: { league: "wnba", column: "wcbb_player_id" },
+          };
+        const linkedProfile = profileLinks[league];
         setIdentity({
           league:
-            typeof res.data.league === "string" ? res.data.league : league,
+            linkedProfile && res.data.player?.[linkedProfile.column] != null
+              ? linkedProfile.league
+              : league,
           playerId:
             Number.isSafeInteger(resolvedId) && resolvedId > 0
               ? resolvedId

@@ -225,10 +225,12 @@ export type ForumPostUpdateResponse<TPost = ForumPost> = {
   post?: TPost;
 };
 
+export type ForumLeague = LeagueType;
+
 export type ForumPostDestination =
   | {
       kind: "league";
-      league: LeagueType;
+      league: ForumLeague;
     }
   | {
       kind: "team";

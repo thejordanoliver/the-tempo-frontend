@@ -1,4 +1,5 @@
 import TeamInfoModal from "@/components/Team/TeamInfoModal";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import TeamPager from "components/Team/TeamPager";
 import { Colors, globalStyles } from "constants/styles";
@@ -41,6 +42,14 @@ export default function TeamDetailScreen({
       <View style={[global.emptyContainer, background]}>
         <Text style={global.emptyTitle}>Team unavailable</Text>
         <Text style={global.emptySubText}>This team could not be found.</Text>
+      </View>
+    );
+  }
+
+  if (screen.loading) {
+    return (
+      <View style={[TeamDetailStyles.loadContainer, background]}>
+        <CustomActivityIndicator />
       </View>
     );
   }

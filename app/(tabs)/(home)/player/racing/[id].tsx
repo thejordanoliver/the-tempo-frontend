@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import PlayerHeader from "components/Player/PlayerHeader";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -27,7 +28,7 @@ export default function PlayerDetailScreen() {
 
   useLayoutEffect(() => {
     if (loading) {
-      navigation.setOptions({ header: () => null });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 

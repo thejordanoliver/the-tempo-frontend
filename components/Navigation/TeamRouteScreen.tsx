@@ -1,6 +1,8 @@
+import { CustomHeader } from "components/CustomHeader";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLayoutEffect } from "react";
 import { Text, View } from "react-native";
 
 import NBATeamScreen from "app/(tabs)/(home)/team/[teamId]";
@@ -36,6 +38,7 @@ const TEAM_SCREENS = {
 } as const;
 
 export default function TeamRouteScreen() {
+  const navigation = useNavigation();
   const { teamType } = useLocalSearchParams<{ teamType?: string | string[] }>();
   const { resolvedColorScheme } = usePreferences();
   const global = globalStyles(resolvedColorScheme === "dark");
@@ -43,6 +46,19 @@ export default function TeamRouteScreen() {
     (Array.isArray(teamType) ? teamType[0] : teamType)?.toLowerCase() ?? "nba";
   const TeamScreen =
     TEAM_SCREENS[resolvedTeamType as keyof typeof TEAM_SCREENS];
+
+  useLayoutEffect(() => {
+    if (!TeamScreen) {
+      navigation.setOptions({
+        header: () => (
+          <CustomHeader
+            title="Team unavailable"
+            onBack={() => navigation.goBack()}
+          />
+        ),
+      });
+    }
+  }, [TeamScreen, navigation]);
 
   if (!TeamScreen) {
     return (

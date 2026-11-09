@@ -1,3 +1,4 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import {
   FanPrediction,
   GameLiveChatOverlay,
@@ -250,9 +251,7 @@ export default function GameDetailsScreen(
 
   useLayoutEffect(() => {
     if (isLoading) {
-      navigation.setOptions({
-        header: () => null,
-      });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 

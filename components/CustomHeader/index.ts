@@ -1,5 +1,3 @@
-export { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
-export { CustomHeader } from "./CustomHeader";
 export type {
   AuthHeaderTab,
   CustomHeaderProps,
@@ -7,4 +5,6 @@ export type {
   HomeHeaderTab,
   RacingLeague,
   RacingLeagueDisplayConfig,
-} from "./types";
+} from "@/utils/customheader/types";
+export { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
+export { CustomHeader } from "./CustomHeader";

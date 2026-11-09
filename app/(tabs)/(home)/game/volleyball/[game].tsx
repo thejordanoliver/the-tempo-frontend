@@ -1,6 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { CustomHeader } from "components/CustomHeader";
-import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import {
   BoxScore,
   GameHeader,
@@ -66,7 +66,7 @@ export default function VolleyballGameScreen(
 
   useLayoutEffect(() => {
     if (isLoading && loading) {
-      navigation.setOptions({ header: () => null });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 
@@ -86,16 +86,27 @@ export default function VolleyballGameScreen(
         />
       ),
     });
-  }, [navigation, router.back, league, game, homeLogo, awayLogo, isLoading, loading]);
+  }, [
+    navigation,
+    router.back,
+    league,
+    game,
+    homeLogo,
+    awayLogo,
+    isLoading,
+    loading,
+  ]);
 
   if (isLoading)
     return (
-      <View style={[styles.screen, styles.content]}>
+      <View
+        style={[
+          styles.screen,
+          loading ? gameDetailsScreenStyles.loadingContainer : styles.content,
+        ]}
+      >
         {loading ? (
-          <>
-            <HeaderSkeleton />
-            <GameCardSkeleton />
-          </>
+          <CustomActivityIndicator />
         ) : (
           <>
             <Text style={global.secondaryText}>

@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -190,7 +193,14 @@ export default function TennisLeagueScreen() {
     [calendar, isDark],
   );
 
+  const entryLoading = useLeagueEntryLoading(loading, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -201,7 +211,7 @@ export default function TennisLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, league, navigation]);
+  }, [entryLoading, favoriteHeaderProps, league, navigation]);
 
   const changeDateByDays = useCallback((days: number) => {
     setSelectedDate((current) => {
@@ -232,6 +242,8 @@ export default function TennisLeagueScreen() {
 
     setShowCalendar(false);
   }, []);
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

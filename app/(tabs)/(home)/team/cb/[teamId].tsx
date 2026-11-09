@@ -23,7 +23,21 @@ export default function TeamDetailScreen() {
   const team = getCBTeam(teamIdNum);
   const teamLogo = getCBTeamLogo(teamIdNum, true);
   const teamColor = team?.primaryColor ?? Colors.midTone;
+  const {
+    games,
+    months,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    error: gamesError,
+    refresh: refreshTeamGames,
+    selectedMonthKey,
+    selectMonth,
+    firstSeasonGame,
+    showCountdown,
+  } = useBaseballTeamGames("cb", teamIdNum ?? null);
+
   const screen = useTeamDetailScreen({
+    loading: Boolean(team) && gamesLoading,
     tabLeague: league,
     header: {
       league,
@@ -47,19 +61,6 @@ export default function TeamDetailScreen() {
   } = useTeamNews(league, teamIdNum, 10, {
     enabled: screen.hasVisitedTab("news"),
   });
-
-  const {
-    games,
-    months,
-    loading: gamesLoading,
-    refreshing: gamesRefreshing,
-    error: gamesError,
-    refresh: refreshTeamGames,
-    selectedMonthKey,
-    selectMonth,
-    firstSeasonGame,
-    showCountdown,
-  } = useBaseballTeamGames("cb", teamIdNum ?? null);
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {

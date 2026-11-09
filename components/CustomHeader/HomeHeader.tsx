@@ -1,7 +1,7 @@
 import React from "react";
 import { Animated, StyleSheet } from "react-native";
 import TabBar from "../TabBars/TabBar";
-import type { HomeHeaderTab } from "./types";
+import type { HomeHeaderTab } from "@/utils/customheader/types";
 
 const HOME_HEADER_TABS = ["scores", "for you"] as const;
 

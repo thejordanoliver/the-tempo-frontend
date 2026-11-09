@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useSoccerGames } from "@/hooks/SoccerHooks/useSoccerGames";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
@@ -126,7 +129,14 @@ export default function SoccerLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -137,7 +147,7 @@ export default function SoccerLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, leagueLabel, league]);
+  }, [entryLoading, favoriteHeaderProps, navigation, leagueLabel, league]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -150,6 +160,8 @@ export default function SoccerLeagueScreen() {
       setRefreshing(false);
     }
   };
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

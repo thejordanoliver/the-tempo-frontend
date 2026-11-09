@@ -22,7 +22,21 @@ export default function GLeagueTeamDetailScreen() {
   const team = getGLeagueTeam(teamIdNum);
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamLogo = getGLeagueTeamLogo(teamIdNum, true);
+  const {
+    games,
+    months,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    error: gamesError,
+    refresh: refreshTeamGames,
+    selectedMonthKey,
+    selectMonth,
+    firstSeasonGame,
+    showCountdown,
+  } = useBasketballTeamGames(league, teamIdNum);
+
   const screen = useTeamDetailScreen({
+    loading: Boolean(team) && gamesLoading,
     tabLeague: league,
     header: {
       league,
@@ -51,18 +65,6 @@ export default function GLeagueTeamDetailScreen() {
     error: playersError,
     refreshPlayers,
   } = useRoster(teamIdNum, league, { enabled: screen.hasVisitedTab("roster") });
-  const {
-    games,
-    months,
-    loading: gamesLoading,
-    refreshing: gamesRefreshing,
-    error: gamesError,
-    refresh: refreshTeamGames,
-    selectedMonthKey,
-    selectMonth,
-    firstSeasonGame,
-    showCountdown,
-  } = useBasketballTeamGames(league, teamIdNum);
 
   const handleRefresh = async () => {
     await screen.runRefresh(async () => {

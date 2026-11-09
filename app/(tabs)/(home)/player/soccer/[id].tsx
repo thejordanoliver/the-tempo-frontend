@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import PlayerHeader from "components/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Soccer/Player/PlayerStatTable";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
@@ -81,7 +82,7 @@ export default function PlayerDetailScreen() {
 
   useLayoutEffect(() => {
     if (screenLoading) {
-      navigation.setOptions({ header: () => null });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 

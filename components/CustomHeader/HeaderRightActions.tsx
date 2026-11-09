@@ -13,7 +13,7 @@ import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 import {
   getFavoriteHeaderAccessibilityLabel,
   getFavoriteHeaderIconName,
-} from "./favoriteAction";
+} from "@/utils/customheader/favoriteAction";
 import { ProfileHeaderMenu } from "./ProfileHeaderMenu";
 
 type HeaderRightActionsProps = {

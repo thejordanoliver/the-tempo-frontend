@@ -1,3 +1,4 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   FanPrediction,
@@ -219,9 +220,7 @@ export default function GameDetailsScreen(
 
   useLayoutEffect(() => {
     if (isLoading) {
-      navigation.setOptions({
-        header: () => null,
-      });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 

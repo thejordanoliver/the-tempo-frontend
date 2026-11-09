@@ -2,7 +2,6 @@ import { CustomHeader } from "@/components/CustomHeader";
 import {
   FanPrediction,
   GameLiveChatOverlay,
-  Venue,
   GameTeamStats,
   HeadCoaches,
   Highlights,
@@ -11,6 +10,7 @@ import {
   MatchupPredictor,
   Officials,
   TeamInjuries,
+  Venue,
 } from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
@@ -37,6 +37,7 @@ import {
 } from "@/utils/games/games";
 import { isGameFinalStatus } from "@/utils/games/gameStatus";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import GameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import GameSummary from "components/Sports/Football/GameDetails/GameSummary";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -276,7 +277,8 @@ export default function GameDetailsScreen(
   const awayCoach = awayTeamDetails?.coach;
 
   const isLoading = loading || !game || !home || !away || !score || !details;
-  const state = score?.status.state ?? "pre";
+  const status = score?.status;
+  const state = status?.state ?? "pre";
   const isFinal = isGameFinalStatus(score?.status);
   const gameNotificationsEnabled = isGameNotified(
     "football",
@@ -286,16 +288,16 @@ export default function GameDetailsScreen(
     awayId,
   );
 
-  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
-  const gameStatusDetail = score?.status.shortDetail ?? "";
+  const gameStatusDescription = status?.gameStatusDescription ?? "";
+  const gameStatusDetail = status?.shortDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
     isCanceled || isPostponed || isSuspended || isForfeited;
-  const clock = score?.status.displayClock ?? "0:00";
-  const period = formatPeriod({ period: score?.status.period });
+  const clock = status?.displayClock ?? "0:00";
+  const period = formatPeriod({ period: status?.period });
   const redzone = game?.situation?.isRedZone ?? false;
   const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
   const headline = details?.headline ?? rivalry ?? holidayLabel;
@@ -401,9 +403,7 @@ export default function GameDetailsScreen(
 
   useLayoutEffect(() => {
     if (isLoading) {
-      navigation.setOptions({
-        header: () => null,
-      });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 
@@ -522,7 +522,7 @@ export default function GameDetailsScreen(
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
             <PlayByPlay
-              gameStatus={score?.status}
+              gameStatus={status}
               awayCode={awayCode}
               homeCode={homeCode}
               awayName={awayName}

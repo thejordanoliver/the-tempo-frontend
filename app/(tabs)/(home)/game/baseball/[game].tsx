@@ -1,3 +1,4 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
@@ -362,9 +363,7 @@ export default function GameDetailsScreen(
 
   useLayoutEffect(() => {
     if (isLoading) {
-      navigation.setOptions({
-        header: () => null,
-      });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 

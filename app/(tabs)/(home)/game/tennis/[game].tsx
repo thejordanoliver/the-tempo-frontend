@@ -1,3 +1,4 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -10,6 +11,7 @@ import { gameDetailsScreenStyles } from "@/styles/GameDetailStyles/GameDetailsSc
 import { formatDate, formatTime, safeDate } from "@/utils/common/dateUtils";
 import { getBroadcastDisplay } from "@/utils/games/games";
 import { CustomHeader } from "components/CustomHeader";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { usePreferences } from "contexts/PreferencesContext";
 import type { TennisMatch } from "types/tennis/tennis";
 
@@ -36,7 +38,7 @@ function parseMatch(value?: string | string[]): TennisMatch | null {
   }
 }
 
-export default function TennisMatchDetailsScreen() {
+export default function GameDetailsScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();
   const params = useLocalSearchParams<RouteParams>();
   const navigation = useNavigation();
@@ -104,7 +106,7 @@ export default function TennisMatchDetailsScreen() {
 
   useLayoutEffect(() => {
     if (isLoading) {
-      navigation.setOptions({ header: () => null });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 
@@ -118,7 +120,13 @@ export default function TennisMatchDetailsScreen() {
     });
   }, [isLoading, match?.tournamentShortName, navigation]);
 
-  if (!match) return <View />;
+  if (!match) {
+    return (
+      <View style={styles.loadingContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <ScrollView

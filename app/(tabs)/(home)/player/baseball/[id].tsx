@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import LatestGame from "@/components/Player/LatestGame";
 import SeasonStatCard from "@/components/Sports/Baseball/Player/SeasonStatCard";
 import {
@@ -138,7 +139,7 @@ export default function PlayerDetailScreen() {
 
   useLayoutEffect(() => {
     if (screenLoading) {
-      navigation.setOptions({ header: () => null });
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
       return;
     }
 

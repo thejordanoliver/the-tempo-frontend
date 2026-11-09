@@ -2,7 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { Image, Text, View, useWindowDimensions } from "react-native";
 import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
-import { FALLBACK_MESSAGE_AVATAR, resolveImage } from "./utils";
+import {
+  FALLBACK_MESSAGE_AVATAR,
+  resolveImage,
+} from "@/utils/customheader/utils";
 
 type MessageThreadHeaderProps = {
   avatar?: string;

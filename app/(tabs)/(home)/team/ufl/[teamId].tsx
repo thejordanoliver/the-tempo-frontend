@@ -25,7 +25,15 @@ export default function TeamDetailScreen() {
   const teamLogo = getUFLTeamLogo(teamIdNum, true);
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamName = team?.name;
+  const {
+    games: teamGames,
+    loading: gamesLoading,
+    error: gamesError,
+    refreshGames: refreshTeamGames,
+  } = useFootballTeamGames(teamIdNum, league);
+
   const screen = useTeamDetailScreen({
+    loading: Boolean(team) && gamesLoading,
     tabLeague: league,
     header: {
       league,
@@ -52,13 +60,6 @@ export default function TeamDetailScreen() {
   } = useTeamNews(league, teamIdNum, 10, {
     enabled: hasVisitedTab("news"),
   });
-
-  const {
-    games: teamGames,
-    loading: gamesLoading,
-    error: gamesError,
-    refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum, league);
 
   const firstSeasonGame = useMemo(
     () => getFirstSeasonGame(teamGames),

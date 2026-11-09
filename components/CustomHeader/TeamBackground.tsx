@@ -1,9 +1,12 @@
+import type {
+  HeaderImageSource,
+  HeaderTeamLike,
+} from "@/utils/customheader/types";
+import { resolveImage } from "@/utils/customheader/utils";
 import { Colors } from "constants/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, StyleSheet, View, useWindowDimensions } from "react-native";
 import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
-import type { HeaderImageSource, HeaderTeamLike } from "./types";
-import { resolveImage } from "./utils";
 
 type TeamBackgroundProps = {
   insets: {

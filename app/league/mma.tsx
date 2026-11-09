@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import EventSelector, {
   getDefaultUFCEventIndex,
 } from "@/components/League/Selectors/EventSelector";
@@ -69,7 +72,7 @@ function UFCLeagueScreen() {
 
   const { scoreboardCalendar, onScoreboardCalendar } =
     useScoreboardCalendar(league);
-  const { calendar } = useLeagueCalendar(
+  const { calendar, loading: calendarLoading } = useLeagueCalendar(
     league,
     league,
     undefined,
@@ -122,7 +125,17 @@ function UFCLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
+  const entryLoading = useLeagueEntryLoading(
+    calendarLoading || loading,
+    league,
+  );
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -133,7 +146,9 @@ function UFCLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league]);
+  }, [entryLoading, favoriteHeaderProps, navigation, league]);
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

@@ -27,7 +27,7 @@ import Animated, {
   type SharedValue,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import type { LeagueType } from "types/types";
+import type { BrowseableLeague } from "constants/leagues";
 import {
   leagueCarouselMotionAction,
   leagueCarouselWindow,
@@ -45,11 +45,11 @@ const IS_WEB = Platform.OS === "web";
 type Props = {
   isDark: boolean;
   searchQuery: string;
-  onSelect: (league: LeagueType) => void;
+  onSelect: (league: BrowseableLeague) => void;
 };
 
 type CardProps = {
-  league: LeagueType;
+  league: BrowseableLeague;
   leagueIndex: number;
   rotation: SharedValue<number>;
   width: number;
@@ -57,7 +57,7 @@ type CardProps = {
   geometry: LeagueOrbitGeometry;
   isDark: boolean;
   active: boolean;
-  onSelect: (league: LeagueType) => void;
+  onSelect: (league: BrowseableLeague) => void;
 };
 
 const OrbitCard = memo(function OrbitCard({
@@ -325,7 +325,7 @@ export default function LeagueCarousel({
   );
 
   const moveToLeague = useCallback(
-    (league: LeagueType) => {
+    (league: BrowseableLeague) => {
       const target = BROWSEABLE_LEAGUES.indexOf(league);
       settle(
         rotation.value + leagueDistanceFromFront(target, rotation.value, COUNT),
@@ -355,7 +355,7 @@ export default function LeagueCarousel({
   }, [matches, moveToLeague]);
 
   const selectSearchPill = useCallback(
-    (league: LeagueType) => {
+    (league: BrowseableLeague) => {
       if (pendingSearch.current !== null) {
         clearTimeout(pendingSearch.current);
         pendingSearch.current = null;
@@ -425,7 +425,7 @@ export default function LeagueCarousel({
   );
 
   const openLeague = useCallback(
-    (league: LeagueType) => {
+    (league: BrowseableLeague) => {
       cancelAnimation(rotation);
       onSelect(league);
     },

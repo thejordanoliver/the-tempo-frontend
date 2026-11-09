@@ -1,3 +1,6 @@
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useHockeyGames } from "@/hooks/HockeyHooks/useHockeyGames";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -159,7 +162,14 @@ function NHLLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
   useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeader
@@ -170,7 +180,7 @@ function NHLLeagueScreen() {
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, league]);
+  }, [entryLoading, favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -285,6 +295,8 @@ function NHLLeagueScreen() {
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
   /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
 
   return (
     <>

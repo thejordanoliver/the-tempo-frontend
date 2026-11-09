@@ -12,19 +12,22 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { playerCardStyles } from "styles/PlayerStyles/PlayerCardStyles";
-import { LeagueType } from "types/types";
+import type { LeagueType } from "types/types";
 
-export interface PlayerCardProps {
-  id: number;
+interface PlayerCardBaseProps {
+  id: string | number;
   name: string | null;
   position?: string | null;
-  teamId: number;
   headshot?: string | null;
   rank?: string | number | null;
   number?: string | number | null;
-  league?: string;
   statNumber?: string | number | null;
 }
+
+export type PlayerCardProps = PlayerCardBaseProps & {
+  league?: string;
+  teamId: number;
+};
 
 type PlayerRoutePathname =
   | "/player/basketball/[id]"
@@ -78,23 +81,26 @@ export default function PlayerCard({
   const isWCBB = league === "wcbb";
   const isNHL = league === "nhl";
 
-  const team = isNBA
-    ? getNBATeam(teamId)
-    : isMLB
-      ? getMLBTeam(teamId)
-      : isNFL
-        ? getNFLTeam(teamId)
-        : isNHL
-          ? getNHLTeam(teamId)
-          : isCFB
-            ? getCFBTeam(teamId)
-            : isWNBA
-              ? getWNBATeam(teamId)
-              : isMCBB
-                ? getMCBBTeam(teamId)
-                : isWCBB
-                  ? getWCBBTeam(teamId)
-                  : null;
+  const team =
+    teamId == null
+      ? null
+      : isNBA
+        ? getNBATeam(teamId)
+        : isMLB
+          ? getMLBTeam(teamId)
+          : isNFL
+            ? getNFLTeam(teamId)
+            : isNHL
+              ? getNHLTeam(teamId)
+              : isCFB
+                ? getCFBTeam(teamId)
+                : isWNBA
+                  ? getWNBATeam(teamId)
+                  : isMCBB
+                    ? getMCBBTeam(teamId)
+                    : isWCBB
+                      ? getWCBBTeam(teamId)
+                      : null;
 
   const teamName = team?.name;
 

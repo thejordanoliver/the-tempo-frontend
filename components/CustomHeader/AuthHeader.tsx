@@ -1,7 +1,7 @@
+import type { AuthHeaderTab } from "@/utils/customheader/types";
 import React from "react";
 import { StyleSheet, type Animated } from "react-native";
 import TabBar from "../TabBars/TabBar";
-import type { AuthHeaderTab } from "./types";
 
 const AUTH_HEADER_TABS = ["sign in", "sign up"] as const;
 

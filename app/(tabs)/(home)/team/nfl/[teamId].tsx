@@ -31,7 +31,15 @@ export default function TeamDetailScreen() {
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
+  const {
+    games: teamGames,
+    loading: gamesLoading,
+    error: gamesError,
+    refreshGames: refreshTeamGames,
+  } = useFootballTeamGames(teamIdNum, league);
+
   const screen = useTeamDetailScreen({
+    loading: Boolean(team) && gamesLoading,
     tabLeague: league,
     header: {
       league,
@@ -66,13 +74,6 @@ export default function TeamDetailScreen() {
     error: playersError,
     refreshPlayers,
   } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
-
-  const {
-    games: teamGames,
-    loading: gamesLoading,
-    error: gamesError,
-    refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum, league);
 
   const {
     teamRoster,

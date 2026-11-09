@@ -1,19 +1,20 @@
-import { BROWSEABLE_LEAGUES } from "constants/leagues";
-import type { ForumPostDestination } from "types/forum";
-import type { LeagueType } from "types/types";
+import { FORUM_LEAGUES } from "constants/leagues";
+import type { ForumLeague, ForumPostDestination } from "types/forum";
 
 type RouteParam = string | string[] | undefined;
 
-const selectableLeagueSet = new Set<string>(BROWSEABLE_LEAGUES);
+const selectableLeagueSet = new Set<string>(FORUM_LEAGUES);
 
 const firstRouteParam = (value: RouteParam) =>
   Array.isArray(value) ? value[0] : value;
 
-export function normalizeForumPostLeague(value: RouteParam): LeagueType | null {
+export function normalizeForumPostLeague(
+  value: RouteParam,
+): ForumLeague | null {
   const normalized = firstRouteParam(value)?.trim().toLowerCase();
 
   return normalized && selectableLeagueSet.has(normalized)
-    ? (normalized as LeagueType)
+    ? (normalized as ForumLeague)
     : null;
 }
 
