@@ -92,6 +92,7 @@ export type FootballGame = {
     id: number;
     uid: string;
     name: string;
+    shortName?: string | null;
     code: string;
     location: string;
     logo: string;
@@ -107,6 +108,7 @@ export type FootballGame = {
     id: number;
     uid: string;
     name: string;
+    shortName?: string | null;
     code: string;
     location: string;
     logo: string;

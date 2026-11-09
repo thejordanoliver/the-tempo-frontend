@@ -61,8 +61,8 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
 
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
-  const homeName = homeTeam?.fullName ?? "TBD";
-  const awayName = awayTeam?.fullName ?? "TBD";
+  const homeName = game.home?.name;
+  const awayName = game.away?.name;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id

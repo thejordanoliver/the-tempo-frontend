@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   getMCBBRivalry,
   getMCBBTeam,
@@ -15,6 +14,7 @@ import {
   getWCBBTeamLogo,
 } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -87,8 +87,8 @@ export default function BasketballSquareGameCard({
           ? getWNBATeam(awayId)
           : getNBATeam(awayId)) ?? emptyAwayTeam;
 
-  const homeName = homeTeam?.code || game.home?.code;
-  const awayName = awayTeam?.code || game.away?.code;
+  const homeName = game.home?.code;
+  const awayName = game.away?.code;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id

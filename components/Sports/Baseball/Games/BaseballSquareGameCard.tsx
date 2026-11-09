@@ -64,8 +64,8 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
 
-  const homeName = (homeTeam?.code || game.home?.code) ?? "TBD";
-  const awayName = (awayTeam?.code || game.away?.code) ?? "TBD";
+  const homeName = game.home?.code;
+  const awayName = game.away?.code;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id

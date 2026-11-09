@@ -50,8 +50,8 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
   const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
 
-  const homeName = homeTeam?.fullName;
-  const awayName = awayTeam?.fullName;
+  const homeName = game.home?.name;
+  const awayName = game.away?.name;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id

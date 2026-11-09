@@ -63,8 +63,8 @@ function FootballSquareGameCard({
   const away =
     (isNFL ? getNFLTeam(awayId) : getCFBTeam(awayId)) ?? emptyAwayTeam;
 
-  const homeName = home?.code ?? game.home.name;
-  const awayName = away?.code ?? game.away.name;
+  const homeName = game.home?.code;
+  const awayName = game.away?.code;
 
   const homeLogo =
     home.id === emptyHomeTeam.id

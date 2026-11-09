@@ -50,8 +50,8 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const awayId = Number(away?.id ?? 0);
   const homeTeam = getSOCCTeam(homeId) ?? emptyHomeTeam;
   const awayTeam = getSOCCTeam(awayId) ?? emptyAwayTeam;
-  const homeName = homeTeam?.shortName || homeTeam?.name || home?.name || "TBD";
-  const awayName = awayTeam?.shortName || awayTeam?.name || away?.name || "TBD";
+  const homeName = game.home?.shortName ?? game.home?.name;
+  const awayName = game.away?.shortName ?? game.away?.name;
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id
       ? emptyHomeTeam.logo

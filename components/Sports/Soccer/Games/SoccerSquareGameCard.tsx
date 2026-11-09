@@ -53,8 +53,8 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const homeTeam = getSOCCTeam(home.id) ?? emptyHomeTeam;
   const awayTeam = getSOCCTeam(away.id) ?? emptyAwayTeam;
 
-  const homeName = homeTeam?.code || "TBD";
-  const awayName = awayTeam?.code || "TBD";
+  const homeName = game.home?.code;
+  const awayName = game.away?.code;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id

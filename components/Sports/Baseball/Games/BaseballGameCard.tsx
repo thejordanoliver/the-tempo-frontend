@@ -65,8 +65,8 @@ function BaseballGameCard({
         ? getCBTeam(awayId)
         : getMLBTeam(awayId)) ?? emptyAwayTeam;
 
-  const homeName = homeTeam?.shortName ?? homeTeam?.name ?? "TBD";
-  const awayName = awayTeam?.shortName ?? awayTeam?.name ?? "TBD";
+  const homeName = game.home?.shortName ?? game.home?.name;
+  const awayName = game.away?.shortName ?? game.away?.name;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id
