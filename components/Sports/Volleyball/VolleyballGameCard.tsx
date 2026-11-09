@@ -57,8 +57,8 @@ function VolleyballGameCard({
       ? getWCVBTeam(awayId)
       : emptyAwayTeam;
 
-  const homeName = home?.shortName ?? home?.name ?? game?.home?.name;
-  const awayName = away?.shortName ?? away?.name ?? game?.away?.name;
+  const homeName = game.home?.shortName ?? game.home?.name;
+  const awayName = game.away?.shortName ?? game.away?.name;
 
   const homeLogo =
     home?.id === emptyHomeTeam.id

@@ -72,8 +72,8 @@ function FootballStackedGameCard({
         ? getCFBTeam(awayId)
         : getUFLTeam(awayId)) ?? emptyAwayTeam;
 
-  const homeName = home?.fullName ?? game?.home?.name;
-  const awayName = away?.fullName ?? game?.away?.name;
+  const homeName = game.home?.name;
+  const awayName = game.away?.name;
 
   const homeLogo =
     home.id === emptyHomeTeam.id

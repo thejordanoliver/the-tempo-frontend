@@ -55,6 +55,7 @@ export type BaseballGame = {
   home: {
     id: number;
     name: string;
+    shortName?: string | null;
     code: string;
     primaryColor: string;
     secondaryColor: string;
@@ -68,6 +69,7 @@ export type BaseballGame = {
   away: {
     id: number;
     name: string;
+    shortName?: string | null;
     fullName: string;
     code: string;
     primaryColor: string;

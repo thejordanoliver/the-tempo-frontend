@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import {
   getMCBBRivalry,
@@ -15,6 +14,7 @@ import {
   getWCBBTeamLogo,
 } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -93,8 +93,8 @@ export default function BasketballGameCard({
               ? getGLeagueTeam(awayId)
               : getNBATeam(awayId)) ?? emptyAwayTeam;
 
-  const homeName = homeTeam?.shortName || homeTeam?.name || game.home?.name;
-  const awayName = awayTeam?.shortName || awayTeam?.name || game.away?.name;
+  const homeName = game.home?.shortName ?? game.home?.name;
+  const awayName = game.away?.shortName ?? game.away?.name;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id

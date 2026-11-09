@@ -45,8 +45,8 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const away = game.away;
   const homeTeam = getSOCCTeam(home.id) ?? emptyHomeTeam;
   const awayTeam = getSOCCTeam(away.id) ?? emptyAwayTeam;
-  const homeName = homeTeam?.fullName || homeTeam?.name || "TBD";
-  const awayName = awayTeam?.fullName || awayTeam?.name || "TBD";
+  const homeName = game.home?.name;
+  const awayName = game.away?.name;
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id
       ? emptyHomeTeam.logo

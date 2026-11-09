@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   getMCBBRivalry,
   getMCBBTeam,
@@ -16,6 +15,7 @@ import {
 import { usePreferences } from "contexts/PreferencesContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -82,8 +82,8 @@ export default function BasketballStackedGameCard({
           ? getWNBATeam(awayId)
           : getNBATeam(awayId)) ?? emptyAwayTeam;
 
-  const homeName = homeTeam?.fullName || game.home?.name;
-  const awayName = awayTeam?.fullName || game.away?.name;
+  const homeName = game.home?.name;
+  const awayName = game.away?.name;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id

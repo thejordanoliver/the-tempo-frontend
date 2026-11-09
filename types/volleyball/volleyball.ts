@@ -22,6 +22,7 @@ export type VolleyballSeason = {
 export type VolleyballTeam = {
   id: string | null;
   name: string | null;
+  shortName?: string | null;
   fullName: string | null;
   code: string | null;
   league: VolleyballLeagueKey;

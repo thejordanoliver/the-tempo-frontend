@@ -51,8 +51,8 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
   const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
 
-  const homeName = homeTeam?.code;
-  const awayName = awayTeam?.code;
+  const homeName = game.home?.code;
+  const awayName = game.away?.code;
 
   const homeLogo =
     homeTeam.id === emptyHomeTeam.id
