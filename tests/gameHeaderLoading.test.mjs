@@ -265,3 +265,28 @@ for (const tab of ["home", "league", "explore", "profile"]) {
     assert.equal(messages.props.onBack, back);
   });
 }
+
+test("hockey game header opens notification settings for the NHL game and both teams", () => {
+  const renderHeader = createHeaderHarness("hockey");
+  const calls = [];
+  const header = renderHeader({
+    isLoading: false,
+    LEAGUE: "nhl",
+    gameId: 401809432,
+    homeId: 6,
+    awayId: 10,
+    gameNotificationsEnabled: true,
+    openGameNotificationSettings: (...args) => calls.push(args),
+  });
+  assert.equal(header.league, "nhl");
+  assert.equal(header.isNotified, true);
+  header.onToggleNotifications();
+  assert.deepEqual(calls, [["hockey", "nhl", 401809432, 6, 10]]);
+
+  const unsubscribed = renderHeader({ gameNotificationsEnabled: false });
+  assert.equal(unsubscribed.isNotified, false);
+  assert.equal(typeof unsubscribed.onToggleNotifications, "function");
+
+  const final = renderHeader({ isFinal: true });
+  assert.equal(final.onToggleNotifications, undefined);
+});
