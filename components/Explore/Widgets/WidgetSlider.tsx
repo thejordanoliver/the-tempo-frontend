@@ -29,7 +29,7 @@ import { ExploreWidgetSize } from "types/widgets";
 import BaseballGameWidget from "./GameCards/BaseballGameWidget";
 import BasketballGameWidget from "./GameCards/BasketballGameWidget";
 import FootballGameWidget from "./GameCards/FootballGameWidget";
-import NHLGameWidget from "./GameCards/HockeyGameWidget";
+import HockeyGameWidget from "./GameCards/HockeyGameWidget";
 import WidgetCarousel from "./WidgetCarousel";
 
 if (
@@ -676,11 +676,12 @@ export default function WidgetSlider({
         case "nhl":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
-              <NHLGameWidget
+              <HockeyGameWidget
                 game={item.data}
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
+                isNHL={true}
               />
             </View>
           );
