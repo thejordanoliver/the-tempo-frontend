@@ -1,11 +1,10 @@
-import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
-import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
+import { getUFLTeamLogo } from "@/constants/teamsUFL";
 import { FootballGame } from "@/types/football/football";
 import Football from "assets/icons/Football.png";
 import FootballLight from "assets/icons/FootballLight.png";
 import { activeOpacity, Colors } from "constants/styles";
-import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { getCFBTeamLogo } from "constants/teamsCFB";
+import { getNFLTeamLogo } from "constants/teamsNFL";
 import { router } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -19,6 +18,7 @@ import {
   safeDate,
 } from "utils/common/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
+import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 import displayeValue from "utils/widgets/widgetUtils";
 
 export type FootballGameWidgetProps = {
@@ -67,16 +67,8 @@ export default function FootballGameWidget({
   const homeId = home.id;
   const awayId = away.id;
 
-  const homeTeam = isNFL
-    ? getNFLTeam(homeId)
-    : isCFB
-      ? getCFBTeam(homeId)
-      : getUFLTeam(homeId);
-  const awayTeam = isNFL
-    ? getNFLTeam(awayId)
-    : isCFB
-      ? getCFBTeam(awayId)
-      : getUFLTeam(awayId);
+  const homeName = game.home?.code;
+  const awayName = game.away?.code;
 
   const awayLogo = isNFL
     ? getNFLTeamLogo(awayId, isDark)
@@ -89,9 +81,6 @@ export default function FootballGameWidget({
     : isCFB
       ? getCFBTeamLogo(homeId, isDark)
       : getUFLTeamLogo(homeId, isDark);
-
-  const awayName = awayTeam?.code;
-  const homeName = homeTeam?.code;
 
   const state = game.status.state ?? "";
   const gameStatusDescription = game.status.description ?? "";

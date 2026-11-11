@@ -1,9 +1,9 @@
 import { activeOpacity } from "@/constants/styles";
 import { BasketballGame } from "@/types/basketball/basketball";
-import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
-import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
-import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
+import { getNBATeamLogo } from "constants/teams";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
+import { getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { router } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -60,24 +60,8 @@ export default function BasketballGameWidget({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = isMCBB
-    ? getMCBBTeam(homeId)
-    : isWCBB
-      ? getWCBBTeam(homeId)
-      : isWNBA
-        ? getWNBATeam(homeId)
-        : getNBATeam(homeId);
-
-  const awayTeam = isMCBB
-    ? getMCBBTeam(awayId)
-    : isWCBB
-      ? getWCBBTeam(awayId)
-      : isWNBA
-        ? getWNBATeam(awayId)
-        : getNBATeam(awayId);
-
-  const homeName = homeTeam?.code || game.home?.code;
-  const awayName = awayTeam?.code || game.away?.code;
+  const homeName = game.home?.code;
+  const awayName = game.away?.code;
 
   const homeLogo = isMCBB
     ? getMCBBTeamLogo(homeId, isDark)
@@ -178,14 +162,7 @@ export default function BasketballGameWidget({
     <View style={styles.teamWrapper}>
       <Image style={styles.teamLogo} source={awayLogo} />
       <Text style={styles.teamName} numberOfLines={1}>
-        <Text
-          style={styles.teamName}
-          numberOfLines={1}
-          adjustsFontSizeToFit={true}
-          minimumFontScale={0.5}
-        >
-          {awayRank}{" "}
-        </Text>
+        {awayRank && <Text style={styles.teamRank}>{awayRank} </Text>}
         {awayName}
       </Text>
     </View>
@@ -195,14 +172,7 @@ export default function BasketballGameWidget({
     <View style={styles.teamWrapper}>
       <Image style={styles.teamLogo} source={homeLogo} />
       <Text style={styles.teamName} numberOfLines={1}>
-        <Text
-          style={styles.teamName}
-          numberOfLines={1}
-          adjustsFontSizeToFit={true}
-          minimumFontScale={0.5}
-        >
-          {homeRank}{" "}
-        </Text>
+        {homeRank && <Text style={styles.teamRank}>{homeRank} </Text>}
         {homeName}
       </Text>
     </View>

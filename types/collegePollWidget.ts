@@ -1,5 +1,3 @@
-import type { ImageSourcePropType } from "react-native";
-
 import type {
   ExploreCollegePollLeague,
   ExploreCollegePollType,
@@ -22,7 +20,7 @@ export type CollegePollRow = {
   teamCode: string;
   teamName: string;
   color: string;
-  logo?: ImageSourcePropType;
+  logo: string;
 };
 
 export type CollegePollTableProps = {

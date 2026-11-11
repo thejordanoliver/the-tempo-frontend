@@ -3,7 +3,6 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
-
 import { LinearGradient } from "expo-linear-gradient";
 import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
@@ -11,14 +10,13 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo, useCallback, useMemo, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { collegePollWidgetStyles } from "styles/ExploreStyles/CollegePollWidgetStyles";
-import type { CollegeTeamRank } from "types/collegeRankings";
 import type {
   CollegePollRow,
   CollegePollSourceProps,
   CollegePollTableProps,
   CollegePollWidgetProps,
 } from "types/collegePollWidget";
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
+import type { CollegeTeamRank } from "types/collegeRankings";
 import {
   getCollegePollLabel,
   getCollegePollPageSize,
@@ -172,7 +170,7 @@ const CollegePollTable = memo(function CollegePollTable({
             <View style={[styles.teamCell, styles.teamColumn]}>
               {row.logo ? (
                 <Image
-                  source={row.logo}
+                  source={{ uri: row.logo }}
                   style={styles.teamLogo}
                   resizeMode="contain"
                 />
@@ -213,6 +211,7 @@ const CollegePollTable = memo(function CollegePollTable({
     const movement = row.trend;
     const movedUp = movement > 0;
     const movementColor = getTrendColor(movement, isDark);
+
     return (
       <Pressable
         disabled={isEditing || row.teamId == null}
@@ -242,10 +241,11 @@ const CollegePollTable = memo(function CollegePollTable({
         </BlurView>
 
         <Image
-          source={row.logo}
+          source={{ uri: row.logo }}
           style={styles.compactLogo}
           resizeMode="contain"
         />
+
         {movement !== 0 ? (
           <View style={styles.compactTrend}>
             <Ionicons
@@ -319,7 +319,7 @@ const CFBPollTable = memo(function CFBPollTable({
     () =>
       (selectedPoll?.ranks ?? [])
         .slice(0, MAX_RANKED_TEAMS)
-        .map((rank, index) => createCFBRow(rank, index, isDark)),
+        .map((rank, index) => createRow(rank, index, isDark)),
     [isDark, selectedPoll?.ranks],
   );
 
@@ -359,7 +359,7 @@ const MCBBPollTable = memo(function MCBBPollTable({
     () =>
       (selectedPoll?.ranks ?? [])
         .slice(0, MAX_RANKED_TEAMS)
-        .map((rank, index) => createMCBBRow(rank, index, isDark)),
+        .map((rank, index) => createRow(rank, index, isDark)),
     [isDark, selectedPoll?.ranks],
   );
 
@@ -379,7 +379,7 @@ const MCBBPollTable = memo(function MCBBPollTable({
   );
 });
 
-function createCFBRow(
+function createRow(
   rank: CollegeTeamRank,
   index: number,
   isDark: boolean,
@@ -387,38 +387,12 @@ function createCFBRow(
   const team = rank.team;
   const teamId = team?.id;
   const teamCode = team?.code || "N/A";
-  const teamName = team?.name || "N/A";
+  const teamName = team?.fullName || "N/A";
   const teamColor = team?.primaryColor || Colors.midTone;
-  const teamLogo = getStandingsTeamLogo(team, isDark);
+  const teamLogo = (isDark ? team?.logoDark : team?.logo) ?? "";
 
   return {
-    key: `cfb:${teamId ?? index}:${rank.current}`,
-    rank: rank.current,
-    trend: Number(rank.trend) || 0,
-    points: rank.points ?? 0,
-    record: rank.recordSummary,
-    teamId: teamId ?? undefined,
-    teamCode: teamCode,
-    teamName: teamName,
-    color: teamColor,
-    logo: teamLogo,
-  };
-}
-
-function createMCBBRow(
-  rank: CollegeTeamRank,
-  index: number,
-  isDark: boolean,
-): CollegePollRow {
-  const team = rank.team;
-  const teamId = team?.id ?? 0;
-  const teamCode = team?.code || "N/A";
-  const teamName = team?.name || "N/A";
-  const teamColor = team?.primaryColor || Colors.midTone;
-  const teamLogo = getStandingsTeamLogo(team, isDark);
-
-  return {
-    key: `mcbb:${teamId ?? index}:${rank.current}`,
+    key: `${teamId ?? index}:${rank.current}`,
     rank: rank.current,
     trend: Number(rank.trend) || 0,
     points: rank.points ?? 0,

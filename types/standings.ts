@@ -1,8 +1,8 @@
 export type StandingsTeamInfo = {
   id: string | number | null;
   name: string;
+  fullName?: string | null;
   shortName?: string | null;
-  shortDisplayName?: string | null;
   code?: string | null;
   location?: string | null;
   logo?: string | null;

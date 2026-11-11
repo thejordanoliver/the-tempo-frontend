@@ -1,6 +1,8 @@
+import { activeOpacity } from "@/constants/styles";
 import { HockeyGame } from "@/types/hockey/hockey";
 import { getNHLTeamLogo } from "constants/teamsNHL";
-import { Image, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
@@ -16,6 +18,7 @@ import displayeValue from "utils/widgets/widgetUtils";
 
 type GameWidgetProps = {
   game: HockeyGame;
+  isNHL: boolean;
   height?: number;
   width?: number;
   isDark: boolean;
@@ -24,11 +27,24 @@ type GameWidgetProps = {
 
 export default function HockeyGameWidget({
   game,
+  isNHL,
   height = 150,
   width = 150,
   loading = false,
   isDark,
 }: GameWidgetProps) {
+  const league = isNHL ? "nhl" : null;
+  const handlePress = () => {
+    router.push({
+      pathname: "/(tabs)/(explore)/game/[sport]/[game]",
+      params: {
+        sport: "hockey",
+        game: String(game.id),
+        leagueId: String(league),
+        data: encodeURIComponent(JSON.stringify(game)),
+      },
+    } as any);
+  };
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
@@ -164,69 +180,71 @@ export default function HockeyGameWidget({
   // Render widget
   // -------------------------
   return (
-    <View style={styles.container}>
-      {showHeadline && (
-        <View style={styles.headlineContainer}>
-          <Text
-            style={styles.headline}
-            numberOfLines={1}
-            adjustsFontSizeToFit={true}
-            minimumFontScale={0.5}
-          >
-            {headline}
-          </Text>
-        </View>
-      )}
-      <View style={styles.wrapper}>
-        {/* ---------------------- */}
-        {/* Away Team Section */}
-        {/* ---------------------- */}
-        <View style={styles.awaySection}>
-          {awayTeamContent}
-          {awayDisplay}
-        </View>
-
-        {/* ---------------------- */}
-        {/* Game Info Section */}
-        {/* ---------------------- */}
-        {!isSmallLayout && (
-          <View style={styles.gameInfo}>
-            {renderStatus()}
-            {showBroadcast && (
-              <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcast}
-              </Text>
-            )}
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+      <View style={styles.container}>
+        {showHeadline && (
+          <View style={styles.headlineContainer}>
+            <Text
+              style={styles.headline}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.5}
+            >
+              {headline}
+            </Text>
           </View>
         )}
+        <View style={styles.wrapper}>
+          {/* ---------------------- */}
+          {/* Away Team Section */}
+          {/* ---------------------- */}
+          <View style={styles.awaySection}>
+            {awayTeamContent}
+            {awayDisplay}
+          </View>
 
-        {/* ---------------------- */}
-        {/* Home Team Section */}
-        {/* ---------------------- */}
-        <View style={styles.homeSection}>
-          {isSmallLayout ? (
-            <>
-              {homeTeamContent}
-              {homeDisplay}
-            </>
-          ) : (
-            <>
-              {homeDisplay}
-              {homeTeamContent}
-            </>
+          {/* ---------------------- */}
+          {/* Game Info Section */}
+          {/* ---------------------- */}
+          {!isSmallLayout && (
+            <View style={styles.gameInfo}>
+              {renderStatus()}
+              {showBroadcast && (
+                <Text style={styles.broadcast} numberOfLines={1}>
+                  {broadcast}
+                </Text>
+              )}
+            </View>
+          )}
+
+          {/* ---------------------- */}
+          {/* Home Team Section */}
+          {/* ---------------------- */}
+          <View style={styles.homeSection}>
+            {isSmallLayout ? (
+              <>
+                {homeTeamContent}
+                {homeDisplay}
+              </>
+            ) : (
+              <>
+                {homeDisplay}
+                {homeTeamContent}
+              </>
+            )}
+          </View>
+          {isSmallLayout && (
+            <View style={styles.gameInfo}>
+              {renderStatus()}
+              {showBroadcast && (
+                <Text style={styles.broadcast} numberOfLines={1}>
+                  {broadcast}
+                </Text>
+              )}
+            </View>
           )}
         </View>
-        {isSmallLayout && (
-          <View style={styles.gameInfo}>
-            {renderStatus()}
-            {showBroadcast && (
-              <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcast}
-              </Text>
-            )}
-          </View>
-        )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
