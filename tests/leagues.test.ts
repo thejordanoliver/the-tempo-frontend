@@ -1,3 +1,4 @@
+import "./helpers/registerAssets";
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
@@ -8,7 +9,6 @@ import {
   LEAGUE_CONFIG,
   resolveLeagueConfig,
 } from "../constants/leagues";
-import "./helpers/registerAssets";
 
 test("resolves IDs, existing display names, and full league names", () => {
   for (const value of ["nba", " NBA ", "National Basketball Association"]) {

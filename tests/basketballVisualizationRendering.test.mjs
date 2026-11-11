@@ -71,13 +71,6 @@ function nodes(node) {
   if (Array.isArray(node)) return node.flatMap(nodes);
   return [node, ...nodes(node.props?.children)];
 }
-function text(node) {
-  if (node == null || typeof node === "boolean") return "";
-  if (Array.isArray(node)) return node.map(text).join(" ");
-  if (typeof node !== "object") return String(node);
-  return text(node.props?.children);
-}
-
 test("court themes and half-court layouts render real SVG primitives with shared coordinates", () => {
   const h = setup();
   h.start(

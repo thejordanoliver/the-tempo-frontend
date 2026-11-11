@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import vm from "node:vm";
-import axios from "axios";
+import axios, { AxiosError, create } from "axios";
 import ts from "typescript";
 
 export function authSessionHarness(options = {}) {
@@ -31,7 +31,7 @@ export function authSessionHarness(options = {}) {
     axios: {
       ...axios,
       create: (config) =>
-        axios.create({
+        create({
           ...config,
           adapter: async (request) => {
             requests.push(request);
@@ -130,17 +130,11 @@ export function authSessionHarness(options = {}) {
 }
 
 export function httpError(config, status, data = {}) {
-  return new axios.AxiosError(
-    "Request failed",
-    "ERR_BAD_RESPONSE",
+  return new AxiosError("Request failed", "ERR_BAD_RESPONSE", config, null, {
     config,
-    null,
-    {
-      config,
-      status,
-      data,
-      headers: {},
-      statusText: "Error",
-    },
-  );
+    status,
+    data,
+    headers: {},
+    statusText: "Error",
+  });
 }

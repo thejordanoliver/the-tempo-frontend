@@ -23,55 +23,62 @@ export function useFanPredictionRankings(
     refreshing: false,
     error: null,
   });
+  if (state.sport !== sport) {
+    setState({
+      sport,
+      data: null,
+      loading: true,
+      refreshing: false,
+      error: null,
+    });
+  }
   const controller = useRef<AbortController | null>(null);
-  const load = useCallback(
-    (refreshing = false) => {
-      controller.current?.abort();
-      const request = new AbortController();
-      controller.current = request;
-      setState((previous) => ({
-        sport,
-        data: previous.sport === sport ? previous.data : null,
-        loading: previous.sport !== sport || previous.data == null,
-        refreshing,
-        error: null,
-      }));
-      return fetchPredictionRankings(
-        request.signal,
-        sport === "all" ? undefined : sport,
-      )
-        .then((result) => {
-          if (!request.signal.aborted)
-            setState({
-              sport,
-              data: result,
-              loading: false,
-              refreshing: false,
-              error: null,
-            });
-        })
-        .catch(() => {
-          if (!request.signal.aborted)
-            setState((previous) => ({
-              ...previous,
-              loading: false,
-              refreshing: false,
-              error: "We couldn't load fan rankings. Try again.",
-            }));
-        })
-        .finally(() => {
-          if (controller.current === request) controller.current = null;
-        });
-    },
-    [sport],
-  );
+  const load = useCallback(() => {
+    controller.current?.abort();
+    const request = new AbortController();
+    controller.current = request;
+    return fetchPredictionRankings(
+      request.signal,
+      sport === "all" ? undefined : sport,
+    )
+      .then((result) => {
+        if (!request.signal.aborted)
+          setState({
+            sport,
+            data: result,
+            loading: false,
+            refreshing: false,
+            error: null,
+          });
+      })
+      .catch(() => {
+        if (!request.signal.aborted)
+          setState((previous) => ({
+            sport,
+            data: previous.sport === sport ? previous.data : null,
+            loading: false,
+            refreshing: false,
+            error: "We couldn't load fan rankings. Try again.",
+          }));
+      })
+      .finally(() => {
+        if (controller.current === request) controller.current = null;
+      });
+  }, [sport]);
   useEffect(() => {
     void load();
     return () => controller.current?.abort();
   }, [load]);
   const refresh = useCallback(() => {
-    void load(true);
-  }, [load]);
+    setState((previous) => ({
+      sport,
+      data: previous.sport === sport ? previous.data : null,
+      loading: previous.sport !== sport || previous.data == null,
+      refreshing: true,
+      error: null,
+    }));
+    void load();
+  }, [load, sport]);
   const sameSport = state.sport === sport;
   return {
     data: sameSport ? state.data : null,

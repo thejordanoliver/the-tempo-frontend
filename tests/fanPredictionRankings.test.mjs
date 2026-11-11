@@ -99,6 +99,53 @@ test("refresh and retry keep the selected sport and its last successful standing
   }
 });
 
+test("a failed request for a new sport settles loading without showing the previous sport", async () => {
+  const h = rankingsHarness();
+  try {
+    h.requests[0].resolve(overall);
+    await flush();
+    h.update(["football"]);
+    h.requests[1].reject(new Error("offline"));
+    await flush();
+    assert.equal(h.state.data, null);
+    assert.equal(h.state.loading, false);
+    assert.match(h.state.error, /couldn't load/);
+    h.state.refresh();
+    assert.equal(h.requests[2].sport, "football");
+    await flush();
+    assert.equal(h.state.refreshing, true);
+    assert.equal(h.state.error, null);
+    h.requests[2].resolve(football);
+    await flush();
+    assert.equal(h.state.data, football);
+    assert.equal(h.state.loading, false);
+  } finally {
+    h.stop();
+  }
+});
+
+test("returning to a previous sport during a pending request waits for fresh results", async () => {
+  const h = rankingsHarness();
+  try {
+    h.requests[0].resolve(overall);
+    await flush();
+    h.update(["football"]);
+    h.update(["all"]);
+    assert.equal(h.requests[1].signal.aborted, true);
+    assert.equal(h.state.data, null);
+    assert.equal(h.state.loading, true);
+    h.requests[1].resolve(football);
+    await flush();
+    assert.equal(h.state.data, null);
+    h.requests[2].resolve(overall);
+    await flush();
+    assert.equal(h.state.data, overall);
+    assert.equal(h.state.loading, false);
+  } finally {
+    h.stop();
+  }
+});
+
 test("rankings API sends a sport query only when a specific sport is selected", async () => {
   const h = sportsHookHarness();
   const calls = [];
