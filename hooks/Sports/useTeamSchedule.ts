@@ -250,6 +250,7 @@ export function useMonthlyTeamSchedule<
     selectedMonthKey,
   );
   return {
+    data: schedule.data,
     games,
     months,
     selectedMonthKey,

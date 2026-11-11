@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Image, type ImageSourcePropType, Text, View } from "react-native";
 import { PlayByPlayStyles } from "styles/GameDetailStyles/PlayByPlayStyles";
 
@@ -8,6 +9,7 @@ type Props = {
   period?: string | null;
   clock?: string | null;
   isLive?: boolean;
+  badge?: ReactNode;
 };
 
 export default function PlayByPlayHeader({
@@ -17,6 +19,7 @@ export default function PlayByPlayHeader({
   period,
   clock,
   isLive = false,
+  badge,
 }: Props) {
   const styles = PlayByPlayStyles(isDark);
   const displayTitle = title
@@ -39,7 +42,7 @@ export default function PlayByPlayHeader({
             {clock ? <Text style={styles.gameTime}>{clock}</Text> : null}
           </View>
         ) : null}
-        
+        {badge}
       </View>
       <View style={styles.headerRow}>
         <View style={styles.headerIdentity}>

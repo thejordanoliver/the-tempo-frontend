@@ -77,12 +77,6 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
         colorScheme === "system" ? "unspecified" : colorScheme,
       );
     }
-
-    if (colorScheme === "system") {
-      setSystemScheme(
-        Appearance.getColorScheme() === "dark" ? "dark" : "light",
-      );
-    }
   }, [colorScheme]);
 
   const resolvedColorScheme: ResolvedColorScheme =

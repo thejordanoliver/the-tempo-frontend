@@ -697,6 +697,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 2,
     name: "Auburn",
+    shortName: "Auburn",
     fullName: "Auburn Tigers",
     code: "AUB",
     primaryColor: "#182942",
@@ -714,6 +715,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 5,
     name: "UAB",
+    shortName: "UAB",
     fullName: "UAB Blazers",
     code: "UAB",
     primaryColor: "#000000",
@@ -731,6 +733,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 6,
     name: "South Alabama",
+    shortName: "South Alabama",
     fullName: "South Alabama Jaguars",
     code: "USA",
     primaryColor: "#004a7b",
@@ -748,6 +751,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 8,
     name: "Arkansas",
+    shortName: "Arkansas",
     fullName: "Arkansas Razorbacks",
     code: "ARK",
     primaryColor: "#9c1831",
@@ -765,6 +769,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 9,
     name: "Arizona St",
+    shortName: "Arizona St.",
     fullName: "Arizona State Sun Devils",
     code: "ASU",
     primaryColor: "#942139",
@@ -782,6 +787,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 12,
     name: "Arizona",
+    shortName: "Arizona",
     fullName: "Arizona Wildcats",
     code: "ARIZ",
     primaryColor: "#102142",
@@ -799,6 +805,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 13,
     name: "Cal Poly",
+    shortName: "Cal Poly",
     fullName: "Cal Poly Mustangs",
     code: "CP",
     primaryColor: "#083808",
@@ -816,6 +823,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 16,
     name: "Sacramento St",
+    shortName: "Sacramento St.",
     fullName: "Sacramento State Hornets",
     code: "SAC",
     primaryColor: "#145f52",
@@ -833,6 +841,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 21,
     name: "San Diego St",
+    shortName: "San Diego St.",
     fullName: "San Diego State Aztecs",
     code: "SDSU",
     primaryColor: "#d60039",
@@ -850,6 +859,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 23,
     name: "San José St",
+    shortName: "San José St.",
     fullName: "San José State Spartans",
     code: "SJSU",
     primaryColor: "#005a94",
@@ -867,6 +877,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 24,
     name: "Stanford",
+    shortName: "Stanford",
     fullName: "Stanford Cardinal",
     code: "STAN",
     primaryColor: "#b72931",
@@ -884,6 +895,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 25,
     name: "California",
+    shortName: "California",
     fullName: "California Golden Bears",
     code: "CAL",
     primaryColor: "#002942",
@@ -901,6 +913,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 26,
     name: "UCLA",
+    shortName: "UCLA",
     fullName: "UCLA Bruins",
     code: "UCLA",
     primaryColor: "#005a94",
@@ -918,6 +931,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 27,
     name: "UC Riverside",
+    shortName: "UC Riverside",
     fullName: "UC Riverside Highlanders",
     code: "UCR",
     primaryColor: "#13214e",
@@ -935,6 +949,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 30,
     name: "USC",
+    shortName: "USC",
     fullName: "USC Trojans",
     code: "USC",
     primaryColor: "#a50010",
@@ -952,6 +967,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 36,
     name: "Colorado St",
+    shortName: "Colorado St.",
     fullName: "Colorado State Rams",
     code: "CSU",
     primaryColor: "#008c73",
@@ -969,6 +985,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 38,
     name: "Colorado",
+    shortName: "Colorado",
     fullName: "Colorado Buffaloes",
     code: "COLO",
     primaryColor: "#bd9c00",
@@ -986,6 +1003,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 41,
     name: "UConn",
+    shortName: "UConn",
     fullName: "UConn Huskies",
     code: "CONN",
     primaryColor: "#0a1e5b",
@@ -1003,6 +1021,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 43,
     name: "Yale",
+    shortName: "Yale",
     fullName: "Yale Bulldogs",
     code: "YALE",
     primaryColor: "#004a81",
@@ -1020,6 +1039,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 44,
     name: "American",
+    shortName: "American",
     fullName: "American University Eagles",
     code: "AMER",
     primaryColor: "#c41130",
@@ -1037,6 +1057,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 45,
     name: "G Washington",
+    shortName: "G Washington",
     fullName: "George Washington Revolutionaries",
     code: "GW",
     primaryColor: "#002843",
@@ -1054,6 +1075,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 46,
     name: "Georgetown",
+    shortName: "Georgetown",
     fullName: "Georgetown Hoyas",
     code: "GTWN",
     primaryColor: "#38427a",
@@ -1071,6 +1093,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 47,
     name: "Howard",
+    shortName: "Howard",
     fullName: "Howard Bison",
     code: "HOW",
     primaryColor: "#9e0b0e",
@@ -1088,6 +1111,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 48,
     name: "Delaware",
+    shortName: "Delaware",
     fullName: "Delaware Blue Hens",
     code: "DEL",
     primaryColor: "#285998",
@@ -1105,6 +1129,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 50,
     name: "Florida A&M",
+    shortName: "Florida A&M",
     fullName: "Florida A&M Rattlers",
     code: "FAMU",
     primaryColor: "#ff7329",
@@ -1122,6 +1147,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 52,
     name: "Florida St",
+    shortName: "Florida St.",
     fullName: "Florida State Seminoles",
     code: "FSU",
     primaryColor: "#b72931",
@@ -1139,6 +1165,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 55,
     name: "Jax State",
+    shortName: "Jax St.",
     fullName: "Jacksonville State Gamecocks",
     code: "JXST",
     primaryColor: "#c61018",
@@ -1156,6 +1183,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 56,
     name: "Stetson",
+    shortName: "Stetson",
     fullName: "Stetson Hatters",
     code: "STET",
     primaryColor: "#18581c",
@@ -1173,6 +1201,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 57,
     name: "Florida",
+    shortName: "Florida",
     fullName: "Florida Gators",
     code: "FLA",
     primaryColor: "#2a42ce",
@@ -1190,6 +1219,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 58,
     name: "South Florida",
+    shortName: "South Florida",
     fullName: "South Florida Bulls",
     code: "USF",
     primaryColor: "#004231",
@@ -1207,6 +1237,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 59,
     name: "Georgia Tech",
+    shortName: "Georgia Tech",
     fullName: "Georgia Tech Yellow Jackets",
     code: "GT",
     primaryColor: "#000000",
@@ -1224,6 +1255,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 61,
     name: "Georgia",
+    shortName: "Georgia",
     fullName: "Georgia Bulldogs",
     code: "UGA",
     primaryColor: "#d60022",
@@ -1241,6 +1273,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 62,
     name: "Hawai'i",
+    shortName: "Hawai'i",
     fullName: "Hawai'i Rainbow Warriors",
     code: "HAW",
     primaryColor: "#004231",
@@ -1258,6 +1291,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 66,
     name: "Iowa State",
+    shortName: "Iowa St.",
     fullName: "Iowa State Cyclones",
     code: "ISU",
     primaryColor: "#d62949",
@@ -1275,6 +1309,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 68,
     name: "Boise St",
+    shortName: "Boise St.",
     fullName: "Boise State Broncos",
     code: "BOIS",
     primaryColor: "#29299c",
@@ -1292,6 +1327,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 70,
     name: "Idaho",
+    shortName: "Idaho",
     fullName: "Idaho Vandals",
     code: "IDHO",
     primaryColor: "#000000",
@@ -1309,6 +1345,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 71,
     name: "Bradley",
+    shortName: "Bradley",
     fullName: "Bradley Braves",
     code: "BRAD",
     primaryColor: "#b70002",
@@ -1326,6 +1363,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 77,
     name: "Northwestern",
+    shortName: "Northwestern",
     fullName: "Northwestern Wildcats",
     code: "NU",
     primaryColor: "#372286",
@@ -1343,6 +1381,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 79,
     name: "S Illinois",
+    shortName: "S Illinois",
     fullName: "Southern Illinois Salukis",
     code: "SIU",
     primaryColor: "#85283d",
@@ -1360,6 +1399,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 82,
     name: "UIC",
+    shortName: "UIC",
     fullName: "UIC Flames",
     code: "UIC",
     primaryColor: "#234077",
@@ -1377,6 +1417,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 84,
     name: "Indiana",
+    shortName: "Indiana",
     fullName: "Indiana Hoosiers",
     code: "IU",
     primaryColor: "#580000",
@@ -1394,6 +1435,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 85,
     name: "IU Indy",
+    shortName: "IU Indy",
     fullName: "IU Indianapolis Jaguars",
     code: "IUIN",
     primaryColor: "#ca3a44",
@@ -1411,6 +1453,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 87,
     name: "Notre Dame",
+    shortName: "Notre Dame",
     fullName: "Notre Dame Fighting Irish",
     code: "ND",
     primaryColor: "#313a98",
@@ -1428,6 +1471,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 88,
     name: "S Indiana",
+    shortName: "S Indiana",
     fullName: "Southern Indiana Screaming Eagles",
     code: "USI",
     primaryColor: null,
@@ -1445,6 +1489,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 91,
     name: "Bellarmine",
+    shortName: "Bellarmine",
     fullName: "Bellarmine Knights",
     code: "BELL",
     primaryColor: null,
@@ -1462,6 +1507,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 93,
     name: "Murray St",
+    shortName: "Murray St.",
     fullName: "Murray State Racers",
     code: "MUR",
     primaryColor: "#182356",
@@ -1479,6 +1525,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 94,
     name: "N Kentucky",
+    shortName: "N Kentucky",
     fullName: "Northern Kentucky Norse",
     code: "NKU",
     primaryColor: null,
@@ -1496,6 +1543,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 96,
     name: "Kentucky",
+    shortName: "Kentucky",
     fullName: "Kentucky Wildcats",
     code: "UK",
     primaryColor: "#003399",
@@ -1513,6 +1561,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 97,
     name: "Louisville",
+    shortName: "Louisville",
     fullName: "Louisville Cardinals",
     code: "LOU",
     primaryColor: "#de0018",
@@ -1530,6 +1579,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 98,
     name: "Western KY",
+    shortName: "Western KY",
     fullName: "Western Kentucky Hilltoppers",
     code: "WKU",
     primaryColor: "#000000",
@@ -1547,6 +1597,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 99,
     name: "LSU",
+    shortName: "LSU",
     fullName: "LSU Tigers",
     code: "LSU",
     primaryColor: "#2b0d57",
@@ -1564,6 +1615,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 103,
     name: "Boston College",
+    shortName: "Boston College",
     fullName: "Boston College Eagles",
     code: "BC",
     primaryColor: "#111111",
@@ -1581,6 +1633,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 107,
     name: "Holy Cross",
+    shortName: "Holy Cross",
     fullName: "Holy Cross Crusaders",
     code: "HC",
     primaryColor: "#0a0a0a",
@@ -1598,6 +1651,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 108,
     name: "Harvard",
+    shortName: "Harvard",
     fullName: "Harvard Crimson",
     code: "HARV",
     primaryColor: "#990000",
@@ -1615,6 +1669,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 111,
     name: "Northeastern",
+    shortName: "Northeastern",
     fullName: "Northeastern Huskies",
     code: "NE",
     primaryColor: "#cc0001",
@@ -1632,6 +1687,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 119,
     name: "Towson",
+    shortName: "Towson",
     fullName: "Towson Tigers",
     code: "TOW",
     primaryColor: "#f3ae22",
@@ -1649,6 +1705,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 120,
     name: "Maryland",
+    shortName: "Maryland",
     fullName: "Maryland Terrapins",
     code: "MD",
     primaryColor: "#d60039",
@@ -1666,6 +1723,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 127,
     name: "Michigan St",
+    shortName: "Michigan St.",
     fullName: "Michigan State Spartans",
     code: "MSU",
     primaryColor: "#226b31",
@@ -1683,6 +1741,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 130,
     name: "Michigan",
+    shortName: "Michigan",
     fullName: "Michigan Wolverines",
     code: "MICH",
     primaryColor: "#292942",
@@ -1700,6 +1759,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 135,
     name: "Minnesota",
+    shortName: "Minnesota",
     fullName: "Minnesota Golden Gophers",
     code: "MINN",
     primaryColor: "#752132",
@@ -1717,6 +1777,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 139,
     name: "Saint Louis",
+    shortName: "Saint Louis",
     fullName: "Saint Louis Billikens",
     code: "SLU",
     primaryColor: "#00428c",
@@ -1734,6 +1795,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 140,
     name: "Kansas City",
+    shortName: "Kansas City",
     fullName: "Kansas City Kangaroos",
     code: "KC",
     primaryColor: "#004a8b",
@@ -1751,6 +1813,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 142,
     name: "Missouri",
+    shortName: "Missouri",
     fullName: "Missouri Tigers",
     code: "MIZ",
     primaryColor: "#000000",
@@ -1768,6 +1831,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 145,
     name: "Ole Miss",
+    shortName: "Ole Miss",
     fullName: "Ole Miss Rebels",
     code: "MISS",
     primaryColor: "#101894",
@@ -1785,6 +1849,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 147,
     name: "Montana St",
+    shortName: "Montana St.",
     fullName: "Montana State Bobcats",
     code: "MTST",
     primaryColor: "#010670",
@@ -1802,6 +1867,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 149,
     name: "Montana",
+    shortName: "Montana",
     fullName: "Montana Grizzlies",
     code: "MONT",
     primaryColor: "#63104a",
@@ -1819,6 +1885,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 150,
     name: "Duke",
+    shortName: "Duke",
     fullName: "Duke Blue Devils",
     code: "DUKE",
     primaryColor: "#004a7b",
@@ -1836,6 +1903,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 151,
     name: "East Carolina",
+    shortName: "East Carolina",
     fullName: "East Carolina Pirates",
     code: "ECU",
     primaryColor: "#4b1869",
@@ -1853,6 +1921,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 152,
     name: "NC State",
+    shortName: "NC St.",
     fullName: "NC State Wolfpack",
     code: "NCSU",
     primaryColor: "#d60039",
@@ -1870,6 +1939,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 153,
     name: "North Carolina",
+    shortName: "North Carolina",
     fullName: "North Carolina Tar Heels",
     code: "UNC",
     primaryColor: "#002942",
@@ -1887,6 +1957,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 154,
     name: "Wake Forest",
+    shortName: "Wake Forest",
     fullName: "Wake Forest Demon Deacons",
     code: "WAKE",
     primaryColor: "#000000",
@@ -1904,6 +1975,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 155,
     name: "North Dakota",
+    shortName: "North Dakota",
     fullName: "North Dakota Fighting Hawks",
     code: "UND",
     primaryColor: null,
@@ -1921,6 +1993,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 156,
     name: "Creighton",
+    shortName: "Creighton",
     fullName: "Creighton Bluejays",
     code: "CREI",
     primaryColor: "#13299e",
@@ -1938,6 +2011,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 158,
     name: "Nebraska",
+    shortName: "Nebraska",
     fullName: "Nebraska Cornhuskers",
     code: "NEB",
     primaryColor: "#fe0d04",
@@ -1955,6 +2029,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 159,
     name: "Dartmouth",
+    shortName: "Dartmouth",
     fullName: "Dartmouth Big Green",
     code: "DART",
     primaryColor: "#005730",
@@ -1972,6 +2047,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 160,
     name: "New Hampshire",
+    shortName: "New Hampshire",
     fullName: "New Hampshire Wildcats",
     code: "UNH",
     primaryColor: "#004371",
@@ -1989,6 +2065,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 161,
     name: "FDU",
+    shortName: "FDU",
     fullName: "Fairleigh Dickinson Knights",
     code: "FDU",
     primaryColor: "#00449c",
@@ -2006,6 +2083,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 163,
     name: "Princeton",
+    shortName: "Princeton",
     fullName: "Princeton Tigers",
     code: "PRIN",
     primaryColor: "#ff9408",
@@ -2023,6 +2101,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 164,
     name: "Rutgers",
+    shortName: "Rutgers",
     fullName: "Rutgers Scarlet Knights",
     code: "RUTG",
     primaryColor: "#000000",
@@ -2040,6 +2119,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 166,
     name: "New Mexico St",
+    shortName: "New Mexico St.",
     fullName: "New Mexico State Aggies",
     code: "NMSU",
     primaryColor: "#730000",
@@ -2057,6 +2137,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 167,
     name: "New Mexico",
+    shortName: "New Mexico",
     fullName: "New Mexico Lobos",
     code: "UNM",
     primaryColor: "#000000",
@@ -2074,6 +2155,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 171,
     name: "Columbia",
+    shortName: "Columbia",
     fullName: "Columbia Lions",
     code: "COLU",
     primaryColor: "#00295a",
@@ -2091,6 +2173,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 172,
     name: "Cornell",
+    shortName: "Cornell",
     fullName: "Cornell Big Red",
     code: "COR",
     primaryColor: "#d60027",
@@ -2108,6 +2191,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 183,
     name: "Syracuse",
+    shortName: "Syracuse",
     fullName: "Syracuse Orange",
     code: "SYR",
     primaryColor: "#1a3e86",
@@ -2125,6 +2209,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 189,
     name: "Bowling Green",
+    shortName: "Bowling Green",
     fullName: "Bowling Green Falcons",
     code: "BGSU",
     primaryColor: "#663300",
@@ -2142,6 +2227,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 193,
     name: "Miami OH",
+    shortName: "Miami OH",
     fullName: "Miami (OH) RedHawks",
     code: "M-OH",
     primaryColor: "#ce2229",
@@ -2159,6 +2245,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 194,
     name: "Ohio State",
+    shortName: "Ohio St.",
     fullName: "Ohio State Buckeyes",
     code: "OSU",
     primaryColor: "#de3129",
@@ -2176,6 +2263,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 195,
     name: "Ohio",
+    shortName: "Ohio",
     fullName: "Ohio Bobcats",
     code: "OHIO",
     primaryColor: "#006342",
@@ -2193,6 +2281,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 196,
     name: "Northeastern S",
+    shortName: "Northeastern S",
     fullName: "Northeastern State RiverHawks",
     code: "NOR",
     primaryColor: null,
@@ -2210,6 +2299,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 198,
     name: "Oral Roberts",
+    shortName: "Oral Roberts",
     fullName: "Oral Roberts Golden Eagles",
     code: "ORU",
     primaryColor: "#002955",
@@ -2227,6 +2317,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 201,
     name: "Oklahoma",
+    shortName: "Oklahoma",
     fullName: "Oklahoma Sooners",
     code: "OU",
     primaryColor: "#7b0000",
@@ -2244,6 +2335,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 202,
     name: "Tulsa",
+    shortName: "Tulsa",
     fullName: "Tulsa Golden Hurricane",
     code: "TLSA",
     primaryColor: "#004273",
@@ -2261,6 +2353,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 204,
     name: "Oregon St",
+    shortName: "Oregon St.",
     fullName: "Oregon State Beavers",
     code: "ORST",
     primaryColor: "#000000",
@@ -2278,6 +2371,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 213,
     name: "Penn State",
+    shortName: "Penn St.",
     fullName: "Penn State Nittany Lions",
     code: "PSU",
     primaryColor: "#29294a",
@@ -2295,6 +2389,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 218,
     name: "Temple",
+    shortName: "Temple",
     fullName: "Temple Owls",
     code: "TEM",
     primaryColor: "#bc0138",
@@ -2312,6 +2407,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 219,
     name: "Penn",
+    shortName: "Penn",
     fullName: "Pennsylvania Quakers",
     code: "PENN",
     primaryColor: "#b10021",
@@ -2329,6 +2425,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 221,
     name: "Pitt",
+    shortName: "Pitt",
     fullName: "Pittsburgh Panthers",
     code: "PITT",
     primaryColor: "#313169",
@@ -2346,6 +2443,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 222,
     name: "Villanova",
+    shortName: "Villanova",
     fullName: "Villanova Wildcats",
     code: "VILL",
     primaryColor: "#006699",
@@ -2363,6 +2461,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 225,
     name: "Brown",
+    shortName: "Brown",
     fullName: "Brown Bears",
     code: "BRWN",
     primaryColor: "#54413a",
@@ -2380,6 +2479,7 @@ export const wcvbTeams: Team[] = [
   {
     id: 227,
     name: "Rhode Island",
+    shortName: "Rhode Island",
     fullName: "Rhode Island Rams",
     code: "URI",
     primaryColor: "#003559",
@@ -2758,7 +2858,7 @@ export const wcvbTeams: Team[] = [
     id: 265,
     name: "Washington St",
     fullName: "Washington State Cougars",
-    shortName: "Washington St",
+    shortName: "Washington St.",
     code: "WSU",
     primaryColor: "#94022a",
     secondaryColor: "#ffffff",
@@ -2866,7 +2966,7 @@ export const wcvbTeams: Team[] = [
     id: 278,
     name: "Fresno St",
     fullName: "Fresno State Bulldogs",
-    shortName: "Fresno St",
+    shortName: "Fresno St.",
     code: "FRES",
     primaryColor: "#e73139",
     secondaryColor: "#13284c",
@@ -2902,7 +3002,7 @@ export const wcvbTeams: Team[] = [
     id: 282,
     name: "Indiana St",
     fullName: "Indiana State Sycamores",
-    shortName: "Indiana St",
+    shortName: "Indiana St.",
     code: "INST",
     primaryColor: "#00669a",
     secondaryColor: "#f0f0f0",
@@ -3010,7 +3110,7 @@ export const wcvbTeams: Team[] = [
     id: 299,
     name: "Long Beach St",
     fullName: "Long Beach State 49ers",
-    shortName: "Long Beach St",
+    shortName: "Long Beach St.",
     code: "LBSU",
     primaryColor: "#000000",
     secondaryColor: "#f1f2f3",
@@ -3082,7 +3182,7 @@ export const wcvbTeams: Team[] = [
     id: 304,
     name: "Idaho St",
     fullName: "Idaho State Bengals",
-    shortName: "Idaho St",
+    shortName: "Idaho St.",
     code: "IDST",
     primaryColor: "#ef8c00",
     secondaryColor: "#e9a126",
@@ -3208,7 +3308,7 @@ export const wcvbTeams: Team[] = [
     id: 325,
     name: "Cleveland St",
     fullName: "Cleveland State Vikings",
-    shortName: "Cleveland St",
+    shortName: "Cleveland St.",
     code: "CLE",
     primaryColor: "#006633",
     secondaryColor: "#231f20",
@@ -3226,7 +3326,7 @@ export const wcvbTeams: Team[] = [
     id: 326,
     name: "Texas St",
     fullName: "Texas State Bobcats",
-    shortName: "Texas St",
+    shortName: "Texas St.",
     code: "TXST",
     primaryColor: "#94314a",
     secondaryColor: "#b4975a",
@@ -3244,7 +3344,7 @@ export const wcvbTeams: Team[] = [
     id: 328,
     name: "Utah State",
     fullName: "Utah State Aggies",
-    shortName: "Utah State",
+    shortName: "Utah St.",
     code: "USU",
     primaryColor: "#020767",
     secondaryColor: "#949ca1",
@@ -3298,7 +3398,7 @@ export const wcvbTeams: Team[] = [
     id: 338,
     name: "Kennesaw St",
     fullName: "Kennesaw State Owls",
-    shortName: "Kennesaw St",
+    shortName: "Kennesaw St.",
     code: "KENN",
     primaryColor: null,
     secondaryColor: "#000000",
@@ -3334,7 +3434,7 @@ export const wcvbTeams: Team[] = [
     id: 344,
     name: "Mississippi St",
     fullName: "Mississippi State Bulldogs",
-    shortName: "Mississippi St",
+    shortName: "Mississippi St.",
     code: "MSST",
     primaryColor: "#531122",
     secondaryColor: "#c1c6c8",
@@ -3550,7 +3650,7 @@ export const wcvbTeams: Team[] = [
     id: 2011,
     name: "Alabama St",
     fullName: "Alabama State Hornets",
-    shortName: "Alabama St",
+    shortName: "Alabama St.",
     code: "ALST",
     primaryColor: "#603913",
     secondaryColor: "#0a0a0a",
@@ -3568,7 +3668,7 @@ export const wcvbTeams: Team[] = [
     id: 2016,
     name: "Alcorn St",
     fullName: "Alcorn State Braves",
-    shortName: "Alcorn St",
+    shortName: "Alcorn St.",
     code: "ALCN",
     primaryColor: "#c1b881",
     secondaryColor: "#46166a",
@@ -3586,7 +3686,7 @@ export const wcvbTeams: Team[] = [
     id: 2026,
     name: "App State",
     fullName: "App State Mountaineers",
-    shortName: "App State",
+    shortName: "App St.",
     code: "APP",
     primaryColor: "#000000",
     secondaryColor: "#ffcd00",
@@ -3640,7 +3740,7 @@ export const wcvbTeams: Team[] = [
     id: 2032,
     name: "Arkansas St",
     fullName: "Arkansas State Red Wolves",
-    shortName: "Arkansas St",
+    shortName: "Arkansas St.",
     code: "ARST",
     primaryColor: "#e81018",
     secondaryColor: "#000000",
@@ -3676,7 +3776,7 @@ export const wcvbTeams: Team[] = [
     id: 2050,
     name: "Ball State",
     fullName: "Ball State Cardinals",
-    shortName: "Ball State",
+    shortName: "Ball St.",
     code: "BALL",
     primaryColor: "#de0000",
     secondaryColor: "#ffffff",
@@ -3748,7 +3848,7 @@ export const wcvbTeams: Team[] = [
     id: 2075,
     name: "Bowie State",
     fullName: "Bowie State Bulldogs",
-    shortName: "Bowie State",
+    shortName: "Bowie St.",
     code: "BOW",
     primaryColor: null,
     secondaryColor: null,
@@ -3964,7 +4064,7 @@ export const wcvbTeams: Team[] = [
     id: 2130,
     name: "Chicago St",
     fullName: "Chicago State Cougars",
-    shortName: "Chicago St",
+    shortName: "Chicago St.",
     code: "CHST",
     primaryColor: "#006700",
     secondaryColor: null,
@@ -4018,7 +4118,7 @@ export const wcvbTeams: Team[] = [
     id: 2154,
     name: "Coppin St",
     fullName: "Coppin State Eagles",
-    shortName: "Coppin St",
+    shortName: "Coppin St.",
     code: "COPP",
     primaryColor: "#2e3192",
     secondaryColor: "#ffd204",
@@ -4072,7 +4172,7 @@ export const wcvbTeams: Team[] = [
     id: 2169,
     name: "Delaware St",
     fullName: "Delaware State Hornets",
-    shortName: "Delaware St",
+    shortName: "Delaware St.",
     code: "DSU",
     primaryColor: "#ff3630",
     secondaryColor: "#d51c28",
@@ -4378,7 +4478,7 @@ export const wcvbTeams: Team[] = [
     id: 2247,
     name: "Georgia St",
     fullName: "Georgia State Panthers",
-    shortName: "Georgia St",
+    shortName: "Georgia St.",
     code: "GAST",
     primaryColor: "#1e539a",
     secondaryColor: "#ebebeb",
@@ -4504,7 +4604,7 @@ export const wcvbTeams: Team[] = [
     id: 2287,
     name: "Illinois St",
     fullName: "Illinois State Redbirds",
-    shortName: "Illinois St",
+    shortName: "Illinois St.",
     code: "ILST",
     primaryColor: "#d72d35",
     secondaryColor: "#ffe716",
@@ -4540,7 +4640,7 @@ export const wcvbTeams: Team[] = [
     id: 2296,
     name: "Jackson St",
     fullName: "Jackson State Tigers",
-    shortName: "Jackson St",
+    shortName: "Jackson St.",
     code: "JKST",
     primaryColor: "#123297",
     secondaryColor: "#b5b7ba",
@@ -4576,7 +4676,7 @@ export const wcvbTeams: Team[] = [
     id: 2306,
     name: "Kansas St",
     fullName: "Kansas State Wildcats",
-    shortName: "Kansas St",
+    shortName: "Kansas St.",
     code: "KSU",
     primaryColor: "#633194",
     secondaryColor: "#e2e3e4",
@@ -4594,7 +4694,7 @@ export const wcvbTeams: Team[] = [
     id: 2309,
     name: "Kent State",
     fullName: "Kent State Golden Flashes",
-    shortName: "Kent State",
+    shortName: "Kent St.",
     code: "KENT",
     primaryColor: "#212142",
     secondaryColor: "#efab00",
@@ -4936,7 +5036,7 @@ export const wcvbTeams: Team[] = [
     id: 2400,
     name: "Miss Valley St",
     fullName: "Mississippi Valley State Delta Devils",
-    shortName: "Miss Valley St",
+    shortName: "Miss Valley St.",
     code: "MVSU",
     primaryColor: "#054105",
     secondaryColor: "#cf2d34",
@@ -4972,7 +5072,7 @@ export const wcvbTeams: Team[] = [
     id: 2413,
     name: "Morehead St",
     fullName: "Morehead State Eagles",
-    shortName: "Morehead St",
+    shortName: "Morehead St.",
     code: "MORE",
     primaryColor: "#29109c",
     secondaryColor: "#fed91a",
@@ -4990,7 +5090,7 @@ export const wcvbTeams: Team[] = [
     id: 2415,
     name: "Morgan St",
     fullName: "Morgan State Bears",
-    shortName: "Morgan St",
+    shortName: "Morgan St.",
     code: "MORG",
     primaryColor: "#0505aa",
     secondaryColor: "#f47937",
@@ -5242,7 +5342,7 @@ export const wcvbTeams: Team[] = [
     id: 2449,
     name: "N Dakota St",
     fullName: "North Dakota State Bison",
-    shortName: "N Dakota St",
+    shortName: "N Dakota St.",
     code: "NDSU",
     primaryColor: null,
     secondaryColor: "#ffffff",
@@ -5260,7 +5360,7 @@ export const wcvbTeams: Team[] = [
     id: 2450,
     name: "Norfolk St",
     fullName: "Norfolk State Spartans",
-    shortName: "Norfolk St",
+    shortName: "Norfolk St.",
     code: "NORF",
     primaryColor: "#08614f",
     secondaryColor: "#fdb813",
@@ -5404,7 +5504,7 @@ export const wcvbTeams: Team[] = [
     id: 2466,
     name: "N'Western St",
     fullName: "Northwestern State Demons",
-    shortName: "N'Western St",
+    shortName: "N'Western St.",
     code: "NWST",
     primaryColor: "#68565f",
     secondaryColor: "#ed6118",
@@ -5494,7 +5594,7 @@ export const wcvbTeams: Team[] = [
     id: 2502,
     name: "Portland St",
     fullName: "Portland State Vikings",
-    shortName: "Portland St",
+    shortName: "Portland St.",
     code: "PRST",
     primaryColor: "#005e60",
     secondaryColor: "#ebebeb",
@@ -5782,7 +5882,7 @@ export const wcvbTeams: Team[] = [
     id: 2542,
     name: "Savannah State",
     fullName: "Savannah State Tigers",
-    shortName: "Savannah State",
+    shortName: "Savannah St.",
     code: "SAV",
     primaryColor: "#330099",
     secondaryColor: "#f78f1e",
@@ -5944,7 +6044,7 @@ export const wcvbTeams: Team[] = [
     id: 2569,
     name: "SC State",
     fullName: "South Carolina State Bulldogs",
-    shortName: "SC State",
+    shortName: "SC St.",
     code: "SCST",
     primaryColor: "#7d1315",
     secondaryColor: "#104897",
@@ -5962,7 +6062,7 @@ export const wcvbTeams: Team[] = [
     id: 2571,
     name: "S Dakota St",
     fullName: "South Dakota State Jackrabbits",
-    shortName: "S Dakota St",
+    shortName: "S Dakota St.",
     code: "SDST",
     primaryColor: null,
     secondaryColor: "#ffd100",
@@ -6160,7 +6260,7 @@ export const wcvbTeams: Team[] = [
     id: 2623,
     name: "Missouri St",
     fullName: "Missouri State Bears",
-    shortName: "Missouri St",
+    shortName: "Missouri St.",
     code: "MOST",
     primaryColor: "#4a0010",
     secondaryColor: "#e8e8e8",
@@ -6232,7 +6332,7 @@ export const wcvbTeams: Team[] = [
     id: 2634,
     name: "Tennessee St",
     fullName: "Tennessee State Tigers",
-    shortName: "Tennessee St",
+    shortName: "Tennessee St.",
     code: "TNST",
     primaryColor: "#21398c",
     secondaryColor: "#f0f0f0",
@@ -6466,7 +6566,7 @@ export const wcvbTeams: Team[] = [
     id: 2692,
     name: "Weber St",
     fullName: "Weber State Wildcats",
-    shortName: "Weber St",
+    shortName: "Weber St.",
     code: "WEB",
     primaryColor: "#18005a",
     secondaryColor: "#ebebeb",
@@ -6556,7 +6656,7 @@ export const wcvbTeams: Team[] = [
     id: 2724,
     name: "Wichita St",
     fullName: "Wichita State Shockers",
-    shortName: "Wichita St",
+    shortName: "Wichita St.",
     code: "WICH",
     primaryColor: "#0d0a03",
     secondaryColor: "#ffc41e",
@@ -6664,7 +6764,7 @@ export const wcvbTeams: Team[] = [
     id: 2750,
     name: "Wright St",
     fullName: "Wright State Raiders",
-    shortName: "Wright St",
+    shortName: "Wright St.",
     code: "WRST",
     primaryColor: "#a36209",
     secondaryColor: "#cba052",
@@ -6718,7 +6818,7 @@ export const wcvbTeams: Team[] = [
     id: 2754,
     name: "Youngstown St",
     fullName: "Youngstown State Penguins",
-    shortName: "Youngstown St",
+    shortName: "Youngstown St.",
     code: "YSU",
     primaryColor: "#961f22",
     secondaryColor: "#690717",
@@ -6988,7 +7088,7 @@ export const wcvbTeams: Team[] = [
     id: 122886,
     name: "Tarleton St",
     fullName: "Tarleton State Texans",
-    shortName: "Tarleton St",
+    shortName: "Tarleton St.",
     code: "TAR",
     primaryColor: null,
     secondaryColor: null,

@@ -1,10 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { isAxiosError } from "axios";
+import { CanceledError, isAxiosError } from "axios";
 import { useCallback } from "react";
 
 import type { PrivateAccountUser } from "types/user";
 import { apiClient, BASE_URL, refreshStoredAuthUser } from "utils/apiClient";
 import { removeCachedUserProfile } from "utils/profile/userProfileCache";
+import {
+  getAuthSessionVersion,
+  isAuthSessionCurrent,
+  withAuthStorageLock,
+} from "utils/auth/authSessionLifecycle";
 
 type ProfileUpdateResponse = {
   user: PrivateAccountUser;
@@ -28,31 +33,42 @@ const readCachedAuthUser = async (): Promise<CachedAuthUser> => {
   }
 };
 
-const persistUpdatedUser = async (user: PrivateAccountUser) => {
-  const cachedUser = await readCachedAuthUser();
+const persistUpdatedUser = async (
+  user: PrivateAccountUser,
+  version: number,
+) => {
+  await withAuthStorageLock(async () => {
+    const cachedUser = await readCachedAuthUser();
+    if (!isAuthSessionCurrent(version)) {
+      throw new CanceledError("Authentication session changed");
+    }
 
-  await AsyncStorage.multiSet([
-    ["userId", String(user.id)],
-    ["username", user.username],
-    ["fullName", user.fullName],
-    ["bio", user.bio],
-    ["profileImage", user.profileImage ?? ""],
-    ["bannerImage", user.bannerImage ?? ""],
-    [
-      "authUser",
-      JSON.stringify({
-        ...cachedUser,
-        id: user.id,
-        username: user.username,
-        fullName: user.fullName,
-        bio: user.bio,
-        profileImage: user.profileImage,
-        bannerImage: user.bannerImage,
-      }),
-    ],
-  ]);
+    await AsyncStorage.multiSet([
+      ["userId", String(user.id)],
+      ["username", user.username],
+      ["fullName", user.fullName],
+      ["bio", user.bio],
+      ["profileImage", user.profileImage ?? ""],
+      ["bannerImage", user.bannerImage ?? ""],
+      [
+        "authUser",
+        JSON.stringify({
+          ...cachedUser,
+          id: user.id,
+          username: user.username,
+          fullName: user.fullName,
+          bio: user.bio,
+          profileImage: user.profileImage,
+          bannerImage: user.bannerImage,
+        }),
+      ],
+    ]);
+  });
 
   await removeCachedUserProfile(String(user.id));
+  if (!isAuthSessionCurrent(version)) {
+    throw new CanceledError("Authentication session changed");
+  }
   await refreshStoredAuthUser();
 };
 
@@ -97,6 +113,7 @@ const getProfileSaveErrorMessage = (error: unknown) => {
 export function useEditProfile() {
   const saveProfile = useCallback(
     async (formData: FormData): Promise<PrivateAccountUser> => {
+      const version = getAuthSessionVersion();
       try {
         if (__DEV__) {
           console.log("Saving profile to:", `${BASE_URL}/api/users/me`);
@@ -119,7 +136,7 @@ export function useEditProfile() {
           throw new Error("Server did not return updated profile data.");
         }
 
-        await persistUpdatedUser(data.user);
+        await persistUpdatedUser(data.user, version);
 
         return data.user;
       } catch (error: unknown) {

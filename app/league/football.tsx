@@ -51,7 +51,7 @@ import {
   useState,
 } from "react";
 import { View } from "react-native";
-import PagerView from "react-native-pager-view";
+import PagerView from "components/PagerView";
 import { CustomHeader } from "../../components/CustomHeader";
 
 dayjs.extend(utc);

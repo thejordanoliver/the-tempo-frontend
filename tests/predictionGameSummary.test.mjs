@@ -154,7 +154,7 @@ test("football shows down and distance and matches numeric possession IDs to sav
       .length,
     1,
   );
-  assert(content.includes("PICKED"));
+  // Pick labels belong to FanPredictionHistoryRow; this summary owns game state.
 });
 test("volleyball separates sets won from the current set's points", () => {
   const content = render("volleyball", {

@@ -103,7 +103,7 @@ export default function TickerDashboard() {
                       : mode === "favorites"
                         ? "Across your leagues"
                         : league
-                          ? LEAGUE_CONFIG[league].label
+                          ? LEAGUE_CONFIG[league].shortName
                           : "League not reported"}
                   </Text>
                   <Text style={text.secondaryText}>{contentLabel}</Text>

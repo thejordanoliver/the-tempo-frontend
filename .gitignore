@@ -38,6 +38,11 @@ yarn-error.*
 .env
 .env.*
 .env*.local
+!.env.example
+
+# Browser test artifacts
+/playwright-report/
+/test-results/
 
 # typescript
 *.tsbuildinfo

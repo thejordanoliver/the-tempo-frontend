@@ -1,3 +1,4 @@
+import path from "node:path";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
@@ -85,9 +86,9 @@ export function sportsHookHarness({ globals = {} } = {}) {
     },
     "@/utils/games/games": { isGameLive: () => false },
   };
-  function load(path) {
+  function load(filePath) {
     const exports = {};
-    const source = ts.transpileModule(fs.readFileSync(path, "utf8"), {
+    const source = ts.transpileModule(fs.readFileSync(filePath, "utf8"), {
       compilerOptions: {
         module: ts.ModuleKind.CommonJS,
         esModuleInterop: true,
@@ -107,11 +108,14 @@ export function sportsHookHarness({ globals = {} } = {}) {
       require(name) {
         if (name === "hooks/Sports/useSportsRequestScope")
           return load("hooks/Sports/useSportsRequestScope.ts");
-        if (name.startsWith("assets/")) return name;
+        if (name.startsWith("assets/") || /\.(png|jpe?g|webp|svg)$/.test(name))
+          return name;
         if (!(name in modules)) {
-          const candidate = name.startsWith("./")
-            ? `hooks/${name.slice(2)}.ts`
-            : `${name}.ts`;
+          const candidate = `${
+            name.startsWith(".")
+              ? path.resolve(path.dirname(filePath), name)
+              : name.replace(/^@\//, "")
+          }.ts`;
           if (fs.existsSync(candidate)) modules[name] = load(candidate);
         }
         assert.ok(name in modules, `Unexpected import: ${name}`);

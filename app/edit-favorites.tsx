@@ -17,7 +17,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Pressable, Text, View, useWindowDimensions } from "react-native";
 import PagerView, {
   type PagerViewOnPageSelectedEvent,
-} from "react-native-pager-view";
+} from "components/PagerView";
 import { EditFavoritesStyles as styles } from "styles/EditFavoriteStyles";
 
 export default function EditFavoritesScreen() {

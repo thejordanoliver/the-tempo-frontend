@@ -212,7 +212,9 @@ test("vote sockets pause on blur/background, rejoin on foreground and ignore an 
       return s;
     },
   };
-  h.start(h.load("hooks/useLiveVotes.ts").useLiveVotes, [401]);
+  h.start(h.load("hooks/FanPredictionHooks/useLiveVotes.ts").useLiveVotes, [
+    401,
+  ]);
   try {
     await flush();
     assert.equal(sockets.length, 1);

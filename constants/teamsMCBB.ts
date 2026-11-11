@@ -938,6 +938,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 242,
     name: "Rice",
+    shortName: "Rice",
     fullName: "Rice Owls",
     code: "RICE",
     primaryColor: "#003d7d",
@@ -974,6 +975,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2046,
     name: "Austin Peay",
+    shortName: "Austin Peay",
     fullName: "Austin Peay Governors",
     code: "APSU",
     primaryColor: "#8e0b0b",
@@ -1009,6 +1011,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 77,
     name: "Northwestern",
+    shortName: "Northwestern",
     fullName: "Northwestern Wildcats",
     code: "NU",
     primaryColor: "#582c83",
@@ -1062,6 +1065,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 158,
     name: "Nebraska",
+    shortName: "Nebraska",
     fullName: "Nebraska Cornhuskers",
     code: "NEB",
     primaryColor: "#d00000",
@@ -1079,6 +1083,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2439,
     name: "UNLV",
+    shortName: "UNLV",
     fullName: "UNLV Rebels",
     code: "UNLV",
     primaryColor: "#b10202",
@@ -1096,6 +1101,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 304,
     name: "Idaho State",
+    shortName: "Idaho St.",
     fullName: "Idaho State Bengals",
     code: "IDST",
     primaryColor: "#ef8c00",
@@ -1131,6 +1137,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 328,
     name: "Utah State",
+    shortName: "Utah St.",
     fullName: "Utah State Aggies",
     code: "USU",
     primaryColor: "#00263a",
@@ -1148,6 +1155,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 41,
     name: "UConn",
+    shortName: "UConn",
     fullName: "UConn Huskies",
     code: "CONN",
     primaryColor: "#0c2340",
@@ -1165,6 +1173,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 356,
     name: "Illinois",
+    shortName: "Illinois",
     fullName: "Illinois Fighting Illini",
     code: "ILL",
     primaryColor: "#ff5f05",
@@ -1182,6 +1191,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2751,
     name: "Wyoming",
+    shortName: "Wyoming",
     fullName: "Wyoming Cowboys",
     code: "WYO",
     primaryColor: "#492f24",
@@ -1199,6 +1209,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 52,
     name: "Florida State",
+    shortName: "Florida St.",
     fullName: "Florida State Seminoles",
     code: "FSU",
     primaryColor: "#782f40",
@@ -1216,6 +1227,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2184,
     name: "Duquesne",
+    shortName: "Duquesne",
     fullName: "Duquesne Dukes",
     code: "DUQ",
     primaryColor: "#002D62",
@@ -1251,6 +1263,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2429,
     name: "Charlotte",
+    shortName: "Charlotte",
     fullName: "Charlotte 49ers",
     code: "CLT",
     primaryColor: "#005035",
@@ -1413,7 +1426,7 @@ export const mcbbTeams: Team[] = [
     id: 2154,
     name: "Coppin State",
     fullName: "Coppin State Eagles",
-    shortName: "Coppin St",
+    shortName: "Coppin St.",
     code: "COPP",
     primaryColor: "#2e3192",
     secondaryColor: "#ffd204",
@@ -1430,6 +1443,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 153,
     name: "North Carolina",
+    shortName: "North Carolina",
     fullName: "North Carolina Tar Heels",
     code: "UNC",
     primaryColor: "#7bafd4",
@@ -1465,6 +1479,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 50,
     name: "Florida A&M",
+    shortName: "Florida A&M",
     fullName: "Florida A&M Rattlers",
     code: "FAMU",
     primaryColor: "#F89728",
@@ -1482,7 +1497,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 166,
     name: "New Mexico State",
-    shortName: "New Mexico St",
+    shortName: "New Mexico St.",
     fullName: "New Mexico State Aggies",
     code: "NMSU",
     primaryColor: "#891216",
@@ -1500,6 +1515,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2440,
     name: "Nevada",
+    shortName: "Nevada",
     fullName: "Nevada Wolf Pack",
     code: "NEV",
     primaryColor: "#002d62",
@@ -1517,6 +1533,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2638,
     name: "UTEP",
+    shortName: "UTEP",
     fullName: "UTEP Miners",
     code: "UTEP",
     primaryColor: "#ff8200",
@@ -1534,6 +1551,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 249,
     name: "North Texas",
+    shortName: "North Texas",
     fullName: "North Texas Mean Green",
     code: "UNT",
     primaryColor: "#000",
@@ -1551,6 +1569,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 62,
     name: "Hawai'i",
+    shortName: "Hawai'i",
     fullName: "Hawai'i Rainbow Warriors",
     code: "HAW",
     primaryColor: "#003420",
@@ -1568,6 +1587,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 238,
     name: "Vanderbilt",
+    shortName: "Vanderbilt",
     fullName: "Vanderbilt Commodores",
     code: "VAN",
     primaryColor: "#000000",
@@ -1585,6 +1605,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 197,
     name: "Oklahoma State",
+    shortName: "Oklahoma St.",
     fullName: "Oklahoma State Cowboys",
     code: "OKST",
     primaryColor: "#000000",
@@ -1602,6 +1623,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2117,
     name: "Central Michigan",
+    shortName: "Central Michigan",
     fullName: "Central Michigan Chippewas",
     code: "CMU",
     primaryColor: "#6a0032",
@@ -1619,6 +1641,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 221,
     name: "Pittsburgh",
+    shortName: "Pittsburgh",
     fullName: "Pittsburgh Panthers",
     code: "PITT",
     primaryColor: "#003263",
@@ -1636,6 +1659,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 277,
     name: "West Virginia",
+    shortName: "West Virginia",
     fullName: "West Virginia Mountaineers",
     code: "WVU",
     primaryColor: "#002855",
@@ -1671,6 +1695,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 154,
     name: "Wake Forest",
+    shortName: "Wake Forest",
     fullName: "Wake Forest Demon Deacons",
     code: "WAKE",
     primaryColor: "#000000",
@@ -1689,6 +1714,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2678,
     name: "VMI",
+    shortName: "VMI",
     fullName: "VMI Keydets",
     code: "VMI",
     primaryColor: "#ae122a",
@@ -1706,6 +1732,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2006,
     name: "Akron",
+    shortName: "Akron",
     fullName: "Akron Zips",
     code: "AKR",
     primaryColor: "#00285e",
@@ -1759,6 +1786,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2633,
     name: "Tennessee",
+    shortName: "Tennessee",
     fullName: "Tennessee Volunteers",
     code: "TENN",
     primaryColor: "#ff8200",
@@ -1776,6 +1804,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2050,
     name: "Ball State",
+    shortName: "Ball St.",
     fullName: "Ball State Cardinals",
     code: "BALL",
     primaryColor: "#BA0C2F",
@@ -1793,6 +1822,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2116,
     name: "UCF",
+    shortName: "UCF",
     fullName: "UCF Knights",
     code: "UCF",
     primaryColor: "#000000",
@@ -1810,6 +1840,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2569,
     name: "South Carolina St",
+    shortName: "South Carolina St.",
     fullName: "South Carolina State Bulldogs",
     code: "SCST",
     primaryColor: "#7d1315",
@@ -1953,6 +1984,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2229,
     name: "FIU",
+    shortName: "FIU",
     fullName: "Florida International Panthers",
     code: "FIU",
     primaryColor: "#001538",
@@ -2042,6 +2074,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2124,
     name: "Chaminade",
+    shortName: "Chaminade",
     fullName: "Chaminade Silverswords",
     code: "CHAM",
     primaryColor: "#0054A5",
@@ -2059,6 +2092,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2803,
     name: "Bryant",
+    shortName: "Bryant",
     fullName: "Bryant Bulldogs",
     code: "BRY",
     primaryColor: "#000000",
@@ -2076,6 +2110,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2649,
     name: "Toledo",
+    shortName: "Toledo",
     fullName: "Toledo Rockets",
     code: "TOL",
     primaryColor: "#0a2240",
@@ -2112,7 +2147,7 @@ export const mcbbTeams: Team[] = [
     id: 299,
     name: "Long Beach State",
     fullName: "Long Beach State Beach",
-    shortName: "Long Beach St",
+    shortName: "Long Beach St.",
     code: "LBSU",
     primaryColor: "#000000",
     secondaryColor: "#f1f2f3",
@@ -2183,6 +2218,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2509,
     name: "Purdue",
+    shortName: "Purdue",
     fullName: "Purdue Boilermakers",
     code: "PUR",
     primaryColor: "#000000",
@@ -2200,6 +2236,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 213,
     name: "Penn State",
+    shortName: "Penn St.",
     fullName: "Penn State Nittany Lions",
     code: "PSU",
     primaryColor: "#00265D",
@@ -2217,6 +2254,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2459,
     name: "Northern Illinois",
+    shortName: "Northern Illinois",
     fullName: "Northern Illinois Huskies",
     code: "NIU",
     primaryColor: "#F1122C",
@@ -2234,6 +2272,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2197,
     name: "Eastern Illinois",
+    shortName: "Eastern Illinois",
     fullName: "Eastern Illinois Panthers",
     code: "EIU",
     primaryColor: "#000000",
@@ -2251,6 +2290,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 5,
     name: "UAB",
+    shortName: "UAB",
     fullName: "UAB Blazers",
     code: "UAB",
     primaryColor: "#003b28",
@@ -2287,6 +2327,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2010,
     name: "Alabama A&M",
+    shortName: "Alabama A&M",
     fullName: "Alabama A&M Bulldogs",
     code: "AAMU",
     primaryColor: "#790000",
@@ -2304,6 +2345,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 142,
     name: "Missouri",
+    shortName: "Missouri",
     fullName: "Missouri Tigers",
     code: "MIZ",
     primaryColor: "#f1b82d",
@@ -2339,6 +2381,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 135,
     name: "Minnesota",
+    shortName: "Minnesota",
     fullName: "Minnesota Golden Gophers",
     code: "MINN",
     primaryColor: "#5e0a2f",
@@ -2356,6 +2399,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 9,
     name: "Arizona State",
+    shortName: "Arizona St.",
     fullName: "Arizona State Sun Devils",
     code: "ASU",
     primaryColor: "#8e0c3a",
@@ -2373,6 +2417,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2464,
     name: "Northern Arizona",
+    shortName: "Northern Arizona",
     fullName: "Northern Arizona Lumberjacks",
     code: "NAU",
     primaryColor: "#003976",
@@ -2390,6 +2435,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 278,
     name: "Fresno State",
+    shortName: "Fresno St.",
     fullName: "Fresno State Bulldogs",
     code: "FRES",
     primaryColor: "#c41230",
@@ -2407,6 +2453,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 13,
     name: "Cal Poly",
+    shortName: "Cal Poly",
     fullName: "Cal Poly Mustangs",
     code: "CP",
     primaryColor: "#1E4D2B",
@@ -2424,6 +2471,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 23,
     name: "San José State",
+    shortName: "San José St.",
     fullName: "San José State Spartans",
     code: "SJSU",
     primaryColor: "#005893",
@@ -2459,6 +2507,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2711,
     name: "Western Michigan",
+    shortName: "Western Michigan",
     fullName: "Western Michigan Broncos",
     code: "WMU",
     primaryColor: "#532e1f",
@@ -2476,6 +2525,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2199,
     name: "Eastern Michigan",
+    shortName: "Eastern Michigan",
     fullName: "Eastern Michigan Eagles",
     code: "EMU",
     primaryColor: "#00331b",
@@ -2493,6 +2543,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2198,
     name: "Eastern Kentucky",
+    shortName: "Eastern Kentucky",
     fullName: "Eastern Kentucky Colonels",
     code: "EKU",
     primaryColor: "#660819",
@@ -2510,6 +2561,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 295,
     name: "Old Dominion",
+    shortName: "Old Dominion",
     fullName: "Old Dominion Monarchs",
     code: "ODU",
     primaryColor: "#00507d",
@@ -2527,6 +2579,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 259,
     name: "Virginia Tech",
+    shortName: "Virginia Tech",
     fullName: "Virginia Tech Hokies",
     code: "VT",
     primaryColor: "#630031",
@@ -2706,6 +2759,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 150,
     name: "Duke",
+    shortName: "Duke",
     fullName: "Duke Blue Devils",
     code: "DUKE",
     primaryColor: "#013088",
@@ -2742,6 +2796,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 218,
     name: "Temple",
+    shortName: "Temple",
     fullName: "Temple Owls",
     code: "TEM",
     primaryColor: "#A80532",
@@ -2759,6 +2814,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2305,
     name: "Kansas",
+    shortName: "Kansas",
     fullName: "Kansas Jayhawks",
     code: "KU",
     primaryColor: "#0051ba",
@@ -2776,6 +2832,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2635,
     name: "Tennessee Tech",
+    shortName: "Tennessee Tech",
     fullName: "Tennessee Tech Golden Eagles",
     code: "TNTC",
     primaryColor: "#5A4099",
@@ -2793,6 +2850,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 84,
     name: "Indiana",
+    shortName: "Indiana",
     fullName: "Indiana Hoosiers",
     code: "IU",
     primaryColor: "#990000",
@@ -2864,6 +2922,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 38,
     name: "Colorado",
+    shortName: "Colorado",
     fullName: "Colorado Buffaloes",
     code: "COLO",
     primaryColor: "#000000",
@@ -2881,6 +2940,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2628,
     name: "TCU",
+    shortName: "TCU",
     fullName: "TCU Horned Frogs",
     code: "TCU",
     primaryColor: "#4d1979",
@@ -2898,6 +2958,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 333,
     name: "Alabama",
+    shortName: "Alabama",
     fullName: "Alabama Crimson Tide",
     code: "ALA",
     primaryColor: "#9e1632",
@@ -2915,6 +2976,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 194,
     name: "Ohio State",
+    shortName: "Ohio St.",
     fullName: "Ohio State Buckeyes",
     code: "OSU",
     primaryColor: "#ce1141",
@@ -2932,6 +2994,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 87,
     name: "Notre Dame",
+    shortName: "Notre Dame",
     fullName: "Notre Dame Fighting Irish",
     code: "ND",
     primaryColor: "#0c2340",
@@ -2949,6 +3012,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 61,
     name: "Georgia",
+    shortName: "Georgia",
     fullName: "Georgia Bulldogs",
     code: "UGA",
     primaryColor: "#ba0c2f",
@@ -2966,6 +3030,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2483,
     name: "Oregon",
+    shortName: "Oregon",
     fullName: "Oregon Ducks",
     code: "ORE",
     primaryColor: "#007030",
@@ -2983,6 +3048,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 245,
     name: "Texas A&M",
+    shortName: "Texas A&M",
     fullName: "Texas A&M Aggies",
     code: "TA&M",
     primaryColor: "#500000",
@@ -3018,6 +3084,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 57,
     name: "Florida",
+    shortName: "Florida",
     fullName: "Florida Gators",
     code: "FLA",
     primaryColor: "#0021a5",
@@ -3035,6 +3102,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 254,
     name: "Utah",
+    shortName: "Utah",
     fullName: "Utah Utes",
     code: "UTAH",
     primaryColor: "#ea002a",
@@ -3070,6 +3138,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 130,
     name: "Michigan",
+    shortName: "Michigan",
     fullName: "Michigan Wolverines",
     code: "MICH",
     primaryColor: "#00274c",
@@ -3087,6 +3156,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 36,
     name: "Colorado State",
+    shortName: "Colorado St.",
     fullName: "Colorado State Rams",
     code: "CSU",
     primaryColor: "#1e4d2b",
@@ -3104,6 +3174,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 201,
     name: "Oklahoma",
+    shortName: "Oklahoma",
     fullName: "Oklahoma Sooners",
     code: "OU",
     primaryColor: "#a32036",
@@ -3121,6 +3192,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 239,
     name: "Baylor",
+    shortName: "Baylor",
     fullName: "Baylor Bears",
     code: "BAY",
     primaryColor: "#154734",
@@ -3138,6 +3210,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 151,
     name: "East Carolina",
+    shortName: "East Carolina",
     fullName: "East Carolina Pirates",
     code: "ECU",
     primaryColor: "#4b1869",
@@ -3155,6 +3228,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 152,
     name: "NC State",
+    shortName: "NC St.",
     fullName: "NC State Wolfpack",
     code: "NCSU",
     primaryColor: "#cc0000",
@@ -3190,6 +3264,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 30,
     name: "USC",
+    shortName: "USC",
     fullName: "USC Trojans",
     code: "USC",
     primaryColor: "#9e2237",
@@ -3207,6 +3282,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2390,
     name: "Miami",
+    shortName: "Miami",
     fullName: "Miami Hurricanes",
     code: "MIA",
     primaryColor: "#005030",
@@ -3279,6 +3355,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 275,
     name: "Wisconsin",
+    shortName: "Wisconsin",
     fullName: "Wisconsin Badgers",
     code: "WIS",
     primaryColor: "#c4012f",
@@ -3296,6 +3373,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2287,
     name: "Illinois State",
+    shortName: "Illinois St.",
     fullName: "Illinois State Redbirds",
     code: "ILST",
     primaryColor: "#CE1126",
@@ -3313,6 +3391,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 8,
     name: "Arkansas",
+    shortName: "Arkansas",
     fullName: "Arkansas Razorbacks",
     code: "ARK",
     primaryColor: "#a41f35",
@@ -3366,6 +3445,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 294,
     name: "Jacksonville",
+    shortName: "Jacksonville",
     fullName: "Jacksonville Dolphins",
     code: "JAX",
     primaryColor: "#00523e",
@@ -3383,6 +3463,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2132,
     name: "Cincinnati",
+    shortName: "Cincinnati",
     fullName: "Cincinnati Bearcats",
     code: "CIN",
     primaryColor: "#000000",
@@ -3400,6 +3481,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 96,
     name: "Kentucky",
+    shortName: "Kentucky",
     fullName: "Kentucky Wildcats",
     code: "UK",
     primaryColor: "#0033a0",
@@ -3417,6 +3499,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 193,
     name: "Miami (OH)",
+    shortName: "Miami (OH)",
     fullName: "Miami (OH) RedHawks",
     code: "M-OH",
     primaryColor: "#a4000c",
@@ -3434,6 +3517,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 145,
     name: "Ole Miss",
+    shortName: "Ole Miss",
     fullName: "Ole Miss Rebels",
     code: "MISS",
     primaryColor: "#13294b",
@@ -3451,6 +3535,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2653,
     name: "Troy",
+    shortName: "Troy",
     fullName: "Troy Trojans",
     code: "TROY",
     primaryColor: "#AE0210",
@@ -3486,6 +3571,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2636,
     name: "UTSA",
+    shortName: "UTSA",
     fullName: "UTSA Roadrunners",
     code: "UTSA",
     primaryColor: "#002A5C",
@@ -3503,6 +3589,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 248,
     name: "Houston",
+    shortName: "Houston",
     fullName: "Houston Cougars",
     code: "HOU",
     primaryColor: "#c92a39",
@@ -3520,6 +3607,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 58,
     name: "South Florida",
+    shortName: "South Florida",
     fullName: "South Florida Bulls",
     code: "USF",
     primaryColor: "#004A36",
@@ -3537,6 +3625,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 252,
     name: "BYU",
+    shortName: "BYU",
     fullName: "BYU Cougars",
     code: "BYU",
     primaryColor: "#003da5",
@@ -3572,6 +3661,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2294,
     name: "Iowa",
+    shortName: "Iowa",
     fullName: "Iowa Hawkeyes",
     code: "IOWA",
     primaryColor: "#000000",
@@ -3590,7 +3680,7 @@ export const mcbbTeams: Team[] = [
     id: 2571,
     name: "South Dakota State",
     fullName: "South Dakota State Jackrabbits",
-    shortName: "S Dakota St",
+    shortName: "S Dakota St.",
     code: "SDST",
     primaryColor: "#0033a0",
     secondaryColor: "#ffd100",
@@ -3607,6 +3697,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 120,
     name: "Maryland",
+    shortName: "Maryland",
     fullName: "Maryland Terrapins",
     code: "MD",
     primaryColor: "#D5002B",
@@ -3624,6 +3715,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2084,
     name: "Buffalo",
+    shortName: "Buffalo",
     fullName: "Buffalo Bulls",
     code: "BUF",
     primaryColor: "#041A9B",
@@ -3641,6 +3733,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 103,
     name: "Boston College",
+    shortName: "Boston College",
     fullName: "Boston College Eagles",
     code: "BC",
     primaryColor: "#8c2232",
@@ -3676,6 +3769,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 164,
     name: "Rutgers",
+    shortName: "Rutgers",
     fullName: "Rutgers Scarlet Knights",
     code: "RUTG",
     primaryColor: "#d21034",
@@ -3693,6 +3787,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2026,
     name: "App State",
+    shortName: "App St.",
     fullName: "App State Mountaineers",
     code: "APP",
     primaryColor: "#000000",
@@ -3710,6 +3805,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2426,
     name: "Navy",
+    shortName: "Navy",
     fullName: "Navy Midshipmen",
     code: "NAVY",
     primaryColor: "#00225b",
@@ -3727,6 +3823,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 48,
     name: "Delaware",
+    shortName: "Delaware",
     fullName: "Delaware Blue Hens",
     code: "DEL",
     primaryColor: "#033594",
@@ -3744,6 +3841,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 258,
     name: "Virginia",
+    shortName: "Virginia",
     fullName: "Virginia Cavaliers",
     code: "UVA",
     primaryColor: "#232d4b",
@@ -3779,6 +3877,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 257,
     name: "Richmond",
+    shortName: "Richmond",
     fullName: "Richmond Spiders",
     code: "RICH",
     primaryColor: "#9e0712",
@@ -3796,6 +3895,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2005,
     name: "Air Force",
+    shortName: "Air Force",
     fullName: "Air Force Falcons",
     code: "AF",
     primaryColor: "#003594",
@@ -3813,6 +3913,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2460,
     name: "Northern Iowa",
+    shortName: "Northern Iowa",
     fullName: "Northern Iowa Panthers",
     code: "UNI",
     primaryColor: "#473282",
@@ -3866,6 +3967,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 66,
     name: "Iowa State",
+    shortName: "Iowa St.",
     fullName: "Iowa State Cyclones",
     code: "ISU",
     primaryColor: "#822433",
@@ -3901,6 +4003,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 26,
     name: "UCLA",
+    shortName: "UCLA",
     fullName: "UCLA Bruins",
     code: "UCLA",
     primaryColor: "#2774ae",
@@ -3918,6 +4021,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 189,
     name: "Bowling Green",
+    shortName: "Bowling Green",
     fullName: "Bowling Green Falcons",
     code: "BGSU",
     primaryColor: "#2b1000",
@@ -3935,6 +4039,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 21,
     name: "San Diego State",
+    shortName: "San Diego St.",
     fullName: "San Diego State Aztecs",
     code: "SDSU",
     primaryColor: "#c41230",
@@ -3952,6 +4057,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 12,
     name: "Arizona",
+    shortName: "Arizona",
     fullName: "Arizona Wildcats",
     code: "ARIZ",
     primaryColor: "#0c234b",
@@ -3969,6 +4075,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 155,
     name: "North Dakota",
+    shortName: "North Dakota",
     fullName: "North Dakota Fighting Hawks",
     code: "UND",
     primaryColor: "#00A26B",
@@ -3986,6 +4093,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2454,
     name: "North Florida",
+    shortName: "North Florida",
     fullName: "North Florida Ospreys",
     code: "UNF",
     primaryColor: "#004B8D",
@@ -4075,6 +4183,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 276,
     name: "Marshall",
+    shortName: "Marshall",
     fullName: "Marshall Thundering Herd",
     code: "MRSH",
     primaryColor: "#00ae42",
@@ -4092,6 +4201,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2450,
     name: "Norfolk State",
+    shortName: "Norfolk St.",
     fullName: "Norfolk State Spartans",
     code: "NORF",
     primaryColor: "#0c8968",
@@ -4109,6 +4219,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 202,
     name: "Tulsa",
+    shortName: "Tulsa",
     fullName: "Tulsa Golden Hurricane",
     code: "TLSA",
     primaryColor: "#003595",
@@ -4126,6 +4237,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 25,
     name: "California",
+    shortName: "California",
     fullName: "California Golden Bears",
     code: "CAL",
     primaryColor: "#031522",
@@ -4215,6 +4327,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 302,
     name: "UC Davis",
+    shortName: "UC Davis",
     fullName: "UC Davis Aggies",
     code: "UCD",
     primaryColor: "#002855",
@@ -4232,6 +4345,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 3246,
     name: "Bethesda",
+    shortName: "Bethesda",
     fullName: "Bethesda University Flames",
     code: "BTHS",
     primaryColor: "#8B2520",
@@ -4249,6 +4363,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 6,
     name: "South Alabama",
+    shortName: "South Alabama",
     fullName: "South Alabama Jaguars",
     code: "USA",
     primaryColor: "#003E7E",
@@ -4284,6 +4399,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2447,
     name: "Nicholls",
+    shortName: "Nicholls",
     fullName: "Nicholls Colonels",
     code: "NICH",
     primaryColor: "#C41230",
@@ -4301,6 +4417,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 326,
     name: "Texas State",
+    shortName: "Texas St.",
     fullName: "Texas State Bobcats",
     code: "TXST",
     primaryColor: "#4e1719",
@@ -4318,6 +4435,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 290,
     name: "Georgia Southern",
+    shortName: "Georgia Southern",
     fullName: "Georgia Southern Eagles",
     code: "GASO",
     primaryColor: "#003775",
@@ -4335,6 +4453,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2415,
     name: "Morgan State",
+    shortName: "Morgan St.",
     fullName: "Morgan State Bears",
     code: "MORG",
     primaryColor: "#014786",
@@ -4352,6 +4471,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 195,
     name: "Ohio",
+    shortName: "Ohio",
     fullName: "Ohio Bobcats",
     code: "OHIO",
     primaryColor: "#295A29",
@@ -4369,6 +4489,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 256,
     name: "JMU",
+    shortName: "JMU",
     fullName: "James Madison Dukes",
     code: "JMU",
     primaryColor: "#450084",
@@ -4404,6 +4525,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2,
     name: "Auburn",
+    shortName: "Auburn",
     fullName: "Auburn Tigers",
     code: "AUB",
     primaryColor: "#002b5c",
@@ -4421,6 +4543,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2382,
     name: "Mercer",
+    shortName: "Mercer",
     fullName: "Mercer Bears",
     code: "MER",
     primaryColor: "#ff7f29",
@@ -4438,6 +4561,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2210,
     name: "Elon",
+    shortName: "Elon",
     fullName: "Elon Phoenix",
     code: "ELON",
     primaryColor: "#020303",
@@ -4455,6 +4579,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2306,
     name: "Kansas State",
+    shortName: "Kansas St.",
     fullName: "Kansas State Wildcats",
     code: "KSU",
     primaryColor: "#3c0969",
@@ -4472,6 +4597,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 233,
     name: "South Dakota",
+    shortName: "South Dakota",
     fullName: "South Dakota Coyotes",
     code: "SDAK",
     primaryColor: "#CD1241",
@@ -4489,6 +4615,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 324,
     name: "Coastal Carolina",
+    shortName: "Coastal Carolina",
     fullName: "Coastal Carolina Chanticleers",
     code: "CCU",
     primaryColor: "#007073",
@@ -4506,6 +4633,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 349,
     name: "Army",
+    shortName: "Army",
     fullName: "Army Black Knights",
     code: "ARMY",
     primaryColor: "#D4BF91",
@@ -4523,6 +4651,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2854,
     name: "Bloomfield",
+    shortName: "Bloomfield",
     fullName: "Bloomfield Deacons",
     code: "BFC",
     primaryColor: "#B4131D",
@@ -4540,6 +4669,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2572,
     name: "Southern Miss",
+    shortName: "Southern Miss",
     fullName: "Southern Miss Golden Eagles",
     code: "USM",
     primaryColor: "#FFAA3C",
@@ -4557,6 +4687,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2335,
     name: "Liberty",
+    shortName: "Liberty",
     fullName: "Liberty Flames",
     code: "LIB",
     primaryColor: "#071740",
@@ -4574,6 +4705,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2655,
     name: "Tulane",
+    shortName: "Tulane",
     fullName: "Tulane Green Wave",
     code: "TULN",
     primaryColor: "#006547",
@@ -4591,6 +4723,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 113,
     name: "UMass",
+    shortName: "UMass",
     fullName: "Massachusetts Minutemen",
     code: "MASS",
     primaryColor: "#971B2F",
@@ -4896,6 +5029,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 309,
     name: "Louisiana",
+    shortName: "Louisiana",
     fullName: "Louisiana Ragin' Cajuns",
     code: "UL",
     primaryColor: "#ce181e",
@@ -4913,6 +5047,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2545,
     name: "SE Louisiana",
+    shortName: "SE Louisiana",
     fullName: "SE Louisiana Lions",
     code: "SELA",
     primaryColor: "#215732",
@@ -4930,6 +5065,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2032,
     name: "Arkansas State",
+    shortName: "Arkansas St.",
     fullName: "Arkansas State Red Wolves",
     code: "ARST",
     primaryColor: "#e81018",
@@ -4947,6 +5083,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2755,
     name: "Grambling",
+    shortName: "Grambling",
     fullName: "Grambling Tigers",
     code: "GRAM",
     primaryColor: "#ee8601",
@@ -4964,7 +5101,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 344,
     name: "Mississippi State",
-    shortName: "Miss St",
+    shortName: "Miss St.",
     fullName: "Mississippi State Bulldogs",
     code: "MSST",
     primaryColor: "#5d1725",
@@ -4982,6 +5119,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 235,
     name: "Memphis",
+    shortName: "Memphis",
     fullName: "Memphis Tigers",
     code: "MEM",
     primaryColor: "#004991",
@@ -4999,6 +5137,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2579,
     name: "South Carolina",
+    shortName: "South Carolina",
     fullName: "South Carolina Gamecocks",
     code: "SC",
     primaryColor: "#73000a",
@@ -5016,6 +5155,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2247,
     name: "Georgia State",
+    shortName: "Georgia St.",
     fullName: "Georgia State Panthers",
     code: "GAST",
     primaryColor: "#1e539a",
@@ -5051,6 +5191,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2567,
     name: "SMU",
+    shortName: "SMU",
     fullName: "SMU Mustangs",
     code: "SMU",
     primaryColor: "#354ca1",
@@ -5068,6 +5209,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 24,
     name: "Stanford",
+    shortName: "Stanford",
     fullName: "Stanford Cardinal",
     code: "STAN",
     primaryColor: "#8c1515",
@@ -5085,6 +5227,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2142,
     name: "Colgate",
+    shortName: "Colgate",
     fullName: "Colgate Raiders",
     code: "COLG",
     primaryColor: "#821019",
@@ -5102,6 +5245,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2641,
     name: "Texas Tech",
+    shortName: "Texas Tech",
     fullName: "Texas Tech Red Raiders",
     code: "TTU",
     primaryColor: "#000000",
@@ -5119,6 +5263,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 93,
     name: "Murray State",
+    shortName: "Murray St.",
     fullName: "Murray State Racers",
     code: "MUR",
     primaryColor: "#002148",
@@ -5154,6 +5299,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 251,
     name: "Texas",
+    shortName: "Texas",
     fullName: "Texas Longhorns",
     code: "TEX",
     primaryColor: "#c15d26",
@@ -5171,6 +5317,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2433,
     name: "UL Monroe",
+    shortName: "UL Monroe",
     fullName: "UL Monroe Warhawks",
     code: "ULM",
     primaryColor: "#231F20",
@@ -5188,6 +5335,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 183,
     name: "Syracuse",
+    shortName: "Syracuse",
     fullName: "Syracuse Orange",
     code: "SYR",
     primaryColor: "#ff6500",
@@ -5205,6 +5353,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2913,
     name: "Brevard",
+    shortName: "Brevard",
     fullName: "Brevard Tornados",
     code: "BRE",
     primaryColor: "#003c78",
@@ -5222,6 +5371,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 513,
     name: "Dakota Wesleyan",
+    shortName: "Dakota Wesleyan",
     fullName: "Dakota Wesleyan Tigers",
     code: "BRE",
     primaryColor: "#004C97",
@@ -5239,6 +5389,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 108807,
     name: "William Peace",
+    shortName: "William Peace",
     fullName: "William Peace Pacers",
     code: "WPEA",
     primaryColor: "#007749",
@@ -5256,6 +5407,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 97,
     name: "Louisville",
+    shortName: "Louisville",
     fullName: "Louisville Cardinals",
     code: "LOU",
     primaryColor: "#c9001f",
@@ -5273,6 +5425,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 167,
     name: "New Mexico",
+    shortName: "New Mexico",
     fullName: "New Mexico Lobos",
     code: "UNM",
     primaryColor: "#891216",
@@ -5290,6 +5443,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 311,
     name: "Maine",
+    shortName: "Maine",
     fullName: "Maine Black Bears",
     code: "ME",
     primaryColor: "#003263",
@@ -5325,6 +5479,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 70,
     name: "Idaho",
+    shortName: "Idaho",
     fullName: "Idaho Vandals",
     code: "IDHO",
     primaryColor: "#000000",
@@ -5342,6 +5497,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 204,
     name: "Oregon State",
+    shortName: "Oregon St.",
     fullName: "Oregon State Beavers",
     code: "ORST",
     primaryColor: "#231f20",
@@ -5395,6 +5551,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 68,
     name: "Boise State",
+    shortName: "Boise St.",
     fullName: "Boise State Broncos",
     code: "BOIS",
     primaryColor: "#0033a0",
@@ -5412,6 +5569,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 264,
     name: "Washington",
+    shortName: "Washington",
     fullName: "Washington Huskies",
     code: "WASH",
     primaryColor: "#33006f",
@@ -5429,6 +5587,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2309,
     name: "Kent State",
+    shortName: "Kent St.",
     fullName: "Kent State Golden Flashes",
     code: "KENT",
     primaryColor: "#003976",
@@ -5446,6 +5605,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 99,
     name: "LSU",
+    shortName: "LSU",
     fullName: "LSU Tigers",
     code: "LSU",
     primaryColor: "#461d7c",
@@ -5463,6 +5623,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 59,
     name: "Georgia Tech",
+    shortName: "Georgia Tech",
     fullName: "Georgia Tech Yellow Jackets",
     code: "GT",
     primaryColor: "#003057",
@@ -5480,6 +5641,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 228,
     name: "Clemson",
+    shortName: "Clemson",
     fullName: "Clemson Tigers",
     code: "CLEM",
     primaryColor: "#f56600",
@@ -5497,6 +5659,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2535,
     name: "Samford",
+    shortName: "Samford",
     fullName: "Samford Bulldogs",
     code: "SAM",
     primaryColor: "#005485",
@@ -5514,6 +5677,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 231,
     name: "Furman",
+    shortName: "Furman",
     fullName: "Furman Paladins",
     code: "FUR",
     primaryColor: "#582c83",
@@ -5531,6 +5695,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 3243,
     name: "Bob Jones",
+    shortName: "Bob Jones",
     fullName: "Bob Jones Bruins",
     code: "BOBJ",
     primaryColor: "#001b41",
@@ -5566,6 +5731,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 253,
     name: "Southern Utah",
+    shortName: "Southern Utah",
     fullName: "Southern Utah Thunderbirds",
     code: "SUU",
     primaryColor: "#c72026",
@@ -5673,6 +5839,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2710,
     name: "Western Illinois",
+    shortName: "Western Illinois",
     fullName: "Western Illinois Leathernecks",
     code: "WIU",
     primaryColor: "#4e1e8a",
@@ -5690,6 +5857,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 322,
     name: "Lafayette",
+    shortName: "Lafayette",
     fullName: "Lafayette Leopards",
     code: "LAF",
     primaryColor: "#790000",
@@ -5707,6 +5875,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2724,
     name: "Wichita State",
+    shortName: "Wichita St.",
     fullName: "Wichita State Shockers",
     code: "WICH",
     primaryColor: "#0d0a03",
@@ -5725,7 +5894,7 @@ export const mcbbTeams: Team[] = [
     id: 338,
     name: "Kennesaw State",
     fullName: "Kennesaw State Owls",
-    shortName: "Kenn St",
+    shortName: "Kenn St.",
     code: "KENN",
     primaryColor: "#fdbb30",
     secondaryColor: "#000000",
@@ -5742,6 +5911,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 282,
     name: "Indiana State",
+    shortName: "Indiana St.",
     fullName: "Indiana State Sycamores",
     code: "INST",
     primaryColor: "#00669a",
@@ -5759,6 +5929,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2681,
     name: "Wagner",
+    shortName: "Wagner",
     fullName: "Wagner Seahawks",
     code: "WAG",
     primaryColor: "#00483A",
@@ -5794,6 +5965,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2011,
     name: "Alabama State",
+    shortName: "Alabama St.",
     fullName: "Alabama State Hornets",
     code: "ALST",
     primaryColor: "#e9a900",
@@ -5811,6 +5983,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2916,
     name: "Incarnate Word",
+    shortName: "Incarnate Word",
     fullName: "Incarnate Word Cardinals",
     code: "UIW",
     primaryColor: "#000000",
@@ -5828,6 +6001,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 107,
     name: "Holy Cross",
+    shortName: "Holy Cross",
     fullName: "Holy Cross Crusaders",
     code: "HC",
     primaryColor: "#0a0a0a",
@@ -5845,6 +6019,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2523,
     name: "Robert Morris",
+    shortName: "Robert Morris",
     fullName: "Robert Morris Colonials",
     code: "RMU",
     primaryColor: "#00214D",
@@ -5880,6 +6055,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2241,
     name: "Gardner-Webb",
+    shortName: "Gardner-Webb",
     fullName: "Gardner-Webb Runnin' Bulldogs",
     code: "GWEB",
     primaryColor: "#c12535",
@@ -5897,6 +6073,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2717,
     name: "Western Carolina",
+    shortName: "Western Carolina",
     fullName: "Western Carolina Catamounts",
     code: "WCU",
     primaryColor: "#492F91",
@@ -5914,6 +6091,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2692,
     name: "Weber State",
+    shortName: "Weber St.",
     fullName: "Weber State Wildcats",
     code: "WEB",
     primaryColor: "#18005a",
@@ -5931,6 +6109,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2016,
     name: "Alcorn State",
+    shortName: "Alcorn St.",
     fullName: "Alcorn State Braves",
     code: "ALCN",
     primaryColor: "#4b0058",
@@ -5984,6 +6163,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 47,
     name: "Howard",
+    shortName: "Howard",
     fullName: "Howard Bison",
     code: "HOW",
     primaryColor: "#003a63",
@@ -6019,6 +6199,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2582,
     name: "Southern",
+    shortName: "Southern",
     fullName: "Southern Jaguars",
     code: "SOU",
     primaryColor: "#004B97",
@@ -6036,6 +6217,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2075,
     name: "Bowie State",
+    shortName: "Bowie St.",
     fullName: "Bowie State Bulldogs",
     code: "BOWE",
     primaryColor: "#FECF0A",
@@ -6071,6 +6253,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 3120,
     name: "Ecclesia",
+    shortName: "Ecclesia",
     fullName: "Ecclesia Royals",
     code: "ECCL",
     primaryColor: "#0B1D4F",
@@ -6088,6 +6271,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2640,
     name: "Texas Southern",
+    shortName: "Texas Southern",
     fullName: "Texas Southern Tigers",
     code: "TXSO",
     primaryColor: "#860038",
@@ -6105,6 +6289,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2377,
     name: "McNeese",
+    shortName: "McNeese",
     fullName: "McNeese Cowboys",
     code: "MCN",
     primaryColor: "#00529C",
@@ -6140,6 +6325,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2886,
     name: "Northwood",
+    shortName: "Northwood",
     fullName: "Northwood (MI) Timberwolves",
     code: "NAR",
     primaryColor: "#15223B",
@@ -6175,6 +6361,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2330,
     name: "Le Moyne",
+    shortName: "Le Moyne",
     fullName: "Le Moyne Dolphins",
     code: "LEM",
     primaryColor: "#00452A",
@@ -6210,6 +6397,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 130201,
     name: "Nobel",
+    shortName: "Nobel",
     fullName: "Nobel Knights",
     code: "NOB",
     primaryColor: "#431E76",
@@ -6227,7 +6415,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2754,
     name: "Youngstown State",
-    shortName: "Youngstown St",
+    shortName: "Youngstown St.",
     fullName: "Youngstown State Penguins",
     code: "YSU",
     primaryColor: "#E51936",
@@ -6263,7 +6451,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2623,
     name: "Missouri State",
-    shortName: "Missouri St",
+    shortName: "Missouri St.",
     fullName: "Missouri State Bears",
     code: "MOST",
     primaryColor: "#5F0000",
@@ -6281,6 +6469,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2747,
     name: "Wofford",
+    shortName: "Wofford",
     fullName: "Wofford Terriers",
     code: "WOF",
     primaryColor: "#533B23",
@@ -6298,6 +6487,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2000,
     name: "Abilene Christian",
+    shortName: "Abilene Christian",
     fullName: "Abilene Christian Wildcats",
     code: "ACU",
     primaryColor: "#592d82",
@@ -6387,6 +6577,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 222,
     name: "Villanova",
+    shortName: "Villanova",
     fullName: "Villanova Wildcats",
     code: "VILL",
     primaryColor: "#00205b",
@@ -6404,6 +6595,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 79,
     name: "Southern Illinois",
+    shortName: "Southern Illinois",
     fullName: "Southern Illinois Salukis",
     code: "SIU",
     primaryColor: "#85283D",
@@ -6421,6 +6613,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 119,
     name: "Towson",
+    shortName: "Towson",
     fullName: "Towson Tigers",
     code: "TOW",
     primaryColor: "#FFC229",
@@ -6438,6 +6631,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 128342,
     name: "Notre Dame (MD)",
+    shortName: "Notre Dame (MD)",
     fullName: "Notre Dame (MD) Gators",
     code: "NDMD",
     primaryColor: "#023666",
@@ -6455,6 +6649,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2083,
     name: "Bucknell",
+    shortName: "Bucknell",
     fullName: "Bucknell Bison",
     code: "BUCK",
     primaryColor: "#000060",
@@ -6490,6 +6685,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2515,
     name: "Radford",
+    shortName: "Radford",
     fullName: "Radford Highlanders",
     code: "RAD",
     primaryColor: "#BC1515",
@@ -6507,6 +6703,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2619,
     name: "Stony Brook",
+    shortName: "Stony Brook",
     fullName: "Stony Brook Seawolves",
     code: "STBK",
     primaryColor: "#990000",
@@ -6542,6 +6739,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2630,
     name: "UT Martin",
+    shortName: "UT Martin",
     fullName: "UT Martin Skyhawks",
     code: "UTM",
     primaryColor: "#FF6700",
@@ -6631,6 +6829,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2097,
     name: "Campbell",
+    shortName: "Campbell",
     fullName: "Campbell Fighting Camels",
     code: "CAM",
     primaryColor: "#000000",
@@ -6666,6 +6865,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 55,
     name: "Jax State",
+    shortName: "Jax St.",
     fullName: "Jacksonville State Gamecocks",
     code: "JVST",
     primaryColor: "#b50500",
@@ -6684,7 +6884,7 @@ export const mcbbTeams: Team[] = [
     id: 2466,
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
-    shortName: "N'Western St",
+    shortName: "N'Western St.",
     code: "NWST",
     primaryColor: "#492F91",
     secondaryColor: "#ed6118",
@@ -6702,7 +6902,7 @@ export const mcbbTeams: Team[] = [
     id: 2634,
     name: "Tennessee State",
     fullName: "Tennessee State Tigers",
-    shortName: "Tennessee St",
+    shortName: "Tennessee St.",
     code: "TNST",
     primaryColor: "#171796",
     secondaryColor: "#f0f0f0",
@@ -6719,6 +6919,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 147,
     name: "Montana State",
+    shortName: "Montana St.",
     fullName: "Montana State Bobcats",
     code: "MTST",
     primaryColor: "#00205c",
@@ -6736,6 +6937,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2449,
     name: "North Dakota St",
+    shortName: "North Dakota St.",
     fullName: "North Dakota State Bison",
     code: "NDSU",
     primaryColor: "#01402A",
@@ -6753,6 +6955,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 236,
     name: "Chattanooga",
+    shortName: "Chattanooga",
     fullName: "Chattanooga Mocs",
     code: "UTC",
     primaryColor: "#00386b",
@@ -6806,6 +7009,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 227,
     name: "Rhode Island",
+    shortName: "Rhode Island",
     fullName: "Rhode Island Rams",
     code: "URI",
     primaryColor: "#091f3f",
@@ -6823,6 +7027,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2519,
     name: "Rhodes",
+    shortName: "Rhodes",
     fullName: "Rhodes Lynx",
     code: "RHO",
     primaryColor: "#020000",
@@ -6840,6 +7045,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2098,
     name: "Campbellsville",
+    shortName: "Campbellsville",
     fullName: "Campbellsville Tigers",
     code: "CBVU",
     primaryColor: "#020000",
@@ -6930,7 +7136,7 @@ export const mcbbTeams: Team[] = [
     id: 16,
     name: "Sacramento State",
     fullName: "Sacramento State Hornets",
-    shortName: "Sacramento St",
+    shortName: "Sacramento St.",
     code: "SAC",
     primaryColor: "#00573C",
     secondaryColor: "#cdb97d",
@@ -7020,7 +7226,7 @@ export const mcbbTeams: Team[] = [
     id: 2750,
     name: "Wright State",
     fullName: "Wright State Raiders",
-    shortName: "Wright St",
+    shortName: "Wright St.",
     code: "WRST",
     primaryColor: "#cba052",
     secondaryColor: "#cba052",
@@ -7110,7 +7316,7 @@ export const mcbbTeams: Team[] = [
     id: 2413,
     name: "Morehead State",
     fullName: "Morehead State Eagles",
-    shortName: "Morehead State",
+    shortName: "Morehead St.",
     code: "MORE",
     primaryColor: "#094FA3",
     secondaryColor: "#fed91a",
@@ -7182,7 +7388,7 @@ export const mcbbTeams: Team[] = [
     id: 2400,
     name: "Mississippi Valley St",
     fullName: "Mississippi Valley State Delta Devils",
-    shortName: "Miss Valley St",
+    shortName: "Miss Valley St.",
     code: "MVSU",
     primaryColor: "#005328",
     secondaryColor: "#cf2d34",
@@ -7218,7 +7424,7 @@ export const mcbbTeams: Team[] = [
     id: 130195,
     name: "Penn State-Shenango",
     fullName: "Penn State-Shenango Nittany Lions",
-    shortName: "Penn State-She",
+    shortName: "Penn St.-She",
     code: "PEN",
     primaryColor: "#1D417D",
     secondaryColor: "#ffffff",
@@ -7452,7 +7658,7 @@ export const mcbbTeams: Team[] = [
     id: 2169,
     name: "Delaware State",
     fullName: "Delaware State Hornets",
-    shortName: "Delaware St",
+    shortName: "Delaware St.",
     code: "DSU",
     primaryColor: "#FF3630",
     secondaryColor: "#009cdd",
@@ -7668,7 +7874,7 @@ export const mcbbTeams: Team[] = [
     id: 2502,
     name: "Portland State",
     fullName: "Portland State Vikings",
-    shortName: "Portland St",
+    shortName: "Portland St.",
     code: "PRST",
     primaryColor: "#00311e",
     secondaryColor: "#ebebeb",
@@ -7775,6 +7981,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2674,
     name: "Valparaiso",
+    shortName: "Valparaiso",
     fullName: "Valparaiso Beacons",
     code: "VAL",
     primaryColor: "#381e0e",
@@ -7846,6 +8053,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 301,
     name: "San Diego",
+    shortName: "San Diego",
     fullName: "San Diego Toreros",
     code: "USD",
     primaryColor: "#2f99d4",
@@ -7991,7 +8199,7 @@ export const mcbbTeams: Team[] = [
     id: 2296,
     name: "Jackson State",
     fullName: "Jackson State Tigers",
-    shortName: "Jackson St",
+    shortName: "Jackson St.",
     code: "JKST",
     primaryColor: "#123297",
     secondaryColor: "#b5b7ba",
@@ -8080,6 +8288,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 108,
     name: "Harvard",
+    shortName: "Harvard",
     fullName: "Harvard Crimson",
     code: "HARV",
     primaryColor: "#990000",
@@ -8097,6 +8306,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 163,
     name: "Princeton",
+    shortName: "Princeton",
     fullName: "Princeton Tigers",
     code: "PRIN",
     primaryColor: "#000000",
@@ -8114,6 +8324,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 219,
     name: "Pennsylvania",
+    shortName: "Pennsylvania",
     fullName: "Pennsylvania Quakers",
     code: "PENN",
     primaryColor: "#082A74",
@@ -8131,6 +8342,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 172,
     name: "Cornell",
+    shortName: "Cornell",
     fullName: "Cornell Big Red",
     code: "COR",
     primaryColor: "#d60027",
@@ -8238,6 +8450,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 60,
     name: "Morehouse College",
+    shortName: "Morehouse College",
     fullName: "Morehouse College",
     logo: PlaceholderLogo,
     logoLight: PlaceholderLogo,
@@ -8274,7 +8487,7 @@ export const mcbbTeams: Team[] = [
     id: 2627,
     name: "Tarleton State",
     fullName: "Tarleton State Texans",
-    shortName: "Tarleton St",
+    shortName: "Tarleton St.",
     code: "TAR",
     primaryColor: "#4f2d7f",
     secondaryColor: "#ffffff",
@@ -8291,6 +8504,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2514,
     name: "Quinnipiac",
+    shortName: "Quinnipiac",
     fullName: "Quinnipiac Bobcats",
     code: "QUIN",
     primaryColor: "#041B43",
@@ -8326,6 +8540,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2699,
     name: "West Liberty",
+    shortName: "West Liberty",
     fullName: "West Liberty Hilltoppers",
     code: "WLIBST",
     primaryColor: "#000000",
@@ -8343,6 +8558,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2274,
     name: "Hiram College",
+    shortName: "Hiram College",
     fullName: "Hiram College Terriers",
     code: "HIR",
     primaryColor: "#000000",
@@ -8360,6 +8576,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 83,
     name: "Depauw",
+    shortName: "Depauw",
     fullName: "Depauw Tigers",
     code: "DEP",
     primaryColor: "#000000",
@@ -8488,7 +8705,7 @@ export const mcbbTeams: Team[] = [
     id: 18,
     name: "Bridgewater State",
     fullName: "Bridgewater State Bears",
-    shortName: "Bridgewater St",
+    shortName: "Bridgewater St.",
     code: "BRIS",
     primaryColor: "#bf2f38",
     secondaryColor: "#000000",
@@ -8505,6 +8722,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2884,
     name: "Nichols",
+    shortName: "Nichols",
     fullName: "Nichols College Bison",
     code: "NICHOLS",
     primaryColor: "#007b5f",
@@ -8522,6 +8740,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2698,
     name: "West Georgia",
+    shortName: "West Georgia",
     fullName: "West Georgia Wolves",
     code: "WGA",
     primaryColor: "#0033a1",
@@ -8539,6 +8758,7 @@ export const mcbbTeams: Team[] = [
   {
     id: 2062,
     name: "Bethany (WV)",
+    shortName: "Bethany (WV)",
     code: "BCWV",
     fullName: "Bethany (WV) Bison",
     primaryColor: "#01573e",
@@ -8791,7 +9011,7 @@ export const mcbbTeams: Team[] = [
     id: 2130,
     name: "Chicago State",
     fullName: "Chicago State Cougars",
-    shortName: "Chicago State",
+    shortName: "Chicago St.",
     code: "CHST",
     primaryColor: "#006700",
     logo: ChicagoStateLogo,
@@ -8827,7 +9047,7 @@ export const mcbbTeams: Team[] = [
     id: 325,
     name: "Cleveland State",
     fullName: "Cleveland State Vikings",
-    shortName: "Cleveland St",
+    shortName: "Cleveland St.",
     code: "CLE",
     primaryColor: "#006633",
     secondaryColor: "#231f20",
@@ -9043,7 +9263,7 @@ export const mcbbTeams: Team[] = [
     id: 2542,
     name: "Savannah State",
     fullName: "Savannah State Tigers",
-    shortName: "Savannah State",
+    shortName: "Savannah St.",
     code: "SAV",
     city: "Savannah",
     location: "Savannah,GA",

@@ -1,144 +1,270 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import vm from "node:vm";
 import test from "node:test";
-import ts from "typescript";
+import {
+  authSessionHarness,
+  httpError,
+} from "./helpers/authSessionHarness.mjs";
+import { deferred, flush } from "./helpers/sportsHookHarness.mjs";
 
-function setup({ refreshToken = "refresh", post } = {}) {
-  let requestInterceptor, rejectResponse;
-  let access = "access",
-    refresh = refreshToken,
-    clears = 0,
-    redirects = 0;
-  const client = async (config) => ({ config });
-  client.defaults = { headers: { common: {} } };
-  client.interceptors = {
-    request: {
-      use(fn) {
-        requestInterceptor = fn;
-      },
-    },
-    response: {
-      use(_success, failure) {
-        rejectResponse = failure;
-      },
-    },
-  };
-  const modules = {
-    axios: {
-      create: () => client,
-      post,
-      isAxiosError: (err) => err?.isAxiosError === true,
-    },
-    "@react-native-async-storage/async-storage": {
-      getAllKeys: async () => [],
-      multiRemove: async () => {},
-    },
-    "utils/auth/secureAuthStorage": {
-      getSecureAccessToken: async () => access,
-      getSecureRefreshToken: async () => refresh,
-      saveSecureTokens: async (a, r) => {
-        access = a;
-        refresh = r;
-      },
-      clearSecureTokens: async () => {
-        clears++;
-        access = refresh = null;
-      },
-    },
-    "expo-router": {
-      router: {
-        replace() {
-          redirects++;
-        },
-      },
-    },
-    "utils/apiConfig": { API_BASE_URL: "https://api.example.test" },
-    "utils/auth/authSessionRace": {
-      isRefreshResponseForCurrentSession: (a, b) => a === b,
-    },
-    "utils/profile/userProfileCache": {
-      USER_PROFILE_CACHE_KEY_PREFIX: "profile:",
-    },
-  };
-  const source = ts.transpileModule(
-    fs.readFileSync("utils/apiClient.ts", "utf8"),
-    {
-      compilerOptions: {
-        module: ts.ModuleKind.CommonJS,
-        esModuleInterop: true,
-      },
-    },
-  ).outputText;
-  vm.runInNewContext(source, {
-    exports: {},
-    require: (name) => modules[name],
-    URL,
-    console,
-  });
-  return {
-    fail: (status = 401, data = {}) =>
-      rejectResponse({
-        config: { url: "/api/users/7", headers: {} },
-        response: { status, data },
-      }),
-    setSession: (a, r) => {
-      access = a;
-      refresh = r;
-    },
-    counts: () => ({ clears, redirects }),
-    request: (config) => requestInterceptor(config),
-  };
-}
+const canceled = (error) => error?.code === "ERR_CANCELED";
 
 test("permission errors do not refresh or clear the session", async () => {
-  let calls = 0;
-  const state = setup({
-    post: async () => {
-      calls++;
+  const h = authSessionHarness({
+    transport: async (config) => {
+      throw httpError(config, 403, { error: "Interaction blocked" });
     },
   });
-  await assert.rejects(state.fail(403, { error: "Interaction blocked" }));
-  assert.equal(calls, 0);
-  assert.deepEqual(state.counts(), { clears: 0, redirects: 0 });
+  await assert.rejects(h.api.apiClient.get("/api/users/7"));
+  assert.equal(h.refreshes.length, 0);
+  assert.equal(h.clears, 0);
 });
 
 test("missing refresh credentials settle every concurrent request", async () => {
-  const state = setup({ refreshToken: null });
-  const results = await Promise.allSettled([state.fail(), state.fail()]);
+  const h = authSessionHarness();
+  h.setStoredTokens("access-A", null);
+  const results = await Promise.allSettled([
+    h.api.apiClient.get("/api/users/7"),
+    h.api.apiClient.get("/api/users/7"),
+  ]);
   assert.ok(results.every((result) => result.status === "rejected"));
-  assert.deepEqual(state.counts(), { clears: 1, redirects: 1 });
+  assert.equal(h.clears, 1);
+  assert.deepEqual(h.redirects, ["/login"]);
 });
 
-test("a failed stale refresh preserves and retries with the newer session", async () => {
-  let rejectRefresh;
-  const state = setup({
-    post: () =>
-      new Promise((_resolve, reject) => {
-        rejectRefresh = reject;
+for (const outcome of ["success", "failure"]) {
+  test(`a stale refresh ${outcome} cannot replay mutations or affect a new account`, async () => {
+    const refresh = deferred();
+    const h = authSessionHarness({ post: () => refresh.promise });
+    const pending = Promise.allSettled([
+      h.api.apiClient.patch("/api/users/me", { fullName: "account A change" }),
+      h.api.apiClient.delete("/api/users/me", {
+        data: { currentPassword: "mock" },
       }),
+    ]);
+    await flush();
+    assert.equal(h.refreshes.length, 1);
+    const signal = h.refreshes[0][2].signal;
+    await h.switchAccount();
+    assert.equal(signal.aborted, true);
+    if (outcome === "success") {
+      refresh.resolve({
+        data: { accessToken: "old-A", refreshToken: "old-A-refresh" },
+      });
+    } else {
+      refresh.reject({ isAxiosError: true, response: { status: 401 } });
+    }
+    const results = await pending;
+    assert.ok(
+      results.every(
+        (result) => result.status === "rejected" && canceled(result.reason),
+      ),
+    );
+    assert.equal(h.requests.length, 2);
+    assert.deepEqual(h.tokens, { access: "access-B", refresh: "refresh-B" });
+    assert.equal(h.storage.get("userId"), "9");
+    assert.deepEqual(h.redirects, []);
   });
-  const first = state.fail();
-  const second = state.fail();
-  while (!rejectRefresh) await Promise.resolve();
-  state.setSession("new-access", "new-refresh");
-  rejectRefresh({ isAxiosError: true, response: { status: 401 } });
-  const results = await Promise.all([first, second]);
-  assert.ok(
-    results.every(
-      (result) =>
-        result.config.headers.Authorization === "Bearer new-access" &&
-        result.config._retry,
-    ),
-  );
-  assert.deepEqual(state.counts(), { clears: 0, redirects: 0 });
+
+  test(`a stale refresh ${outcome} can reuse a password rotation within the same session`, async () => {
+    const refresh = deferred();
+    const h = authSessionHarness({ post: () => refresh.promise });
+    const pending = h.api.apiClient.patch("/api/users/me", {
+      bio: "same account",
+    });
+    await flush();
+    await h.api.saveTokens("password-access-A", "password-refresh-A");
+    if (outcome === "success") {
+      refresh.resolve({
+        data: { accessToken: "old-A", refreshToken: "old-A-refresh" },
+      });
+    } else {
+      refresh.reject({ isAxiosError: true, response: { status: 401 } });
+    }
+    const response = await pending;
+    assert.equal(
+      response.config.headers.Authorization,
+      "Bearer password-access-A",
+    );
+    assert.deepEqual(h.tokens, {
+      access: "password-access-A",
+      refresh: "password-refresh-A",
+    });
+    assert.equal(h.clears, 0);
+  });
+}
+
+test("logout rejects late successes and late unauthorized responses without touching a new login", async () => {
+  for (const status of [200, 401]) {
+    const response = deferred();
+    const h = authSessionHarness({
+      transport: (config) =>
+        response.promise.then(() => {
+          if (status === 401) throw httpError(config, status);
+          return {
+            data: { id: 7 },
+            status,
+            statusText: "OK",
+            headers: {},
+            config,
+          };
+        }),
+    });
+    const pending = assert.rejects(
+      h.api.apiClient.get("/api/users/7"),
+      canceled,
+    );
+    await flush();
+    await h.api.clearAuthSession();
+    await h.switchAccount();
+    response.resolve();
+    await pending;
+    assert.equal(h.refreshes.length, 0);
+    assert.equal(h.tokens.access, "access-B");
+    assert.deepEqual(h.redirects, []);
+  }
 });
 
-test("requests remove inherited credentials when no session exists", async () => {
-  const state = setup();
-  state.setSession(null, null);
-  const result = await state.request({
+test("a session change during token lookup cancels before dispatch", async () => {
+  const read = deferred();
+  const h = authSessionHarness({ beforeReadAccess: () => read.promise });
+  const pending = assert.rejects(
+    h.api.apiClient.get("/api/users/me"),
+    canceled,
+  );
+  await flush();
+  await h.switchAccount();
+  read.resolve();
+  await pending;
+  assert.equal(h.requests.length, 0);
+});
+
+test("new-session requests do not wait on an obsolete refresh", async () => {
+  const staleRefresh = deferred();
+  let calls = 0;
+  const h = authSessionHarness({
+    post: () =>
+      ++calls === 1
+        ? staleRefresh.promise
+        : {
+            data: { accessToken: "new-B", refreshToken: "new-B-refresh" },
+          },
+  });
+  const old = assert.rejects(h.api.apiClient.get("/api/users/7"), canceled);
+  await flush();
+  await h.switchAccount();
+  const fresh = await h.api.apiClient.get("/api/users/9");
+  assert.equal(fresh.config.headers.Authorization, "Bearer new-B");
+  staleRefresh.reject({ isAxiosError: true, response: { status: 401 } });
+  await old;
+  assert.equal(h.tokens.access, "new-B");
+});
+
+test("requests have a finite default timeout and uploads can override it", async () => {
+  const h = authSessionHarness({
+    transport: async (config) => ({
+      data: {},
+      status: 200,
+      headers: {},
+      config,
+    }),
+  });
+  const normal = await h.api.apiClient.get("/api/users/me");
+  const upload = await h.api.apiClient.post(
+    "/api/upload",
+    {},
+    { timeout: 60_000 },
+  );
+  assert.equal(normal.config.timeout, 15_000);
+  assert.equal(upload.config.timeout, 60_000);
+});
+
+test("signed-out requests remove inherited credentials", async () => {
+  const h = authSessionHarness({
+    transport: async (config) => ({
+      data: {},
+      status: 200,
+      headers: {},
+      config,
+    }),
+  });
+  await h.api.clearAuthSession();
+  const response = await h.api.apiClient.get("/public", {
     headers: { Authorization: "Bearer stale" },
   });
-  assert.equal(result.headers.Authorization, undefined);
+  assert.equal(response.config.headers.Authorization, undefined);
+});
+
+test("transient refresh failures preserve the session and back off", async () => {
+  const h = authSessionHarness({
+    post: async () => {
+      throw { isAxiosError: true, response: { status: 503 } };
+    },
+  });
+  await assert.rejects(h.api.apiClient.get("/api/users/me"));
+  await assert.rejects(h.api.apiClient.get("/api/users/me"));
+  assert.equal(h.refreshes.length, 1);
+  assert.equal(h.clears, 0);
+  assert.equal(h.tokens.access, "access-A");
+});
+
+test("concurrent authentication failures share one refresh and each retry once", async () => {
+  const refresh = deferred();
+  const h = authSessionHarness({ post: () => refresh.promise });
+  const pending = Promise.all([
+    h.api.apiClient.get("/api/users/me"),
+    h.api.apiClient.patch("/api/users/me", { bio: "same account" }),
+  ]);
+  await flush();
+  assert.equal(h.refreshes.length, 1);
+  refresh.resolve({
+    data: { accessToken: "fresh-A", refreshToken: "fresh-refresh-A" },
+  });
+  const responses = await pending;
+  assert.equal(h.requests.length, 4);
+  assert.ok(
+    responses.every(
+      (response) => response.config.headers.Authorization === "Bearer fresh-A",
+    ),
+  );
+  assert.equal(h.clears, 0);
+});
+
+test("public auth, optional analytics and invalid-password errors never refresh", async () => {
+  const h = authSessionHarness({
+    transport: async (config) => {
+      throw httpError(config, 401, {
+        error:
+          config.url === "/api/users/me/password"
+            ? "Invalid current password"
+            : "Invalid password",
+      });
+    },
+  });
+  for (const path of [
+    "/api/login",
+    "/api/signup",
+    "/api/forgot-password",
+    "/api/reset-password",
+    "/api/verify-reset-code",
+    "/api/explore/search/events",
+    "/api/users/me/password",
+    "/api/users/me",
+  ]) {
+    await assert.rejects(h.api.apiClient.post(path));
+  }
+  assert.equal(h.refreshes.length, 0);
+  assert.equal(h.clears, 0);
+  assert.deepEqual(h.redirects, []);
+});
+
+test("a request queued immediately before switching accounts is never dispatched as the new user", async () => {
+  const h = authSessionHarness();
+  const pending = assert.rejects(
+    h.api.apiClient.patch("/api/users/me", { bio: "old account" }),
+    canceled,
+  );
+  await h.switchAccount();
+  await pending;
+  assert.equal(h.requests.length, 0);
+  assert.equal(h.tokens.access, "access-B");
 });

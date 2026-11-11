@@ -85,6 +85,7 @@ function setup(league = "cfb") {
     getDefaultDraftYear: () => 2027,
     getRecruitYear: () => 2027,
     useLeagueFavoriteHeader: () => ({}),
+    useLeagueEntryLoading: (loading) => loading,
     useNavigation: () => ({}),
     usePreferences: () => ({ resolvedColorScheme: "light" }),
     LeagueScreenStyles: () => ({}),
@@ -116,6 +117,7 @@ function setup(league = "cfb") {
     "WeekSelector",
     "GamesList",
     "ConferenceListModal",
+    "LeagueLoadingScreen",
   ]) {
     context[name] = name;
   }
@@ -135,10 +137,13 @@ function setup(league = "cfb") {
       return request;
     },
     get selector() {
-      return find("WeekSelector").props;
+      return find("WeekSelector")?.props;
     },
     get gamesList() {
-      return find("GamesList").props;
+      return find("GamesList")?.props;
+    },
+    get loading() {
+      return Boolean(find("LeagueLoadingScreen"));
     },
     get calendarCalls() {
       return calendarCalls;
@@ -162,7 +167,8 @@ function setup(league = "cfb") {
 test("college football waits for its calendar before fetching games", () => {
   const screen = setup();
   assert.equal(screen.request.enabled, false);
-  assert.equal(screen.selector.loading, true);
+  assert.equal(screen.loading, true);
+  assert.equal(screen.selector, undefined);
   // The calendar must load independently to avoid waiting for a disabled games request.
   assert.deepEqual(screen.calendarCalls[0], ["cfb", "football"]);
 });
@@ -200,8 +206,9 @@ test("college football selects the postseason week with its season type", () => 
 test("NFL waits for its calendar and shows loading for both weeks and games", () => {
   const screen = setup("nfl");
   assert.equal(screen.request.enabled, false);
-  assert.equal(screen.selector.loading, true);
-  assert.equal(screen.gamesList.loading, true);
+  assert.equal(screen.loading, true);
+  assert.equal(screen.selector, undefined);
+  assert.equal(screen.gamesList, undefined);
   assert.deepEqual(screen.calendarCalls[0], ["nfl", "football"]);
 });
 

@@ -1,148 +1,18 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import vm from "node:vm";
 import test from "node:test";
 import dayjs from "dayjs";
-import ts from "typescript";
-
-const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
-
-function deferred() {
-  let resolve, reject;
-  const promise = new Promise((yes, no) => {
-    resolve = yes;
-    reject = no;
-  });
-  return { promise, resolve, reject };
-}
+import {
+  sportsHookHarness,
+  deferred,
+  flush,
+} from "./helpers/sportsHookHarness.mjs";
 
 function harness() {
-  const slots = [],
-    effects = [];
-  let index = 0,
-    queued = false,
-    stopped = false,
-    hook,
-    args,
-    state,
-    subscription;
-  const same = (a, b) =>
-    a && b && a.length === b.length && a.every((v, i) => Object.is(v, b[i]));
-  const schedule = () => {
-    if (queued || stopped) return;
-    queued = true;
-    queueMicrotask(() => {
-      queued = false;
-      if (!stopped) render();
-    });
+  const h = sportsHookHarness();
+  h.modules["hooks/useScreenActivity"] = {
+    useScreenActivity: () => ({ active: true, activeRef: { current: true } }),
   };
-  const memo = (factory, deps) => {
-    const i = index++;
-    if (!slots[i] || !same(slots[i].deps, deps))
-      slots[i] = { value: factory(), deps };
-    return slots[i].value;
-  };
-  const react = {
-    useState(initial) {
-      const i = index++;
-      slots[i] ??= {
-        value: typeof initial === "function" ? initial() : initial,
-      };
-      return [
-        slots[i].value,
-        (next) => {
-          const value =
-            typeof next === "function" ? next(slots[i].value) : next;
-          if (!Object.is(value, slots[i].value)) {
-            slots[i].value = value;
-            schedule();
-          }
-        },
-      ];
-    },
-    useRef(initial) {
-      const i = index++;
-      return (slots[i] ??= { current: initial });
-    },
-    useMemo: memo,
-    useCallback: (callback, deps) => memo(() => callback, deps),
-    useEffect(callback, deps) {
-      const i = index++;
-      if (slots[i] && same(slots[i].deps, deps)) return;
-      const previous = slots[i];
-      slots[i] = { deps, cleanup: previous?.cleanup };
-      effects.push(() => {
-        previous?.cleanup?.();
-        slots[i].cleanup = callback();
-      });
-    },
-  };
-  const modules = {
-    react,
-    dayjs,
-    "dayjs/plugin/timezone": () => {},
-    "dayjs/plugin/utc": () => {},
-    "hooks/useLiveSportsSubscription": {
-      useLiveSportsSubscription(options) {
-        subscription = options;
-      },
-    },
-    "@/utils/games/games": { isGameLive: () => false },
-  };
-  function load(path) {
-    const exports = {};
-    const source = ts.transpileModule(fs.readFileSync(path, "utf8"), {
-      compilerOptions: {
-        module: ts.ModuleKind.CommonJS,
-        esModuleInterop: true,
-      },
-    }).outputText;
-    vm.runInNewContext(source, {
-      exports,
-      console: { error() {}, warn() {} },
-      AbortController,
-      setTimeout,
-      clearTimeout,
-      require(name) {
-        if (name === "hooks/Sports/useSportsRequestScope")
-          return load("hooks/Sports/useSportsRequestScope.ts");
-        if (name.startsWith("assets/")) return name;
-        assert.ok(name in modules, `Unexpected import: ${name}`);
-        return modules[name];
-      },
-    });
-    return exports;
-  }
-  modules["utils/games/gameStatus"] = load("utils/games/gameStatus.ts");
-  function render() {
-    index = 0;
-    state = hook(...args);
-    while (effects.length) effects.shift()();
-  }
-  return {
-    react,
-    modules,
-    load,
-    start(fn, initialArgs = []) {
-      hook = fn;
-      args = initialArgs;
-      render();
-    },
-    update(nextArgs = args) {
-      args = nextArgs;
-      render();
-    },
-    get state() {
-      return state;
-    },
-    get subscription() {
-      return subscription;
-    },
-    stop() {
-      stopped = true;
-      slots.forEach((slot) => slot?.cleanup?.());
-    },
-  };
+  return h;
 }
 
 function homeHarness(tab = "scores") {
@@ -250,13 +120,13 @@ test("Scores refresh starts favorites and all leagues together, keeps content, a
     const sections = h.state.homeGameSections;
     const pending = h.state.handleRefresh();
     await flush();
-    assert.equal(h.requests.length, 28);
-    assert.equal(new Set(h.requests.map(({ kind }) => kind)).size, 28);
+    assert.equal(h.requests.length, 30);
+    assert.equal(new Set(h.requests.map(({ kind }) => kind)).size, 30);
     assert.equal(h.state.refreshing, true);
     assert.equal(h.state.loading, false);
     assert.equal(h.state.homeGameSections, sections);
     await h.state.handleRefresh();
-    assert.equal(h.requests.length, 28);
+    assert.equal(h.requests.length, 30);
     h.requests.slice(1).forEach((r) => r.resolve());
     await flush();
     assert.equal(h.state.refreshing, true, "favorite teams are still pending");
@@ -281,10 +151,10 @@ test("a date reset uses automatic date requests and waits for all of them", asyn
     const sections = h.state.homeGameSections;
     const pending = h.state.handleRefresh();
     await flush();
-    assert.equal(h.requests.length, 28);
+    assert.equal(h.requests.length, 30);
     assert.equal(
       h.requests.filter(({ kind }) => kind.startsWith("date:")).length,
-      26,
+      28,
     );
     assert.equal(h.state.homeGameSections, sections);
     assert.equal(h.state.loading, false);
@@ -572,7 +442,12 @@ for (const [sport, league] of [
       apiClient: { get: () => pending.promise },
     };
     const response = (state) => ({
-      score: { status: { state }, playerStats: [] },
+      score: {
+        gameId: "401",
+        lastUpdated: Date.now(),
+        status: { state },
+        playerStats: [],
+      },
       details: {},
     });
     try {
@@ -599,7 +474,7 @@ for (const [sport, league] of [
   });
 }
 
-test("favorite-game widgets subscribe before kickoff and keep the final update", async () => {
+test("favorite-game widgets keep final scores and continue watching the team's schedule", async () => {
   const h = harness(),
     subscriptions = [];
   const game = (state) => ({
@@ -650,13 +525,16 @@ test("favorite-game widgets subscribe before kickoff and keep the final update",
     );
     assert.equal(subscriptions.length, 1);
     assert.equal(subscriptions[0].active, true);
-    subscriptions[0].listener({ payload: { game: game("in") } });
+    subscriptions[0].listener({ payload: { games: [game("in")] } });
     assert.equal(cache.response.games[0].game.status.state, "in");
     assert.equal(subscriptions.length, 1);
-    subscriptions[0].listener({ payload: { game: game("post") } });
+    subscriptions[0].listener({ payload: { games: [game("post")] } });
     assert.equal(cache.response.games[0].game.status.state, "post");
-    assert.equal(subscriptions[0].active, false);
+    await flush();
+    // Full schedules remain subscribed so the widget can select the next game.
+    assert.equal(subscriptions[0].active, true);
   } finally {
     h.stop();
+    assert.equal(subscriptions[0].active, false);
   }
 });

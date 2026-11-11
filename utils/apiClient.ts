@@ -1,9 +1,15 @@
 // utils/apiClient.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios, { create, isAxiosError } from "axios";
+import axios, { CanceledError, create, isAxiosError } from "axios";
 import { router } from "expo-router";
 import { API_BASE_URL } from "utils/apiConfig";
 import { isRefreshResponseForCurrentSession } from "utils/auth/authSessionRace";
+import {
+  getAuthSessionVersion,
+  invalidateAuthSession,
+  isAuthSessionCurrent,
+  withAuthStorageLock,
+} from "utils/auth/authSessionLifecycle";
 import {
   clearSecureTokens,
   getSecureAccessToken,
@@ -13,11 +19,29 @@ import {
 import { USER_PROFILE_CACHE_KEY_PREFIX } from "utils/profile/userProfileCache";
 
 export const BASE_URL = API_BASE_URL;
+export const API_REQUEST_TIMEOUT_MS = 15_000;
+export const API_UPLOAD_TIMEOUT_MS = 120_000;
+
+declare module "axios" {
+  interface AxiosRequestConfig {
+    _authSessionVersion?: number;
+  }
+}
+
+const assertCurrentSession = (version: number) => {
+  if (!isAuthSessionCurrent(version)) {
+    throw new CanceledError("Authentication session changed");
+  }
+};
 
 // ─── Shared Axios Instance ────────────────────────────────────────────────────
 
 export const apiClient = create({
   baseURL: BASE_URL,
+  timeout: API_REQUEST_TIMEOUT_MS,
+  // Axios copies defaults when a request is created, before its asynchronous
+  // interceptors run. This also binds requests queued immediately before logout.
+  _authSessionVersion: getAuthSessionVersion(),
 });
 
 export const forgotPassword = (email: string) =>
@@ -38,7 +62,10 @@ export const checkSignupAvailability = (
 
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
-export const getAccessToken = getSecureAccessToken;
+let tokensAvailable = true; // Persisted credentials are read on cold startup.
+
+export const getAccessToken = async () =>
+  tokensAvailable ? getSecureAccessToken() : null;
 export const getRefreshToken = getSecureRefreshToken;
 
 type AuthSessionListener = (session: { accessToken: string | null }) => void;
@@ -67,10 +94,40 @@ export const subscribeAuthSession = (listener: AuthSessionListener) => {
   };
 };
 
-export const saveTokens = async (accessToken: string, refreshToken: string) => {
+const storeTokens = async (
+  accessToken: string,
+  refreshToken: string,
+  version: number,
+) => {
+  assertCurrentSession(version);
   await saveSecureTokens(accessToken, refreshToken);
+  assertCurrentSession(version);
+  tokensAvailable = true;
 
   notifyAuthSessionListeners(accessToken);
+};
+
+export const saveTokens = (
+  accessToken: string,
+  refreshToken: string,
+  version = getAuthSessionVersion(),
+) => withAuthStorageLock(() => storeTokens(accessToken, refreshToken, version));
+
+export const startAuthSession = async (
+  accessToken: string,
+  refreshToken: string,
+  userEntries: [string, string][],
+) => {
+  const cleanup = clearAuthSession();
+  const version = getAuthSessionVersion();
+  await cleanup;
+
+  await withAuthStorageLock(async () => {
+    assertCurrentSession(version);
+    await AsyncStorage.multiSet(userEntries);
+    await storeTokens(accessToken, refreshToken, version);
+  });
+  return version;
 };
 
 const AUTH_SESSION_STORAGE_KEYS = [
@@ -100,45 +157,56 @@ const AUTH_SESSION_STORAGE_KEY_PREFIXES = [
 ];
 
 export const clearAuthSession = async (userId?: number | string | null) => {
+  const version = invalidateAuthSession();
+  apiClient.defaults._authSessionVersion = version;
+  tokensAvailable = false;
+  activeRefresh?.controller.abort();
+  activeRefresh = null;
+  refreshFailure = null;
+  delete apiClient.defaults.headers.common.Authorization;
+  delete apiClient.defaults.headers.common.authorization;
   notifyAuthSessionListeners(null);
-  const keysToRemove = new Set(AUTH_SESSION_STORAGE_KEYS);
 
-  if (userId != null) {
-    keysToRemove.add(`favoriteTeams:${userId}`);
-    keysToRemove.add(`@view_mode_preference_${userId}`);
-  }
+  return withAuthStorageLock(async () => {
+    const keysToRemove = new Set(AUTH_SESSION_STORAGE_KEYS);
 
-  try {
-    const existingKeys = await AsyncStorage.getAllKeys();
-
-    existingKeys.forEach((key) => {
-      if (
-        AUTH_SESSION_STORAGE_KEY_PREFIXES.some((prefix) =>
-          key.startsWith(prefix),
-        )
-      ) {
-        keysToRemove.add(key);
-      }
-    });
-  } catch (err) {
-    console.warn("Failed to list auth storage keys:", err);
-  }
-
-  try {
-    await AsyncStorage.multiRemove(
-      Array.from(keysToRemove).filter(
-        (key) => key !== "accessToken" && key !== "refreshToken",
-      ),
-    );
-  } finally {
-    try {
-      await clearSecureTokens();
-    } finally {
-      delete apiClient.defaults.headers.common.Authorization;
-      delete apiClient.defaults.headers.common.authorization;
-      notifyAuthSessionListeners(null);
+    if (userId != null) {
+      keysToRemove.add(`favoriteTeams:${userId}`);
+      keysToRemove.add(`@view_mode_preference_${userId}`);
     }
-  }
+
+    try {
+      const existingKeys = await AsyncStorage.getAllKeys();
+
+      existingKeys.forEach((key) => {
+        if (
+          AUTH_SESSION_STORAGE_KEY_PREFIXES.some((prefix) =>
+            key.startsWith(prefix),
+          )
+        ) {
+          keysToRemove.add(key);
+        }
+      });
+    } catch (err) {
+      console.warn("Failed to list auth storage keys:", err);
+    }
+
+    try {
+      await AsyncStorage.multiRemove(
+        Array.from(keysToRemove).filter(
+          (key) => key !== "accessToken" && key !== "refreshToken",
+        ),
+      );
+    } finally {
+      try {
+        await clearSecureTokens();
+      } finally {
+        delete apiClient.defaults.headers.common.Authorization;
+        delete apiClient.defaults.headers.common.authorization;
+        if (isAuthSessionCurrent(version)) notifyAuthSessionListeners(null);
+      }
+    }
+  });
 };
 
 export const clearTokens = async () => {
@@ -185,7 +253,11 @@ const shouldSkipAuthRefresh = (url?: string) => {
 // ─── Request interceptor ─────────────────────────────────────────────────────
 
 apiClient.interceptors.request.use(async (config) => {
+  const version = config._authSessionVersion ?? getAuthSessionVersion();
+  config._authSessionVersion = version;
+  assertCurrentSession(version);
   const token = await getAccessToken();
+  assertCurrentSession(version);
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -199,64 +271,167 @@ apiClient.interceptors.request.use(async (config) => {
 
 // ─── Response interceptor ────────────────────────────────────────────────────
 
-let isRefreshing = false;
-let refreshBackoffUntil = 0;
-let lastTransientRefreshError: any = null;
+type ActiveRefresh = {
+  version: number;
+  controller: AbortController;
+  promise: Promise<string>;
+};
+
+let activeRefresh: ActiveRefresh | null = null;
+let refreshFailure: { version: number; until: number; error: unknown } | null =
+  null;
 
 const DEFAULT_REFRESH_BACKOFF_MS = 5_000;
 const MAX_REFRESH_BACKOFF_MS = 60_000;
 
-let failedQueue: {
-  resolve: (value: string) => void;
-  reject: (reason?: any) => void;
-}[] = [];
-
-const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token!);
-    }
-  });
-
-  failedQueue = [];
+const isTransientRefreshError = (error: unknown) => {
+  if (!isAxiosError(error)) return false;
+  const status = error.response?.status;
+  return !status || status === 429 || status >= 500;
 };
 
-const isTransientRefreshError = (error: any) => {
-  const status = error?.response?.status;
+const getRefreshBackoffMs = (error: unknown) => {
+  const retryAfterSeconds = isAxiosError(error)
+    ? Number(error.response?.headers?.["retry-after"])
+    : NaN;
 
-  return isAxiosError(error) && (!status || status === 429 || status >= 500);
+  return Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+    ? Math.min(
+        MAX_REFRESH_BACKOFF_MS,
+        Math.max(DEFAULT_REFRESH_BACKOFF_MS, retryAfterSeconds * 1_000),
+      )
+    : DEFAULT_REFRESH_BACKOFF_MS;
 };
 
-const getRefreshBackoffMs = (error: any) => {
-  const retryAfterHeader = error?.response?.headers?.["retry-after"];
-  const retryAfterSeconds = Number(retryAfterHeader);
-
-  if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
-    return Math.min(
-      MAX_REFRESH_BACKOFF_MS,
-      Math.max(DEFAULT_REFRESH_BACKOFF_MS, retryAfterSeconds * 1_000),
-    );
+// Called with the storage lock held so a password rotation cannot race a refresh
+// between comparing the refresh token and writing its replacement.
+const getRotatedAccessToken = async (
+  requestedToken: string,
+  version: number,
+) => {
+  const currentRefreshToken = await getRefreshToken();
+  assertCurrentSession(version);
+  if (isRefreshResponseForCurrentSession(requestedToken, currentRefreshToken)) {
+    return null;
   }
 
-  return DEFAULT_REFRESH_BACKOFF_MS;
+  const currentAccessToken = await getAccessToken();
+  assertCurrentSession(version);
+  if (!currentAccessToken)
+    throw new CanceledError("Authentication session changed");
+  return currentAccessToken;
+};
+
+const refreshAccessToken = async (
+  version: number,
+  signal: AbortSignal,
+): Promise<string> => {
+  let requestedToken: string | null = null;
+  try {
+    requestedToken = await getRefreshToken();
+    assertCurrentSession(version);
+    if (!requestedToken) throw new Error("No refresh token available");
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/refresh`,
+      { refreshToken: requestedToken },
+      { timeout: API_REQUEST_TIMEOUT_MS, signal },
+    );
+
+    const token = requestedToken;
+    return await withAuthStorageLock(async () => {
+      assertCurrentSession(version);
+      const rotatedAccessToken = await getRotatedAccessToken(token, version);
+      if (rotatedAccessToken) return rotatedAccessToken;
+
+      const { accessToken, refreshToken } = data ?? {};
+      if (
+        typeof accessToken !== "string" ||
+        !accessToken.trim() ||
+        typeof refreshToken !== "string" ||
+        !refreshToken.trim()
+      ) {
+        throw new Error("Invalid token refresh response");
+      }
+
+      await storeTokens(accessToken, refreshToken, version);
+      refreshFailure = null;
+      return accessToken;
+    });
+  } catch (error) {
+    // A login/logout invalidates the entire operation, including queued retries
+    // and cleanup. A token rotation for the same session may safely be reused.
+    assertCurrentSession(version);
+    if (requestedToken) {
+      const token = requestedToken;
+      const rotatedAccessToken = await withAuthStorageLock(() =>
+        getRotatedAccessToken(token, version),
+      );
+      if (rotatedAccessToken) return rotatedAccessToken;
+    }
+    assertCurrentSession(version);
+
+    if (isTransientRefreshError(error)) {
+      refreshFailure = {
+        version,
+        until: Date.now() + getRefreshBackoffMs(error),
+        error,
+      };
+    } else {
+      const cleanup = clearAuthSession();
+      const clearedVersion = getAuthSessionVersion();
+      await cleanup;
+      if (isAuthSessionCurrent(clearedVersion)) router.replace("/login");
+    }
+    throw error;
+  }
+};
+
+const getRefreshedAccessToken = (version: number) => {
+  assertCurrentSession(version);
+  if (activeRefresh?.version === version) return activeRefresh.promise;
+  if (
+    refreshFailure?.version === version &&
+    Date.now() < refreshFailure.until
+  ) {
+    return Promise.reject(refreshFailure.error);
+  }
+
+  const controller = new AbortController();
+  const refresh: ActiveRefresh = {
+    version,
+    controller,
+    promise: refreshAccessToken(version, controller.signal).finally(() => {
+      if (activeRefresh === refresh) activeRefresh = null;
+    }),
+  };
+  activeRefresh = refresh;
+  return refresh.promise;
 };
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    assertCurrentSession(
+      response.config._authSessionVersion ?? getAuthSessionVersion(),
+    );
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
-    const status = error.response?.status;
-    const requestUrl = originalRequest?.url;
+    if (!originalRequest) return Promise.reject(error);
+    const version =
+      originalRequest._authSessionVersion ?? getAuthSessionVersion();
+    assertCurrentSession(version);
 
+    const status = error.response?.status;
+    const requestUrl = originalRequest.url;
+    const requestPath = getRequestPath(requestUrl);
+    const responseError = error.response?.data?.error;
     const isAuthError =
       status === 401 ||
       (status === 403 &&
         (error.response?.data?.code === "ACCESS_TOKEN_INVALID" ||
-          error.response?.data?.error === "Invalid or expired token"));
-    const requestPath = getRequestPath(requestUrl);
-    const responseError = error.response?.data?.error;
+          responseError === "Invalid or expired token"));
     const isInvalidCurrentPassword =
       status === 401 &&
       ((requestPath === "/api/users/me/password" &&
@@ -264,133 +439,20 @@ apiClient.interceptors.response.use(
         (requestPath === "/api/users/me" &&
           responseError === "Invalid password"));
 
-    // Important:
-    // Do NOT refresh/redirect for login/signup/reset routes.
-    // A 401 from /api/login means "Wrong password", not "expired session".
-    // The password-change route also uses 401 for a bad current password.
+    // Login/reset validation failures and permission denials do not expire a session.
     if (
-      !originalRequest ||
       shouldSkipAuthRefresh(requestUrl) ||
-      isInvalidCurrentPassword
+      isInvalidCurrentPassword ||
+      !isAuthError ||
+      originalRequest._retry
     ) {
       return Promise.reject(error);
     }
 
-    if (!isAuthError || originalRequest?._retry) {
-      return Promise.reject(error);
-    }
-
-    if (lastTransientRefreshError && Date.now() < refreshBackoffUntil) {
-      return Promise.reject(lastTransientRefreshError);
-    }
-
     originalRequest._retry = true;
-
-    if (isRefreshing) {
-      return new Promise<string>((resolve, reject) => {
-        failedQueue.push({ resolve, reject });
-      })
-        .then((newToken) => {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          return apiClient(originalRequest);
-        })
-        .catch((err) => Promise.reject(err));
-    }
-
-    isRefreshing = true;
-    let refreshToken: string | null | undefined;
-
-    try {
-      refreshToken = await getRefreshToken();
-
-      if (!refreshToken) {
-        throw new Error("No refresh token available");
-      }
-
-      const res = await axios.post(
-        `${BASE_URL}/api/refresh`,
-        {
-          refreshToken,
-        },
-        { timeout: 15_000 },
-      );
-
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-        res.data ?? {};
-
-      // A concurrent password change can install a replacement session while
-      // this refresh request is in flight. Never let the older response put
-      // its token pair back over the newly rotated credentials.
-      const currentRefreshToken = await getRefreshToken();
-
-      if (
-        !isRefreshResponseForCurrentSession(refreshToken, currentRefreshToken)
-      ) {
-        const currentAccessToken = await getAccessToken();
-
-        if (!currentAccessToken) {
-          throw new Error("Auth session changed during token refresh");
-        }
-
-        originalRequest.headers.Authorization = `Bearer ${currentAccessToken}`;
-        processQueue(null, currentAccessToken);
-
-        return apiClient(originalRequest);
-      }
-
-      if (
-        typeof newAccessToken !== "string" ||
-        !newAccessToken.trim() ||
-        typeof newRefreshToken !== "string" ||
-        !newRefreshToken.trim()
-      ) {
-        throw new Error("Invalid token refresh response");
-      }
-
-      await saveTokens(newAccessToken, newRefreshToken);
-
-      refreshBackoffUntil = 0;
-      lastTransientRefreshError = null;
-
-      apiClient.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
-      originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
-      processQueue(null, newAccessToken);
-
-      return apiClient(originalRequest);
-    } catch (refreshError) {
-      if (
-        refreshToken != null &&
-        !isRefreshResponseForCurrentSession(
-          refreshToken,
-          await getRefreshToken(),
-        )
-      ) {
-        const currentAccessToken = await getAccessToken();
-        if (currentAccessToken) {
-          processQueue(null, currentAccessToken);
-          originalRequest.headers.Authorization = `Bearer ${currentAccessToken}`;
-          return apiClient(originalRequest);
-        }
-        processQueue(refreshError);
-        return Promise.reject(refreshError);
-      }
-
-      processQueue(refreshError, null);
-
-      if (isTransientRefreshError(refreshError)) {
-        lastTransientRefreshError = refreshError;
-        refreshBackoffUntil = Date.now() + getRefreshBackoffMs(refreshError);
-
-        return Promise.reject(refreshError);
-      }
-
-      await clearAuthSession();
-      router.replace("/login");
-
-      return Promise.reject(refreshError);
-    } finally {
-      isRefreshing = false;
-    }
+    const token = await getRefreshedAccessToken(version);
+    assertCurrentSession(version);
+    originalRequest.headers.Authorization = `Bearer ${token}`;
+    return apiClient(originalRequest);
   },
 );

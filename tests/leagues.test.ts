@@ -5,7 +5,6 @@ import {
   BROWSEABLE_LEAGUES,
   FAVORITE_SPORT_LEAGUES,
   FAVORITE_SPORT_OPTIONS,
-  HOME_SCORE_LEAGUES,
   isFavoriteSportId,
   LEAGUE_CONFIG,
   resolveLeagueConfig,

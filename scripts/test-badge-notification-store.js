@@ -500,6 +500,7 @@ async function testRealtimeHelpers() {
   const realtime = loadTranspiledModule(
     "hooks/ForumHooks/useBadgeRealtimeNotifications.ts",
     {
+      "services/predictionUpdates": { notifyPredictionPicksChanged() {} },
       react: {
         useEffect() {},
         useRef: (initialValue) => ({ current: initialValue }),
@@ -624,242 +625,63 @@ async function testRealtimeHelpers() {
   assertArrayEqual(failedRetryQueue, [["read-3"]]);
 }
 
-function createCenterLike(id, postId, actorUsername, createdAt, actorUserId) {
-  return {
-    id,
-    type: "likes",
-    title: "New Like",
-    text: "",
-    postId,
-    actorUsername,
-    actorUsernames: [actorUsername],
-    ...(actorUserId
-      ? { userId: String(actorUserId), actorUserIds: [String(actorUserId)] }
-      : {}),
-    likeCount: 1,
-    readAt: null,
-    createdAt,
-  };
-}
-
-function testNotificationCenterGrouping() {
+function testNotificationCenterRouting() {
+  const counts = loadTranspiledModule("utils/profile/userProfileCounts.ts");
+  const profile = loadTranspiledModule(
+    "utils/navigation/userProfileNavigation.ts",
+    {
+      "../profile/userProfileCounts": counts,
+    },
+  );
   const center = loadTranspiledModule(
     "utils/notifications/notificationCenter.ts",
+    {
+      "../navigation/userProfileNavigation": profile,
+    },
+    { URLSearchParams },
   );
-  // Grouped legacy notification-center records were replaced by canonical
-  // AppNotification records. Keep these assertions only for older checkouts.
-  if (typeof center.addCenterNotificationToState !== "function") return;
-  let notifications = [];
-
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike(
-      "like:1",
-      "post-1",
-      "jordan",
-      "2026-07-14T00:00:00.000Z",
-      2,
-    ),
-  );
-  assert.equal(notifications.length, 1);
-  assert.equal(notifications[0].title, "New Like");
-  assert.equal(notifications[0].text, "@jordan liked your post");
-  assert.equal(notifications[0].likeCount, 1);
-
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike(
-      "like:1",
-      "post-1",
-      "jordan",
-      "2026-07-14T00:00:00.000Z",
-      2,
-    ),
-  );
-  assert.equal(notifications.length, 1);
-  assert.equal(notifications[0].text, "@jordan liked your post");
-  assert.equal(notifications[0].likeCount, 1);
-
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike("like:2", "post-1", "alex", "2026-07-14T00:01:00.000Z"),
-  );
-  assert.equal(notifications.length, 1);
-  assert.equal(notifications[0].title, "2 new likes");
-  assert.equal(notifications[0].text, "@jordan and @alex liked your post");
-
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike("like:3", "post-1", "sam", "2026-07-14T00:02:00.000Z"),
-  );
-  assert.equal(notifications[0].title, "3 new likes");
-  assert.equal(
-    notifications[0].text,
-    "@jordan, @alex and 1 other liked your post",
-  );
-
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike("like:4", "post-1", "lee", "2026-07-14T00:03:00.000Z"),
-  );
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike("like:5", "post-1", "morgan", "2026-07-14T00:04:00.000Z"),
-  );
-  assert.equal(notifications[0].title, "5 new likes");
-  assert.equal(
-    notifications[0].text,
-    "@jordan, @alex and 3 others liked your post",
-  );
-
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike(
-      "like:duplicate-actor",
-      "post-1",
-      "@Jordan",
-      "2026-07-14T00:05:00.000Z",
-      2,
-    ),
-  );
-  assert.equal(notifications.length, 1);
-  assert.equal(notifications[0].likeCount, 5);
-
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike(
-      "like:other-post",
-      "post-2",
-      "casey",
-      "2026-07-14T00:06:00.000Z",
-    ),
-  );
-  assert.equal(notifications.length, 2);
-  assert.equal(notifications[0].postId, "post-2");
-
-  const readGroup = {
-    ...notifications.find((notification) => notification.postId === "post-1"),
-    readAt: "2026-07-14T00:07:00.000Z",
-  };
-  notifications = [
-    readGroup,
-    ...notifications.filter((notification) => notification.postId !== "post-1"),
-  ];
-  notifications = center.addCenterNotificationToState(
-    notifications,
-    createCenterLike(
-      "like:after-read",
-      "post-1",
-      "newuser",
-      "2026-07-14T00:08:00.000Z",
-    ),
-  );
-
-  const postOneGroups = notifications.filter(
-    (notification) => notification.postId === "post-1",
-  );
-  assert.equal(postOneGroups.length, 2);
-  assert.equal(postOneGroups[0].title, "New Like");
-  assert.equal(postOneGroups[0].text, "@newuser liked your post");
-  assert.equal(postOneGroups[1].likeCount, 5);
-  assert.ok(postOneGroups[1].readAt);
-
-  let messageNotifications = [];
-  const createMessage = (id, createdAt) => ({
-    id,
-    type: "messages",
-    title: "New Message",
-    text: "hello",
-    conversationId: "conversation-1",
-    senderUsername: "sender",
-    messageCount: 1,
-    readAt: null,
-    createdAt,
-  });
-  messageNotifications = center.addCenterNotificationToState(
-    messageNotifications,
-    createMessage("message:1", "2026-07-14T01:00:00.000Z"),
-  );
-  messageNotifications = center.addCenterNotificationToState(
-    messageNotifications,
-    createMessage("message:2", "2026-07-14T01:01:00.000Z"),
-  );
-  assert.equal(messageNotifications.length, 1);
-  assert.equal(messageNotifications[0].title, "2 new messages");
-  assert.equal(messageNotifications[0].messageCount, 2);
-
-  assert.equal(
-    center.getUnreadCenterNotificationCount(
-      [
-        {
-          ...messageNotifications[0],
-          messageCount: 3,
-        },
-        createCenterLike(
-          "like:weighted",
-          "post-3",
-          "first",
-          "2026-07-14T02:00:00.000Z",
-        ),
-        {
-          id: "comment:1",
-          type: "comments",
-          title: "New Comment",
-          text: "Commented on your post",
-          readAt: null,
-          createdAt: "2026-07-14T02:01:00.000Z",
-        },
-      ].map((notification) =>
-        notification.id === "like:weighted"
-          ? { ...notification, likeCount: 4 }
-          : notification,
-      ),
-    ),
-    8,
-  );
-
+  const notification = (type, data = {}) => ({ type, data });
   assert.equal(
     center.getNotificationCenterHref(
-      createCenterLike(
-        "like:route",
-        "post-route",
-        "jordan",
-        "2026-07-14T03:00:00.000Z",
-      ),
+      notification("post_like", { postId: "a/b" }),
     ),
-    "/post/post-route",
-  );
-
-  const hydratedWithLiveNotification = center.mergeCenterNotificationStates(
-    [
-      createCenterLike(
-        "like:persisted",
-        "post-hydration",
-        "persisted-user",
-        "2026-07-14T04:00:00.000Z",
-        10,
-      ),
-    ],
-    [
-      createCenterLike(
-        "like:live",
-        "post-hydration",
-        "live-user",
-        "2026-07-14T04:01:00.000Z",
-        11,
-      ),
-    ],
-  );
-
-  assert.equal(hydratedWithLiveNotification.length, 1);
-  assert.equal(hydratedWithLiveNotification[0].title, "2 new likes");
-  assert.equal(
-    hydratedWithLiveNotification[0].text,
-    "@persisted-user and @live-user liked your post",
+    "/post/a%2Fb",
   );
   assert.equal(
-    center.getUnreadCenterNotificationCount(hydratedWithLiveNotification),
-    2,
+    center.getNotificationCenterHref(
+      notification("message", { conversationId: "42" }),
+    ),
+    "/messages/42",
+  );
+  assert.equal(
+    center.getNotificationCenterHref(
+      notification("game_final", {
+        gameId: "401",
+        sport: "volleyball",
+        league: "WCVB",
+      }),
+    ),
+    "/game/volleyball/401?league=wcvb",
+  );
+  assert.equal(
+    center.getNotificationCenterHref(
+      notification("game_final", {
+        gameId: "401",
+        sport: "football",
+        league: "../bad",
+      }),
+    ),
+    "/game/football/401",
+  );
+  assert.equal(
+    center.getNotificationCenterHref(notification("post_like")),
+    null,
+  );
+  assert.equal(
+    center.getNotificationCenterHref(
+      notification("new_follower", { userId: 3, username: "Tempo" }),
+    ),
+    "/user/3?username=Tempo",
   );
 }
 
@@ -905,7 +727,7 @@ function testBadgeAwardResponsesOnlyRefresh() {
   testNotificationSocketSingleton();
   await testNotificationRoomJoin();
   await testRealtimeHelpers();
-  testNotificationCenterGrouping();
+  testNotificationCenterRouting();
   testBadgeAwardResponsesOnlyRefresh();
 
   console.log("Badge and Notification Center tests passed.");

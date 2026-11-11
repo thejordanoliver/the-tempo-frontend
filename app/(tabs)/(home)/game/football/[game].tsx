@@ -372,6 +372,7 @@ export default function GameDetailsScreen(
   const teamStats = score?.boxScore?.teams ?? [];
   const playerStats = score?.boxScore?.players ?? [];
   const neutralSite = details?.neutralSite;
+
   const baseVenue = details?.venue;
   const venue = details?.venueInfo;
   const { weather } = useWeather({
@@ -380,7 +381,6 @@ export default function GameDetailsScreen(
     location: venue?.address.city,
     date: gameDateObj,
   });
-
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName ?? null;
   const venueAddress =

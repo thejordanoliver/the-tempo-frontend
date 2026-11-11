@@ -1,21 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppState } from "react-native";
 import { isAxiosError } from "axios";
-import { useFanPrediction } from "./useFanPrediction";
+import { useFanPrediction, type FanPredictionInput } from "./useFanPrediction";
 import { usePredictionScoring } from "./usePredictionScoring";
 import { castRankedPrediction } from "services/fanPredictionsApi";
 import type { FeedPrediction, FanPredictionTeamId } from "types/fanPredictions";
 
-export function useFeedPrediction(game: FeedPrediction) {
+export function useFeedPredictionInput(
+  game: FeedPrediction,
+): FanPredictionInput & { open: boolean } {
   const [open, setOpen] = useState(
     () => Date.parse(game.startsAt) > Date.now(),
   );
-  const { scoring } = usePredictionScoring(game.gameId, {
-    sport: game.sport,
-    league: game.league,
-    date: game.startsAt,
-    state: open ? "pre" : "in",
-  });
+  const { scoring, scoringError, retryScoring } = usePredictionScoring(
+    game.gameId,
+    {
+      sport: game.sport,
+      league: game.league,
+      date: game.startsAt,
+      state: open ? "pre" : "in",
+    },
+  );
 
   useEffect(() => {
     const remaining = Date.parse(game.startsAt) - Date.now();
@@ -61,7 +66,7 @@ export function useFeedPrediction(game: FeedPrediction) {
     [game],
   );
 
-  const prediction = useFanPrediction({
+  return {
     gameId: game.gameId,
     awayId: game.away.id,
     awayCode: game.away.code,
@@ -71,6 +76,19 @@ export function useFeedPrediction(game: FeedPrediction) {
     initialState: game,
     votes: null,
     castVote,
-  });
-  return { ...prediction, open, scoring: scoring ?? game.scoring };
+    open,
+    scoring: scoring ?? game.scoring,
+    scoringError,
+    retryScoring,
+  };
+}
+
+export function useFeedPrediction(game: FeedPrediction) {
+  const input = useFeedPredictionInput(game);
+  const prediction = useFanPrediction(input);
+  return {
+    ...prediction,
+    open: input.open,
+    scoring: input.scoring ?? game.scoring,
+  };
 }

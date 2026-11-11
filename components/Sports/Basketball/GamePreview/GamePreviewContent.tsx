@@ -65,10 +65,12 @@ type GamePreviewContentProps = {
   state: string | null;
   league: string;
   isDark: boolean;
+  neutralSite?: boolean;
 };
 
 export default function GamePreviewContent({
   homeId,
+  neutralSite = false,
   homeColor,
   homeName,
   homeCode,
@@ -152,6 +154,7 @@ export default function GamePreviewContent({
           awayColor={awayColor}
           state={state}
           gameStatus={gameStatus}
+          neutralSite={neutralSite}
           isDark={isDark}
           league={league}
         />

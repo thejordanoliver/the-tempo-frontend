@@ -3,7 +3,7 @@ import { SkeletonBlock } from "components/Skeletons/primitives";
 import type {
   PredictionAnalytics,
   PredictionSample,
-} from "hooks/useFanPredictionAnalytics";
+} from "hooks/FanPredictionHooks/useFanPredictionAnalytics";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
 import { fanPredictionRankingsStyles } from "styles/FanPredictionStyles/FanPredictionRankingsStyles";

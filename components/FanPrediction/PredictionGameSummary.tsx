@@ -96,6 +96,7 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
         : pick.sport === "volleyball"
           ? (team.setsWon ?? team.score)
           : team.score;
+          
     const score = (
       <View style={styles.scoreSection}>
         <Text
@@ -132,6 +133,7 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
         )}
       </View>
     );
+    
     const participant = (
       <View style={styles.team}>
         <View

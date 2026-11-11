@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import FeedFanPrediction from "components/FanPrediction/FeedFanPrediction";
 import { PostItem } from "components/Forum/PostItem/PostItem";
 import PostItemSkeleton from "components/Forum/PostItemSkeleton";
 import NewsCard from "components/News/NewsCard";
@@ -10,7 +11,6 @@ import { StyleSheet, Text, View } from "react-native";
 import type { FeedPrediction } from "types/fanPredictions";
 import type { ForumPost } from "types/forum";
 import { interleavePredictions } from "utils/explore/forYouFeed";
-import PredictionFeedCard from "./PredictionFeedCard";
 
 type ForYouFeedProps = {
   articles: ForYouArticle[];
@@ -127,7 +127,7 @@ export default function ForYouFeed({
       {feed.map((item) => {
         if (item.kind === "prediction") {
           return (
-            <PredictionFeedCard
+            <FeedFanPrediction
               key={`prediction-${item.prediction.sport}-${item.prediction.league}-${item.prediction.gameId}`}
               game={item.prediction}
               isDark={isDark}

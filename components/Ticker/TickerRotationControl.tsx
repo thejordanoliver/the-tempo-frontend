@@ -135,7 +135,7 @@ function RotationEditor() {
     picker?.type === "league"
       ? LEAGUES.map((id) => ({
           id,
-          name: LEAGUE_CONFIG[id].label,
+          name: LEAGUE_CONFIG[id].shortName,
           logo: isDark ? LEAGUE_CONFIG[id].logoLight : LEAGUE_CONFIG[id].logo,
           primaryColor: LEAGUE_CONFIG[id].color,
         }))
@@ -314,7 +314,7 @@ function RotationEditor() {
                       label="League"
                       value={
                         entry.league
-                          ? LEAGUE_CONFIG[entry.league].label
+                          ? LEAGUE_CONFIG[entry.league].shortName
                           : "Across your leagues"
                       }
                       disabled={locked || isActive}
@@ -435,7 +435,7 @@ function RotationEditor() {
               : "Choose rotation content"
         }
         subtitle={
-          picker?.type === "view" ? LEAGUE_CONFIG[league].label : undefined
+          picker?.type === "view" ? LEAGUE_CONFIG[league].shortName : undefined
         }
         items={pickerItems}
         searchable={picker?.type === "team"}

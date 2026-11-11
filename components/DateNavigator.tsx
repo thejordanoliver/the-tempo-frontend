@@ -1,13 +1,9 @@
 // components/DateNavigator.tsx
 import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import dayjs from "dayjs";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
 type Props = {
   selectedDate: Date;
   onChangeDate: (days: number) => void;
@@ -22,6 +18,8 @@ export default function DateNavigator({
   isDark,
 }: Props) {
   const styles = getStyles(isDark);
+  // Use the same calendar day as the scores request and calendar selection.
+  const date = dayjs(selectedDate);
 
   return (
     <View style={styles.dateNavContainer}>
@@ -44,16 +42,14 @@ export default function DateNavigator({
 
       <TouchableOpacity
         accessibilityRole="button"
-        accessibilityLabel={dayjs(selectedDate)
-          .tz("America/New_York")
-          .format("dddd, MMMM D, YYYY")}
+        accessibilityLabel={date.format("dddd, MMMM D, YYYY")}
         accessibilityHint="Opens the calendar to choose a date"
         onPress={onOpenCalendar}
         style={styles.dateNavButton}
         activeOpacity={0.7}
       >
         <Text style={styles.dateNavText}>
-          {dayjs(selectedDate).tz("America/New_York").format("MMM D")}
+          {date.format("MMM D")}
         </Text>
       </TouchableOpacity>
 

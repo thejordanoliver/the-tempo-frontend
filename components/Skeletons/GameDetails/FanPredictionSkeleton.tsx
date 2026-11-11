@@ -1,85 +1,146 @@
+import FanPredictionFooter from "@/components/FanPrediction/FanPredictionFooter";
+import FanPredictionHeader from "@/components/FanPrediction/FanPredictionHeader";
 import FanPredictionSection from "@/components/FanPrediction/FanPredictionSection";
 import PredictionGradient from "@/components/FanPrediction/PredictionGradient";
+import { FanPredictionStyles } from "@/styles/FanPredictionStyles/FanPredictionStyles";
 import { SkeletonBlock, SkeletonCircle } from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
-import { useMemo } from "react";
-import { View } from "react-native";
-import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
+import { useMemo, type ReactNode } from "react";
+import { StyleSheet, Text, View, type TextStyle } from "react-native";
+import type { FanPredictionScoring } from "types/fanPredictions";
 
 export default function FanPredictionSkeleton({
   isDark,
   isLive = false,
   canVote = false,
-  resultsRevealed = true,
-  showLiveStatus = false,
+  resultsRevealed = !canVote,
+  hasPick = false,
+  subtitle = canVote
+    ? "Pick a team to reveal fan votes"
+    : "Predictions are locked",
+  scoring,
+  scoringError,
+  retryScoring,
+  children,
 }: {
   isDark: boolean;
   isLive?: boolean;
   canVote?: boolean;
   resultsRevealed?: boolean;
-  showLiveStatus?: boolean;
+  hasPick?: boolean;
+  subtitle?: string;
+  scoring?: FanPredictionScoring | null;
+  scoringError?: boolean;
+  retryScoring?: () => void;
+  children?: ReactNode;
 }) {
   const styles = useMemo(() => FanPredictionStyles(isDark), [isDark]);
 
   return (
     <FanPredictionSection>
-      {canVote && (
-        <View style={styles.bonusRow}>
-          <SkeletonBlock width={160} height={styles.subtitle.fontSize} />
-        </View>
-      )}
+      {children}
+      <FanPredictionHeader
+        isDark={isDark}
+        canVote={canVote}
+        isLive={isLive}
+        hasPick={hasPick}
+        scoring={scoring}
+        scoringError={scoringError}
+        retryScoring={retryScoring}
+      />
       <View style={styles.cardsRow}>
         {["away", "home"].map((team) => (
-          <View key={team} style={styles.predictionCard}>
+          <View key={team} style={[styles.predictionCard, styles.matchupCard]}>
             <PredictionGradient
               color={Colors.midTone}
               fillPercentage={0}
               isSelected={false}
               isDark={isDark}
             />
-            <View style={styles.cardContent}>
-              <SkeletonCircle size={styles.teamLogo.width} />
-              <SkeletonBlock width={60} height={styles.teamLabel.lineHeight} />
-              {resultsRevealed && (
+            <View style={[styles.cardContent, styles.matchupCardContent]}>
+              <View style={styles.matchupIdentity}>
+                <SkeletonCircle size={styles.teamLogo.width} />
                 <SkeletonBlock
-                  width={36}
-                  height={styles.votePercentage.lineHeight}
+                  width={44}
+                  height={styles.matchupTeamLabel.lineHeight}
                 />
+              </View>
+              {resultsRevealed ? (
+                <View>
+                  <SkeletonBlock
+                    width={60}
+                    height={styles.matchupPercentage.lineHeight}
+                  />
+                  <SkeletonText textStyle={styles.matchupPercentageLabel}>
+                    of fan picks
+                  </SkeletonText>
+                </View>
+              ) : (
+                <View style={styles.matchupAction}>
+                  <SkeletonCircle size={14} />
+                  <SkeletonBlock width={48} height={12} />
+                </View>
               )}
             </View>
           </View>
         ))}
       </View>
 
-      {(!isLive || showLiveStatus) && (
-        <View style={styles.statusRow}>
-          <View style={styles.skeletonStatusCopy}>
-            <SkeletonBlock width="80%" height={styles.subtitle.fontSize} />
-          </View>
-          {!isLive && resultsRevealed && (
-            <SkeletonBlock width={56} height={styles.totalVotesText.fontSize} />
-          )}
+      <View style={styles.statusRow}>
+        <View style={styles.statusCopy}>
+          <SkeletonCircle size={14} />
+          <SkeletonText textStyle={styles.subtitle}>{subtitle}</SkeletonText>
         </View>
-      )}
+        {resultsRevealed && (
+          <SkeletonText textStyle={styles.totalVotesText}>
+            000 votes
+          </SkeletonText>
+        )}
+      </View>
 
-      {!isLive && (
-        <View style={styles.footer}>
-          <View
-            style={{
-              minHeight: styles.rankingHint.lineHeight * 2,
-              justifyContent: "center",
-              alignItems: "center",
-              gap: styles.rankingHint.lineHeight - styles.rankingHint.fontSize,
-            }}
-          >
-            <SkeletonBlock width="90%" height={styles.rankingHint.fontSize} />
-            <SkeletonBlock width="45%" height={styles.rankingHint.fontSize} />
-          </View>
-          <View style={styles.rankingsButton}>
-            <SkeletonBlock width={110} height={styles.textLink.fontSize} />
-          </View>
-        </View>
-      )}
+      {!isLive && <FanPredictionFooter />}
     </FanPredictionSection>
   );
 }
+
+function SkeletonText({
+  children,
+  textStyle,
+}: {
+  children: ReactNode;
+  textStyle: TextStyle;
+}) {
+  return (
+    <View
+      style={placeholderStyles.textContainer}
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      aria-hidden
+    >
+      <Text style={[textStyle, placeholderStyles.hiddenText]}>{children}</Text>
+      <SkeletonBlock
+        height={textStyle.fontSize}
+        style={placeholderStyles.textBlock}
+      />
+    </View>
+  );
+}
+
+const placeholderStyles = StyleSheet.create({
+  textContainer: {
+    position: "relative",
+    flexShrink: 1,
+    justifyContent: "center",
+  },
+  hiddenText: {
+    opacity: 0,
+  },
+  textBlock: {
+    position: "absolute",
+    // Native percentage widths can resolve against the wider row.
+    left: 0,
+    right: 0,
+    width: "auto",
+  },
+});

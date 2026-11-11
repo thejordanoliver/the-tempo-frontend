@@ -17,7 +17,7 @@ import {
   useState,
 } from "react";
 import { View } from "react-native";
-import PagerView from "react-native-pager-view";
+import PagerView from "components/PagerView";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Shared                                   */

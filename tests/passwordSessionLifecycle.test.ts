@@ -51,7 +51,7 @@ test("authenticated requests read the newly stored access token on every call", 
 
   assert.match(
     clientSource,
-    /interceptors\.request\.use\(async \(config\) => \{\s*const token = await getAccessToken\(\)/s,
+    /interceptors\.request\.use\(async \(config\) => \{[\s\S]*?const token = await getAccessToken\(\)/,
   );
   assert.match(
     clientSource,

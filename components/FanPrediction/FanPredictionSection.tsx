@@ -1,8 +1,8 @@
+import { FanPredictionStyles } from "@/styles/FanPredictionStyles/FanPredictionStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo, type ReactNode } from "react";
 import { View } from "react-native";
-import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
 
 export default function FanPredictionSection({
   children,

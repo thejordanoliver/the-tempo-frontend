@@ -1,13 +1,17 @@
 import { Colors } from "@/constants/styles";
+import { FanPredictionStyles } from "@/styles/FanPredictionStyles/FanPredictionStyles";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "components/Buttons/Button";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo } from "react";
 import { Text } from "react-native";
-import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
 
-export default function FanRankingsLink() {
+export default function FanRankingsLink({
+  compact = false,
+}: {
+  compact?: boolean;
+}) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -16,17 +20,20 @@ export default function FanRankingsLink() {
   return (
     <Button
       onPress={() => router.push("/fan-prediction-rankings")}
+      accessibilityLabel="View fan rankings"
       isDark={isDark}
       variant="text"
       style={styles.rankingsButton}
     >
       <Text style={styles.textLink}>
-        View fan rankings{" "}
-        <Ionicons
-          name="arrow-forward"
-          color={isDark ? Colors.dark.text : Colors.light.text}
-        />
+        {compact ? "Rankings" : "View fan rankings"}
       </Text>
+      <Ionicons
+        name="arrow-forward"
+        size={14}
+        color={isDark ? Colors.dark.text : Colors.light.text}
+        accessible={false}
+      />
     </Button>
   );
 }

@@ -89,7 +89,7 @@ export default function TickerContentControl() {
       index < 3 || tickerSupportsExpandedLeagues(state.status?.firmwareVersion),
   ).map((value) => ({
     id: value,
-    name: LEAGUE_CONFIG[value].label,
+    name: LEAGUE_CONFIG[value].shortName,
     logo: isDark ? LEAGUE_CONFIG[value].logoLight : LEAGUE_CONFIG[value].logo,
     primaryColor: LEAGUE_CONFIG[value].color,
   }));
@@ -133,7 +133,7 @@ export default function TickerContentControl() {
         <TickerSettingOption
           label="League"
           icon={league ? undefined : "trophy-outline"}
-          value={league ? LEAGUE_CONFIG[league].label : "Choose a league"}
+          value={league ? LEAGUE_CONFIG[league].shortName : "Choose a league"}
           logo={
             league
               ? isDark
@@ -315,7 +315,7 @@ export default function TickerContentControl() {
         title="Choose a team"
         subtitle={
           league
-            ? `${LEAGUE_CONFIG[league].label} · Current-season schedule`
+            ? `${LEAGUE_CONFIG[league].shortName} · Current-season schedule`
             : undefined
         }
         items={teamOptions}

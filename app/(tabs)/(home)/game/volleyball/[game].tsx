@@ -1,35 +1,28 @@
-import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
-import { CustomHeader } from "components/CustomHeader";
+import { useScrollFade } from "@/hooks/useScrollFade";
+import { useWeather } from "@/hooks/useWeather";
+import { formatVenueAddress } from "@/utils/games/games";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { CustomHeader } from "components/CustomHeader";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import {
-  BoxScore,
   GameHeader,
-  Venue,
-  GameTeamStats,
-  Highlights,
   LineScore,
-  Officials,
-  PlayByPlay,
+  Venue,
 } from "components/Sports/Volleyball/GameDetails";
-import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useVolleyballGameDetails } from "hooks/VolleyballHooks/useVolleyballGameDetails";
-import { useLayoutEffect } from "react";
-import {
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { useLayoutEffect, useMemo } from "react";
+import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { volleyballStyles } from "styles/VolleyballStyles";
 import type { VolleyballGameCardProps } from "types/volleyball/volleyball";
 import { getVolleyballGameParams } from "utils/navigation/volleyballGame";
-import { getVolleyballTeamLogo } from "utils/teams/volleyballTeams";
+import {
+  getVolleyballTeam,
+  getVolleyballTeamLogo,
+} from "utils/teams/volleyballTeams";
 
 export default function VolleyballGameScreen(
   props: Partial<VolleyballGameCardProps> = {},
@@ -45,24 +38,36 @@ export default function VolleyballGameScreen(
   const resource = useVolleyballGameDetails(route.league, route.gameId);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = volleyballStyles(isDark);
-  const global = globalStyles(isDark);
+  const styles = gameDetailsScreenStyles;
   const navigation = useNavigation();
   const router = useScopedRouter();
   const navigationContentStyle = useNavigationBarContentStyle();
-  const { score, details, warning, loading, refreshing, refresh } = resource;
-  const game = score;
-  const league = route.league;
-  const homeLogo =
-    league && game
-      ? getVolleyballTeamLogo(game.home.id, league, true)
-      : undefined;
-  const awayLogo =
-    league && game
-      ? getVolleyballTeamLogo(game.away.id, league, true)
-      : undefined;
+  const { handleScrollStart, handleScrollEnd } = useScrollFade();
 
-  const isLoading = !score || !details;
+  const { score, details, loading } = resource;
+
+  const game = score;
+
+  const gameDateObj = useMemo(() => {
+    return game?.date ? new Date(game.date) : null;
+  }, [game]);
+
+  const league = route.league ?? "mcvb";
+
+  const home = game?.home;
+  const away = game?.away;
+  const homeId = home?.id ?? 0;
+  const awayId = away?.id ?? 0;
+
+  const homeTeam = getVolleyballTeam(homeId, league);
+  const awayTeam = getVolleyballTeam(awayId, league);
+
+  const homeLogo =
+    league && game ? getVolleyballTeamLogo(homeId, league, true) : undefined;
+  const awayLogo =
+    league && game ? getVolleyballTeamLogo(awayId, league, true) : undefined;
+
+  const isLoading = !score || !details || !game || !home || !away;
 
   useLayoutEffect(() => {
     if (isLoading && loading) {
@@ -97,62 +102,64 @@ export default function VolleyballGameScreen(
     loading,
   ]);
 
-  if (isLoading)
+  const homeCode = score?.home.code ?? score?.home.name ?? "Home";
+  const awayCode = score?.away.code ?? score?.away.name ?? "Away";
+
+  const gameStatusDescription = score?.status.gameStatusDescription;
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const dontShowDetails =
+    isCanceled || isPostponed || isSuspended || isForfeited;
+
+  const baseVenue = details?.venue;
+  const venue = details?.venueInfo;
+  const { weather } = useWeather({
+    lat: venue?.latitude,
+    lon: venue?.longitude,
+    location: venue?.address.city,
+    date: gameDateObj,
+  });
+  const baseVenueAddress = formatVenueAddress(baseVenue?.address);
+  const venueName = venue?.name ?? baseVenue?.fullName ?? null;
+  const venueAddress =
+    venue?.address.formatted ??
+    (formatVenueAddress(venue?.address) || baseVenueAddress);
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href ?? null;
+  const venueAttendance = details?.attendance ?? null;
+
+  const venueCity = venue?.address.city ?? baseVenue?.address?.city;
+  const venueRegion =
+    venue?.address.state ??
+    venue?.address.country ??
+    baseVenue?.address?.state ??
+    baseVenue?.address?.country;
+  const venueLocation =
+    venueCity && venueRegion
+      ? `${venueCity}, ${venueRegion}`
+      : (venueCity ?? "");
+
+  if (isLoading) {
     return (
-      <View
-        style={[
-          styles.screen,
-          loading ? gameDetailsScreenStyles.loadingContainer : styles.content,
-        ]}
-      >
-        {loading ? (
-          <CustomActivityIndicator />
-        ) : (
-          <>
-            <Text style={global.secondaryText}>
-              {!route.league || !route.gameId
-                ? "This match link is invalid."
-                : "Unable to load match details."}
-            </Text>
-            {!!route.league && !!route.gameId && (
-              <Pressable accessibilityRole="button" onPress={refresh}>
-                <Text style={styles.link}>Try again</Text>
-              </Pressable>
-            )}
-          </>
-        )}
+      <View style={styles.loadingContainer}>
+        <CustomActivityIndicator />
       </View>
     );
+  }
 
-  const homeCode = score.home.code ?? score.home.name ?? "Home";
-  const awayCode = score.away.code ?? score.away.name ?? "Away";
-  const venue = details.venueInfo;
-  const venueAddress = details.venue?.address;
-  const dontShowDetails = /cancel|postpon|suspend|forfeit/i.test(
-    score.status.gameStatusDescription ?? "",
-  );
+  if (isLoading || !homeTeam || !awayTeam) return <View />;
+
   return (
     <ScrollView
-      style={styles.screen}
-      contentContainerStyle={navigationContentStyle(
-        gameDetailsScreenStyles.container,
-      )}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
-      }
+      contentContainerStyle={navigationContentStyle(styles.container)}
+      onScrollBeginDrag={handleScrollStart}
+      onMomentumScrollEnd={handleScrollEnd}
+      stickyHeaderIndices={[0]}
     >
       <GameHeader score={score} isDark={isDark} />
-      <View style={gameDetailsScreenStyles.innerContainer}>
-        {!!warning && (
-          <View style={styles.card}>
-            <Text style={global.secondaryText}>
-              Unable to refresh this match. Showing the latest loaded details.
-            </Text>
-            <Pressable accessibilityRole="button" onPress={refresh}>
-              <Text style={styles.link}>Retry</Text>
-            </Pressable>
-          </View>
-        )}
+      <View style={styles.innerContainer}>
         {!dontShowDetails && (
           <>
             <LineScore
@@ -172,71 +179,18 @@ export default function VolleyballGameScreen(
               state={score.status.state}
               isDark={isDark}
             />
-            <GameTeamStats
-              stats={score.teamStats.map((team) => ({
-                ...team,
-                homeAway: team.homeAway ?? undefined,
-              }))}
-              homeLogo={getVolleyballTeamLogo(
-                score.home.id,
-                score.league.code,
-                isDark,
-              )}
-              awayLogo={getVolleyballTeamLogo(
-                score.away.id,
-                score.league.code,
-                isDark,
-              )}
-              homeName={homeCode}
-              awayName={awayCode}
-              homeColor={score.home.primaryColor ?? undefined}
-              awayColor={score.away.primaryColor ?? undefined}
-              league={score.league.code}
-              state={score.status.state}
-              isDark={isDark}
-            />
-            <BoxScore score={score} isDark={isDark} />
-            {!details.available.teamStats && !details.available.playerStats && (
-              <Text style={global.secondaryText}>
-                {score.status.state === "pre"
-                  ? "Team and player statistics will appear here when available."
-                  : "Detailed statistics are unavailable for this match."}
-              </Text>
-            )}
-            <PlayByPlay plays={score.plays} isDark={isDark} />
-            <Highlights highlights={details.highlights} isDark={isDark} />
-            <Officials
-              officials={details.officials}
-              state={score.status.state}
+
+            <Venue
+              venueImage={venueImage}
+              venueName={venueName}
+              location={venueLocation}
+              address={venueAddress}
+              venueCapacity={venueCapacity}
+              venueAttendance={venueAttendance}
+              weather={weather}
               isDark={isDark}
             />
           </>
-        )}
-        {(venue || details.venue) && (
-          <Venue
-            isDark={isDark}
-            weather={null}
-            venueName={venue?.name ?? details.venue?.fullName}
-            venueImage={venue?.image ?? details.venue?.images[0]?.href}
-            venueCapacity={venue?.capacity}
-            venueAttendance={details.attendance}
-            location={[
-              venue?.address.city ?? venueAddress?.city,
-              venue?.address.state ?? venueAddress?.state,
-            ]
-              .filter(Boolean)
-              .join(", ")}
-            address={
-              venue?.address.formatted ??
-              [
-                venue?.address.street,
-                venue?.address.city ?? venueAddress?.city,
-                venue?.address.state ?? venueAddress?.state,
-              ]
-                .filter(Boolean)
-                .join(", ")
-            }
-          />
         )}
       </View>
     </ScrollView>

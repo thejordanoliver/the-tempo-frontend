@@ -13,7 +13,7 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
-import PagerView from "react-native-pager-view";
+import PagerView from "components/PagerView";
 import { CustomHeader } from "../../components/CustomHeader";
 import ForumFeed from "../../components/Forum/ForumFeed";
 import NewsList from "../../components/News/NewsList";
