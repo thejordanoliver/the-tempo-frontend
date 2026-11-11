@@ -200,10 +200,6 @@ export default function SettingsScreen() {
               label: "Ticker Design Preview",
               href: "/design-preview/ticker" as const,
             },
-            {
-              label: "Notification Banner Preview",
-              href: "/design-preview/notification-banners" as const,
-            },
           ].map(({ label, href }) => (
             <View key={href} style={styles.optionButtonContainer}>
               <TouchableOpacity
