@@ -48,6 +48,8 @@ export const fanPredictionRankingsStyles = (isDark: boolean) => {
       borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     record: { gap: 10 },
+    sportFilters: { marginTop: 0, marginBottom: 0 },
+    sportFilter: { minHeight: 44 },
     sectionHeader: {
       flexDirection: "row",
       alignItems: "baseline",

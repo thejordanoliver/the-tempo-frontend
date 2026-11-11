@@ -16,6 +16,7 @@ import {
   volleyballDirectoryTeam,
   volleyballStandingGroups,
   volleyballStatus,
+  volleyballTableGroups,
 } from "../utils/volleyball";
 import {
   getVolleyballGameParams,
@@ -193,4 +194,94 @@ test("standings preserve nested conference groups and skip empty headings", () =
     volleyballStandingGroups(groups).map((group) => group.id),
     ["acc"],
   );
+});
+
+test("standings flatten backend conference groups and preserve display values", () => {
+  const team = {
+    id: "221",
+    name: "Pittsburgh",
+    league: "wcvb",
+  } as VolleyballGame["home"];
+  const standing = {
+    team,
+    stats: [
+      { name: "wins", label: "W", value: 15, displayValue: "15" },
+      { name: "losses", label: "L", value: 2, displayValue: null },
+      { name: "percentage", label: "PCT", value: null, displayValue: null },
+    ],
+  };
+  const groups = volleyballTableGroups({
+    league: "wcvb",
+    standings: [],
+    groups: [
+      {
+        id: "root",
+        name: "NCAA",
+        standings: [],
+        children: [
+          { id: "acc", name: "ACC", standings: [standing], children: [] },
+        ],
+      },
+    ],
+  });
+  assert.equal(groups.length, 1);
+  assert.equal(groups[0].title, "ACC");
+  assert.deepEqual(
+    groups[0].columns.map((column) => column.label),
+    ["W", "L", "PCT"],
+  );
+  assert.deepEqual(groups[0].rows[0].values, {
+    wins: "15",
+    losses: "2",
+    percentage: "—",
+  });
+  assert.equal(groups[0].rows[0].team, team);
+  assert.equal(
+    volleyballTableGroups({
+      league: "wcvb",
+      standings: [standing],
+      groups: [],
+    })[0].rows.length,
+    1,
+  );
+});
+
+test("rankings preserve tied ranks, absent previous positions and unavailable coverage", () => {
+  const team = {
+    id: "221",
+    name: "Pittsburgh",
+    league: "wcvb",
+  } as VolleyballGame["home"];
+  const groups = volleyballTableGroups({
+    available: true,
+    rankings: {
+      all: [
+        {
+          id: "avca",
+          name: "AVCA",
+          date: null,
+          ranks: [
+            { current: 4, previous: null, recordSummary: "15-2", team },
+            {
+              current: 4,
+              previous: 5,
+              recordSummary: null,
+              team: { ...team, id: "222" },
+            },
+          ],
+        },
+      ],
+    },
+  });
+  assert.deepEqual(
+    groups[0].rows.map((row) => row.rank),
+    [4, 4],
+  );
+  assert.equal(groups[0].rows[0].values.previous, "—");
+  assert.equal(groups[0].rows[1].values.record, "—");
+  assert.deepEqual(
+    volleyballTableGroups({ available: false, rankings: { all: [] } }),
+    [],
+  );
+  assert.deepEqual(volleyballTableGroups(null), []);
 });

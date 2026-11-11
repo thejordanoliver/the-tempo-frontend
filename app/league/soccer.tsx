@@ -12,7 +12,7 @@ import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
-import PagerView from "react-native-pager-view";
+import PagerView from "components/PagerView";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";

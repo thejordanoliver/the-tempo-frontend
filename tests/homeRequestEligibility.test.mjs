@@ -89,11 +89,11 @@ function setup(
 }
 
 for (const [name, preferences, expected] of [
-  ["general Home", {}, 26],
+  ["general Home", {}, 28],
   [
     "guest waiting for authenticated-only sports preferences",
     { userId: null, favoriteSportsReady: false },
-    26,
+    28,
   ],
   ["one favorite team", { favorites: ["nba:1"] }, 1],
   [
@@ -103,12 +103,12 @@ for (const [name, preferences, expected] of [
   ],
   ["preferences loading", { favoriteSportsReady: false }, 0],
   ["favorite teams loading", { ready: false }, 0],
-  ["loaded empty favorites", { favorites: [], favoriteSports: [] }, 26],
+  ["loaded empty favorites", { favorites: [], favoriteSports: [] }, 28],
   ["unsupported Home league", { favoriteSports: ["f1"] }, 0],
   [
     "preference failure falls back without a permanent loader",
     { favoriteSportsReady: false, favoriteSportsError: "offline" },
-    26,
+    28,
   ],
 ]) {
   test(`${name}: requests ${expected} league feeds without rerender duplicates`, async () => {
@@ -330,7 +330,7 @@ test("general empty results keep the existing upcoming-date search across all le
     await new Promise((resolve) => setTimeout(resolve, 300));
     await flush();
     assert.ok(h.state.selectedDate.getTime() > initialDay);
-    assert.equal(h.requests.length, 52);
+    assert.equal(h.requests.length, 56);
     h.settle();
     await flush();
     assert.equal(h.state.loading, false);
@@ -351,4 +351,24 @@ if (process.env.TEMPO_HOME_BASELINE) {
       }
     });
   }
+}
+
+for (const league of ["cb", "sb"]) {
+  test(`Home requests and displays the selected ${league} feed`, async () => {
+    const h = setup({ favoriteSports: [league] });
+    try {
+      await flush();
+      assert.equal(h.requests.length, 1);
+      assert.ok(h.requests[0].url.endsWith(`/baseball/${league}`));
+      h.settle(`${league}-game`);
+      await flush();
+      assert.equal(h.state.loading, false);
+      assert.ok(
+        JSON.stringify(h.state.homeGameSections).includes(`${league}-game`),
+      );
+      assert.deepEqual(h.activeLeagues(), [league]);
+    } finally {
+      h.stop();
+    }
+  });
 }

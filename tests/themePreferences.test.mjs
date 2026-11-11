@@ -182,6 +182,9 @@ for (const group of ["home", "league", "explore", "profile"]) {
       "react/jsx-runtime": { jsx, jsxs: jsx },
       "expo-router": { Stack: "Stack" },
       "components/CustomHeader": { CustomHeader: "CustomHeader" },
+      "components/CustomHeader/GameHeaderPlaceholder": {
+        GameHeaderPlaceholder: "Placeholder",
+      },
     });
     const { default: Layout } = h.load(`app/(tabs)/(${group})/_layout.tsx`);
     h.start(Layout);

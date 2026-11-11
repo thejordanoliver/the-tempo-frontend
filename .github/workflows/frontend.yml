@@ -1,0 +1,43 @@
+name: Frontend checks
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      EXPO_NO_TELEMETRY: "1"
+      EXPO_PUBLIC_API_URL: https://tempo-api.invalid
+      EXPO_PUBLIC_SENTRY_DSN: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      # Keep advisories visible while the documented SDK 57 routing advisory
+      # awaits an SDK upgrade. Compilation and regression checks remain gates.
+      - run: npm audit --audit-level=high
+        continue-on-error: true
+      - run: npx expo install --check
+      - run: npm run export:all
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-test-results
+          path: |
+            playwright-report/
+            test-results/

@@ -8,7 +8,7 @@
     "start:hosted": "node ./scripts/start-hosted.mjs",
     "reset-project": "node ./scripts/reset-project.js",
     "test:bracket": "node ./scripts/test-tournament-bracket-utils.js && node --test tests/tournamentBracketStatus.test.mjs",
-    "test:play-by-play-field": "node ./scripts/test-play-by-play-field-utils.js",
+    "test:play-by-play-field": "node --import tsx --test tests/footballRedZone.test.ts tests/basketballVisualizationRendering.test.mjs",
     "test:badges": "node ./scripts/test-badge-notification-store.js",
     "test:favorites": "node --experimental-strip-types --experimental-default-type=module --test tests/favoriteTeamKeys.test.ts tests/favoriteSportHeader.test.ts",
     "test:schedule": "node --experimental-strip-types --experimental-default-type=module --test tests/teamScheduleSelection.test.ts",
@@ -26,7 +26,12 @@
     "lint": "expo lint",
     "test:navigation": "node --import tsx --test tests/tabStackRouteCoverage.test.ts",
     "format": "prettier --write . --ignore-path .gitignore --ignore-path .prettierignore",
-    "format:check": "prettier --check . --ignore-path .gitignore --ignore-path .prettierignore"
+    "format:check": "prettier --check . --ignore-path .gitignore --ignore-path .prettierignore",
+    "test": "node --import tsx --test --test-concurrency=4 tests/*.test.* && npm run test:bracket && npm run test:badges",
+    "typecheck": "tsc --noEmit",
+    "export:all": "expo export --platform all --max-workers 2",
+    "export:web": "expo export --platform web",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@expo-google-fonts/barlow-condensed": "^0.4.1",
@@ -38,10 +43,11 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "9.1.0",
     "@react-native-community/slider": "5.2.0",
-    "axios": "^1.12.2",
+    "@sentry/react-native": "~7.11.0",
+    "axios": "^1.21.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.18",
-    "expo": "~57.0.31",
+    "expo": "~57.0.32",
     "expo-blur": "~57.0.3",
     "expo-constants": "~57.0.17",
     "expo-font": "~57.0.3",
@@ -51,7 +57,7 @@
     "expo-image-picker": "~57.0.20",
     "expo-linear-gradient": "~57.0.2",
     "expo-linking": "~57.0.13",
-    "expo-router": "~57.0.29",
+    "expo-router": "~57.0.30",
     "expo-secure-store": "~57.0.4",
     "expo-sms": "~57.0.2",
     "expo-splash-screen": "~57.0.10",
@@ -82,14 +88,14 @@
     "react-native-worklets": "0.10.1",
     "reicon-react-native": "^1.0.102",
     "socket.io-client": "^4.8.1",
-    "zod": "^4.5.4",
+    "zod": "^4.6.7",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@types/date-fns": "^2.5.3",
     "@types/node": "^22.20.2",
     "@types/react": "~19.2.10",
-    "babel-plugin-module-resolver": "^5.0.2",
     "babel-preset-expo": "~57.0.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~57.0.2",
@@ -98,5 +104,9 @@
     "tsx": "^4.23.13",
     "typescript": "~6.0.3"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "glob@>=9 <14.0.2": "14.0.4",
+    "minimatch@>=7 <11.0.1": "11.0.5"
+  }
 }

@@ -18,9 +18,14 @@ function setup() {
   };
   h.modules["react-native"] = {
     View: "View",
+    Image: "Image",
     Text: "Text",
     Pressable: "Pressable",
     StyleSheet: { create: (x) => x },
+  };
+  h.modules["components/Sports/PlayByPlay/PlayByPlayHeader"] = {
+    default: "PlayByPlayHeader",
+    __esModule: true,
   };
   h.modules["components/Headings/HeadingTwo"] = {
     default: "HeadingTwo",
@@ -237,89 +242,84 @@ test("made shots pass through either rim and exit below the net; misses stay abo
   h.stop();
 });
 
-test("chart touch selection, screen reader adjustment, and resizing inspect actual observations", async () => {
+test("shot chart filters real shots by period and resizes court branding", async () => {
   const h = setup();
-  const points = [
-    {
-      key: "1",
-      seconds: 0,
-      period: 1,
-      clock: "12:00",
-      home: 45,
-      away: 55,
-      description: "First observation",
-    },
-    {
-      key: "2",
-      seconds: 720,
-      period: 1,
-      clock: "0:00",
-      home: 60,
-      away: 40,
-      description: "Second observation",
-    },
-    {
-      key: "3",
-      seconds: 2880,
-      period: 4,
-      clock: "0:00",
-      home: 100,
-      away: 0,
-      description: "Final observation",
-    },
-  ];
+  h.modules["@/components/Dropdown"] = {
+    default: "Dropdown",
+    __esModule: true,
+  };
+  h.modules["contexts/PreferencesContext"] = {
+    usePreferences: () => ({ resolvedColorScheme: "light" }),
+  };
+  const shot = (id, teamId, period, made) => ({
+    id,
+    team: { id: teamId },
+    period: { number: period },
+    coordinate: { x: 25, y: 6 },
+    shootingPlay: true,
+    scoringPlay: made,
+  });
   const props = {
-    points,
-    mode: "probability",
-    homeCode: "LAL",
-    awayCode: "DEN",
+    plays: [shot("home", 20, 1, true), shot("away", 6, 2, false)],
+    homeId: 20,
+    awayId: 6,
     homeColor: "#552583",
     awayColor: "#0e2240",
-    isDark: false,
-    active: true,
-    scope: "game1",
+    homeLogo: "home.png",
+    awayLogo: "away.png",
+    league: "nba",
+    state: "post",
   };
-  h.start(
-    h.load(
-      "components/Sports/Basketball/GameDetails/Charts/BasketballTimelineChart.tsx",
-    ).default,
-    [props],
-  );
-  assert.match(text(h.state), /Final observation/);
-  let surface = nodes(h.state).find((node) => node.props?.onResponderGrant);
-  surface.props.onResponderGrant({ nativeEvent: { locationX: 36 } });
-  await flush();
-  assert.match(text(h.state), /First observation/);
-  surface = nodes(h.state).find((node) => node.props?.onAccessibilityAction);
-  surface.props.onAccessibilityAction({
-    nativeEvent: { actionName: "increment" },
-  });
-  await flush();
-  assert.match(text(h.state), /Second observation/);
-  nodes(h.state)
-    .find(
-      (node) =>
-        node.props?.accessibilityLabel === "Show latest chart observation",
-    )
-    .props.onPress();
-  await flush();
-  assert.match(text(h.state), /Final observation/);
-  surface = nodes(h.state).find((node) => node.props?.onLayout);
-  surface.props.onLayout({ nativeEvent: { layout: { width: 400 } } });
-  await flush();
-  assert.equal(
-    nodes(h.state).find((node) => node.type === "Svg").props.viewBox,
-    "0 0 400 210",
-  );
-  h.update([{ ...props, scope: "game2", isDark: true }]);
-  assert.match(text(h.state), /Final observation/);
-  h.update([{ ...props, points: [] }]);
-  assert.match(text(h.state), /history is unavailable/);
-  assert.equal(
-    nodes(h.state).some((node) => node.type === "Svg"),
-    false,
-  );
-  h.stop();
+  try {
+    h.start(
+      h.load("components/Sports/Basketball/GameDetails/ShotChart.tsx").default,
+      [props],
+    );
+    assert.equal(
+      nodes(h.state).filter((node) => node.type === "Circle").length,
+      3,
+    );
+    nodes(h.state)
+      .find((node) => node.type === "Dropdown")
+      .props.onSelect("1st");
+    await flush();
+    assert.equal(
+      nodes(h.state).filter((node) => node.type === "Circle").length,
+      1,
+    );
+    assert.equal(
+      nodes(h.state).find((node) => node.type === "Circle").props.fill,
+      props.homeColor,
+    );
+    nodes(h.state)
+      .find((node) => node.props?.onLayout)
+      .props.onLayout({ nativeEvent: { layout: { width: 400, height: 230 } } });
+    await flush();
+    assert.equal(
+      nodes(h.state).find((node) => node.type === "Svg").props.viewBox,
+      "0 0 94 50",
+    );
+    assert.ok(
+      nodes(h.state).some(
+        (node) =>
+          node.type === "Image" &&
+          Array.isArray(node.props.style) &&
+          node.props.style.some((style) => style?.left === 125),
+      ),
+    );
+    h.update([{ ...props, neutralSite: true }]);
+    assert.equal(
+      nodes(h.state).some(
+        (node) =>
+          node.type === "Image" &&
+          Array.isArray(node.props.style) &&
+          node.props.style.some((style) => style?.left === 125),
+      ),
+      false,
+    );
+  } finally {
+    h.stop();
+  }
 });
 
 test("simplified latest-play card follows the newest event without playback controls", async () => {

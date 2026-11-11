@@ -103,6 +103,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 24,
     name: "Stanford",
+    shortName: "Stanford",
     fullName: "Stanford Cardinal",
     code: "STAN",
     primaryColor: "#b72931",
@@ -120,6 +121,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 26,
     name: "UCLA",
+    shortName: "UCLA",
     fullName: "UCLA Bruins",
     code: "UCLA",
     primaryColor: "#005a94",
@@ -137,6 +139,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 28,
     name: "UC San Diego",
+    shortName: "UC San Diego",
     fullName: "UC San Diego Tritons",
     code: "UCSD",
     primaryColor: null,
@@ -154,6 +157,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 30,
     name: "USC",
+    shortName: "USC",
     fullName: "USC Trojans",
     code: "USC",
     primaryColor: "#a50010",
@@ -171,6 +175,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 62,
     name: "Hawai'i",
+    shortName: "Hawai'i",
     fullName: "Hawai'i Rainbow Warriors",
     code: "HAW",
     primaryColor: "#004231",
@@ -188,6 +193,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 85,
     name: "IU Indy",
+    shortName: "IU Indy",
     fullName: "IU Indianapolis Jaguars",
     code: "IUIN",
     primaryColor: "#ca3a44",
@@ -205,6 +211,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 94,
     name: "N Kentucky",
+    shortName: "N Kentucky",
     fullName: "Northern Kentucky Norse",
     code: "NKU",
     primaryColor: null,
@@ -222,6 +229,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 108,
     name: "Harvard",
+    shortName: "Harvard",
     fullName: "Harvard Crimson",
     code: "HARV",
     primaryColor: "#990000",
@@ -239,6 +247,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 123,
     name: "St Thm Aquinas",
+    shortName: "St Thm Aquinas",
     fullName: "St. Thomas Aquinas Spartans",
     code: "STAC",
     primaryColor: null,
@@ -256,6 +265,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 163,
     name: "Princeton",
+    shortName: "Princeton",
     fullName: "Princeton Tigers",
     code: "PRIN",
     primaryColor: "#ff9408",
@@ -273,6 +283,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 164,
     name: "Rutgers",
+    shortName: "Rutgers",
     fullName: "Rutgers Scarlet Knights",
     code: "RUTG",
     primaryColor: "#000000",
@@ -290,6 +301,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 194,
     name: "Ohio State",
+    shortName: "Ohio St.",
     fullName: "Ohio State Buckeyes",
     code: "OSU",
     primaryColor: "#de3129",
@@ -307,6 +319,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 213,
     name: "Penn State",
+    shortName: "Penn St.",
     fullName: "Penn State Nittany Lions",
     code: "PSU",
     primaryColor: "#29294a",
@@ -324,6 +337,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 252,
     name: "BYU",
+    shortName: "BYU",
     fullName: "BYU Cougars",
     code: "BYU",
     primaryColor: "#002942",
@@ -341,6 +355,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 279,
     name: "Pacific",
+    shortName: "Pacific",
     fullName: "Pacific Tigers",
     code: "PAC",
     primaryColor: "#ff5109",
@@ -358,6 +373,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 299,
     name: "Long Beach St",
+    shortName: "Long Beach St.",
     fullName: "Long Beach State Beach",
     code: "LBSU",
     primaryColor: "#000000",
@@ -375,6 +391,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 300,
     name: "UC Irvine",
+    shortName: "UC Irvine",
     fullName: "UC Irvine Anteaters",
     code: "UCI",
     primaryColor: "#00108c",
@@ -392,6 +409,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 435,
     name: "PR-Rio Piedras",
+    shortName: "PR-Rio Piedras",
     fullName: "Puerto Rico-Rio Piedras PUERTO RICO-RIO PIEDRAS",
     code: "PRRP",
     primaryColor: null,
@@ -409,6 +427,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2050,
     name: "Ball State",
+    shortName: "Ball St.",
     fullName: "Ball State Cardinals",
     code: "BALL",
     primaryColor: "#de0000",
@@ -426,6 +445,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2054,
     name: "Barton",
+    shortName: "Barton",
     fullName: "Barton Bulldogs",
     code: "BART",
     primaryColor: null,
@@ -443,6 +463,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2058,
     name: "Belmont Abbey",
+    shortName: "Belmont Abbey",
     fullName: "Belmont Abbey Crusaders",
     code: "BMTA",
     primaryColor: null,
@@ -460,6 +481,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2059,
     name: "Benedict",
+    shortName: "Benedict",
     fullName: "Benedict Tigers",
     code: "BEN",
     primaryColor: null,
@@ -477,6 +499,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2107,
     name: "Catawba",
+    shortName: "Catawba",
     fullName: "Catawba Indians",
     code: "CAT",
     primaryColor: null,
@@ -494,6 +517,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2215,
     name: "Erskine",
+    shortName: "Erskine",
     fullName: "Erskine Flying Fleet",
     code: "ERSK",
     primaryColor: null,
@@ -511,6 +535,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2233,
     name: "Franklin",
+    shortName: "Franklin",
     fullName: "Franklin Grizzlies",
     code: "FRKL",
     primaryColor: null,
@@ -528,6 +553,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2244,
     name: "George Mason",
+    shortName: "George Mason",
     fullName: "George Mason Patriots",
     code: "GMU",
     primaryColor: "#016600",
@@ -545,6 +571,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2253,
     name: "Grand Canyon",
+    shortName: "Grand Canyon",
     fullName: "Grand Canyon Lopes",
     code: "GCU",
     primaryColor: null,
@@ -562,6 +589,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2327,
     name: "Lees McRae",
+    shortName: "Lees McRae",
     fullName: "Lees McRae Bobcats",
     code: "LMCR",
     primaryColor: null,
@@ -579,6 +607,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2332,
     name: "Lewis",
+    shortName: "Lewis",
     fullName: "Lewis Flyers",
     code: "LEW",
     primaryColor: null,
@@ -596,6 +625,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2350,
     name: "Loyola Chicago",
+    shortName: "Loyola Chicago",
     fullName: "Loyola Chicago Ramblers",
     code: "LUC",
     primaryColor: "#9d1244",
@@ -613,6 +643,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2363,
     name: "Manhattan",
+    shortName: "Manhattan",
     fullName: "Manhattan Jaspers",
     code: "MAN",
     primaryColor: "#4f8537",
@@ -630,6 +661,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2379,
     name: "MD-Eastern",
+    shortName: "MD-Eastern",
     fullName: "Maryland-Eastern Shore Hawks",
     code: "UMES",
     primaryColor: "#5c2301",
@@ -647,6 +679,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2384,
     name: "Mercy",
+    shortName: "Mercy",
     fullName: "Mercy Flyers",
     code: "MERCY",
     primaryColor: "#0b335e",
@@ -664,6 +697,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2418,
     name: "Mount Olive",
+    shortName: "Mount Olive",
     fullName: "Mount Olive Trojans",
     code: "UMO",
     primaryColor: null,
@@ -681,6 +715,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2444,
     name: "Newberry",
+    shortName: "Newberry",
     fullName: "Newberry Wolves",
     code: "NBRY",
     primaryColor: null,
@@ -698,6 +733,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2463,
     name: "CSU Northridge",
+    shortName: "CSU Northridge",
     fullName: "Cal State Northridge Matadors",
     code: "CSUN",
     primaryColor: "#b50000",
@@ -715,6 +751,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2474,
     name: "Oakland City",
+    shortName: "Oakland City",
     fullName: "Oakland City Mighty Oaks",
     code: "OCU",
     primaryColor: null,
@@ -732,6 +769,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2492,
     name: "Pepperdine",
+    shortName: "Pepperdine",
     fullName: "Pepperdine Waves",
     code: "PEPP",
     primaryColor: "#009c98",
@@ -749,6 +787,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2503,
     name: "PR-Mayaguez",
+    shortName: "PR-Mayaguez",
     fullName: "Puerto Rico-Mayaguez Bulldogs",
     code: "PRM",
     primaryColor: null,
@@ -766,6 +805,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2525,
     name: "Rockhurst",
+    shortName: "Rockhurst",
     fullName: "Rockhurst Hawks",
     code: "RCKH",
     primaryColor: null,
@@ -783,6 +823,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2529,
     name: "Sacred Heart",
+    shortName: "Sacred Heart",
     fullName: "Sacred Heart Pioneers",
     code: "SHU",
     primaryColor: "#bb003a",
@@ -800,6 +841,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2540,
     name: "Santa Barbara",
+    shortName: "Santa Barbara",
     fullName: "UC Santa Barbara Gauchos",
     code: "UCSB",
     primaryColor: "#101084",
@@ -817,6 +859,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2586,
     name: "SW Baptist",
+    shortName: "SW Baptist",
     fullName: "Southwest Baptist Bearcats",
     code: "SWBU",
     primaryColor: null,
@@ -834,6 +877,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2598,
     name: "Saint Francis",
+    shortName: "Saint Francis",
     fullName: "Saint Francis Red Flash",
     code: "SFPA",
     primaryColor: "#a20012",
@@ -851,6 +895,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2815,
     name: "Lindenwood",
+    shortName: "Lindenwood",
     fullName: "Lindenwood Lions",
     code: "LIN",
     primaryColor: null,
@@ -868,6 +913,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2816,
     name: "McKendree",
+    shortName: "McKendree",
     fullName: "McKendree Bearcats",
     code: "MCK",
     primaryColor: null,
@@ -885,6 +931,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2825,
     name: "Quincy",
+    shortName: "Quincy",
     fullName: "Quincy Hawks",
     code: "QUI",
     primaryColor: null,
@@ -902,6 +949,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2870,
     name: "Purdue FW",
+    shortName: "Purdue FW",
     fullName: "Purdue Fort Wayne Mastodons",
     code: "PFW",
     primaryColor: "#00378a",
@@ -919,6 +967,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2885,
     name: "NJIT",
+    shortName: "NJIT",
     fullName: "NJIT Highlanders",
     code: "NJIT",
     primaryColor: null,
@@ -936,6 +985,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2889,
     name: "PR-Bayamon",
+    shortName: "PR-Bayamon",
     fullName: "Puerto Rico-Bayamon Pirates",
     code: "PRB",
     primaryColor: null,
@@ -953,6 +1003,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2917,
     name: "LeMoyne-Owen",
+    shortName: "LeMoyne-Owen",
     fullName: "LeMoyne-Owen Magicians",
     code: "LEMO",
     primaryColor: null,
@@ -970,6 +1021,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 2939,
     name: "Jamestown",
+    shortName: "Jamestown",
     fullName: "Jamestown Jimmies",
     code: "UJ",
     primaryColor: null,
@@ -987,6 +1039,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 3259,
     name: "King (TN)",
+    shortName: "King (TN)",
     fullName: "King (TN) KING UNIVERSITY",
     code: "KNG",
     primaryColor: null,
@@ -1004,6 +1057,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 111369,
     name: "Concordia Irv",
+    shortName: "Concordia Irv",
     fullName: "Concordia University Irvine Golden Eagles",
     code: "CUI",
     primaryColor: null,
@@ -1021,6 +1075,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 117485,
     name: "Edward Waters",
+    shortName: "Edward Waters",
     fullName: "Edward Waters Tigers",
     code: "EDW",
     primaryColor: null,
@@ -1038,6 +1093,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 118348,
     name: "Menlo",
+    shortName: "Menlo",
     fullName: "Menlo Oaks",
     code: "MNLO",
     primaryColor: null,
@@ -1055,6 +1111,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 119333,
     name: "Vanguard",
+    shortName: "Vanguard",
     fullName: "Vanguard Lions",
     code: "VANG",
     primaryColor: null,
@@ -1072,6 +1129,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 119676,
     name: "Thomas More",
+    shortName: "Thomas More",
     fullName: "Thomas More Saints",
     code: "TMOR",
     primaryColor: null,
@@ -1089,6 +1147,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 121290,
     name: "Roosevelt",
+    shortName: "Roosevelt",
     fullName: "Roosevelt Lakers",
     code: "RSVT",
     primaryColor: null,
@@ -1106,6 +1165,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 121312,
     name: "UC Merced",
+    shortName: "UC Merced",
     fullName: "UC Merced Bobcats",
     code: "UCME",
     primaryColor: null,
@@ -1123,6 +1183,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 122556,
     name: "Charleston WV",
+    shortName: "Charleston WV",
     fullName: "Charleston (WV) Golden Eagles",
     code: "UCWV",
     primaryColor: null,
@@ -1140,6 +1201,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 123447,
     name: "Lincoln Mem",
+    shortName: "Lincoln Mem",
     fullName: "Lincoln Memorial Railsplitters",
     code: "LMUT",
     primaryColor: null,
@@ -1157,6 +1219,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 123448,
     name: "Queens",
+    shortName: "Queens",
     fullName: "Queens University Royals",
     code: "QUC",
     primaryColor: null,
@@ -1174,6 +1237,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 125228,
     name: "N Greenville",
+    shortName: "N Greenville",
     fullName: "North Greenville Trailblazers",
     code: "NGU",
     primaryColor: null,
@@ -1191,6 +1255,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 125254,
     name: "Maryville (MO)",
+    shortName: "Maryville (MO)",
     fullName: "Maryville (MO) Saints",
     code: "MUMO",
     primaryColor: null,
@@ -1208,6 +1273,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 125314,
     name: "Daemen",
+    shortName: "Daemen",
     fullName: "Daemen Wildcats",
     code: "DMN",
     primaryColor: null,
@@ -1225,6 +1291,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 125353,
     name: "Central St",
+    shortName: "Central St.",
     fullName: "Central State Marauders",
     code: "CNSU",
     primaryColor: null,
@@ -1242,6 +1309,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 125354,
     name: "Long Island",
+    shortName: "Long Island",
     fullName: "Long Island University Sharks",
     code: "LIU",
     primaryColor: null,
@@ -1259,6 +1327,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 125583,
     name: "FDU",
+    shortName: "FDU",
     fullName: "Fairleigh Dickinson Knights",
     code: "FDU",
     primaryColor: null,
@@ -1276,6 +1345,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 125660,
     name: "Emmanuel (GA)",
+    shortName: "Emmanuel (GA)",
     fullName: "Emmanuel (GA) Lions",
     code: "EUGA",
     primaryColor: null,
@@ -1293,6 +1363,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 125665,
     name: "Tusculum",
+    shortName: "Tusculum",
     fullName: "Tusculum Pioneers",
     code: "TUSC",
     primaryColor: null,
@@ -1310,6 +1381,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 127262,
     name: "Merrimack",
+    shortName: "Merrimack",
     fullName: "Merrimack Warriors",
     code: "MRMK",
     primaryColor: null,
@@ -1327,6 +1399,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 127336,
     name: "Missouri S&T",
+    shortName: "Missouri S&T",
     fullName: "Missouri S&T Miners",
     code: "MS&T",
     primaryColor: null,
@@ -1344,6 +1417,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 127650,
     name: "American Int'l",
+    shortName: "American Int'l",
     fullName: "American International Yellow Jackets",
     code: "AIC",
     primaryColor: null,
@@ -1361,6 +1435,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 128930,
     name: "Fort Valley St",
+    shortName: "Fort Valley St.",
     fullName: "Fort Valley State Wildcats",
     code: "FVSU",
     primaryColor: null,
@@ -1378,6 +1453,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 128989,
     name: "Kentucky St",
+    shortName: "Kentucky St.",
     fullName: "Kentucky State Thorobreds",
     code: "KYSU",
     primaryColor: null,
@@ -1395,6 +1471,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 129349,
     name: "Dominican (NY)",
+    shortName: "Dominican (NY)",
     fullName: "Dominican (NY) Chargers",
     code: "DMNY",
     primaryColor: null,
@@ -1412,6 +1489,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 130474,
     name: "Barry",
+    shortName: "Barry",
     fullName: "Barry Buccaneers",
     code: "BARR",
     primaryColor: null,
@@ -1429,6 +1507,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 130478,
     name: "D'Youville",
+    shortName: "D'Youville",
     fullName: "D'Youville Saints",
     code: "DYU",
     primaryColor: null,
@@ -1446,6 +1525,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 130481,
     name: "Roberts Wslyn",
+    shortName: "Roberts Wslyn",
     fullName: "Roberts Wesleyan Redhawks",
     code: "RWC",
     primaryColor: null,
@@ -1463,6 +1543,7 @@ export const mcvbTeams: Team[] = [
   {
     id: 130731,
     name: "Emmanuel (MA)",
+    shortName: "Emmanuel (MA)",
     fullName: "Emmanuel (MA) Saints",
     code: "ECMA",
     primaryColor: null,

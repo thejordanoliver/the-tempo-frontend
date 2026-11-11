@@ -6,6 +6,7 @@ import type {
   FanPredictionScoring,
   FanPredictionPicksResponse,
   FanPredictionRankingsResponse,
+  FanPredictionSport,
   RankedPredictionContext,
 } from "types/fanPredictions";
 export async function fetchCurrentUserPicks(signal?: AbortSignal) {
@@ -18,10 +19,13 @@ export async function fetchCurrentUserPicks(signal?: AbortSignal) {
     picks: data.picks.filter((pick) => !isUnavailablePrediction(pick)),
   };
 }
-export async function fetchPredictionRankings(signal?: AbortSignal) {
+export async function fetchPredictionRankings(
+  signal?: AbortSignal,
+  sport?: FanPredictionSport,
+) {
   const { data } = await apiClient.get<FanPredictionRankingsResponse>(
     "/api/predictions/rankings",
-    { signal },
+    { signal, params: sport ? { sport } : undefined },
   );
   return data;
 }

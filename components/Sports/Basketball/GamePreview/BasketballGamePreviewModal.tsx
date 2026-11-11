@@ -374,6 +374,7 @@ export default function GamePreviewModal({
                   plays={score?.plays}
                   lastPlay={score?.lastPlay}
                   gameStatus={score?.status}
+                  neutralSite={details?.neutralSite ?? false}
                   state={state}
                   homeId={homeId}
                   awayId={awayId}

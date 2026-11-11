@@ -1,15 +1,18 @@
+import FanPredictionSkeleton from "components/Skeletons/GameDetails/FanPredictionSkeleton";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import {
   useFanPrediction,
   type FanPredictionInput,
 } from "hooks/FanPredictionHooks/useFanPrediction";
-import FanPredictionSkeleton from "components/Skeletons/GameDetails/FanPredictionSkeleton";
-import { Colors, globalStyles } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
 
-import { useMemo } from "react";
-import { type ImageProps, Pressable, Text, View } from "react-native";
-import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
+import { FanPredictionStyles } from "@/styles/FanPredictionStyles/FanPredictionStyles";
+import { useMemo, type ReactNode } from "react";
+import { Text, View, type ImageProps } from "react-native";
 import { formatPercentage, isSameTeamId } from "utils/games/fanPredictionVotes";
+import FanPredictionFooter from "./FanPredictionFooter";
+import FanPredictionHeader from "./FanPredictionHeader";
 import FanPredictionSection from "./FanPredictionSection";
 import FanRankingsLink from "./FanRankingsLink";
 import PredictionCard from "./PredictionCard";
@@ -19,6 +22,7 @@ type Props = FanPredictionInput & {
   awayColor?: string | null;
   homeLogo: ImageProps["source"] | string;
   homeColor?: string | null;
+  children?: ReactNode;
 };
 
 export default function FanPrediction(props: Props) {
@@ -39,6 +43,7 @@ function FanPredictionContent(props: Props) {
     scoring,
     scoringError,
     retryScoring,
+    children,
   } = props;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -59,6 +64,14 @@ function FanPredictionContent(props: Props) {
     handleHomeVote,
   } = useFanPrediction(props);
   const isLive = state === "in";
+  const hasPick = userVote != null;
+  const theme = isDark ? Colors.dark : Colors.light;
+  const statusText =
+    submittingTeamId != null
+      ? "Saving your pick…"
+      : canVote && !hasPick
+        ? "Pick a team to reveal fan votes"
+        : subtitle || "Predictions are locked";
   const voteDisabled =
     (canVote && !scoring) ||
     !canVote ||
@@ -74,15 +87,22 @@ function FanPredictionContent(props: Props) {
         isDark={isDark}
         isLive={isLive}
         canVote={canVote}
-        resultsRevealed={resultsRevealed}
-        showLiveStatus={userVote != null}
-      />
+        resultsRevealed={resultsRevealed || !canVote}
+        hasPick={hasPick}
+        subtitle={statusText}
+        scoring={scoring}
+        scoringError={scoringError}
+        retryScoring={retryScoring}
+      >
+        {children}
+      </FanPredictionSkeleton>
     );
   }
 
   if (phase === "error") {
     return (
       <FanPredictionSection>
+        {children}
         <Text style={global.errorText}>
           {errorMessage ?? "We couldn't load this poll."}
         </Text>
@@ -93,31 +113,20 @@ function FanPredictionContent(props: Props) {
 
   return (
     <FanPredictionSection>
-      {canVote && (
-        <View style={styles.bonusRow}>
-          {scoring ? (
-            <Text
-              style={
-                scoring.pointsValue === 2 ? styles.bonusBadge : styles.subtitle
-              }
-            >
-              {scoring.pointsValue === 2
-                ? `2× points · ${{ rivalry: "Rivalry game🫯", ranked: "Ranked Matchup🔥", playoff: "Playoff game🏆", championship: "Championship", knockout: "Tournament knockout" }[scoring.bonusReason!]}`
-                : "1 point for a correct pick"}
-            </Text>
-          ) : scoringError ? (
-            <Pressable onPress={retryScoring} accessibilityRole="button">
-              <Text style={global.errorText}>
-                Couldn’t load points. Tap to retry.
-              </Text>
-            </Pressable>
-          ) : (
-            <Text style={styles.subtitle}>Checking prediction points…</Text>
-          )}
-        </View>
-      )}
+      {children}
+      <FanPredictionHeader
+        isDark={isDark}
+        canVote={canVote}
+        isLive={isLive}
+        hasPick={hasPick}
+        scoring={scoring}
+        scoringError={scoringError}
+        retryScoring={retryScoring}
+      />
       <View style={styles.cardsRow}>
         <PredictionCard
+          variant="matchup"
+          isSubmitting={isSameTeamId(submittingTeamId, awayId)}
           code={awayCode}
           logo={awayLogo}
           color={awayColor ?? Colors.midTone}
@@ -131,6 +140,8 @@ function FanPredictionContent(props: Props) {
         />
 
         <PredictionCard
+          variant="matchup"
+          isSubmitting={isSameTeamId(submittingTeamId, homeId)}
           code={homeCode}
           logo={homeLogo}
           color={homeColor ?? Colors.midTone}
@@ -143,32 +154,41 @@ function FanPredictionContent(props: Props) {
           isDark={isDark}
         />
       </View>
-      {isLive && userVote != null && (
-        <View style={styles.statusRow}>
-          <Text style={styles.subtitle}>{subtitle}</Text>
+      <View style={styles.statusRow}>
+        <View style={styles.statusCopy}>
+          <Ionicons
+            name={
+              hasPick
+                ? "checkmark-circle"
+                : canVote
+                  ? "eye-off-outline"
+                  : "lock-closed-outline"
+            }
+            size={14}
+            color={hasPick ? theme.green : theme.secondaryText}
+            accessible={false}
+          />
+          <Text
+            accessibilityLiveRegion="polite"
+            style={[styles.subtitle, hasPick && styles.selectedStatus]}
+          >
+            {statusText}
+          </Text>
         </View>
+        {resultsRevealed && (
+          <Text style={styles.totalVotesText}>
+            {totalVotes === 0
+              ? "No votes yet"
+              : `${totalVotes.toLocaleString()} ${totalVotes === 1 ? "vote" : "votes"}`}
+          </Text>
+        )}
+      </View>
+      {errorMessage && (
+        <Text accessibilityRole="alert" style={global.errorText}>
+          {errorMessage}
+        </Text>
       )}
-      {!isLive && (
-        <>
-          <View style={styles.statusRow}>
-            <Text style={styles.subtitle}>{subtitle}</Text>
-            {resultsRevealed && (
-              <Text style={styles.totalVotesText}>
-                {`${totalVotes.toLocaleString()} ${
-                  totalVotes === 1 ? "vote" : "votes"
-                }`}
-              </Text>
-            )}
-          </View>
-          <View style={styles.footer}>
-            <Text style={styles.rankingHint}>
-              Correct picks earn 1 or 2 points. Points update until game time,
-              then lock.
-            </Text>
-            <FanRankingsLink />
-          </View>
-        </>
-      )}
+      {!isLive && <FanPredictionFooter />}
     </FanPredictionSection>
   );
 }

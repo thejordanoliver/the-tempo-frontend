@@ -140,7 +140,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
     if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
-
+    
     if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)

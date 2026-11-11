@@ -8,6 +8,7 @@ import { CustomHeader } from "components/CustomHeader";
 import FanPredictionRankingsSkeleton from "components/Skeletons/FanPredictionRankingsSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/styles";
+import type { FanPredictionSportFilter } from "types/fanPredictions";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useFanPredictionAnalytics } from "hooks/FanPredictionHooks/useFanPredictionAnalytics";
@@ -16,7 +17,7 @@ import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
-import PagerView from "react-native-pager-view";
+import PagerView from "components/PagerView";
 import { fanPredictionRankingsStyles } from "styles/FanPredictionStyles/FanPredictionRankingsStyles";
 
 const TABS = ["Rankings", "Analysis"] as const;
@@ -34,8 +35,10 @@ export default function FanPredictionRankingsScreen() {
   const [selectedTab, setSelectedTab] = useState<FanPredictionTab>(
     tab === "Analysis" ? "Analysis" : "Rankings",
   );
+  const [selectedSport, setSelectedSport] =
+    useState<FanPredictionSportFilter>("all");
   const { data, loading, refreshing, error, refresh } =
-    useFanPredictionRankings();
+    useFanPredictionRankings(selectedSport);
   const analytics = useFanPredictionAnalytics();
   const refreshAnalytics = analytics.refresh;
   const refreshAll = useCallback(() => {
@@ -127,6 +130,8 @@ export default function FanPredictionRankingsScreen() {
                   rankings={rankings}
                   showLeaderboard={loading || rankings.length > 0}
                   onOpenUser={openUser}
+                  sport={selectedSport}
+                  onSportChange={setSelectedSport}
                 />
                 {error ? (
                   <View accessibilityRole="alert" style={styles.status}>
@@ -168,8 +173,9 @@ export default function FanPredictionRankingsScreen() {
                     The leaderboard starts with you
                   </Text>
                   <Text style={styles.emptyText}>
-                    Pick a winner before a game starts. Your rank appears once
-                    your first prediction has a scored result.
+                    {selectedSport === "all"
+                      ? "Pick a winner before a game starts. Your rank appears once your first prediction has a scored result."
+                      : "Make a prediction in this sport before a game starts. Your rank appears once your first prediction in this sport has a scored result."}
                   </Text>
                 </View>
               ) : null

@@ -1,14 +1,15 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/styles";
-import { FanPredictionStyles } from "@/styles/GameDetailStyles/FanPredictionStyles";
+import { FanPredictionStyles } from "@/styles/FanPredictionStyles/FanPredictionStyles";
+import { Ionicons } from "@expo/vector-icons";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 
 import { memo, useEffect, useMemo } from "react";
 import {
   Image,
-  type ImageProps,
   Text,
   TouchableOpacity,
   View,
+  type ImageProps,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
@@ -37,6 +38,8 @@ type PredictionCardProps = {
   percentText: string;
   isDark: boolean;
   style?: StyleProp<ViewStyle>;
+  variant?: "default" | "matchup";
+  isSubmitting?: boolean;
 };
 
 function PredictionCard({
@@ -51,9 +54,12 @@ function PredictionCard({
   percentText,
   isDark,
   style,
+  variant = "default",
+  isSubmitting = false,
 }: PredictionCardProps) {
   const styles = useMemo(() => FanPredictionStyles(isDark), [isDark]);
   const teamLabel = code || "team";
+  const isMatchup = variant === "matchup";
   const selectionProgress = useSharedValue(isSelected ? 1 : 0);
   const selectedBorderColor = styles.predictionCardSelected.borderColor;
 
@@ -79,7 +85,12 @@ function PredictionCard({
       onPress={onPress}
       disabled={disabled}
       activeOpacity={disabled ? 1 : 0.7}
-      style={[styles.predictionCard, style, animatedBorderStyle]}
+      style={[
+        styles.predictionCard,
+        isMatchup && styles.matchupCard,
+        style,
+        animatedBorderStyle,
+      ]}
       accessibilityRole="button"
       accessibilityLabel={`${isSelected ? "Your pick: " : ""}${
         showPercent
@@ -89,6 +100,7 @@ function PredictionCard({
       accessibilityState={{
         disabled,
         selected: isSelected,
+        busy: isSubmitting,
       }}
     >
       <PredictionGradient
@@ -100,33 +112,73 @@ function PredictionCard({
 
       {isSelected ? (
         <View
-          style={styles.selectedBadge}
+          style={[
+            styles.selectedBadge,
+            isMatchup && styles.matchupSelectedBadge,
+          ]}
           pointerEvents="none"
           accessible={false}
         >
-          <Ionicons
-            name="checkmark"
-            size={14}
-            color={isDark ? Colors.black : Colors.white}
-          />
+          {isSubmitting ? (
+            <CustomActivityIndicator size={14} thickness={2} />
+          ) : (
+            <Ionicons
+              name="checkmark"
+              size={14}
+              color={isDark ? Colors.black : Colors.white}
+            />
+          )}
         </View>
       ) : null}
 
-      <View style={styles.cardContent}>
-        <Image
-          source={typeof logo === "string" ? { uri: logo } : logo}
-          style={styles.teamLogo}
-          resizeMode="contain"
-          fadeDuration={120}
-        />
-
-        <Text numberOfLines={1} style={styles.teamLabel}>
-          {teamLabel}
-        </Text>
-
-        {showPercent ? (
-          <Text style={styles.votePercentage}>{percentText}</Text>
-        ) : null}
+      <View
+        style={[styles.cardContent, isMatchup && styles.matchupCardContent]}
+      >
+        {isMatchup ? (
+          <>
+            <View style={styles.matchupIdentity}>
+              <Image
+                source={typeof logo === "string" ? { uri: logo } : logo}
+                style={styles.teamLogo}
+                resizeMode="contain"
+                fadeDuration={120}
+              />
+              <Text numberOfLines={1} style={styles.matchupTeamLabel}>
+                {teamLabel}
+              </Text>
+            </View>
+            {showPercent ? (
+              <View>
+                <Text style={styles.matchupPercentage}>{percentText}</Text>
+                <Text style={styles.matchupPercentageLabel}>
+                  {isSubmitting ? "Saving…" : "of fan picks"}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.matchupAction}>
+                <View style={styles.selectionRing} />
+                <Text numberOfLines={1} style={styles.matchupActionText}>
+                  {disabled ? "Picks unavailable" : `Pick ${teamLabel}`}
+                </Text>
+              </View>
+            )}
+          </>
+        ) : (
+          <>
+            <Image
+              source={typeof logo === "string" ? { uri: logo } : logo}
+              style={styles.teamLogo}
+              resizeMode="contain"
+              fadeDuration={120}
+            />
+            <Text numberOfLines={1} style={styles.teamLabel}>
+              {teamLabel}
+            </Text>
+            {showPercent && (
+              <Text style={styles.votePercentage}>{percentText}</Text>
+            )}
+          </>
+        )}
       </View>
     </AnimatedTouchableOpacity>
   );

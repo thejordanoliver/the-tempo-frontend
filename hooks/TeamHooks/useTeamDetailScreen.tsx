@@ -1,6 +1,6 @@
 import { CustomHeader } from "components/CustomHeader";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
-import type { HeaderImageSource } from "components/CustomHeader/types";
+import type { HeaderImageSource } from "utils/customheader/types";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -16,11 +16,13 @@ type TeamHeaderConfig = {
   teamId: number;
   notificationTeamId?: number;
   teamName?: string | null;
+  title?: string;
   teamColor: string;
   logo: HeaderImageSource;
   favorite?: { lookupId: number; toggleId: number };
   favoriteLeague?: string;
   infoEnabled?: boolean;
+  notificationsEnabled?: boolean;
 };
 
 type TeamDetailConfig = {
@@ -113,6 +115,7 @@ export function useTeamDetailScreen({
     navigation.setOptions({
       header: () => (
         <CustomHeader
+          title={header.title}
           teamId={header.teamId}
           logo={header.logo}
           teamName={header.teamName}
@@ -125,10 +128,16 @@ export function useTeamDetailScreen({
               ? undefined
               : () => toggleFavorite(favoriteLeague, favoriteToggleId)
           }
-          onToggleNotifications={() =>
-            void toggleNotifications(header.league, notificationTeamId)
+          onToggleNotifications={
+            header.notificationsEnabled === false
+              ? undefined
+              : () =>
+                  void toggleNotifications(header.league, notificationTeamId)
           }
-          isNotified={isNotified(header.league, notificationTeamId)}
+          isNotified={
+            header.notificationsEnabled !== false &&
+            isNotified(header.league, notificationTeamId)
+          }
           onOpenInfo={
             header.infoEnabled ? () => setModalVisible(true) : undefined
           }
@@ -142,12 +151,14 @@ export function useTeamDetailScreen({
     router,
     isDark,
     header.league,
+    header.title,
     header.teamId,
     notificationTeamId,
     header.logo,
     header.teamName,
     header.teamColor,
     header.infoEnabled,
+    header.notificationsEnabled,
     favoriteLeague,
     favoriteToggleId,
     favorited,

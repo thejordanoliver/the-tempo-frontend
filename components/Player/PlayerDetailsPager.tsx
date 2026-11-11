@@ -11,11 +11,11 @@ import {
   type ReactNode,
 } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import PagerView from "react-native-pager-view";
+import PagerView from "components/PagerView";
 import type {
   PageScrollStateChangedNativeEvent,
   PagerViewOnPageSelectedEvent,
-} from "react-native-pager-view";
+} from "components/PagerView";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 type Page = { label: string; content: ReactNode };

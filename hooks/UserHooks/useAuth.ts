@@ -1,19 +1,25 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import axios, { CanceledError } from "axios";
 import { useEffect, useState } from "react";
 import { disconnectNotificationSocket } from "services/notificationSocket";
 import { useBadgeNotificationStore } from "store/badgeNotificationStore";
 import { useLikesStore } from "store/useLikesStore";
 import {
   apiClient,
+  API_REQUEST_TIMEOUT_MS,
+  API_UPLOAD_TIMEOUT_MS,
   clearAuthSession,
   getAccessToken,
   getRefreshToken,
-  saveTokens,
+  startAuthSession,
   subscribeAuthSession,
 } from "utils/apiClient";
+import {
+  getAuthSessionVersion,
+  isAuthSessionCurrent,
+} from "utils/auth/authSessionLifecycle";
 
 interface User {
   id: number;
@@ -47,6 +53,7 @@ const loadStoredAuthSnapshot = async (): Promise<{
   accessToken: string;
   user: User;
 } | null> => {
+  const version = getAuthSessionVersion();
   const [accessToken, values] = await Promise.all([
     getAccessToken(),
     AsyncStorage.multiGet([
@@ -60,6 +67,7 @@ const loadStoredAuthSnapshot = async (): Promise<{
   ]);
 
   const stored: Record<string, string | null> = Object.fromEntries(values);
+  if (!isAuthSessionCurrent(version)) return null;
   const parsedUserId = stored.userId ? Number.parseInt(stored.userId, 10) : NaN;
 
   if (
@@ -97,6 +105,7 @@ export function useAuth() {
 
     const unsubscribe = subscribeAuthSession(({ accessToken }) => {
       if (!isMounted) return;
+      const version = getAuthSessionVersion();
 
       setToken(accessToken);
 
@@ -108,7 +117,7 @@ export function useAuth() {
 
       void loadStoredAuthSnapshot()
         .then((snapshot) => {
-          if (!isMounted || !snapshot) return;
+          if (!isMounted || !snapshot || !isAuthSessionCurrent(version)) return;
           useLikesStore.getState().setUser(String(snapshot.user.id));
           setUser(snapshot.user);
         })
@@ -126,9 +135,12 @@ export function useAuth() {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
     const loadUser = async () => {
+      const version = getAuthSessionVersion();
       try {
         const snapshot = await loadStoredAuthSnapshot();
+        if (!isMounted || !isAuthSessionCurrent(version)) return;
 
         if (!snapshot) {
           await clearAuthSession();
@@ -144,11 +156,14 @@ export function useAuth() {
       } catch (err) {
         console.error("Failed to load user from storage:", err);
       } finally {
-        setLoadingUser(false);
+        if (isMounted) setLoadingUser(false);
       }
     };
 
     loadUser();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleAuthSuccess = async (
@@ -156,11 +171,7 @@ export function useAuth() {
     refreshToken: string,
     user: User,
   ) => {
-    useLikesStore.getState().setUser(String(user.id));
-    setToken(accessToken);
-    setUser(user);
-
-    await AsyncStorage.multiSet([
+    const version = await startAuthSession(accessToken, refreshToken, [
       ["userId", user.id.toString()],
       ["username", normalizeString(user.username)],
       ["fullName", normalizeString(user.full_name ?? user.fullName)],
@@ -173,7 +184,12 @@ export function useAuth() {
       ["authUser", JSON.stringify(normalizeCachedAuthUser(user))],
     ]);
 
-    await saveTokens(accessToken, refreshToken);
+    if (!isAuthSessionCurrent(version)) {
+      throw new CanceledError("Authentication session changed");
+    }
+    useLikesStore.getState().setUser(String(user.id));
+    setToken(accessToken);
+    setUser(user);
   };
 
   const login = async (username: string, password: string) => {
@@ -218,6 +234,7 @@ export function useAuth() {
         user: User;
       }>("api/signup", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        timeout: API_UPLOAD_TIMEOUT_MS,
       });
 
       await handleAuthSuccess(
@@ -239,6 +256,7 @@ export function useAuth() {
 
   const logout = async () => {
     const currentUserId = user?.id;
+    const version = getAuthSessionVersion();
     let refreshToken: string | null = null;
 
     try {
@@ -247,28 +265,32 @@ export function useAuth() {
       console.warn("Failed to read refresh token before logout:", err);
     }
 
-    try {
-      if (refreshToken) {
-        try {
-          await axios.post(`${apiClient.defaults.baseURL}/api/logout`, {
-            refreshToken,
-          });
-        } catch (err) {
-          console.warn("Failed to revoke refresh token on server:", err);
-        }
-      }
-    } finally {
-      try {
-        await clearAuthSession(currentUserId);
-      } catch (err) {
-        console.warn("Failed to clear local auth session:", err);
-      }
+    if (!isAuthSessionCurrent(version)) return;
+    const cleanup = clearAuthSession(currentUserId);
+    disconnectNotificationSocket();
+    useBadgeNotificationStore.getState().clearBadgeNotifications();
+    useLikesStore.getState().setUser(null);
+    setUser(null);
+    setToken(null);
 
-      disconnectNotificationSocket();
-      useBadgeNotificationStore.getState().clearBadgeNotifications();
-      useLikesStore.getState().setUser(null);
-      setUser(null);
-      setToken(null);
+    if (refreshToken) {
+      // Revocation uses only the captured credential. It must not attach a later
+      // account's token or run session interceptors after local sign-out.
+      void axios
+        .post(
+          `${apiClient.defaults.baseURL}/api/logout`,
+          { refreshToken },
+          { timeout: API_REQUEST_TIMEOUT_MS },
+        )
+        .catch((err) =>
+          console.warn("Failed to revoke refresh token on server:", err),
+        );
+    }
+
+    try {
+      await cleanup;
+    } catch (err) {
+      console.warn("Failed to clear local auth session:", err);
     }
   };
 

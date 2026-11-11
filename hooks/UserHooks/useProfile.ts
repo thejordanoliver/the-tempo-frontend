@@ -1,6 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCallback, useState } from "react";
-import { apiClient } from "utils/apiClient";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { apiClient, subscribeAuthSession } from "utils/apiClient";
+import {
+  getAuthSessionVersion,
+  isAuthSessionCurrent,
+  withAuthStorageLock,
+} from "utils/auth/authSessionLifecycle";
 
 function parseImageUrl(url: string | null | undefined): string | null {
   if (!url || url === "null" || url === "undefined") return null;
@@ -13,24 +18,42 @@ function parseString(value: string | null | undefined): string | null {
   return value;
 }
 
-function parseCachedString(value: string | null | undefined): string {
-  return parseString(value) ?? "";
-}
+type ProfileResponse = {
+  id: number;
+  username: string;
+  fullName?: string;
+  full_name?: string;
+  bio?: string | null;
+  profileImage?: string | null;
+  profile_image?: string | null;
+  bannerImage?: string | null;
+  banner_image?: string | null;
+  followersCount?: number;
+  followingCount?: number;
+};
+
+type ProfileRequest = {
+  version: number;
+  controller: AbortController;
+};
 
 export function useProfile() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-
   const [username, setUsername] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string | null>(null);
   const [bio, setBio] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const requestRef = useRef<ProfileRequest | null>(null);
+  const mounted = useRef(true);
 
   const resetProfile = useCallback(() => {
+    requestRef.current?.controller.abort();
+    requestRef.current = null;
+    setIsLoading(false);
     setCurrentUserId(null);
     setUsername(null);
     setFullName(null);
@@ -41,118 +64,118 @@ export function useProfile() {
     setFollowingCount(0);
   }, []);
 
-  const loadFromCache = useCallback(async () => {
+  useEffect(() => {
+    mounted.current = true;
+    const unsubscribe = subscribeAuthSession(({ accessToken }) => {
+      if (!accessToken) resetProfile();
+    });
+    return () => {
+      mounted.current = false;
+      requestRef.current?.controller.abort();
+      requestRef.current = null;
+      unsubscribe();
+    };
+  }, [resetProfile]);
+
+  const loadProfile = useCallback(async () => {
+    requestRef.current?.controller.abort();
+    const request: ProfileRequest = {
+      version: getAuthSessionVersion(),
+      controller: new AbortController(),
+    };
+    requestRef.current = request;
+    const isCurrent = () =>
+      mounted.current &&
+      requestRef.current === request &&
+      isAuthSessionCurrent(request.version);
+    setIsLoading(true);
+    let userId: number | null = null;
+
     try {
-      const keys = [
+      const values = await AsyncStorage.multiGet([
         "userId",
         "username",
         "fullName",
         "bio",
         "profileImage",
         "bannerImage",
-      ];
-
-      const result = await AsyncStorage.multiGet(keys);
-      const data = Object.fromEntries(result);
-      const cachedUserId = data.userId ? Number(data.userId) : null;
-
-      if (cachedUserId) {
-        setCurrentUserId(cachedUserId);
-      }
-
-      setUsername(parseString(data.username));
-      setFullName(parseString(data.fullName));
-      setBio(parseString(data.bio));
-      setProfileImage(parseImageUrl(data.profileImage));
-      setBannerImage(parseImageUrl(data.bannerImage));
-      return cachedUserId;
-    } catch (error) {
-      console.warn("[useProfile] Cache load failed:", error);
-      return null;
-    }
-  }, []);
-
-  const saveToCache = useCallback(async (data: any) => {
-    try {
-      const username = parseCachedString(data.username);
-      const fullName = parseCachedString(data.fullName ?? data.full_name);
-      const profileImage = parseCachedString(
-        data.profileImage ?? data.profile_image,
-      );
-      const bannerImage = parseCachedString(
-        data.bannerImage ?? data.banner_image,
-      );
-
-      const entries: [string, string][] = [
-        ["userId", String(data.id)],
-        ["username", username],
-        ["fullName", fullName],
-        ["bio", parseCachedString(data.bio)],
-        ["profileImage", profileImage],
-        ["bannerImage", bannerImage],
-        [
-          "authUser",
-          JSON.stringify({
-            id: data.id,
-            username,
-            fullName,
-            profileImage,
-          }),
-        ],
-      ];
-
-      await AsyncStorage.multiSet(entries);
-    } catch (error) {
-      console.warn("[useProfile] Cache save failed:", error);
-    }
-  }, []);
-
-  const loadFromAPI = useCallback(
-    async (userId: string) => {
-      try {
-        const { data } = await apiClient.get(`/api/users/id/${userId}`);
-
-        setCurrentUserId(data.id);
-        setUsername(parseString(data.username));
-        setFullName(parseString(data.fullName ?? data.full_name));
-        setBio(parseString(data.bio));
-        setProfileImage(parseImageUrl(data.profileImage ?? data.profile_image));
-        setBannerImage(parseImageUrl(data.bannerImage ?? data.banner_image));
-        setFollowersCount(data.followersCount ?? 0);
-        setFollowingCount(data.followingCount ?? 0);
-
-        await saveToCache(data);
-        return Number(data.id);
-      } catch (error) {
-        console.warn("[useProfile] API load failed:", error);
-        return Number(userId);
-      }
-    },
-    [saveToCache],
-  );
-
-  const loadProfile = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      const userId = await AsyncStorage.getItem("userId");
-
-      if (!userId) {
+      ]);
+      if (!isCurrent()) return null;
+      const cached = Object.fromEntries(values);
+      userId = cached.userId ? Number(cached.userId) : null;
+      if (!userId || !Number.isSafeInteger(userId) || userId < 1) {
         resetProfile();
-        setIsLoading(false);
         return null;
       }
 
-      await loadFromCache();
+      setCurrentUserId(userId);
+      setUsername(parseString(cached.username));
+      setFullName(parseString(cached.fullName));
+      setBio(parseString(cached.bio));
+      setProfileImage(parseImageUrl(cached.profileImage));
+      setBannerImage(parseImageUrl(cached.bannerImage));
 
-      return await loadFromAPI(userId);
+      const { data } = await apiClient.get<ProfileResponse>(
+        `/api/users/id/${userId}`,
+        { signal: request.controller.signal },
+      );
+      if (!isCurrent()) return null;
+      if (Number(data.id) !== userId)
+        throw new Error("Profile identity mismatch");
+
+      const nextUsername = parseString(data.username);
+      const nextFullName = parseString(data.fullName ?? data.full_name);
+      const nextBio = parseString(data.bio);
+      const nextProfileImage = parseImageUrl(
+        data.profileImage ?? data.profile_image,
+      );
+      const nextBannerImage = parseImageUrl(
+        data.bannerImage ?? data.banner_image,
+      );
+
+      await withAuthStorageLock(async () => {
+        if (!isCurrent()) return;
+        try {
+          // Authentication owns userId. Profile hydration can only update the
+          // current account's presentation fields and never replace its identity.
+          await AsyncStorage.multiSet([
+            ["username", nextUsername ?? ""],
+            ["fullName", nextFullName ?? ""],
+            ["bio", nextBio ?? ""],
+            ["profileImage", nextProfileImage ?? ""],
+            ["bannerImage", nextBannerImage ?? ""],
+            [
+              "authUser",
+              JSON.stringify({
+                id: userId,
+                username: nextUsername ?? "",
+                fullName: nextFullName ?? "",
+                profileImage: nextProfileImage ?? "",
+              }),
+            ],
+          ]);
+        } catch (error) {
+          console.warn("[useProfile] Cache save failed:", error);
+        }
+      });
+      if (!isCurrent()) return null;
+
+      setUsername(nextUsername);
+      setFullName(nextFullName);
+      setBio(nextBio);
+      setProfileImage(nextProfileImage);
+      setBannerImage(nextBannerImage);
+      setFollowersCount(data.followersCount ?? 0);
+      setFollowingCount(data.followingCount ?? 0);
+      return userId;
     } catch (error) {
-      console.warn("[useProfile] Failed:", error);
-      return null;
+      if (!isCurrent()) return null;
+      console.warn("[useProfile] Load failed:", error);
+      return userId;
     } finally {
-      setIsLoading(false);
+      if (isCurrent()) setIsLoading(false);
     }
-  }, [loadFromCache, loadFromAPI, resetProfile]);
+  }, [resetProfile]);
 
   return {
     isLoading,

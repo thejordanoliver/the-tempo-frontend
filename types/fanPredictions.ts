@@ -21,6 +21,8 @@ export type RankedPredictionContext = {
   date?: string;
   state?: string;
 };
+export type FanPredictionSport = RankedPredictionContext["sport"];
+export type FanPredictionSportFilter = "all" | FanPredictionSport;
 export type FanPredictionRanking = {
   userId: number;
   username: string;

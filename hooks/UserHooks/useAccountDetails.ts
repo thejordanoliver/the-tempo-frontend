@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import type { PrivateAccountUser } from "types/user";
 import { apiClient, BASE_URL, saveTokens } from "utils/apiClient";
+import { getAuthSessionVersion } from "utils/auth/authSessionLifecycle";
 
 export type AccountDetailsUser = PrivateAccountUser;
 
@@ -84,6 +85,7 @@ export function useAccountDetails() {
     currentPassword,
     newPassword,
   }: ChangePasswordInput) => {
+    const version = getAuthSessionVersion();
     setError(null);
 
     try {
@@ -95,7 +97,11 @@ export function useAccountDetails() {
         },
       );
 
-      await saveTokens(response.data.accessToken, response.data.refreshToken);
+      await saveTokens(
+        response.data.accessToken,
+        response.data.refreshToken,
+        version,
+      );
 
       return response.data;
     } catch (err: unknown) {

@@ -1,7 +1,10 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import { Colors } from "constants/styles";
-import type { Play } from "hooks/BasketballHooks/useBasketballGameDetails";
+import type {
+  GameStatus,
+  Play,
+} from "hooks/BasketballHooks/useBasketballGameDetails";
 import { useBasketballPlayback } from "hooks/BasketballHooks/useBasketballPlayback";
 import { useScreenActivity } from "hooks/useScreenActivity";
 import { memo, useMemo, useState } from "react";
@@ -21,6 +24,7 @@ type Props = {
   awayColor?: string;
   homeColor?: string;
   state?: string | null;
+  gameStatus?: Partial<GameStatus> | null;
   isDark: boolean;
   league: string;
   scope?: string;
@@ -63,6 +67,7 @@ function BasketballPlayByPlay({
   awayColor,
   homeColor,
   state,
+  gameStatus,
   isDark,
   scope = "",
   neutralSite,
@@ -104,7 +109,9 @@ function BasketballPlayByPlay({
           logo={teamLogo}
           period={latest ? period : null}
           clock={latest ? clock : null}
-          isLive={playback.followingLatest && isBasketballPlayLive(state)}
+          isLive={
+            playback.followingLatest && isBasketballPlayLive(state, gameStatus)
+          }
         />
         <View style={styles.detailRow}>
           <Text

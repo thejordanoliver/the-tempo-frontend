@@ -1275,7 +1275,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2011,
     name: "Alabama State",
-    shortName: "Alabama St",
+    shortName: "Alabama St.",
     fullName: "Alabama State Hornets",
     code: "ALST",
     primaryColor: "#e9a900",
@@ -1294,7 +1294,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2016,
     name: "Alcorn State",
-    shortName: "Alcorn St",
+    shortName: "Alcorn St.",
     fullName: "Alcorn State Braves",
     code: "ALCN",
     primaryColor: "#4b0058",
@@ -1313,7 +1313,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2026,
     name: "App State",
-    shortName: "App State",
+    shortName: "App St.",
     fullName: "App State Mountaineers",
     code: "APP",
     primaryColor: "#000000",
@@ -1351,7 +1351,7 @@ export const cfbTeams: Team[] = [
   {
     id: 9,
     name: "Arizona State",
-    shortName: "Arizona St",
+    shortName: "Arizona St.",
     fullName: "Arizona State Sun Devils",
     code: "ASU",
     primaryColor: "#8e0c3a",
@@ -1389,7 +1389,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2032,
     name: "Arkansas State",
-    shortName: "Arkansas St",
+    shortName: "Arkansas St.",
     fullName: "Arkansas State Red Wolves",
     code: "ARST",
     primaryColor: "#e81018",
@@ -1503,7 +1503,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2050,
     name: "Ball State",
-    shortName: "Ball State",
+    shortName: "Ball St.",
     fullName: "Ball State Cardinals",
     code: "BALL",
     primaryColor: "#cc0000",
@@ -1579,7 +1579,7 @@ export const cfbTeams: Team[] = [
   {
     id: 68,
     name: "Boise State",
-    shortName: "Boise St",
+    shortName: "Boise St.",
     fullName: "Boise State Broncos",
     code: "BOIS",
     primaryColor: "#0033a0",
@@ -1636,7 +1636,7 @@ export const cfbTeams: Team[] = [
     id: 2075,
     name: "Bowie State",
     fullName: "Bowie State Bulldogs",
-    shortName: "Bowie St",
+    shortName: "Bowie St.",
     code: "BSU",
     primaryColor: "#FECF0A",
     secondaryColor: "#000000",
@@ -2088,7 +2088,7 @@ export const cfbTeams: Team[] = [
   {
     id: 36,
     name: "Colorado State",
-    shortName: "Colorado St",
+    shortName: "Colorado St.",
     fullName: "Colorado State Rams",
     code: "CSU",
     primaryColor: "#1e4d2b",
@@ -2221,7 +2221,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2169,
     name: "Delaware State",
-    shortName: "Delaware St",
+    shortName: "Delaware St.",
     fullName: "Delaware State Hornets",
     code: "DSU",
     primaryColor: "#FF3630",
@@ -2337,7 +2337,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2193,
     name: "East Tennessee State",
-    shortName: "East Tenn St",
+    shortName: "East Tenn St.",
     fullName: "East Tennessee State Buccaneers",
     code: "ETSU",
     primaryColor: "#002d61",
@@ -2546,7 +2546,7 @@ export const cfbTeams: Team[] = [
   {
     id: 52,
     name: "Florida State",
-    shortName: "Florida St",
+    shortName: "Florida St.",
     fullName: "Florida State Seminoles",
     code: "FSU",
     primaryColor: "#782f40",
@@ -2602,7 +2602,7 @@ export const cfbTeams: Team[] = [
   {
     id: 278,
     name: "Fresno State",
-    shortName: "Fresno St",
+    shortName: "Fresno St.",
     fullName: "Fresno State Bulldogs",
     code: "FRES",
     primaryColor: "#c41230",
@@ -2621,7 +2621,7 @@ export const cfbTeams: Team[] = [
   {
     id: 341,
     name: "Frostburg State",
-    shortName: "Frostburg St",
+    shortName: "Frostburg St.",
     fullName: "Frostburg State Bobcats",
     code: "FRO",
     primaryColor: "#E4002B",
@@ -2735,7 +2735,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2247,
     name: "Georgia State",
-    shortName: "Georgia St",
+    shortName: "Georgia St.",
     fullName: "Georgia State Panthers",
     code: "GAST",
     primaryColor: "#1e539a",
@@ -3001,7 +3001,7 @@ export const cfbTeams: Team[] = [
   {
     id: 304,
     name: "Idaho State",
-    shortName: "Idaho State",
+    shortName: "Idaho St.",
     fullName: "Idaho State Bengals",
     code: "IDST",
     primaryColor: "#ef8c00",
@@ -3039,7 +3039,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2287,
     name: "Illinois State",
-    shortName: "Illinois St",
+    shortName: "Illinois St.",
     fullName: "Illinois State Redbirds",
     code: "ILST",
     primaryColor: "#CE1126",
@@ -3096,7 +3096,7 @@ export const cfbTeams: Team[] = [
   {
     id: 282,
     name: "Indiana State",
-    shortName: "Indiana State",
+    shortName: "Indiana St.",
     fullName: "Indiana State Sycamores",
     code: "INST",
     primaryColor: "#00669a",
@@ -3134,7 +3134,7 @@ export const cfbTeams: Team[] = [
   {
     id: 66,
     name: "Iowa State",
-    shortName: "Iowa State",
+    shortName: "Iowa St.",
     fullName: "Iowa State Cyclones",
     code: "ISU",
     primaryColor: "#822433",
@@ -3172,7 +3172,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2296,
     name: "Jackson State",
-    shortName: "Jackson St",
+    shortName: "Jackson St.",
     fullName: "Jackson State Tigers",
     code: "JKST",
     primaryColor: "#123297",
@@ -3191,7 +3191,7 @@ export const cfbTeams: Team[] = [
   {
     id: 55,
     name: "Jax State",
-    shortName: "Jax State",
+    shortName: "Jax St.",
     fullName: "Jacksonville State Gamecocks",
     code: "JVST",
     primaryColor: "#b50500",
@@ -3229,7 +3229,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2306,
     name: "Kansas State",
-    shortName: "Kansas St",
+    shortName: "Kansas St.",
     fullName: "Kansas State Wildcats",
     code: "KSU",
     primaryColor: "#3c0969",
@@ -3248,7 +3248,7 @@ export const cfbTeams: Team[] = [
   {
     id: 338,
     name: "Kennesaw State",
-    shortName: "Kennesaw St",
+    shortName: "Kennesaw St.",
     fullName: "Kennesaw State Owls",
     code: "KENN",
     primaryColor: "#fdbb30",
@@ -3267,7 +3267,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2309,
     name: "Kent State",
-    shortName: "Kent State",
+    shortName: "Kent St.",
     fullName: "Kent State Golden Flashes",
     code: "KENT",
     primaryColor: "#003976",
@@ -3305,7 +3305,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2310,
     name: "Kentucky State",
-    shortName: "Kentucky St",
+    shortName: "Kentucky St.",
     fullName: "Kentucky State Thorobreds",
     code: "KYST",
     primaryColor: "#056839",
@@ -3742,7 +3742,7 @@ export const cfbTeams: Team[] = [
   {
     id: 127,
     name: "Michigan State",
-    shortName: "Michigan St",
+    shortName: "Michigan St.",
     fullName: "Michigan State Spartans",
     code: "MSU",
     primaryColor: "#18453b",
@@ -3799,7 +3799,7 @@ export const cfbTeams: Team[] = [
   {
     id: 344,
     name: "Mississippi State",
-    shortName: "Miss State",
+    shortName: "Miss St.",
     fullName: "Mississippi State Bulldogs",
     code: "MSST",
     primaryColor: "#5d1725",
@@ -3818,7 +3818,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2400,
     name: "Mississippi Valley St",
-    shortName: "Miss Valley St",
+    shortName: "Miss Valley St.",
     fullName: "Mississippi Valley State Delta Devils",
     code: "MVSU",
     primaryColor: "#005328",
@@ -3856,7 +3856,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2623,
     name: "Missouri State",
-    shortName: "Missouri St",
+    shortName: "Missouri St.",
     fullName: "Missouri State Bears",
     code: "MOST",
     primaryColor: "#5F0000",
@@ -3913,7 +3913,7 @@ export const cfbTeams: Team[] = [
   {
     id: 147,
     name: "Montana State",
-    shortName: "Montana St",
+    shortName: "Montana St.",
     fullName: "Montana State Bobcats",
     code: "MTST",
     primaryColor: "#00205c",
@@ -3932,7 +3932,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2413,
     name: "Morehead State",
-    shortName: "Morehead St",
+    shortName: "Morehead St.",
     fullName: "Morehead State Eagles",
     code: "MORE",
     primaryColor: "#094FA3",
@@ -3951,7 +3951,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2415,
     name: "Morgan State",
-    shortName: "Morgan St",
+    shortName: "Morgan St.",
     fullName: "Morgan State Bears",
     code: "MORG",
     primaryColor: "#014786",
@@ -3970,7 +3970,7 @@ export const cfbTeams: Team[] = [
   {
     id: 93,
     name: "Murray State",
-    shortName: "Murray St",
+    shortName: "Murray St.",
     fullName: "Murray State Racers",
     code: "MUR",
     primaryColor: "#002148",
@@ -3989,7 +3989,7 @@ export const cfbTeams: Team[] = [
   {
     id: 152,
     name: "NC State",
-    shortName: "NC State",
+    shortName: "NC St.",
     fullName: "NC State Wolfpack",
     code: "NCSU",
     primaryColor: "#cc0000",
@@ -4124,7 +4124,7 @@ export const cfbTeams: Team[] = [
   {
     id: 166,
     name: "New Mexico State",
-    shortName: "New Mexico St",
+    shortName: "New Mexico St.",
     fullName: "New Mexico State Aggies",
     code: "NMSU",
     primaryColor: "#891216",
@@ -4179,7 +4179,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2450,
     name: "Norfolk State",
-    shortName: "Norfolk St",
+    shortName: "Norfolk St.",
     fullName: "Norfolk State Spartans",
     code: "NORF",
     primaryColor: "#0c8968",
@@ -4256,7 +4256,7 @@ export const cfbTeams: Team[] = [
     id: 2222,
     name: "Ferris State",
     fullName: "Ferris State Bulldogs",
-    shortName: "Ferris St",
+    shortName: "Ferris St.",
     code: "FSU",
     primaryColor: "#c41230",
     secondaryColor: "#000000",
@@ -4310,7 +4310,7 @@ export const cfbTeams: Team[] = [
     id: 2627,
     name: "Tarleton State",
     fullName: "Tarleton State Texans",
-    shortName: "Tarleton St",
+    shortName: "Tarleton St.",
     code: "TAR",
     primaryColor: "#4f2d7f",
     secondaryColor: "#ffffff",
@@ -4436,7 +4436,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2449,
     name: "North Dakota State",
-    shortName: "North Dakota St",
+    shortName: "North Dakota St.",
     fullName: "North Dakota State Bison",
     code: "NDSU",
     primaryColor: "#01402A",
@@ -4588,7 +4588,7 @@ export const cfbTeams: Team[] = [
     id: 2466,
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
-    shortName: "N'Western St",
+    shortName: "N'Western St.",
     code: "NWST",
     primaryColor: "#492F91",
     secondaryColor: "#ed6118",
@@ -4665,7 +4665,7 @@ export const cfbTeams: Team[] = [
   {
     id: 194,
     name: "Ohio State",
-    shortName: "Ohio State",
+    shortName: "Ohio St.",
     fullName: "Ohio State Buckeyes",
     code: "OSU",
     primaryColor: "#ce1141",
@@ -4703,7 +4703,7 @@ export const cfbTeams: Team[] = [
   {
     id: 197,
     name: "Oklahoma State",
-    shortName: "Oklahoma St",
+    shortName: "Oklahoma St.",
     fullName: "Oklahoma State Cowboys",
     code: "OKST",
     primaryColor: "#000000",
@@ -4779,7 +4779,7 @@ export const cfbTeams: Team[] = [
   {
     id: 204,
     name: "Oregon State",
-    shortName: "Oregon State",
+    shortName: "Oregon St.",
     fullName: "Oregon State Beavers",
     code: "ORST",
     primaryColor: "#231f20",
@@ -4798,7 +4798,7 @@ export const cfbTeams: Team[] = [
   {
     id: 213,
     name: "Penn State",
-    shortName: "Penn State",
+    shortName: "Penn St.",
     fullName: "Penn State Nittany Lions",
     code: "PSU",
     primaryColor: "#00265D",
@@ -4876,7 +4876,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2502,
     name: "Portland State",
-    shortName: "Portland State",
+    shortName: "Portland St.",
     fullName: "Portland State Vikings",
     code: "PRST",
     primaryColor: "#00311e",
@@ -5085,7 +5085,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2546,
     name: "SE Missouri State",
-    shortName: "SE Missouri State",
+    shortName: "SE Missouri St.",
     fullName: "Southeast Missouri State Redhawks",
     code: "SEMO",
     primaryColor: "#c8102e",
@@ -5123,7 +5123,7 @@ export const cfbTeams: Team[] = [
   {
     id: 16,
     name: "Sacramento State",
-    shortName: "Sac State",
+    shortName: "Sac St.",
     fullName: "Sacramento State Hornets",
     code: "SAC",
     primaryColor: "#00573C",
@@ -5238,7 +5238,7 @@ export const cfbTeams: Team[] = [
     id: 21,
     name: "San Diego State",
     fullName: "San Diego State Aztecs",
-    shortName: "San Diego St",
+    shortName: "San Diego St.",
     code: "SDSU",
     primaryColor: "#c41230",
     secondaryColor: "#000000",
@@ -5256,7 +5256,7 @@ export const cfbTeams: Team[] = [
   {
     id: 23,
     name: "San José State",
-    shortName: "San José State",
+    shortName: "San José St.",
     fullName: "San José State Spartans",
     code: "SJSU",
     primaryColor: "#005893",
@@ -5314,7 +5314,7 @@ export const cfbTeams: Team[] = [
     id: 2569,
     name: "South Carolina St",
     fullName: "South Carolina State Bulldogs",
-    shortName: "SC State",
+    shortName: "SC St.",
     code: "SCST",
     primaryColor: "#7d1315",
     secondaryColor: "#104897",
@@ -5369,7 +5369,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2571,
     name: "South Dakota State",
-    shortName: "South Dakota State",
+    shortName: "South Dakota St.",
     fullName: "South Dakota State Jackrabbits",
     code: "SDST",
     primaryColor: "#0033a0",
@@ -5675,7 +5675,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2634,
     name: "Tennessee State",
-    shortName: "Tennessee State",
+    shortName: "Tennessee St.",
     fullName: "Tennessee State Tigers",
     code: "TNST",
     primaryColor: "#171796",
@@ -5770,7 +5770,7 @@ export const cfbTeams: Team[] = [
   {
     id: 326,
     name: "Texas State",
-    shortName: "Texas State",
+    shortName: "Texas St.",
     fullName: "Texas State Bobcats",
     code: "TXST",
     primaryColor: "#4e1719",
@@ -6209,7 +6209,7 @@ export const cfbTeams: Team[] = [
   {
     id: 328,
     name: "Utah State",
-    shortName: "Utah State",
+    shortName: "Utah St.",
     fullName: "Utah State Aggies",
     code: "USU",
     primaryColor: "#00263a",
@@ -6416,7 +6416,7 @@ export const cfbTeams: Team[] = [
   {
     id: 265,
     name: "Washington State",
-    shortName: "Washington St",
+    shortName: "Washington St.",
     fullName: "Washington State Cougars",
     code: "WSU",
     primaryColor: "#981e32",
@@ -6434,7 +6434,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2692,
     name: "Weber State",
-    shortName: "Weber State",
+    shortName: "Weber St.",
     fullName: "Weber State Wildcats",
     code: "WEB",
     primaryColor: "#18005a",
@@ -6755,7 +6755,7 @@ export const cfbTeams: Team[] = [
     id: 2754,
     name: "Youngstown State",
     fullName: "Youngstown State Penguins",
-    shortName: "Youngstown St",
+    shortName: "Youngstown St.",
     code: "YSU",
     primaryColor: "#E51936",
     secondaryColor: "#690717",
@@ -6828,7 +6828,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2001,
     name: "Adams State",
-    shortName: "Adams State",
+    shortName: "Adams St.",
     fullName: "Adams State Grizzlies",
     code: "ADSU",
     primaryColor: "#000000",
@@ -7026,7 +7026,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2025,
     name: "Angelo State",
-    shortName: "Angelo State",
+    shortName: "Angelo St.",
     fullName: "Angelo State Rams",
     code: "AGSU",
     primaryColor: "#000000",
@@ -7314,7 +7314,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2069,
     name: "Black Hills State",
-    shortName: "Black Hills State",
+    shortName: "Black Hills St.",
     fullName: "Black Hills State Yellow Jackets",
     code: "BHSU",
     primaryColor: "#000000",
@@ -7404,7 +7404,7 @@ export const cfbTeams: Team[] = [
   {
     id: 18,
     name: "Bridgewater State",
-    shortName: "Bridgewater State",
+    shortName: "Bridgewater St.",
     fullName: "Bridgewater State Bears",
     code: "BRIS",
     primaryColor: "#bf2f38",
@@ -7458,7 +7458,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2085,
     name: "Buffalo State",
-    shortName: "Buffalo State",
+    shortName: "Buffalo St.",
     fullName: "Buffalo State Bengals",
     code: "BSU",
     primaryColor: "#000000",
@@ -7692,7 +7692,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2123,
     name: "Chadron State",
-    shortName: "Chadron State",
+    shortName: "Chadron St.",
     fullName: "Chadron State Eagles",
     code: "CHAD",
     primaryColor: "#000000",
@@ -7980,7 +7980,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2170,
     name: "Delta State",
-    shortName: "Delta State",
+    shortName: "Delta St.",
     fullName: "Delta State Statesmen",
     code: "DLST",
     primaryColor: "#00753e",
@@ -8178,7 +8178,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2214,
     name: "Emporia State",
-    shortName: "Emporia State",
+    shortName: "Emporia St.",
     fullName: "Emporia State Hornets",
     code: "EMSU",
     primaryColor: "#000000",
@@ -8232,7 +8232,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2986,
     name: "Fairmont State",
-    shortName: "Fairmont State",
+    shortName: "Fairmont St.",
     fullName: "Fairmont State Falcons",
     code: "FMSU",
     primaryColor: "#000000",
@@ -8286,7 +8286,7 @@ export const cfbTeams: Team[] = [
   {
     id: 114,
     name: "Fitchburg State",
-    shortName: "Fitchburg State",
+    shortName: "Fitchburg St.",
     fullName: "Fitchburg State Falcons",
     code: "FBSU",
     primaryColor: "#024d36",
@@ -8340,7 +8340,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2967,
     name: "Framingham State",
-    shortName: "Framingham State",
+    shortName: "Framingham St.",
     fullName: "Framingham State Rams",
     code: "FRSU",
     primaryColor: "#000000",
@@ -8466,7 +8466,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2249,
     name: "Glenville State",
-    shortName: "Glenville State",
+    shortName: "Glenville St.",
     fullName: "Glenville State Pioneers",
     code: "GVLS",
     primaryColor: "#000000",
@@ -8682,7 +8682,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2271,
     name: "Henderson State",
-    shortName: "Henderson State",
+    shortName: "Henderson St.",
     fullName: "Henderson State Reddies",
     code: "HSTU",
     primaryColor: "#000000",
@@ -9438,7 +9438,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2395,
     name: "Midwestern State",
-    shortName: "Midwestern State",
+    shortName: "Midwestern St.",
     fullName: "Midwestern State Mustangs",
     code: "MWSU",
     primaryColor: "#000000",
@@ -9564,7 +9564,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2403,
     name: "Missouri Southern State",
-    shortName: "Missouri Southern State",
+    shortName: "Missouri Southern St.",
     fullName: "Missouri Southern State Lions",
     code: "MSSU",
     primaryColor: "#000000",
@@ -9618,7 +9618,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2818,
     name: "Montclair State",
-    shortName: "Montclair State",
+    shortName: "Montclair St.",
     fullName: "Montclair State Red Hawks",
     code: "MCST",
     primaryColor: "#c20f2f",
@@ -9834,7 +9834,7 @@ export const cfbTeams: Team[] = [
   {
     id: 138,
     name: "Northwest Missouri State",
-    shortName: "Northwest Missouri State",
+    shortName: "Northwest Missouri St.",
     fullName: "Northwest Missouri State Bearcats",
     code: "MWMO",
     primaryColor: "#000000",
@@ -10104,7 +10104,7 @@ export const cfbTeams: Team[] = [
   {
     id: 90,
     name: "Pittsburg State",
-    shortName: "Pittsburg State",
+    shortName: "Pittsburg St.",
     fullName: "Pittsburg State Gorillas",
     code: "PTSU",
     primaryColor: "#000000",
@@ -10122,7 +10122,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2972,
     name: "Plymouth State",
-    shortName: "Plymouth State",
+    shortName: "Plymouth St.",
     fullName: "Plymouth State Panthers",
     code: "PLYM",
     primaryColor: "#054e39",
@@ -10320,7 +10320,7 @@ export const cfbTeams: Team[] = [
   {
     id: 129,
     name: "Saginaw Valley State",
-    shortName: "Saginaw Valley State",
+    shortName: "Saginaw Valley St.",
     fullName: "Saginaw Valley State Cardinals",
     code: "SVSU",
     primaryColor: "#000000",
@@ -10536,7 +10536,7 @@ export const cfbTeams: Team[] = [
   {
     id: 199,
     name: "Southeastern Oklahoma State",
-    shortName: "Southeastern Oklahoma State",
+    shortName: "Southeastern Oklahoma St.",
     fullName: "Southeastern Oklahoma State Savage Storm",
     code: "SEOK",
     primaryColor: "#000000",
@@ -10572,7 +10572,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2583,
     name: "Southern Connecticut State",
-    shortName: "Southern Conn St",
+    shortName: "Southern Conn St.",
     fullName: "Southern Connecticut State Owls",
     code: "SCTS",
     primaryColor: "#000000",
@@ -10644,7 +10644,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2927,
     name: "Southwestern Oklahoma State",
-    shortName: "Southwestern Oklahoma State",
+    shortName: "Southwestern Oklahoma St.",
     fullName: "Southwestern Oklahoma State Bulldogs",
     code: "SOSU",
     primaryColor: "#000000",
@@ -10770,7 +10770,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2834,
     name: "Sul Ross State",
-    shortName: "Sul Ross State",
+    shortName: "Sul Ross St.",
     fullName: "Sul Ross State Lobos",
     code: "SRST",
     primaryColor: "#000000",
@@ -10986,7 +10986,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2654,
     name: "Truman State",
-    shortName: "Truman State",
+    shortName: "Truman St.",
     fullName: "Truman State Bulldogs",
     code: "TRST",
     primaryColor: "#000000",
@@ -11130,7 +11130,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2673,
     name: "Valdosta State",
-    shortName: "Valdosta State",
+    shortName: "Valdosta St.",
     fullName: "Valdosta State Blazers",
     code: "VALD",
     primaryColor: "#dd1a32",
@@ -11256,7 +11256,7 @@ export const cfbTeams: Team[] = [
   {
     id: 131,
     name: "Wayne State (MI)",
-    shortName: "Wayne State (MI)",
+    shortName: "Wayne St. (MI)",
     fullName: "Wayne State (MI) Warriors",
     code: "WSMI",
     primaryColor: "#000000",
@@ -11346,7 +11346,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2707,
     name: "West Virginia State",
-    shortName: "West Virginia State",
+    shortName: "West Virginia St.",
     fullName: "West Virginia State Yellow Jackets",
     code: "WVSU",
     primaryColor: "#000000",
@@ -11436,7 +11436,7 @@ export const cfbTeams: Team[] = [
   {
     id: 2909,
     name: "Westfield State",
-    shortName: "Westfield State",
+    shortName: "Westfield St.",
     fullName: "Westfield State Owls",
     code: "WFST",
     primaryColor: "#1b509e",
@@ -11850,7 +11850,7 @@ export const cfbTeams: Team[] = [
   {
     id: 402,
     name: "Worcester State",
-    shortName: "Worcester State",
+    shortName: "Worcester St.",
     fullName: "Worcester State Lancers",
     code: "WORC",
     primaryColor: "#004b8e",

@@ -1,9 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
+import PillTabs from "components/TabBars/PillTabs";
+import { FAN_PREDICTION_SPORT_FILTERS } from "constants/fanPredictions";
 import { Colors, globalStyles } from "constants/styles";
 import { useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { fanPredictionRankingsStyles } from "styles/FanPredictionStyles/FanPredictionRankingsStyles";
-import type { FanPredictionRanking } from "types/fanPredictions";
+import type {
+  FanPredictionRanking,
+  FanPredictionSportFilter,
+} from "types/fanPredictions";
 import FanRankingRow from "./FanRankingRow";
 
 type Props = {
@@ -12,9 +17,12 @@ type Props = {
   rankings: FanPredictionRanking[];
   showLeaderboard: boolean;
   onOpenUser: (userId: number) => void;
+  sport: FanPredictionSportFilter;
+  onSportChange: (sport: FanPredictionSportFilter) => void;
 };
 
 const RANKING_RULES = [
+  "All Sports combines every sport. Choose a sport to compare points, accuracy, and records from that sport only.",
   "Pick a winner before the game starts. Each correct pregame pick earns one point, or two for rivalry games, playoffs, championships, tournament knockout rounds, or matchups with both teams ranked.",
   "Picks close when the game goes live. Team pick percentages and your selected team remain visible.",
   "Fans with the same number of points share a rank. Accuracy is based on scored picks only.",
@@ -28,11 +36,16 @@ export default function FanRankingsHeader({
   rankings,
   showLeaderboard,
   onOpenUser,
+  sport,
+  onSportChange,
 }: Props) {
   const [rulesExpanded, setRulesExpanded] = useState(false);
   const styles = useMemo(() => fanPredictionRankingsStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
+  const sportLabel = FAN_PREDICTION_SPORT_FILTERS.find(
+    (option) => option.value === sport,
+  )!.label;
 
   return (
     <View style={styles.header}>
@@ -47,7 +60,9 @@ export default function FanRankingsHeader({
             />
           </View>
           <View style={styles.introCopy}>
-            <Text style={styles.eyebrow}>ALL-TIME</Text>
+            <Text style={styles.eyebrow}>
+              ALL-TIME · {sportLabel.toUpperCase()}
+            </Text>
             <Text style={styles.title}>Fan predictions</Text>
           </View>
         </View>
@@ -81,6 +96,16 @@ export default function FanRankingsHeader({
           </View>
         ) : null}
       </View>
+
+      <PillTabs<FanPredictionSportFilter>
+        tabs={FAN_PREDICTION_SPORT_FILTERS}
+        selectedValue={sport}
+        onChange={onSportChange}
+        scrollable
+        minTabWidth={96}
+        containerStyle={styles.sportFilters}
+        tabStyle={styles.sportFilter}
+      />
 
       {me ? (
         <View style={styles.record}>

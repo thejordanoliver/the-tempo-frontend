@@ -14,7 +14,7 @@ import type {
   ForumPost,
   ForumPostResponse,
 } from "types/forum";
-import { apiClient } from "utils/apiClient";
+import { apiClient, API_UPLOAD_TIMEOUT_MS } from "utils/apiClient";
 
 function getPostAuthorId(post: ForumExtendedPost | null) {
   return post?.user_id ?? post?.author?.id ?? null;
@@ -207,6 +207,7 @@ async function createForumComment({
     const res = await apiClient.post<
       ForumCommentCreateResponse<RawForumComment>
     >(endpoint, formData, {
+      timeout: API_UPLOAD_TIMEOUT_MS,
       headers: {
         "Content-Type": "multipart/form-data",
       },

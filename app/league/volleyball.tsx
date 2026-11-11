@@ -1,3 +1,4 @@
+import VolleyballTable from "components/Sports/Volleyball/VolleyballTable";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
 import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
@@ -31,7 +32,7 @@ import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLeagueFavoriteHeader } from "hooks/UserHooks/useLeagueFavoriteHeader";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
-import PagerView from "react-native-pager-view";
+import PagerView from "components/PagerView";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -256,7 +257,16 @@ function MCVBLeagueScreen() {
   );
 
   const standingsPage = (
-    <View key="standings">{hasVisitedTab("standings") ? null : null}</View>
+    <View key="standings" style={styles.contentArea}>
+      {hasVisitedTab("standings") ? <VolleyballTable league={league} /> : null}
+    </View>
+  );
+  const rankingsPage = (
+    <View key="rankings" style={styles.contentArea}>
+      {hasVisitedTab("rankings") ? (
+        <VolleyballTable league={league} kind="rankings" />
+      ) : null}
+    </View>
   );
 
   const forumPage = (
@@ -265,7 +275,13 @@ function MCVBLeagueScreen() {
     </View>
   );
 
-  const pagerPages = [scoresPage, newsPage, standingsPage, forumPage];
+  const pagerPages = [
+    scoresPage,
+    newsPage,
+    standingsPage,
+    rankingsPage,
+    forumPage,
+  ];
 
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */
@@ -492,7 +508,16 @@ function WCVBLeagueScreen() {
   );
 
   const standingsPage = (
-    <View key="standings">{hasVisitedTab("standings") ? null : null}</View>
+    <View key="standings" style={styles.contentArea}>
+      {hasVisitedTab("standings") ? <VolleyballTable league={league} /> : null}
+    </View>
+  );
+  const rankingsPage = (
+    <View key="rankings" style={styles.contentArea}>
+      {hasVisitedTab("rankings") ? (
+        <VolleyballTable league={league} kind="rankings" />
+      ) : null}
+    </View>
   );
 
   const forumPage = (
@@ -501,7 +526,13 @@ function WCVBLeagueScreen() {
     </View>
   );
 
-  const pagerPages = [scoresPage, newsPage, standingsPage, forumPage];
+  const pagerPages = [
+    scoresPage,
+    newsPage,
+    standingsPage,
+    rankingsPage,
+    forumPage,
+  ];
 
   /* ------------------------------------------------------------------------ */
   /*                                  Render                                  */

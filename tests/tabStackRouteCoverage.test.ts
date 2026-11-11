@@ -1,5 +1,5 @@
-import assert from "node:assert/strict";
 import type { Href } from "expo-router";
+import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
@@ -7,7 +7,6 @@ import {
   getTabGroup,
   scopeHrefToTab,
 } from "../utils/navigation/tabStackNavigation";
-import { LEAGUE_TABS } from "../utils/navigation/tabs";
 
 const root = process.cwd();
 

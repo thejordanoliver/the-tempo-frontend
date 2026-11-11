@@ -20,7 +20,7 @@ import type {
   ForumPostCreateResponse,
   ForumPostDestination,
 } from "types/forum";
-import { apiClient } from "utils/apiClient";
+import { apiClient, API_UPLOAD_TIMEOUT_MS } from "utils/apiClient";
 import { getForumPostCreateEndpoint } from "utils/forums/forumPostDestination";
 
 if (
@@ -324,6 +324,7 @@ export function useCreatePost(destination: ForumPostDestination | null) {
       const res = await apiClient.post<
         ForumPostCreateResponse<ForumPost, unknown>
       >(endpoint, formData, {
+        timeout: API_UPLOAD_TIMEOUT_MS,
         headers: {
           "Content-Type": "multipart/form-data",
         },

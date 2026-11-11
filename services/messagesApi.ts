@@ -1,4 +1,4 @@
-import { apiClient } from "utils/apiClient";
+import { apiClient, API_UPLOAD_TIMEOUT_MS } from "utils/apiClient";
 import {
   ConversationReadPayload,
   ConversationReadPosition,
@@ -692,6 +692,7 @@ export const uploadMessageImage = async (
     `/api/messages/conversations/${conversationId}/attachments`,
     formData,
     {
+      timeout: API_UPLOAD_TIMEOUT_MS,
       headers: {
         "Content-Type": "multipart/form-data",
       },

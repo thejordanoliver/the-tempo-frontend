@@ -51,6 +51,79 @@ clear flag: `npm run start:local -- -c` or `npm run start:hosted -- -c`.
 Stop the running Expo server before switching modes. These commands select the
 backend for development sessions; production builds need their own API configuration.
 
+## Release checks
+
+Use Node 22 and install the lockfile with `npm ci`. Copy `.env.example` to `.env`
+and set `EXPO_PUBLIC_API_URL` to the backend for the intended environment.
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npx expo install --check
+npm run export:all
+npx playwright install chromium
+npm run test:e2e
+npm audit
+```
+
+The browser tests use the static `dist` export and a mobile Chromium viewport.
+They exercise sign-in validation, sign-in/sign-up tab switching, and password
+recovery navigation without creating accounts. Volleyball coverage checks both
+leagues' standings, rankings, and team navigation with synthetic account/API
+fixtures and intercepted external requests. To use another export directory,
+set `TEMPO_WEB_DIR=/absolute/path/to/export` when running `npm run test:e2e`.
+The GitHub workflow runs these checks on pull requests and pushes to main/master.
+Device release builds still need verification on iOS and Android before shipping.
+
+The lockfile retains Expo SDK 57. Patched `glob` and `minimatch` overrides address
+build-tool advisories; aliases use Expo's existing `tsconfig.json` support.
+One upstream URL-decoder issue remains in
+`expo-router -> query-string -> decode-uri-component`
+([exponential decoding](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr),
+[quadratic replacement](https://github.com/advisories/GHSA-qr28-fpjm-wq7f)).
+`npm audit` reports three high-severity package entries for that chain. Replacing
+the decoder alone changes its CommonJS API to ESM and breaks its caller; npm's
+available fix upgrades Expo Router across a major version. Resolve this through
+a compatible routing/Expo upgrade before declaring production readiness. The CI
+audit step reports advisories without blocking the other checks while this
+known issue remains; it is not a clean security bill of health.
+
+## Optional crash reporting
+
+Tempo uses the `tempo-frontend` React Native project in the `the-tempo` Sentry
+organization. The project DSN, organization, project slug, and `production`
+environment are configured in EAS production; `SENTRY_AUTH_TOKEN` is stored there
+with secret visibility for native build artifact uploads. Local settings live in the ignored
+`.env`. The initial release-web verification event is
+[TEMPO-FRONTEND-1](https://the-tempo.sentry.io/issues/7839900601/), tagged
+`setup-verification`; its temporary trigger has been removed.
+After uploading that build's source maps, a fresh event,
+[TEMPO-FRONTEND-2](https://the-tempo.sentry.io/issues/7839922905/), resolved to
+`app/_layout.tsx` with readable source context. Native crash reporting and native
+artifact uploads still need validation in the next signed device release build.
+
+Sentry reporting is disabled unless a valid HTTPS `EXPO_PUBLIC_SENTRY_DSN` is set
+in a release build. Development sessions do not send reports. Rebuild the app
+after changing Expo public environment variables.
+Use `EXPO_PUBLIC_SENTRY_ENVIRONMENT=preview` for preview release builds; the
+default is `production`. Native release identifiers come from the installed app's
+version/build, and Expo web uses the app configuration's name and version.
+
+For readable release stack traces, set `SENTRY_ORG`, `SENTRY_PROJECT`, and
+`SENTRY_AUTH_TOKEN` in the build service's secret environment. Never prefix the
+auth token with `EXPO_PUBLIC_` or commit it. Source-map upload is disabled until
+all three are supplied; the DSN is public routing configuration, not that token.
+See [Expo's Sentry guide](https://docs.expo.dev/guides/using-sentry/).
+
+The JavaScript event filter retains exception types and stack locations while
+removing arbitrary error messages, account data, requests, and breadcrumbs.
+Session replay, tracing, logs, and automatic session/breadcrumb tracking are
+disabled. Native crash reports also require reviewing the Sentry project's data
+scrubbing settings; JavaScript `beforeSend` does not filter native crash events.
+Verify a controlled crash in a dedicated release test build and confirm readable
+stack traces before relying on reporting in production.
+
 ## Get a fresh project
 
 When you're ready, run:

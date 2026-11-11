@@ -51,6 +51,11 @@ import { useBadgeRealtimeNotifications } from "../hooks/ForumHooks/useBadgeRealt
 import { useAuth } from "../hooks/UserHooks/useAuth";
 import { useBadgeNotificationStore } from "../store/badgeNotificationStore";
 import { clearAuthSession, getAccessToken } from "../utils/apiClient";
+import { initializeCrashReporting } from "utils/observability/crashReporting";
+
+export { RootErrorBoundary as ErrorBoundary } from "components/RootErrorBoundary";
+
+initializeCrashReporting();
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -324,7 +329,7 @@ function AppLayout() {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Oswald_200ExtraLight,
     Oswald_300Light,
     Oswald_400Regular,
@@ -339,6 +344,7 @@ export default function RootLayout() {
     BarlowCondensed_800ExtraBold,
   });
 
+  if (fontError) throw fontError;
   if (!fontsLoaded) {
     return null;
   }

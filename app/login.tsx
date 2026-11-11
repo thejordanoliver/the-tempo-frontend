@@ -2,7 +2,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Keyboard, View } from "react-native";
-import PagerView from "react-native-pager-view";
+import PagerView from "components/PagerView";
 import ConfirmModal from "components/ConfirmModal";
 import CropEditorModal from "components/CropEditorModal";
 import { CustomHeader, type AuthHeaderTab } from "components/CustomHeader";

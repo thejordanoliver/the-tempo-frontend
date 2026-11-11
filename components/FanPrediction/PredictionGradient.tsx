@@ -1,3 +1,4 @@
+import { FanPredictionStyles } from "@/styles/FanPredictionStyles/FanPredictionStyles";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useEffect, useMemo } from "react";
 import Animated, {
@@ -7,7 +8,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
 import { getTeamGradient } from "utils/teams/teamGradient";
 
 type Props = {

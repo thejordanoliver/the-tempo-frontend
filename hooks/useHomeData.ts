@@ -112,6 +112,18 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useBaseballGames(selectedDate, "mlb", undefined, requestOptions("mlb"));
 
   const {
+    games: cbGames,
+    loading: cbLoading,
+    refreshGames: refreshCBGames,
+  } = useBaseballGames(selectedDate, "cb", undefined, requestOptions("cb"));
+
+  const {
+    games: sbGames,
+    loading: sbLoading,
+    refreshGames: refreshSBGames,
+  } = useBaseballGames(selectedDate, "sb", undefined, requestOptions("sb"));
+
+  const {
     games: nhlGames,
     loading: nhlLoading,
     refreshGames: refreshNHLGames,
@@ -339,6 +351,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => normalizeGames(mlbGames, "mlb"),
     [mlbGames],
   );
+  const normalizedCB = useMemo(() => normalizeGames(cbGames, "cb"), [cbGames]);
+  const normalizedSB = useMemo(() => normalizeGames(sbGames, "sb"), [sbGames]);
   const normalizedNHL = useMemo(
     () => normalizeGames(nhlGames, "nhl"),
     [nhlGames],
@@ -444,6 +458,14 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => safeFilterByDate(normalizedMLB, true),
     [normalizedMLB, safeFilterByDate],
   );
+  const filteredCB = useMemo(
+    () => safeFilterByDate(normalizedCB, true),
+    [normalizedCB, safeFilterByDate],
+  );
+  const filteredSB = useMemo(
+    () => safeFilterByDate(normalizedSB, true),
+    [normalizedSB, safeFilterByDate],
+  );
   const filteredNHL = useMemo(
     () => safeFilterByDate(normalizedNHL, true),
     [normalizedNHL, safeFilterByDate],
@@ -525,6 +547,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       nfl: filteredNFL,
       ufl: filteredUFL,
       mlb: filteredMLB,
+      cb: filteredCB,
+      sb: filteredSB,
       nhl: filteredNHL,
       cfb: filteredCFB,
       msoc: filteredMensSoccer,
@@ -561,6 +585,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     filteredNFL,
     filteredUFL,
     filteredMLB,
+    filteredCB,
+    filteredSB,
     filteredNHL,
     filteredCFB,
     filteredMensSoccer,
@@ -642,6 +668,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
                 wcvb.refreshGames(),
                 refreshNBAGames(),
                 refreshMLBGames(),
+                refreshCBGames(),
+                refreshSBGames(),
                 refreshNHLGames(),
                 refreshNFLGames(),
                 refreshUFLGames(),
@@ -685,6 +713,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     wcvb.loading ||
     nbaLoading ||
     mlbLoading ||
+    cbLoading ||
+    sbLoading ||
     nhlLoading ||
     nflLoading ||
     uflLoading ||

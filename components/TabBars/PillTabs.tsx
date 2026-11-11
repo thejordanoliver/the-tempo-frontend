@@ -183,6 +183,7 @@ export default function PillTabs<T extends string = string>({
                 accessibilityRole="tab"
                 accessibilityLabel={tab.label}
                 accessibilityState={{ selected: active }}
+                aria-selected={active}
                 onLayout={handleTabLayout(tab.value)}
                 onPress={() => {
                   if (!active) {
