@@ -40,7 +40,6 @@ import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import {
   useCallback,
@@ -296,7 +295,7 @@ function NFLLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -679,7 +678,7 @@ function CFBLeagueScreen() {
         <CustomHeader
           tabName={"College Football"}
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
@@ -1013,7 +1012,7 @@ function UFLLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

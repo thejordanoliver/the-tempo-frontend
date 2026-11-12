@@ -491,12 +491,17 @@ export function useFavoriteTeams() {
     }
 
     const league = previewTeam.league.toLowerCase();
+    if (league === "mcvb" || league === "wcvb") {
+      router.push({
+        pathname: "/league/[sport]",
+        params: { sport: "volleyball", league },
+      });
+      setModalVisible(false);
+      return;
+    }
+
     const route =
-      league === "mcvb"
-        ? "/team/mcvb/[teamId]"
-        : league === "wcvb"
-          ? "/team/wcvb/[teamId]"
-          : league === "nfl"
+      league === "nfl"
             ? "/team/nfl/[teamId]"
             : league === "nba"
               ? "/team/[teamId]"

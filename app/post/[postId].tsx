@@ -36,6 +36,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  type TextInputInstance,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ForumComment, ForumCommentAttachment } from "types/forum";
@@ -56,7 +57,7 @@ export default function CommentThreadScreen() {
   const { height: windowHeight } = useWindowDimensions();
 
   const listRef = useRef<FlatList<ForumComment>>(null);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const [keyboardOffset] = useState(() => new Animated.Value(0));
   const hasExitedAfterDeleteRef = useRef(false);
 
@@ -474,7 +475,7 @@ export default function CommentThreadScreen() {
               onImagePress={() => {}}
               disableCommentNavigation
             />
-          ) : null
+          ) : undefined
         }
         ListEmptyComponent={renderEmptyComments}
         keyboardShouldPersistTaps="handled"

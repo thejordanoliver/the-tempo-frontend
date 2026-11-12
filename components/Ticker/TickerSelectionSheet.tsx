@@ -291,7 +291,7 @@ function ActiveTickerSelectionSheet({
                   ? "No matches. Try another name."
                   : "No options available."}
               </Text>
-            ) : null
+            ) : undefined
           }
         />
       </View>

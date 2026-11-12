@@ -81,7 +81,7 @@ export default function NewsList({
           <Text style={global.emptyTitle}>No news available</Text>
         </View>
       }
-      ListFooterComponent={loadingMore ? <NewsCardSkeleton /> : null}
+      ListFooterComponent={loadingMore ? <NewsCardSkeleton /> : undefined}
     />
   );
 }

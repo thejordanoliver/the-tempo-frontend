@@ -63,9 +63,8 @@ export function getTeamRoute(league: LeagueType): string {
     case "sb":
       return "/team/sb/[teamId]";
     case "mcvb":
-      return "/team/mcvb/[teamId]";
     case "wcvb":
-      return "/team/wcvb/[teamId]";
+      return "/league/volleyball";
     case "nhl":
       return "/team/nhl/[teamId]";
     case "ufc":

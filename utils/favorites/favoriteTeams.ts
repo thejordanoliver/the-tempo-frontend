@@ -22,8 +22,7 @@ export type FavoriteTeamRoute =
   | "/team/mlb/[teamId]"
   | "/team/cb/[teamId]"
   | "/team/sb/[teamId]"
-  | "/team/mcvb/[teamId]"
-  | "/team/wcvb/[teamId]"
+  | "/league/volleyball"
   | "/team/nhl/[teamId]"
   | "/team/soccer/[teamId]";
 
@@ -141,9 +140,8 @@ export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
     case "sb":
       return "/team/sb/[teamId]";
     case "mcvb":
-      return "/team/mcvb/[teamId]";
     case "wcvb":
-      return "/team/wcvb/[teamId]";
+      return "/league/volleyball";
 
     case "nhl":
       return "/team/nhl/[teamId]";

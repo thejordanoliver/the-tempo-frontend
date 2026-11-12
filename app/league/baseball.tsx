@@ -13,7 +13,6 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
@@ -220,7 +219,7 @@ function MLBLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -518,7 +517,7 @@ function CBLeagueScreen() {
         <CustomHeader
           tabName="College Baseball"
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -758,7 +757,7 @@ function SBLeagueScreen() {
         <CustomHeader
           tabName="College Softball"
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

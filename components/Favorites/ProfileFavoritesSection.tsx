@@ -288,6 +288,19 @@ export default function ProfileFavoritesSection({
 
       const route = getFavoriteTeamRoute(league);
 
+      if (route === "/league/volleyball") {
+        router.push({
+          pathname:
+            scopedStack === "profile"
+              ? "/(tabs)/(profile)/league/[sport]"
+              : scopedStack === "explore"
+                ? "/(tabs)/(explore)/league/[sport]"
+                : "/(tabs)/(home)/league/[sport]",
+          params: { sport: "volleyball", league },
+        });
+        return;
+      }
+
       if (!scopedStack) {
         router.push({
           pathname: route,
@@ -538,7 +551,7 @@ export default function ProfileFavoritesSection({
                   Edit Favorites
                 </Button>
               </View>
-            ) : null
+            ) : undefined
           }
           stickySectionHeadersEnabled={false}
           showsVerticalScrollIndicator={false}

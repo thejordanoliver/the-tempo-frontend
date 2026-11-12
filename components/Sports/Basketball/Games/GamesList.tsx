@@ -282,7 +282,7 @@ export default function GamesList({
                 teamColor={teamColor}
                 teamSecondaryColor={teamSecondaryColor}
               />
-            ) : null
+            ) : undefined
           }
           contentContainerStyle={navigationContentStyle(
             styles.gridListContainer,
@@ -311,7 +311,7 @@ export default function GamesList({
                 teamColor={teamColor}
                 teamSecondaryColor={teamSecondaryColor}
               />
-            ) : null
+            ) : undefined
           }
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           contentContainerStyle={navigationContentStyle(

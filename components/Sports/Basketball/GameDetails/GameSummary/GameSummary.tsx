@@ -10,6 +10,7 @@ import {
   Text,
   View,
   type ImageSourcePropType,
+  type ScrollViewInstance,
 } from "react-native";
 import { GameSummaryStyles } from "styles/GameDetailStyles/GameSummaryStyles";
 import type { GameSummaryModel } from "types/gameSummary";
@@ -48,7 +49,7 @@ function GameSummary({
   const [selectedPeriod, setSelectedPeriod] = useState("All");
 
   const [visibleCount, setVisibleCount] = useState(PLAY_BATCH_SIZE);
-  const listRef = useRef<ScrollView>(null);
+  const listRef = useRef<ScrollViewInstance>(null);
 
   const { plays: sortedPlays, periods: availablePeriods } = model;
   const periodTabs = availablePeriods.map((tab) => tab.label);

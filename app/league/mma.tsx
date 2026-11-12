@@ -9,7 +9,6 @@ import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
@@ -141,7 +140,7 @@ function UFCLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

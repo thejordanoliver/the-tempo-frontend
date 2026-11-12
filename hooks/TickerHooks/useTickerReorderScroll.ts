@@ -12,7 +12,7 @@ import type {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  ScrollView,
+  ScrollViewInstance,
 } from "react-native";
 import { useSharedValue, type SharedValue } from "react-native-reanimated";
 import {
@@ -22,7 +22,7 @@ import {
 
 type Phase = "idle" | "holding" | "dragging" | "settling";
 export interface TickerReorderScroll {
-  scrollRef: RefObject<ScrollView | null>;
+  scrollRef: RefObject<ScrollViewInstance | null>;
   scrollEnabled: boolean;
   scrollOffset: SharedValue<number>;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
@@ -51,7 +51,7 @@ export function useTickerReorderScroll(): TickerReorderScroll {
 export function useTickerReorderPageScroll(
   resetKey?: string,
 ): TickerReorderScroll {
-  const scrollRef = useRef<ScrollView | null>(null);
+  const scrollRef = useRef<ScrollViewInstance | null>(null);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const scrollOffset = useSharedValue(0);
   const offset = useRef(0);

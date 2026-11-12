@@ -3,7 +3,7 @@ name: Frontend checks
 on:
   pull_request:
   push:
-    branches: [main, master]
+    branches: [main, master, backup-main]
 
 permissions:
   contents: read
@@ -23,13 +23,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run lint
       - run: npm run typecheck
+      - run: npm run lint
       - run: npm test
-      # Keep advisories visible while the documented SDK 57 routing advisory
-      # awaits an SDK upgrade. Compilation and regression checks remain gates.
+      # No temporary allowlist: high/critical findings block the release.
       - run: npm audit --audit-level=high
-        continue-on-error: true
       - run: npx expo install --check
       - run: npm run export:all
       - run: npx playwright install --with-deps chromium

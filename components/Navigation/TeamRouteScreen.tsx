@@ -18,12 +18,8 @@ import SoccerTeamScreen from "app/(tabs)/(home)/team/soccer/[teamId]";
 import UFLTeamScreen from "app/(tabs)/(home)/team/ufl/[teamId]";
 import WCBBTeamScreen from "app/(tabs)/(home)/team/wcbb/[teamId]";
 import WNBATeamScreen from "app/(tabs)/(home)/team/wnba/[teamId]";
-import MCVBTeamScreen from "app/(tabs)/(home)/team/mcvb/[teamId]";
-import WCVBTeamScreen from "app/(tabs)/(home)/team/wcvb/[teamId]";
 
 const TEAM_SCREENS = {
-  mcvb: MCVBTeamScreen,
-  wcvb: WCVBTeamScreen,
   nba: NBATeamScreen,
   cb: CBTeamScreen,
   mcbb: MCBBTeamScreen,

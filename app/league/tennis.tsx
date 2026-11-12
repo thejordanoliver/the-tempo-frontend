@@ -4,7 +4,6 @@ import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import dayjs from "dayjs";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import {
   useCallback,
   useEffect,
@@ -206,7 +205,7 @@ export default function TennisLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

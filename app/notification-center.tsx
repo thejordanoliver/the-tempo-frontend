@@ -220,10 +220,10 @@ export default function NotificationsCenter() {
                 </Text>
               </Pressable>
             </View>
-          ) : null
+          ) : undefined
         }
         ListEmptyComponent={
-          suppressEmptyState ? null : (
+          suppressEmptyState ? undefined : (
             <View style={styles.emptyState}>
               <>
                 <Ionicons
@@ -249,7 +249,7 @@ export default function NotificationsCenter() {
             <View style={global.emptyContainer}>
               <CustomActivityIndicator />
             </View>
-          ) : null
+          ) : undefined
         }
         refreshControl={
           <RefreshControl

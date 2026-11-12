@@ -538,7 +538,7 @@ export default function RecruitsList({
               <View style={styles.footer}>
                 <Text style={styles.footerText}>Loading more…</Text>
               </View>
-            ) : null
+            ) : undefined
           }
         />
       ) : (
@@ -565,7 +565,7 @@ export default function RecruitsList({
               <View style={styles.footer}>
                 <Text style={styles.footerText}>Loading more…</Text>
               </View>
-            ) : null
+            ) : undefined
           }
         />
       )}

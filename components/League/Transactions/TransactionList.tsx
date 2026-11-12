@@ -109,9 +109,9 @@ export default function TransactionList({
               accessibilityLabel="Loading more transactions"
             />
           ) : (
-            feedback
+            feedback ?? undefined
           )
-        ) : null
+        ) : undefined
       }
     />
   );

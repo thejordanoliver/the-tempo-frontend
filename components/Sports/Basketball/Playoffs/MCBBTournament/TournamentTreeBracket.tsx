@@ -5,7 +5,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useTournamentBracket } from "hooks/BasketballHooks/useTournamentBracket";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useRef } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View, type ScrollViewInstance } from "react-native";
 import { MCBBTournamentBracketStyles } from "styles/PlayoffStyles/MCBBTournamentBracketStyles";
 import { BRACKET_LAYOUT } from "utils/brackets/tournamentBracket.utils";
 import { QUADRANT_BOARD_HEIGHT } from "utils/brackets/tournamentBracketLayout";
@@ -27,7 +27,7 @@ export default function TournamentTreeBracket({
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = MCBBTournamentBracketStyles(isDark);
   const global = globalStyles(isDark);
-  const roundHeaderScrollRef = useRef<ScrollView>(null);
+  const roundHeaderScrollRef = useRef<ScrollViewInstance>(null);
 
   const {
     games,

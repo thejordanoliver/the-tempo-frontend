@@ -43,7 +43,6 @@ for (const id of [401234567, "401234567"]) {
                 }
               : {},
         },
-        "expo-router/build/global-state/routing": { goBack() {} },
         "@/components/CustomHeader": { CustomHeader: "CustomHeader" },
         "components/CustomHeader/GameHeaderPlaceholder": {
           GameHeaderPlaceholder: "Placeholder",

@@ -53,41 +53,47 @@ backend for development sessions; production builds need their own API configura
 
 ## Release checks
 
-Use Node 22 and install the lockfile with `npm ci`. Copy `.env.example` to `.env`
-and set `EXPO_PUBLIC_API_URL` to the backend for the intended environment.
+Tempo is upgrading from Expo SDK 57 to **SDK 58** (React Native 0.88).
+Use Node 22 and install the committed lockfile with `npm ci`. Copy
+`.env.example` to a local `.env`; set `EXPO_PUBLIC_API_URL` to the API for
+your intended environment. The repo's `.npmrc` scopes a temporary npm peer
+resolution workaround to the Windows-only peer of the SDK 58 date picker;
+never override or ignore npm audit failures.
 
 ```bash
+npm ci
 npm run lint
 npm run typecheck
 npm test
+npm audit --audit-level=high
 npx expo install --check
 npm run export:all
 npx playwright install chromium
 npm run test:e2e
-npm audit
 ```
 
-The browser tests use the static `dist` export and a mobile Chromium viewport.
-They exercise sign-in validation, sign-in/sign-up tab switching, and password
-recovery navigation without creating accounts. Volleyball coverage checks both
-leagues' standings, rankings, and team navigation with synthetic account/API
-fixtures and intercepted external requests. To use another export directory,
-set `TEMPO_WEB_DIR=/absolute/path/to/export` when running `npm run test:e2e`.
-The GitHub workflow runs these checks on pull requests and pushes to main/master.
-Device release builds still need verification on iOS and Android before shipping.
+GitHub Actions runs these checks on pull requests and pushes to
+`main`, `master`, and `backup-main`. The required `verify` status check
+protects `backup-main`. The browser tests serve the exported static pages and exercise sign-in
+validation, tab navigation, password recovery, and volleyball league routes
+without restoring removed volleyball team screens. Tempo currently has no
+Expo API routes; `web.output: "static"` with the default Router configuration
+keeps the web build deployable as prerendered files. Set `TEMPO_WEB_DIR` if testing a
+different web export directory.
 
-The lockfile retains Expo SDK 57. Patched `glob` and `minimatch` overrides address
-build-tool advisories; aliases use Expo's existing `tsconfig.json` support.
-One upstream URL-decoder issue remains in
-`expo-router -> query-string -> decode-uri-component`
-([exponential decoding](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr),
-[quadratic replacement](https://github.com/advisories/GHSA-qr28-fpjm-wq7f)).
-`npm audit` reports three high-severity package entries for that chain. Replacing
-the decoder alone changes its CommonJS API to ESM and breaks its caller; npm's
-available fix upgrades Expo Router across a major version. Resolve this through
-a compatible routing/Expo upgrade before declaring production readiness. The CI
-audit step reports advisories without blocking the other checks while this
-known issue remains; it is not a clean security bill of health.
+**Dependency vulnerability remediation:** The old
+`expo-router@57 -> query-string@7 -> decode-uri-component@0.2.2` chain
+was removed by the SDK 58 migration. The temporary audit exception has
+been deleted, and CI now fails on **all high/critical advisories**.
+See [security remediation details](docs/security/dependency-advisories.md).
+A clean audit is not evidence that native release builds work.
+
+**Signed production build validation is a separate mandatory gate.**
+See [iOS/Android release build instructions](docs/release/production-build-validation.md)
+and the manual `.eas/workflows/validate-production-builds.yml` workflow.
+The production profile uses real EAS production environment variables,
+Apple provisioning and distribution signing, and an Android signing key.
+Do not deploy or submit until both builds finish and pass on-device checks.
 
 ## Optional crash reporting
 

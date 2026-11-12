@@ -26,8 +26,6 @@ const TEAM_LEAGUE_ROUTES: TeamLeagueRoute[] = [
   { flag: "isMLB", teamType: "mlb" },
   { flag: "isCB", teamType: "cb" },
   { flag: "isSB", teamType: "sb" },
-  { flag: "isMCVB", teamType: "mcvb" },
-  { flag: "isWCVB", teamType: "wcvb" },
   { flag: "isWNBA", teamType: "wnba" },
   { flag: "isNHL", teamType: "nhl" },
   { flag: "isCFB", teamType: "cfb" },
@@ -124,6 +122,23 @@ export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
   }
 
   if (item.type === "team") {
+    // Volleyball teams no longer have detail pages. Keep search navigable by
+    // opening the matching league rather than a removed team route.
+    if (
+      item.isMCVB ||
+      item.isWCVB ||
+      item.affiliation === "mcvb" ||
+      item.affiliation === "wcvb"
+    ) {
+      return {
+        pathname: "/(tabs)/(explore)/league/[sport]",
+        params: {
+          sport: "volleyball",
+          league: item.isMCVB ? "mcvb" : item.isWCVB ? "wcvb" : item.affiliation,
+        },
+      };
+    }
+
     const teamRoute = TEAM_LEAGUE_ROUTES.find((route) =>
       Boolean(item[route.flag]),
     );

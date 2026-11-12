@@ -19,6 +19,7 @@ import {
   TextStyle,
   View,
   ViewStyle,
+  type ScrollViewInstance,
 } from "react-native";
 
 export interface TabBarProps<T extends string> {
@@ -79,7 +80,7 @@ export default function MainScrollTabBar<T extends string>({
   const reduceMotion = useReducedMotion();
   const scrollProgress = reduceMotion ? undefined : suppliedScrollProgress;
   const styles = MainScrollTabBarStyles;
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const [underlineX] = useState(() => new Animated.Value(0));
   const [underlineWidth] = useState(() => new Animated.Value(0));
   const textWidths = useRef(new Map<T, number>());

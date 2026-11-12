@@ -1,12 +1,10 @@
 import Button from "components/Buttons/Button";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
-import { activeOpacity, globalStyles } from "constants/styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { useVolleyballTable } from "hooks/VolleyballHooks/useVolleyballTable";
 import {
   Image,
-  Pressable,
   RefreshControl,
   ScrollView,
   Text,
@@ -26,7 +24,6 @@ export default function VolleyballTable({
   const isDark = resolvedColorScheme === "dark";
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
-  const router = useScopedRouter();
   const resource = useVolleyballTable(league, kind);
   if (resource.loading && !resource.data) return <StandingsSkeleton />;
 
@@ -79,26 +76,7 @@ export default function VolleyballTable({
                   (isDark ? row.team.logoDark : row.team.logo) ?? row.team.logo;
                 const name = row.team.shortName ?? row.team.name ?? "Team";
                 return (
-                  <Pressable
-                    key={row.key}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Open ${name}`}
-                    disabled={!row.team.id}
-                    onPress={() =>
-                      router.push({
-                        pathname: "/team/[teamType]/[teamId]",
-                        params: {
-                          teamType: league,
-                          league,
-                          teamId: row.team.id ?? "",
-                        },
-                      })
-                    }
-                    style={({ pressed }) => [
-                      styles.row,
-                      { opacity: pressed ? activeOpacity : 1 },
-                    ]}
-                  >
+                  <View key={row.key} style={styles.row}>
                     <View style={styles.rankContainer}>
                       <Text style={styles.rankText}>
                         {kind === "rankings" ? (row.rank ?? "—") : index + 1}
@@ -122,7 +100,7 @@ export default function VolleyballTable({
                         </Text>
                       </View>
                     ))}
-                  </Pressable>
+                  </View>
                 );
               })}
             </View>

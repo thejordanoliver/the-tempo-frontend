@@ -1,0 +1,18 @@
+name: Validate signed production builds
+
+# Manually trigger using:
+# eas workflow:run .eas/workflows/validate-production-builds.yml
+# No push trigger and no auto-submit: these builds consume EAS resources.
+jobs:
+  build_android:
+    name: Signed Android production AAB
+    type: build
+    params:
+      platform: android
+      profile: production
+  build_ios:
+    name: Signed iOS production IPA
+    type: build
+    params:
+      platform: ios
+      profile: production

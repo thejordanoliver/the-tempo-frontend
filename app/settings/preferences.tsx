@@ -4,7 +4,6 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -45,7 +44,7 @@ const PreferencesScreen = () => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Preferences" onBack={goBack} />,
+      header: () => <CustomHeader title="Preferences" onBack={navigation.goBack} />,
     });
   }, [navigation, isDark]);
 

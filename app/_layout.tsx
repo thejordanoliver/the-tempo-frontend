@@ -19,13 +19,18 @@ import {
 } from "@expo-google-fonts/barlow-condensed";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack, usePathname } from "expo-router";
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationLightTheme,
+  Stack,
   ThemeProvider,
-} from "expo-router/react-navigation";
-import * as SplashScreen from "expo-splash-screen";
+  usePathname,
+} from "expo-router";
+import {
+  hideAsync,
+  preventAutoHideAsync,
+  setOptions,
+} from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
 import { useEffect, useState } from "react";
@@ -57,9 +62,9 @@ export { RootErrorBoundary as ErrorBoundary } from "components/RootErrorBoundary
 
 initializeCrashReporting();
 
-SplashScreen.preventAutoHideAsync().catch(() => {});
+preventAutoHideAsync().catch(() => {});
 
-SplashScreen.setOptions({
+setOptions({
   duration: 1000,
   fade: true,
 });
@@ -224,7 +229,7 @@ function AppLayout() {
 
   useEffect(() => {
     if (!loadingUser && !checkingStoredSession) {
-      SplashScreen.hideAsync().catch(() => {
+      hideAsync().catch(() => {
         // Prevents app crashes if the splash screen is already hidden.
       });
     }

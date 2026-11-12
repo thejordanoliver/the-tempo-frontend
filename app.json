@@ -5,18 +5,22 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/appIcon.png",
-    "scheme": ["tempo", "nbascorestracker"],
+    "scheme": [
+      "tempo",
+      "nbascorestracker"
+    ],
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.jordanoliver.thetempo",
-      "appleTeamId": "L89JT5BLN3",
       "deploymentTarget": "17.0",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSBluetoothAlwaysUsageDescription": "Tempo uses Bluetooth to discover and connect to your nearby Tempo Ticker.",
         "NSLocalNetworkUsageDescription": "Tempo connects to your Mac on the local network to load the app during development.",
-        "NSBonjourServices": ["_expo._tcp"]
+        "NSBonjourServices": [
+          "_expo._tcp"
+        ]
       }
     },
     "android": {
@@ -25,7 +29,8 @@
       },
       "icon": "./assets/images/appIcon.png",
       "predictiveBackGestureEnabled": false,
-      "permissions": []
+      "permissions": [],
+      "package": "com.jordanoliver.thetempo"
     },
     "web": {
       "output": "static",
@@ -64,7 +69,6 @@
         "expo-build-properties",
         {
           "ios": {
-            "enableSceneSupport": true,
             "usePrecompiledModules": false
           }
         }
@@ -107,11 +111,11 @@
                           "value": "wnba"
                         },
                         {
-                          "name": "Men\u2019s College Basketball",
+                          "name": "Men’s College Basketball",
                           "value": "mcbb"
                         },
                         {
-                          "name": "Women\u2019s College Basketball",
+                          "name": "Women’s College Basketball",
                           "value": "wcbb"
                         },
                         {
@@ -139,11 +143,11 @@
                           "value": "nhl"
                         },
                         {
-                          "name": "Men\u2019s College Volleyball",
+                          "name": "Men’s College Volleyball",
                           "value": "mcvb"
                         },
                         {
-                          "name": "Women\u2019s College Volleyball",
+                          "name": "Women’s College Volleyball",
                           "value": "wcvb"
                         }
                       ]
@@ -154,7 +158,8 @@
             }
           ]
         }
-      ]
+      ],
+      "@sfourdrinier/react-native-ble-plx"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -13,8 +13,6 @@ const TEAM_ROUTE_LEAGUES = new Set([
   "cb",
   "sb",
   "nhl",
-  "mcvb",
-  "wcvb",
 ]);
 
 // Recover fixed leagues from paths and retain soccer competition metadata.
@@ -41,13 +39,17 @@ export function withTeamLeague(href: Href): Href {
       : match[1];
   if (teamType !== "soccer" && !TEAM_ROUTE_LEAGUES.has(teamType)) return href;
   const teamId = params?.teamId ?? match[2];
-  const getLeague = (value: unknown) =>
-    teamType === "soccer"
-      ? resolveSoccerTeamLeague(
-          String(teamId ?? ""),
-          typeof value === "string" || Array.isArray(value) ? value : undefined,
-        )
-      : value || teamType;
+  const getLeague = (value: unknown): string => {
+    if (teamType === "soccer") {
+      return resolveSoccerTeamLeague(
+        String(teamId ?? ""),
+        typeof value === "string" || Array.isArray(value) ? value : undefined,
+      );
+    }
+
+    // Expo Router params must be strings/numbers, not unchecked objects.
+    return typeof value === "string" && value.trim() ? value : teamType;
+  };
 
   if (typeof href !== "string") {
     return {

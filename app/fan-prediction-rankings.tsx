@@ -147,7 +147,7 @@ export default function FanPredictionRankingsScreen() {
                       {refreshing ? "Retrying…" : "Try again"}
                     </Button>
                   </View>
-                ) : null}
+                ) : undefined}
               </>
             }
             renderItem={({ item }) => (
@@ -178,7 +178,7 @@ export default function FanPredictionRankingsScreen() {
                       : "Make a prediction in this sport before a game starts. Your rank appears once your first prediction in this sport has a scored result."}
                   </Text>
                 </View>
-              ) : null
+              ) : undefined
             }
           />
         </View>
