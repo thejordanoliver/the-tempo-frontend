@@ -5,7 +5,6 @@ import { useSeasonLeaders } from "@/hooks/LeagueHooks/useSeasonLeaders";
 import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
 import { SeasonLeaderCategory } from "@/types/stats";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/router";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { View } from "react-native";
 
@@ -85,7 +84,7 @@ export default function SeasonLeadersScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader tabName={title} onBack={goBack} />,
+      header: () => <CustomHeader tabName={title} onBack={() => navigation.goBack()} />,
     });
   }, [title, navigation]);
 

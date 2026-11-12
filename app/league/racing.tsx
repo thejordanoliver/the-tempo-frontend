@@ -11,7 +11,6 @@ import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import F1StandingsList from "components/Sports/Racing/Standings/F1StandingsList";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import {
   useCallback,
@@ -193,7 +192,7 @@ export default function RacingLeagueScreen() {
         <CustomHeader
           tabName={leagueLabel}
           league={league}
-          onBack={goBack}
+          onBack={() => navigation.goBack()}
           {...favoriteHeaderProps}
         />
       ),

@@ -8,7 +8,6 @@ import { Colors, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
@@ -137,7 +136,7 @@ export default function SettingsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Settings" onBack={goBack} />,
+      header: () => <CustomHeader title="Settings" onBack={() => navigation.goBack()} />,
     });
   }, [navigation]);
 

@@ -7,7 +7,6 @@ import {
 } from "constants/styles";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
@@ -180,7 +179,7 @@ export default function CreatePostScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="New post" onBack={goBack} />,
+      header: () => <CustomHeader title="New post" onBack={() => navigation.goBack()} />,
     });
   }, [navigation, router, createPost, loading, newPostText, poll, media]);
 
