@@ -119,8 +119,6 @@ export const LEAGUE_TABS = {
 } as const;
 
 export const TEAM_TABS = {
-  mcvb: ["schedule", "news", "standings", "forum"],
-  wcvb: ["schedule", "news", "standings", "forum"],
   // Basketball
   nba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   gleague: ["schedule", "news", "roster", "forum"],

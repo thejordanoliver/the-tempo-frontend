@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 for (const league of ["mcvb", "wcvb"]) {
-  test(`${league} standings and rankings open the correct team screen`, async ({
+  test(`${league} standings and rankings remain available without team links`, async ({
     page,
   }) => {
     const errors: string[] = [];
@@ -89,21 +89,18 @@ for (const league of ["mcvb", "wcvb"]) {
     await page
       .getByRole("tab", { name: "Switch to standings tab", exact: true })
       .click();
+    await expect(page.getByText("Pitt", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Open Pitt", exact: true }),
-    ).toBeVisible();
+    ).toHaveCount(0);
     await page
       .getByRole("tab", { name: "Switch to rankings tab", exact: true })
       .click();
     await expect(page.getByText("AVCA", { exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Open Pitt", exact: true }).click();
-    await expect(page).toHaveURL(new RegExp(`/team/${league}/221`));
     await expect(
-      page.getByRole("tab", { name: "Switch to schedule tab", exact: true }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Pitt", exact: true }),
-    ).toBeVisible();
+      page.getByRole("button", { name: "Open Pitt", exact: true }),
+    ).toHaveCount(0);
+    await expect(page).toHaveURL(new RegExp("/league/volleyball"));
     expect(errors).toEqual([]);
   });
 }

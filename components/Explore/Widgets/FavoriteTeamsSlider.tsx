@@ -67,6 +67,13 @@ export default function FavoriteTeamsSlider({
           style={styles.slideButton}
           onPress={() => {
             const route = getFavoriteTeamRoute(item.favorite.league);
+            if (route === "/league/volleyball") {
+              router.push({
+                pathname: "/(tabs)/(explore)/league/[sport]",
+                params: { sport: "volleyball", league: item.favorite.league },
+              });
+              return;
+            }
             const teamType =
               route === "/team/[teamId]" ? null : route.split("/")[2];
 

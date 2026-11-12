@@ -10,7 +10,7 @@ import type {
 import { getExploreResultIdentity } from "../utils/explore/exploreSearch";
 import { getExploreRouteForResult } from "../utils/navigation/exploreNavigation";
 import { scopeHrefToTab } from "../utils/navigation/tabStackNavigation";
-import { LEAGUE_TABS, TEAM_TABS } from "../utils/navigation/tabs";
+import { LEAGUE_TABS } from "../utils/navigation/tabs";
 import {
   isVolleyballLeague,
   volleyballDirectoryTeam,
@@ -59,7 +59,7 @@ test("backend directory fields become eligible team choices with both logo varia
   );
 });
 
-test("volleyball search results navigate within each tab and retain separate identities", () => {
+test("volleyball team search results open league pages instead of removed team screens", () => {
   for (const league of ["mcvb", "wcvb"] as const) {
     const item = {
       type: "team" as const,
@@ -75,8 +75,9 @@ test("volleyball search results navigate within each tab and retain separate ide
     };
     const route = getExploreRouteForResult(item);
     assert.equal(typeof route, "object");
-    if (typeof route !== "object") throw new Error("Expected a team route");
-    assert.equal(route.params.teamType, league);
+    if (typeof route !== "object") throw new Error("Expected a league route");
+    assert.equal(route.pathname, "/(tabs)/(explore)/league/[sport]");
+    assert.equal(route.params.sport, "volleyball");
     assert.equal(route.params.league, league);
     assert.equal(getExploreResultIdentity(item), `team:${league}:221`);
     for (const tab of [
@@ -86,11 +87,11 @@ test("volleyball search results navigate within each tab and retain separate ide
       "(profile)",
     ] as const) {
       assert.equal(
-        scopeHrefToTab(`/team/${league}/221`, tab),
-        `/(tabs)/${tab}/team/${league}/221?league=${league}`,
+        scopeHrefToTab(`/league/volleyball?league=${league}`, tab),
+        `/(tabs)/${tab}/league/volleyball?league=${league}`,
       );
     }
-    assert.ok(existsSync(`app/(tabs)/(home)/team/${league}/[teamId].tsx`));
+    assert.equal(existsSync(`app/(tabs)/(home)/team/${league}/[teamId].tsx`), false);
   }
   assert.ok(existsSync("app/(tabs)/(home)/game/volleyball/[game].tsx"));
 });
@@ -103,7 +104,6 @@ test("only implemented volleyball tabs are exposed", () => {
     "rankings",
     "forum",
   ]);
-  assert.deepEqual(TEAM_TABS.mcvb, ["schedule", "news", "standings", "forum"]);
 });
 
 test("live and final volleyball labels use set periods", () => {

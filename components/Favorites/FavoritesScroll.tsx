@@ -378,6 +378,14 @@ export default function FavoritesScroll({
 
       const route = getFavoriteTeamRoute(item.league);
 
+      if (route === "/league/volleyball") {
+        pushOnce({
+          pathname: "/(tabs)/(home)/league/[sport]",
+          params: { sport: "volleyball", league: item.league },
+        } as Href);
+        return;
+      }
+
       if (route === "/team/[teamId]") {
         pushOnce({
           pathname: "/(tabs)/(home)/team/[teamId]",
