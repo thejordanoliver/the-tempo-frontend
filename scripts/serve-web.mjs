@@ -1,9 +1,14 @@
+import { existsSync } from "node:fs";
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 // Preview Expo's static export, including extensionless file-based routes.
-const root = path.resolve(process.env.TEMPO_WEB_DIR || "dist");
+// SDK 58 can export to dist/client when server features are enabled. The
+// preview server serves only prerendered client pages, not API/server routes.
+const exportRoot = path.resolve(process.env.TEMPO_WEB_DIR || "dist");
+const clientRoot = path.join(exportRoot, "client");
+const root = existsSync(clientRoot) ? clientRoot : exportRoot;
 const types = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",

@@ -74,9 +74,11 @@ npm run test:e2e
 
 GitHub Actions runs these checks on pull requests and pushes to
 `main`, `master`, and `backup-main`. The required `verify` status check
-protects `backup-main`. The browser tests exercise sign-in validation,
-tab navigation, password recovery, and volleyball league routes without
-restoring removed volleyball team screens. Set `TEMPO_WEB_DIR` if testing a
+protects `backup-main`. The browser tests serve the exported static pages and exercise sign-in
+validation, tab navigation, password recovery, and volleyball league routes
+without restoring removed volleyball team screens. Tempo currently has no
+Expo API routes; `web.output: "static"` with the default Router configuration
+keeps the web build deployable as prerendered files. Set `TEMPO_WEB_DIR` if testing a
 different web export directory.
 
 **Dependency vulnerability remediation:** The old
