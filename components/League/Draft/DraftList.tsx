@@ -441,7 +441,7 @@ export default function DraftList({
             <View style={styles.footerLoader}>
               <Text style={styles.footerLoaderText}>Loading more…</Text>
             </View>
-          ) : null
+          ) : undefined
         }
       />
     </>

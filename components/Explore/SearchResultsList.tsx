@@ -146,7 +146,7 @@ export default function SearchResultsList({
           );
         }}
         ListHeaderComponent={
-          showRecentsTitle ? <HeadingThree>Recents</HeadingThree> : null
+          showRecentsTitle ? <HeadingThree>Recents</HeadingThree> : undefined
         }
         ListFooterComponent={renderFooter}
         contentContainerStyle={navigationContentStyle(

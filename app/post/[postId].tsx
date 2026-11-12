@@ -475,7 +475,7 @@ export default function CommentThreadScreen() {
               onImagePress={() => {}}
               disableCommentNavigation
             />
-          ) : null
+          ) : undefined
         }
         ListEmptyComponent={renderEmptyComments}
         keyboardShouldPersistTaps="handled"
