@@ -27,11 +27,8 @@ jobs:
       - run: npm ci
       - name: Upgrade SDK 58 and align native packages
         run: |
-          if ! npx expo install expo@^58.0.0 --fix --npm; then
-            echo "Expo install hit an optional React Native Windows peer-resolution issue."
-            npm install --omit=peer --ignore-scripts --no-fund || npm install --legacy-peer-deps --ignore-scripts --no-fund
-          fi
-          npm install --save-dev @types/react@~19.3.0 babel-preset-expo@~58.0.0 eslint-config-expo@~58.0.4 --legacy-peer-deps --ignore-scripts --no-fund
+          npx expo install expo@^58.0.0 --fix --npm
+          npm install --save-dev @types/react@~19.3.0 babel-preset-expo@~58.0.0 eslint-config-expo@~58.0.4 --ignore-scripts --no-fund
           npx expo install --check
           npm audit --audit-level=high
           npm ci --ignore-scripts --no-fund
