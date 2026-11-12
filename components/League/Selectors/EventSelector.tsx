@@ -1,3 +1,4 @@
+import type { ScrollViewInstance } from "react-native";
 import { activeOpacity } from "@/constants/styles";
 import { DateSelectorStyles } from "@/styles/LeagueStyles/DateSelectorStyles";
 import WeekSelectorSkeleton from "components/Skeletons/WeekSelectorSkeleton";
@@ -105,7 +106,7 @@ export default function EventSelector({
 }: Props) {
   const styles = DateSelectorStyles(isDark, { itemWidth });
 
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = ScrollViewInstance>(null);
   const [indicatorX] = useState(() => new Animated.Value(0));
 
   const [containerWidth, setContainerWidth] = useState(0);

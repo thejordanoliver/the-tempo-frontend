@@ -1,3 +1,4 @@
+import type { ScrollViewInstance } from "react-native";
 import { formatPeriod } from "@/utils/games/games";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
@@ -48,7 +49,7 @@ function GameSummary({
   const [selectedPeriod, setSelectedPeriod] = useState("All");
 
   const [visibleCount, setVisibleCount] = useState(PLAY_BATCH_SIZE);
-  const listRef = useRef<ScrollView>(null);
+  const listRef = ScrollViewInstance>(null);
 
   const { plays: sortedPlays, periods: availablePeriods } = model;
   const periodTabs = availablePeriods.map((tab) => tab.label);

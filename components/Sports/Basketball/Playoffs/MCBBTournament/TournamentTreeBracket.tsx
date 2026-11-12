@@ -1,3 +1,4 @@
+import type { ScrollViewInstance } from "react-native";
 import Button from "components/Buttons/Button";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
@@ -27,7 +28,7 @@ export default function TournamentTreeBracket({
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = MCBBTournamentBracketStyles(isDark);
   const global = globalStyles(isDark);
-  const roundHeaderScrollRef = useRef<ScrollView>(null);
+  const roundHeaderScrollRef = ScrollViewInstance>(null);
 
   const {
     games,

@@ -1,3 +1,4 @@
+import type { ScrollViewInstance } from "react-native";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import React, {
@@ -79,7 +80,7 @@ export default function MainScrollTabBar<T extends string>({
   const reduceMotion = useReducedMotion();
   const scrollProgress = reduceMotion ? undefined : suppliedScrollProgress;
   const styles = MainScrollTabBarStyles;
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = ScrollViewInstance>(null);
   const [underlineX] = useState(() => new Animated.Value(0));
   const [underlineWidth] = useState(() => new Animated.Value(0));
   const textWidths = useRef(new Map<T, number>());

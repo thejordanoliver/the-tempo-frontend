@@ -1,3 +1,4 @@
+import type { ScrollViewInstance } from "react-native";
 import MonthSelectorSkeleton from "@/components/Skeletons/MonthSelectorSkeleton";
 import {
   DATE_SELECTOR_ITEM_SPACING,
@@ -34,7 +35,7 @@ export default function MonthSelector({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = ScrollViewInstance>(null);
   const [indicatorX] = useState(() => new Animated.Value(0));
 
   const [containerWidth, setContainerWidth] = useState(0);
