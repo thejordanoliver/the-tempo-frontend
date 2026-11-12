@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { Alert, TextInput, type TextInputInstance } from "react-native";
+import { Alert, type TextInputInstance } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { getAuthorizedMessageAttachment } from "services/messageAttachmentUrls";
 import { uploadMessageGif, uploadMessageImage } from "services/messagesApi";
