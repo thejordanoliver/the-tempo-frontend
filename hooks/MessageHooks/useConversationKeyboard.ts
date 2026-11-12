@@ -1,6 +1,5 @@
-import type { ViewInstance } from "react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Easing, Keyboard, Platform, View } from "react-native";
+import { Animated, Easing, Keyboard, Platform, View, type ViewInstance } from "react-native";
 
 export function useConversationKeyboard(
   scrollToBottom: () => void,

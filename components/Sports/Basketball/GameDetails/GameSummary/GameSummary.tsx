@@ -1,4 +1,3 @@
-import type { ScrollViewInstance } from "react-native";
 import { formatPeriod } from "@/utils/games/games";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
@@ -11,6 +10,7 @@ import {
   Text,
   View,
   type ImageSourcePropType,
+  type ScrollViewInstance,
 } from "react-native";
 import { GameSummaryStyles } from "styles/GameDetailStyles/GameSummaryStyles";
 import type { GameSummaryModel } from "types/gameSummary";

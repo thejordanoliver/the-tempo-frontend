@@ -1,4 +1,3 @@
-import type { ScrollViewInstance } from "react-native";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import React, {
@@ -20,6 +19,7 @@ import {
   TextStyle,
   View,
   ViewStyle,
+  type ScrollViewInstance,
 } from "react-native";
 
 export interface TabBarProps<T extends string> {

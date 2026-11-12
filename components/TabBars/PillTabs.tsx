@@ -1,4 +1,3 @@
-import type { ScrollViewInstance } from "react-native";
 // components/Tabs/PillTabs.tsx
 import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
@@ -16,6 +15,7 @@ import {
   TextStyle,
   View,
   ViewStyle,
+  type ScrollViewInstance,
 } from "react-native";
 
 export type PillTabOption<T extends string = string> = {

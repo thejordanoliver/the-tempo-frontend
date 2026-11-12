@@ -1,4 +1,3 @@
-import type { ScrollViewInstance } from "react-native";
 import MonthSelectorSkeleton from "@/components/Skeletons/MonthSelectorSkeleton";
 import {
   DATE_SELECTOR_ITEM_SPACING,
@@ -16,6 +15,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  type ScrollViewInstance,
 } from "react-native";
 import type { ScheduleMonthKey, ScheduleMonthOption } from "types/schedule";
 

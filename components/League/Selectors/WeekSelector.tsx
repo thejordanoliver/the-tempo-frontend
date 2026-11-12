@@ -1,4 +1,3 @@
-import type { ScrollViewInstance } from "react-native";
 import WeekSelectorSkeleton from "@/components/Skeletons/WeekSelectorSkeleton";
 import { activeOpacity } from "@/constants/styles";
 import { DateSelectorStyles } from "@/styles/LeagueStyles/DateSelectorStyles";
@@ -21,6 +20,7 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
+  type ScrollViewInstance,
 } from "react-native";
 
 export type FootballWeekGroup = {

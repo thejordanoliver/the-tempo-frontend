@@ -1,4 +1,3 @@
-import type { ScrollViewInstance } from "react-native";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/styles";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
@@ -11,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, type ScrollViewInstance } from "react-native";
 import PagerView from "components/PagerView";
 import type {
   PageScrollStateChangedNativeEvent,
