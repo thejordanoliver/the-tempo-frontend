@@ -26,10 +26,9 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      # Keep advisories visible while the documented SDK 57 routing advisory
-      # awaits an SDK upgrade. Compilation and regression checks remain gates.
-      - run: npm audit --audit-level=high
-        continue-on-error: true
+      # Fail for all new advisories, changes to the known chain, and at expiry.
+      # This is NOT a clean audit; a temporary exception emits a warning.
+      - run: node scripts/check-dependency-advisories.mjs
       - run: npx expo install --check
       - run: npm run export:all
       - run: npx playwright install --with-deps chromium

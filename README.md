@@ -73,21 +73,25 @@ recovery navigation without creating accounts. Volleyball coverage checks both
 leagues' standings, rankings, and team navigation with synthetic account/API
 fixtures and intercepted external requests. To use another export directory,
 set `TEMPO_WEB_DIR=/absolute/path/to/export` when running `npm run test:e2e`.
-The GitHub workflow runs these checks on pull requests and pushes to main/master.
+The GitHub workflow runs these checks on pull requests and pushes to main/master/backup-main.
 Device release builds still need verification on iOS and Android before shipping.
 
-The lockfile retains Expo SDK 57. Patched `glob` and `minimatch` overrides address
-build-tool advisories; aliases use Expo's existing `tsconfig.json` support.
-One upstream URL-decoder issue remains in
-`expo-router -> query-string -> decode-uri-component`
-([exponential decoding](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr),
-[quadratic replacement](https://github.com/advisories/GHSA-qr28-fpjm-wq7f)).
-`npm audit` reports three high-severity package entries for that chain. Replacing
-the decoder alone changes its CommonJS API to ESM and breaks its caller; npm's
-available fix upgrades Expo Router across a major version. Resolve this through
-a compatible routing/Expo upgrade before declaring production readiness. The CI
-audit step reports advisories without blocking the other checks while this
-known issue remains; it is not a clean security bill of health.
+The lockfile retains Expo SDK 57. Patched `glob` and `minimatch` overrides
+address build-tool advisories; aliases use Expo's existing `tsconfig.json` support.
+The URL-decoder issue in
+`expo-router@57.0.31 -> query-string@7.1.3 -> decode-uri-component@0.2.2`
+remains **unresolved** ([GHSA-vcc3-ghjq-m6fr](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr),
+[GHSA-qr28-fpjm-wq7f](https://github.com/advisories/GHSA-qr28-fpjm-wq7f)).
+`npm audit` reports three high-severity entries for this one chain.
+
+**Security review:** [docs/security/dependency-advisories.md](docs/security/dependency-advisories.md)
+documents affected versions, threat model, residual risk, and an Expo Router
+migration plan. CI now runs `node scripts/check-dependency-advisories.mjs`
+instead of ignoring all audit failures: it warns only for this exact known chain,
+fails for any new finding or changed dependency, and automatically fails after
+**2026-12-11**. A green CI result does **not** indicate a clean security audit or
+constitute formal production risk acceptance. The maintainer must approve
+residual risk before a public release.
 
 ## Optional crash reporting
 
