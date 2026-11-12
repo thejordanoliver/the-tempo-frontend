@@ -223,7 +223,7 @@ export default function NotificationsCenter() {
           ) : undefined
         }
         ListEmptyComponent={
-          suppressEmptyState ? null : (
+          suppressEmptyState ? undefined : (
             <View style={styles.emptyState}>
               <>
                 <Ionicons
