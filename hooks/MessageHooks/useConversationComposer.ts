@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { Alert, TextInput } from "react-native";
+import { Alert, type TextInputInstance } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { getAuthorizedMessageAttachment } from "services/messageAttachmentUrls";
 import { uploadMessageGif, uploadMessageImage } from "services/messagesApi";
@@ -20,7 +20,7 @@ export function useConversationComposer({
   notifyTyping,
   scrollToBottom,
 }: Options) {
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const [draftMessage, setDraftMessage] = useState("");
   const [selectedAttachment, setSelectedAttachment] =
     useState<MessageAttachment | null>(null);

@@ -341,7 +341,7 @@ export default function GamesList({
                 teamColor={teamColor}
                 teamSecondaryColor={teamSecondaryColor}
               />
-            ) : null
+            ) : undefined
           }
           renderSectionHeader={({ section }) =>
             showHeaders ? (
@@ -380,7 +380,7 @@ export default function GamesList({
                 teamColor={teamColor}
                 teamSecondaryColor={teamSecondaryColor}
               />
-            ) : null
+            ) : undefined
           }
           renderSectionHeader={({ section }) => {
             if (!showHeaders) return null;
@@ -410,7 +410,7 @@ export default function GamesList({
               <View style={{ paddingVertical: 20 }}>
                 <GameCardSkeleton />
               </View>
-            ) : null
+            ) : undefined
           }
           ListEmptyComponent={
             <View style={global.emptyContainer}>

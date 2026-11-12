@@ -33,7 +33,6 @@ import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import {
   type BaseballPlay,
   useBaseballGameDetails,
@@ -371,7 +370,7 @@ export default function GameDetailsScreen(
       header: () => (
         <CustomHeader
           tabName="Game"
-          onBack={goBack}
+          onBack={navigation.goBack}
           homeLogo={homeHeaderLogo}
           awayLogo={awayHeaderLogo}
           homeTeamCode={homeCode}

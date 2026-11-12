@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Easing, Keyboard, Platform, View } from "react-native";
+import { Animated, Easing, Keyboard, Platform, type ViewInstance } from "react-native";
 
 export function useConversationKeyboard(
   scrollToBottom: () => void,
   navigationBarInset: number,
 ) {
-  const rootRef = useRef<View>(null);
+  const rootRef = useRef<ViewInstance>(null);
   const keyboardTop = useRef<number | null>(null);
   const [bottomInset] = useState(() => new Animated.Value(navigationBarInset));
   const [keyboardVisible, setKeyboardVisible] = useState(false);

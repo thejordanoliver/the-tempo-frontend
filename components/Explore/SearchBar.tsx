@@ -10,6 +10,7 @@ import {
   StyleSheet,
   TextInput,
   View,
+  type TextInputInstance,
 } from "react-native";
 
 type Props = {
@@ -37,7 +38,7 @@ export default function SearchBar({
   selectedTab,
   onTabPress,
 }: Props) {
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const [inputAnim] = useState(() => new Animated.Value(0));
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

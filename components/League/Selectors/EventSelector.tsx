@@ -20,6 +20,7 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
+  type ScrollViewInstance,
 } from "react-native";
 
 export type UFCCalendarEvent = {
@@ -105,7 +106,7 @@ export default function EventSelector({
 }: Props) {
   const styles = DateSelectorStyles(isDark, { itemWidth });
 
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<ScrollViewInstance>(null);
   const [indicatorX] = useState(() => new Animated.Value(0));
 
   const [containerWidth, setContainerWidth] = useState(0);

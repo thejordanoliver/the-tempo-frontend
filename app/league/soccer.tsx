@@ -8,7 +8,6 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
@@ -142,7 +141,7 @@ export default function SoccerLeagueScreen() {
         <CustomHeader
           tabName={leagueLabel}
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

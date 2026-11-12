@@ -551,7 +551,7 @@ export default function ProfileFavoritesSection({
                   Edit Favorites
                 </Button>
               </View>
-            ) : null
+            ) : undefined
           }
           stickySectionHeadersEnabled={false}
           showsVerticalScrollIndicator={false}

@@ -212,7 +212,7 @@ export default function GamesList({
               teamColor={teamColor}
               teamSecondaryColor={teamSecondaryColor}
             />
-          ) : null
+          ) : undefined
         }
         contentContainerStyle={navigationContentStyle(
           viewMode === "grid"

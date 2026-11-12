@@ -11,6 +11,8 @@ import {
   StyleSheet,
   View,
   type ViewStyle,
+  type ViewInstance,
+  type ScrollViewInstance,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -381,8 +383,8 @@ export default function SortableWidgetGrid({
       setPullRefreshing(false);
     }
   }, [onRefresh]);
-  const scrollRef = useRef<ScrollView | null>(null);
-  const viewportRef = useRef<View | null>(null);
+  const scrollRef = useRef<ScrollViewInstance | null>(null);
+  const viewportRef = useRef<ViewInstance | null>(null);
   const activeDragRef = useRef<ActiveWidgetDrag | null>(null);
   const orderRef = useRef<string[]>(widgets.map((widget) => widget.id));
   const scrollOffsetRef = useRef(0);

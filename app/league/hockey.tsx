@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
@@ -175,7 +174,7 @@ function NHLLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

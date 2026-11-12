@@ -23,12 +23,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run lint
       - run: npm run typecheck
+      - run: npm run lint
       - run: npm test
-      # Fail for all new advisories, changes to the known chain, and at expiry.
-      # This is NOT a clean audit; a temporary exception emits a warning.
-      - run: node scripts/check-dependency-advisories.mjs
+      # No temporary allowlist: high/critical findings block the release.
+      - run: npm audit --audit-level=high
       - run: npx expo install --check
       - run: npm run export:all
       - run: npx playwright install --with-deps chromium

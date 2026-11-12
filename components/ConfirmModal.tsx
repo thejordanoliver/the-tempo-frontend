@@ -15,6 +15,7 @@ import {
   ScrollView,
   Text,
   View,
+  type TextInstance,
 } from "react-native";
 import Modal from "react-native-modal";
 
@@ -54,7 +55,7 @@ export default function ConfirmModal({
   testID = "confirm-modal",
 }: ConfirmModalProps) {
   const reduceMotion = useReducedMotion();
-  const titleRef = useRef<Text>(null);
+  const titleRef = useRef<TextInstance>(null);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => ConfirmModalStyles(isDark), [isDark]);

@@ -33,7 +33,7 @@ export default function ArticleScreen() {
   const navigation = useNavigation();
   const router = useScopedRouter();
   const newsId = Array.isArray(id) ? id[0] : id;
-  const { article, loading, error } = useArticle(newsId);
+  const { article, loading, error } = useArticle(newsId ?? "");
 
   const headline = article?.headline;
   const source = article?.byline || article?.source;

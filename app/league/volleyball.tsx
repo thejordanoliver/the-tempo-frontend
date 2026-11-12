@@ -24,7 +24,6 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/router";
 import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
@@ -186,7 +185,7 @@ function MCVBLeagueScreen() {
         <CustomHeader
           tabName="Men's College Volleyball"
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -437,7 +436,7 @@ function WCVBLeagueScreen() {
         <CustomHeader
           tabName="Women's College Volleyball"
           league={league}
-          onBack={goBack}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

@@ -15,6 +15,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  type ScrollViewInstance,
 } from "react-native";
 import type { ScheduleMonthKey, ScheduleMonthOption } from "types/schedule";
 
@@ -34,7 +35,7 @@ export default function MonthSelector({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const [indicatorX] = useState(() => new Animated.Value(0));
 
   const [containerWidth, setContainerWidth] = useState(0);

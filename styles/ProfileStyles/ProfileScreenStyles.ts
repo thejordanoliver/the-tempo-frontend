@@ -83,7 +83,7 @@ export const profileStyles = (
     followButtonContainer: {
       width: 120,
       borderRadius: 10,
-      opacity: opacityAnim,
+      opacity: opacityAnim as unknown as number | undefined,
       overflow: "hidden",
       borderColor: isFollowing
         ? isDark

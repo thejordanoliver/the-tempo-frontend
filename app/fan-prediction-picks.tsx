@@ -90,7 +90,7 @@ export default function FanPredictionPicksScreen() {
           <View style={styles.empty}>
             <Text style={styles.emptyTitle}>No predictions yet</Text>
           </View>
-        ) : null
+        ) : undefined
       }
       ListFooterComponent={
         error ? (
@@ -115,7 +115,7 @@ export default function FanPredictionPicksScreen() {
           >
             {loading ? "Loading…" : "Load more predictions"}
           </Button>
-        ) : null
+        ) : undefined
       }
     />
   );
