@@ -84,7 +84,7 @@ export default function SeasonLeadersScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader tabName={title} onBack={() => navigation.goBack()} />,
+      header: () => <CustomHeader tabName={title} onBack={navigation.goBack} />,
     });
   }, [title, navigation]);
 

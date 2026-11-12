@@ -136,7 +136,7 @@ export default function SettingsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Settings" onBack={() => navigation.goBack()} />,
+      header: () => <CustomHeader title="Settings" onBack={navigation.goBack} />,
     });
   }, [navigation]);
 

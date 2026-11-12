@@ -44,7 +44,7 @@ const PreferencesScreen = () => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Preferences" onBack={() => navigation.goBack()} />,
+      header: () => <CustomHeader title="Preferences" onBack={navigation.goBack} />,
     });
   }, [navigation, isDark]);
 

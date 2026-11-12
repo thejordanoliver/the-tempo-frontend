@@ -179,7 +179,7 @@ export default function CreatePostScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="New post" onBack={() => navigation.goBack()} />,
+      header: () => <CustomHeader title="New post" onBack={navigation.goBack} />,
     });
   }, [navigation, router, createPost, loading, newPostText, poll, media]);
 

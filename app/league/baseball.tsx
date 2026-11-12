@@ -219,7 +219,7 @@ function MLBLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -517,7 +517,7 @@ function CBLeagueScreen() {
         <CustomHeader
           tabName="College Baseball"
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -757,7 +757,7 @@ function SBLeagueScreen() {
         <CustomHeader
           tabName="College Softball"
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

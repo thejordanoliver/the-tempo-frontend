@@ -192,7 +192,7 @@ export default function RacingLeagueScreen() {
         <CustomHeader
           tabName={leagueLabel}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

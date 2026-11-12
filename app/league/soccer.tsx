@@ -141,7 +141,7 @@ export default function SoccerLeagueScreen() {
         <CustomHeader
           tabName={leagueLabel}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

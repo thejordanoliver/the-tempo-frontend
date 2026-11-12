@@ -185,7 +185,7 @@ function MCVBLeagueScreen() {
         <CustomHeader
           tabName="Men's College Volleyball"
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -436,7 +436,7 @@ function WCVBLeagueScreen() {
         <CustomHeader
           tabName="Women's College Volleyball"
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),

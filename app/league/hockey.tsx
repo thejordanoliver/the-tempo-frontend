@@ -174,7 +174,7 @@ function NHLLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
