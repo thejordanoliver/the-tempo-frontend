@@ -148,7 +148,7 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
     }
 
     let active = true;
-    let appState: AppStateStatus = AppState.currentState ?? "inactive";
+    let appState: AppStateStatus = AppState.currentState === "active" ? "active" : "inactive";
     let socket: NotificationSocket | null = null;
     let socketToken: string | null = null;
     let initialHydration: Promise<boolean> | null = null;
