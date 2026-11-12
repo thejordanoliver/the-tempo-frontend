@@ -1,3 +1,4 @@
+import type { TextInputInstance } from "react-native";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Easing, TextInput, useWindowDimensions } from "react-native";
@@ -20,7 +21,7 @@ export default function SearchBar({
   const { fontScale } = useWindowDimensions();
   const expandedHeight = Math.max(48, 28 + 20 * fontScale);
   const [anim] = useState(() => new Animated.Value(0));
-  const inputRef = useRef<TextInput>(null); // ← ref for auto-blur
+  const inputRef = TextInputInstance>(null); // ← ref for auto-blur
   useEffect(() => {
     Animated.timing(anim, {
       toValue: visible ? 1 : 0,

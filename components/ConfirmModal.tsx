@@ -1,3 +1,4 @@
+import type { TextInstance } from "react-native";
 import { ConfirmModalStyles } from "@/styles/ModalsStyles/ConfirmModalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
@@ -54,7 +55,7 @@ export default function ConfirmModal({
   testID = "confirm-modal",
 }: ConfirmModalProps) {
   const reduceMotion = useReducedMotion();
-  const titleRef = useRef<Text>(null);
+  const titleRef = TextInstance>(null);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => ConfirmModalStyles(isDark), [isDark]);

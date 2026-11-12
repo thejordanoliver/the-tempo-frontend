@@ -1,3 +1,4 @@
+import type { TextInputInstance } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
@@ -37,7 +38,7 @@ export default function SearchBar({
   selectedTab,
   onTabPress,
 }: Props) {
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = TextInputInstance>(null);
   const [inputAnim] = useState(() => new Animated.Value(0));
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

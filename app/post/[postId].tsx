@@ -1,3 +1,4 @@
+import type { TextInputInstance } from "react-native";
 import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
@@ -56,7 +57,7 @@ export default function CommentThreadScreen() {
   const { height: windowHeight } = useWindowDimensions();
 
   const listRef = useRef<FlatList<ForumComment>>(null);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = TextInputInstance>(null);
   const [keyboardOffset] = useState(() => new Animated.Value(0));
   const hasExitedAfterDeleteRef = useRef(false);
 

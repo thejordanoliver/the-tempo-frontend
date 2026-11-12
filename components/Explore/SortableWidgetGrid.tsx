@@ -1,3 +1,5 @@
+import type { ViewInstance } from "react-native";
+import type { ScrollViewInstance } from "react-native";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import * as Haptics from "expo-haptics";
 import type { ReactNode } from "react";
@@ -381,8 +383,8 @@ export default function SortableWidgetGrid({
       setPullRefreshing(false);
     }
   }, [onRefresh]);
-  const scrollRef = useRef<ScrollView | null>(null);
-  const viewportRef = useRef<View | null>(null);
+  const scrollRef = ScrollViewInstance | null>(null);
+  const viewportRef = ViewInstance | null>(null);
   const activeDragRef = useRef<ActiveWidgetDrag | null>(null);
   const orderRef = useRef<string[]>(widgets.map((widget) => widget.id));
   const scrollOffsetRef = useRef(0);

@@ -1,3 +1,4 @@
+import type { TextInputInstance } from "react-native";
 import AuthorizedMessageImage from "components/Messages/AuthorizedMessageImage";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,7 +17,7 @@ type Props = {
   draftMessage: string;
   isSendDisabled: boolean;
   sendError: string | null;
-  inputRef: RefObject<TextInput | null>;
+  inputRef: TextInputInstance | null>;
   handleRemoveAttachment: () => void;
   handlePickImage: () => Promise<void>;
   handleOpenGifPicker: () => void;
