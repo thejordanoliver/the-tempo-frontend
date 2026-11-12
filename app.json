@@ -5,7 +5,10 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/appIcon.png",
-    "scheme": ["tempo", "nbascorestracker"],
+    "scheme": [
+      "tempo",
+      "nbascorestracker"
+    ],
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
@@ -21,14 +24,20 @@
       },
       "icon": "./assets/images/appIcon.png",
       "predictiveBackGestureEnabled": false,
-      "permissions": []
+      "permissions": [],
+      "package": "com.jordanoliver.thetempo"
     },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "apiRoutes": true
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -80,21 +89,54 @@
                       "type": "enum",
                       "default": "all",
                       "values": [
-                        { "name": "All Leagues", "value": "all" },
-                        { "name": "NBA", "value": "nba" },
-                        { "name": "WNBA", "value": "wnba" },
-                        { "name": "Men’s College Basketball", "value": "mcbb" },
+                        {
+                          "name": "All Leagues",
+                          "value": "all"
+                        },
+                        {
+                          "name": "NBA",
+                          "value": "nba"
+                        },
+                        {
+                          "name": "WNBA",
+                          "value": "wnba"
+                        },
+                        {
+                          "name": "Men’s College Basketball",
+                          "value": "mcbb"
+                        },
                         {
                           "name": "Women’s College Basketball",
                           "value": "wcbb"
                         },
-                        { "name": "MLB", "value": "mlb" },
-                        { "name": "College Baseball", "value": "cb" },
-                        { "name": "NFL", "value": "nfl" },
-                        { "name": "College Football", "value": "cfb" },
-                        { "name": "UFL", "value": "ufl" },
-                        { "name": "NHL", "value": "nhl" },
-                        { "name": "Men’s College Volleyball", "value": "mcvb" },
+                        {
+                          "name": "MLB",
+                          "value": "mlb"
+                        },
+                        {
+                          "name": "College Baseball",
+                          "value": "cb"
+                        },
+                        {
+                          "name": "NFL",
+                          "value": "nfl"
+                        },
+                        {
+                          "name": "College Football",
+                          "value": "cfb"
+                        },
+                        {
+                          "name": "UFL",
+                          "value": "ufl"
+                        },
+                        {
+                          "name": "NHL",
+                          "value": "nhl"
+                        },
+                        {
+                          "name": "Men’s College Volleyball",
+                          "value": "mcvb"
+                        },
                         {
                           "name": "Women’s College Volleyball",
                           "value": "wcvb"

@@ -1,62 +1,80 @@
-# Dependency security risk assessment — Expo Router SDK 57
+# Resolved: Expo Router decoder denial-of-service advisories
 
-**Assessment date:** 2026-11-12  
-**Review/exception expiration:** 2026-12-12 00:00 UTC (CI fails at expiration)  
-**Status:** Unresolved, temporarily allowlisted for CI with explicit warning; **not** a formal security or production release approval  
-**Risk owner:** Tempo frontend maintainer (owner approval required before production release)
+**Original assessment:** 2026-11-12  
+**Remediation branch:** `security/expo58-release-readiness`  
+**Status:** Dependency remediation implemented; PR CI and signed native release validation required before release
 
-## Verified dependency chain
+## Original findings
 
-The production dependencies recorded in `package-lock.json` are:
+The Expo SDK 57 lockfile contained:
 
 ```text
-expo-router@57.0.31 (direct dependency)
+expo-router@57.0.31
 └── query-string@7.1.3
     └── decode-uri-component@0.2.2
 ```
 
-An npm audit executed in GitHub Actions on 2026-11-12 reported **three high-severity vulnerable package entries** for this **single chain** (not three separate root causes). The decoder has two known advisories:
+This generated three high-severity **package findings** for one affected
+dependency chain. The underlying decoder was affected by:
 
-| Advisory | CVE | Impact | Patched decoder |
-| --- | --- | --- | --- |
-| [GHSA-vcc3-ghjq-m6fr](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr) | CVE-2026-45822 | Excessive CPU/time on malformed percent-encoded inputs | 0.5.0 |
-| [GHSA-qr28-fpjm-wq7f](https://github.com/advisories/GHSA-qr28-fpjm-wq7f) | CVE-2026-118664 | Quadratic CPU/time on distinct encoded runs | 0.5.1 |
+- [GHSA-vcc3-ghjq-m6fr](https://github.com/advisories/GHSA-vcc3-ghjq-m6fr)
+  (exponential decoding, fixed in `0.5.0`)
+- [GHSA-qr28-fpjm-wq7f](https://github.com/advisories/GHSA-qr28-fpjm-wq7f)
+  (quadratic-time decoding, fixed in `0.5.1`)
 
-**0.5.0 is still affected by the second issue; a safe patched version is 0.5.1 or newer.** Both problems affect availability; the advisories do not identify data theft, integrity compromise, or arbitrary code execution.
+These are availability/denial-of-service risks from untrusted malformed URLs;
+there is no basis for claiming account compromise or data theft.
 
-## Tempo exposure and practical risk
+## Remediation
 
-- The vulnerable chain is within the **frontend Expo Router dependency tree**. This does not establish a vulnerability in Tempo's separate Express API/backend or its server-side input handling.
-- Tempo handles web links and native deep links. Crafted, malformed, long query parameters could cause **client-side UI stalls** if they reach vulnerable parsing paths. The exact exploitability of the app's routing entry points has **not** been dynamically demonstrated or ruled out.
-- On a statically exported web app, the known Node.js whole-server denial-of-service example is **not automatically applicable** to Tempo's backend. Reassess immediately if any request-time server-side rendering or server URL parser uses this dependency on untrusted requests.
-- Default URL/header length restrictions can reduce the worst case on some servers, but are **not** a proven native/mobile defense. We are **not** claiming a deployed length limit or exploit prevention for all navigation entry points.
-- **Impact:** Availability only; user experience could be disrupted. **Likelihood:** Uncertain but plausibly lower than an exposed unauthenticated Node HTTP parser given current client-side usage. **Provisional residual risk:** Medium for the frontend client, escalating to High if exposed to unbounded untrusted input in a shared server process. This is engineering judgment, not a vendor severity downgrade.
+Tempo upgraded through the supported **Expo SDK 58** dependency map:
+`expo-router@~58.0.31`, `react-native@0.88.1`,
+`react@19.3.0`, and matching Expo modules, including Sentry 8.28.
+The new lockfile contains **neither** `query-string` nor
+`decode-uri-component`; the bootstrap job's `npm audit --audit-level=high`
+reported **0 vulnerabilities**.
 
-## Why a direct fix is not merged
+The old expiring exception in `scripts/check-dependency-advisories.mjs`,
+its tests, and the temporary migration workflow have been removed. CI now
+runs `npm audit --audit-level=high` directly, with no
+`continue-on-error`.
 
-- Expo Router 57.0.31 depends on `query-string@^7.1.3`, which pulls `decode-uri-component@^0.2.2` using CommonJS.
-- The fixed decoder (`0.5.1`) is ESM-only; overriding only the decoder breaks this CommonJS consumer.
-- `npm audit fix --force` proposes Expo Router **58.0.31**, a breaking change across the SDK 57/58 navigation boundary. Expo documents navigation and rendering migrations that require more extensive testing.
-- Force-upgrading router or transitive dependencies without an integration migration creates a different risk: navigation failures and broken production builds.
+### npm peer resolution note
 
-## Temporary, tightly bounded CI control
+The SDK 58-supported `@react-native-community/datetimepicker@9.2.1` has
+an optional `react-native-windows` peer. npm attempts to select Windows
+0.85, which has an incompatible React Native 0.85 peer against Tempo's
+React Native 0.88. Tempo builds iOS, Android, and Web; it does not import
+Windows runtime components. The project-level `.npmrc` currently sets
+`legacy-peer-deps=true` so installs remain reproducible without bringing
+an incompatible Windows runtime into the dependency tree. **This option
+does not validate peer dependency compatibility**; the lockfile, Expo
+compatibility check, native build tests, and review of changed dependencies
+remain essential. Remove this option once the optional peer metadata is
+compatible with React Native 0.88.
 
-`scripts/check-dependency-advisories.mjs` runs a live `npm audit --json` and **fails closed** unless all the following hold:
+### Sentry config note
 
-1. Exactly the three known affected package names are reported, with High severity and expected install locations.
-2. The decoder lists exactly the two known GHSA advisory URLs and the parent entries describe precisely the existing chain.
-3. The lockfile resolves exactly the three audited package versions, with no other installed copies.
-4. npm audit supplies the expected vulnerability metadata and succeeds in returning a parseable report.
-5. The current date is **before 2026-12-12 00:00 UTC**.
+Expo CLI's upgrade initially attempted to auto-add
+`@sentry/react-native` to `app.config.ts` after installing the packages.
+Tempo already includes the equivalent `@sentry/react-native/expo` config
+plugin conditionally, when the DSN and build-time auth/organization variables
+are configured. A dynamic app config cannot be edited automatically by the
+Expo CLI; that CLI message did not indicate an unsuccessful package install.
 
-An allowed run emits a visible GitHub Actions **warning** stating that the advisories remain unresolved. This is a **provisional engineering exception to retain CI regression coverage**, not a blanket `continue-on-error` or approval to ship.
+## Remaining release gates
 
-## Remediation and verification plan
+1. Review and merge PR only after `verify` passes: install, lint, typecheck,
+   unit and browser tests, strict audit, compatibility checks, and
+   iOS/Android/Web production exports.
+2. Test routing and deep linking on iOS 27 and Android release builds.
+3. Produce real **signed production IPA and AAB** using the existing EAS
+   project and production environment. Confirm both build records finished,
+   signing credentials worked, and the corresponding artifact type is correct.
+4. Test signed distribution builds for startup, login, game views, navigation,
+   refresh/favorites, video and notification permissions, widgets, API connectivity,
+   and crash reporting/source maps before public production release.
 
-1. Track a supported Expo SDK 58 / Router 58 migration, or an official compatible patched release from the vendor. Prefer a supported dependency graph instead of a hand-written decoder shim.
-2. Verify the chosen router version no longer installs a vulnerable decoder: `npm ls expo-router query-string decode-uri-component` and `npm audit --audit-level=high`.
-3. Re-run `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npx expo install --check`, `npm run export:all`, and `npm run test:e2e`. Validate login, all tab stacks, deep links with malformed query strings, native routing, and app start/restart on release builds.
-4. Once `npm audit` reports **zero high/critical advisories**, replace the temporary audit guard with a strict `npm audit --audit-level=high` check and delete this exception.
-5. Reassess before **2026-12-12 UTC**. CI intentionally fails once the deadline is reached, and fails immediately if any new vulnerability, version, advisory, or scope appears.
-
-**Decision needed:** The maintainer must explicitly approve any remaining risk before public production release. Passing the temporary CI check alone is insufficient to declare production readiness.
+**A passing JS export is not a signed production build.** No claims about
+actual iOS/Android signing or App Store/Play Store distribution should be
+made until those EAS build records and device checks exist.
