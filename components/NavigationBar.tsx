@@ -1,13 +1,20 @@
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { useNavigationBarRowHeight } from "contexts/NavigationBarInsetContext";
 import { BlurView } from "expo-blur";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { useMemo, type ComponentProps } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Balls, Compass, Home, User } from "reicon-react-native";
 
 type TabBarRenderer = NonNullable<ComponentProps<typeof Tabs>["tabBar"]>;
 type NavigationBarProps = Parameters<TabBarRenderer>[0] & { isDark: boolean };
+
+const TAB_PATHS = {
+  "(home)": "/(tabs)/(home)",
+  "(league)": "/(tabs)/(league)",
+  "(explore)": "/(tabs)/(explore)",
+  "(profile)": "/(tabs)/(profile)",
+} as const;
 
 const TAB_DETAILS = {
   "(home)": { label: "Home", Icon: Home },
@@ -19,10 +26,10 @@ const TAB_DETAILS = {
 export default function NavigationBar({
   state,
   descriptors,
-  navigation,
   insets,
   isDark,
 }: NavigationBarProps) {
+  const router = useRouter();
   const iconColor = isDark ? Colors.white : Colors.black;
   const rowHeight = useNavigationBarRowHeight();
   const styles = useMemo(
@@ -48,26 +55,15 @@ export default function NavigationBar({
           const { options } = descriptors[route.key];
 
           const handlePress = () => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!focused && !event.defaultPrevented) {
-              navigation.navigate(route.name, route.params);
+            if (!focused) {
+              router.navigate(TAB_PATHS[route.name as keyof typeof TAB_PATHS]);
             }
-          };
-
-          const handleLongPress = () => {
-            navigation.emit({ type: "tabLongPress", target: route.key });
           };
 
           return (
             <TouchableOpacity
               key={route.key}
               onPress={handlePress}
-              onLongPress={handleLongPress}
               style={styles.tabButton}
               activeOpacity={activeOpacity}
               accessibilityRole="tab"

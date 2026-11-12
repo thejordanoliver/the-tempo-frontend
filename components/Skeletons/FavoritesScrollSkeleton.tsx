@@ -29,7 +29,8 @@ export default function FavoritesScrollSkeleton({ isDark }: Props) {
           useNativeDriver: true,
         }),
       ]),
-      { resetBeforeIteration: false },
+      { iterations: -1,
+      resetBeforeIteration: false },
     );
 
     pulse.start();

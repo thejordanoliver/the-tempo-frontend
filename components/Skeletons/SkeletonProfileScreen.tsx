@@ -32,7 +32,8 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
           useNativeDriver: true,
         }),
       ]),
-      { resetBeforeIteration: false },
+      { iterations: -1,
+      resetBeforeIteration: false },
     );
 
     pulse.start();

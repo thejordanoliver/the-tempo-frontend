@@ -36,7 +36,8 @@ export default function PlayerCardSkeletonList({
           useNativeDriver: true,
         }),
       ]),
-      { resetBeforeIteration: false }, // keeps it perfectly continuous
+      { iterations: -1,
+      resetBeforeIteration: false }, // keeps it perfectly continuous
     );
 
     pulse.start();

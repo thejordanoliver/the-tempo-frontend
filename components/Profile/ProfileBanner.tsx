@@ -1,3 +1,4 @@
+import type { ImageStyle } from "react-native";
 import {
   activeOpacity,
   PLACEHOLDER_AVATAR,
@@ -25,7 +26,7 @@ export default function ProfileBanner({
       <BannerComponent onPress={onPressBanner} activeOpacity={activeOpacity}>
         <Image
           source={{ uri: bannerImage ?? PLACEHOLDER_BANNER }}
-          style={styles.banner}
+          style={styles.banner as ImageStyle}
         />
       </BannerComponent>
 
@@ -36,7 +37,7 @@ export default function ProfileBanner({
         >
           <Image
             source={{ uri: profileImage ?? PLACEHOLDER_AVATAR }}
-            style={styles.profilePic}
+            style={styles.profilePic as ImageStyle}
           />
         </ProfileComponent>
       </View>
