@@ -57,7 +57,7 @@ export default function AccountDetailsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Account Details" onBack={() => navigation.goBack()} />,
+      header: () => <CustomHeader title="Account Details" onBack={navigation.goBack} />,
     });
   }, [navigation, isDark]);
 

@@ -113,7 +113,7 @@ export default function GameDetailsScreen(
     }
 
     navigation.setOptions({
-      header: () => <CustomHeader tabName={gameName} onBack={() => navigation.goBack()} />,
+      header: () => <CustomHeader tabName={gameName} onBack={navigation.goBack} />,
     });
   }, [isLoading, navigation, gameName]);
 

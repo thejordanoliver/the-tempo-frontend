@@ -380,7 +380,7 @@ function NBALeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -751,7 +751,7 @@ function WNBALeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -1081,7 +1081,7 @@ function GLeagueScreen() {
         <CustomHeader
           tabName={"NBA G League"}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -1415,7 +1415,7 @@ function MCBBLeagueScreen() {
         <CustomHeader
           tabName={"Men's College Basketball"}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
@@ -1804,7 +1804,7 @@ function WCBBLeagueScreen() {
         <CustomHeader
           tabName={"Women's College Basketball"}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}

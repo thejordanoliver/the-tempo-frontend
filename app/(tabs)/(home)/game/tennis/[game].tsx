@@ -113,7 +113,7 @@ export default function GameDetailsScreen() {
       header: () => (
         <CustomHeader
           tabName={match?.tournamentShortName ?? "Tennis"}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
         />
       ),
     });

@@ -227,7 +227,7 @@ export default function GameDetailsScreen(
       header: () => (
         <CustomHeader
           tabName="Game"
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           awayTeamCode={secondFighterLastName}
           homeTeamCode={firstFighterLastName}
           homeLogo={firstFighterFlag}

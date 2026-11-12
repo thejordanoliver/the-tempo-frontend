@@ -295,7 +295,7 @@ function NFLLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
@@ -678,7 +678,7 @@ function CFBLeagueScreen() {
         <CustomHeader
           tabName={"College Football"}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
@@ -1012,7 +1012,7 @@ function UFLLeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={() => navigation.goBack()}
+          onBack={navigation.goBack}
           {...favoriteHeaderProps}
         />
       ),
