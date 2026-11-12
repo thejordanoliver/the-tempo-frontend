@@ -17,7 +17,7 @@ type Props = {
   draftMessage: string;
   isSendDisabled: boolean;
   sendError: string | null;
-  inputRef: TextInputInstance | null>;
+  inputRef: RefObject<TextInputInstance | null>;
   handleRemoveAttachment: () => void;
   handlePickImage: () => Promise<void>;
   handleOpenGifPicker: () => void;

@@ -6,7 +6,7 @@ import { StyleSheet, TextInput, TextInputProps } from "react-native";
 
 export type BaseSearchInputProps = Omit<TextInputProps, "placeholderTextColor">;
 
-const BaseSearchInput = TextInputInstance, BaseSearchInputProps>(
+const BaseSearchInput = forwardRef<TextInputInstance, BaseSearchInputProps>(
   ({ placeholder = "Search...", style, ...props }, ref) => {
     const { resolvedColorScheme } = usePreferences();
     const isDark = resolvedColorScheme === "dark";

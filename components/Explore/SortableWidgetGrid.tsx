@@ -383,8 +383,8 @@ export default function SortableWidgetGrid({
       setPullRefreshing(false);
     }
   }, [onRefresh]);
-  const scrollRef = ScrollViewInstance | null>(null);
-  const viewportRef = ViewInstance | null>(null);
+  const scrollRef = useRef<ScrollViewInstance | null>(null);
+  const viewportRef = useRef<ViewInstance | null>(null);
   const activeDragRef = useRef<ActiveWidgetDrag | null>(null);
   const orderRef = useRef<string[]>(widgets.map((widget) => widget.id));
   const scrollOffsetRef = useRef(0);

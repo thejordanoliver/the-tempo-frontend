@@ -38,7 +38,7 @@ export default function SearchBar({
   selectedTab,
   onTabPress,
 }: Props) {
-  const inputRef = TextInputInstance>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const [inputAnim] = useState(() => new Animated.Value(0));
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

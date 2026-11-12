@@ -57,7 +57,7 @@ export default function CommentThreadScreen() {
   const { height: windowHeight } = useWindowDimensions();
 
   const listRef = useRef<FlatList<ForumComment>>(null);
-  const inputRef = TextInputInstance>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const [keyboardOffset] = useState(() => new Animated.Value(0));
   const hasExitedAfterDeleteRef = useRef(false);
 

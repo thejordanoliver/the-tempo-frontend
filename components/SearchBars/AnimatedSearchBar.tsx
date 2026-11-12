@@ -21,7 +21,7 @@ export default function SearchBar({
   const { fontScale } = useWindowDimensions();
   const expandedHeight = Math.max(48, 28 + 20 * fontScale);
   const [anim] = useState(() => new Animated.Value(0));
-  const inputRef = TextInputInstance>(null); // ← ref for auto-blur
+  const inputRef = useRef<TextInputInstance>(null); // ← ref for auto-blur
   useEffect(() => {
     Animated.timing(anim, {
       toValue: visible ? 1 : 0,

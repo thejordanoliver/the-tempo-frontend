@@ -21,7 +21,7 @@ export function useConversationComposer({
   notifyTyping,
   scrollToBottom,
 }: Options) {
-  const inputRef = TextInputInstance>(null);
+  const inputRef = useRef<TextInputInstance>(null);
   const [draftMessage, setDraftMessage] = useState("");
   const [selectedAttachment, setSelectedAttachment] =
     useState<MessageAttachment | null>(null);

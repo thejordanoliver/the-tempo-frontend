@@ -55,7 +55,7 @@ export default function ConfirmModal({
   testID = "confirm-modal",
 }: ConfirmModalProps) {
   const reduceMotion = useReducedMotion();
-  const titleRef = TextInstance>(null);
+  const titleRef = useRef<TextInstance>(null);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => ConfirmModalStyles(isDark), [isDark]);
