@@ -45,7 +45,7 @@ const PageContent = memo(function PageContent({
 export default function PlayerDetailsPager({ overview, pages, isDark }: Props) {
   const navigationContentStyle = useNavigationBarContentStyle();
   const pagerRef = useRef<PagerView>(null);
-  const scrollRef = ScrollViewInstance>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const selectedPage = useRef(0);
   const scrollState = useRef("idle");
   const scrollOffset = useRef(0);

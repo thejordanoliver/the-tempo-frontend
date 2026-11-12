@@ -28,7 +28,7 @@ export default function TournamentTreeBracket({
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = MCBBTournamentBracketStyles(isDark);
   const global = globalStyles(isDark);
-  const roundHeaderScrollRef = ScrollViewInstance>(null);
+  const roundHeaderScrollRef = useRef<ScrollViewInstance>(null);
 
   const {
     games,

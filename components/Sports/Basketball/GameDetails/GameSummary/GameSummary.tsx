@@ -49,7 +49,7 @@ function GameSummary({
   const [selectedPeriod, setSelectedPeriod] = useState("All");
 
   const [visibleCount, setVisibleCount] = useState(PLAY_BATCH_SIZE);
-  const listRef = ScrollViewInstance>(null);
+  const listRef = useRef<ScrollViewInstance>(null);
 
   const { plays: sortedPlays, periods: availablePeriods } = model;
   const periodTabs = availablePeriods.map((tab) => tab.label);

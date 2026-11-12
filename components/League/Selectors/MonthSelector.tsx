@@ -35,7 +35,7 @@ export default function MonthSelector({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const scrollRef = ScrollViewInstance>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const [indicatorX] = useState(() => new Animated.Value(0));
 
   const [containerWidth, setContainerWidth] = useState(0);

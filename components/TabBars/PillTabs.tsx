@@ -62,7 +62,7 @@ export default function PillTabs<T extends string = string>({
   const reduceMotion = useReducedMotion();
   const styles = useMemo(() => pillTabsStyles(isDark), [isDark]);
 
-  const scrollViewRef = ScrollViewInstance | null>(null);
+  const scrollViewRef = useRef<ScrollViewInstance | null>(null);
   const [translateX] = useState(() => new Animated.Value(0));
   const [animatedWidth] = useState(() => new Animated.Value(0));
   const hasPlacedIndicator = useRef(false);

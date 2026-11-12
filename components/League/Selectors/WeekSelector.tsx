@@ -96,7 +96,7 @@ export default function WeekSelector({
 }: Props) {
   const styles = DateSelectorStyles(isDark, { itemWidth });
 
-  const scrollViewRef = ScrollViewInstance>(null);
+  const scrollViewRef = useRef<ScrollViewInstance>(null);
 
   const [indicatorX] = useState(() => new Animated.Value(0));
   const hasPositionedIndicatorRef = useRef(false);

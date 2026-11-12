@@ -6,7 +6,7 @@ export function useConversationKeyboard(
   scrollToBottom: () => void,
   navigationBarInset: number,
 ) {
-  const rootRef = ViewInstance>(null);
+  const rootRef = useRef<ViewInstance>(null);
   const keyboardTop = useRef<number | null>(null);
   const [bottomInset] = useState(() => new Animated.Value(navigationBarInset));
   const [keyboardVisible, setKeyboardVisible] = useState(false);
