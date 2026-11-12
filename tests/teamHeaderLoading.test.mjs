@@ -235,7 +235,7 @@ test("unsupported team routes restore a visible error header and back navigation
     }
   }
   const { default: renderRoute } = loadModule(file, modules);
-  for (teamType of ["unsupported", "invalid-sport"]) {
+  for (teamType of ["unsupported", "invalid-sport", "mcvb", "wcvb"]) {
     const result = descendants(renderRoute());
     assert.ok(
       result.some((node) => node.props.children === "Team unavailable"),
@@ -245,8 +245,8 @@ test("unsupported team routes restore a visible error header and back navigation
     assert.equal(header.props.title, "Team unavailable");
     header.props.onBack();
   }
-  assert.equal(backCount, 2);
-  for (teamType of ["nba", "mcvb", "wcvb"]) {
+  assert.equal(backCount, 4);
+  for (teamType of ["nba", "nfl", "wnba"]) {
     options = undefined;
     assert.equal(typeof renderRoute().type, "function");
     assert.equal(options, undefined, "supported team owns its header setup");
