@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { TextInput, View } from "react-native";
+import { View, type TextInputInstance } from "react-native";
 import BaseSearchInput from "./BaseSearchInput";
 
 type Props = {
@@ -21,7 +21,7 @@ export default function SearchBar({
   autoCapitalize = "none",
   editable,
 }: Props) {
-  const inputRef = useRef<TextInput>(null); // ← ref for auto-blur
+  const inputRef = useRef<TextInputInstance>(null); // ← ref for auto-blur
   return (
     <View>
       <BaseSearchInput
