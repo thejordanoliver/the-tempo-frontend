@@ -1,4 +1,3 @@
-import type { TextInputInstance } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
@@ -11,6 +10,7 @@ import {
   StyleSheet,
   TextInput,
   View,
+  type TextInputInstance,
 } from "react-native";
 
 type Props = {

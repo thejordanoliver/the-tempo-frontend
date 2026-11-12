@@ -1,8 +1,7 @@
-import type { TextInputInstance } from "react-native";
 import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { forwardRef } from "react";
-import { StyleSheet, TextInput, TextInputProps } from "react-native";
+import { StyleSheet, TextInput, TextInputProps, type TextInputInstance } from "react-native";
 
 export type BaseSearchInputProps = Omit<TextInputProps, "placeholderTextColor">;
 

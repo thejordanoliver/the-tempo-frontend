@@ -1,4 +1,3 @@
-import type { TextInputInstance } from "react-native";
 import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
@@ -37,6 +36,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  type TextInputInstance,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ForumComment, ForumCommentAttachment } from "types/forum";

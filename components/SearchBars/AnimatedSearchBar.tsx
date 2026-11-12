@@ -1,7 +1,6 @@
-import type { TextInputInstance } from "react-native";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Easing, TextInput, useWindowDimensions } from "react-native";
+import { Animated, Easing, TextInput, useWindowDimensions, type TextInputInstance } from "react-native";
 import BaseSearchInput from "./BaseSearchInput";
 
 type Props = {

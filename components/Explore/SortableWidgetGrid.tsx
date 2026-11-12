@@ -1,5 +1,3 @@
-import type { ViewInstance } from "react-native";
-import type { ScrollViewInstance } from "react-native";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import * as Haptics from "expo-haptics";
 import type { ReactNode } from "react";
@@ -13,6 +11,8 @@ import {
   StyleSheet,
   View,
   type ViewStyle,
+  type ViewInstance,
+  type ScrollViewInstance,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {

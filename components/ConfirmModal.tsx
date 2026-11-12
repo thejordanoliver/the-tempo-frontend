@@ -1,4 +1,3 @@
-import type { TextInstance } from "react-native";
 import { ConfirmModalStyles } from "@/styles/ModalsStyles/ConfirmModalStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
@@ -16,6 +15,7 @@ import {
   ScrollView,
   Text,
   View,
+  type TextInstance,
 } from "react-native";
 import Modal from "react-native-modal";
 

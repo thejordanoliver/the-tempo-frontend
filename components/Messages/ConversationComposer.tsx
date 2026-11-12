@@ -1,10 +1,9 @@
-import type { TextInputInstance } from "react-native";
 import AuthorizedMessageImage from "components/Messages/AuthorizedMessageImage";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import type { RefObject } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, type TextInputInstance } from "react-native";
 import type { ConversationScreenStyles } from "styles/MessageStyles/ConversationScreenStyles";
 import type { MessageAttachment } from "types/messages";
 
