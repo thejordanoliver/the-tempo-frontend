@@ -124,7 +124,7 @@ const getCoverSize = (
   return { width, height: width / imageRatio };
 };
 
-const getDistance = (touches: { pageX: number; pageY: number }[]) => {
+const getDistance = (touches: readonly Readonly<{ pageX: number; pageY: number }>[]) => {
   const [a, b] = touches;
   return Math.hypot(b.pageX - a.pageX, b.pageY - a.pageY);
 };

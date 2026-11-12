@@ -171,7 +171,6 @@ export default function Dropdown({
         accessibilityLabel={accessibilityLabel}
         accessibilityValue={{ text: selectedLabel }}
         accessibilityState={{ expanded: visible }}
-        onAccessibilityEscape={closeDropdown}
         onPress={toggleDropdown}
         style={styles.toggleButton}
       >

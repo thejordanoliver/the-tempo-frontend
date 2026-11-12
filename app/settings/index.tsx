@@ -12,7 +12,6 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
-  InteractionManager,
   Linking,
   ScrollView,
   Text,
@@ -61,7 +60,7 @@ export default function SettingsScreen() {
 
     let timeout: ReturnType<typeof setTimeout> | undefined;
 
-    const task = InteractionManager.runAfterInteractions(() => {
+    const animationFrame = requestAnimationFrame(() => {
       timeout = setTimeout(() => {
         setAlertConfig(pendingAlertConfig);
         setPendingAlertConfig(null);
@@ -69,7 +68,7 @@ export default function SettingsScreen() {
     });
 
     return () => {
-      task.cancel?.();
+      cancelAnimationFrame(animationFrame);
 
       if (timeout) {
         clearTimeout(timeout);

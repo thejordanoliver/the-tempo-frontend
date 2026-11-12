@@ -182,7 +182,7 @@ export default function TeamDetailScreen() {
       <View key="stats" style={styles.contentArea}>
         <RosterStats
           rosterStats={teamRoster}
-          teamId={teamIdStr}
+          teamId={teamIdStr ?? ""}
           teamStats={teamStats}
           loading={rosterStatsLoading || teamStatsLoading}
           error={rosterStatsError || teamStatsError}

@@ -69,7 +69,7 @@ export default function ConversationScreen() {
   const listRef = useRef<FlatList<DirectMessageItem>>(null);
   const [isScreenFocused, setIsScreenFocused] = useState(false);
   const [appState, setAppState] = useState<AppStateStatus>(
-    AppState.currentState,
+    AppState.currentState ?? "unknown",
   );
   const isConversationVisible = isScreenFocused && appState === "active";
 
