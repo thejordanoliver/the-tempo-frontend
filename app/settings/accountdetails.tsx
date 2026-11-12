@@ -7,7 +7,6 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLayoutEffect, useMemo } from "react";
@@ -58,7 +57,7 @@ export default function AccountDetailsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Account Details" onBack={goBack} />,
+      header: () => <CustomHeader title="Account Details" onBack={() => navigation.goBack()} />,
     });
   }, [navigation, isDark]);
 

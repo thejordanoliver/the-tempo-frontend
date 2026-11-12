@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import {
   useCallback,
@@ -381,7 +380,7 @@ function NBALeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={goBack}
+          onBack={() => navigation.goBack()}
           {...favoriteHeaderProps}
         />
       ),
@@ -752,7 +751,7 @@ function WNBALeagueScreen() {
         <CustomHeader
           tabName={league.toUpperCase()}
           league={league}
-          onBack={goBack}
+          onBack={() => navigation.goBack()}
           {...favoriteHeaderProps}
         />
       ),
@@ -1082,7 +1081,7 @@ function GLeagueScreen() {
         <CustomHeader
           tabName={"NBA G League"}
           league={league}
-          onBack={goBack}
+          onBack={() => navigation.goBack()}
           {...favoriteHeaderProps}
         />
       ),
@@ -1416,7 +1415,7 @@ function MCBBLeagueScreen() {
         <CustomHeader
           tabName={"Men's College Basketball"}
           league={league}
-          onBack={goBack}
+          onBack={() => navigation.goBack()}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
@@ -1805,7 +1804,7 @@ function WCBBLeagueScreen() {
         <CustomHeader
           tabName={"Women's College Basketball"}
           league={league}
-          onBack={goBack}
+          onBack={() => navigation.goBack()}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}

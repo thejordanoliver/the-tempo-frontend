@@ -1,7 +1,6 @@
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import MatchInformation from "@/components/Sports/Tennis/GameDetails/MatchInformation";
@@ -114,7 +113,7 @@ export default function GameDetailsScreen() {
       header: () => (
         <CustomHeader
           tabName={match?.tournamentShortName ?? "Tennis"}
-          onBack={goBack}
+          onBack={() => navigation.goBack()}
         />
       ),
     });

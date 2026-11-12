@@ -9,7 +9,6 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
@@ -114,7 +113,7 @@ export default function GameDetailsScreen(
     }
 
     navigation.setOptions({
-      header: () => <CustomHeader tabName={gameName} onBack={goBack} />,
+      header: () => <CustomHeader tabName={gameName} onBack={() => navigation.goBack()} />,
     });
   }, [isLoading, navigation, gameName]);
 

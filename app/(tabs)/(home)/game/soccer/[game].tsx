@@ -30,7 +30,6 @@ import { CustomHeader } from "components/CustomHeader";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
@@ -259,7 +258,7 @@ export default function GameDetailsScreen(
       header: () => (
         <CustomHeader
           tabName="Game"
-          onBack={goBack}
+          onBack={() => navigation.goBack()}
           homeLogo={homeHeaderLogo}
           awayLogo={awayHeaderLogo}
           homeTeamCode={homeCode}
