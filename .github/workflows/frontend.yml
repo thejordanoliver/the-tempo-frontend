@@ -23,8 +23,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run lint
       - run: npm run typecheck
+      - run: npm run lint
       - run: npm test
       # No temporary allowlist: high/critical findings block the release.
       - run: npm audit --audit-level=high
