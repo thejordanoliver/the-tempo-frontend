@@ -53,6 +53,14 @@ backend for development sessions; production builds need their own API configura
 
 ## Release checks
 
+The Babel compatibility plugin `plugins/babelNativeReanimatedDependencies.js`
+adapts web-only Reanimated dependency arguments in `@gorhom/bottom-sheet` and
+`react-native-draggable-flatlist` for native builds using Reanimated 4.6 and later
+4.x versions.
+It preserves web dependencies, argument side effects, and Worklets transforms.
+Remove it when both libraries fix their native call sites. Run its regression
+checks with `node --test tests/nativeReanimatedDependencies.test.mjs`.
+
 Tempo is upgrading from Expo SDK 57 to **SDK 58** (React Native 0.88).
 Use Node 22 and install the committed lockfile with `npm ci`. Copy
 `.env.example` to a local `.env`; set `EXPO_PUBLIC_API_URL` to the API for
@@ -96,6 +104,12 @@ Apple provisioning and distribution signing, and an Android signing key.
 Do not deploy or submit until both builds finish and pass on-device checks.
 
 ## Optional crash reporting
+
+Sentry is pinned to `~8.33.0` for its Expo Router SDK 58 compatibility fix.
+Expo's SDK 58 version map still recommends `~8.28.0`, which imports the removed
+Router store. The `expo.install.exclude` entry in `package.json` preserves this
+targeted override; remove it when Expo's recommended Sentry version includes
+the fix. Dependency audits and the other release checks still apply.
 
 Tempo uses the `tempo-frontend` React Native project in the `the-tempo` Sentry
 organization. The project DSN, organization, project slug, and `production`

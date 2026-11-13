@@ -79,16 +79,6 @@ function setup(file, name, args) {
 
 for (const [file, name, args, response, dataKey] of [
   [
-    "hooks/BasketballHooks/useWNBAPlayoffs.ts",
-    "useWNBAPlayoffs",
-    [2026],
-    {
-      season: 2026,
-      rounds: [{ series: [{ games: [{ status: { state: "in" } }] }] }],
-    },
-    "data",
-  ],
-  [
     "hooks/LeagueHooks/useLeagueDraft.ts",
     "useDraft",
     ["nfl", 2026],
@@ -325,13 +315,6 @@ test("root widget subscriptions follow board visibility and reject callbacks aft
 });
 
 for (const [file, name, args, response, key] of [
-  [
-    "hooks/BasketballHooks/useWNBAPlayoffs.ts",
-    "useWNBAPlayoffs",
-    [2026],
-    { season: 2026, rounds: [] },
-    "data",
-  ],
   [
     "hooks/LeagueHooks/useLeagueDraft.ts",
     "useDraft",

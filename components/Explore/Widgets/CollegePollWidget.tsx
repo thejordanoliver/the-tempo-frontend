@@ -12,11 +12,11 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { collegePollWidgetStyles } from "styles/ExploreStyles/CollegePollWidgetStyles";
 import type {
   CollegePollRow,
-  CollegePollSourceProps,
   CollegePollTableProps,
   CollegePollWidgetProps,
 } from "types/collegePollWidget";
 import type { CollegeTeamRank } from "types/collegeRankings";
+import { getDefaultCollegePollType } from "utils/standings/collegeRankings";
 import {
   getCollegePollLabel,
   getCollegePollPageSize,
@@ -302,82 +302,8 @@ const CollegePollTable = memo(function CollegePollTable({
 });
 
 // -----------------------------------------------------------------------------
-// League-specific data sources
+// Row mapping
 // -----------------------------------------------------------------------------
-
-const CFBPollTable = memo(function CFBPollTable({
-  size,
-  width,
-  isDark,
-  isEditing,
-  pollType,
-  autoPlay,
-}: CollegePollSourceProps) {
-  const { rankings, loading, error, refresh } = useCollegeRankings("cfb");
-  const selectedPoll = rankings.find((poll) => poll.type === pollType);
-  const rows = useMemo<CollegePollRow[]>(
-    () =>
-      (selectedPoll?.ranks ?? [])
-        .slice(0, MAX_RANKED_TEAMS)
-        .map((rank, index) => createRow(rank, index, isDark)),
-    [isDark, selectedPoll?.ranks],
-  );
-
-  return (
-    <CollegePollTable
-      size={size}
-      width={width}
-      isDark={isDark}
-      isEditing={isEditing}
-      league="cfb"
-      loading={loading}
-      error={error}
-      rows={rows}
-      onRetry={refresh}
-      autoPlay={autoPlay}
-    />
-  );
-});
-
-const MCBBPollTable = memo(function MCBBPollTable({
-  size,
-  width,
-  isDark,
-  isEditing,
-  pollType,
-  autoPlay,
-}: CollegePollSourceProps) {
-  const { rankings, loading, error, refresh } = useCollegeRankings("mcbb");
-  const selectedPoll =
-    rankings.find((poll) => poll.type === pollType) ??
-    rankings.find((poll) =>
-      pollType === "ap"
-        ? poll.shortName === "AP Poll"
-        : poll.shortName === "Coaches Poll",
-    );
-  const rows = useMemo<CollegePollRow[]>(
-    () =>
-      (selectedPoll?.ranks ?? [])
-        .slice(0, MAX_RANKED_TEAMS)
-        .map((rank, index) => createRow(rank, index, isDark)),
-    [isDark, selectedPoll?.ranks],
-  );
-
-  return (
-    <CollegePollTable
-      size={size}
-      width={width}
-      isDark={isDark}
-      isEditing={isEditing}
-      league="mcbb"
-      loading={loading}
-      error={error}
-      rows={rows}
-      onRetry={refresh}
-      autoPlay={autoPlay}
-    />
-  );
-});
 
 function createRow(
   rank: CollegeTeamRank,
@@ -436,7 +362,24 @@ const CollegePollWidget = memo(function CollegePollWidget({
     [isDark, size],
   );
   const leagueConfig = LEAGUE_CONFIG[league];
-  const normalizedPollType = normalizeCollegePollType(league, pollType);
+  const { rankings, loading, error, refresh } = useCollegeRankings(league);
+  const normalizedPollType = normalizeCollegePollType(
+    league,
+    pollType ?? getDefaultCollegePollType(rankings),
+  );
+  const selectedPoll =
+    rankings.find((poll) => poll.type === normalizedPollType) ??
+    rankings.find(
+      (poll) =>
+        poll.shortName === getCollegePollLabel(league, normalizedPollType),
+    );
+  const rows = useMemo<CollegePollRow[]>(
+    () =>
+      (selectedPoll?.ranks ?? [])
+        .slice(0, MAX_RANKED_TEAMS)
+        .map((rank, index) => createRow(rank, index, isDark)),
+    [isDark, selectedPoll?.ranks],
+  );
   const pollLabel = getCollegePollLabel(league, normalizedPollType);
 
   return (
@@ -472,27 +415,19 @@ const CollegePollWidget = memo(function CollegePollWidget({
           <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
         </Pressable>
 
-        {league === "cfb" ? (
-          <CFBPollTable
-            key={`cfb:${normalizedPollType}`}
-            size={size}
-            width={width}
-            isDark={isDark}
-            isEditing={isEditing}
-            pollType={normalizedPollType}
-            autoPlay={autoPlay}
-          />
-        ) : (
-          <MCBBPollTable
-            key={`mcbb:${normalizedPollType}`}
-            size={size}
-            width={width}
-            isDark={isDark}
-            isEditing={isEditing}
-            pollType={normalizedPollType}
-            autoPlay={autoPlay}
-          />
-        )}
+        <CollegePollTable
+          key={`${league}:${normalizedPollType}`}
+          size={size}
+          width={width}
+          isDark={isDark}
+          isEditing={isEditing}
+          league={league}
+          loading={loading}
+          error={error}
+          rows={rows}
+          onRetry={refresh}
+          autoPlay={autoPlay}
+        />
 
         {isEditing ? (
           <WidgetEditControls

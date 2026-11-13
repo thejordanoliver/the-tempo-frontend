@@ -17,16 +17,12 @@ import TransactionList from "@/components/League/Transactions/TransactionList";
 import NewsList from "@/components/News/NewsList";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
-import { CFPBracket } from "@/components/Sports/Football/Playoffs/CFBPlayoffs/CFPBracket";
-import { NFLPlayoffBracket } from "@/components/Sports/Football/Playoffs/NFLPlayoffs/NFLPlayoffBracket";
 import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStandingsList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { getCFBConferenceSelectionName } from "@/constants/conferences/cfbConferences";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
-import { useCFBPlayoffs } from "@/hooks/FootballHooks/useCFBPlayoffs";
 import { useFootballGames } from "@/hooks/FootballHooks/useFootballGames";
-import { useNFLPlayoffs } from "@/hooks/FootballHooks/useNFLPlayoffs";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "@/hooks/LeagueHooks/useLeagueTabs";
 import { useSeasonLeaders } from "@/hooks/LeagueHooks/useSeasonLeaders";
@@ -250,14 +246,6 @@ function NFLLeagueScreen() {
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
   const {
-    playoffData: nflPlayoffData,
-    playoffLoading: nflPlayoffLoading,
-    playoffError: nflPlayoffError,
-    onRefresh: refreshNFLPlayoffs,
-    playoffRefreshing: nflPlayoffRefreshing,
-  } = useNFLPlayoffs(currentSeason, { enabled: hasVisitedTab("playoffs") });
-
-  const {
     categories,
     loading: leadersLoading,
     error: leadersError,
@@ -375,18 +363,6 @@ function NFLLeagueScreen() {
                 year={standingsYear}
                 onYearChange={setStandingsYear}
                 league={league}
-              />
-            ) : null}
-          </View>
-
-          <View key="playoffs" style={styles.contentArea}>
-            {hasVisitedTab("playoffs") ? (
-              <NFLPlayoffBracket
-                bracket={nflPlayoffData}
-                loading={nflPlayoffLoading}
-                error={nflPlayoffError}
-                refreshing={nflPlayoffRefreshing}
-                onRefresh={refreshNFLPlayoffs}
               />
             ) : null}
           </View>
@@ -602,17 +578,6 @@ function CFBLeagueScreen() {
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
   const {
-    games: cfpGames,
-    loading: cfpLoading,
-    refreshing: cfpRefreshing,
-    error: cfpError,
-    refetch: refetchCFPPlayoffs,
-  } = useCFBPlayoffs({
-    season: currentSeason,
-    enabled: hasVisitedTab("playoffs"),
-  });
-
-  const {
     categories,
     loading: leadersLoading,
     error: leadersError,
@@ -787,20 +752,6 @@ function CFBLeagueScreen() {
                 categories={categories}
                 league={league}
                 season={currentSeason}
-              />
-            ) : null}
-          </View>
-
-          <View key="playoffs" style={styles.contentArea}>
-            {hasVisitedTab("playoffs") ? (
-              <CFPBracket
-                games={cfpGames}
-                loading={cfpLoading}
-                refreshing={cfpRefreshing}
-                error={cfpError}
-                onRetry={() => {
-                  void refetchCFPPlayoffs();
-                }}
               />
             ) : null}
           </View>

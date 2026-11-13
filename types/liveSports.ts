@@ -15,7 +15,6 @@ export type LiveFeedType =
   | "scoreboard"
   | "teamSchedule"
   | "teamLatest"
-  | "nbaPlayoffs"
   | "eventList";
 
 export type LiveGameSubscriptionInput = {

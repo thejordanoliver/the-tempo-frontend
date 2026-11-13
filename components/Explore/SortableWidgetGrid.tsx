@@ -201,7 +201,6 @@ function SortableWidget({
       setSharedValue(currentIndexValue, targetIndex);
       scheduleOnRN(onTargetIndexChange, widget.id, targetIndex);
     },
-    [layout.height, layout.width, onTargetIndexChange, widget.id],
   );
 
   const panGesture = useMemo(

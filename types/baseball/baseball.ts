@@ -143,59 +143,6 @@ export type BaseballGame = {
   };
 };
 
-export type MLBPlayoffLeague = "american" | "national" | "world-series";
-export type MLBPlayoffRound =
-  | "wild-card"
-  | "division-series"
-  | "championship-series"
-  | "world-series";
-
-export type MLBPlayoffTeam = {
-  id: string;
-  name: string;
-  abbreviation: string;
-  logo: string | null;
-  seed: number;
-  wins: number;
-  league: Exclude<MLBPlayoffLeague, "world-series">;
-};
-
-export type MLBPlayoffSeries = {
-  id: string;
-  league: MLBPlayoffLeague;
-  round: MLBPlayoffRound;
-  label: string;
-  bestOf: number;
-  teams: MLBPlayoffTeam[];
-  games: MLBPlayoffGame[];
-  winnerTeamId: string | null;
-};
-
-export type MLBPlayoffGame = BaseballGame & {
-  series: Omit<MLBPlayoffSeries, "games"> & {
-    gameNumber: number | null;
-  };
-};
-
-export type MLBPlayoffBracketResponse = {
-  season: number;
-  count: number;
-  games: MLBPlayoffGame[];
-  format: {
-    teams: 12;
-    teamsPerLeague: 6;
-    firstRoundByes: number[];
-    wildCardMatchups: number[][];
-    divisionSeriesPaths: {
-      seed: number;
-      receivesWinnerOf: number[];
-    }[];
-  };
-  teams: MLBPlayoffTeam[];
-  series: MLBPlayoffSeries[];
-  updatedAt: string;
-};
-
 export type BaseballGameCardProps = {
   game: BaseballGame;
   onNavigate?: () => void;
