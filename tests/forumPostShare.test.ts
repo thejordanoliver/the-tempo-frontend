@@ -34,27 +34,19 @@ test("rejects malformed links and unexpected destinations", () => {
   for (const text of [
     "hello",
     "https://example.com/post/123",
-    "nbascorestracker://post/",
-    "nbascorestracker://post/%ZZ",
-    "nbascorestracker://post/%2Fmessages",
-    "nbascorestracker://post/123?other=1",
-    "nbascorestracker://post/123\nother text",
+    "otherapp://post/123",
+    "tempo://post/",
+    "tempo://post/%ZZ",
+    "tempo://post/%2Fmessages",
+    "tempo://post/123?other=1",
+    "tempo://post/123\nother text",
   ]) {
     assert.equal(getSharedForumPostId(text), null);
   }
 });
 
-test("new links use Tempo branding while legacy shared DMs still open", () => {
+test("shared links use the registered Tempo scheme", () => {
   assert.equal(getSharedForumPostId("tempo://post/123"), "123");
-  assert.equal(getSharedForumPostId("nbascorestracker://post/123"), "123");
-  for (const text of [
-    "tempo://post/%ZZ",
-    "tempo://post/%2Fmessages",
-    "tempo://post/123?other=1",
-    "tempo://post/",
-  ]) {
-    assert.equal(getSharedForumPostId(text), null);
-  }
 });
 
 test("post previews truncate long and multiline text with an ellipsis", () => {
@@ -69,18 +61,17 @@ test("post previews truncate long and multiline text with an ellipsis", () => {
 });
 
 test("unavailable post previews retain the original author and text without the link", () => {
-  for (const link of ["tempo://post/123", "nbascorestracker://post/123"]) {
-    assert.deepEqual(
-      getSharedForumPostFallback(
-        `Post from @fan on Tempo\n\nGame thoughts\n\n${link}`,
-      ),
-      { username: "fan", text: "Game thoughts" },
-    );
-    assert.deepEqual(getSharedForumPostFallback(link), {
-      username: "",
-      text: "",
-    });
-  }
+  const link = "tempo://post/123";
+  assert.deepEqual(
+    getSharedForumPostFallback(
+      `Post from @fan on Tempo\n\nGame thoughts\n\n${link}`,
+    ),
+    { username: "fan", text: "Game thoughts" },
+  );
+  assert.deepEqual(getSharedForumPostFallback(link), {
+    username: "",
+    text: "",
+  });
   assert.deepEqual(
     getSharedForumPostFallback(
       getForumPostShareText({ id: "123", username: "fan", text: "" }),

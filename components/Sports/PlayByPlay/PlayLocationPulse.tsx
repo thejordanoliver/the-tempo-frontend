@@ -37,14 +37,11 @@ export default function PlayLocationPulse({
     );
     return () => cancelAnimation(progress);
   }, [progress, x, y]);
-  const animatedProps = useAnimatedProps(
-    () => ({
-      rx: radiusX + progress.value * 18,
-      ry: radiusY + progress.value * 11,
-      opacity: 0.8 * (1 - progress.value),
-    }),
-    [progress, radiusX, radiusY],
-  );
+  const animatedProps = useAnimatedProps(() => ({
+    rx: radiusX + progress.value * 18,
+    ry: radiusY + progress.value * 11,
+    opacity: 0.8 * (1 - progress.value),
+  }));
   return (
     <AnimatedEllipse
       cx={x}

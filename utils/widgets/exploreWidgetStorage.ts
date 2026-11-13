@@ -193,7 +193,7 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
         type === "college_polls" &&
         isExploreCollegePollType(widget.collegePollType)
           ? normalizeCollegePollType(collegePollLeague, widget.collegePollType)
-          : "ap";
+          : undefined;
       const favoriteGameLeagues =
         type === "favorite_games" && Array.isArray(widget.favoriteGameLeagues)
           ? EXPLORE_WIDGET_LEAGUES.filter((league) =>

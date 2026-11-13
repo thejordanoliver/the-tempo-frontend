@@ -3,7 +3,7 @@ import { CustomHeader } from "components/CustomHeader";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 
 export const unstable_settings = {
-  initialRouteName: "index",
+  anchor: "index",
 };
 
 export default function HomeStackLayout() {

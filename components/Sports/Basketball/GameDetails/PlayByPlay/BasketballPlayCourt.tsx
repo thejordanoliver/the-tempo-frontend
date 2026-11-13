@@ -95,7 +95,7 @@ function BasketballPlayCourt({
       rimOffset +
       drop * 34;
     return { matrix: [1, 0, 0, 1, x, y], opacity: 1 };
-  }, [startX, startY, endX, endY, controlX, controlY, madeShot]);
+  });
   const eventGlow = useAnimatedProps(() => ({
     opacity: 0.12 + (1 - progress.value) * 0.24,
   }));

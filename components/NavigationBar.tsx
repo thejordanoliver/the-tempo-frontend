@@ -11,9 +11,9 @@ type NavigationBarProps = Parameters<TabBarRenderer>[0] & { isDark: boolean };
 
 const TAB_PATHS = {
   "(home)": "/(tabs)/(home)",
-  "(league)": "/(tabs)/(league)",
-  "(explore)": "/(tabs)/(explore)",
-  "(profile)": "/(tabs)/(profile)",
+  "(league)": "/(tabs)/(league)/league",
+  "(explore)": "/(tabs)/(explore)/explore",
+  "(profile)": "/(tabs)/(profile)/profile",
 } as const;
 
 const TAB_DETAILS = {
@@ -106,11 +106,7 @@ const CustomTabBarStyles = (
       borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
       backgroundColor: "transparent",
       paddingBottom: bottomInset,
-      shadowColor: "rgba(0, 0, 0, 0.8)",
-      shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.25,
-      shadowRadius: 12,
-      elevation: 12,
+      boxShadow: "0px 5px 12px rgba(0, 0, 0, 0.2)",
     },
     blurBackground: {
       position: "absolute",

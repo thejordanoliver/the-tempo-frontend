@@ -131,7 +131,6 @@ function FavoriteDragBoundary({
         );
       }
     },
-    [itemCount, sportCount],
   );
 
   return null;

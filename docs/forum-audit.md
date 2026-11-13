@@ -24,7 +24,7 @@ Recommended follow-up: scope requests to league/team and a refresh generation, c
 
 ## Link and platform limitations
 
-New shares use `tempo://post/[postId]`. The legacy `nbascorestracker` scheme remains registered, and existing DM links still open. Recipients need Tempo installed. The Expo configuration currently has no associated domains or Android HTTPS intent filters; public HTTPS share pages and universal links require a separately configured public domain.
+Shared posts use `tempo://post/[postId]`. Only the Tempo scheme is registered and recognized for shared posts. Recipients need Tempo installed. The Expo configuration currently has no associated domains or Android HTTPS intent filters; public HTTPS share pages and universal links require a separately configured public domain.
 
 `expo-sms` is now an SDK-compatible dependency. A custom native development/release app must be rebuilt to include it and register the new Tempo scheme. Browser and iOS simulator SMS attempts show an unavailable message; they still support Tempo DMs. Phone composer behavior needs real-device verification.
 
@@ -38,5 +38,5 @@ The iOS option displays a Messages-style icon for the system SMS composer. On An
 
 - Web export is blocked by an existing native-only `react-native-pager-view` import in `app/edit-favorites.tsx`. No visual/device verification was completed.
 - iOS production bundle export succeeds.
-- Expo confirms both URL schemes and discovers the local Android messaging module through autolinking. Android native compilation/device testing was not run (no Android SDK available in this environment).
+- Expo confirms the Tempo URL scheme and discovers the local Android messaging module through autolinking. Android native compilation/device testing was not run (no Android SDK available in this environment).
 - All 22 backend forum-route tests pass, including a self-share that preserves an existing share count and inserts no share record. Backend TypeScript checking passes.

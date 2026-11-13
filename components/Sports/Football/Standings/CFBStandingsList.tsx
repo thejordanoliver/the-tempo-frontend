@@ -22,6 +22,7 @@ import {
 } from "react-native";
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 import { getCFBTeamLogo } from "@/constants/teamsCFB";
+import { getDefaultCollegePollType } from "utils/standings/collegeRankings";
 
 type PollMode = "ap" | "coaches" | "cfp" | "fcs";
 
@@ -51,7 +52,8 @@ export const CFBStandingsList = () => {
   const styles = StandingsStyles(isDark);
   const router = useScopedRouter();
 
-  const [pollMode, setPollMode] = useState<PollMode>("ap");
+  const [selectedPollMode, setPollMode] = useState<PollMode | null>(null);
+  const pollMode = selectedPollMode ?? getDefaultCollegePollType(rankings);
 
   if (loading) {
     return <StandingsSkeleton variant="rankings" />;

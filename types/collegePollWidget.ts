@@ -49,7 +49,7 @@ export type CollegePollWidgetProps = {
   width: number;
   height: number;
   league: ExploreCollegePollLeague;
-  pollType: ExploreCollegePollType;
+  pollType?: ExploreCollegePollType;
   onChangeSelection: (
     league: ExploreCollegePollLeague,
     pollType: ExploreCollegePollType,

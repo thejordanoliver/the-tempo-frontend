@@ -190,3 +190,12 @@ export function getCollegeRankingPolls(
     ? (response.rankings as CollegeRankPoll[])
     : [];
 }
+
+// Empty CFP selector slots do not count as published rankings.
+export function getDefaultCollegePollType(
+  rankings: readonly CollegeRankPoll[],
+): CollegePollType {
+  return rankings.some((poll) => poll.type === "cfp" && poll.ranks.length > 0)
+    ? "cfp"
+    : "ap";
+}

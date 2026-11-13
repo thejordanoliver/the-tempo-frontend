@@ -71,11 +71,6 @@ const FEED_ALIASES: Record<string, string> = {
   eventlist: "eventList",
   "event-list": "eventList",
   events: "eventList",
-  nbatournament: "nbaPlayoffs",
-  "nba-playoffs": "nbaPlayoffs",
-  nbaplayoffs: "nbaPlayoffs",
-  playoff: "nbaPlayoffs",
-  playoffs: "nbaPlayoffs",
   scoreboard: "scoreboard",
   teamlatest: "teamLatest",
   "team-latest": "teamLatest",
@@ -179,15 +174,6 @@ function canonicalizeScoreboardPayload(
 
   if (feed === "teamSchedule" || feed === "teamLatest") {
     addCanonicalParam(params, "teamId", input.teamId);
-    addCanonicalParam(params, "season", input.season);
-  } else if (feed === "nbaPlayoffs") {
-    addCanonicalParam(
-      params,
-      "dates",
-      input.dates ?? input.date,
-      normalizeDateToken,
-    );
-    addCanonicalParam(params, "limit", input.limit);
     addCanonicalParam(params, "season", input.season);
   } else {
     if (

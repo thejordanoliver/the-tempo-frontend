@@ -5,7 +5,6 @@ export const LEAGUE_TABS = {
     "scores",
     "news",
     "standings",
-    "playoffs",
     "stats",
     "transactions",
     "draft",
@@ -13,16 +12,7 @@ export const LEAGUE_TABS = {
     "forum",
   ],
 
-  wnba: [
-    "scores",
-    "news",
-    "standings",
-    "playoffs",
-    "stats",
-    "draft",
-    "awards",
-    "forum",
-  ],
+  wnba: ["scores", "news", "standings", "stats", "draft", "awards", "forum"],
 
   gleague: ["scores", "news", "forum"],
 
@@ -30,7 +20,6 @@ export const LEAGUE_TABS = {
     "scores",
     "news",
     "standings",
-    "playoffs",
     "stats",
     "transactions",
     "draft",
@@ -44,7 +33,6 @@ export const LEAGUE_TABS = {
     "scores",
     "news",
     "standings",
-    "playoffs",
     "stats",
     "transactions",
     "awards",
@@ -53,29 +41,11 @@ export const LEAGUE_TABS = {
 
   nhl: ["scores", "news", "standings", "stats", "awards", "forum"],
 
-  cfb: [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "playoffs",
-    "recruits",
-    "awards",
-    "forum",
-  ],
+  cfb: ["scores", "news", "standings", "stats", "recruits", "awards", "forum"],
 
-  mcbb: [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "bracket",
-    "recruits",
-    "awards",
-    "forum",
-  ],
+  mcbb: ["scores", "news", "standings", "stats", "recruits", "awards", "forum"],
 
-  wcbb: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
+  wcbb: ["scores", "news", "standings", "stats", "awards", "forum"],
 
   cb: ["scores", "news", "standings", "forum"],
 
