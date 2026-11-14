@@ -412,7 +412,7 @@ export default function LiveChat({
           />
 
           {showLatestButton && (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               activeOpacity={0.88}
               onPress={() => scrollToLatestMessage(true)}
               style={[

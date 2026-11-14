@@ -138,7 +138,7 @@ export default function RosterStats({
 
     return (
       <View style={styles.cardWrapper}>
-        <TouchableOpacity
+        <TouchableOpacity accessibilityRole="button"
           activeOpacity={activeOpacity}
           onPress={() => handlePress(player)}
           style={styles.cardContainer}
@@ -205,7 +205,7 @@ export default function RosterStats({
                   index === rows.length - 1 && { borderBottomWidth: 0 },
                 ]}
               >
-                <TouchableOpacity
+                <TouchableOpacity accessibilityRole="button"
                   activeOpacity={activeOpacity}
                   onPress={() => handlePress(row.player)}
                   style={[styles.tableCell, { width: 140 }]}

@@ -38,7 +38,7 @@ export default function ChampionsTable({
   if (loading) {
     return (
       <View style={styles.container}>
-        <AwardSeasonTableSkeleton teams={1} />
+        <AwardSeasonTableSkeleton teams={1} variant="champions" />
       </View>
     );
   }

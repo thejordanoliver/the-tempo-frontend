@@ -15,6 +15,7 @@ import {
   Easing,
   Image,
   ImageSourcePropType,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -526,12 +527,8 @@ const recruitCardStyles = (isDark: boolean) =>
       borderRadius: 999,
       borderCurve: "circular",
       shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3,
+      boxShadow:
+        Platform.OS === "android" ? undefined : "0px 2px 6px #00000040",
       elevation: 4,
     },
 

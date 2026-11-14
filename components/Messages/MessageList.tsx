@@ -174,7 +174,7 @@ export default function MessageList({
 
         <Text style={global.errorText}>Messages unavailable</Text>
 
-        <TouchableOpacity
+        <TouchableOpacity accessibilityRole="button"
           activeOpacity={activeOpacity}
           style={styles.retryButton}
           onPress={onRetry}

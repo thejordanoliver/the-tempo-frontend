@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -8,9 +7,9 @@ import {
 } from "@/utils/common/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
-import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
+import { getCBTeamLogo } from "constants/teamsCB";
+import { getMLBTeamLogo } from "constants/teamsMLB";
+import { getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -18,6 +17,7 @@ import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
@@ -45,43 +45,27 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const away = game?.away;
   const homeId = home?.id;
   const awayId = away?.id;
-  const homeTeam =
-    (isSB
-      ? getSBTeam(home?.id)
-      : isCB
-        ? getCBTeam(home?.id)
-        : getMLBTeam(home?.id)) ?? emptyHomeTeam;
 
-  const awayTeam =
-    (isSB
-      ? getSBTeam(away?.id)
-      : isCB
-        ? getCBTeam(away?.id)
-        : getMLBTeam(away?.id)) ?? emptyAwayTeam;
-
-  const homeTeamId = homeTeam?.id ?? 0;
-  const awayTeamId = awayTeam?.id ?? 0;
-  const homeName = game.home?.name;
-  const awayName = game.away?.name;
+  const homeName = game.home?.fullName;
+  const awayName = game.away?.fullName;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : isSB
         ? getSBTeamLogo(homeId, isDark)
         : isCB
           ? getCBTeamLogo(homeId, isDark)
-          : getMLBTeamLogo(homeTeamId, isDark);
+          : getMLBTeamLogo(homeId, isDark);
 
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : isSB
         ? getSBTeamLogo(awayId, isDark)
         : isCB
           ? getCBTeamLogo(awayId, isDark)
-          : getMLBTeamLogo(awayTeamId, isDark);
-
+          : getMLBTeamLogo(awayId, isDark);
   const league = game?.league?.code ?? "mlb";
 
   const isChampionship = game?.season.slug === "championship-series";
@@ -106,8 +90,8 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const awayScore = away?.score ?? 0;
   const homeRecord = game.home.record;
   const awayRecord = game.away.record;
-  const homeRank = game.home.homeRank;
-  const awayRank = game.away.awayRank;
+  const homeRank = game.home.rank;
+  const awayRank = game.away.rank;
   const headline = game.headline ?? holidayLabel;
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);

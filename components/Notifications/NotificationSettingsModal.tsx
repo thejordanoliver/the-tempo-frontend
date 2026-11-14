@@ -304,7 +304,7 @@ export default function NotificationSettingsModal({
           {saveError ? <Text style={styles.errorText}>{saveError}</Text> : null}
 
           {scope === "game" && hasGameOverride && onUseTeamDefaults ? (
-            <Pressable
+            <Pressable accessibilityState={{ disabled: isSaving }}
               onPress={() => void handleUseTeamDefaults()}
               disabled={isSaving}
               style={({ pressed }) => [

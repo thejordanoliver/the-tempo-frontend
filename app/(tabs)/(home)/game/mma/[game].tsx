@@ -1,3 +1,4 @@
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
@@ -165,6 +166,13 @@ export default function GameDetailsScreen(
 
   const gameStatusDescription = game?.status.description;
 
+  const oddsHome = game?.competitors?.find(
+    (participant) => participant.homeAway === "home",
+  );
+  const oddsAway = game?.competitors?.find(
+    (participant) => participant.homeAway === "away",
+  );
+
   const state = game?.status.state ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -317,6 +325,22 @@ export default function GameDetailsScreen(
               homeColor={firstFighterColor}
               state={state}
             />
+
+            {oddsHome && oddsAway && (
+              <Odds
+                homeId={Number(oddsHome.id)}
+                awayId={Number(oddsAway.id)}
+                homeCode={oddsHome.shortName ?? "Home"}
+                awayCode={oddsAway.shortName ?? "Away"}
+                homeLogo={oddsHome.flag ?? null}
+                awayLogo={oddsAway.flag ?? null}
+                homeLabel="Fighter"
+                awayLabel="Fighter"
+                odds={game?.odds}
+                state={state}
+                isDark={isDark}
+              />
+            )}
 
             <MatchupComparison
               firstFighterId={firstFighterId}

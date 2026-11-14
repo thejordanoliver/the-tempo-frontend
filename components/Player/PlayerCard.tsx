@@ -136,7 +136,7 @@ export default function PlayerCard({
   };
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessibilityRole="button"
       activeOpacity={activeOpacity}
       style={styles.card}
       onPress={handlePress}

@@ -1,12 +1,13 @@
-import { shouldTrackGameUpdates } from "utils/games/gameStatus";
+import { GameOdds } from "@/types/odds";
 import { useSportsRequestScope } from "hooks/Sports/useSportsRequestScope";
-import { useScreenActivity } from "hooks/useScreenActivity";
-import type { BasketballWinProbability } from "types/basketball/visualizations";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useScreenActivity } from "hooks/useScreenActivity";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { BasketballWinProbability } from "types/basketball/visualizations";
 import type { GameVenueInfo } from "types/gameVenue";
 import { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
+import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import { Official, TeamInjury } from "../FootballHooks/useFootballGameDetails";
 
 export type StatsByKey = {
@@ -312,6 +313,7 @@ export type Details = {
   headline?: string | null;
   predictor: Predictor | null;
   attendance: number | null;
+  odds?: GameOdds | [] | null;
 };
 
 export type BasketballGameDetailsResponse = {

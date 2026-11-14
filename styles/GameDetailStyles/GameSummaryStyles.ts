@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const GameSummaryStyles = (isDark: boolean) => {
@@ -28,8 +28,7 @@ export const GameSummaryStyles = (isDark: boolean) => {
       gap: 6,
     },
     legendLogo: {
-      width: 16,
-      height: 16,
+      ...gameDetailTeamLogo,
     },
     listContainer: {
       height: 420,
@@ -80,8 +79,7 @@ export const GameSummaryStyles = (isDark: boolean) => {
       borderColor: theme.green,
     },
     logo: {
-      width: 24,
-      height: 24,
+      ...gameDetailTeamLogo,
     },
     neutralDot: {
       width: 6,

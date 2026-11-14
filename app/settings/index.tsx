@@ -146,7 +146,7 @@ export default function SettingsScreen() {
         contentContainerStyle={navigationContentStyle(styles.scrollContent)}
       >
         <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => router.push("/settings/accountdetails")}
           >
@@ -161,7 +161,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => router.push("/settings/preferences")}
           >
@@ -176,7 +176,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => router.push("/settings/blocked-users")}
           >
@@ -221,7 +221,7 @@ export default function SettingsScreen() {
         ))}
 
         <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => setshowLogoutModal(true)}
           >
@@ -230,7 +230,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => {
               setDeleteError(null);

@@ -8,7 +8,15 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
-import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Animated,
+  Easing,
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export type DraftPick = {
   pick: number;
@@ -357,12 +365,8 @@ const draftCardStyles = (isDark: boolean) =>
       borderRadius: 999,
       borderCurve: "circular",
       shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3,
+      boxShadow:
+        Platform.OS === "android" ? undefined : "0px 2px 6px #00000040",
       elevation: 4,
     },
 

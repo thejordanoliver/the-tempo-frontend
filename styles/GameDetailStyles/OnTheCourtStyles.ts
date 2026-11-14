@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const OnTheCourtStyles = (isDark: boolean) =>
@@ -16,9 +16,7 @@ export const OnTheCourtStyles = (isDark: boolean) =>
       gap: 6,
     },
     tabLogo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
     wrapper: {
       width: "100%",
@@ -90,9 +88,7 @@ export const OnTheCourtStyles = (isDark: boolean) =>
       color: isDark ? Colors.midTone : Colors.black,
     },
     teamLogo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
     teamHeader: {
       flexDirection: "row",

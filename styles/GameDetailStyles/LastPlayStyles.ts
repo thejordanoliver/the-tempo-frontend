@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const lastPlayStyles = (isDark: boolean) =>
+export const LastPlayStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flexGrow: 1,

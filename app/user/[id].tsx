@@ -205,7 +205,7 @@ function UserProfileContent() {
           onBack={handleBack}
           rightAction={
             !isCurrentUser ? (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityState={{ disabled: safety.pending }}
                 onPress={safety.open}
                 disabled={safety.pending}
                 accessibilityRole="button"
@@ -288,7 +288,16 @@ function UserProfileContent() {
     initialFollowingCount === undefined &&
     !routeUsername
   ) {
-    return <SkeletonProfileScreen isDark={isDark} />;
+    return (
+      <SkeletonProfileScreen
+        isDark={isDark}
+        isCurrentUser={isCurrentUser}
+        showBookmarks={false}
+        fullName={fullName ?? undefined}
+        username={username ?? (routeUsername || undefined)}
+        bio={bio}
+      />
+    );
   }
 
   return (

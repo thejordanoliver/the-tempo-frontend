@@ -1,3 +1,4 @@
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
@@ -133,6 +134,7 @@ export default function GameDetailsScreen(
     if (!score) return undefined;
     return {
       id: Number(score.gameId),
+      odds: score.odds,
       league: { code: LEAGUE },
       date: score.date,
       headline: details?.headline,
@@ -536,6 +538,24 @@ export default function GameDetailsScreen(
               awayChance={awayChance}
               awayColor={awayColor}
               size={180}
+              isDark={isDark}
+              state={state}
+            />
+
+            <Odds
+              homeId={homeId}
+              homeCode={homeCode}
+              homeLogo={homeLogo}
+              awayId={awayId}
+              awayCode={awayCode}
+              awayLogo={awayLogo}
+              odds={
+                details?.odds === undefined
+                  ? (score?.odds ?? game?.odds)
+                  : Array.isArray(details.odds)
+                    ? null
+                    : details.odds
+              }
               isDark={isDark}
               state={state}
             />

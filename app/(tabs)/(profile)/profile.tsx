@@ -422,7 +422,14 @@ export default function ProfileScreen() {
   }, [currentUserId, router]);
 
   if (isLoading) {
-    return <SkeletonProfileScreen isDark={isDark} />;
+    return (
+      <SkeletonProfileScreen
+        isDark={isDark}
+        fullName={fullName ?? cachedUser?.fullName ?? undefined}
+        username={username ?? cachedUser?.username ?? undefined}
+        bio={bio}
+      />
+    );
   }
 
   return (

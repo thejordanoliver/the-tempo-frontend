@@ -125,7 +125,7 @@ export const TeamRow = ({
 
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
-        <Pressable onPress={handleTeamPress}>
+        <Pressable accessibilityRole="button" accessibilityLabel={`Open ${name} team details`} onPress={handleTeamPress}>
           <Image source={logo} style={styles.logo} />
         </Pressable>
 

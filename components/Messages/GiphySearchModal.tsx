@@ -129,7 +129,7 @@ export const GiphySearchModal: React.FC<Props> = ({
 
   const renderItem = useCallback(
     ({ item }: { item: GifItem }) => (
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Select ${item.title || "GIF"}`}
         activeOpacity={activeOpacity}
         onPress={() => handleGifSelect(item)}
         style={styles.gifContainer}

@@ -65,10 +65,9 @@ test("volleyball team search results open league pages instead of removed team s
       type: "team" as const,
       id: 221,
       name: "Pitt",
-      short_name: "Pitt",
-      affiliation: league,
-      isMCVB: league === "mcvb",
-      isWCVB: league === "wcvb",
+      shortName: "Pitt",
+      league: league,
+      sport: "volleyball" as const,
       matchClass: 4 as const,
       textScore: 1,
       score: 1,
@@ -91,7 +90,10 @@ test("volleyball team search results open league pages instead of removed team s
         `/(tabs)/${tab}/league/volleyball?league=${league}`,
       );
     }
-    assert.equal(existsSync(`app/(tabs)/(home)/team/${league}/[teamId].tsx`), false);
+    assert.equal(
+      existsSync(`app/(tabs)/(home)/team/${league}/[teamId].tsx`),
+      false,
+    );
   }
   assert.ok(existsSync("app/(tabs)/(home)/game/volleyball/[game].tsx"));
 });

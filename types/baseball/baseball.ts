@@ -1,4 +1,22 @@
+import type { ScoreboardOdds } from "types/odds";
+export type Team = {
+  id: number;
+  name: string;
+  fullName: string;
+  shortName: string;
+  code: string;
+  primaryColor: string;
+  secondaryColor: string;
+  score: number;
+  hits: number;
+  errors: number;
+  record: string;
+  rank: number | null;
+  winner: boolean;
+};
+
 export type BaseballGame = {
+  odds?: ScoreboardOdds | null;
   league: {
     id: number;
     uid: string;
@@ -52,35 +70,8 @@ export type BaseballGame = {
   broadcasts: string[];
   geoBroadcasts: unknown[];
   innings: number;
-  home: {
-    id: number;
-    name: string;
-    shortName?: string | null;
-    code: string;
-    primaryColor: string;
-    secondaryColor: string;
-    score: number;
-    hits: number;
-    errors: number;
-    record: string;
-    homeRank: number;
-    winner: boolean;
-  };
-  away: {
-    id: number;
-    name: string;
-    shortName?: string | null;
-    fullName: string;
-    code: string;
-    primaryColor: string;
-    secondaryColor: string;
-    score: number;
-    hits: number;
-    errors: number;
-    record: string;
-    awayRank: number;
-    winner: boolean;
-  };
+  home: Team;
+  away: Team;
   isConferenceGame: boolean;
   isNeutralSite: boolean;
   attendance: number;

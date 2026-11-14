@@ -86,6 +86,10 @@ const PostSubmenu = ({
   return (
     <Animated.View
       pointerEvents={visible ? "auto" : "none"}
+      accessibilityElementsHidden={!visible}
+      importantForAccessibility={visible ? "auto" : "no-hide-descendants"}
+      aria-hidden={!visible}
+      inert={!visible}
       style={[
         styles.submenu,
         {
@@ -112,7 +116,7 @@ const PostSubmenu = ({
       ]}
     >
       {/* Edit */}
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         activeOpacity={activeOpacity}
         style={styles.submenuItem}
         onPress={onEdit}
@@ -138,7 +142,7 @@ const PostSubmenu = ({
       <View style={styles.submenuSeparator} />
 
       {/* Delete */}
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         activeOpacity={activeOpacity}
         style={styles.submenuItem}
         onPress={onDelete}
@@ -247,7 +251,7 @@ export const UserHeader = memo(function UserHeader({
       <View style={styles.userRow}>
         {/* User */}
         <View style={styles.leftSide}>
-          <TouchableOpacity onPress={handleOpenUser} activeOpacity={0.7}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Open ${item.username} profile`} onPress={handleOpenUser} activeOpacity={0.7}>
             {profileImageUri ? (
               <Image
                 source={{
@@ -269,7 +273,7 @@ export const UserHeader = memo(function UserHeader({
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Open ${item.username} profile`}
             onPress={handleOpenUser}
             activeOpacity={0.7}
             style={styles.userRow}
@@ -290,7 +294,7 @@ export const UserHeader = memo(function UserHeader({
               onDelete={handleDelete}
             />
 
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Post options" accessibilityState={{ expanded: submenuVisible }}
               activeOpacity={activeOpacity}
               onPress={() => setSubmenuVisible((current) => !current)}
               style={[
@@ -310,7 +314,7 @@ export const UserHeader = memo(function UserHeader({
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityState={{ disabled: safety.pending }}
             activeOpacity={activeOpacity}
             onPress={safety.open}
             disabled={safety.pending}

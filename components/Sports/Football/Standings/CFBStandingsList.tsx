@@ -125,7 +125,7 @@ export const CFBStandingsList = () => {
         </View>
 
         <View style={styles.teamInfo}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: !teamId }}
             disabled={!teamId}
             onPress={() => {
               if (!teamId) return;

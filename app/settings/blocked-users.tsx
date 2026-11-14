@@ -136,7 +136,7 @@ export default function BlockedUsersScreen() {
                 <Text style={styles.fullName}>{item.fullName}</Text>
               ) : null}
             </View>
-            <TouchableOpacity
+            <TouchableOpacity accessibilityState={{ disabled: pendingUserId === item.id }}
               style={styles.unblockButton}
               disabled={pendingUserId === item.id}
               onPress={() => setSelectedUser(item)}

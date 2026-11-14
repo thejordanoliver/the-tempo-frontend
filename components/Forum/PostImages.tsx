@@ -46,7 +46,7 @@ export default function PostImages({
     <View>
       <View style={containerStyle}>
         {limitedMedia.map((m, idx) => (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Open ${m.type === "video" ? "video" : "image"} ${idx + 1}`}
             key={idx}
             activeOpacity={0.9}
             onPress={() => {

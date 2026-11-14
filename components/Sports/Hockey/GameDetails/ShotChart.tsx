@@ -5,7 +5,7 @@ import rinkImage from "assets/Placeholders/NHLRinkPlaceholder.png";
 
 import { getNHLTeam, getNHLTeamLogo } from "@/constants/teamsNHL";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo, useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
@@ -448,8 +448,7 @@ export const shotChartStyles = (isDark: boolean) =>
     },
 
     legendLogo: {
-      width: 20,
-      height: 20,
+      ...gameDetailTeamLogo,
     },
 
     divider: {

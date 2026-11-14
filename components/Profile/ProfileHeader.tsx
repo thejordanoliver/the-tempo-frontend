@@ -37,7 +37,7 @@ export default function ProfileHeader({
       </View>
 
       {isCurrentUser ? (
-        <Pressable
+        <Pressable accessibilityRole="button"
           style={({ pressed }) => [
             { opacity: pressed ? activeOpacity : 1 },
             styles.editProfileBtn,

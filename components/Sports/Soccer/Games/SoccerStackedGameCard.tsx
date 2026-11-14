@@ -1,7 +1,4 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
-import { emptyAwayTeam, emptyHomeTeam } from "types/team";
-import { useScopedRouter } from "hooks/useScopedRouter";
-import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
+import { getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import {
   formatDate,
@@ -11,7 +8,10 @@ import {
 } from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   formatPeriod,
   getBroadcastDisplay,
@@ -43,18 +43,19 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const league = game?.league?.id;
   const home = game.home;
   const away = game.away;
-  const homeTeam = getSOCCTeam(home.id) ?? emptyHomeTeam;
-  const awayTeam = getSOCCTeam(away.id) ?? emptyAwayTeam;
+  const homeId = Number(home?.id ?? 0);
+  const awayId = Number(away?.id ?? 0);
   const homeName = game.home?.name;
   const awayName = game.away?.name;
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
-      : getSOCCTeamLogo(home.id, isDark);
+      : getSOCCTeamLogo(homeId, isDark);
+
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
-      : getSOCCTeamLogo(away.id, isDark);
+      : getSOCCTeamLogo(awayId, isDark);
   const homeScore = Number(game?.home?.score ?? 0);
   const awayScore = Number(game?.away?.score ?? 0);
   const homeRecord = game?.home?.record ?? "0-0-0";

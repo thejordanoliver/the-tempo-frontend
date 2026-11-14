@@ -110,7 +110,7 @@ export default function PollEditorModal({
         <View
           style={[styles.optionRow, isActive && { borderColor: "#007AFF" }]}
         >
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Reorder option ${index}`}
             onLongPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               drag();
@@ -126,7 +126,7 @@ export default function PollEditorModal({
             />
           </TouchableOpacity>
 
-          <TextInput
+          <TextInput accessibilityLabel={`Option ${index}`}
             style={styles.optionInput}
             placeholder={`Option ${index}`}
             placeholderTextColor={Colors.lightGray}
@@ -136,7 +136,7 @@ export default function PollEditorModal({
           />
 
           {options.length > MIN_OPTIONS && (
-            <TouchableOpacity onPress={() => removeOption(item.id)} hitSlop={8}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Remove option ${index}`} onPress={() => removeOption(item.id)} hitSlop={8}>
               <Ionicons
                 name="close-circle"
                 size={22}
@@ -156,7 +156,7 @@ export default function PollEditorModal({
         <View style={styles.wrapper}>
           {/* HEADER */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} style={styles.headerBtn}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Close poll editor" onPress={onClose} style={styles.headerBtn}>
               <Ionicons
                 name="close"
                 size={24}
@@ -166,7 +166,7 @@ export default function PollEditorModal({
 
             <Text style={styles.headerTitle}>Create Poll</Text>
 
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: !isValid }}
               style={styles.headerBtn}
               onPress={handleSave}
               disabled={!isValid}
@@ -185,7 +185,7 @@ export default function PollEditorModal({
             {/* QUESTION */}
             <Text style={styles.sectionTitle}>Question</Text>
             <View style={styles.inputCard}>
-              <TextInput
+              <TextInput accessibilityLabel="Ask a question…"
                 style={styles.questionInput}
                 placeholder="Ask a question…"
                 placeholderTextColor={Colors.lightGray}
@@ -213,7 +213,7 @@ export default function PollEditorModal({
             />
 
             {options.length < MAX_OPTIONS && (
-              <TouchableOpacity onPress={addOption} style={styles.addOptionBtn}>
+              <TouchableOpacity accessibilityRole="button" onPress={addOption} style={styles.addOptionBtn}>
                 <Ionicons
                   name="add-circle-outline"
                   size={22}
@@ -232,7 +232,7 @@ export default function PollEditorModal({
                   Users can select more than one option
                 </Text>
               </View>
-              <Switch
+              <Switch accessibilityLabel="Allow multiple poll answers"
                 value={allowsMultiple}
                 onValueChange={setAllowsMultiple}
                 trackColor={{ true: "#007AFF" }}

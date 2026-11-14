@@ -1,4 +1,6 @@
+import type { ScoreboardOdds } from "types/odds";
 export type SoccerGame = {
+  odds?: ScoreboardOdds | null;
   league: {
     id: number;
     uid: string;

@@ -414,7 +414,7 @@ export const StandingsList = ({
           </Text>
         </View>
 
-        <TouchableOpacity
+        <TouchableOpacity accessibilityRole="button"
           style={styles.teamInfo}
           onPress={() =>
             router.push({

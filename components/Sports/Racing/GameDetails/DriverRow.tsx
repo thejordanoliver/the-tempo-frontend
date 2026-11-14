@@ -39,7 +39,7 @@ export const DriverRow = ({
       <View style={styles.driverContainer}>
         <View>
           <View style={styles.profileContainer}>
-            <Pressable onPress={handleTeamPress}>
+            <Pressable accessibilityRole="button" accessibilityLabel={`Open ${name} driver profile`} onPress={handleTeamPress}>
               <View style={styles.headshotContainer}>
                 <Image
                   source={{ uri: headshot ?? "" }}

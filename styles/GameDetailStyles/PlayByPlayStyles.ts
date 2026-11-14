@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const PlayByPlayStyles = (isDark: boolean) =>
@@ -240,9 +240,7 @@ export const PlayByPlayStyles = (isDark: boolean) =>
     },
 
     headerLogo: {
-      width: 30,
-      height: 30,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
     playStatusBadge: {
       position: "relative",

@@ -6,7 +6,6 @@ import { Colors } from "constants/styles";
 
 import { useMemo } from "react";
 import { Image, Text, View } from "react-native";
-import { FanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import type {
   FanPredictionGameTeam,
@@ -27,8 +26,7 @@ type Props = {
 };
 
 export default function PredictionGameSummary({ pick, isDark }: Props) {
-  const styles = useMemo(() => FanPredictionHistoryRowStyles(isDark), [isDark]);
-  const gameStyles = useMemo(() => GameCardStyles(isDark), [isDark]);
+  const styles = useMemo(() => GameCardStyles(isDark), [isDark]);
   const game = pick.game?.sport === pick.sport ? pick.game : undefined;
   const state = game?.status.completed
     ? "post"
@@ -78,6 +76,7 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
       team.code ||
       team.name ||
       side.toUpperCase();
+
     const logo =
       pick.sport === "mma"
         ? athlete?.headshot
@@ -88,6 +87,7 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
           : team.logo
             ? { uri: team.logo }
             : teamPlaceholder;
+
     const rank = team.rank ?? (side === "home" ? team.homeRank : team.awayRank);
     const isWinner = isFinal && gameTeamIdsMatch(id, pick.winnerId);
     const value =
@@ -96,15 +96,15 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
         : pick.sport === "volleyball"
           ? (team.setsWon ?? team.score)
           : team.score;
-          
+
     const score = (
-      <View style={styles.scoreSection}>
+      <View>
         <Text
           style={
             showRecord || pick.sport === "mma"
-              ? styles.record
+              ? styles.teamRecord
               : [
-                  styles.score,
+                  styles.teamScore,
                   winnerStyle({
                     isDark,
                     isWinner,
@@ -115,47 +115,29 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
         >
           {value ?? "—"}
         </Text>
-        {isLive && football && gameTeamIdsMatch(football.possession, id) && (
-          <Ionicons
-            name="american-football"
-            size={14}
-            color={isDark ? Colors.white : Colors.black}
-            accessibilityLabel="Possession"
-          />
-        )}
-        {pick.sport === "mma" && isWinner && (
-          <Ionicons
-            name="caret-up"
-            size={14}
-            color={isDark ? Colors.white : Colors.black}
-            accessibilityLabel="Winner"
-          />
-        )}
       </View>
     );
-    
+
     const participant = (
-      <View style={styles.team}>
+      <View style={styles.teamSection}>
         <View
-          style={pick.sport === "mma" ? gameStyles.fighterContainer : undefined}
+          style={pick.sport === "mma" ? styles.fighterContainer : undefined}
         >
           <Image
             source={logo}
-            style={pick.sport === "mma" ? gameStyles.fighter : gameStyles.logo}
+            style={pick.sport === "mma" ? styles.fighter : styles.logo}
             resizeMode="contain"
             accessibilityLabel={name}
           />
         </View>
 
         <Text
-          style={gameStyles.teamName}
+          style={styles.teamName}
           numberOfLines={1}
           adjustsFontSizeToFit
           minimumFontScale={0.5}
         >
-          {rank != null && rank > 0 && (
-            <Text style={gameStyles.rank}>{rank} </Text>
-          )}
+          {rank != null && rank > 0 && <Text style={styles.rank}>{rank} </Text>}
           {name}
         </Text>
       </View>
@@ -175,32 +157,30 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
 
   const renderStatus = () => {
     if (interrupted) {
-      return <Text style={gameStyles.finalText}>{description || detail}</Text>;
+      return <Text style={styles.finalText}>{description || detail}</Text>;
     }
     if (isFinal) {
       const method = mma?.method
         ?.replace(/^submission$/i, "SUB")
         .replace(/^decision$/i, "DEC");
       return (
-        <View style={gameStyles.infoWrapper}>
-          <Text style={gameStyles.finalText}>
-            {method || detail || "Final"}
-          </Text>
-          <View style={gameStyles.finalStatusDivider} />
-          <Text style={gameStyles.finalText}>{formatDate(date)}</Text>
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{method || detail || "Final"}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formatDate(date)}</Text>
         </View>
       );
     }
     if (isLive) {
       if (/halftime|end of|walkouts|intros|pre-fight/i.test(description)) {
-        return <Text style={gameStyles.clock}>{description}</Text>;
+        return <Text style={styles.clock}>{description}</Text>;
       }
       if (pick.sport === "baseball") {
         const betweenInnings = /end|mid/i.test(detail ?? "");
         const outs = baseball?.outs;
         return (
           <>
-            <Text style={gameStyles.date}>
+            <Text style={styles.date}>
               {detail ||
                 (game?.status.period ? `Inning ${game.status.period}` : "Live")}
             </Text>
@@ -208,7 +188,7 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
               <>
                 {outs != null && (
                   <View
-                    style={gameStyles.outsContainer}
+                    style={styles.outsContainer}
                     accessibilityLabel={`${outs} outs`}
                   >
                     {[1, 2, 3].map((out) => (
@@ -246,13 +226,13 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
             : undefined;
         return (
           <>
-            <Text style={gameStyles.period}>
+            <Text style={styles.period}>
               {game?.status.period
                 ? `Set ${game.status.period}`
                 : detail || "Live"}
             </Text>
             {set && (
-              <Text style={gameStyles.clock}>
+              <Text style={styles.clock}>
                 {set.away ?? "—"} – {set.home ?? "—"}
               </Text>
             )}
@@ -261,19 +241,19 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
       }
       return (
         <>
-          <View style={gameStyles.infoWrapper}>
-            <Text style={gameStyles.period}>{period || detail || "Live"}</Text>
+          <View style={styles.infoWrapper}>
+            <Text style={styles.period}>{period || detail || "Live"}</Text>
             {!!clock && (
               <>
-                <View style={gameStyles.statusDivider} />
-                <Text style={gameStyles.clock}>{clock}</Text>
+                <View style={styles.statusDivider} />
+                <Text style={styles.clock}>{clock}</Text>
               </>
             )}
           </View>
           {!!football?.downDistanceText && (
             <Text
               style={[
-                gameStyles.downDistance,
+                styles.downDistance,
                 football.isRedZone && {
                   color: isDark ? Colors.dark.lightRed : Colors.light.red,
                 },
@@ -287,18 +267,16 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
     }
     if (state === "pre") {
       return (
-        <View style={gameStyles.infoWrapper}>
-          <Text style={gameStyles.date}>{formatDate(date)}</Text>
-          <View style={gameStyles.statusDivider} />
-          <Text style={gameStyles.date}>
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{formatDate(date)}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>
             {/TBD/i.test(detail ?? "") ? "TBD" : formatTime(date)}
           </Text>
         </View>
       );
     }
-    return (
-      <Text style={gameStyles.date}>{detail || "Details unavailable"}</Text>
-    );
+    return <Text style={styles.date}>{detail || "Details unavailable"}</Text>;
   };
 
   return (
@@ -309,7 +287,7 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
         <View style={styles.info}>
           {renderStatus()}
           {!isFinal && !!broadcast && (
-            <Text style={gameStyles.broadcast}>{broadcast}</Text>
+            <Text style={styles.broadcast}>{broadcast}</Text>
           )}
         </View>
 

@@ -231,7 +231,7 @@ export const CBStandingsList = ({ league }: Props) => {
           </View>
 
           <View style={styles.teamInfo}>
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               style={styles.teamInfoWrapper}
               onPress={() => {
                 if (!teamId) return;

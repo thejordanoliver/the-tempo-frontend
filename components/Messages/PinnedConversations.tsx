@@ -77,6 +77,10 @@ function PinnedSubmenu({ visible, isDark, onRemovePinned }: SubmenuProps) {
   return (
     <Animated.View
       pointerEvents={visible ? "auto" : "none"}
+      accessibilityElementsHidden={!visible}
+      importantForAccessibility={visible ? "auto" : "no-hide-descendants"}
+      aria-hidden={!visible}
+      inert={!visible}
       style={[
         styles.submenu,
         {
@@ -98,7 +102,7 @@ function PinnedSubmenu({ visible, isDark, onRemovePinned }: SubmenuProps) {
         },
       ]}
     >
-      <Pressable style={styles.submenuItem} onPress={onRemovePinned}>
+      <Pressable accessibilityRole="button" style={styles.submenuItem} onPress={onRemovePinned}>
         <View style={styles.submenuIconWrap}>
           <Ionicons
             name="pin-outline"
@@ -176,12 +180,12 @@ function PinnedConversations({
           const isMenuOpen = activeMenuId === conversationId;
 
           return (
-            <Pressable
+            <Pressable accessibilityRole="button" accessibilityLabel={`Open conversation with ${name}. ${conversation.isOnline ? "Online. " : ""}${message}`}
               key={conversation.id}
               style={[styles.card, isMenuOpen && styles.activeCard]}
               onPress={() => handleSelect(conversation)}
             >
-              <Pressable
+              <Pressable accessibilityRole="button" accessibilityLabel={`Conversation options for ${name}`} accessibilityState={{ expanded: isMenuOpen }}
                 hitSlop={10}
                 style={[
                   styles.menuButton,

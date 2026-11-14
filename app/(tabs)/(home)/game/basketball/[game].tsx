@@ -20,6 +20,7 @@ import {
   TeamInjuries,
   Venue,
 } from "@/components/Sports/Basketball/GameDetails";
+import Odds from "@/components/Sports/Basketball/GameDetails/Odds";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
@@ -154,29 +155,7 @@ export default function GameDetailsScreen(
   const game = useMemo(() => {
     if (routeGame) return routeGame;
     if (!score) return undefined;
-
-    const toGameTeam = (team: typeof score.home) => ({
-      ...team,
-      id: Number(team.id),
-      name: team.fullName ?? team.name,
-      shortName: team.shortName,
-      city: "",
-      state: "",
-      logo: "",
-      primaryColor: "",
-      secondaryColor: "",
-      rank: team.rank ?? 0,
-    });
-
-    return {
-      id: Number(score.gameId),
-      date: score.date ?? "",
-      league: { code: LEAGUE },
-      home: toGameTeam(score.home),
-      away: toGameTeam(score.away),
-      attendance: 0,
-    };
-  }, [LEAGUE, routeGame, score]);
+  }, [routeGame, score]);
 
   const gameDateObj = game?.date ? new Date(game.date) : null;
   const gameDate = safeDate(game?.date);
@@ -211,10 +190,10 @@ export default function GameDetailsScreen(
             ? getGLeagueTeam(awayId)
             : getNBATeam(awayId)) ?? emptyAwayTeam;
 
-  const homeCode = homeTeam.code ?? home?.code ?? "";
-  const awayCode = awayTeam.code ?? away?.code ?? "";
-  const homeName = homeTeam.fullName ?? home?.name ?? "";
-  const awayName = awayTeam.fullName ?? away?.name ?? "";
+  const homeCode = home?.code ?? "";
+  const awayCode = away?.code ?? "";
+  const homeName = home?.fullName ?? "";
+  const awayName = away?.fullName ?? "";
 
   const isHomeActive = homeTeam.isActive;
   const isAwayActive = awayTeam.isActive;
@@ -232,7 +211,7 @@ export default function GameDetailsScreen(
     Colors.midTone;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(homeId, isDark)
@@ -245,7 +224,7 @@ export default function GameDetailsScreen(
               : getNBATeamLogo(homeId, isDark);
 
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(awayId, isDark)
@@ -258,7 +237,7 @@ export default function GameDetailsScreen(
               : getNBATeamLogo(awayId, isDark);
 
   const homeHeaderLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(homeId, true)
@@ -271,7 +250,7 @@ export default function GameDetailsScreen(
               : getNBATeamLogo(homeId, true);
 
   const awayHeaderLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(awayId, true)
@@ -327,6 +306,14 @@ export default function GameDetailsScreen(
     period: score?.status.period ?? 0,
     isMCBB: isMCBB || isWCBB,
   });
+
+  const odds =
+    details?.odds === undefined
+      ? game?.odds
+      : Array.isArray(details.odds)
+        ? null
+        : details.odds;
+
   const clock = score?.status.displayClock ?? "0:00";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -561,6 +548,18 @@ export default function GameDetailsScreen(
                 awayChance={awayChance}
                 awayColor={awayColor}
                 size={180}
+                isDark={isDark}
+                state={state}
+              />
+
+              <Odds
+                homeId={homeId}
+                homeCode={homeCode}
+                homeLogo={homeLogo}
+                awayId={awayId}
+                awayCode={awayCode}
+                awayLogo={awayLogo}
+                odds={odds}
                 isDark={isDark}
                 state={state}
               />

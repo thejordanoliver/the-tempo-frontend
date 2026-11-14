@@ -326,7 +326,7 @@ export default function CreatePostScreen() {
             overflow: "visible",
           }}
         >
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Edit ${item.type}, attachment ${index + 1}`}
             onLongPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
               drag();
@@ -365,7 +365,7 @@ export default function CreatePostScreen() {
           </TouchableOpacity>
 
           {!isActive && (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Remove attachment ${index + 1}`}
               style={styles.removeButton}
               onPress={() => removeMedia(item.id)}
               hitSlop={10}
@@ -451,7 +451,7 @@ export default function CreatePostScreen() {
           ))}
 
           <View style={styles.metaContainer}>
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               onPress={() => setPoll(null)}
               hitSlop={8}
               style={styles.pollRemoveContainer}
@@ -496,7 +496,7 @@ export default function CreatePostScreen() {
       <View style={styles.toolbar}>
         {/* Media Button */}
         {!poll && (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityState={{ disabled: loading }}
             onPress={pickMedia}
             disabled={loading}
             style={styles.toolBtn}
@@ -510,7 +510,7 @@ export default function CreatePostScreen() {
 
         {/* GIF Button */}
         {!poll && (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityState={{ disabled: loading }}
             onPress={handleOpenGifPicker}
             disabled={loading}
             style={styles.toolBtn}
@@ -523,7 +523,7 @@ export default function CreatePostScreen() {
         )}
 
         {/* Poll Button */}
-        <TouchableOpacity
+        <TouchableOpacity accessibilityState={{ disabled: loading }}
           onPress={poll ? () => setPollEditorVisible(true) : handleAddPollPress}
           disabled={loading}
           style={[styles.toolBtn, poll ? styles.toolBtnActive : undefined]}

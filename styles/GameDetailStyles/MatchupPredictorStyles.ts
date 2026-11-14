@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "@/constants/styles";
 import { StyleSheet } from "react-native";
 
 export const MatchupPredictorStyles = (isDark: boolean) =>
@@ -47,9 +47,7 @@ export const MatchupPredictorStyles = (isDark: boolean) =>
       overflow: "hidden",
     },
     logo: {
-      width: 32,
-      height: 32,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
     teamCode: {
       fontFamily: Fonts.SEMIBOLD,
@@ -80,8 +78,7 @@ export const MatchupPredictorStyles = (isDark: boolean) =>
       borderColor: Colors.white,
     },
     markerLogo: {
-      width: 28,
-      height: 28,
+      ...gameDetailTeamLogo,
     },
     track: {
       position: "relative",

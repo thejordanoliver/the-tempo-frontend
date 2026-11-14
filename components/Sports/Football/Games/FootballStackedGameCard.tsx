@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   getCFBRivalry,
   getCFBTeam,
@@ -10,6 +9,7 @@ import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -72,8 +72,8 @@ function FootballStackedGameCard({
         ? getCFBTeam(awayId)
         : getUFLTeam(awayId)) ?? emptyAwayTeam;
 
-  const homeName = game.home?.name;
-  const awayName = game.away?.name;
+  const homeName = game.home?.fullName;
+  const awayName = game.away?.fullName;
 
   const homeLogo =
     home.id === emptyHomeTeam.id

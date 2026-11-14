@@ -81,7 +81,7 @@ const NewMessageHeader = memo(function NewMessageHeader({
           <Text style={styles.subtitle}>Search for someone to start a DM.</Text>
         </View>
 
-        <Pressable
+        <Pressable accessibilityRole="button" accessibilityState={{ disabled: isCreating }} accessibilityLabel="Close new message"
           hitSlop={10}
           style={styles.closeButton}
           onPress={onRequestClose}
@@ -194,7 +194,7 @@ const NewMessageModal = forwardRef<NewMessageModalRef, Props>(
         const displayName = fullName || item.username;
 
         return (
-          <Pressable
+          <Pressable accessibilityRole="button" accessibilityState={{ disabled: isCreating }}
             style={({ pressed }) => [
               styles.userRow,
               pressed && styles.userRowPressed,

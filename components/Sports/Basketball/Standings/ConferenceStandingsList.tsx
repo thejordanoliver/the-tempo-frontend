@@ -114,7 +114,7 @@ export const ConferenceStandingsList = ({
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
 
-        <TouchableOpacity onPress={handleTeamPress} style={styles.teamInfo}>
+        <TouchableOpacity accessibilityRole="button" onPress={handleTeamPress} style={styles.teamInfo}>
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
 
           <Text style={styles.collegeTeamName}>{teamCode}</Text>

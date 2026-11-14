@@ -2,6 +2,7 @@ import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { useCallback, useEffect, useState } from "react";
 import type { GameVenueInfo } from "types/gameVenue";
+import type { GameOdds } from "types/odds";
 import type { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
 import type { Predictor } from "../BasketballHooks/useBasketballGameDetails";
@@ -407,6 +408,7 @@ export type Official = {
 };
 
 export type Details = {
+  odds?: GameOdds | [] | null;
   broadcast?: string | null;
   broadcasts?: string[];
   officials: Official[];

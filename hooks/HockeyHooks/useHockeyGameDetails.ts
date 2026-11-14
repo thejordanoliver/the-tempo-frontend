@@ -1,3 +1,4 @@
+import type { GameOdds, ScoreboardOdds } from "types/odds";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { GameVenueInfo } from "types/gameVenue";
 import { Venue } from "@/types/types";
@@ -264,6 +265,7 @@ export type GameStatus = {
 };
 
 export type Score = {
+  odds?: ScoreboardOdds | null;
   gameId: string;
   uid?: string;
   date?: string;
@@ -291,6 +293,7 @@ export type TeamRecords = {
 };
 
 export type GameDetails = {
+  odds?: GameOdds | [] | null;
   playoffRound: string;
   seriesSummary: SeriesSummary;
   isPostseason: boolean;

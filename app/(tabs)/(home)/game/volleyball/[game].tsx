@@ -1,3 +1,4 @@
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { useScrollFade } from "@/hooks/useScrollFade";
 import { useWeather } from "@/hooks/useWeather";
 import { formatVenueAddress } from "@/utils/games/games";
@@ -176,6 +177,18 @@ export default function VolleyballGameScreen(
               homeSets={score.home.setsWon ?? score.home.score}
               awaySets={score.away.setsWon ?? score.away.score}
               league={score.league.code}
+              state={score.status.state}
+              isDark={isDark}
+            />
+
+            <Odds
+              homeId={homeId}
+              awayId={awayId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeLogo={homeLogo ?? null}
+              awayLogo={awayLogo ?? null}
+              odds={details?.odds === undefined ? score?.odds : details.odds}
               state={score.status.state}
               isDark={isDark}
             />

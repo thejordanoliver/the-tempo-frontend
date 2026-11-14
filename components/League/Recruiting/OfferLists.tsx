@@ -97,7 +97,7 @@ export default function OfferList({ recruit, isDark }: Props) {
         )}
 
         {offer.length > COLLAPSED_ROWS && (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityState={{ expanded }}
             onPress={() => setExpanded((prev) => !prev)}
             style={styles.showMoreButton}
           >

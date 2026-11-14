@@ -2,6 +2,27 @@
 
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/styles";
+import type { ScoreboardOdds } from "types/odds";
+
+export type Team = {
+  id: number;
+  uid: string;
+  name: string;
+  fullName: string;
+  shortName: string;
+  code: string;
+  location: string;
+  city: string;
+  state: string;
+  logo: string;
+  logoDark: string;
+  primaryColor: string;
+  secondaryColor: string;
+  record: string;
+  rank: string | null;
+  score: number;
+  winner: boolean;
+};
 
 export type LastPlay = {
   id: string;
@@ -79,20 +100,13 @@ export type FootballGame = {
       region: string;
     },
   ];
-  odds: {
-    provider: string;
-    details: string;
-    spread: number;
-    overUnder: number;
-    homeMoneyline: null;
-    awayMoneyline: null;
-  };
-
+  odds: ScoreboardOdds | null;
   home: {
     id: number;
     uid: string;
     name: string;
-    shortName?: string | null;
+    fullName: string;
+    shortName: string;
     code: string;
     location: string;
     logo: string;
@@ -108,7 +122,8 @@ export type FootballGame = {
     id: number;
     uid: string;
     name: string;
-    shortName?: string | null;
+    fullName: string;
+    shortName: string;
     code: string;
     location: string;
     logo: string;

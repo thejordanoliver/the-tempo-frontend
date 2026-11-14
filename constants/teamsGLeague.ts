@@ -1,4 +1,5 @@
 import { Team } from "@/types/team";
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import AUSLogo from "../assets/GLeague/Logos/aus.png";
 import AUSLogoLight from "../assets/GLeague/Logos/ausLight.png";
 import BIRLogo from "../assets/GLeague/Logos/bir.png";
@@ -63,7 +64,6 @@ import WESLogo from "../assets/GLeague/Logos/wes.png";
 import WESLogoLight from "../assets/GLeague/Logos/wesLight.png";
 import WISLogo from "../assets/GLeague/Logos/wis.png";
 import WISLogoLight from "../assets/GLeague/Logos/wisLight.png";
-import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 const placeholderLogo = PlaceholderLogo;
 
 export const gleagueTeams: Team[] = [
@@ -683,7 +683,7 @@ export const gleagueTeams: Team[] = [
 
 export const getGLeagueTeam = (id: number | string) => {
   if (id == null) return undefined;
-  return gleagueTeams.find((t) => String(t.id) === String(id));
+  return gleagueTeams.find((t) => t.id === id);
 };
 
 export function getGLeagueTeamLogo(
@@ -694,7 +694,7 @@ export function getGLeagueTeamLogo(
     return placeholderLogo;
   }
 
-  const team = gleagueTeams.find((team) => String(team.id) === id);
+  const team = gleagueTeams.find((team) => team.id === id);
 
   if (!team) {
     return placeholderLogo;

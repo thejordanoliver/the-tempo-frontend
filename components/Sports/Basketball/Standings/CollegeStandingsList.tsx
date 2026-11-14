@@ -101,7 +101,7 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
         </View>
 
         <View style={styles.teamInfo}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             onPress={() => {
               if (!teamId) return;
               router.push({

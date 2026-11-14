@@ -106,7 +106,7 @@ export default function AuthorizedMessageImage({
     return (
       <View style={[style, localStyles.state]}>
         <Text style={localStyles.stateText}>Image unavailable</Text>
-        <TouchableOpacity onPress={handleManualRetry} hitSlop={8}>
+        <TouchableOpacity accessibilityRole="button" onPress={handleManualRetry} hitSlop={8}>
           <Text style={localStyles.retryText}>Retry</Text>
         </TouchableOpacity>
       </View>

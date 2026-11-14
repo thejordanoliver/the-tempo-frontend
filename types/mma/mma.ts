@@ -1,3 +1,4 @@
+import type { ScoreboardOdds } from "types/odds";
 import type { GameVenueInfo } from "types/gameVenue";
 export type MMALeague = "ufc" | "mma";
 
@@ -34,6 +35,7 @@ export type MMAAthlete = {
 };
 
 export type MMAFight = {
+  odds?: ScoreboardOdds | null;
   id?: string | number | null;
   uid?: string | null;
   name?: string | null;

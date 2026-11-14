@@ -216,7 +216,7 @@ function ConversationMessageItem({
               {timestamp}
             </>
           ) : showsBubble ? (
-            <Pressable
+            <Pressable accessibilityRole="button"
               style={({ pressed }) => [
                 bubbleStyle,
                 pressed && { opacity: activeOpacity },

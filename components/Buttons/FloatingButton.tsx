@@ -5,7 +5,7 @@ import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import { BlurView } from "expo-blur";
 import { memo, useContext, useEffect, useMemo, useState } from "react";
-import { Animated, StyleSheet, TouchableOpacity } from "react-native";
+import { Animated, Platform, StyleSheet, TouchableOpacity } from "react-native";
 
 type Props = {
   isOpen: boolean;
@@ -51,7 +51,7 @@ function FloatingButton({
         },
       ]}
     >
-      <TouchableOpacity
+      <TouchableOpacity accessibilityState={{ disabled: isOpen }}
         disabled={isOpen}
         focusable={!isOpen}
         style={styles.floatingButton}
@@ -100,12 +100,10 @@ const FloatingButtonStyles = (isDark: boolean, navigationBarInset: number) =>
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.white : Colors.black,
       shadowColor: Colors.black,
-      shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-      shadowOpacity: isDark ? 0.5 : 0.3,
-      shadowRadius: 4.65,
+      boxShadow:
+        Platform.OS === "android"
+          ? undefined
+          : `0px 3px 9.3px ${Colors.black}${isDark ? "80" : "4d"}`,
       elevation: 7,
     },
 

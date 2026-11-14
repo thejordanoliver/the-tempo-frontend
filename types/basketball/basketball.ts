@@ -1,3 +1,25 @@
+import { ScoreboardOdds } from "../odds";
+
+export type Team = {
+  id: number;
+  uid: string;
+  name: string;
+  fullName: string;
+  shortName: string;
+  code: string;
+  location: string;
+  city: string;
+  state: string;
+  logo: string;
+  logoDark: string;
+  primaryColor: string;
+  secondaryColor: string;
+  record: string;
+  rank: number | null;
+  score: number;
+  winner: boolean;
+};
+
 export type BasketballGame = {
   league: {
     id: number;
@@ -46,42 +68,9 @@ export type BasketballGame = {
     },
   ];
   periods: number;
-  home: {
-    id: number;
-    uid: string;
-    name: string;
-    shortName: string;
-    code: string;
-    city: string;
-    state: string;
-    location: string;
-    logo: string;
-    primaryColor: string;
-    secondaryColor: string;
-    alt_id: number;
-    rank: number;
-    score: number;
-    record: string;
-    winner: boolean;
-  };
-  away: {
-    id: number;
-    uid: string;
-    name: string;
-    shortName: string;
-    code: string;
-    city: string;
-    state: string;
-    location: string;
-    logo: string;
-    primaryColor: string;
-    secondaryColor: string;
-    alt_id: number;
-    rank: number;
-    score: number;
-    record: string;
-    winner: boolean;
-  };
+  odds: ScoreboardOdds | null;
+  home: Team;
+  away: Team;
   isConferenceGame: boolean;
   isNeutralSite: boolean;
   attendance: 0;

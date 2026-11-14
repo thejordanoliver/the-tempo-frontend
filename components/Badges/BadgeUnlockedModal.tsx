@@ -16,6 +16,7 @@ import {
   Animated,
   Easing,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -520,12 +521,10 @@ const badgeUnlockedModalStyles = (isDark: boolean, tierColor: string) =>
       paddingTop: 34,
       paddingBottom: 24,
       shadowColor: Colors.black,
-      shadowOffset: {
-        width: 0,
-        height: 16,
-      },
-      shadowOpacity: isDark ? 0.5 : 0.22,
-      shadowRadius: 30,
+      boxShadow:
+        Platform.OS === "android"
+          ? undefined
+          : `0px 16px 60px ${Colors.black}${isDark ? "80" : "38"}`,
       elevation: 20,
     },
 

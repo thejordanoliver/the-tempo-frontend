@@ -1,7 +1,14 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, type ImageStyle } from "react-native";
 
 export const activeOpacity = 0.7;
 export const MIN_TOUCH_TARGET = 36;
+export const GAME_DETAIL_TEAM_LOGO_SIZE = 28;
+export const gameDetailTeamLogo = {
+  width: GAME_DETAIL_TEAM_LOGO_SIZE,
+  height: GAME_DETAIL_TEAM_LOGO_SIZE,
+  resizeMode: "contain",
+  flexShrink: 0,
+} satisfies ImageStyle;
 export const PLACEHOLDER_COLOR = "#888";
 export const PLACEHOLDER_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";

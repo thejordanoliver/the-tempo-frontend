@@ -28,7 +28,6 @@ export default function TeamInfo({
       <InfoCard
         label={league === "mlb" ? "Manager" : "Coach"}
         value={coachName}
-        image={teamDetails?.coach?.image}
         teamColor={teamColor}
       />
 

@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   getCFBRivalry,
   getCFBTeam,
@@ -9,6 +8,7 @@ import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -99,8 +99,7 @@ function FootballSquareGameCard({
   const period = formatPeriod({ period: game.status.period });
   const redzone = game?.situation.isRedZone;
   const isRedzone = redzone;
-  const broadcasts = game?.broadcasts;
-  const broadcast = getBroadcastDisplay(broadcasts);
+  const broadcast = getBroadcastDisplay(game?.broadcasts, true);
   const downDistanceText = game.situation.shortDownDistanceText;
   const possessionTeamId = game.situation.possession;
   const homeRecord = game.home.record;

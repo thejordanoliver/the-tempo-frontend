@@ -400,7 +400,7 @@ export default function ProfileFavoritesSection({
     const teamName = team.name ?? team.shortName ?? String(id);
 
     return (
-      <Pressable
+      <Pressable accessibilityRole="button"
         key={`${league}:${id}`}
         delayLongPress={300}
         onLongPress={() => {

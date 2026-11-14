@@ -299,7 +299,7 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
   };
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: !game.id && !game.uid }}
       activeOpacity={activeOpacity}
       onPress={handlePress}
       disabled={!game.id && !game.uid}

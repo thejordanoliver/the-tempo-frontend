@@ -232,7 +232,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
                   key={`${conference.label}-${conference.value}`}
                   style={styles.buttonContainer}
                 >
-                  <Pressable
+                  <Pressable accessibilityRole="button" accessibilityLabel={conference.label} accessibilityState={{ selected: selectedConference === conference.value }}
                     onPress={() => {
                       onSelect(conference.value);
                       modalRef.current?.close();

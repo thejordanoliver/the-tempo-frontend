@@ -140,7 +140,9 @@ export default function FavoriteGamesSettingsModal({
             <Text style={styles.sectionLabel}>
               Sports · {selectedLeagues.length} selected
             </Text>
-            <Pressable
+            <Pressable accessibilityState={{ disabled: 
+                selectedLeagues.length === EXPLORE_WIDGET_LEAGUES.length
+               }}
               onPress={() => onChangeLeagues([...EXPLORE_WIDGET_LEAGUES])}
               disabled={
                 selectedLeagues.length === EXPLORE_WIDGET_LEAGUES.length

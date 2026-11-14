@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "@/constants/styles";
 import { StyleSheet } from "react-native";
 
 export const FanPredictionStyles = (isDark: boolean) =>
@@ -277,9 +277,7 @@ export const FanPredictionStyles = (isDark: boolean) =>
       zIndex: 1,
     },
     teamLogo: {
-      width: 40,
-      height: 40,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
       zIndex: 1,
     },
 
