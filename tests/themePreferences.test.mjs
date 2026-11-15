@@ -230,9 +230,11 @@ test("tab navigation and its bar respond to theme changes without remounting", (
   h.stop();
 });
 
-test("navigation bar opens each tab's concrete root screen", () => {
+test("navigation bar preserves stacks, emits reselection, and respects prevented tab presses", () => {
   const h = sportsHookHarness();
   const navigations = [];
+  const events = [];
+  let preventNavigation = false;
   const jsx = (type, props) => ({ type, props });
   Object.assign(h.modules, {
     "react/jsx-runtime": { jsx, jsxs: jsx },
@@ -263,6 +265,13 @@ test("navigation bar opens each tab's concrete root screen", () => {
   h.start(NavigationBar, [
     {
       state: { index: 0, routes },
+      emitter: {
+        emit(event) {
+          events.push({ ...event });
+          return { defaultPrevented: preventNavigation };
+        },
+      },
+      navigateToTab: (key) => navigations.push(key),
       descriptors: Object.fromEntries(
         routes.map(({ key }) => [key, { options: {} }]),
       ),
@@ -272,10 +281,18 @@ test("navigation bar opens each tab's concrete root screen", () => {
   ]);
   const buttons = h.state.props.children[1].props.children;
   buttons.forEach((button) => button.props.onPress());
-  assert.deepEqual(navigations, [
-    "/(tabs)/(league)/league",
-    "/(tabs)/(explore)/explore",
-    "/(tabs)/(profile)/profile",
-  ]);
+  assert.deepEqual(navigations, ["(league)", "(explore)", "(profile)"]);
+  assert.deepEqual(
+    events,
+    routes.map(({ key }) => ({
+      type: "tabPress",
+      target: key,
+      canPreventDefault: true,
+    })),
+  );
+  preventNavigation = true;
+  buttons[1].props.onPress();
+  assert.equal(navigations.length, 3);
+  assert.equal(events.length, 5);
   h.stop();
 });

@@ -332,8 +332,8 @@ export default function GameDetailsScreen(
                 awayId={Number(oddsAway.id)}
                 homeCode={oddsHome.shortName ?? "Home"}
                 awayCode={oddsAway.shortName ?? "Away"}
-                homeLogo={oddsHome.flag ?? null}
-                awayLogo={oddsAway.flag ?? null}
+                homeLogo={oddsHome.flag ? { uri: oddsHome.flag } : null}
+                awayLogo={oddsAway.flag ? { uri: oddsAway.flag } : null}
                 homeLabel="Fighter"
                 awayLabel="Fighter"
                 odds={game?.odds}

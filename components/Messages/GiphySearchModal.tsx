@@ -30,6 +30,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type GifItem = {
   id: string;
+  title?: string;
   images: {
     original: { url: string };
     fixed_width_small: { url: string };
@@ -129,7 +130,9 @@ export const GiphySearchModal: React.FC<Props> = ({
 
   const renderItem = useCallback(
     ({ item }: { item: GifItem }) => (
-      <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Select ${item.title || "GIF"}`}
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={`Select ${item.title || "GIF"}`}
         activeOpacity={activeOpacity}
         onPress={() => handleGifSelect(item)}
         style={styles.gifContainer}

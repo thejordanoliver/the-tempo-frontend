@@ -142,14 +142,12 @@ export default function GameDetailsScreen(
       home: {
         ...score.home,
         id: Number(score.home.id),
-        homeRank: score.home.rank,
         primaryColor: undefined,
         secondaryColor: undefined,
       },
       away: {
         ...score.away,
         id: Number(score.away.id),
-        awayRank: score.away.rank,
         primaryColor: undefined,
         secondaryColor: undefined,
       },
@@ -311,8 +309,8 @@ export default function GameDetailsScreen(
   const awayRuns = score?.away.score;
   const homeRecord = score?.home?.record || home?.record || "—";
   const awayRecord = score?.away?.record || away?.record || "—";
-  const homeRank = score?.home?.rank ?? home?.homeRank;
-  const awayRank = score?.away?.rank ?? away?.awayRank;
+  const homeRank = score?.home?.rank ?? home?.rank;
+  const awayRank = score?.away?.rank ?? away?.rank;
   const plays = score?.plays ?? [];
   const situation = score?.situation ?? null;
   const fieldPlay = useMemo<BaseballPlay | null>(() => {

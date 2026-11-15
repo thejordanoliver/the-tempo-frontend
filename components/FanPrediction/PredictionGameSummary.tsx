@@ -1,4 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
+import Football from "assets/icons/Football.png";
+import FootballLight from "assets/icons/FootballLight.png";
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import teamPlaceholder from "assets/Placeholders/teamPlaceholder.png";
 import { BasesIndicator } from "components/Sports/Baseball/GameDetails/BasesIndicator";
@@ -120,6 +122,15 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
 
     const participant = (
       <View style={styles.teamSection}>
+        {isLive &&
+          !interrupted &&
+          gameTeamIdsMatch(football?.possession, id) && (
+            <Image
+              source={isDark ? FootballLight : Football}
+              style={styles.possession}
+              accessibilityLabel="Possession"
+            />
+          )}
         <View
           style={pick.sport === "mma" ? styles.fighterContainer : undefined}
         >

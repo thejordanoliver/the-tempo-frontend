@@ -9,6 +9,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Image,
+  Platform,
   PixelRatio,
   Animated as RNAnimated,
   Easing as RNEasing,
@@ -108,7 +109,7 @@ const CommentSubmenu = ({
       accessibilityElementsHidden={!visible}
       importantForAccessibility={visible ? "auto" : "no-hide-descendants"}
       aria-hidden={!visible}
-      inert={!visible}
+      {...(Platform.OS === "web" ? { inert: !visible } : {})}
       style={[
         styles.submenu,
         {
@@ -130,7 +131,8 @@ const CommentSubmenu = ({
         },
       ]}
     >
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         activeOpacity={activeOpacity}
         style={styles.submenuItem}
         onPress={onEdit}
@@ -148,7 +150,8 @@ const CommentSubmenu = ({
 
       <View style={styles.submenuSeparator} />
 
-      <TouchableOpacity accessibilityRole="button"
+      <TouchableOpacity
+        accessibilityRole="button"
         activeOpacity={activeOpacity}
         style={styles.submenuItem}
         onPress={onDelete}
@@ -421,7 +424,10 @@ export const CommentItem = ({
       >
         <View style={styles.userRow}>
           <View style={styles.leftSide}>
-            <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: isEditing }} accessibilityLabel={`Open ${comment.username} profile`}
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityState={{ disabled: isEditing }}
+              accessibilityLabel={`Open ${comment.username} profile`}
               activeOpacity={0.7}
               disabled={isEditing}
               onPress={handleOpenUser}
@@ -455,7 +461,10 @@ export const CommentItem = ({
               )}
             </TouchableOpacity>
 
-            <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: isEditing }} accessibilityLabel={`Open ${comment.username} profile`}
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityState={{ disabled: isEditing }}
+              accessibilityLabel={`Open ${comment.username} profile`}
               activeOpacity={0.7}
               disabled={isEditing}
               onPress={handleOpenUser}
@@ -485,7 +494,10 @@ export const CommentItem = ({
                 onDelete={confirmDelete}
               />
 
-              <TouchableOpacity accessibilityRole="button" accessibilityLabel="Comment options" accessibilityState={{ expanded: submenuVisible }}
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Comment options"
+                accessibilityState={{ expanded: submenuVisible }}
                 activeOpacity={activeOpacity}
                 onPress={toggleSubmenu}
                 style={[
@@ -502,7 +514,8 @@ export const CommentItem = ({
               </TouchableOpacity>
             </View>
           ) : (
-            <TouchableOpacity accessibilityState={{ disabled: safety.pending }}
+            <TouchableOpacity
+              accessibilityState={{ disabled: safety.pending }}
               activeOpacity={activeOpacity}
               onPress={safety.open}
               disabled={safety.pending}
@@ -522,7 +535,8 @@ export const CommentItem = ({
 
         {isEditing ? (
           <View style={styles.editContainer}>
-            <TextInput accessibilityLabel="Edit your comment..."
+            <TextInput
+              accessibilityLabel="Edit your comment..."
               style={styles.editInput}
               multiline
               value={editText}
@@ -533,7 +547,8 @@ export const CommentItem = ({
             />
 
             <View style={styles.editActionsContainer}>
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityRole="button"
                 activeOpacity={activeOpacity}
                 onPress={handleCancelEdit}
                 style={styles.editButton}
@@ -546,7 +561,8 @@ export const CommentItem = ({
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity accessibilityRole="button"
+              <TouchableOpacity
+                accessibilityRole="button"
                 activeOpacity={activeOpacity}
                 onPress={handleSaveEdit}
                 style={styles.editButton}
@@ -579,7 +595,9 @@ export const CommentItem = ({
                 </Reanimated.View>
 
                 {shouldShowExpand && (
-                  <TouchableOpacity accessibilityRole="button" accessibilityState={{ expanded: textExpanded }}
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: textExpanded }}
                     activeOpacity={activeOpacity}
                     onPress={() => setTextExpanded((prev) => !prev)}
                     style={styles.expandButton}

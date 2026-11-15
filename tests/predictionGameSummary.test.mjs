@@ -227,3 +227,36 @@ test("suspended games take precedence over live clocks and baseball base state",
   assert(content.includes("Suspended"));
   assert(!content.some((node) => node.type === "Bases"));
 });
+
+test("hockey displays backend records before games and scores during live games", () => {
+  const teams = {
+    home: { id: 1, record: "12-4-2", score: 3 },
+    away: { id: 2, record: "10-6-1", score: 1 },
+  };
+  const pregame = render("hockey", { ...teams, status: { state: "pre" } });
+  assert(pregame.includes("12-4-2"));
+  assert(pregame.includes("10-6-1"));
+  assert(
+    !pregame.some((node) => typeof node === "string" && /pts/i.test(node)),
+  );
+  const live = render("hockey", { ...teams, status: { state: "in" } });
+  assert(live.includes("3"));
+  assert(live.includes("1"));
+  assert(!live.includes("12-4-2"));
+});
+
+test("football possession is hidden outside active play", () => {
+  for (const status of [
+    { state: "pre" },
+    { state: "post", completed: true },
+    { state: "in", description: "Suspended" },
+  ]) {
+    const content = render("football", {
+      status,
+      situation: { possession: "1" },
+    });
+    assert(
+      !content.some((node) => node.props?.accessibilityLabel === "Possession"),
+    );
+  }
+});
