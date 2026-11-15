@@ -26,7 +26,7 @@ import Button from "../Buttons/Button";
 
 type NotificationSettingsModalProps = {
   visible: boolean;
-  scope: "team" | "game";
+  scope: "team" | "game" | "league";
   sport: NotificationTeamSport;
   league: string;
   enabled: boolean;
@@ -201,11 +201,13 @@ export default function NotificationSettingsModal({
   }, [onUseTeamDefaults]);
 
   const scopeCopy =
-    scope === "team"
-      ? "These choices apply to every game on this team's schedule."
-      : hasGameOverride
-        ? "Custom settings for this game override both teams' schedule settings."
-        : "Save to create custom settings for this game. Until then, team schedule settings apply.";
+    scope === "league"
+      ? "These choices apply to every game in this league."
+      : scope === "team"
+        ? "These choices apply to every game on this team's schedule."
+        : hasGameOverride
+          ? "Custom settings for this game override league and team settings."
+          : "Save to create custom settings for this game. Until then, league and team settings apply.";
 
   return (
     <BottomSheetModal
@@ -223,7 +225,11 @@ export default function NotificationSettingsModal({
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>
-            {scope === "team" ? "Team notifications" : "Game notifications"}
+            {scope === "league"
+              ? "League notifications"
+              : scope === "team"
+                ? "Team notifications"
+                : "Game notifications"}
           </Text>
           <Text style={styles.subtitle}>{scopeCopy}</Text>
         </View>
@@ -304,7 +310,8 @@ export default function NotificationSettingsModal({
           {saveError ? <Text style={styles.errorText}>{saveError}</Text> : null}
 
           {scope === "game" && hasGameOverride && onUseTeamDefaults ? (
-            <Pressable accessibilityState={{ disabled: isSaving }}
+            <Pressable
+              accessibilityState={{ disabled: isSaving }}
               onPress={() => void handleUseTeamDefaults()}
               disabled={isSaving}
               style={({ pressed }) => [
@@ -312,9 +319,11 @@ export default function NotificationSettingsModal({
                 pressed && styles.pressed,
               ]}
               accessibilityRole="button"
-              accessibilityLabel="Use team notification settings for this game"
+              accessibilityLabel="Use league and team notification settings for this game"
             >
-              <Text style={styles.defaultsButtonText}>Use team settings</Text>
+              <Text style={styles.defaultsButtonText}>
+                Use league and team settings
+              </Text>
             </Pressable>
           ) : null}
         </BottomSheetScrollView>
@@ -378,7 +387,7 @@ const createStyles = (isDark: boolean) => {
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      textTransform: "uppercase",
+      textAlign: "center",
     },
 
     content: { paddingBottom: 0 },

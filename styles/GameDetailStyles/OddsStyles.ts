@@ -70,16 +70,18 @@ export const OddsStyles = (isDark: boolean) => {
     marketLabel: {
       ...shared.label,
       alignSelf: "center",
-      width: "100%",
+      flexShrink: 0,
       fontSize: 11,
       textAlign: "center",
+      textAlignVertical: "center",
+      includeFontPadding: false,
     },
     valuesRow: {
       flexDirection: "row",
       alignSelf: "stretch",
       minWidth: 0,
       gap: 8,
-      alignItems: "flex-start",
+      alignItems: "center",
     },
     priceCell: {
       width: 0,

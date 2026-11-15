@@ -234,7 +234,7 @@ export default function PostImagesModal({
   return (
     <Modal visible={visible} transparent animationType={reduceMotion ? "none" : "fade"} onRequestClose={onClose}>
       <SafeAreaView style={styles.modalContainer} accessibilityViewIsModal onAccessibilityEscape={onClose}>
-        <BlurView intensity={90} style={StyleSheet.absoluteFill} />
+        <BlurView intensity={100} style={StyleSheet.absoluteFill} />
         <View style={styles.modalBackground} />
 
         <Animated.View

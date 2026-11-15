@@ -129,9 +129,9 @@ export default function Odds({
                   : `${row.label}. ${awayCode}, ${describe(row.away)}. ${homeCode}, ${describe(row.home)}.`
               }
             >
-              <Text style={styles.marketLabel}>{row.label}</Text>
               <View style={styles.valuesRow}>
                 <Price cell={row.away} styles={styles} />
+                <Text style={styles.marketLabel}>{row.label}</Text>
                 <Price cell={row.home} styles={styles} />
               </View>
             </View>

@@ -46,6 +46,7 @@ export type FanPredictionPickTeam = {
   name: string;
   code: string;
   logo: string | null;
+  logoDark?: string | null;
   score?: number | string | null;
   record?: string | null;
 };

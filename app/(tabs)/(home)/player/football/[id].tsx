@@ -127,6 +127,7 @@ export default function PlayerDetailScreen() {
   }, [currentTeamId, isNFL]);
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamId = team?.id != null ? String(team.id) : currentTeamId;
+  const isActive = player?.active === true;
 
   const teamLogo = useMemo(() => {
     return isNFL ? getNFLTeamLogo(teamId, true) : getCFBTeamLogo(teamId, true);
@@ -156,14 +157,17 @@ export default function PlayerDetailScreen() {
     game,
     loading: latestGameLoading,
     error: latestGameError,
-  } = usePlayerClosestGame<FootballGame>("football", playerLeague, teamId);
+  } = usePlayerClosestGame<FootballGame>(
+    "football",
+    playerLeague,
+    teamId,
+    isActive,
+  );
   const gameLoading = latestGameLoading;
   const gameError = latestGameError;
   const latestSeason = useMemo(() => {
     return getLatestPlayerSeason(data);
   }, [data]);
-
-  const isActive = player?.active === true;
 
   const screenLoading = loading || seasonsLoading || latestGameLog.loading;
 
@@ -280,7 +284,7 @@ export default function PlayerDetailScreen() {
             rankings={currentSeasonRankings}
             teamColor={teamColor}
           />
-          {playerId ? (
+          {isActive && teamId ? (
             <LatestGame
               game={game}
               loading={gameLoading}

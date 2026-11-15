@@ -111,3 +111,8 @@ export type GameNotificationSettings = Pick<
   | "closeGameEnabled"
   | "finalScoreEnabled"
 >;
+
+export type LeagueNotificationSubscription = Omit<
+  TeamNotificationSubscription,
+  "teamId"
+>;

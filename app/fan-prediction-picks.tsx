@@ -1,3 +1,4 @@
+import { getPredictionGameHref } from "utils/navigation/predictionGameNavigation";
 import Button from "components/Buttons/Button";
 import { CustomHeader } from "components/CustomHeader";
 import FanPredictionHistoryHeader from "components/FanPrediction/FanPredictionHistoryHeader";
@@ -70,17 +71,7 @@ export default function FanPredictionPicksScreen() {
         <FanPredictionHistoryRow
           pick={pick}
           isDark={isDark}
-          onPress={() =>
-            router.push({
-              pathname: "/game/[sport]/[game]",
-              params: {
-                sport: pick.sport,
-                game: pick.gameId,
-                league: pick.league,
-                date: pick.startsAt,
-              },
-            })
-          }
+          onPress={() => router.push(getPredictionGameHref(pick))}
         />
       )}
       ListEmptyComponent={

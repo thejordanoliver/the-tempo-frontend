@@ -1,3 +1,4 @@
+import { getPredictionGameHref } from "utils/navigation/predictionGameNavigation";
 import BadgePreviewSection from "@/components/Badges/ProfileBadgeSection";
 import { CustomHeader } from "@/components/CustomHeader";
 import ProfilePredictions from "@/components/FanPrediction/ProfilePredictions";
@@ -205,7 +206,8 @@ function UserProfileContent() {
           onBack={handleBack}
           rightAction={
             !isCurrentUser ? (
-              <TouchableOpacity accessibilityState={{ disabled: safety.pending }}
+              <TouchableOpacity
+                accessibilityState={{ disabled: safety.pending }}
                 onPress={safety.open}
                 disabled={safety.pending}
                 accessibilityRole="button"
@@ -384,17 +386,7 @@ function UserProfileContent() {
               itemWidth={itemWidth}
               record={predictions.record}
               picks={predictions.picks}
-              onPick={(pick) =>
-                router.push({
-                  pathname: "/game/[sport]/[game]",
-                  params: {
-                    sport: pick.sport,
-                    game: pick.gameId,
-                    league: pick.league,
-                    date: pick.startsAt,
-                  },
-                })
-              }
+              onPick={(pick) => router.push(getPredictionGameHref(pick))}
               loading={predictions.loading}
               error={predictions.error}
               onRetry={predictions.refresh}

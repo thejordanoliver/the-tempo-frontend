@@ -1,3 +1,4 @@
+import { FanPredictionHistoryRowStyles } from "@/styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
 import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons/Football.png";
 import FootballLight from "assets/icons/FootballLight.png";
@@ -5,30 +6,27 @@ import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import teamPlaceholder from "assets/Placeholders/teamPlaceholder.png";
 import { BasesIndicator } from "components/Sports/Baseball/GameDetails/BasesIndicator";
 import { Colors } from "constants/styles";
-
 import { useMemo } from "react";
 import { Image, Text, View } from "react-native";
-import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import type {
   FanPredictionGameTeam,
   FanPredictionPick,
 } from "types/fanPredictions";
 import { formatDate, formatTime, safeDate } from "utils/common/dateUtils";
-import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 import {
   formatPeriod,
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
-import { getPredictionTeamHelpers } from "utils/games/predictionTeamHelpers";
+import { gameTeamIdsMatch } from "utils/games/gameTeamIdentity";
 
 type Props = {
   pick: FanPredictionPick;
   isDark: boolean;
 };
 
-export default function PredictionGameSummary({ pick, isDark }: Props) {
-  const styles = useMemo(() => GameCardStyles(isDark), [isDark]);
+export default function PredictionGameCard({ pick, isDark }: Props) {
+  const styles = useMemo(() => FanPredictionHistoryRowStyles(isDark), [isDark]);
   const game = pick.game?.sport === pick.sport ? pick.game : undefined;
   const state = game?.status.completed
     ? "post"
@@ -44,7 +42,7 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
     );
   const showRecord = state === "pre" || interrupted;
   const date = safeDate(game?.date ?? pick.startsAt);
-  const helpers = getPredictionTeamHelpers(pick.sport, pick.league);
+
   const period = formatPeriod({
     period: game?.status.period,
     isMCBB: pick.league === "mcbb",
@@ -69,26 +67,23 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
     const athlete = mma?.competitors?.find((fighter) =>
       gameTeamIdsMatch(fighter.id, id),
     );
-    const localTeam = id == null ? undefined : helpers?.getTeam(id);
+
     const name =
       athlete?.shortName ||
-      localTeam?.shortName ||
-      localTeam?.name ||
       team.shortName ||
       team.code ||
       team.name ||
       side.toUpperCase();
 
+    const teamLogo = isDark ? team.logoDark || team.logo : team.logo;
     const logo =
       pick.sport === "mma"
         ? athlete?.headshot
           ? { uri: athlete.headshot }
           : playerPlaceholder
-        : localTeam && helpers
-          ? helpers.getLogo(id ?? undefined, isDark)
-          : team.logo
-            ? { uri: team.logo }
-            : teamPlaceholder;
+        : teamLogo
+          ? { uri: teamLogo }
+          : teamPlaceholder;
 
     const rank = team.rank ?? (side === "home" ? team.homeRank : team.awayRank);
     const isWinner = isFinal && gameTeamIdsMatch(id, pick.winnerId);
@@ -291,19 +286,17 @@ export default function PredictionGameSummary({ pick, isDark }: Props) {
   };
 
   return (
-    <View>
-      <View style={styles.card}>
-        {renderTeam("away")}
+    <View style={styles.card}>
+      {renderTeam("away")}
 
-        <View style={styles.info}>
-          {renderStatus()}
-          {!isFinal && !!broadcast && (
-            <Text style={styles.broadcast}>{broadcast}</Text>
-          )}
-        </View>
-
-        {renderTeam("home")}
+      <View style={styles.info}>
+        {renderStatus()}
+        {!isFinal && !!broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
+
+      {renderTeam("home")}
     </View>
   );
 }

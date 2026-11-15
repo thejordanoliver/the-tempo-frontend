@@ -1,5 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
+import {
+  activeOpacity,
+  Colors,
+  Fonts,
+  MIN_TOUCH_TARGET,
+} from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import { useMemo, useState } from "react";
@@ -47,7 +52,7 @@ export default function Dropdown({
     useState(OPTION_BATCH_SIZE);
   const [anim] = useState(() => new Animated.Value(0));
 
-  const styles = dropDownStyles({
+  const styles = DropdownStyles({
     isDark,
     width,
     visible,
@@ -150,7 +155,7 @@ export default function Dropdown({
             accessibilityRole="button"
             accessibilityLabel={option.label}
             accessibilityState={{ selected: isSelected }}
-            activeOpacity={0.7}
+            activeOpacity={activeOpacity}
             onPress={() => handleSelect(option.value)}
             style={[
               styles.optionButton,
@@ -168,17 +173,13 @@ export default function Dropdown({
               {option.label}
             </Text>
 
-            {isSelected ? (
+            {isSelected && (
               <Ionicons
                 name="checkmark"
                 size={18}
-                color={
-                  isDark
-                    ? Colors.dark.secondaryText
-                    : Colors.light.actionBackground
-                }
+                color={isDark ? Colors.white : Colors.black}
               />
-            ) : null}
+            )}
           </TouchableOpacity>
         );
       })}
@@ -188,7 +189,7 @@ export default function Dropdown({
   return (
     <View style={[styles.container, style]}>
       <TouchableOpacity
-        activeOpacity={0.7}
+        activeOpacity={activeOpacity}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
         accessibilityValue={{ text: selectedLabel }}
@@ -227,7 +228,11 @@ export default function Dropdown({
           ]}
         >
           <View style={styles.fallbackSurface}>
-            <BlurView intensity={100} style={StyleSheet.absoluteFill} />
+            <BlurView
+              tint={"systemMaterial"}
+              intensity={100}
+              style={StyleSheet.absoluteFill}
+            />
 
             {renderOptions()}
           </View>
@@ -237,17 +242,17 @@ export default function Dropdown({
   );
 }
 
-type DropDownStylesParams = {
+type DropdownStylesParams = {
   isDark: boolean;
   width: number;
   visible: boolean;
 };
 
-export const dropDownStyles = ({
+export const DropdownStyles = ({
   isDark,
   width,
   visible,
-}: DropDownStylesParams) =>
+}: DropdownStylesParams) =>
   StyleSheet.create({
     container: {
       position: "relative",
@@ -315,13 +320,11 @@ export const dropDownStyles = ({
       maxHeight: 260,
       overflow: "hidden",
       borderRadius: 12,
-
       backgroundColor: isDark
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,
 
       borderWidth: StyleSheet.hairlineWidth,
-
       borderColor: isDark ? "rgba(255, 255, 255, 0.16)" : "rgba(0, 0, 0, 0.12)",
     },
 
@@ -344,16 +347,13 @@ export const dropDownStyles = ({
 
     optionBorder: {
       borderBottomWidth: StyleSheet.hairlineWidth,
-
-      borderBottomColor: isDark
-        ? "rgba(255, 255, 255, 0.1)"
-        : "rgba(0, 0, 0, 0.08)",
+      borderBottomColor: Colors.midTone,
     },
 
     selectedOptionButton: {
       backgroundColor: isDark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(0, 0, 0, 0.05)",
+        ? Colors.transparentDarkGray
+        : Colors.transparentLightGray,
     },
 
     optionText: {
@@ -361,10 +361,10 @@ export const dropDownStyles = ({
       marginRight: 8,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     selectedOptionText: {
-      color: isDark ? Colors.dark.secondaryText : Colors.light.actionBackground,
+      color: isDark ? Colors.white : Colors.black,
     },
   });

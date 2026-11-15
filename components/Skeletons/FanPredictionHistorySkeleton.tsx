@@ -29,8 +29,8 @@ export default function FanPredictionHistorySkeleton({
     </View>
   );
   const score = () => (
-    <View style={row.scoreSection}>
-      <SkeletonBlock width={30} height={row.score.fontSize} />
+    <View style={row.winnerContainer}>
+      <SkeletonBlock width={30} height={row.teamScore.fontSize} />
     </View>
   );
   return (

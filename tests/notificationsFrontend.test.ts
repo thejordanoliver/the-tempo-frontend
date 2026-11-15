@@ -296,3 +296,24 @@ test("follower notification profile links carry available actor preview data", (
   );
   assert.equal(url.searchParams.get("isFollowing"), "false");
 });
+
+test("league preferences merge with team preferences for inherited game alerts", () => {
+  const league = {
+    gameStartEnabled: true,
+    touchdownEnabled: false,
+    quarterEndEnabled: false,
+    halftimeEnabled: false,
+    closeGameEnabled: false,
+    finalScoreEnabled: true,
+  };
+  const team = { ...league, gameStartEnabled: false, touchdownEnabled: true };
+  assert.deepEqual(mergeNotificationSettings([league]), league);
+  assert.deepEqual(mergeNotificationSettings([team, league]), {
+    ...league,
+    touchdownEnabled: true,
+  });
+  assert.equal(
+    hasEnabledNotificationSetting(mergeNotificationSettings([league])),
+    true,
+  );
+});

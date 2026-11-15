@@ -48,7 +48,7 @@ export const TeamRow = ({
    * --------------------------------------------------- */
   const handleTeamPress = () => {
     if (!isActive) return;
-    if (league === "NHL") {
+    if (league === "nhl") {
       router.push(`/team/nhl/${id}`);
     }
   };

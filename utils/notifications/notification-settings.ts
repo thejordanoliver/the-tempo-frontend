@@ -1,4 +1,5 @@
 import type {
+  LeagueNotificationSubscription,
   GameNotificationSettings,
   GameNotificationSubscription,
   TeamNotificationSettings,
@@ -26,7 +27,10 @@ export const DISABLED_NOTIFICATION_EVENT_SETTINGS: NotificationEventSettings = {
 };
 
 export function notificationSettingsFromSubscription(
-  subscription: TeamNotificationSubscription | GameNotificationSubscription,
+  subscription:
+    | TeamNotificationSubscription
+    | GameNotificationSubscription
+    | LeagueNotificationSubscription,
 ): NotificationEventSettings {
   return {
     gameStartEnabled: subscription.gameStartEnabled,
