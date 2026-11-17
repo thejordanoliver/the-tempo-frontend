@@ -1,3 +1,4 @@
+import type { CollegeTeamRank } from "@/types/rankings";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
@@ -5,7 +6,7 @@ import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
-import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
+import { useRankings } from "hooks/LeagueHooks/useRankings";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo, useCallback, useMemo, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
@@ -15,7 +16,6 @@ import type {
   CollegePollTableProps,
   CollegePollWidgetProps,
 } from "types/collegePollWidget";
-import type { CollegeTeamRank } from "types/collegeRankings";
 import { getDefaultCollegePollType } from "utils/standings/collegeRankings";
 import {
   getCollegePollLabel,
@@ -362,7 +362,7 @@ const CollegePollWidget = memo(function CollegePollWidget({
     [isDark, size],
   );
   const leagueConfig = LEAGUE_CONFIG[league];
-  const { rankings, loading, error, refresh } = useCollegeRankings(league);
+  const { rankings, loading, error, refresh } = useRankings(league);
   const normalizedPollType = normalizeCollegePollType(
     league,
     pollType ?? getDefaultCollegePollType(rankings),

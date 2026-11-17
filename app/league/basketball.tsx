@@ -1,7 +1,8 @@
-import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
 import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
+import PagerView from "components/PagerView";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -16,7 +17,6 @@ import {
   useState,
 } from "react";
 import { View } from "react-native";
-import PagerView from "components/PagerView";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Shared                                   */
@@ -56,14 +56,14 @@ import { StandingsList } from "../../components/League/Standings/StandingsList";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "@/components/League/ConferenceListModal";
+import { ConferenceStandingsList } from "@/components/League/Standings/ConferenceStandingsList";
+import Rankings from "@/components/League/Standings/Rankings";
 import TransactionList from "@/components/League/Transactions/TransactionList";
-import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import { getWCBBConferenceSelectionName } from "@/constants/conferences/wcbbConferences";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import SeasonLeadersList from "../../components/League/SeasonLeaders/SeasonLeaderList";
-import { CollegeStandingsList } from "../../components/Sports/Basketball/Standings/CollegeStandingsList";
 import { getMCBBConferenceSelectionName } from "../../constants/conferences/mcbbConferences";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import {
@@ -1476,7 +1476,7 @@ function MCBBLeagueScreen() {
     <View key="standings" style={styles.contentArea}>
       {hasVisitedTab("standings") ? (
         !selectedConferenceGroupId ? (
-          <CollegeStandingsList league={league} />
+          <Rankings league={league} />
         ) : (
           <ConferenceStandingsList
             conferences={conferences}
@@ -1856,7 +1856,7 @@ function WCBBLeagueScreen() {
     <View key="standings" style={styles.contentArea}>
       {hasVisitedTab("standings") ? (
         !selectedConferenceGroupId ? (
-          <CollegeStandingsList league={league} />
+          <Rankings league={league} />
         ) : (
           <ConferenceStandingsList
             conferences={conferences}

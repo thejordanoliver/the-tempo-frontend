@@ -1,7 +1,3 @@
-import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
-import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
-import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
-import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import ConferenceListModal, {
@@ -13,12 +9,12 @@ import SeasonLeadersList from "@/components/League/SeasonLeaders/SeasonLeaderLis
 import WeekSelector, {
   FootballWeekGroup,
 } from "@/components/League/Selectors/WeekSelector";
+import { ConferenceStandingsList } from "@/components/League/Standings/ConferenceStandingsList";
+import Rankings from "@/components/League/Standings/Rankings";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
 import TransactionList from "@/components/League/Transactions/TransactionList";
 import NewsList from "@/components/News/NewsList";
-import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
-import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStandingsList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { getCFBConferenceSelectionName } from "@/constants/conferences/cfbConferences";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -32,11 +28,16 @@ import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
 import { getFootballSeason, getRecruitYear } from "@/utils/common/dateUtils";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
+import PagerView from "components/PagerView";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import {
   useCallback,
@@ -47,7 +48,6 @@ import {
   useState,
 } from "react";
 import { View } from "react-native";
-import PagerView from "components/PagerView";
 import { CustomHeader } from "../../components/CustomHeader";
 
 dayjs.extend(utc);
@@ -741,7 +741,7 @@ function CFBLeagueScreen() {
           <View key="standings" style={styles.contentArea}>
             {hasVisitedTab("standings") ? (
               !selectedConferenceGroupId ? (
-                <CFBStandingsList />
+                <Rankings league={league} />
               ) : (
                 <ConferenceStandingsList
                   conferences={conferences}

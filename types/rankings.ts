@@ -1,6 +1,6 @@
 import type { StandingsTeamInfo } from "types/standings";
 
-export type CollegeRankingsLeague = "mcbb" | "wcbb" | "cfb";
+export type League = "mcbb" | "wcbb" | "cfb";
 export type CollegePollType = "ap" | "coaches" | "cfp" | "fcs";
 
 export type CollegeRankingTeam = StandingsTeamInfo & {
@@ -28,7 +28,7 @@ export type CollegeTeamRank = {
   lastUpdated: string;
 };
 
-export type CollegeRankPoll = {
+export type RankPoll = {
   type: CollegePollType;
   shortName: string;
   ranks: CollegeTeamRank[];

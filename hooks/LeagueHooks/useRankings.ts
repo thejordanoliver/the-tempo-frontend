@@ -1,25 +1,22 @@
+import type { League, RankPoll } from "@/types/rankings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type {
-  CollegeRankingsLeague,
-  CollegeRankPoll,
-} from "types/collegeRankings";
 import { apiClient } from "utils/apiClient";
-import { getCollegeRankingPolls } from "utils/standings/collegeRankings";
+import { getRankingPolls } from "utils/standings/collegeRankings";
 
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 const BACKGROUND_REFRESH_INTERVAL = 5 * 60 * 1000;
-const EMPTY_RANKINGS: CollegeRankPoll[] = [];
+const EMPTY_RANKINGS: RankPoll[] = [];
 
 type RankingsState = {
-  league: CollegeRankingsLeague;
-  rankings: CollegeRankPoll[];
+  league: League;
+  rankings: RankPoll[];
   loading: boolean;
   refreshing: boolean;
   error: string | null;
 };
 
-async function readCache(key: string): Promise<CollegeRankPoll[] | null> {
+async function readCache(key: string): Promise<RankPoll[] | null> {
   try {
     const cached = await AsyncStorage.getItem(key);
     if (!cached) return null;
@@ -46,7 +43,7 @@ function getErrorMessage(error: unknown): string {
   return typeof message === "string" ? message : "Failed to fetch rankings";
 }
 
-export function useCollegeRankings(league: CollegeRankingsLeague) {
+export function useRankings(league: League) {
   const [state, setState] = useState<RankingsState>({
     league,
     rankings: EMPTY_RANKINGS,
@@ -109,7 +106,7 @@ export function useCollegeRankings(league: CollegeRankingsLeague) {
           { signal: abort.signal },
         );
         if (!isCurrent()) return;
-        const rankings = getCollegeRankingPolls(response.data, league);
+        const rankings = getRankingPolls(response.data, league);
         setState({
           league,
           rankings,

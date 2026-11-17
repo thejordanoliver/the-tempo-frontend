@@ -1,12 +1,12 @@
 import Dropdown from "@/components/Dropdown";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
-import { getCFBTeamLogo } from "@/constants/teamsCFB";
+import type { CollegeTeamRank } from "@/types/rankings";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
+import { useRankings } from "hooks/LeagueHooks/useRankings";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo, useState } from "react";
@@ -20,16 +20,24 @@ import {
   View,
 } from "react-native";
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
-import type { CollegeTeamRank } from "types/collegeRankings";
 import { getDefaultCollegePollType } from "utils/standings/collegeRankings";
 
 type PollMode = "ap" | "coaches" | "cfp" | "fcs";
+type League = "cfb" | "mcbb" | "wcbb";
 
-const POLL_OPTIONS: { label: string; value: PollMode }[] = [
+type Props = {
+  league: League;
+};
+
+const POLL_OPTIONS: {
+  label: string;
+  value: PollMode;
+  league?: League;
+}[] = [
   { label: "AP Poll", value: "ap" },
   { label: "Coaches Poll", value: "coaches" },
-  { label: "CFP Rankings", value: "cfp" },
-  { label: "FCS Coaches Poll", value: "fcs" },
+  { label: "CFP Rankings", value: "cfp", league: "cfb" },
+  { label: "FCS Coaches Poll", value: "fcs", league: "cfb" },
 ];
 
 const POLL_TITLES: Record<PollMode, string> = {
@@ -39,9 +47,9 @@ const POLL_TITLES: Record<PollMode, string> = {
   fcs: "FCS Coaches Poll",
 };
 
-export const CFBStandingsList = () => {
-  const { rankings, loading, refreshing, error, refresh } =
-    useCollegeRankings("cfb");
+export default function Rankings({ league }: Props) {
+  const { rankings, loading, refreshing, error, refresh } = useRankings(league);
+
   const { resolvedColorScheme } = usePreferences();
   const { isFavorite } = useFavoriteTeamsContext();
 
@@ -52,7 +60,18 @@ export const CFBStandingsList = () => {
   const router = useScopedRouter();
 
   const [selectedPollMode, setPollMode] = useState<PollMode | null>(null);
-  const pollMode = selectedPollMode ?? getDefaultCollegePollType(rankings);
+
+  const pollMode =
+    selectedPollMode &&
+    (league === "cfb" ||
+      selectedPollMode === "ap" ||
+      selectedPollMode === "coaches")
+      ? selectedPollMode
+      : getDefaultCollegePollType(rankings);
+
+  const pollOptions = POLL_OPTIONS.filter(
+    (option) => !option.league || option.league === league,
+  );
 
   if (loading) {
     return <StandingsSkeleton variant="rankings" />;
@@ -88,13 +107,14 @@ export const CFBStandingsList = () => {
     const isLastRow = index === filteredRankings.length - 1;
     const team = item.team;
     const teamId = team?.id ?? 0;
-    const teamLogo = getCFBTeamLogo(teamId, isDark);
+    const teamLogo = isDark ? team?.logoDark || team?.logo : team?.logo;
     const teamCode = team?.code || "N/A";
 
     const trendNum = Number(item.trend);
     const hasTrend = Number.isFinite(trendNum) && trendNum !== 0;
     const isUp = trendNum > 0;
-    const favorited = team?.id != null ? isFavorite("cfb", team.id) : false;
+
+    const favorited = team?.id != null ? isFavorite(league, team.id) : false;
 
     const trendColor = isUp
       ? isDark
@@ -132,13 +152,15 @@ export const CFBStandingsList = () => {
               if (!teamId) return;
 
               router.push({
-                pathname: "/team/cfb/[teamId]",
+                pathname: `/team/${league}/[teamId]`,
                 params: { teamId: String(teamId) },
               });
             }}
             style={styles.teamInfoWrapper}
           >
-            {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+            {teamLogo && (
+              <Image source={{ uri: teamLogo }} style={styles.logo} />
+            )}
 
             <Text style={styles.collegeTeamName}>{teamCode}</Text>
           </TouchableOpacity>
@@ -183,7 +205,7 @@ export const CFBStandingsList = () => {
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
     const team = item.team;
-    const favorited = team?.id != null ? isFavorite("cfb", team.id) : false;
+    const favorited = team?.id != null ? isFavorite(league, team.id) : false;
 
     return (
       <View
@@ -277,11 +299,16 @@ export const CFBStandingsList = () => {
             const team = item.team;
             const teamName = team?.shortName || team?.name || "N/A";
             const logo = isDark ? team?.logoDark || team?.logo : team?.logo;
+
             return (
-              <View key={item.team?.id} style={styles.droppedoutRow}>
+              <View
+                key={team?.id ?? `dropped-${index}`}
+                style={styles.droppedoutRow}
+              >
                 {logo && (
                   <Image source={{ uri: logo }} style={styles.droppedoutLogo} />
                 )}
+
                 <Text style={styles.droppedoutName}>
                   {teamName} ({item.previous})
                 </Text>
@@ -361,7 +388,7 @@ export const CFBStandingsList = () => {
     >
       <View style={styles.dropdownRow}>
         <Dropdown
-          options={POLL_OPTIONS}
+          options={pollOptions}
           selectedValue={pollMode}
           onSelect={(value) => setPollMode(value as PollMode)}
           isDark={isDark}
@@ -373,4 +400,4 @@ export const CFBStandingsList = () => {
       {renderDroppedOut()}
     </ScrollView>
   );
-};
+}
