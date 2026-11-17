@@ -3,7 +3,16 @@ import { StyleSheet } from "react-native";
 
 export const ConfirmModalStyles = (isDark: boolean) =>
   StyleSheet.create({
+    backdrop: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: isDark ? "rgba(0,0,0,0.66)" : "rgba(0,0,0,0.48)",
+    },
     modal: {
+      flex: 1,
       alignItems: "center",
       justifyContent: "center",
       margin: 0,

@@ -1,3 +1,4 @@
+import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
 import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
@@ -289,6 +290,14 @@ function MLBLeagueScreen() {
     </View>
   );
 
+  const playoffsPage = (
+    <View key="playoffs" style={styles.contentArea} collapsable={false}>
+      {hasVisitedTab("playoffs") ? (
+        <LeaguePlayoffs league="mlb" active={selectedTab === "playoffs"} />
+      ) : null}
+    </View>
+  );
+
   const statsPage = (
     <View key="stats" style={styles.contentArea}>
       {hasVisitedTab("stats") ? (
@@ -330,6 +339,7 @@ function MLBLeagueScreen() {
     scoresPage,
     newsPage,
     standingsPage,
+    playoffsPage,
     statsPage,
     transactionsPage,
     awardsPage,
@@ -354,6 +364,7 @@ function MLBLeagueScreen() {
 
       <View style={styles.container}>
         <PagerView
+          scrollEnabled={selectedTab !== "playoffs"}
           key={league}
           ref={pagerRef}
           style={styles.container}

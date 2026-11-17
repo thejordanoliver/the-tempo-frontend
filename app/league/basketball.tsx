@@ -1,3 +1,4 @@
+import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
 import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
@@ -456,6 +457,7 @@ function NBALeagueScreen() {
 
       <View style={styles.container}>
         <PagerView
+          scrollEnabled={selectedTab !== "playoffs"}
           key={league}
           ref={pagerRef}
           style={styles.container}
@@ -504,6 +506,15 @@ function NBALeagueScreen() {
                 year={standingsYear}
                 onYearChange={setStandingsYear}
                 league={league}
+              />
+            ) : null}
+          </View>
+
+          <View key="playoffs" style={styles.contentArea} collapsable={false}>
+            {hasVisitedTab("playoffs") ? (
+              <LeaguePlayoffs
+                league="nba"
+                active={selectedTab === "playoffs"}
               />
             ) : null}
           </View>
@@ -803,6 +814,7 @@ function WNBALeagueScreen() {
 
       <View style={styles.container}>
         <PagerView
+          scrollEnabled={selectedTab !== "playoffs"}
           key={league}
           ref={pagerRef}
           style={styles.container}
@@ -854,6 +866,15 @@ function WNBALeagueScreen() {
                 year={standingsYear}
                 onYearChange={setStandingsYear}
                 league={league}
+              />
+            ) : null}
+          </View>
+
+          <View collapsable={false} key="playoffs" style={styles.pagerPage}>
+            {hasVisitedTab("playoffs") ? (
+              <LeaguePlayoffs
+                league="wnba"
+                active={selectedTab === "playoffs"}
               />
             ) : null}
           </View>

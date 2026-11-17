@@ -228,11 +228,7 @@ export default function Dropdown({
           ]}
         >
           <View style={styles.fallbackSurface}>
-            <BlurView
-              tint={"systemMaterial"}
-              intensity={100}
-              style={StyleSheet.absoluteFill}
-            />
+            <BlurView intensity={100} style={StyleSheet.absoluteFill} />
 
             {renderOptions()}
           </View>
@@ -320,10 +316,7 @@ export const DropdownStyles = ({
       maxHeight: 260,
       overflow: "hidden",
       borderRadius: 12,
-      backgroundColor: isDark
-        ? Colors.transparentDarkGray
-        : Colors.transparentLightGray,
-
+      backgroundColor: "transparent",
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? "rgba(255, 255, 255, 0.16)" : "rgba(0, 0, 0, 0.12)",
     },

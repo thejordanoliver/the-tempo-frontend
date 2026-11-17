@@ -5,6 +5,7 @@ export const LEAGUE_TABS = {
     "scores",
     "news",
     "standings",
+    "playoffs",
     "stats",
     "transactions",
     "draft",
@@ -12,7 +13,16 @@ export const LEAGUE_TABS = {
     "forum",
   ],
 
-  wnba: ["scores", "news", "standings", "stats", "draft", "awards", "forum"],
+  wnba: [
+    "scores",
+    "news",
+    "standings",
+    "playoffs",
+    "stats",
+    "draft",
+    "awards",
+    "forum",
+  ],
 
   gleague: ["scores", "news", "forum"],
 
@@ -20,6 +30,7 @@ export const LEAGUE_TABS = {
     "scores",
     "news",
     "standings",
+    "playoffs",
     "stats",
     "transactions",
     "draft",
@@ -33,13 +44,14 @@ export const LEAGUE_TABS = {
     "scores",
     "news",
     "standings",
+    "playoffs",
     "stats",
     "transactions",
     "awards",
     "forum",
   ],
 
-  nhl: ["scores", "news", "standings", "stats", "awards", "forum"],
+  nhl: ["scores", "news", "standings", "playoffs", "stats", "awards", "forum"],
 
   cfb: ["scores", "news", "standings", "stats", "recruits", "awards", "forum"],
 
