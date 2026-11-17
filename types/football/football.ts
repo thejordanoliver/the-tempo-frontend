@@ -110,6 +110,7 @@ export type FootballGame = {
     code: string;
     location: string;
     logo: string;
+    logoDark: string;
     primaryColor: string;
     secondaryColor: string;
     conferenceId: number | null;
@@ -127,6 +128,7 @@ export type FootballGame = {
     code: string;
     location: string;
     logo: string;
+    logoDark: string;
     primaryColor: string;
     secondaryColor: string;
     conferenceId: number | null;

@@ -5,6 +5,8 @@ export type Team = {
   fullName: string;
   shortName: string;
   code: string;
+  logo: string;
+  logoDark: string;
   primaryColor: string;
   secondaryColor: string;
   score: number;
