@@ -5,6 +5,8 @@ export type StandingsTeam = {
   id: string;
   logo?: string | null;
   logoDark?: string | null;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
   name: string;
   shortName: string | null;
   code: string;

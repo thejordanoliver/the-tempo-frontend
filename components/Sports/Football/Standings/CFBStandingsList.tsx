@@ -1,15 +1,14 @@
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import Dropdown from "@/components/Dropdown";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
+import { getCFBTeamLogo } from "@/constants/teamsCFB";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
-import type { CollegeTeamRank } from "types/collegeRankings";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo, useState } from "react";
 import {
   FlatList,
@@ -21,7 +20,7 @@ import {
   View,
 } from "react-native";
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
-import { getCFBTeamLogo } from "@/constants/teamsCFB";
+import type { CollegeTeamRank } from "types/collegeRankings";
 import { getDefaultCollegePollType } from "utils/standings/collegeRankings";
 
 type PollMode = "ap" | "coaches" | "cfp" | "fcs";
@@ -125,7 +124,9 @@ export const CFBStandingsList = () => {
         </View>
 
         <View style={styles.teamInfo}>
-          <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: !teamId }}
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !teamId }}
             disabled={!teamId}
             onPress={() => {
               if (!teamId) return;
@@ -275,11 +276,11 @@ export const CFBStandingsList = () => {
           {droppedOutTeams.map((item, index) => {
             const team = item.team;
             const teamName = team?.shortName || team?.name || "N/A";
-            const teamLogo = getStandingsTeamLogo(team, isDark);
+            const logo = isDark ? team?.logoDark || team?.logo : team?.logo;
             return (
               <View key={item.team?.id} style={styles.droppedoutRow}>
-                {teamLogo && (
-                  <Image source={teamLogo} style={styles.droppedoutLogo} />
+                {logo && (
+                  <Image source={{ uri: logo }} style={styles.droppedoutLogo} />
                 )}
                 <Text style={styles.droppedoutName}>
                   {teamName} ({item.previous})

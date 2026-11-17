@@ -1,8 +1,7 @@
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
-import { useMemo } from "react";
 import { Colors, globalStyles } from "constants/styles";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
+import { useMemo } from "react";
 
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import {
@@ -82,8 +81,8 @@ export const ConferenceStandingsList = ({
     isLastRow: boolean;
   }) => {
     const teamId = item.id;
-
-    const teamLogo = getStandingsTeamLogo(item, isDark);
+    const team = item;
+    const logo = isDark ? team?.logoDark || team?.logo : team?.logo;
 
     const teamCode = item.code || "-";
     const favorited = teamId ? isFavorite(league, String(teamId)) : false;
@@ -114,8 +113,12 @@ export const ConferenceStandingsList = ({
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
 
-        <TouchableOpacity accessibilityRole="button" onPress={handleTeamPress} style={styles.teamInfo}>
-          {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={handleTeamPress}
+          style={styles.teamInfo}
+        >
+          {logo && <Image source={{ uri: logo }} style={styles.logo} />}
 
           <Text style={styles.collegeTeamName}>{teamCode}</Text>
         </TouchableOpacity>

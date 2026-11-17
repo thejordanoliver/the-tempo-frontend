@@ -412,7 +412,11 @@ const CollegePollWidget = memo(function CollegePollWidget({
             resizeMode="contain"
           />
           <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
-          <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
+          <Ionicons
+            name="chevron-down"
+            size={13}
+            color={isDark ? Colors.white : Colors.black}
+          />
         </Pressable>
 
         <CollegePollTable

@@ -1,15 +1,13 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
-import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
-import type { CollegeTeamRank } from "types/collegeRankings";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useCollegeRankings } from "hooks/LeagueHooks/useCollegeRankings";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo, useState } from "react";
 import {
   FlatList,
@@ -21,6 +19,8 @@ import {
   View,
 } from "react-native";
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import type { CollegeTeamRank } from "types/collegeRankings";
+
 type Props = {
   league: "mcbb" | "wcbb";
 };
@@ -75,7 +75,7 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
     const isLastRow = index === filteredRankings.length - 1;
     const team = item.team;
     const teamId = team?.id;
-    const teamLogo = getStandingsTeamLogo(team, isDark);
+    const logo = isDark ? team?.logoDark || team?.logo : team?.logo;
     const teamcode = team?.code || "N/A";
     const trendNum = Number(item.trend);
     const isUp = trendNum > 0;
@@ -101,7 +101,8 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
         </View>
 
         <View style={styles.teamInfo}>
-          <TouchableOpacity accessibilityRole="button"
+          <TouchableOpacity
+            accessibilityRole="button"
             onPress={() => {
               if (!teamId) return;
               router.push({
@@ -113,7 +114,7 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
             }}
             style={styles.teamInfoWrapper}
           >
-            {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+            {logo && <Image source={{ uri: logo }} style={styles.logo} />}
             <Text style={styles.collegeTeamName}>{teamcode}</Text>
           </TouchableOpacity>
 
@@ -246,11 +247,11 @@ export const CollegeStandingsList = ({ league = "mcbb" }: Props) => {
           {droppedOutTeams.map((item, index) => {
             const team = item.team;
             const teamName = team?.shortName || team?.name || "N/A";
-            const teamLogo = getStandingsTeamLogo(team, isDark);
+            const logo = isDark ? team?.logoDark || team?.logo : team?.logo;
             return (
               <View key={item.team?.id} style={styles.droppedoutRow}>
-                {teamLogo && (
-                  <Image source={teamLogo} style={styles.droppedoutLogo} />
+                {logo && (
+                  <Image source={{ uri: logo }} style={styles.droppedoutLogo} />
                 )}
                 <Text style={styles.droppedoutName}>
                   {teamName} ({item.previous})
