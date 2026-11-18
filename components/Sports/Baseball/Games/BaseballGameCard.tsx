@@ -83,7 +83,7 @@ function BaseballGameCard({
     game?.season.slug === "championship-series" ||
     headline?.includes("World Series");
 
-  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
+  const styles = GameCardStyles(isDark, isChampionship);
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = game.status.description ?? "";
