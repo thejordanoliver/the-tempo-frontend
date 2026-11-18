@@ -39,7 +39,6 @@ import { EditFavoritesHeader } from "./EditFavoritesHeader";
 import { GameHeader } from "./GameHeader";
 import { HeaderLeftActions } from "./HeaderLeftActions";
 import { HeaderRightActions } from "./HeaderRightActions";
-import { HomeHeader } from "./HomeHeader";
 import { LeagueHeader } from "./LeagueHeader";
 import { MessageThreadHeader } from "./MessageThreadHeader";
 import { NotificationsHeaderMenu } from "./NotificationsHeaderMenu";
@@ -61,7 +60,6 @@ export function CustomHeader({
   onCreateMessage,
   onBack,
   onOpenLeagueModal,
-  onHomeTabPress,
   onAuthTabPress,
   onEditTabPress,
   homeScrollProgress,
@@ -115,7 +113,6 @@ export function CustomHeader({
   messageFullName,
   messageIsOnline,
   messageIsVerified,
-  homeSelectedTab = "scores",
   authSelectedTab = "sign in",
   editFavoritesSelectedTab = "teams",
 }: CustomHeaderProps) {
@@ -540,12 +537,7 @@ export function CustomHeader({
             isDark={isDark}
           />
         ) : tabName === "Home" ? (
-          <HomeHeader
-            isDark={isDark}
-            selectedTab={homeSelectedTab}
-            onTabPress={onHomeTabPress ?? (() => undefined)}
-            scrollProgress={homeScrollProgress}
-          />
+          <View style={{ flex: 1 }} />
         ) : tabName === "Login" && onAuthTabPress ? (
           <AuthHeader
             isDark={isDark}
