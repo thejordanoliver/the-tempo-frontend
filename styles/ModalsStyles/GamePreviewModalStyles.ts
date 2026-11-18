@@ -4,8 +4,6 @@ import { StyleSheet } from "react-native";
 export const GamePreviewModalStyles = ({
   isDark,
   isChampionship,
-  awayColor,
-  homeColor,
 }: {
   isDark: boolean;
   isChampionship?: boolean;
@@ -41,7 +39,7 @@ export const GamePreviewModalStyles = ({
       borderTopRightRadius: 20,
       overflow: "hidden",
     },
-    blurViewContainer: {
+    contentContainer: {
       flex: 1,
       padding: 12,
       paddingTop: 40,
@@ -68,23 +66,5 @@ export const GamePreviewModalStyles = ({
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-    },
-    leftCircle: {
-      position: "absolute",
-      top: -70,
-      left: -70,
-      width: 140,
-      height: 140,
-      borderRadius: 999,
-      backgroundColor: awayColor,
-    },
-    rightCircle: {
-      position: "absolute",
-      top: -70,
-      right: -70,
-      width: 140,
-      height: 140,
-      borderRadius: 999,
-      backgroundColor: homeColor,
     },
   });
