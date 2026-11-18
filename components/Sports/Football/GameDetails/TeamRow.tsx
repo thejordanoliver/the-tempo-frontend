@@ -38,14 +38,7 @@ export const TeamRow = ({
     if (!isActive) return;
     if (!id || league === "ufl") return;
 
-    if (league === "nfl") {
-      router.push(`/team/nfl/${id}`);
-      return;
-    }
-
-    if (league === "cfb") {
-      router.push(`/team/cfb/${id}`);
-    }
+    return router.push(`/team/${league}/${id}`);
   };
 
   const getScoreStyle = () => {
@@ -111,7 +104,7 @@ export const TeamRow = ({
       {hasPossession && (
         <Image
           source={isDark ? FootballLight : Football}
-          style={styles.possessionIcon}
+          style={styles.possession}
         />
       )}
     </View>
@@ -122,7 +115,11 @@ export const TeamRow = ({
       {isHome && renderScore()}
 
       <View style={styles.teamInfoContainer}>
-        <Pressable accessibilityRole="button" accessibilityLabel={`Open ${name} team details`} onPress={handleTeamPress}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${name} team details`}
+          onPress={handleTeamPress}
+        >
           <Image source={logo} style={styles.logo} />
         </Pressable>
 

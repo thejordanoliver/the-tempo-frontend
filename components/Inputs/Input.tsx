@@ -1,19 +1,27 @@
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
-import { StyleSheet, TextInput, View } from "react-native";
-type LabeledInputProps = {
+import {
+  StyleProp,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native";
+
+type InputProps = Omit<TextInputProps, "value" | "onChangeText"> & {
   value: string;
   onChangeText: (text: string) => void;
   multiline?: boolean;
   placeholder?: string;
-  containerStyle?: object | object[];
-  inputStyle?: object | object[];
-  labelStyle?: object | object[];
-  [key: string]: any; // for other TextInput props
+  containerStyle?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
+  labelStyle?: StyleProp<TextStyle>;
 };
 
-export default function TextInputComponent({
+export default function Input({
   value,
   onChangeText,
   multiline = false,
@@ -22,13 +30,13 @@ export default function TextInputComponent({
   inputStyle,
   labelStyle,
   ...rest
-}: LabeledInputProps) {
+}: InputProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = inputStyles(isDark);
 
   return (
-    <View>
+    <View style={containerStyle}>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -48,6 +56,7 @@ export default function TextInputComponent({
 const inputStyles = (isDark: boolean) =>
   StyleSheet.create({
     input: {
+      width: "100%",
       marginBottom: 12,
       padding: 16,
       borderRadius: 8,
@@ -58,6 +67,7 @@ const inputStyles = (isDark: boolean) =>
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
+
     bioInput: {
       minHeight: 100,
       textAlignVertical: "top",

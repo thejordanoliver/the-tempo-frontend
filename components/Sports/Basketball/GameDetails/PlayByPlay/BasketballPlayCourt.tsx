@@ -1,4 +1,4 @@
-import PlayLocationPulse from "components/Sports/PlayByPlay/PlayLocationPulse";
+import PlayLocationPulse from "@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayLocationPulse";
 import { Colors } from "constants/styles";
 import { useBasketballAnimation } from "hooks/BasketballHooks/useBasketballAnimation";
 import type { Play } from "hooks/BasketballHooks/useBasketballGameDetails";

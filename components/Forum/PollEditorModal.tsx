@@ -16,7 +16,7 @@ import {
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import type {
   ForumPollDraftOption,
   ForumPollEditorModalProps,
@@ -110,7 +110,9 @@ export default function PollEditorModal({
         <View
           style={[styles.optionRow, isActive && { borderColor: "#007AFF" }]}
         >
-          <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Reorder option ${index}`}
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={`Reorder option ${index}`}
             onLongPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               drag();
@@ -126,7 +128,8 @@ export default function PollEditorModal({
             />
           </TouchableOpacity>
 
-          <TextInput accessibilityLabel={`Option ${index}`}
+          <TextInput
+            accessibilityLabel={`Option ${index}`}
             style={styles.optionInput}
             placeholder={`Option ${index}`}
             placeholderTextColor={Colors.lightGray}
@@ -136,7 +139,12 @@ export default function PollEditorModal({
           />
 
           {options.length > MIN_OPTIONS && (
-            <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Remove option ${index}`} onPress={() => removeOption(item.id)} hitSlop={8}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={`Remove option ${index}`}
+              onPress={() => removeOption(item.id)}
+              hitSlop={8}
+            >
               <Ionicons
                 name="close-circle"
                 size={22}
@@ -151,96 +159,117 @@ export default function PollEditorModal({
   );
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.wrapper}>
-          {/* HEADER */}
-          <View style={styles.header}>
-            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Close poll editor" onPress={onClose} style={styles.headerBtn}>
-              <Ionicons
-                name="close"
-                size={24}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </TouchableOpacity>
-
-            <Text style={styles.headerTitle}>Create Poll</Text>
-
-            <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: !isValid }}
-              style={styles.headerBtn}
-              onPress={handleSave}
-              disabled={!isValid}
-            >
-              <Text style={[styles.save, !isValid && { opacity: 0.4 }]}>
-                Done
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.pollContentContainer}
-          >
-            {/* QUESTION */}
-            <Text style={styles.sectionTitle}>Question</Text>
-            <View style={styles.inputCard}>
-              <TextInput accessibilityLabel="Ask a question…"
-                style={styles.questionInput}
-                placeholder="Ask a question…"
-                placeholderTextColor={Colors.lightGray}
-                value={question}
-                onChangeText={setQuestion}
-                maxLength={120}
-              />
-            </View>
-
-            {/* OPTIONS */}
-            <Text style={styles.sectionTitle}>
-              Options ({options.length}/{MAX_OPTIONS})
-            </Text>
-
-            <DraggableFlatList
-              data={options}
-              keyExtractor={(item) => item.id}
-              renderItem={renderOption}
-              onDragEnd={({ data }) => setOptions(data)}
-              onDragBegin={() =>
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-              }
-              scrollEnabled={false}
-              activationDistance={10}
-            />
-
-            {options.length < MAX_OPTIONS && (
-              <TouchableOpacity accessibilityRole="button" onPress={addOption} style={styles.addOptionBtn}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      presentationStyle="overFullScreen"
+      onRequestClose={onClose}
+    >
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.wrapper}>
+            {/* HEADER */}
+            <View style={styles.header}>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Close poll editor"
+                onPress={onClose}
+                style={styles.headerBtn}
+              >
                 <Ionicons
-                  name="add-circle-outline"
-                  size={22}
+                  name="close"
+                  size={24}
                   color={isDark ? Colors.white : Colors.black}
                 />
-                <Text style={styles.addOptionText}>Add Option</Text>
               </TouchableOpacity>
-            )}
 
-            {/* MULTIPLE CHOICE TOGGLE */}
-            <Text style={styles.sectionTitle}>Settings</Text>
-            <View style={styles.toggleCard}>
-              <View style={{ flex: 1, marginRight: 12 }}>
-                <Text style={styles.toggleLabel}>Allow Multiple Choices</Text>
-                <Text style={styles.toggleSubLabel}>
-                  Users can select more than one option
+              <Text style={styles.headerTitle}>Create Poll</Text>
+
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityState={{ disabled: !isValid }}
+                style={styles.headerBtn}
+                onPress={handleSave}
+                disabled={!isValid}
+              >
+                <Text style={[styles.save, !isValid && { opacity: 0.4 }]}>
+                  Done
                 </Text>
-              </View>
-              <Switch accessibilityLabel="Allow multiple poll answers"
-                value={allowsMultiple}
-                onValueChange={setAllowsMultiple}
-                trackColor={{ true: "#007AFF" }}
-              />
+              </TouchableOpacity>
             </View>
-          </ScrollView>
-        </View>
-      </SafeAreaView>
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.pollContentContainer}
+            >
+              {/* QUESTION */}
+              <Text style={styles.sectionTitle}>Question</Text>
+              <View style={styles.inputCard}>
+                <TextInput
+                  accessibilityLabel="Ask a question…"
+                  style={styles.questionInput}
+                  placeholder="Ask a question…"
+                  placeholderTextColor={Colors.lightGray}
+                  value={question}
+                  onChangeText={setQuestion}
+                  maxLength={120}
+                />
+              </View>
+
+              {/* OPTIONS */}
+              <Text style={styles.sectionTitle}>
+                Options ({options.length}/{MAX_OPTIONS})
+              </Text>
+
+              <DraggableFlatList
+                data={options}
+                keyExtractor={(item) => item.id}
+                renderItem={renderOption}
+                onDragEnd={({ data }) => setOptions(data)}
+                onDragBegin={() =>
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+                }
+                scrollEnabled={false}
+                activationDistance={10}
+              />
+
+              {options.length < MAX_OPTIONS && (
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  onPress={addOption}
+                  style={styles.addOptionBtn}
+                >
+                  <Ionicons
+                    name="add-circle-outline"
+                    size={22}
+                    color={isDark ? Colors.white : Colors.black}
+                  />
+                  <Text style={styles.addOptionText}>Add Option</Text>
+                </TouchableOpacity>
+              )}
+
+              {/* MULTIPLE CHOICE TOGGLE */}
+              <Text style={styles.sectionTitle}>Settings</Text>
+              <View style={styles.toggleCard}>
+                <View style={{ flex: 1, marginRight: 12 }}>
+                  <Text style={styles.toggleLabel}>Allow Multiple Choices</Text>
+                  <Text style={styles.toggleSubLabel}>
+                    Users can select more than one option
+                  </Text>
+                </View>
+                <Switch
+                  accessibilityLabel="Allow multiple poll answers"
+                  value={allowsMultiple}
+                  onValueChange={setAllowsMultiple}
+                  trackColor={{ true: "#007AFF" }}
+                />
+              </View>
+            </ScrollView>
+          </View>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </Modal>
   );
 }
@@ -263,7 +292,6 @@ function getStyles(isDark: boolean) {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      marginVertical: 20,
     },
     headerBtn: { padding: 8 },
     headerTitle: {

@@ -28,12 +28,11 @@ export const TeamRow = ({
   const inProgress = state === "in";
   const isFinal = state === "post";
 
-  const handleTeamPress = () => {
-    if (!isActive) return;
-    if (id && league === "mlb") router.push(`/team/mlb/${id}`);
-    if (id && league === "cb") router.push(`/team/cb/${id}`);
-    if (id && league === "sb") router.push(`/team/sb/${id}`);
-  };
+ const handleTeamPress = () => {
+   if (!isActive) return;
+
+   return router.push(`/team/${league}/${id}`);
+ };
 
   const showRecordInsteadOfScore = state === "pre";
   /* -----------------------------------------------------

@@ -1,4 +1,5 @@
 import HeadingTwo from "@/components/Headings/HeadingTwo";
+import PlayByPlayHeader from "@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayByPlayHeader";
 import type {
   BaseballPlay,
   BaseballPlayAthlete,
@@ -6,7 +7,6 @@ import type {
   BaseballSituation,
 } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { PlayByPlayStyles } from "@/styles/GameDetailStyles/PlayByPlayStyles";
-import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import {
   Image,

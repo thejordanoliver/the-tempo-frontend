@@ -90,7 +90,11 @@ export const TeamRow = ({
       {isHome && renderScore()}
 
       <View style={styles.teamInfoContainer}>
-        <Pressable accessibilityRole="button" accessibilityLabel={`Open ${name} team details`} onPress={handleTeamPress}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${name} team details`}
+          onPress={handleTeamPress}
+        >
           <Image source={logo} style={styles.logo} />
         </Pressable>
 

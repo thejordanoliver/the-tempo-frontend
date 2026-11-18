@@ -166,10 +166,9 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useBasketballGames(
     selectedDate,
     "mcbb",
-    undefined,
+    50, // All Division I teams
     requestOptions("mcbb"),
   );
-
   const {
     games: womensBasketballGames,
     loading: womensMCBBLoading,
@@ -177,7 +176,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useBasketballGames(
     selectedDate,
     "wcbb",
-    undefined,
+    50, // All Division I teams
     requestOptions("wcbb"),
   );
 
