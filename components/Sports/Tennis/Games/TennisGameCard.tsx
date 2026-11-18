@@ -2,6 +2,8 @@ import { activeOpacity } from "@/constants/styles";
 import { formatDate, formatTime, safeDate } from "@/utils/common/dateUtils";
 import { winnerStyle } from "@/utils/games/games";
 import { usePreferences } from "contexts/PreferencesContext";
+import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -201,7 +203,13 @@ export default function TennisGameCard({ match }: Props) {
 
   return (
     <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
-      <View style={styles.card}>{renderCardContent()}</View>
+      <LinearGradient
+        colors={getTeamCardGradientColors(isDark)}
+        locations={[0, 0.28, 0.5, 0.72, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.card}
+      >{renderCardContent()}</LinearGradient>
     </TouchableOpacity>
   );
 }
