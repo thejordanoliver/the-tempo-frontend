@@ -8,8 +8,8 @@ import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -256,8 +256,7 @@ function FootballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-        {!isChampionship && <View style={styles.leftCircle} />}
-        <Image source={awayLogo} style={styles.logo} resizeMode="contain" />
+                <Image source={awayLogo} style={styles.logo} resizeMode="contain" />
 
         <Text
           style={styles.teamName}
@@ -303,8 +302,7 @@ function FootballGameCard({
       </View>
 
       <View style={styles.teamSection}>
-        {!isChampionship && <View style={styles.rightCircle} />}
-        <Image source={homeLogo} style={styles.logo} resizeMode="contain" />
+                <Image source={homeLogo} style={styles.logo} resizeMode="contain" />
         <Text
           style={styles.teamName}
           numberOfLines={1}
@@ -345,9 +343,15 @@ function FootballGameCard({
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <BlurView intensity={100} style={styles.card}>
+        <LinearGradient
+          colors={getTeamCardGradientColors(isDark, awayColor, homeColor)}
+          locations={[0, 0.28, 0.5, 0.72, 1]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={styles.card}
+        >
           {renderCardContent()}
-        </BlurView>
+        </LinearGradient>
       )}
     </TouchableOpacity>
   );
