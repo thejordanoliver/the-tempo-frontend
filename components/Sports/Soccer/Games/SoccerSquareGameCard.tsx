@@ -8,6 +8,7 @@ import {
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
@@ -18,12 +19,13 @@ import {
   winnerStyle,
 } from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
-import { BlurView } from "expo-blur";
 
 export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor ?? undefined;
+  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor ?? undefined;
 
   const handlePress = () => {
     router.push({
@@ -236,24 +238,20 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
       })}
       accessibilityHint="Opens game details"
     >
-      {isChampionship ? (
-        <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#dbb145ff", "#CDA765"] as [string, string])
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      ) : (
-        <BlurView intensity={100} style={styles.card}>
-          {renderCardContent()}
-        </BlurView>
-      )}
+      <LinearGradient
+        colors={getTeamCardGradientColors(
+          isDark,
+          awayColor,
+          homeColor,
+          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
+        )}
+        locations={[0, 0.28, 0.5, 0.72, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.card}
+      >
+        {renderCardContent()}
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
