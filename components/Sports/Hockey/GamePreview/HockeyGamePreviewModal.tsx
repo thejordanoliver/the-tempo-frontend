@@ -17,7 +17,7 @@ import {
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { GamePreviewCornerGradients } from "components/Sports/GamePreviewCornerGradients";
+import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import {
@@ -187,9 +187,10 @@ export default function HockeyGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <GamePreviewCornerGradients isDark={isDark} awayColor={awayColor} homeColor={homeColor} />
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
 
-        <View style={styles.contentContainer}>
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {!isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -286,7 +287,7 @@ export default function HockeyGamePreviewModal({
               )}
             </>
           )}
-        </View>
+        </BlurView>
       </View>
     </BottomSheetModal>
   );
