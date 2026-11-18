@@ -73,7 +73,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
 
   const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));
-  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
+  const styles = GameCardStyles(isDark, isChampionship);
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });
