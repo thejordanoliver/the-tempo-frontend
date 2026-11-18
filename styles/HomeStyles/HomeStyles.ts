@@ -14,6 +14,15 @@ export const homeStyles = (isDark: boolean) =>
     contentArea: {
       flex: 1,
     },
+    feedTitle: {
+      marginTop: 20,
+      marginBottom: 12,
+      paddingHorizontal: 12,
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.BOLD,
+      fontSize: 22,
+      lineHeight: 28,
+    },
     teamLabel: {
       marginTop: 4,
       fontFamily: Fonts.REGULAR,
