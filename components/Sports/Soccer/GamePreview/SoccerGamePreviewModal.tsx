@@ -8,7 +8,7 @@ import { SoccerGame } from "@/types/soccer/soccer";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
-import { GamePreviewCornerGradients } from "components/Sports/GamePreviewCornerGradients";
+import { BlurView } from "expo-blur";
 import React, { useEffect, useMemo, useRef } from "react";
 import { Text, View } from "react-native";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
@@ -194,9 +194,10 @@ export default function SoccerGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <GamePreviewCornerGradients isDark={isDark} awayColor={awayColor} homeColor={homeColor} />
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
 
-        <View style={styles.contentContainer}>
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {isGameLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -290,7 +291,7 @@ export default function SoccerGamePreviewModal({
               )}
             </>
           )}
-        </View>
+        </BlurView>
       </View>
     </BottomSheetModal>
   );
