@@ -22,7 +22,7 @@ import {
 } from "@/utils/games/games";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { BlurView } from "expo-blur";
+import { GamePreviewCornerGradients } from "components/Sports/GamePreviewCornerGradients";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import {
@@ -288,10 +288,9 @@ export default function FootballGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <View style={styles.leftCircle} />
-        <View style={styles.rightCircle} />
+        <GamePreviewCornerGradients isDark={isDark} awayColor={awayColor} homeColor={homeColor} />
 
-        <BlurView intensity={100} style={styles.blurViewContainer}>
+        <View style={styles.contentContainer}>
           {!isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -403,7 +402,7 @@ export default function FootballGamePreviewModal({
               )}
             </>
           )}
-        </BlurView>
+        </View>
       </View>
     </BottomSheetModal>
   );
