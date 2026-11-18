@@ -92,8 +92,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   }
 
   const forYouFeed = useForYouFeed(
-    selectedTab === "for you" &&
-      favoriteTeamsReady &&
+    favoriteTeamsReady &&
       (favoriteSportsReady || favoriteSportsError !== null || userId === null),
     userId,
     JSON.stringify([favorites, favoriteSports]),
@@ -660,6 +659,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
         await Promise.allSettled([
           refreshFavorites(),
           loadFavoriteSports(true),
+          forYouFeed.refresh(),
           ...(dateRefresh
             ? [dateRefresh]
             : [
