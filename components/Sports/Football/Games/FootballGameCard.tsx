@@ -130,7 +130,7 @@ function FootballGameCard({
   const isChampionship =
     headlineMatch?.includes("super bowl") ||
     headlineMatch?.includes("national championship");
-  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
+  const styles = GameCardStyles(isDark, isChampionship);
   const homeHasPossession = inProgress && possessionTeamId === home?.id;
   const awayHasPossession = inProgress && possessionTeamId === away?.id;
 
