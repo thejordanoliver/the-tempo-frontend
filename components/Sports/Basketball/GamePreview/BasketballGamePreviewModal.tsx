@@ -21,7 +21,7 @@ import {
   getWCBBTeam,
   getWCBBTeamLogo,
 } from "constants/teamsWCBB";
-import { GamePreviewCornerGradients } from "components/Sports/GamePreviewCornerGradients";
+import { BlurView } from "expo-blur";
 import React, { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
@@ -302,9 +302,10 @@ export default function GamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <GamePreviewCornerGradients isDark={isDark} awayColor={awayColor} homeColor={homeColor} />
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
 
-        <View style={styles.contentContainer}>
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {!isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -412,7 +413,7 @@ export default function GamePreviewModal({
               )}
             </>
           )}
-        </View>
+        </BlurView>
       </View>
     </BottomSheetModal>
   );
