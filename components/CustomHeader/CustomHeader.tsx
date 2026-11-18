@@ -537,7 +537,9 @@ export function CustomHeader({
             isDark={isDark}
           />
         ) : tabName === "Home" ? (
-          <View style={{ flex: 1 }} />
+          <View pointerEvents="none" style={styles.defaultHeaderTitleContainer}>
+            <HeaderTitle style={textStyle}>The Tempo</HeaderTitle>
+          </View>
         ) : tabName === "Login" && onAuthTabPress ? (
           <AuthHeader
             isDark={isDark}
