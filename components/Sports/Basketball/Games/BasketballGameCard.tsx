@@ -108,7 +108,7 @@ export default function BasketballGameCard({
       "Women's Basketball Championship - National Championship",
     );
 
-  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
+  const styles = GameCardStyles(isDark, isChampionship);
 
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
