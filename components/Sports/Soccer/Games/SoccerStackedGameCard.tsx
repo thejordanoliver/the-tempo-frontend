@@ -18,12 +18,15 @@ import {
   winnerStyle,
 } from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
-import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor ?? undefined;
+  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor ?? undefined;
 
   const handlePress = () => {
     router.push({
@@ -233,9 +236,20 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
       })}
       accessibilityHint="Opens game details"
     >
-      <BlurView intensity={100} style={styles.card}>
+      <LinearGradient
+        colors={getTeamCardGradientColors(
+          isDark,
+          awayColor,
+          homeColor,
+          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
+        )}
+        locations={[0, 0.28, 0.5, 0.72, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.card}
+      >
         {renderCardContent()}
-      </BlurView>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
