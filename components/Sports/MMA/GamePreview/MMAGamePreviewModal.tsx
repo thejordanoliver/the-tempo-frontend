@@ -9,7 +9,7 @@ import {
   safeDate,
 } from "@/utils/common/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { BlurView } from "expo-blur";
+import { GamePreviewCornerGradients } from "components/Sports/GamePreviewCornerGradients";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { GamePreviewModalStyles } from "styles/ModalsStyles/GamePreviewModalStyles";
@@ -165,10 +165,9 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <View style={styles.leftCircle} />
-        <View style={styles.rightCircle} />
+        <GamePreviewCornerGradients isDark={isDark} awayColor={secondFighterColor} homeColor={firstFighterColor} />
 
-        <BlurView intensity={100} style={styles.blurViewContainer}>
+        <View style={styles.contentContainer}>
           {headline && <Text style={styles.headlineText}>{headline}</Text>}
 
           <View style={styles.gameHeaderContainer}>
@@ -249,7 +248,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
               isDark={isDark}
             />
           )}
-        </BlurView>
+        </View>
       </View>
     </BottomSheetModal>
   );
