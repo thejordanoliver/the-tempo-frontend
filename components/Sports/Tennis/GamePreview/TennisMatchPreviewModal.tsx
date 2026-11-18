@@ -4,7 +4,7 @@ import { TennisMatch } from "@/types/tennis/tennis";
 import { getBroadcastDisplay } from "@/utils/games/games";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { GamePreviewCornerGradients } from "components/Sports/GamePreviewCornerGradients";
+import { BlurView } from "expo-blur";
 import React, { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { formatDate, formatTime, safeDate } from "utils/common/dateUtils";
@@ -103,9 +103,10 @@ export default function TennisMatchPreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <GamePreviewCornerGradients isDark={isDark} />
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
 
-        <View style={styles.contentContainer}>
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -158,7 +159,7 @@ export default function TennisMatchPreviewModal({
               </View>
             </>
           )}
-        </View>
+        </BlurView>
       </View>
     </BottomSheetModal>
   );
