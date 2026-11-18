@@ -1,9 +1,10 @@
-import { activeOpacity, Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts, PLACEHOLDER_AVATAR } from "constants/styles";
 import { useNavigationBarRowHeight } from "contexts/NavigationBarInsetContext";
 import { BlurView } from "expo-blur";
-import { Tabs } from "expo-router";
-import { useMemo, type ComponentProps } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Tabs, usePathname } from "expo-router";
+import { useProfile } from "hooks/UserHooks/useProfile";
+import { useEffect, useMemo, useRef, useState, type ComponentProps } from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Balls, Compass, Home, User } from "reicon-react-native";
 
 type TabBarRenderer = NonNullable<ComponentProps<typeof Tabs>["tabBar"]>;
@@ -25,6 +26,26 @@ export default function NavigationBar({
   isDark,
 }: NavigationBarProps) {
   const iconColor = isDark ? Colors.white : Colors.black;
+  const pathname = usePathname();
+  const { profileImage, loadProfile } = useProfile();
+  const hasLoadedAvatar = useRef(false);
+  const [avatarFailed, setAvatarFailed] = useState(false);
+
+  // Hydrate the avatar on mount and after returning to the Profile screen,
+  // including when the user has just edited their profile image.
+  useEffect(() => {
+    if (!hasLoadedAvatar.current || pathname === "/profile") {
+      hasLoadedAvatar.current = true;
+      void loadProfile();
+    }
+  }, [loadProfile, pathname]);
+
+  useEffect(() => {
+    setAvatarFailed(false);
+  }, [profileImage]);
+
+  const avatarUri =
+    !avatarFailed && profileImage ? profileImage : PLACEHOLDER_AVATAR;
   const rowHeight = useNavigationBarRowHeight();
   const styles = useMemo(
     () => CustomTabBarStyles(isDark, insets.bottom, rowHeight),
@@ -75,11 +96,27 @@ export default function NavigationBar({
               }
               testID={options.tabBarButtonTestID}
             >
-              <tab.Icon
-                size={24}
-                color={iconColor}
-                weight={focused ? "Filled" : "Outline"}
-              />
+              {route.name === "(profile)" ? (
+                <View
+                  style={[
+                    styles.avatarContainer,
+                    focused && styles.avatarContainerFocused,
+                  ]}
+                >
+                  <Image
+                    source={{ uri: avatarUri }}
+                    style={styles.avatarImage}
+                    onError={() => setAvatarFailed(true)}
+                    accessibilityIgnoresInvertColors
+                  />
+                </View>
+              ) : (
+                <tab.Icon
+                  size={24}
+                  color={iconColor}
+                  weight={focused ? "Filled" : "Outline"}
+                />
+              )}
               <Text style={[styles.tabLabel, focused && styles.activeTabLabel]}>
                 {tab.label}
               </Text>
@@ -130,6 +167,23 @@ const CustomTabBarStyles = (
       minHeight: 48,
       alignItems: "center",
       justifyContent: "center",
+    },
+    avatarContainer: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      overflow: "hidden",
+      borderWidth: 1,
+      borderColor: isDark ? Colors.dark.gray : Colors.light.gray,
+      backgroundColor: isDark ? Colors.dark.gray : Colors.light.gray,
+    },
+    avatarContainerFocused: {
+      borderWidth: 2,
+      borderColor: isDark ? Colors.white : Colors.black,
+    },
+    avatarImage: {
+      width: "100%",
+      height: "100%",
     },
     tabLabel: {
       color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText,
