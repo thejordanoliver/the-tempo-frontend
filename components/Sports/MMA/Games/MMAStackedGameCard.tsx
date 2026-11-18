@@ -7,6 +7,8 @@ import {
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -235,7 +237,13 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
 
   return (
     <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
-      <View style={styles.card}>{renderCardContent()}</View>
+      <LinearGradient
+        colors={getTeamCardGradientColors(isDark, secondFighter?.color ?? secondFighter?.secondaryColor ?? undefined, firstFighter?.color ?? firstFighter?.secondaryColor ?? undefined)}
+        locations={[0, 0.28, 0.5, 0.72, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.card}
+      >{renderCardContent()}</LinearGradient>
     </TouchableOpacity>
   );
 }
