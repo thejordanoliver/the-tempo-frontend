@@ -4,8 +4,6 @@ import { StyleSheet } from "react-native";
 export const GameCardStyles = (
   isDark: boolean,
   isChampionship?: boolean,
-  awayColor?: string,
-  homeColor?: string,
 ) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
@@ -294,26 +292,6 @@ export const GameCardStyles = (
       height: 7,
       borderRadius: 999,
       backgroundColor: liveColor,
-    },
-    leftCircle: {
-      position: "absolute",
-      zIndex: -1,
-      top: -70,
-      left: -100,
-      width: 160,
-      height: 160,
-      borderRadius: 999,
-      backgroundColor: awayColor,
-    },
-    rightCircle: {
-      position: "absolute",
-      zIndex: -1,
-      top: -70,
-      right: -100,
-      width: 160,
-      height: 160,
-      borderRadius: 999,
-      backgroundColor: homeColor,
     },
   });
 };
