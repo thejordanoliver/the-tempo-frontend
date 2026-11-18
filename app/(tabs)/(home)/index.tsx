@@ -1,10 +1,9 @@
 import { useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import React, { useCallback, useRef } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
-import PagerView from "components/PagerView";
-import { CustomHeader, type HomeHeaderTab } from "components/CustomHeader";
+import React, { useCallback } from "react";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
+import { CustomHeader } from "components/CustomHeader";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
 import ForYouFeed from "components/Home/ForYouFeed";
 import LeagueGamesList from "components/League/Games/LeagueGamesList";
@@ -12,46 +11,16 @@ import { Colors } from "constants/styles";
 import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useHomeData } from "hooks/useHomeData";
-import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
   const router = useScopedRouter();
   const { resolvedColorScheme, viewMode } = usePreferences();
   const { unreadNotificationCount } = useNotifications();
-
   const isDark = resolvedColorScheme === "dark";
-
   const navigation = useNavigation();
-
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = homeStyles(isDark);
-
-  const [favoritesInteracting, setFavoritesInteracting] = React.useState(false);
-
-  const [selectedTab, setSelectedTab] = React.useState<HomeHeaderTab>("scores");
-
-  const pagerRef = useRef<PagerView>(null);
-
-  const {
-    scrollProgress: homeTabScrollProgress,
-    handlePageScroll,
-    syncPageScrollProgress,
-  } = usePagerTabScrollProgress();
-
-  const handleHeaderTabPress = useCallback((tab: HomeHeaderTab) => {
-    setSelectedTab(tab);
-
-    pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
-  }, []);
-
-  const handleFavoritesInteractionStart = useCallback(() => {
-    setFavoritesInteracting(true);
-  }, []);
-
-  const handleFavoritesInteractionEnd = useCallback(() => {
-    setFavoritesInteracting(false);
-  }, []);
 
   const {
     refreshing,
@@ -65,29 +34,19 @@ export default function HomeScreen() {
     forYouError,
     forYouLoading,
     loading: gamesLoading,
-  } = useHomeData(selectedTab);
+  } = useHomeData("scores");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeader
           tabName="Home"
-          homeSelectedTab={selectedTab}
-          onHomeTabPress={handleHeaderTabPress}
-          homeScrollProgress={homeTabScrollProgress}
           onNotificationsCenter={() => router.navigate("/notification-center")}
           unreadNotificationCount={unreadNotificationCount}
         />
       ),
     });
-  }, [
-    handleHeaderTabPress,
-    homeTabScrollProgress,
-    navigation,
-    router,
-    selectedTab,
-    unreadNotificationCount,
-  ]);
+  }, [navigation, router, unreadNotificationCount]);
 
   const refreshControl = useCallback(
     () => (
@@ -103,62 +62,33 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.contentArea}>
-        <PagerView
-          ref={pagerRef}
-          style={styles.contentArea}
-          initialPage={0}
-          scrollEnabled={!favoritesInteracting}
-          onPageScroll={handlePageScroll}
-          onPageSelected={(event) => {
-            const index = event.nativeEvent.position;
-            syncPageScrollProgress(index);
-            setSelectedTab(index === 0 ? "scores" : "for you");
-          }}
-        >
-          {/* SCORES PAGE */}
-          <View key="scores" style={styles.contentArea}>
-            <ScrollView
-              contentContainerStyle={navigationContentStyle()}
-              showsVerticalScrollIndicator={false}
-              refreshControl={refreshControl()}
-            >
-              <FavoritesScroll
-                onInteractionStart={handleFavoritesInteractionStart}
-                onInteractionEnd={handleFavoritesInteractionEnd}
-                isDark={isDark}
-              />
+      <ScrollView
+        style={styles.contentArea}
+        contentContainerStyle={navigationContentStyle()}
+        showsVerticalScrollIndicator={false}
+        refreshControl={refreshControl()}
+      >
+        <FavoritesScroll isDark={isDark} />
 
-              <LeagueGamesList
-                sections={homeGameSections}
-                loading={gamesLoading}
-                isDark={isDark}
-                viewMode={viewMode}
-              />
-            </ScrollView>
-          </View>
+        <LeagueGamesList
+          sections={homeGameSections}
+          loading={gamesLoading}
+          isDark={isDark}
+          viewMode={viewMode}
+        />
 
-          {/* FOR YOU PAGE */}
-          <View key="for-you" style={styles.contentArea}>
-            <ScrollView
-              contentContainerStyle={navigationContentStyle()}
-              showsVerticalScrollIndicator={false}
-              refreshControl={refreshControl()}
-            >
-              <ForYouFeed
-                articles={forYouArticles}
-                posts={forYouPosts}
-                predictions={forYouPredictions}
-                favoriteLeagues={favoriteLeagues}
-                currentUserId={currentUserId}
-                isDark={isDark}
-                loading={forYouLoading}
-                error={forYouError}
-              />
-            </ScrollView>
-          </View>
-        </PagerView>
-      </View>
+        <Text style={styles.feedTitle}>For You</Text>
+        <ForYouFeed
+          articles={forYouArticles}
+          posts={forYouPosts}
+          predictions={forYouPredictions}
+          favoriteLeagues={favoriteLeagues}
+          currentUserId={currentUserId}
+          isDark={isDark}
+          loading={forYouLoading}
+          error={forYouError}
+        />
+      </ScrollView>
     </View>
   );
 }
