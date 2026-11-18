@@ -87,7 +87,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const awayRecord = game?.away?.record ?? "0-0";
   const clock = game.status?.clock;
   const isChampionship = headlineText?.includes("Stanley Cup Final");
-  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
+  const styles = GameCardStyles(isDark, isChampionship);
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
