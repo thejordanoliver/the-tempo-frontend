@@ -16,7 +16,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
-import { BlurView } from "expo-blur";
+import { GamePreviewCornerGradients } from "components/Sports/GamePreviewCornerGradients";
 import { useBaseballGameDetails } from "hooks/BaseballHooks/useBaseballGameDetails";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
@@ -249,9 +249,9 @@ export default function BaseballGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <View style={styles.leftCircle} />
-        <View style={styles.rightCircle} />
-        <BlurView intensity={100} style={styles.blurViewContainer}>
+        <GamePreviewCornerGradients isDark={isDark} awayColor={awayColor} homeColor={homeColor} />
+
+        <View style={styles.contentContainer}>
           {isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -360,7 +360,7 @@ export default function BaseballGamePreviewModal({
               )}
             </>
           )}
-        </BlurView>
+        </View>
       </View>
     </BottomSheetModal>
   );
