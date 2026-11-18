@@ -2,7 +2,7 @@ import { useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useCallback } from "react";
-import { RefreshControl, ScrollView, Text, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { CustomHeader } from "components/CustomHeader";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
 import ForYouFeed from "components/Home/ForYouFeed";
@@ -22,6 +22,32 @@ export default function HomeScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = homeStyles(isDark);
 
+  const [showPersonalizedFeed, setShowPersonalizedFeed] = React.useState(false);
+  const viewportHeightRef = React.useRef(0);
+  const contentHeightRef = React.useRef(0);
+  const scrollOffsetRef = React.useRef(0);
+
+  const maybeLoadPersonalizedFeed = useCallback(
+    (scrollY: number, scoresAreLoading: boolean) => {
+      if (
+        scoresAreLoading ||
+        viewportHeightRef.current <= 0 ||
+        contentHeightRef.current <= 0
+      ) {
+        return;
+      }
+
+      // Fetch the personalized content shortly before it enters the viewport.
+      if (
+        scrollY + viewportHeightRef.current + 500 >=
+        contentHeightRef.current
+      ) {
+        setShowPersonalizedFeed(true);
+      }
+    },
+    [],
+  );
+
   const {
     refreshing,
     handleRefresh,
@@ -34,7 +60,11 @@ export default function HomeScreen() {
     forYouError,
     forYouLoading,
     loading: gamesLoading,
-  } = useHomeData("scores");
+  } = useHomeData("scores", showPersonalizedFeed);
+
+  React.useEffect(() => {
+    maybeLoadPersonalizedFeed(scrollOffsetRef.current, gamesLoading);
+  }, [gamesLoading, homeGameSections, maybeLoadPersonalizedFeed]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -67,6 +97,19 @@ export default function HomeScreen() {
         contentContainerStyle={navigationContentStyle()}
         showsVerticalScrollIndicator={false}
         refreshControl={refreshControl()}
+        onLayout={(event) => {
+          viewportHeightRef.current = event.nativeEvent.layout.height;
+          maybeLoadPersonalizedFeed(scrollOffsetRef.current, gamesLoading);
+        }}
+        onContentSizeChange={(_, height) => {
+          contentHeightRef.current = height;
+          maybeLoadPersonalizedFeed(scrollOffsetRef.current, gamesLoading);
+        }}
+        onScroll={(event) => {
+          scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
+          maybeLoadPersonalizedFeed(scrollOffsetRef.current, gamesLoading);
+        }}
+        scrollEventThrottle={100}
       >
         <FavoritesScroll isDark={isDark} />
 
@@ -77,17 +120,20 @@ export default function HomeScreen() {
           viewMode={viewMode}
         />
 
-        <Text style={styles.feedTitle}>For You</Text>
-        <ForYouFeed
-          articles={forYouArticles}
-          posts={forYouPosts}
-          predictions={forYouPredictions}
-          favoriteLeagues={favoriteLeagues}
-          currentUserId={currentUserId}
-          isDark={isDark}
-          loading={forYouLoading}
-          error={forYouError}
-        />
+        {showPersonalizedFeed && (
+          <View style={styles.feedSection}>
+            <ForYouFeed
+              articles={forYouArticles}
+              posts={forYouPosts}
+              predictions={forYouPredictions}
+              favoriteLeagues={favoriteLeagues}
+              currentUserId={currentUserId}
+              isDark={isDark}
+              loading={forYouLoading}
+              error={forYouError}
+            />
+          </View>
+        )}
       </ScrollView>
     </View>
   );
