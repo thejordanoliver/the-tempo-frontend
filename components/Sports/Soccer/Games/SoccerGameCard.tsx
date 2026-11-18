@@ -7,8 +7,8 @@ import {
 } from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -175,8 +175,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-        {!isChampionship && <View style={styles.leftCircle} />}
-        <Image
+                <Image
           source={awayLogo}
           style={styles.logo}
           accessibilityLabel={`${awayName} logo`}
@@ -207,8 +206,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
       <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       <View style={styles.teamSection}>
-        {!isChampionship && <View style={styles.rightCircle} />}
-        <Image
+                <Image
           source={homeLogo}
           style={styles.logo}
           accessibilityLabel={`${homeName} logo`}
@@ -248,9 +246,15 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <BlurView intensity={100} style={styles.card}>
+        <LinearGradient
+          colors={getTeamCardGradientColors(isDark, awayColor, homeColor)}
+          locations={[0, 0.28, 0.5, 0.72, 1]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={styles.card}
+        >
           {renderCardContent()}
-        </BlurView>
+        </LinearGradient>
       )}
     </TouchableOpacity>
   );
