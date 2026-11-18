@@ -27,7 +27,7 @@ export default function NewsList({
   isDark,
 }: NewsHighlightsListProps) {
   const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = NewsListStyles(isDark);
+  const styles = NewsListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const userHasScrolled = useRef(false);
 

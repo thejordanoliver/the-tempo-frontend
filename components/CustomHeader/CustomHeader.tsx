@@ -550,6 +550,7 @@ export function CustomHeader({
             <HeaderTitle
               style={{
                 ...textStyle,
+                fontSize: 25,
                 fontFamily: Fonts.BOLD,
                 textAlign: "left",
               }}
