@@ -31,7 +31,10 @@ dayjs.extend(timezone);
 
 const getStartOfToday = () => dayjs().startOf("day").toDate();
 
-export function useHomeData(selectedTab: "scores" | "for you") {
+export function useHomeData(
+  selectedTab: "scores" | "for you",
+  enablePersonalizedFeed = true,
+) {
   const {
     favorites,
     favoriteSports,
@@ -92,7 +95,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   }
 
   const forYouFeed = useForYouFeed(
-    favoriteTeamsReady &&
+    enablePersonalizedFeed &&
+      favoriteTeamsReady &&
       (favoriteSportsReady || favoriteSportsError !== null || userId === null),
     userId,
     JSON.stringify([favorites, favoriteSports]),
@@ -659,7 +663,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
         await Promise.allSettled([
           refreshFavorites(),
           loadFavoriteSports(true),
-          forYouFeed.refresh(),
+          ...(enablePersonalizedFeed ? [forYouFeed.refresh()] : []),
           ...(dateRefresh
             ? [dateRefresh]
             : [
