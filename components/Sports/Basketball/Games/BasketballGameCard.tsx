@@ -8,8 +8,8 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { getGLeagueTeamLogo } from "@/constants/teamsGLeague";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
@@ -215,8 +215,7 @@ export default function BasketballGameCard({
     <>
       {/* Away Team */}
       <View style={styles.teamSection}>
-        {!isChampionship && <View style={styles.leftCircle} />}
-        <Image
+                <Image
           source={awayLogo}
           style={styles.logo}
           resizeMode="contain"
@@ -253,8 +252,7 @@ export default function BasketballGameCard({
 
       {/* Home Team */}
       <View style={styles.teamSection}>
-        {!isChampionship && <View style={styles.rightCircle} />}
-        <Image
+                <Image
           source={homeLogo}
           style={styles.logo}
           resizeMode="contain"
@@ -300,9 +298,15 @@ export default function BasketballGameCard({
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <BlurView intensity={100}  style={styles.card}>
+        <LinearGradient
+          colors={getTeamCardGradientColors(isDark, awayColor, homeColor)}
+          locations={[0, 0.28, 0.5, 0.72, 1]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={styles.card}
+        >
           {renderCardContent()}
-        </BlurView>
+        </LinearGradient>
       )}
     </TouchableOpacity>
   );
