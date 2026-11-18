@@ -284,30 +284,20 @@ function BaseballGameCard({
       })}
       accessibilityHint="Opens game details"
     >
-      {isChampionship ? (
-        <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#dbb145ff", "#CDA765"] as [string, string])
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      ) : (
-        <LinearGradient
-          colors={getTeamCardGradientColors(isDark, awayColor, homeColor)}
-          locations={[0, 0.28, 0.5, 0.72, 1]}
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      )}
+      <LinearGradient
+        colors={getTeamCardGradientColors(
+          isDark,
+          awayColor,
+          homeColor,
+          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
+        )}
+        locations={[0, 0.28, 0.5, 0.72, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.card}
+      >
+        {renderCardContent()}
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
