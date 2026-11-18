@@ -10,8 +10,8 @@ import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { getGLeagueTeamLogo } from "@/constants/teamsGLeague";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import {
@@ -36,6 +36,8 @@ export default function BasketballStackedGameCard({
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor ?? undefined;
+  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor ?? undefined;
   const handlePress = () => {
     router.push({
       pathname: "/game/basketball/[game]",
@@ -291,24 +293,20 @@ export default function BasketballStackedGameCard({
       })}
       accessibilityHint="Opens game details"
     >
-      {isChampionship ? (
-        <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#dbb145ff", "#CDA765"] as [string, string])
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      ) : (
-        <BlurView intensity={100} style={styles.card}>
-          {renderCardContent()}
-        </BlurView>
-      )}
+      <LinearGradient
+        colors={getTeamCardGradientColors(
+          isDark,
+          awayColor,
+          homeColor,
+          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
+        )}
+        locations={[0, 0.28, 0.5, 0.72, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.card}
+      >
+        {renderCardContent()}
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
