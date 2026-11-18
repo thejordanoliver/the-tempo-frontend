@@ -1,3 +1,8 @@
+import type {
+  PageScrollStateChangedNativeEvent,
+  PagerViewOnPageSelectedEvent,
+} from "components/PagerView";
+import PagerView from "components/PagerView";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/styles";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
@@ -10,13 +15,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { ScrollView, StyleSheet, View, type ScrollViewInstance } from "react-native";
-import PagerView from "components/PagerView";
-import type {
-  PageScrollStateChangedNativeEvent,
-  PagerViewOnPageSelectedEvent,
-} from "components/PagerView";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  type ScrollViewInstance,
+} from "react-native";
+import { PlayerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 type Page = { label: string; content: ReactNode };
 type Props = { overview: ReactNode; pages: Page[]; isDark: boolean };
@@ -134,7 +139,7 @@ export default function PlayerDetailsPager({ overview, pages, isDark }: Props) {
         scrollOffset.current = event.nativeEvent.contentOffset.y;
       }}
     >
-      <View style={[playerScreenStyles.contentContainerStyle, styles.overview]}>
+      <View style={[PlayerScreenStyles.contentContainerStyle, styles.overview]}>
         {overview}
       </View>
       <View

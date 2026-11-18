@@ -20,14 +20,14 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { newsArticleStyles } from "styles/NewsStyles/NewsArticleStyle";
+import { NewsArticleStyles } from "styles/NewsStyles/NewsArticleStyle";
 
 export default function ArticleScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const { width } = useWindowDimensions();
-  const styles = newsArticleStyles(isDark, width);
+  const styles = NewsArticleStyles(isDark, width);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
@@ -215,7 +215,12 @@ export default function ArticleScreen() {
               }}
             />
           ) : videoThumbnail ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="Play article video" style={styles.image} onPress={handlePlay}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Play article video"
+              style={styles.image}
+              onPress={handlePlay}
+            >
               <Image source={{ uri: videoThumbnail }} style={styles.image} />
               <View
                 style={{

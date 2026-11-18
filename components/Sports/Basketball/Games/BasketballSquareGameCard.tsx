@@ -8,6 +8,8 @@ import { getWCBBRivalry, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
+import { getGLeagueTeamLogo } from "@/constants/teamsGLeague";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -22,7 +24,6 @@ import {
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
-import { getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 
 export default function BasketballSquareGameCard({
   game,
@@ -307,7 +308,9 @@ export default function BasketballSquareGameCard({
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} style={styles.card}>
+          {renderCardContent()}
+        </BlurView>
       )}
     </TouchableOpacity>
   );

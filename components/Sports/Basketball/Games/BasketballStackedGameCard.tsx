@@ -10,6 +10,7 @@ import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { getGLeagueTeamLogo } from "@/constants/teamsGLeague";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
@@ -304,7 +305,9 @@ export default function BasketballStackedGameCard({
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} style={styles.card}>
+          {renderCardContent()}
+        </BlurView>
       )}
     </TouchableOpacity>
   );

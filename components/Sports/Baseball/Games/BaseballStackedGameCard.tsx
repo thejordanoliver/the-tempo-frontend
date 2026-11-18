@@ -11,6 +11,7 @@ import { getCBTeamLogo } from "constants/teamsCB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
@@ -296,7 +297,9 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} style={styles.card}>
+          {renderCardContent()}
+        </BlurView>
       )}
     </TouchableOpacity>
   );

@@ -1,4 +1,4 @@
-import { newsListStyles } from "@/styles/NewsStyles/newsListStyles";
+import { NewsListStyles } from "@/styles/NewsStyles/NewsListStyles";
 import { globalStyles } from "constants/styles";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
@@ -27,7 +27,7 @@ export default function NewsList({
   isDark,
 }: NewsHighlightsListProps) {
   const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = newsListStyles(isDark);
+  const styles = NewsListStyles(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const userHasScrolled = useRef(false);
 

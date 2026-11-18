@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const playerScreenStyles = StyleSheet.create({
+export const PlayerScreenStyles = StyleSheet.create({
   contentContainerStyle: {
     gap: 24,
     paddingBottom: 40,

@@ -12,7 +12,7 @@ import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { PlayerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function RecruitDetailScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();
@@ -25,7 +25,7 @@ export default function RecruitDetailScreen() {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = playerScreenStyles;
+  const styles = PlayerScreenStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const { data: player, loading, error } = useRecruit(recruitId, league);

@@ -7,6 +7,7 @@ import {
 } from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React from "react";
@@ -48,8 +49,13 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const away = game.away;
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
+
   const homeName = game.home?.shortName ?? game.home?.name;
   const awayName = game.away?.shortName ?? game.away?.name;
+
+  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor;
+  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor;
+
   const homeLogo =
     homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
@@ -67,7 +73,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
 
   const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));
-  const styles = GameCardStyles(isDark, isChampionship);
+  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });
@@ -169,6 +175,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
+        {!isChampionship && <View style={styles.leftCircle} />}
         <Image
           source={awayLogo}
           style={styles.logo}
@@ -200,6 +207,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
       <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       <View style={styles.teamSection}>
+        {!isChampionship && <View style={styles.rightCircle} />}
         <Image
           source={homeLogo}
           style={styles.logo}
@@ -240,7 +248,9 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} style={styles.card}>
+          {renderCardContent()}
+        </BlurView>
       )}
     </TouchableOpacity>
   );

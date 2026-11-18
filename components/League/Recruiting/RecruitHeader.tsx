@@ -1,7 +1,7 @@
 import { Recruit } from "@/types/recruiting/players";
 import { Colors } from "constants/styles";
 import { Image, Text, View } from "react-native";
-import { recruitHeaderStyles } from "styles/PlayerStyles/RecruitHeaderStyles";
+import { RecruitHeaderStyles } from "styles/PlayerStyles/RecruitHeaderStyles";
 
 type Props = {
   player: Recruit;
@@ -15,7 +15,7 @@ type Props = {
 export default function RecruitHeader({ player, isDark, age }: Props) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const accent = isDark ? Colors.white : Colors.black;
-  const styles = recruitHeaderStyles(isDark, accent);
+  const styles = RecruitHeaderStyles(isDark, accent);
 
   return (
     <View style={styles.container}>

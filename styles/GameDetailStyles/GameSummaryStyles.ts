@@ -79,7 +79,9 @@ export const GameSummaryStyles = (isDark: boolean) => {
       borderColor: theme.green,
     },
     logo: {
-      ...gameDetailTeamLogo,
+      width: 20,
+      height: 20,
+      resizeMode: "contain",
     },
     neutralDot: {
       width: 6,

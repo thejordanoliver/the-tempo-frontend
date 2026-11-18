@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
+export const RecruitHeaderStyles = (isDark: boolean, accent: string) => {
   const bg = isDark ? Colors.black : Colors.white;
   const surface = isDark
     ? Colors.dark.itemBackground

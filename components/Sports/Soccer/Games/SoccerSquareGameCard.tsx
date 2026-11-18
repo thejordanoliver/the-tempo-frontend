@@ -18,6 +18,7 @@ import {
   winnerStyle,
 } from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
+import { BlurView } from "expo-blur";
 
 export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const router = useScopedRouter();
@@ -249,7 +250,9 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} style={styles.card}>
+          {renderCardContent()}
+        </BlurView>
       )}
     </TouchableOpacity>
   );

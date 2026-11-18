@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 const TABLET_BREAKPOINT = 768;
 const MAX_ARTICLE_WIDTH = 900;
 
-export const newsArticleStyles = (isDark: boolean, screenWidth: number) => {
+export const NewsArticleStyles = (isDark: boolean, screenWidth: number) => {
   const isTablet = screenWidth >= TABLET_BREAKPOINT;
 
   return StyleSheet.create({

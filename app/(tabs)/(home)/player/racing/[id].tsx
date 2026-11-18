@@ -1,15 +1,15 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
-import PlayerHeader from "components/Player/PlayerHeader";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import PlayerHeader from "components/Player/PlayerHeader";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useMemo, useLayoutEffect } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { PlayerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();
@@ -18,7 +18,7 @@ export default function PlayerDetailScreen() {
     teamId?: string | string[];
     league: string;
   }>();
-  const styles = playerScreenStyles;
+  const styles = PlayerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const global = useMemo(() => globalStyles(isDark), [isDark]);

@@ -8,6 +8,7 @@ import {
 import { activeOpacity } from "constants/styles";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
@@ -253,7 +254,9 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+            <BlurView intensity={100} style={styles.card}>
+                  {renderCardContent()}
+                </BlurView>
       )}
     </TouchableOpacity>
   );

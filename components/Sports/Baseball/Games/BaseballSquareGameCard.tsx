@@ -20,6 +20,7 @@ import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
+import { BlurView } from "expo-blur";
 
 function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const router = useScopedRouter();
@@ -292,7 +293,9 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+            <BlurView intensity={100} style={styles.card}>
+                  {renderCardContent()}
+                </BlurView>
       )}
     </TouchableOpacity>
   );

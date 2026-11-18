@@ -33,6 +33,8 @@ export const stackedGameCardStyles = (
       paddingTop: 22,
       paddingBottom: 12,
       borderRadius: 8,
+      borderColor: Colors.midTone,
+      borderWidth: 1,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,

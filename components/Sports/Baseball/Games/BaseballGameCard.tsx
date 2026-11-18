@@ -20,6 +20,7 @@ import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
+import { BlurView } from "expo-blur";
 
 function BaseballGameCard({
   game,
@@ -55,6 +56,9 @@ function BaseballGameCard({
   const homeName = game.home?.shortName ?? game.home?.name;
   const awayName = game.away?.shortName ?? game.away?.name;
 
+  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor;
+  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor;
+
   const homeLogo =
     homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
@@ -78,7 +82,8 @@ function BaseballGameCard({
   const isChampionship =
     game?.season.slug === "championship-series" ||
     headline?.includes("World Series");
-  const styles = GameCardStyles(isDark, isChampionship);
+
+  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = game.status.description ?? "";
@@ -218,6 +223,7 @@ function BaseballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
+        {!isChampionship && <View style={styles.leftCircle} />}
         <Image
           source={awayLogo}
           style={styles.logo}
@@ -245,6 +251,7 @@ function BaseballGameCard({
       <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       <View style={styles.teamSection}>
+        {!isChampionship && <View style={styles.rightCircle} />}
         <Image
           source={homeLogo}
           style={styles.logo}
@@ -293,7 +300,7 @@ function BaseballGameCard({
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} tint="systemMaterial" style={styles.card}>{renderCardContent()}</BlurView>
       )}
     </TouchableOpacity>
   );

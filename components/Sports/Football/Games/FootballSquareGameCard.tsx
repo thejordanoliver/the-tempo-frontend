@@ -10,6 +10,7 @@ import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
@@ -340,7 +341,9 @@ function FootballSquareGameCard({
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} style={styles.card}>
+          {renderCardContent()}
+        </BlurView>
       )}
     </TouchableOpacity>
   );

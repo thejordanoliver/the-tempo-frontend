@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   getCFBRivalry,
   getCFBTeam,
@@ -9,6 +8,7 @@ import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
@@ -21,6 +21,7 @@ import {
   getHolidayLabel,
   safeDate,
 } from "utils/common/dateUtils";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   formatPeriod,
   getBroadcastDisplay,
@@ -58,6 +59,12 @@ function FootballGameCard({
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
 
+  const homeName = game.home?.shortName ?? game.home?.name;
+  const awayName = game.away?.shortName ?? game.away?.name;
+
+  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor;
+  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor;
+
   const home =
     (isNFL
       ? getNFLTeam(homeId)
@@ -70,9 +77,6 @@ function FootballGameCard({
       : isCFB
         ? getCFBTeam(awayId)
         : getUFLTeam(awayId)) ?? emptyAwayTeam;
-
-  const homeName = game.home?.shortName ?? game.home?.name;
-  const awayName = game.away?.shortName ?? game.away?.name;
 
   const homeLogo =
     home.id === emptyHomeTeam.id
@@ -126,7 +130,7 @@ function FootballGameCard({
   const isChampionship =
     headlineMatch?.includes("super bowl") ||
     headlineMatch?.includes("national championship");
-  const styles = GameCardStyles(isDark, isChampionship);
+  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
   const homeHasPossession = inProgress && possessionTeamId === home?.id;
   const awayHasPossession = inProgress && possessionTeamId === away?.id;
 
@@ -252,6 +256,7 @@ function FootballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
+        {!isChampionship && <View style={styles.leftCircle} />}
         <Image source={awayLogo} style={styles.logo} resizeMode="contain" />
 
         <Text
@@ -298,6 +303,7 @@ function FootballGameCard({
       </View>
 
       <View style={styles.teamSection}>
+        {!isChampionship && <View style={styles.rightCircle} />}
         <Image source={homeLogo} style={styles.logo} resizeMode="contain" />
         <Text
           style={styles.teamName}
@@ -339,7 +345,9 @@ function FootballGameCard({
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} style={styles.card}>
+          {renderCardContent()}
+        </BlurView>
       )}
     </TouchableOpacity>
   );

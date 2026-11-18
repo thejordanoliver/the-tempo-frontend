@@ -1,7 +1,12 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
+export const GameCardStyles = (
+  isDark: boolean,
+  isChampionship?: boolean,
+  awayColor?: string,
+  homeColor?: string,
+) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
@@ -18,15 +23,27 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        🧱 LAYOUT
     ========================= */
     card: {
+      overflow: "hidden",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       padding: 8,
       minHeight: 80,
       borderRadius: 8,
+      borderColor: Colors.midTone,
+      borderWidth: 1,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+    },
+
+    blurViewContainer: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      zIndex: 999,
+      width: "100%",
+      height: "100%",
     },
 
     info: {
@@ -277,6 +294,26 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       height: 7,
       borderRadius: 999,
       backgroundColor: liveColor,
+    },
+    leftCircle: {
+      position: "absolute",
+      zIndex: -1,
+      top: -70,
+      left: -100,
+      width: 160,
+      height: 160,
+      borderRadius: 999,
+      backgroundColor: awayColor,
+    },
+    rightCircle: {
+      position: "absolute",
+      zIndex: -1,
+      top: -70,
+      right: -100,
+      width: 160,
+      height: 160,
+      borderRadius: 999,
+      backgroundColor: homeColor,
     },
   });
 };

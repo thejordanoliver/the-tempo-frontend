@@ -1,18 +1,18 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
-import PlayerHeader from "components/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Soccer/Player/PlayerStatTable";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import { usePlayerSeasons } from "@/hooks/SoccerHooks/usePlayerSeasons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import PlayerHeader from "components/Player/PlayerHeader";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { PlayerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 const normalizeParam = (
   value: string | string[] | number | null | undefined,
@@ -30,7 +30,7 @@ export default function PlayerDetailScreen() {
     teamId?: string | string[];
     league?: string | string[];
   }>();
-  const styles = playerScreenStyles;
+  const styles = PlayerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const global = useMemo(() => globalStyles(isDark), [isDark]);

@@ -32,6 +32,8 @@ export const SquareGameCardStyles = (
       paddingBottom: 20,
       paddingHorizontal: 12,
       borderRadius: 8,
+      borderColor: Colors.midTone,
+      borderWidth: 1,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,

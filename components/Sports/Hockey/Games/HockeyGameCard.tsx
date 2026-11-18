@@ -8,6 +8,7 @@ import {
 import { activeOpacity } from "constants/styles";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
@@ -51,6 +52,9 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeName = game.home?.shortName ?? game.home?.name;
   const awayName = game.away?.shortName ?? game.away?.name;
 
+  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor;
+  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor;
+
   const homeLogo =
     homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
@@ -83,7 +87,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const awayRecord = game?.away?.record ?? "0-0";
   const clock = game.status?.clock;
   const isChampionship = headlineText?.includes("Stanley Cup Final");
-  const styles = GameCardStyles(isDark, isChampionship);
+  const styles = GameCardStyles(isDark, isChampionship, awayColor, homeColor);
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -163,6 +167,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
     <>
       {/* Away Team */}
       <View style={styles.teamSection}>
+        {!isChampionship && <View style={styles.leftCircle} />}
         <Image
           source={awayLogo}
           style={styles.logo}
@@ -198,6 +203,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
 
       {/* Home Team */}
       <View style={styles.teamSection}>
+        {!isChampionship && <View style={styles.rightCircle} />}
         <Image
           source={homeLogo}
           style={styles.logo}
@@ -245,7 +251,9 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
+        <BlurView intensity={100} style={styles.card}>
+          {renderCardContent()}
+        </BlurView>
       )}
     </TouchableOpacity>
   );

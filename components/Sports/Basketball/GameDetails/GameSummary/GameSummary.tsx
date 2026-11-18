@@ -133,11 +133,7 @@ function GameSummary({
                     style={[styles.teamMarker, scoring && styles.scoringMarker]}
                   >
                     {showLogo && teamLogo ? (
-                      <Image
-                        source={teamLogo}
-                        style={styles.logo}
-                        resizeMode="contain"
-                      />
+                      <Image source={teamLogo} style={styles.logo} />
                     ) : (
                       <View style={styles.neutralDot} />
                     )}
