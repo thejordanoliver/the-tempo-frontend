@@ -486,17 +486,19 @@ export function CustomHeader({
           },
         ]}
       >
-        <HeaderLeftActions
-          tabName={tabName}
-          showBackButton={showBackButton}
-          onBack={resolvedOnBack}
-          onAddWidget={onAddWidget}
-          onToggleWidgetEditing={onToggleWidgetEditing}
-          isWidgetEditing={isWidgetEditing}
-          onProfileMessages={onMessages ? handleProfileMessages : undefined}
-          isDark={isDark}
-          headerIconColor={headerIconColor}
-        />
+        {tabName !== "Home" && (
+          <HeaderLeftActions
+            tabName={tabName}
+            showBackButton={showBackButton}
+            onBack={resolvedOnBack}
+            onAddWidget={onAddWidget}
+            onToggleWidgetEditing={onToggleWidgetEditing}
+            isWidgetEditing={isWidgetEditing}
+            onProfileMessages={onMessages ? handleProfileMessages : undefined}
+            isDark={isDark}
+            headerIconColor={headerIconColor}
+          />
+        )}
 
         {shouldRenderGameHeader ? (
           <GameHeader
@@ -537,8 +539,23 @@ export function CustomHeader({
             isDark={isDark}
           />
         ) : tabName === "Home" ? (
-          <View pointerEvents="none" style={styles.defaultHeaderTitleContainer}>
-            <HeaderTitle style={textStyle}>The Tempo</HeaderTitle>
+          <View
+            pointerEvents="none"
+            style={{
+              flex: 1,
+              alignItems: "flex-start",
+              justifyContent: "center",
+            }}
+          >
+            <HeaderTitle
+              style={{
+                ...textStyle,
+                fontFamily: Fonts.BOLD,
+                textAlign: "left",
+              }}
+            >
+              The Tempo
+            </HeaderTitle>
           </View>
         ) : tabName === "Login" && onAuthTabPress ? (
           <AuthHeader
