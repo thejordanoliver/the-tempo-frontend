@@ -12,6 +12,7 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -20,7 +21,6 @@ import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
-import { BlurView } from "expo-blur";
 
 function BaseballGameCard({
   game,
@@ -223,8 +223,7 @@ function BaseballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-        {!isChampionship && <View style={styles.leftCircle} />}
-        <Image
+                <Image
           source={awayLogo}
           style={styles.logo}
           accessibilityLabel={`${awayName} logo`}
@@ -251,8 +250,7 @@ function BaseballGameCard({
       <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       <View style={styles.teamSection}>
-        {!isChampionship && <View style={styles.rightCircle} />}
-        <Image
+                <Image
           source={homeLogo}
           style={styles.logo}
           accessibilityLabel={`${homeName} logo`}
@@ -300,7 +298,15 @@ function BaseballGameCard({
           {renderCardContent()}
         </LinearGradient>
       ) : (
-        <BlurView intensity={100} tint="systemMaterial" style={styles.card}>{renderCardContent()}</BlurView>
+        <LinearGradient
+          colors={getTeamCardGradientColors(isDark, awayColor, homeColor)}
+          locations={[0, 0.28, 0.5, 0.72, 1]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
       )}
     </TouchableOpacity>
   );
