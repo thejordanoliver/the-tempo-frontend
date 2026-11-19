@@ -8,3 +8,18 @@ export function interleavePredictions<T>(content: T[], predictions: T[]): T[] {
   });
   return [...result, ...pending];
 }
+
+/** Append only genuinely new feed items, preserving the order of each page. */
+export function onlyNewItems<T>(
+  existing: readonly T[],
+  incoming: readonly T[],
+  getKey: (item: T) => string,
+): T[] {
+  const seen = new Set(existing.map(getKey));
+  return incoming.filter((item) => {
+    const key = getKey(item);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
