@@ -40,7 +40,7 @@ export default function ChampionshipBanner({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = championshipBannerStyles(isDark);
+  const styles = ChampionshipBannerStyles(isDark);
 
   if (!teamId) {
     console.warn(
@@ -147,7 +147,7 @@ export default function ChampionshipBanner({
   );
 }
 
-const championshipBannerStyles = (isDark: boolean) =>
+const ChampionshipBannerStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
       flexDirection: "row",
