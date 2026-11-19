@@ -6,10 +6,15 @@ export const GradientGameCardStyles = (
   isChampionship?: boolean,
 ) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
+
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
+
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
+
   const borderColor = isDark ? Colors.lightGray : Colors.darkGray;
+
   const liveColor = isDark ? Colors.dark.limeGreen : Colors.light.green;
+
   const headlineColor = isChampionship
     ? isDark
       ? Colors.white
@@ -39,7 +44,9 @@ export const GradientGameCardStyles = (
       alignItems: "center",
       justifyContent: "center",
       flex: 1,
+      minWidth: 0,
       marginTop: 4,
+      zIndex: 2,
     },
 
     infoWrapper: {
@@ -48,11 +55,14 @@ export const GradientGameCardStyles = (
       justifyContent: "center",
     },
 
-    /* =========================
-       🏀 TEAM
-    ========================= */
+    // ==================================================
+    // TEAMS
+    // ==================================================
+
     teamSection: {
       flex: 1,
+      minWidth: 0,
+      position: "relative",
       justifyContent: "center",
       flexDirection: "row",
       alignItems: "center",
@@ -98,6 +108,8 @@ export const GradientGameCardStyles = (
       fontSize: 40,
       color: textColor,
       textAlign: "center",
+      flexShrink: 1,
+      zIndex: 1,
     },
 
     rank: {
@@ -107,11 +119,12 @@ export const GradientGameCardStyles = (
       color: textColor,
       mixBlendMode: "overlay",
     },
+
     awayRankContainer: {
       position: "absolute",
       bottom: -20,
       left: -20,
-      zIndex: 999,
+      zIndex: 3,
       justifyContent: "center",
       borderRadius: 999,
       borderColor: textColor,
@@ -120,11 +133,12 @@ export const GradientGameCardStyles = (
       width: 50,
       transform: [{ rotate: "15deg" }],
     },
+
     homeRankContainer: {
       position: "absolute",
       bottom: -20,
       right: -20,
-      zIndex: 999,
+      zIndex: 3,
       justifyContent: "center",
       borderRadius: 999,
       borderColor: textColor,
@@ -151,9 +165,54 @@ export const GradientGameCardStyles = (
       zIndex: 1,
     },
 
-    /* =========================
-       🥊 FIGHTERS
-    ========================= */
+    // Football possession stays below the score, not between columns.
+    footballScoreColumn: {
+      flex: 1,
+      minWidth: 0,
+      height: 58,
+      position: "relative",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 2,
+    },
+
+    footballScoreColumnActive: {
+      paddingBottom: 14,
+    },
+
+    footballScoreText: {
+      flex: 0,
+      width: "100%",
+      fontFamily: Fonts.BOLD,
+      fontSize: 28,
+      textAlign: "center",
+      zIndex: 1,
+    },
+
+    footballRecordText: {
+      flex: 0,
+      width: "100%",
+      fontFamily: Fonts.BOLD,
+      fontSize: 16,
+      color: textColor,
+      textAlign: "center",
+      zIndex: 1,
+    },
+
+    footballBelowScore: {
+      position: "absolute",
+      bottom: 0,
+      alignSelf: "center",
+      width: 17,
+      height: 17,
+      resizeMode: "contain",
+      zIndex: 3,
+    },
+
+    // ==================================================
+    // FIGHTERS
+    // ==================================================
+
     fighterContainer: {
       alignItems: "center",
       width: 40,
@@ -188,9 +247,10 @@ export const GradientGameCardStyles = (
       height: 20,
     },
 
-    /* =========================
-       🏈 GAME STATE / STATUS
-    ========================= */
+    // ==================================================
+    // GAME STATE / STATUS
+    // ==================================================
+
     date: {
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
@@ -265,9 +325,10 @@ export const GradientGameCardStyles = (
       backgroundColor: accentRed,
     },
 
-    /* =========================
-       📰 HEADLINES
-    ========================= */
+    // ==================================================
+    // HEADLINES
+    // ==================================================
+
     headlineContainer: {
       position: "absolute",
       top: 4,
@@ -285,9 +346,10 @@ export const GradientGameCardStyles = (
       textAlign: "center",
     },
 
-    /* =========================
-       ⚾ POSSESSION / EXTRAS
-    ========================= */
+    // ==================================================
+    // POSSESSION / EXTRAS
+    // ==================================================
+
     possession: {
       width: 22,
       height: 22,
