@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { interleavePredictions } from "../utils/explore/forYouFeed";
+import { interleavePredictions, onlyNewItems } from "../utils/explore/forYouFeed";
 
 test("spaces predictions without changing news and post ordering", () => {
   const content = Array.from({ length: 15 }, (_, i) => `content-${i}`);
@@ -28,4 +28,30 @@ test("supports prediction-only and short feeds", () => {
     "pick-2",
   ]);
   assert.deepEqual(interleavePredictions(["news"], []), ["news"]);
+});
+
+test("endless feed deduplicates article IDs across and within pages", () => {
+  const existing = [{ keyId: "nba-1" }, { keyId: "nfl-2" }];
+  const incoming = [
+    { keyId: "nba-1" },
+    { keyId: "nfl-3" },
+    { keyId: "nfl-3" },
+    { keyId: "mlb-4" },
+  ];
+  assert.deepEqual(
+    onlyNewItems(existing, incoming, (article) => article.keyId),
+    [{ keyId: "nfl-3" }, { keyId: "mlb-4" }],
+  );
+  assert.deepEqual(existing, [{ keyId: "nba-1" }, { keyId: "nfl-2" }]);
+});
+
+test("endless feed deduplicates posts while preserving incoming order", () => {
+  assert.deepEqual(
+    onlyNewItems(
+      [{ id: 12 }],
+      [{ id: 12 }, { id: 15 }, { id: 14 }, { id: 15 }],
+      (post) => String(post.id),
+    ),
+    [{ id: 15 }, { id: 14 }],
+  );
 });
