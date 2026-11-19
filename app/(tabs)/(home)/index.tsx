@@ -112,10 +112,6 @@ export default function HomeScreen() {
     maybeLoadPersonalizedFeed(scrollOffsetRef.current);
   }, [homeGameSections, maybeLoadPersonalizedFeed]);
 
-  React.useEffect(() => {
-    maybeLoadMoreFeed(scrollOffsetRef.current);
-  }, [maybeLoadMoreFeed, forYouPages]);
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
