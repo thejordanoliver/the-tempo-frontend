@@ -1,5 +1,13 @@
-import { useScrollToTop } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
+import { CustomHeader } from "components/CustomHeader";
+import FavoritesScroll from "components/Favorites/FavoritesScroll";
+import ForYouFeed from "components/Home/ForYouFeed";
+import LeagueGamesList from "components/League/Games/LeagueGamesList";
+import { Colors } from "constants/styles";
+import { useNotifications } from "contexts/NotificationContext";
+import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigation, useScrollToTop } from "expo-router";
+import type { ForYouPage } from "hooks/useForYouFeed";
+import { useHomeData } from "hooks/useHomeData";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useCallback } from "react";
@@ -11,15 +19,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { CustomHeader } from "components/CustomHeader";
-import FavoritesScroll from "components/Favorites/FavoritesScroll";
-import ForYouFeed from "components/Home/ForYouFeed";
-import LeagueGamesList from "components/League/Games/LeagueGamesList";
-import { Colors } from "constants/styles";
-import { useNotifications } from "contexts/NotificationContext";
-import { usePreferences } from "contexts/PreferencesContext";
-import type { ForYouPage } from "hooks/useForYouFeed";
-import { useHomeData } from "hooks/useHomeData";
 import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
@@ -214,7 +213,7 @@ export default function HomeScreen() {
                 !forYouLoadingMore &&
                 !forYouLoadMoreError &&
                 forYouPages.length > 0 && (
-                  <Text style={styles.emptyText}>You're all caught up.</Text>
+                  <Text style={styles.emptyText}>{`You're all caught up.`}</Text>
                 )}
             </View>
           ) : undefined
