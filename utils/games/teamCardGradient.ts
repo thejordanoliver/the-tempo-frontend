@@ -53,16 +53,15 @@ export function getTeamCardGradientColors(
   const background = backgroundOverride ?? (isDark
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground);
-  const neutralTint = isDark ? Colors.dark.gray : Colors.light.gray;
 
   const edgeStrength = isDark ? 0.32 : 0.2;
   const innerStrength = isDark ? 0.09 : 0.06;
 
   return [
-    blendWithBackground(awayColor ?? neutralTint, background, edgeStrength),
-    blendWithBackground(awayColor ?? neutralTint, background, innerStrength),
+    blendWithBackground(awayColor, background, edgeStrength),
+    blendWithBackground(awayColor, background, innerStrength),
     background,
-    blendWithBackground(homeColor ?? neutralTint, background, innerStrength),
-    blendWithBackground(homeColor ?? neutralTint, background, edgeStrength),
+    blendWithBackground(homeColor, background, innerStrength),
+    blendWithBackground(homeColor, background, edgeStrength),
   ];
 }
