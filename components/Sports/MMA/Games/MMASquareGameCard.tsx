@@ -231,8 +231,8 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
       <LinearGradient
         colors={getTeamCardGradientColors(isDark, secondFighter?.color ?? secondFighter?.secondaryColor ?? undefined, firstFighter?.color ?? firstFighter?.secondaryColor ?? undefined)}
         locations={[0, 0.28, 0.5, 0.72, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
         style={styles.card}
       >{renderCardContent()}</LinearGradient>
     </TouchableOpacity>
