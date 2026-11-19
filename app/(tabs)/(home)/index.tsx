@@ -1,3 +1,4 @@
+import { useScrollToTop } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -29,6 +30,10 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = homeStyles(isDark);
+  const homeListRef = React.useRef<FlatList<ForYouPage>>(null);
+
+  // Re-tapping the active Home tab scrolls the entire feed to its beginning.
+  useScrollToTop(homeListRef);
 
   const [showPersonalizedFeed, setShowPersonalizedFeed] = React.useState(false);
   const viewportHeightRef = React.useRef(0);
@@ -139,6 +144,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <FlatList<ForYouPage>
+        ref={homeListRef}
         style={styles.contentArea}
         contentContainerStyle={navigationContentStyle()}
         data={showPersonalizedFeed ? forYouPages : []}
