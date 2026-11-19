@@ -12,7 +12,7 @@ import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import NHLGamePreviewModal from "../GamePreview/HockeyGamePreviewModal";
-import NHLGameCard from "./HockeyGameCard";
+import HockeyGradientGameCard from "./HockeyGradientGameCard";
 import NHLSquareGameCard from "./HockeySqaureGameCard";
 import NHLStackedGameCard from "./HockeyStackedGameCard";
 
@@ -82,7 +82,7 @@ export default function GamesList({
 
       const cardContent =
         viewMode === "list" ? (
-          <NHLGameCard game={game} isNHL={true} isMCH={false} />
+          <HockeyGradientGameCard game={game} isNHL={true} isMCH={false} />
         ) : viewMode === "grid" ? (
           <NHLSquareGameCard game={game} isNHL={true} isMCH={false} />
         ) : (

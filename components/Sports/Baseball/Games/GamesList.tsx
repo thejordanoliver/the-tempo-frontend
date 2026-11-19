@@ -20,7 +20,7 @@ import {
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import BaseballGamePreviewModal from "../GamePreview/BaseballGamePreviewModal";
-import BaseballGameCard from "./BaseballGameCard";
+import BaseballGradientGameCard from "./BaseballGradientGameCard";
 import BaseballSquareGameCard from "./BaseballSquareGameCard";
 import BaseballStackedGameCard from "./BaseballStackedGameCard";
 
@@ -103,7 +103,7 @@ export default function GamesList({
 
       const cardContent =
         viewMode === "list" ? (
-          <BaseballGameCard game={game} isMLB={isMLB} isCB={isCB} isSB={isSB} />
+          <BaseballGradientGameCard game={game} isMLB={isMLB} isCB={isCB} isSB={isSB} />
         ) : viewMode === "grid" ? (
           <BaseballSquareGameCard
             game={game}
