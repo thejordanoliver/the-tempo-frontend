@@ -9,9 +9,9 @@ import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { BlurView } from "expo-blur";
-import GradientGameCardBackground from "components/Sports/GradientGameCardBackground";
+import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GradientGameCardStyles } from "styles/GamecardStyles/GradientGameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import {
@@ -25,6 +25,7 @@ import {
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 export default function BasketballGradientGameCard({
   game,
@@ -93,7 +94,7 @@ export default function BasketballGradientGameCard({
 
   const rivalry = isMCBB
     ? getMCBBRivalry(homeId, awayId)?.name
-    : isWCBB
+    : isMCBB
       ? getWCBBRivalry(homeId, awayId)?.name
       : null;
 
@@ -215,7 +216,12 @@ export default function BasketballGradientGameCard({
     <>
       {/* Away Team */}
       <View style={styles.teamSection}>
-        
+        <Image
+          source={awayLogo}
+          style={styles.awayLogo}
+          resizeMode="contain"
+          accessibilityLabel={`${awayName} logo`}
+        />
 
         {awayRank && (
           <BlurView style={styles.awayRankContainer}>
@@ -252,7 +258,12 @@ export default function BasketballGradientGameCard({
 
       {/* Home Team */}
       <View style={styles.teamSection}>
-        
+        <Image
+          source={homeLogo}
+          style={styles.homeLogo}
+          resizeMode="contain"
+          accessibilityLabel={`${homeName} logo`}
+        />
 
         {homeRank && (
           <BlurView style={styles.homeRankContainer}>
@@ -284,16 +295,20 @@ export default function BasketballGradientGameCard({
       })}
       accessibilityHint="Opens game details"
     >
-      <GradientGameCardBackground
-        isDark={isDark}
-        isChampionship={Boolean(isChampionship)}
-        awayColor={awayColor}
-        homeColor={homeColor}
-        awayLogo={awayLogo}
-        homeLogo={homeLogo}
+      <LinearGradient
+        colors={getTeamCardGradientColors(
+          isDark,
+          awayColor,
+          homeColor,
+          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
+        )}
+        locations={[0, 0.28, 0.5, 0.72, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.card}
       >
         {renderCardContent()}
-      </GradientGameCardBackground>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }

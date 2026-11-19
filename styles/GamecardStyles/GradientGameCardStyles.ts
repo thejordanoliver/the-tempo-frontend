@@ -20,59 +20,6 @@ export const GradientGameCardStyles = (
     /* =========================
        🧱 LAYOUT
     ========================= */
-    // Gradient card compositing: background > blended logos > content.
-    gradientFrame: {
-      position: "relative",
-      overflow: "hidden",
-      isolation: "isolate",
-      minHeight: 80,
-      borderRadius: 8,
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-
-    gradientBackground: {
-      ...StyleSheet.absoluteFillObject,
-      zIndex: 0,
-    },
-
-    gradientAwayBackdropLogo: {
-      position: "absolute",
-      left: -40,
-      bottom: -70,
-      width: 180,
-      height: 180,
-      resizeMode: "contain",
-      mixBlendMode: "soft-light",
-      transform: [{ rotate: "-10deg" }],
-      zIndex: 1,
-    },
-
-    gradientHomeBackdropLogo: {
-      position: "absolute",
-      right: -40,
-      bottom: -70,
-      width: 180,
-      height: 180,
-      resizeMode: "contain",
-      mixBlendMode: "soft-light",
-      transform: [{ rotate: "10deg" }],
-      zIndex: 1,
-    },
-
-    gradientForeground: {
-      position: "relative",
-      zIndex: 2,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: 8,
-      minHeight: 80,
-    },
-
     card: {
       overflow: "hidden",
       flexDirection: "row",
@@ -89,8 +36,6 @@ export const GradientGameCardStyles = (
     },
 
     info: {
-      minWidth: 0,
-      zIndex: 2,
       alignItems: "center",
       justifyContent: "center",
       flex: 1,
@@ -108,8 +53,6 @@ export const GradientGameCardStyles = (
     ========================= */
     teamSection: {
       flex: 1,
-      minWidth: 0,
-      position: "relative",
       justifyContent: "center",
       flexDirection: "row",
       alignItems: "center",
@@ -134,7 +77,7 @@ export const GradientGameCardStyles = (
       width: 180,
       height: 180,
       resizeMode: "contain",
-      mixBlendMode: "soft-light",
+      opacity: 0.4,
       transform: [{ rotate: "10deg" }],
     },
 
@@ -146,13 +89,11 @@ export const GradientGameCardStyles = (
       width: 180,
       height: 180,
       resizeMode: "contain",
-      mixBlendMode: "soft-light",
+      opacity: 0.4,
       transform: [{ rotate: "-10deg" }],
     },
 
     teamName: {
-      flexShrink: 1,
-      zIndex: 1,
       fontFamily: Fonts.BOLD,
       fontSize: 40,
       color: textColor,
@@ -208,50 +149,6 @@ export const GradientGameCardStyles = (
       color: textColor,
       textAlign: "center",
       zIndex: 1,
-    },
-
-    // Football possession stays below the score, not between columns.
-    footballScoreColumn: {
-      flex: 1,
-      minWidth: 0,
-      height: 58,
-      position: "relative",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 2,
-    },
-
-    footballScoreColumnActive: {
-      paddingBottom: 14,
-    },
-
-    footballScoreText: {
-      flex: 0,
-      width: "100%",
-      fontFamily: Fonts.BOLD,
-      fontSize: 28,
-      textAlign: "center",
-      zIndex: 1,
-    },
-
-    footballRecordText: {
-      flex: 0,
-      width: "100%",
-      fontFamily: Fonts.BOLD,
-      fontSize: 16,
-      color: textColor,
-      textAlign: "center",
-      zIndex: 1,
-    },
-
-    footballBelowScore: {
-      position: "absolute",
-      bottom: 0,
-      alignSelf: "center",
-      width: 17,
-      height: 17,
-      resizeMode: "contain",
-      zIndex: 3,
     },
 
     /* =========================

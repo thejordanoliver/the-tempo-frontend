@@ -9,7 +9,7 @@ import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
-import GradientGameCardBackground from "components/Sports/GradientGameCardBackground";
+import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -27,6 +27,7 @@ import {
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import Football from "../../../../assets/icons/Football.png";
 import FootballLight from "../../../../assets/icons/FootballLight.png";
 
@@ -131,10 +132,8 @@ function FootballGradientGameCard({
     headlineMatch?.includes("super bowl") ||
     headlineMatch?.includes("national championship");
   const styles = GradientGameCardStyles(isDark, isChampionship);
-  const homeHasPossession =
-    inProgress && possessionTeamId != null && String(possessionTeamId) === String(homeId);
-  const awayHasPossession =
-    inProgress && possessionTeamId != null && String(possessionTeamId) === String(awayId);
+  const homeHasPossession = inProgress && possessionTeamId === home?.id;
+  const awayHasPossession = inProgress && possessionTeamId === away?.id;
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -143,49 +142,36 @@ function FootballGradientGameCard({
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const ScoreColumn = ({
+  const ScoreText = ({
     score,
     record,
     isWinner,
-    hasPossession,
   }: {
     score: number;
     record: string | undefined;
     isWinner: boolean;
-    hasPossession: boolean;
-  }) => (
-    <View
-      style={[
-        styles.footballScoreColumn,
-        hasPossession && styles.footballScoreColumnActive,
-      ]}
-    >
+  }) => {
+    const showRecord = isScheduled;
+
+    return (
       <Text
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        minimumFontScale={0.75}
         style={
-          isScheduled
-            ? [styles.teamRecord, styles.footballRecordText]
+          showRecord
+            ? styles.teamRecord
             : [
                 styles.teamScore,
-                styles.footballScoreText,
-                winnerStyle({ isWinner, isTie, isDark }),
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
               ]
         }
       >
-        {isScheduled ? record : score}
+        {showRecord ? record : score}
       </Text>
-      {hasPossession && (
-        <Image
-          source={isDark ? FootballLight : Football}
-          style={styles.footballBelowScore}
-          resizeMode="contain"
-          accessible={false}
-        />
-      )}
-    </View>
-  );
+    );
+  };
 
   const renderDownAndDistance = () => {
     if (!downDistanceText) return null;
@@ -271,6 +257,7 @@ function FootballGradientGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
+        <Image source={awayLogo} style={styles.awayLogo} resizeMode="contain" />
 
         {awayRank && (
           <BlurView style={styles.awayRankContainer}>
@@ -287,9 +274,14 @@ function FootballGradientGameCard({
         </Text>
       </View>
 
-      <ScoreColumn score={awayScore} record={awayRecord} isWinner={awayWins} hasPossession={awayHasPossession} />
+      <ScoreText score={awayScore} record={awayRecord} isWinner={awayWins} />
 
-      
+      {inProgress && awayHasPossession && (
+        <Image
+          source={isDark ? FootballLight : Football}
+          style={styles.possession}
+        />
+      )}
 
       <View style={styles.headlineContainer}>
         <Text style={[styles.headlineText]}>{headline}</Text>
@@ -303,10 +295,16 @@ function FootballGradientGameCard({
         )}
       </View>
 
-      <ScoreColumn score={homeScore} record={homeRecord} isWinner={homeWins} hasPossession={homeHasPossession} />
-      
+      <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
+      {inProgress && homeHasPossession && (
+        <Image
+          source={isDark ? FootballLight : Football}
+          style={styles.possession}
+        />
+      )}
 
       <View style={styles.teamSection}>
+        <Image source={homeLogo} style={styles.homeLogo} resizeMode="contain" />
         {homeRank && (
           <BlurView style={styles.homeRankContainer}>
             <Text style={styles.rank}>#{homeRank} </Text>
@@ -337,16 +335,20 @@ function FootballGradientGameCard({
       })}
       accessibilityHint="Opens game details"
     >
-      <GradientGameCardBackground
-        isDark={isDark}
-        isChampionship={Boolean(isChampionship)}
-        awayColor={awayColor}
-        homeColor={homeColor}
-        awayLogo={awayLogo}
-        homeLogo={homeLogo}
+      <LinearGradient
+        colors={getTeamCardGradientColors(
+          isDark,
+          awayColor,
+          homeColor,
+          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
+        )}
+        locations={[0, 0.28, 0.5, 0.72, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.card}
       >
         {renderCardContent()}
-      </GradientGameCardBackground>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
