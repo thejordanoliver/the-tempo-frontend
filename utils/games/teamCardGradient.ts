@@ -54,7 +54,7 @@ export function getTeamCardGradientColors(
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground);
 
-  const edgeStrength = isDark ? 0.32 : 0.2;
+  const edgeStrength = .5;
   const innerStrength = isDark ? 0.09 : 0.06;
 
   return [
