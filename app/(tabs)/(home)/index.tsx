@@ -217,7 +217,7 @@ export default function HomeScreen() {
                   <Text style={styles.emptyText}>You're all caught up.</Text>
                 )}
             </View>
-          ) : null
+          ) : undefined
         }
         refreshControl={refreshControl()}
         showsVerticalScrollIndicator={false}
