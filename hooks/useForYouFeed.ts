@@ -16,35 +16,75 @@ export type ForYouArticle = {
   sport?: string;
 };
 
+export type ForYouPage = {
+  articles: ForYouArticle[];
+  posts: ForumPost[];
+};
+
 type ForYouResponse = {
   success: boolean;
   favoriteLeagues: string[];
   articles: ForYouArticle[];
   posts: ForumPost[];
   predictions?: FeedPrediction[];
+  hasMoreArticles?: boolean;
+  hasMorePosts?: boolean;
+};
+
+const PAGE_SIZE = 20;
+
+type FeedState = {
+  owner: number | null;
+  preferencesKey: string;
+  articles: ForYouArticle[];
+  posts: ForumPost[];
+  pages: ForYouPage[];
+  predictions: FeedPrediction[];
+  favoriteLeagues: string[];
+  newsOffset: number;
+  postsOffset: number;
+  hasMoreArticles: boolean;
+  hasMorePosts: boolean;
+  loading: boolean;
+  loadingMore: boolean;
+  loaded: boolean;
+  error: string | null;
+  loadMoreError: string | null;
 };
 
 const emptyFeed = {
   articles: [] as ForYouArticle[],
   posts: [] as ForumPost[],
+  pages: [] as ForYouPage[],
   predictions: [] as FeedPrediction[],
   favoriteLeagues: [] as string[],
+  newsOffset: 0,
+  postsOffset: 0,
+  hasMoreArticles: false,
+  hasMorePosts: false,
+  loading: false,
+  loadingMore: false,
+  loaded: false,
+  error: null as string | null,
+  loadMoreError: null as string | null,
 };
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Failed to load your personalized feed";
+}
 
 export function useForYouFeed(
   enabled: boolean,
   userId: number | null,
   preferencesKey = "",
 ) {
-  const [feed, setFeed] = useState({
+  const [feed, setFeed] = useState<FeedState>({
     ...emptyFeed,
-    owner: null as number | null,
+    owner: null,
     preferencesKey,
-    loading: false,
-    loaded: false,
-    error: null as string | null,
   });
   const request = useRef<AbortController | null>(null);
+  const loadMoreInFlight = useRef(false);
   const belongsToUser =
     userId != null &&
     feed.owner === userId &&
@@ -52,54 +92,177 @@ export function useForYouFeed(
   const hasLoaded = belongsToUser && feed.loaded;
 
   const fetchFeed = useCallback(async () => {
-    if (userId == null) return;
+    if (!enabled || userId == null) return;
     request.current?.abort();
+    loadMoreInFlight.current = false;
     const controller = new AbortController();
     request.current = controller;
+
     setFeed((previous) => ({
       ...(previous.owner === userId &&
       previous.preferencesKey === preferencesKey
         ? previous
-        : { ...emptyFeed, loaded: false }),
+        : { ...emptyFeed }),
       owner: userId,
       preferencesKey,
       loading: true,
+      loadingMore: false,
       error: null,
+      loadMoreError: null,
     }));
+
     try {
       const { data } = await apiClient.get<ForYouResponse>(
         "/api/feed/for-you",
         {
-          params: { newsLimit: 20, postsLimit: 20 },
+          params: { newsLimit: PAGE_SIZE, postsLimit: PAGE_SIZE },
           signal: controller.signal,
         },
       );
-      if (!data.success)
-        throw new Error("Failed to load your personalized feed");
+      if (!data.success) throw new Error("Failed to load your personalized feed");
       if (controller.signal.aborted) return;
+
+      const articles = data.articles ?? [];
+      const posts = data.posts ?? [];
       setFeed({
         owner: userId,
         preferencesKey,
-        articles: data.articles ?? [],
-        posts: data.posts ?? [],
+        articles,
+        posts,
+        pages: [{ articles, posts }],
         predictions: data.predictions ?? [],
         favoriteLeagues: data.favoriteLeagues ?? [],
+        newsOffset: articles.length,
+        postsOffset: posts.length,
+        hasMoreArticles: data.hasMoreArticles ?? articles.length === PAGE_SIZE,
+        hasMorePosts: data.hasMorePosts ?? posts.length === PAGE_SIZE,
         loading: false,
+        loadingMore: false,
         loaded: true,
         error: null,
+        loadMoreError: null,
       });
     } catch (error: unknown) {
       if (controller.signal.aborted) return;
+      setFeed((previous) =>
+        previous.owner !== userId || previous.preferencesKey !== preferencesKey
+          ? previous
+          : {
+              ...previous,
+              loading: false,
+              error: getErrorMessage(error),
+            },
+      );
+    } finally {
+      if (request.current === controller) request.current = null;
+    }
+  }, [enabled, userId, preferencesKey]);
+
+  const loadMore = useCallback(
+    async (retry = false) => {
+      if (
+        !enabled ||
+        userId == null ||
+        !belongsToUser ||
+        !feed.loaded ||
+        feed.loading ||
+        feed.loadingMore ||
+        (!retry && feed.loadMoreError !== null) ||
+        (!feed.hasMoreArticles && !feed.hasMorePosts) ||
+        request.current ||
+        loadMoreInFlight.current
+      ) {
+        return;
+      }
+
+      loadMoreInFlight.current = true;
+      const controller = new AbortController();
+      request.current = controller;
       setFeed((previous) => ({
         ...previous,
-        loading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to load your personalized feed",
+        loadingMore: true,
+        loadMoreError: null,
       }));
-    }
-  }, [userId, preferencesKey]);
+
+      const newsLimit = feed.hasMoreArticles ? PAGE_SIZE : 0;
+      const postsLimit = feed.hasMorePosts ? PAGE_SIZE : 0;
+
+      try {
+        const { data } = await apiClient.get<ForYouResponse>(
+          "/api/feed/for-you",
+          {
+            params: {
+              newsLimit,
+              postsLimit,
+              newsOffset: feed.newsOffset,
+              postsOffset: feed.postsOffset,
+            },
+            signal: controller.signal,
+          },
+        );
+        if (!data.success) throw new Error("Failed to load more feed items");
+        if (controller.signal.aborted) return;
+
+        setFeed((previous) => {
+          if (
+            previous.owner !== userId ||
+            previous.preferencesKey !== preferencesKey
+          ) return previous;
+
+          const articleIds = new Set(previous.articles.map((item) => item.keyId));
+          const postIds = new Set(previous.posts.map((item) => String(item.id)));
+          const nextArticles = (data.articles ?? []).filter((article) => {
+            if (articleIds.has(article.keyId)) return false;
+            articleIds.add(article.keyId);
+            return true;
+          });
+          const nextPosts = (data.posts ?? []).filter((post) => {
+            const id = String(post.id);
+            if (postIds.has(id)) return false;
+            postIds.add(id);
+            return true;
+          });
+          const hasNewItems = nextArticles.length > 0 || nextPosts.length > 0;
+
+          return {
+            ...previous,
+            articles: [...previous.articles, ...nextArticles],
+            posts: [...previous.posts, ...nextPosts],
+            pages: hasNewItems
+              ? [...previous.pages, { articles: nextArticles, posts: nextPosts }]
+              : previous.pages,
+            newsOffset: previous.newsOffset + (data.articles?.length ?? 0),
+            postsOffset: previous.postsOffset + (data.posts?.length ?? 0),
+            hasMoreArticles:
+              newsLimit > 0 &&
+              nextArticles.length > 0 &&
+              (data.hasMoreArticles ?? (data.articles?.length ?? 0) === PAGE_SIZE),
+            hasMorePosts:
+              postsLimit > 0 &&
+              nextPosts.length > 0 &&
+              (data.hasMorePosts ?? (data.posts?.length ?? 0) === PAGE_SIZE),
+            loadingMore: false,
+            loadMoreError: null,
+          };
+        });
+      } catch (error: unknown) {
+        if (controller.signal.aborted) return;
+        setFeed((previous) =>
+          previous.owner !== userId || previous.preferencesKey !== preferencesKey
+            ? previous
+            : {
+                ...previous,
+                loadingMore: false,
+                loadMoreError: getErrorMessage(error),
+              },
+        );
+      } finally {
+        if (request.current === controller) request.current = null;
+        loadMoreInFlight.current = false;
+      }
+    },
+    [enabled, userId, belongsToUser, feed],
+  );
 
   useEffect(() => {
     if (!enabled || hasLoaded || userId == null) return;
@@ -112,16 +275,20 @@ export function useForYouFeed(
   useEffect(
     () => () => {
       request.current?.abort();
+      loadMoreInFlight.current = false;
     },
-    [userId],
+    [userId, preferencesKey],
   );
 
+  const current = belongsToUser ? feed : emptyFeed;
   return {
-    ...(belongsToUser ? feed : emptyFeed),
+    ...current,
     loading: belongsToUser
-      ? feed.loading || (!feed.loaded && feed.error === null && enabled)
+      ? current.loading || (!current.loaded && current.error === null && enabled)
       : enabled && userId != null,
-    error: belongsToUser ? feed.error : null,
+    error: belongsToUser ? current.error : null,
+    hasMore: current.hasMoreArticles || current.hasMorePosts,
     refresh: fetchFeed,
+    loadMore,
   };
 }
