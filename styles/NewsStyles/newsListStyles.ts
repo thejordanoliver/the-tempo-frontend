@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const newsListStyles = (isDark: boolean) =>
+export const NewsListStyles = (isDark: boolean) =>
   StyleSheet.create({
     list: {
       flex: 1,
