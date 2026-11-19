@@ -131,8 +131,8 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
       <LinearGradient
         colors={getTeamCardGradientColors(isDark)}
         locations={[0, 0.28, 0.5, 0.72, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
         style={styles.card}
       >
         <View style={styles.headlineContainer}>
