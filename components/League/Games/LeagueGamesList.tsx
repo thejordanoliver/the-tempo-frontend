@@ -88,10 +88,22 @@ const isChampionshipGame = (item: HomeGameItem): boolean => {
     "headline" in item.game ? String(item.game.headline ?? "") : "";
   return (
     headline.includes("NBA Finals") ||
+    headline.includes("WNBA Finals") ||
+    headline.includes("Super Bowl") ||
     headline.includes("World Series") ||
-    headline.includes("Finals") ||
-    headline.includes("Championship") ||
-    headline.includes("Final")
+    headline.includes("Stanley Cup Final") ||
+    headline?.includes("NBA Summer League - Final") ||
+    headline?.includes("NCAA Men's Hockey National Championship") ||
+    headline?.includes("NCAA Women's Ice Hockey Championship") ||
+    headline?.includes("Men's College World Series Championship Final") ||
+    headline?.includes("Women's College World Series Championship Finals") ||
+    headline?.includes("College Football Playoff National Championship ") ||
+    headline?.includes(
+      "Men's Basketball Championship - National Championship",
+    ) ||
+    headline?.includes(
+      "Women's Basketball Championship - National Championship",
+    )
   );
 };
 
@@ -428,7 +440,7 @@ export default function LeagueGamesList({
   const visibleSections = regularSections.filter(
     (section) => section.data.length > 0,
   );
-  
+
   const previewLeague = previewItem?.league;
   const previewGame = previewItem?.game;
 

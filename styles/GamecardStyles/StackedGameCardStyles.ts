@@ -26,6 +26,7 @@ export const stackedGameCardStyles = (
   return StyleSheet.create({
     card: {
       flex: 1,
+      overflow: "hidden",
       flexDirection: "row",
       justifyContent: "space-between",
       minHeight: 94,

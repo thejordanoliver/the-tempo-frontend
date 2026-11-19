@@ -18,6 +18,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        🧱 LAYOUT
     ========================= */
     card: {
+      overflow:"hidden",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
