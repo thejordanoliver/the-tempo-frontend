@@ -80,7 +80,7 @@ export default function ChampionshipBanner({
             ? `x${displayValue}`
             : league === "nfl"
               ? String(displayValue)
-              : String(displayValue);
+              : displayValue;
 
         let label = `${league.toUpperCase()} CHAMPIONS`;
 
