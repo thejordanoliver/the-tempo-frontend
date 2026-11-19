@@ -5,7 +5,7 @@ import PostItemSkeleton from "components/Forum/PostItemSkeleton";
 import NewsCard from "components/News/NewsCard";
 import NewsCardSkeleton from "components/Skeletons/NewsCardSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import type { ForYouArticle } from "hooks/useForYouFeed";
+import type { ForYouArticle, ForYouPage } from "hooks/useForYouFeed";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { FeedPrediction } from "types/fanPredictions";
@@ -16,6 +16,7 @@ type ForYouFeedProps = {
   articles: ForYouArticle[];
   predictions: FeedPrediction[];
   posts: ForumPost[];
+  pages: ForYouPage[];
   favoriteLeagues: string[];
   currentUserId: number | null;
   loading: boolean;
@@ -39,6 +40,7 @@ export default function ForYouFeed({
   articles,
   predictions,
   posts,
+  pages,
   favoriteLeagues,
   currentUserId,
   loading,
@@ -48,34 +50,39 @@ export default function ForYouFeed({
   const styles = useMemo(() => forYouFeedStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const feed = useMemo<FeedItem[]>(() => {
-    const articleItems = articles.map((article) => ({
-      kind: "article" as const,
-      date: article.published,
-      article,
-    }));
-    const postItems = posts.map((post) => ({
-      kind: "post" as const,
-      date: post.created_at,
-      post,
-    }));
-    const items: FeedItem[] =
-      favoriteLeagues.length === 0
-        ? Array.from(
-            { length: Math.max(articleItems.length, postItems.length) },
-            (_, index) =>
-              [articleItems[index], postItems[index]].filter(
-                (item): item is NonNullable<typeof item> => Boolean(item),
-              ),
-          ).flat()
-        : [...articleItems, ...postItems].sort(
-            (first, second) =>
-              getTimestamp(second.date) - getTimestamp(first.date),
-          );
+    // Sort inside each fetched page, but never move previously rendered cards
+    // when older pages arrive. This keeps scroll position and card identity stable.
+    const content = (pages.length > 0 ? pages : [{ articles, posts }]).flatMap(
+      (page): FeedItem[] => {
+        const articleItems = page.articles.map((article) => ({
+          kind: "article" as const,
+          date: article.published,
+          article,
+        }));
+        const postItems = page.posts.map((post) => ({
+          kind: "post" as const,
+          date: post.created_at,
+          post,
+        }));
+        return favoriteLeagues.length === 0
+          ? Array.from(
+              { length: Math.max(articleItems.length, postItems.length) },
+              (_, index) =>
+                [articleItems[index], postItems[index]].filter(
+                  (item): item is NonNullable<typeof item> => Boolean(item),
+                ),
+            ).flat()
+          : [...articleItems, ...postItems].sort(
+              (first, second) =>
+                getTimestamp(second.date) - getTimestamp(first.date),
+            );
+      },
+    );
     return interleavePredictions<FeedItem>(
-      items,
+      content,
       predictions.map((prediction) => ({ kind: "prediction", prediction })),
     );
-  }, [articles, posts, predictions, favoriteLeagues.length]);
+  }, [pages, articles, posts, predictions, favoriteLeagues.length]);
 
   if (loading && feed.length === 0) {
     return (
