@@ -74,16 +74,13 @@ export default function ChampionshipBanner({
   return (
     <View style={styles.wrapper}>
       {bannerList.map(({ season, displayValue, isCount }, index) => {
-        const yearShort = isNone
+        const year = isNone
           ? "NONE"
           : isCount
             ? `x${displayValue}`
             : league === "nfl"
               ? String(displayValue)
-              : typeof displayValue === "number" ||
-                  !Number.isNaN(Number(displayValue))
-                ? `'${String(displayValue).slice(-2)}`
-                : String(displayValue);
+              : String(displayValue);
 
         let label = `${league.toUpperCase()} CHAMPIONS`;
 
@@ -136,7 +133,7 @@ export default function ChampionshipBanner({
 
             <View style={styles.contentOverlay}>
               <Text style={styles.leagueLabel}>{label}</Text>
-              <Text style={styles.yearText}>{yearShort}</Text>
+              <Text style={styles.yearText}>{year}</Text>
 
               <Image
                 source={teamLogo || PlaceholderLogo}
