@@ -230,6 +230,16 @@ export const winnerStyle = ({
   isTie?: boolean;
   isDark: boolean;
 }) => ({
-  color: isDark ? Colors.white : Colors.black,
-  opacity: isTie ? 1 : isWinner ? 1 : 0.5,
+  color:
+    isDark && isWinner
+      ? Colors.white
+      : isWinner
+        ? Colors.black
+        : isDark && isTie
+          ? Colors.white
+          : isTie
+            ? Colors.black
+            : isDark
+              ? Colors.lightGray
+              : Colors.darkGray,
 });
