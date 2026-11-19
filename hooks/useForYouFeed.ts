@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { FeedPrediction } from "types/fanPredictions";
 import type { ForumPost } from "types/forum";
 import { apiClient } from "utils/apiClient";
+import { onlyNewItems } from "utils/explore/forYouFeed";
 
 export type ForYouArticle = {
   id: number;
@@ -31,7 +32,7 @@ type ForYouResponse = {
   hasMorePosts?: boolean;
 };
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 12;
 
 type FeedState = {
   owner: number | null;
@@ -209,19 +210,16 @@ export function useForYouFeed(
             previous.preferencesKey !== preferencesKey
           ) return previous;
 
-          const articleIds = new Set(previous.articles.map((item) => item.keyId));
-          const postIds = new Set(previous.posts.map((item) => String(item.id)));
-          const nextArticles = (data.articles ?? []).filter((article) => {
-            if (articleIds.has(article.keyId)) return false;
-            articleIds.add(article.keyId);
-            return true;
-          });
-          const nextPosts = (data.posts ?? []).filter((post) => {
-            const id = String(post.id);
-            if (postIds.has(id)) return false;
-            postIds.add(id);
-            return true;
-          });
+          const nextArticles = onlyNewItems(
+            previous.articles,
+            data.articles ?? [],
+            (article) => article.keyId,
+          );
+          const nextPosts = onlyNewItems(
+            previous.posts,
+            data.posts ?? [],
+            (post) => String(post.id),
+          );
           const hasNewItems = nextArticles.length > 0 || nextPosts.length > 0;
 
           return {
