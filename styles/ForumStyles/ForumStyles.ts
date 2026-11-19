@@ -17,6 +17,12 @@ export function ForumStyles(
       paddingBottom: bottomSpacing,
     },
 
+    scrollSkeletonContainer: {
+      flexGrow: 1,
+      paddingHorizontal: 12,
+      paddingBottom: bottomSpacing,
+    },
+
     embeddedContent: {
       paddingBottom: showCreateButton ? bottomSpacing : 24,
     },

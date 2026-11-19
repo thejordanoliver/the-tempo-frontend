@@ -91,7 +91,7 @@ function getStyles(isDark: boolean) {
   return StyleSheet.create({
     containerWrapper: {
       paddingTop: 12,
-      paddingHorizontal: 12,
+     
     },
     postContainer: {
       paddingVertical: 10,

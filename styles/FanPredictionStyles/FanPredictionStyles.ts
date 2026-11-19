@@ -172,18 +172,13 @@ export const FanPredictionStyles = (isDark: boolean) =>
       minHeight: 36,
       paddingHorizontal: 6,
       paddingVertical: 7,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.dark.gray : Colors.light.gray,
-      borderRadius: 6,
-      backgroundColor: isDark
-        ? Colors.dark.transparentBackground
-        : Colors.light.transparentBackground,
+     
+     
     },
     matchupActionText: {
       flexShrink: 1,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 12,
-      lineHeight: 18,
+      fontFamily: Fonts.BOLD,
+      fontSize: 20,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     selectionRing: {

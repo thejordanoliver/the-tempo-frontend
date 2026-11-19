@@ -1,5 +1,5 @@
-import FanPredictionSkeleton from "components/Skeletons/GameDetails/FanPredictionSkeleton";
 import { Ionicons } from "@expo/vector-icons";
+import FanPredictionSkeleton from "components/Skeletons/GameDetails/FanPredictionSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
@@ -22,6 +22,7 @@ type Props = FanPredictionInput & {
   awayColor?: string | null;
   homeLogo: ImageProps["source"] | string;
   homeColor?: string | null;
+  showHeader: boolean;
   children?: ReactNode;
 };
 
@@ -31,6 +32,7 @@ export default function FanPrediction(props: Props) {
 
 function FanPredictionContent(props: Props) {
   const {
+    showHeader,
     awayId,
     awayCode = "AWY",
     awayLogo,
@@ -101,7 +103,7 @@ function FanPredictionContent(props: Props) {
 
   if (phase === "error") {
     return (
-      <FanPredictionSection>
+      <FanPredictionSection showHeader={showHeader}>
         {children}
         <Text style={global.errorText}>
           {errorMessage ?? "We couldn't load this poll."}
@@ -112,7 +114,7 @@ function FanPredictionContent(props: Props) {
   }
 
   return (
-    <FanPredictionSection>
+    <FanPredictionSection showHeader={showHeader}>
       {children}
       <FanPredictionHeader
         isDark={isDark}

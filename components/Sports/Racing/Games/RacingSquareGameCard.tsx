@@ -1,10 +1,10 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { RacingDriver, RacingEventCardProps } from "@/types/racing/racing";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -128,10 +128,14 @@ export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
   };
 
   return (
-    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+    >
       <LinearGradient
         colors={getTeamCardGradientColors(isDark)}
-        locations={[0, 0.28, 0.5, 0.72, 1]}
+        locations={[0, 0.4, 0.5, 0.6, 1]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.card}

@@ -11,7 +11,6 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
 import { LinearGradient } from "expo-linear-gradient";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -27,6 +26,7 @@ import {
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import Football from "../../../../assets/icons/Football.png";
 import FootballLight from "../../../../assets/icons/FootballLight.png";
 
@@ -38,8 +38,10 @@ function FootballSquareGameCard({
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor ?? undefined;
-  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor ?? undefined;
+  const awayColor =
+    game.away?.primaryColor ?? game.away?.secondaryColor ?? undefined;
+  const homeColor =
+    game.home?.primaryColor ?? game.home?.secondaryColor ?? undefined;
   const handlePress = () => {
     router.push({
       pathname: "/game/football/[game]",
@@ -336,7 +338,7 @@ function FootballSquareGameCard({
           homeColor,
           isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
         )}
-        locations={[0, 0.28, 0.5, 0.72, 1]}
+        locations={[0, 0.4, 0.5, 0.6, 1]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.card}

@@ -9,7 +9,6 @@ import { activeOpacity } from "constants/styles";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -21,13 +20,16 @@ import {
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor ?? undefined;
-  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor ?? undefined;
+  const awayColor =
+    game.away?.primaryColor ?? game.away?.secondaryColor ?? undefined;
+  const homeColor =
+    game.home?.primaryColor ?? game.home?.secondaryColor ?? undefined;
   const handlePress = () => {
     router.push({
       pathname: "/game/hockey/[game]",
@@ -249,7 +251,7 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
           homeColor,
           isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
         )}
-        locations={[0, 0.28, 0.5, 0.72, 1]}
+        locations={[0, 0.4, 0.5, 0.6, 1]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.card}

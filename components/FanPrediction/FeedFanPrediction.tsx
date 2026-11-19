@@ -60,6 +60,7 @@ export default function FeedFanPrediction({
     <View style={styles.container}>
       <FanPrediction
         {...input}
+        showHeader={false}
         awayLogo={teamLogo(game.away)}
         awayColor={teamColor(game.away)}
         homeLogo={teamLogo(game.home)}

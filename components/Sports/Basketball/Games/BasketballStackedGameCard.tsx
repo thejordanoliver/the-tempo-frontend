@@ -300,7 +300,7 @@ export default function BasketballStackedGameCard({
           homeColor,
           isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
         )}
-        locations={[0, 0.28, 0.5, 0.72, 1]}
+        locations={[0, 0.4, 0.5, 0.6, 1]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.card}
