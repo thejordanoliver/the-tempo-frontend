@@ -1,11 +1,11 @@
-import { usePreferences } from "@/contexts/PreferencesContext";
+import { ChampionshipBannerStyles } from "@/styles/TeamStyles/ChampionshipBannerStyles";
 import type { Championships } from "@/types/team";
 import Fill from "assets/banners/Fill.png";
 import Outline from "assets/banners/Outline.png";
 import OutlineLight from "assets/banners/OutlineLight.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { Colors, Fonts } from "constants/styles";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Colors } from "constants/styles";
+import { Image, Text, View } from "react-native";
 
 type Props = {
   championships: Championships[] | undefined;
@@ -38,9 +38,7 @@ export default function ChampionshipBanner({
   teamLogo,
   league = "nba",
 }: Props) {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  const styles = ChampionshipBannerStyles(isDark);
+  const styles = ChampionshipBannerStyles;
 
   if (!teamId) {
     console.warn(
@@ -146,62 +144,3 @@ export default function ChampionshipBanner({
     </View>
   );
 }
-
-const ChampionshipBannerStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    wrapper: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "center",
-      gap: 12,
-      marginVertical: 16,
-    },
-
-    bannerWrapper: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 120,
-      height: 165,
-    },
-
-    bannerFill: {
-      position: "absolute",
-      width: "100%",
-      height: "100%",
-    },
-
-    bannerOutline: {
-      position: "absolute",
-      width: "100%",
-      height: "100%",
-    },
-
-    contentOverlay: {
-      position: "absolute",
-      top: 16,
-      alignItems: "center",
-      width: "100%",
-    },
-
-    yearText: {
-      marginTop: 4,
-      fontFamily: Fonts.BOLD,
-      fontSize: 22,
-      color: Colors.white,
-    },
-
-    teamLogo: {
-      width: 40,
-      height: 40,
-      marginTop: 8,
-      resizeMode: "contain",
-    },
-
-    leagueLabel: {
-      width: 100,
-      fontFamily: Fonts.BOLD,
-      fontSize: 12,
-      color: Colors.white,
-      textAlign: "center",
-    },
-  });
