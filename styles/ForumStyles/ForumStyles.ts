@@ -16,6 +16,11 @@ export function ForumStyles(
       flexGrow: 1,
       paddingBottom: bottomSpacing,
     },
+    scrollSkeltonContainer: {
+      flexGrow: 1,
+      paddingHorizontal: 12,
+      paddingBottom: bottomSpacing,
+    },
 
     scrollSkeletonContainer: {
       flexGrow: 1,

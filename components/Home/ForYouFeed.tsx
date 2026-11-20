@@ -138,6 +138,7 @@ export default function ForYouFeed({
               key={`prediction-${item.prediction.sport}-${item.prediction.league}-${item.prediction.gameId}`}
               game={item.prediction}
               isDark={isDark}
+              showHeader={false}
             />
           );
         }

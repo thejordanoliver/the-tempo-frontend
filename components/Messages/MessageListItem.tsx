@@ -1,9 +1,9 @@
+import { MessageListItemStyles } from "@/styles/MessageStyles/MessageListItemStyles";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts, PLACEHOLDER_AVATAR } from "constants/styles";
+import { Colors, PLACEHOLDER_AVATAR } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-
 import { useCallback, useMemo, useRef } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import ReanimatedSwipeable, {
   type SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -90,8 +90,7 @@ export default function MessageListItem({
   const canDelete = Boolean(onDelete) && query.trim().length === 0;
   const canPin = Boolean(onTogglePin);
 
-  const displayUsername = item.username || "Tempo User";
-  const displayName = item.fullName || item.full_name || "Sports fan";
+  const displayUsername = item.username;
   const lastMessage = item.lastMessage || "Start a conversation";
   const timestamp = formatConversationTimestamp(item);
 
@@ -208,7 +207,7 @@ export default function MessageListItem({
             accessibilityRole="button"
             accessibilityLabel={`Open conversation with ${displayUsername}`}
           >
-            <View style={styles.headshotContainer}>
+            <View style={styles.avatarContainer}>
               <Image
                 source={{ uri: profileImageUrl }}
                 style={styles.avatar}
@@ -243,10 +242,6 @@ export default function MessageListItem({
                 )}
               </View>
 
-              <Text style={styles.fullName} numberOfLines={1}>
-                {displayName}
-              </Text>
-
               <Text style={styles.lastMessage} numberOfLines={1}>
                 {lastMessage}
               </Text>
@@ -273,144 +268,3 @@ export default function MessageListItem({
     </Animated.View>
   );
 }
-
-const MessageListItemStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    swipeContainer: {
-      marginBottom: 10,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.midTone : Colors.lightGray,
-      borderRadius: 18,
-      overflow: "hidden",
-    },
-
-    rowContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      minHeight: 82,
-      paddingHorizontal: 12,
-      paddingVertical: 12,
-      backgroundColor: isDark ? Colors.black : Colors.white,
-    },
-
-    headshotContainer: {
-      width: 50,
-      height: 50,
-      marginRight: 12,
-      borderRadius: 25,
-    },
-
-    avatar: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-
-    onlineDot: {
-      position: "absolute",
-      right: 1,
-      bottom: 1,
-      width: 13,
-      height: 13,
-      borderWidth: 2,
-      borderColor: isDark ? Colors.black : Colors.white,
-      borderRadius: 7,
-      backgroundColor: Colors.dark.leafGreen,
-    },
-
-    middleContent: {
-      flex: 1,
-      justifyContent: "center",
-      minWidth: 0,
-    },
-
-    nameRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      minWidth: 0,
-    },
-
-    username: {
-      maxWidth: "82%",
-      fontFamily: Fonts.BOLD,
-      fontSize: 15,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-    },
-
-    inlineIcon: {
-      marginLeft: 5,
-    },
-
-    fullName: {
-      marginTop: 2,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 13,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
-    lastMessage: {
-      marginTop: 3,
-      opacity: 0.72,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 13,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    metaContent: {
-      alignItems: "flex-end",
-      justifyContent: "center",
-      minWidth: 48,
-      marginLeft: 10,
-    },
-
-    timestamp: {
-      marginBottom: 8,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 11,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
-    unreadBadge: {
-      alignItems: "center",
-      justifyContent: "center",
-      height: 22,
-      minWidth: 22,
-      paddingHorizontal: 7,
-      borderRadius: 11,
-      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-    },
-
-    unreadText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 11,
-      color: Colors.white,
-    },
-
-    actionContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 92,
-      height: "100%",
-    },
-
-    pinAction: {
-      backgroundColor: isDark ? Colors.dark.orange : Colors.light.orange,
-    },
-
-    deleteAction: {
-      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-    },
-
-    actionText: {
-      marginTop: 4,
-      fontFamily: Fonts.BOLD,
-      fontSize: 12,
-      color: Colors.white,
-    },
-    pressed: {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-  });

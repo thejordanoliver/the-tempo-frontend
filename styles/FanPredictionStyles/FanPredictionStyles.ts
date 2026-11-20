@@ -170,10 +170,7 @@ export const FanPredictionStyles = (isDark: boolean) =>
       justifyContent: "center",
       gap: 6,
       minHeight: 36,
-      paddingHorizontal: 6,
-      paddingVertical: 7,
-     
-     
+      padding: 6,
     },
     matchupActionText: {
       flexShrink: 1,

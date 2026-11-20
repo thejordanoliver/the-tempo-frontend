@@ -38,7 +38,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
+import { RosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 
 export default function RosterStats({
   rosterStats,
@@ -54,7 +54,7 @@ export default function RosterStats({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = useMemo(() => rosterStatsStyles(isDark), [isDark]);
+  const styles = useMemo(() => RosterStatsStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0].value);
@@ -141,7 +141,8 @@ export default function RosterStats({
   }) => {
     return (
       <View style={styles.cardWrapper}>
-        <TouchableOpacity accessibilityRole="button"
+        <TouchableOpacity
+          accessibilityRole="button"
           activeOpacity={activeOpacity}
           onPress={() => handlePress(player.playerId)}
           style={styles.cardContainer}
@@ -238,7 +239,8 @@ export default function RosterStats({
                   },
                 ]}
               >
-                <TouchableOpacity accessibilityRole="button"
+                <TouchableOpacity
+                  accessibilityRole="button"
                   activeOpacity={activeOpacity}
                   onPress={() => handlePress(player.playerId)}
                   style={[styles.tableCell, { width: 140 }]}

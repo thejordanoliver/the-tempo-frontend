@@ -17,6 +17,8 @@ export default function TeamInfo({
 }: Props) {
   if (!teamId) return null;
 
+  const styles = TeamInfoStyles
+
   const coachName = `${teamDetails?.coach?.firstName ?? ""} ${
     teamDetails?.coach?.lastName ?? ""
   }`.trim();
@@ -69,7 +71,7 @@ export default function TeamInfo({
   );
 }
 
-const styles = StyleSheet.create({
+export const TeamInfoStyles = StyleSheet.create({
   infoCardContainer: {
     width: "100%",
   },

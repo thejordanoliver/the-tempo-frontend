@@ -40,6 +40,7 @@ export default function NewsList({
       </View>
     );
   }
+  
   if (error) {
     return (
       <View style={global.emptyContainer}>

@@ -178,7 +178,7 @@ export default function Forum({
 
   if (isInitialLoading) {
     return scrollEnabled ? (
-      <ScrollView contentContainerStyle={styles.scrollSkeletonContainer}>
+      <ScrollView contentContainerStyle={styles.scrollSkeltonContainer}>
         {renderSkeletons()}
       </ScrollView>
     ) : (

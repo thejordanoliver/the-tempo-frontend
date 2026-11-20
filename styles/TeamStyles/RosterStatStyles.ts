@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 const PLAYER_NAME_WIDTH = 140;
 const STAT_CELL_WIDTH = 80;
 
-export const rosterStatsStyles = (isDark: boolean) =>
+export const RosterStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
     center: {
       alignItems: "center",
