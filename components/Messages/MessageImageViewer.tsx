@@ -1,3 +1,4 @@
+import { MessageImageViewerStyles } from "@/styles/MessageStyles/MessageImageViewerStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
@@ -13,6 +14,8 @@ type Props = {
 };
 
 export default function MessageImageViewer({ attachment, onClose }: Props) {
+  const styles = MessageImageViewerStyles;
+
   return (
     <Modal
       visible
@@ -50,22 +53,3 @@ export default function MessageImageViewer({ attachment, onClose }: Props) {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.transparentBlack,
-  },
-  toolbar: {
-    alignItems: "flex-end",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  closeButton: {
-    padding: 8,
-  },
-  image: {
-    flex: 1,
-    width: "100%",
-  },
-});

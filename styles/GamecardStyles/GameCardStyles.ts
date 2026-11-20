@@ -2,6 +2,9 @@ import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
+  const bgColor = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
@@ -18,16 +21,14 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        🧱 LAYOUT
     ========================= */
     card: {
-      overflow:"hidden",
+      overflow: "hidden",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       padding: 8,
       minHeight: 80,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+      backgroundColor: bgColor,
     },
 
     info: {
@@ -282,7 +283,10 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
   });
 };
 
-export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
+export const RacingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
+  const bgColor = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
@@ -304,9 +308,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       minWidth: 0,
       padding: 8,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+      backgroundColor: bgColor,
     },
 
     cardHeader: {

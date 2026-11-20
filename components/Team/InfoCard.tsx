@@ -1,8 +1,8 @@
-import { Colors, Fonts } from "constants/styles";
+import { InfoCardStyles } from "@/styles/TeamStyles/InfoCardStyles";
+import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { ReactNode } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { getContrastingTextColor } from "utils/ui/color";
+import { Text, View } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
 
 type Props = {
@@ -18,7 +18,7 @@ export default function InfoCard({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = InfoCardStyles(isDark, teamColor);
+  const styles = InfoCardStyles(teamColor);
   let formattedValue: string | ReactNode;
 
   if (Array.isArray(value)) {
@@ -43,27 +43,3 @@ export default function InfoCard({
     </>
   );
 }
-
-export const InfoCardStyles = (isDark: boolean, teamColor: string) =>
-  StyleSheet.create({
-    cardContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: "100%",
-      height: 80,
-      marginBottom: 12,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 8,
-      backgroundColor: teamColor ?? Colors.midTone,
-    },
-    value: {
-      flex: 1,
-      flexShrink: 1,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: getContrastingTextColor(teamColor),
-    },
-  });

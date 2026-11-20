@@ -5,6 +5,9 @@ export const stackedGameCardStyles = (
   isDark: boolean,
   isChampionship?: boolean,
 ) => {
+  const bgColor = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
@@ -34,9 +37,7 @@ export const stackedGameCardStyles = (
       paddingTop: 22,
       paddingBottom: 12,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+      backgroundColor: bgColor,
     },
     cardWrapper: {
       flex: 1,

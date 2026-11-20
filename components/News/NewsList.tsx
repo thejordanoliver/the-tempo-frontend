@@ -27,7 +27,7 @@ export default function NewsList({
   isDark,
 }: NewsHighlightsListProps) {
   const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = NewsListStyles(isDark);
+  const styles = NewsListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const userHasScrolled = useRef(false);
 
@@ -40,6 +40,7 @@ export default function NewsList({
       </View>
     );
   }
+  
   if (error) {
     return (
       <View style={global.emptyContainer}>
