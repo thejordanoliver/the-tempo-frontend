@@ -1,7 +1,13 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CFB/RecruitCard.tsx
 import { getMCBBTeamLogo } from "@/constants/teamsMCBB";
-import { RecruitPredictedSchool } from "@/hooks/RecruitHooks/useAllRecruits";
+import type { RecruitPredictedSchool } from "@/types/recruiting/players";
+import {
+  getRecruitRanking,
+  getRecruitStatus,
+  formatRecruitRating,
+  type RecruitRankingSource,
+} from "utils/recruiting/recruits";
 import { Recruit } from "@/types/recruiting/players";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
@@ -26,10 +32,11 @@ type Props = {
   recruit: Recruit;
   league: "mcbb" | "cfb";
   index: number;
+  rankingSource?: RecruitRankingSource;
 };
 
 type LogoDisplayItem = {
-  teamId: number;
+  teamId: number | null;
   teamName: string;
   logo: ImageSourcePropType;
 };
@@ -76,7 +83,12 @@ function getTopTiedPredictions(
   );
 }
 
-export default function RecruitCard({ recruit, index, league }: Props) {
+export default function RecruitCard({
+  recruit,
+  index,
+  league,
+  rankingSource = "industry",
+}: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => recruitCardStyles(isDark), [isDark]);
@@ -92,7 +104,8 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     [sortedPredictions],
   );
 
-  const isCommittedOrSigned = recruit.is_signed || recruit.is_committed;
+  const isCommittedOrSigned =
+    recruit.is_enrolled || recruit.is_signed || recruit.is_committed;
 
   const isPredictionTie =
     !isCommittedOrSigned &&
@@ -105,14 +118,13 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     if (isCommittedOrSigned) {
       const committedTeamId = recruit.committed_team_id;
 
-      if (!committedTeamId) {
-        return [];
-      }
-
-      const logo =
-        league === "cfb"
+      const logo = committedTeamId
+        ? league === "cfb"
           ? getCFBTeamLogo(committedTeamId, isDark)
-          : getMCBBTeamLogo(committedTeamId, isDark);
+          : getMCBBTeamLogo(committedTeamId, isDark)
+        : recruit.committed_school_logo_url
+          ? { uri: recruit.committed_school_logo_url }
+          : null;
 
       if (!logo) {
         return [];
@@ -135,7 +147,10 @@ export default function RecruitCard({ recruit, index, league }: Props) {
             return null;
           }
 
-          const logo = getCFBTeamLogo(prediction.team_id, isDark);
+          const logo =
+            league === "cfb"
+              ? getCFBTeamLogo(prediction.team_id, isDark)
+              : getMCBBTeamLogo(prediction.team_id, isDark);
 
           if (!logo) {
             return null;
@@ -147,7 +162,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
             logo,
           };
         })
-        .filter((item): item is LogoDisplayItem => Boolean(item));
+        .filter((item): item is NonNullable<typeof item> => Boolean(item));
     }
 
     const teamId = primaryPrediction?.team_id || recruit.predicted_team_id;
@@ -179,6 +194,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     isPredictionTie,
     recruit.committed_team_id,
     recruit.committed_team_name,
+    recruit.committed_school_logo_url,
     recruit.predicted_team_id,
     recruit.predicted_team_name,
     sortedPredictions,
@@ -194,31 +210,32 @@ export default function RecruitCard({ recruit, index, league }: Props) {
       Animated.timing(slideX, {
         toValue: 0,
         duration: 650,
-        delay: index * 60,
+        delay: Math.min(index, 8) * 60,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
       Animated.timing(fade, {
         toValue: 1,
         duration: 650,
-        delay: index * 60,
+        delay: Math.min(index, 8) * 60,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
     ]).start();
   }, [fade, index, slideX]);
 
-  const starCount = recruit.stars ?? 0;
+  const ranking = getRecruitRanking(recruit, rankingSource);
+  const starCount = ranking.stars ?? 0;
   const isFiveStar = starCount === 5;
   const avatar = recruit.image_url;
 
   const nationalRankLabel =
-    recruit.national_rank === null ? "NR" : `#${recruit.national_rank}`;
+    ranking.national == null ? "NR" : `#${ranking.national}`;
 
-  const nationalRankValue = recruit.national_rank ?? "—";
-  const positionRankValue = recruit.position_rank ?? "—";
-  const stateRankValue = recruit.state_rank ?? "—";
-  const scoreValue = recruit.score ?? "—";
+  const nationalRankValue = ranking.national ?? "—";
+  const positionRankValue = ranking.position ?? "—";
+  const stateRankValue = ranking.state ?? "—";
+  const scoreValue = formatRecruitRating(ranking.rating);
   const highSchoolValue = recruit.high_school ?? "High school unavailable";
   const heightValue = recruit.height ?? "—";
   const weightValue = recruit.weight ? `${recruit.weight} lbs` : "—";
@@ -226,13 +243,15 @@ export default function RecruitCard({ recruit, index, league }: Props) {
   return (
     <View style={styles.cardWrapper}>
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={`Open ${recruit.name}`}
         activeOpacity={activeOpacity}
         onPress={() =>
           router.push({
             pathname: "/recruit/[id]",
             params: {
               id: recruit.id,
-              teamId: recruit.committed_team_id,
+              teamId: recruit.committed_team_id ?? undefined,
               league: league,
             },
           })
@@ -324,7 +343,10 @@ export default function RecruitCard({ recruit, index, league }: Props) {
           </View>
 
           <View style={styles.contentRow}>
-            <Text style={styles.subText}>Nat {nationalRankValue}</Text>
+            <Text style={styles.subText}>
+              {rankingSource === "industry" ? "Industry" : "On3"} · Nat{" "}
+              {nationalRankValue}
+            </Text>
 
             <View style={styles.divider} />
 
@@ -360,7 +382,10 @@ export default function RecruitCard({ recruit, index, league }: Props) {
 
             <View style={styles.divider} />
 
-            <Text style={styles.subText}>{scoreValue}</Text>
+            <Text style={styles.subText}>
+              {ranking.stars === null ? "Unrated · " : ""}
+              {scoreValue}
+            </Text>
           </View>
 
           <View style={styles.contentRow}>
@@ -380,21 +405,16 @@ export default function RecruitCard({ recruit, index, league }: Props) {
             <Text style={styles.subText}>{weightValue}</Text>
           </View>
 
-          {recruit.is_signed && (
-            <Text style={styles.commitText}>
-              Signed: {recruit.committed_team_name ?? "Unknown team"}
-            </Text>
-          )}
-
-          {recruit.is_committed && !recruit.is_signed && (
-            <Text style={styles.commitText}>
-              Committed: {recruit.committed_team_name ?? "Unknown team"}
-            </Text>
-          )}
-
-          {!isCommittedOrSigned && (
-            <Text style={styles.uncommittedText}>Uncommitted</Text>
-          )}
+          <Text
+            style={
+              isCommittedOrSigned ? styles.commitText : styles.uncommittedText
+            }
+          >
+            {getRecruitStatus(recruit)}
+            {isCommittedOrSigned
+              ? ` · ${recruit.committed_team_name ?? "School unavailable"}`
+              : ""}
+          </Text>
         </View>
       </TouchableOpacity>
     </View>
