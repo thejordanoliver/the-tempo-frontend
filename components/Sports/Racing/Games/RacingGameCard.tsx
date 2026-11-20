@@ -4,6 +4,8 @@ import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
+import { LinearGradient } from "expo-linear-gradient";
+import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { RacingCardStyles } from "styles/GamecardStyles/GameCardStyles";

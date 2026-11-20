@@ -24,7 +24,6 @@ type Props = FanPredictionInput & {
   homeColor?: string | null;
   showHeader: boolean;
   children?: ReactNode;
-  showHeader: boolean;
 };
 
 export default function FanPrediction(props: Props) {
@@ -33,7 +32,6 @@ export default function FanPrediction(props: Props) {
 
 function FanPredictionContent(props: Props) {
   const {
-    showHeader,
     awayId,
     awayCode = "AWY",
     awayLogo,

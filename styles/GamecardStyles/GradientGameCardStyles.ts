@@ -6,15 +6,10 @@ export const GradientGameCardStyles = (
   isChampionship?: boolean,
 ) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
-
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
-
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
-
   const borderColor = isDark ? Colors.lightGray : Colors.darkGray;
-
   const liveColor = isDark ? Colors.dark.limeGreen : Colors.light.green;
-
   const headlineColor = isChampionship
     ? isDark
       ? Colors.white
