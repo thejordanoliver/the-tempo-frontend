@@ -1,3 +1,4 @@
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   getCFBRivalry,
   getCFBTeam,
@@ -9,7 +10,6 @@ import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -21,7 +21,6 @@ import {
   getHolidayLabel,
   safeDate,
 } from "utils/common/dateUtils";
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   formatPeriod,
   getBroadcastDisplay,
@@ -59,12 +58,6 @@ function FootballGameCard({
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
 
-  const homeName = game.home?.shortName ?? game.home?.name;
-  const awayName = game.away?.shortName ?? game.away?.name;
-
-  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor;
-  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor;
-
   const home =
     (isNFL
       ? getNFLTeam(homeId)
@@ -77,6 +70,9 @@ function FootballGameCard({
       : isCFB
         ? getCFBTeam(awayId)
         : getUFLTeam(awayId)) ?? emptyAwayTeam;
+
+  const homeName = game.home?.shortName ?? game.home?.name;
+  const awayName = game.away?.shortName ?? game.away?.name;
 
   const homeLogo =
     home.id === emptyHomeTeam.id
@@ -256,7 +252,7 @@ function FootballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-                <Image source={awayLogo} style={styles.logo} resizeMode="contain" />
+        <Image source={awayLogo} style={styles.logo} resizeMode="contain" />
 
         <Text
           style={styles.teamName}
@@ -302,7 +298,7 @@ function FootballGameCard({
       </View>
 
       <View style={styles.teamSection}>
-                <Image source={homeLogo} style={styles.logo} resizeMode="contain" />
+        <Image source={homeLogo} style={styles.logo} resizeMode="contain" />
         <Text
           style={styles.teamName}
           numberOfLines={1}
@@ -329,20 +325,22 @@ function FootballGameCard({
       })}
       accessibilityHint="Opens game details"
     >
-      <LinearGradient
-        colors={getTeamCardGradientColors(
-          isDark,
-          awayColor,
-          homeColor,
-          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
-        )}
-        locations={[0, 0.28, 0.5, 0.72, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={styles.card}
-      >
-        {renderCardContent()}
-      </LinearGradient>
+      {isChampionship ? (
+        <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#dbb145ff", "#CDA765"] as [string, string])
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>{renderCardContent()}</View>
+      )}
     </TouchableOpacity>
   );
 }

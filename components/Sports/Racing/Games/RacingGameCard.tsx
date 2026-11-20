@@ -4,8 +4,6 @@ import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { LinearGradient } from "expo-linear-gradient";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { RacingCardStyles } from "styles/GamecardStyles/GameCardStyles";
@@ -308,13 +306,7 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
       onPress={handlePress}
       disabled={!game.id && !game.uid}
     >
-      <LinearGradient
-        colors={getTeamCardGradientColors(isDark)}
-        locations={[0, 0.28, 0.5, 0.72, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={styles.card}
-      >
+      <View style={styles.card}>
         <View style={styles.headlineContainer}>
           <Text style={styles.headlineText} numberOfLines={1}>
             {headline}
@@ -344,7 +336,7 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
             {broadcast}
           </Text>
         ) : null}
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 }

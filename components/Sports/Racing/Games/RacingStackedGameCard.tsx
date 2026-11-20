@@ -3,9 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { RacingCardStyles } from "styles/GamecardStyles/GameCardStyles";
@@ -132,13 +130,7 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
       activeOpacity={activeOpacity}
       onPress={handlePress}
     >
-      <LinearGradient
-        colors={getTeamCardGradientColors(isDark)}
-        locations={[0, 0.4, 0.5, 0.6, 1]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.card}
-      >
+      <View style={styles.card}>
         <View style={styles.headlineContainer}>
           <Text style={styles.headlineText} numberOfLines={1}>
             {headline}
@@ -175,7 +167,7 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
             {broadcast}
           </Text>
         ) : null}
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 }

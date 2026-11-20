@@ -31,15 +31,6 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       backgroundColor: bgColor,
     },
 
-    blurViewContainer: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      zIndex: 999,
-      width: "100%",
-      height: "100%",
-    },
-
     info: {
       alignItems: "center",
       justifyContent: "center",

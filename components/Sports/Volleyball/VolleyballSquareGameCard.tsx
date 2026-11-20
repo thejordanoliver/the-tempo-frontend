@@ -21,17 +21,12 @@ import {
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { getVolleyballGameRoute } from "utils/navigation/volleyballGame";
 
 function VolleyballSquareGameCard({ game }: VolleyballGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const awayColor =
-    game.away?.primaryColor ?? game.away?.secondaryColor ?? undefined;
-  const homeColor =
-    game.home?.primaryColor ?? game.home?.secondaryColor ?? undefined;
   const isMCVB = game.league.code === "mcvb";
   const isWCVB = game.league.code === "wcvb";
   const handlePress = () => {
@@ -243,25 +238,23 @@ function VolleyballSquareGameCard({ game }: VolleyballGameCardProps) {
   );
 
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
-      activeOpacity={activeOpacity}
-      onPress={handlePress}
-    >
-      <LinearGradient
-        colors={getTeamCardGradientColors(
-          isDark,
-          awayColor,
-          homeColor,
-          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
-        )}
-        locations={[0, 0.4, 0.5, 0.6, 1]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.card}
-      >
-        {renderCardContent()}
-      </LinearGradient>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
+      {isChampionship ? (
+        <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#dbb145ff", "#CDA765"] as [string, string])
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>{renderCardContent()}</View>
+      )}
     </TouchableOpacity>
   );
 }

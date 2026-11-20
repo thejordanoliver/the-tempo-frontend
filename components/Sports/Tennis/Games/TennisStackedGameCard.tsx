@@ -1,10 +1,8 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { activeOpacity, Colors, Fonts } from "@/constants/styles";
 import { formatDate, formatTime, safeDate } from "@/utils/common/dateUtils";
 import { winnerStyle } from "@/utils/games/games";
 import { usePreferences } from "contexts/PreferencesContext";
-import { LinearGradient } from "expo-linear-gradient";
-import { useScopedRouter } from "hooks/useScopedRouter";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { TennisCompetitor, TennisMatch } from "types/tennis/tennis";
@@ -88,18 +86,8 @@ export default function TennisStackedGameCard({ match }: Props) {
   );
 
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
-      activeOpacity={activeOpacity}
-      onPress={handlePress}
-    >
-      <LinearGradient
-        colors={getTeamCardGradientColors(isDark)}
-        locations={[0, 0.4, 0.5, 0.6, 1]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.card}
-      >
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
+      <View style={styles.card}>
         <View style={styles.main}>
           <View style={styles.header}>
             <Text style={styles.tournament} numberOfLines={1}>
@@ -129,7 +117,7 @@ export default function TennisStackedGameCard({ match }: Props) {
             </Text>
           )}
         </View>
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 }

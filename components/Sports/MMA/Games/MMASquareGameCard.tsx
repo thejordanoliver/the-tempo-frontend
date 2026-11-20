@@ -8,8 +8,6 @@ import {
 } from "@/utils/common/dateUtils";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { usePreferences } from "contexts/PreferencesContext";
-import { LinearGradient } from "expo-linear-gradient";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -228,19 +226,7 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
       activeOpacity={activeOpacity}
       onPress={handlePress}
     >
-      <LinearGradient
-        colors={getTeamCardGradientColors(
-          isDark,
-          secondFighter?.color ?? secondFighter?.secondaryColor ?? undefined,
-          firstFighter?.color ?? firstFighter?.secondaryColor ?? undefined,
-        )}
-        locations={[0, 0.4, 0.5, 0.6, 1]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.card}
-      >
-        {renderCardContent()}
-      </LinearGradient>
+      <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );
 }

@@ -24,7 +24,6 @@ import {
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 
 export default function BasketballGameCard({
   game,
@@ -62,8 +61,6 @@ export default function BasketballGameCard({
 
   const homeName = game.home?.shortName ?? game.home?.name;
   const awayName = game.away?.shortName ?? game.away?.name;
-  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor;
-  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor;
 
   const homeLogo =
     homeId === emptyHomeTeam.id
@@ -284,20 +281,22 @@ export default function BasketballGameCard({
       })}
       accessibilityHint="Opens game details"
     >
-      <LinearGradient
-        colors={getTeamCardGradientColors(
-          isDark,
-          awayColor,
-          homeColor,
-          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
-        )}
-        locations={[0, 0.28, 0.5, 0.72, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={styles.card}
-      >
-        {renderCardContent()}
-      </LinearGradient>
+      {isChampionship ? (
+        <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#dbb145ff", "#CDA765"] as [string, string])
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>{renderCardContent()}</View>
+      )}
     </TouchableOpacity>
   );
 }

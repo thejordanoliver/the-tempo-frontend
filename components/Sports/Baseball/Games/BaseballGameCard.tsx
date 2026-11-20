@@ -12,7 +12,6 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { getTeamCardGradientColors } from "utils/games/teamCardGradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -56,9 +55,6 @@ function BaseballGameCard({
   const homeName = game.home?.shortName ?? game.home?.name;
   const awayName = game.away?.shortName ?? game.away?.name;
 
-  const homeColor = game.home?.primaryColor ?? game.home?.secondaryColor;
-  const awayColor = game.away?.primaryColor ?? game.away?.secondaryColor;
-
   const homeLogo =
     homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
@@ -82,7 +78,6 @@ function BaseballGameCard({
   const isChampionship =
     game?.season.slug === "championship-series" ||
     headline?.includes("World Series");
-
   const styles = GameCardStyles(isDark, isChampionship);
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
@@ -223,7 +218,7 @@ function BaseballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-                <Image
+        <Image
           source={awayLogo}
           style={styles.logo}
           accessibilityLabel={`${awayName} logo`}
@@ -250,7 +245,7 @@ function BaseballGameCard({
       <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       <View style={styles.teamSection}>
-                <Image
+        <Image
           source={homeLogo}
           style={styles.logo}
           accessibilityLabel={`${homeName} logo`}
@@ -284,20 +279,22 @@ function BaseballGameCard({
       })}
       accessibilityHint="Opens game details"
     >
-      <LinearGradient
-        colors={getTeamCardGradientColors(
-          isDark,
-          awayColor,
-          homeColor,
-          isChampionship ? (isDark ? "#50412a" : "#CDA765") : undefined,
-        )}
-        locations={[0, 0.28, 0.5, 0.72, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={styles.card}
-      >
-        {renderCardContent()}
-      </LinearGradient>
+      {isChampionship ? (
+        <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#dbb145ff", "#CDA765"] as [string, string])
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>{renderCardContent()}</View>
+      )}
     </TouchableOpacity>
   );
 }
