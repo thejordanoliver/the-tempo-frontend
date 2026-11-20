@@ -82,7 +82,7 @@ export const GradientGameCardStyles = (
       width: 180,
       height: 180,
       resizeMode: "contain",
-      opacity: 0.4,
+      opacity: 0.2,
       transform: [{ rotate: "10deg" }],
     },
 
@@ -94,7 +94,7 @@ export const GradientGameCardStyles = (
       width: 180,
       height: 180,
       resizeMode: "contain",
-      opacity: 0.4,
+      opacity: 0.2,
       transform: [{ rotate: "-10deg" }],
     },
 
