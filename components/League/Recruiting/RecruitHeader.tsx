@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function RecruitHeader({ player, isDark, age }: Props) {
-  const initial = player?.first_name?.[0]?.toUpperCase() || "?";
+  const initial = player.name?.[0]?.toUpperCase() || "?";
   const accent = isDark ? Colors.white : Colors.black;
   const styles = RecruitHeaderStyles(isDark, accent);
 
@@ -26,7 +26,7 @@ export default function RecruitHeader({ player, isDark, age }: Props) {
             <Image
               source={{ uri: player.image_url }}
               style={styles.avatar}
-              accessibilityLabel={`${player.first_name} ${player.last_name} photo`}
+              accessibilityLabel={`${player.name} photo`}
             />
           ) : (
             <View style={styles.avatarPlaceholder}>
@@ -43,9 +43,7 @@ export default function RecruitHeader({ player, isDark, age }: Props) {
 
       {/* Name block */}
       <View style={styles.nameContainer}>
-        <Text style={styles.firstName}>
-          {player.first_name?.toUpperCase()} {player.last_name?.toUpperCase()}
-        </Text>
+        <Text style={styles.firstName}>{player.name.toUpperCase()}</Text>
       </View>
 
       {/* Stats row */}
@@ -78,13 +76,13 @@ export default function RecruitHeader({ player, isDark, age }: Props) {
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>SCHOOL</Text>
           <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
-            {player.high_school}
+            {player.high_school ?? "—"}
           </Text>
         </View>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>HOMETOWN</Text>
           <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
-            {player.hometown}
+            {player.hometown ?? "—"}
           </Text>
         </View>
       </View>

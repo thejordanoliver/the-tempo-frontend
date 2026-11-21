@@ -5,7 +5,6 @@ import {
   MIN_TOUCH_TARGET,
   globalStyles,
 } from "constants/styles";
-import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text } from "react-native";
 import type { PlayoffMatchup, PlayoffTeam } from "types/playoffs";
 import {
@@ -22,22 +21,6 @@ type Props = {
   onTeamPress?: (team: PlayoffTeam) => void;
 };
 
-function TeamLogo({ team, isDark }: Pick<Props, "team" | "isDark">) {
-  const uri = isDark ? (team?.logoDark ?? team?.logo) : team?.logo;
-  const [failedUri, setFailedUri] = useState<string | null>(null);
-  const showRemoteLogo = Boolean(uri && failedUri !== uri);
-
-  return (
-    <Image
-      source={uri && failedUri !== uri ? { uri } : PlaceholderLogo}
-      style={styles.logo}
-      resizeMode="contain"
-      onError={showRemoteLogo ? () => setFailedUri(uri ?? null) : undefined}
-      accessible={false}
-    />
-  );
-}
-
 export default function BracketTeamRow({
   team,
   matchup,
@@ -45,10 +28,12 @@ export default function BracketTeamRow({
   onTeamPress,
 }: Props) {
   const colors = isDark ? Colors.dark : Colors.light;
+  const styles = BracketTeamRowStyles(isDark);
   const global = globalStyles(isDark);
   const score = getBracketTeamScore(team, matchup);
   const winner = isBracketWinner(team, matchup);
   const canOpenTeam = Boolean(onTeamPress && team?.id != null);
+  const teamLogo = isDark ? team?.logoDark || team?.logo : team?.logo;
 
   return (
     <Pressable
@@ -62,8 +47,13 @@ export default function BracketTeamRow({
         pressed && styles.pressed,
       ]}
     >
-      <Text style={[global.caption, styles.seed]}>{team?.seed ?? ""}</Text>
-      <TeamLogo team={team} isDark={isDark} />
+      <Text style={[styles.seed]}>{team?.seed ?? ""}</Text>
+      <Image
+        source={{ uri: teamLogo ?? PlaceholderLogo }}
+        style={styles.logo}
+        resizeMode="contain"
+        accessible={false}
+      />
       <Text
         numberOfLines={1}
         style={[
@@ -85,34 +75,42 @@ export default function BracketTeamRow({
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    minHeight: MIN_TOUCH_TARGET,
-    height: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 8,
-  },
-  winnerRow: {
-    backgroundColor: Colors.transparentGold,
-  },
-  pressed: { opacity: 0.65 },
-  seed: { width: 13, textAlign: "center", fontSize: 14 },
-  logo: {
-    width: 25,
-    height: 25,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  name: { flex: 1, fontSize: 14, lineHeight: 20 },
-  score: {
-    minWidth: 26,
-    fontSize: 18,
-    textAlign: "right",
-    fontFamily: Fonts.MEDIUM,
-  },
-  winner: {
-    fontFamily: Fonts.BOLD,
-  },
-});
+const BracketTeamRowStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    row: {
+      minHeight: MIN_TOUCH_TARGET,
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: 8,
+    },
+    winnerRow: {
+      backgroundColor: Colors.transparentGold,
+    },
+    pressed: { opacity: 0.65 },
+    seed: {
+      fontFamily: Fonts.MEDIUM,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      width: 13,
+      textAlign: "center",
+      fontSize: 13,
+    },
+    logo: {
+      width: 25,
+      height: 25,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    name: { flex: 1, fontSize: 14 },
+    score: {
+      minWidth: 26,
+      fontSize: 18,
+      textAlign: "right",
+      fontFamily: Fonts.MEDIUM,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    winner: {
+      fontFamily: Fonts.BOLD,
+    },
+  });

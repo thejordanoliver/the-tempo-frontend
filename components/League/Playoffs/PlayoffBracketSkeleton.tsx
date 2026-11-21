@@ -1,5 +1,5 @@
-import { SkeletonBlock, SkeletonCircle } from "components/Skeletons/primitives";
-import { Colors } from "constants/styles";
+import { SkeletonBlock } from "components/Skeletons/primitives";
+import { Colors, MIN_TOUCH_TARGET } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -15,12 +15,14 @@ import BracketConnections from "./BracketConnections";
 function TeamRowSkeleton() {
   return (
     <View style={styles.teamRow}>
-      <SkeletonBlock width={13} height={9} />
-      <SkeletonCircle size={25} />
+      <View style={styles.seed}>
+        <SkeletonBlock width={10} height={14} />
+      </View>
+      <SkeletonBlock width={25} height={25} radius={0} />
       <View style={styles.teamCode}>
         <SkeletonBlock width={44} height={14} />
       </View>
-      <SkeletonBlock width={24} height={20} />
+      <SkeletonBlock width={26} height={18} />
     </View>
   );
 }
@@ -81,7 +83,7 @@ export default function PlayoffBracketSkeleton({
             nodes={layout.nodes}
             width={layout.width}
             height={layout.height}
-            color={colors.transparentGray}
+            color={colors.gray}
           />
           {layout.headers.map(({ key, x }) => (
             <View
@@ -89,8 +91,7 @@ export default function PlayoffBracketSkeleton({
               testID={`bracket-skeleton-heading-${key}`}
               style={[styles.heading, { left: x }]}
             >
-              <SkeletonBlock width={48} height={9} />
-              <SkeletonBlock width={128} height={16} />
+              <SkeletonBlock width={128} height={18} />
             </View>
           ))}
           {layout.nodes.map((node) => (
@@ -101,8 +102,8 @@ export default function PlayoffBracketSkeleton({
                 {
                   left: node.x,
                   top: node.y + BRACKET_HEADER_HEIGHT,
-                  backgroundColor: colors.background,
-                  borderColor: colors.transparentGray,
+                  backgroundColor: colors.itemBackground,
+                  borderColor: Colors.midTone,
                 },
               ]}
             >
@@ -126,27 +127,32 @@ const styles = StyleSheet.create({
     width: BRACKET_CARD_WIDTH,
     height: BRACKET_HEADER_HEIGHT,
     alignItems: "center",
-    gap: 8,
   },
   card: {
     position: "absolute",
     width: BRACKET_CARD_WIDTH,
     height: BRACKET_CARD_HEIGHT,
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 10,
     overflow: "hidden",
   },
   teamRow: {
-    height: 44,
+    minHeight: MIN_TOUCH_TARGET,
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingHorizontal: 8,
   },
+  seed: { width: 13, alignItems: "center" },
   teamCode: { flex: 1 },
   bye: { height: 76, justifyContent: "center" },
   footer: {
     flex: 1,
+    minHeight: MIN_TOUCH_TARGET,
+    flexDirection: "row",
+    gap: 4,
+    paddingHorizontal: 6,
     borderTopWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
     justifyContent: "center",

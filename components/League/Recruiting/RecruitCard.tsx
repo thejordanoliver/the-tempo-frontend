@@ -1,13 +1,16 @@
+import {
+  getSportsCardGradient,
+  sportsCardBackgroundStyles,
+} from "styles/SportsCardBackgroundStyles";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CFB/RecruitCard.tsx
 import { getMCBBTeamLogo } from "@/constants/teamsMCBB";
-import { RecruitPredictedSchool } from "@/hooks/RecruitHooks/useAllRecruits";
+import type { RecruitPredictedSchool } from "@/types/recruiting/players";
 import { Recruit } from "@/types/recruiting/players";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -15,21 +18,27 @@ import {
   Easing,
   Image,
   ImageSourcePropType,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import {
+  formatRecruitRating,
+  getRecruitRanking,
+  getRecruitStatus,
+  type RecruitRankingSource,
+} from "utils/recruiting/recruits";
 
 type Props = {
   recruit: Recruit;
   league: "mcbb" | "cfb";
   index: number;
+  rankingSource?: RecruitRankingSource;
 };
 
 type LogoDisplayItem = {
-  teamId: number;
+  teamId: number | null;
   teamName: string;
   logo: ImageSourcePropType;
 };
@@ -76,10 +85,15 @@ function getTopTiedPredictions(
   );
 }
 
-export default function RecruitCard({ recruit, index, league }: Props) {
+export default function RecruitCard({
+  recruit,
+  index,
+  league,
+  rankingSource = "industry",
+}: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => recruitCardStyles(isDark), [isDark]);
+  const styles = useMemo(() => RecruitCardStyles(isDark), [isDark]);
   const router = useScopedRouter();
 
   const sortedPredictions = useMemo(
@@ -92,7 +106,8 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     [sortedPredictions],
   );
 
-  const isCommittedOrSigned = recruit.is_signed || recruit.is_committed;
+  const isCommittedOrSigned =
+    recruit.is_enrolled || recruit.is_signed || recruit.is_committed;
 
   const isPredictionTie =
     !isCommittedOrSigned &&
@@ -105,14 +120,16 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     if (isCommittedOrSigned) {
       const committedTeamId = recruit.committed_team_id;
 
-      if (!committedTeamId) {
-        return [];
-      }
-
-      const logo =
-        league === "cfb"
+      const localLogo = committedTeamId
+        ? league === "cfb"
           ? getCFBTeamLogo(committedTeamId, isDark)
-          : getMCBBTeamLogo(committedTeamId, isDark);
+          : getMCBBTeamLogo(committedTeamId, isDark)
+        : null;
+      const logo =
+        localLogo ??
+        (recruit.committed_school_logo_url
+          ? { uri: recruit.committed_school_logo_url }
+          : null);
 
       if (!logo) {
         return [];
@@ -135,7 +152,10 @@ export default function RecruitCard({ recruit, index, league }: Props) {
             return null;
           }
 
-          const logo = getCFBTeamLogo(prediction.team_id, isDark);
+          const logo =
+            league === "cfb"
+              ? getCFBTeamLogo(prediction.team_id, isDark)
+              : getMCBBTeamLogo(prediction.team_id, isDark);
 
           if (!logo) {
             return null;
@@ -147,7 +167,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
             logo,
           };
         })
-        .filter((item): item is LogoDisplayItem => Boolean(item));
+        .filter((item): item is NonNullable<typeof item> => Boolean(item));
     }
 
     const teamId = primaryPrediction?.team_id || recruit.predicted_team_id;
@@ -179,6 +199,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     isPredictionTie,
     recruit.committed_team_id,
     recruit.committed_team_name,
+    recruit.committed_school_logo_url,
     recruit.predicted_team_id,
     recruit.predicted_team_name,
     sortedPredictions,
@@ -194,31 +215,28 @@ export default function RecruitCard({ recruit, index, league }: Props) {
       Animated.timing(slideX, {
         toValue: 0,
         duration: 650,
-        delay: index * 60,
+        delay: Math.min(index, 8) * 60,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
       Animated.timing(fade, {
         toValue: 1,
         duration: 650,
-        delay: index * 60,
+        delay: Math.min(index, 8) * 60,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
     ]).start();
   }, [fade, index, slideX]);
 
-  const starCount = recruit.stars ?? 0;
-  const isFiveStar = starCount === 5;
+  const ranking = getRecruitRanking(recruit, rankingSource);
+  const starCount = ranking.stars ?? 0;
   const avatar = recruit.image_url;
 
-  const nationalRankLabel =
-    recruit.national_rank === null ? "NR" : `#${recruit.national_rank}`;
-
-  const nationalRankValue = recruit.national_rank ?? "—";
-  const positionRankValue = recruit.position_rank ?? "—";
-  const stateRankValue = recruit.state_rank ?? "—";
-  const scoreValue = recruit.score ?? "—";
+  const nationalRankValue = ranking.national ?? "—";
+  const positionRankValue = ranking.position ?? "—";
+  const stateRankValue = ranking.state ?? "—";
+  const scoreValue = formatRecruitRating(ranking.rating);
   const highSchoolValue = recruit.high_school ?? "High school unavailable";
   const heightValue = recruit.height ?? "—";
   const weightValue = recruit.weight ? `${recruit.weight} lbs` : "—";
@@ -226,13 +244,15 @@ export default function RecruitCard({ recruit, index, league }: Props) {
   return (
     <View style={styles.cardWrapper}>
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={`Open ${recruit.name}`}
         activeOpacity={activeOpacity}
         onPress={() =>
           router.push({
             pathname: "/recruit/[id]",
             params: {
               id: recruit.id,
-              teamId: recruit.committed_team_id,
+              teamId: recruit.committed_team_id ?? undefined,
               league: league,
             },
           })
@@ -277,14 +297,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
         )}
 
         <LinearGradient
-          colors={
-            isDark
-              ? [Colors.dark.background, "rgba(0, 0, 0, 0)"]
-              : [Colors.light.background, "rgba(255, 255, 255, 0)"]
-          }
-          locations={[0.55, 1]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
+          {...getSportsCardGradient(isDark)}
           style={styles.cardGradient}
         />
 
@@ -292,8 +305,16 @@ export default function RecruitCard({ recruit, index, league }: Props) {
           <View style={styles.row}>
             <View style={styles.playerHeader}>
               <View style={styles.avatarContainer}>
-                {avatar && (
+                {avatar ? (
                   <Image source={{ uri: avatar }} style={styles.avatar} />
+                ) : (
+                  <View style={styles.avatarFallback}>
+                    <Ionicons
+                      name="person"
+                      size={26}
+                      color={isDark ? Colors.dark.icon : Colors.light.icon}
+                    />
+                  </View>
                 )}
               </View>
 
@@ -307,19 +328,9 @@ export default function RecruitCard({ recruit, index, league }: Props) {
                 </Text>
               </View>
             </View>
-
             <View style={styles.rankingBadge}>
-              <BlurView intensity={100} style={StyleSheet.absoluteFill} />
-              <Text
-                style={[
-                  styles.rankingText,
-                  isFiveStar && {
-                    color: isDark ? Colors.dark.gold : Colors.light.gold,
-                  },
-                ]}
-              >
-                {nationalRankLabel}
-              </Text>
+              <Text style={styles.rankingText}>#{nationalRankValue}</Text>
+              <Text style={styles.rankLabel}>NATIONAL</Text>
             </View>
           </View>
 
@@ -360,7 +371,10 @@ export default function RecruitCard({ recruit, index, league }: Props) {
 
             <View style={styles.divider} />
 
-            <Text style={styles.subText}>{scoreValue}</Text>
+            <Text style={styles.subText}>
+              {ranking.stars === null ? "Unrated · " : ""}
+              {scoreValue}
+            </Text>
           </View>
 
           <View style={styles.contentRow}>
@@ -380,46 +394,36 @@ export default function RecruitCard({ recruit, index, league }: Props) {
             <Text style={styles.subText}>{weightValue}</Text>
           </View>
 
-          {recruit.is_signed && (
-            <Text style={styles.commitText}>
-              Signed: {recruit.committed_team_name ?? "Unknown team"}
-            </Text>
-          )}
-
-          {recruit.is_committed && !recruit.is_signed && (
-            <Text style={styles.commitText}>
-              Committed: {recruit.committed_team_name ?? "Unknown team"}
-            </Text>
-          )}
-
-          {!isCommittedOrSigned && (
-            <Text style={styles.uncommittedText}>Uncommitted</Text>
-          )}
+          <Text
+            style={
+              isCommittedOrSigned ? styles.commitText : styles.uncommittedText
+            }
+          >
+            {getRecruitStatus(recruit)}
+            {isCommittedOrSigned
+              ? ` to ${recruit.committed_team_name ?? "School unavailable"}`
+              : ""}
+          </Text>
         </View>
       </TouchableOpacity>
     </View>
   );
 }
 
-const recruitCardStyles = (isDark: boolean) =>
+export const RecruitCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     cardWrapper: {
-      position: "relative",
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       overflow: "hidden",
+      position: "relative",
+      marginHorizontal: 12,
+      marginBottom: 10,
+      borderRadius: 8,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
 
-    logoContainer: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      bottom: 0,
-      alignItems: "flex-end",
-      justifyContent: "center",
-      width: "45%",
-      overflow: "hidden",
-    },
+    logoContainer: sportsCardBackgroundStyles.logoContainer,
 
     splitLogoStack: {
       width: "100%",
@@ -434,30 +438,19 @@ const recruitCardStyles = (isDark: boolean) =>
       overflow: "hidden",
     },
 
-    backgroundLogo: {
-      height: "150%",
-      aspectRatio: 1,
-      marginRight: -40,
-      opacity: 0.55,
-    },
+    backgroundLogo: sportsCardBackgroundStyles.backgroundLogo,
 
     splitBackgroundLogo: {
       height: "190%",
       marginRight: -34,
-      opacity: 0.48,
+      opacity: 0.16,
     },
 
-    cardGradient: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      left: 0,
-      width: "120%",
-    },
+    cardGradient: sportsCardBackgroundStyles.cardGradient,
 
     cardContent: {
       paddingHorizontal: 12,
-      paddingVertical: 8,
+      paddingVertical: 12,
     },
 
     row: {
@@ -476,8 +469,8 @@ const recruitCardStyles = (isDark: boolean) =>
 
     namePosition: {
       flex: 1,
-      flexDirection: "row",
-      alignItems: "baseline",
+      minWidth: 0,
+      gap: 2,
     },
 
     avatarContainer: {
@@ -505,37 +498,33 @@ const recruitCardStyles = (isDark: boolean) =>
     name: {
       flexShrink: 1,
       fontFamily: Fonts.BOLD,
-      fontSize: 20,
+      fontSize: 18,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
 
     positionText: {
-      marginLeft: 6,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     rankingBadge: {
-      overflow: "hidden",
       alignItems: "center",
       justifyContent: "center",
-      width: 44,
-      height: 44,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 999,
-      borderCurve: "circular",
-      shadowColor: "#000",
-      boxShadow:
-        Platform.OS === "android" ? undefined : "0px 2px 6px #00000040",
-      elevation: 4,
+      minWidth: 50,
+      marginLeft: 8,
     },
-
     rankingText: {
       fontFamily: Fonts.BOLD,
-      fontSize: 18,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 28,
+      lineHeight: 30,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+    },
+    rankLabel: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 9,
+      letterSpacing: 0.5,
+      color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText,
     },
 
     contentRow: {
@@ -553,9 +542,9 @@ const recruitCardStyles = (isDark: boolean) =>
     },
 
     divider: {
-      width: 1,
-      height: 18,
-      marginHorizontal: 6,
+      width: StyleSheet.hairlineWidth,
+      height: 12,
+      marginHorizontal: 8,
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -566,15 +555,21 @@ const recruitCardStyles = (isDark: boolean) =>
     },
 
     commitText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 16,
+      marginTop: 6,
+      paddingTop: 8,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark
+        ? Colors.dark.transparentGray
+        : Colors.light.transparentGray,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
       color: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
 
     uncommittedText: {
       marginTop: 8,
       fontFamily: Fonts.BOLD,
-      fontSize: 15,
-      color: isDark ? Colors.dark.yellow : Colors.light.yellow,
+      fontSize: 14,
+      color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText,
     },
   });

@@ -1,5 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useRecruitingTeams } from "hooks/RecruitHooks/useRecruitingTeams";
 import { useAllRecruits } from "@/hooks/RecruitHooks/useAllRecruits";
 import {
   RecruitTeamRanking,
@@ -9,8 +7,11 @@ import { Recruit } from "@/types/recruiting/players";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
+import PillTabs, { type PillTabOption } from "components/TabBars/PillTabs";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useRecruitingTeams } from "hooks/RecruitHooks/useRecruitingTeams";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import React, {
   memo,
   useCallback,
@@ -26,6 +27,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import {
+  getRecruitRanking,
+  type RecruitRankingSource,
+} from "utils/recruiting/recruits";
 import RecruitCardSkeleton from "../../Skeletons/RecruitCardSkeleton";
 import TeamRankCardSkeleton from "../../Skeletons/TeamRankCardSkeleton";
 import RecruitCard from "./RecruitCard";
@@ -56,7 +61,7 @@ type RecruitsHeaderProps = {
   searchOpen: boolean;
   yearOptions: DropdownOption[];
   teamOptions: DropdownOption[];
-  viewOptions: DropdownOption[];
+  viewOptions: PillTabOption<"players" | "teams">[];
   onYearChange: (y: string) => void;
   onTeamChange: (t: string) => void;
   onViewChange: (v: "players" | "teams") => void;
@@ -115,6 +120,11 @@ const RecruitsHeader = memo(function RecruitsHeader({
 }: RecruitsHeaderProps) {
   return (
     <View style={styles.headerContainer}>
+      <PillTabs
+        tabs={viewOptions}
+        selectedValue={view}
+        onChange={onViewChange}
+      />
       <View style={styles.filterRow}>
         <TouchableOpacity onPress={onToggleSearch} hitSlop={10}>
           <Ionicons
@@ -126,6 +136,7 @@ const RecruitsHeader = memo(function RecruitsHeader({
 
         <View style={styles.dropdownGroup}>
           <Dropdown
+            accessibilityLabel="Recruiting class"
             options={yearOptions}
             selectedValue={year}
             onSelect={onYearChange}
@@ -135,6 +146,7 @@ const RecruitsHeader = memo(function RecruitsHeader({
 
           {view === "players" && (
             <Dropdown
+              accessibilityLabel="Recruiting team"
               options={teamOptions}
               selectedValue={team}
               onSelect={onTeamChange}
@@ -142,14 +154,6 @@ const RecruitsHeader = memo(function RecruitsHeader({
               width={120}
             />
           )}
-
-          <Dropdown
-            options={viewOptions}
-            selectedValue={view}
-            onSelect={(v) => onViewChange(v as "players" | "teams")}
-            isDark={isDark}
-            width={120}
-          />
         </View>
       </View>
 
@@ -181,6 +185,7 @@ export default function RecruitsList({
 
   const listRef = useRef<FlatList<any>>(null);
 
+  const rankingSource: RecruitRankingSource = "industry";
   const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -199,7 +204,7 @@ export default function RecruitsList({
     return () => {
       cancelled = true;
     };
-  }, [year, team, view]);
+  }, [year, team, view, league, rankingSource]);
 
   useEffect(() => {
     let cancelled = false;
@@ -216,15 +221,15 @@ export default function RecruitsList({
   }, [search]);
 
   const yearOptions = useMemo(() => {
-    const now = new Date().getFullYear();
+    const now = new Date().getUTCFullYear();
 
-    return Array.from({ length: 19 }, (_, i) => {
-      const y = now + 2 - i;
+    return Array.from({ length: now + 3 - 2010 + 1 }, (_, i) => {
+      const y = now + 3 - i;
       return { label: String(y), value: String(y) };
     });
   }, []);
 
-  const viewOptions = useMemo(
+  const viewOptions = useMemo<PillTabOption<"players" | "teams">[]>(
     () => [
       { label: "Players", value: "players" },
       { label: "Teams", value: "teams" },
@@ -323,6 +328,7 @@ export default function RecruitsList({
           p.name?.toLowerCase().includes(query) ||
           p.position?.toLowerCase().includes(query) ||
           p.predicted_team_name?.toLowerCase().includes(query) ||
+          p.committed_team_name?.toLowerCase().includes(query) ||
           p.high_school?.toLowerCase().includes(query) ||
           p.hometown?.toLowerCase().includes(query) ||
           predictionMatches
@@ -330,8 +336,14 @@ export default function RecruitsList({
       });
     }
 
-    return list;
-  }, [playerData, team, search, recruitingTeams]);
+    return [...list].sort(
+      (a, b) =>
+        (getRecruitRanking(a, rankingSource).national ?? Infinity) -
+          (getRecruitRanking(b, rankingSource).national ?? Infinity) ||
+        a.name.localeCompare(b.name) ||
+        a.id - b.id,
+    );
+  }, [playerData, team, search, recruitingTeams, rankingSource]);
 
   const filteredTeamRankings = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -522,7 +534,12 @@ export default function RecruitsList({
             `recruit-${item.year ?? year}-${item.id ?? index}`
           }
           renderItem={({ item, index }) => (
-            <RecruitCard recruit={item} index={index} league={league} />
+            <RecruitCard
+              recruit={item}
+              index={index}
+              league={league}
+              rankingSource={rankingSource}
+            />
           )}
           onEndReached={loadMore}
           onEndReachedThreshold={0.6}
@@ -577,7 +594,6 @@ const recruitListStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 14,
     },
     listContent: {
       paddingBottom: 100,
@@ -647,6 +663,7 @@ const recruitListStyles = (isDark: boolean) =>
       paddingVertical: 20,
     },
     footerText: {
+      fontFamily: Fonts.REGULAR,
       color: Colors.lightGray,
       textAlign: "center",
     },
