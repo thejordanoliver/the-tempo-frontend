@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { SquareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import {
@@ -12,12 +11,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   formatPeriod,
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
+
 export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -68,7 +69,7 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));
   const styles = SquareGameCardStyles(isDark, isChampionship);
-  const broadcast = getBroadcastDisplay(game?.broadcasts);
+  const broadcast = getBroadcastDisplay(game?.broadcasts, true);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });
   const clock = game.status?.displayClock;
   const gameStatusDescription = game.status?.description;
@@ -156,6 +157,7 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
       </View>
     );
   };
+
   const renderCardContent = () => (
     <>
       <Text style={styles.headlineText} numberOfLines={1}>

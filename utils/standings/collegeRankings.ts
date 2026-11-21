@@ -1,9 +1,9 @@
 import type {
   CollegePollType,
-  CollegeRankingsLeague,
-  CollegeRankPoll,
   CollegeTeamRank,
-} from "types/collegeRankings";
+  League,
+  RankPoll,
+} from "@/types/rankings";
 
 type PollType = CollegePollType;
 
@@ -143,10 +143,7 @@ const getPollCandidates = (rawValue: unknown): RawPoll[] => {
   return [];
 };
 
-const normalizePoll = (
-  poll: RawPoll | undefined,
-  type: PollType,
-): CollegeRankPoll => {
+const normalizePoll = (poll: RawPoll | undefined, type: PollType): RankPoll => {
   if (!poll) {
     return {
       type,
@@ -170,7 +167,7 @@ const normalizePoll = (
   };
 };
 
-const normalizeRankings = (rawValue: unknown): CollegeRankPoll[] => {
+const normalizeRankings = (rawValue: unknown): RankPoll[] => {
   const candidates = getPollCandidates(rawValue);
 
   return POLL_TYPES.map((type) => {
@@ -181,12 +178,18 @@ const normalizeRankings = (rawValue: unknown): CollegeRankPoll[] => {
 };
 
 // These are backend poll responses; football keeps its four selector slots.
-export function getCollegeRankingPolls(
-  response: unknown,
-  league: CollegeRankingsLeague,
-): CollegeRankPoll[] {
+export function getRankingPolls(response: unknown, league: League): RankPoll[] {
   if (league === "cfb") return normalizeRankings(response);
   return isRecord(response) && Array.isArray(response.rankings)
-    ? (response.rankings as CollegeRankPoll[])
+    ? (response.rankings as RankPoll[])
     : [];
+}
+
+// Empty CFP selector slots do not count as published rankings.
+export function getDefaultCollegePollType(
+  rankings: readonly RankPoll[],
+): CollegePollType {
+  return rankings.some((poll) => poll.type === "cfp" && poll.ranks.length > 0)
+    ? "cfp"
+    : "ap";
 }

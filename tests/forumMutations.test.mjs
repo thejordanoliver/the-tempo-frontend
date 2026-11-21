@@ -427,7 +427,7 @@ function shareHarness({
       },
       "utils/forums/forumPostShare": {
         getForumPostShareText: () =>
-          "Post from @fan on Tempo\nnbascorestracker://post/post-1",
+          "Post from @fan on Tempo\ntempo://post/post-1",
       },
     },
   );

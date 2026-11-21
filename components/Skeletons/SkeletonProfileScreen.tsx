@@ -1,5 +1,13 @@
+import FollowButton from "components/Buttons/FollowButton";
+import { Ionicons } from "@expo/vector-icons";
+import TabBar from "components/TabBars/TabBar";
+import Subheading from "components/Headings/Subheading";
+import Button from "components/Buttons/Button";
+import { FavoritesSectionStyles } from "styles/FavoritesSectionStyles";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors } from "constants/styles";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
   Easing,
@@ -7,20 +15,49 @@ import {
   StyleSheet,
   View,
   ViewProps,
+  Text,
+  useWindowDimensions,
 } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
-export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
+export const SkeletonProfileScreen = ({
+  isDark,
+  isCurrentUser = true,
+  showBookmarks = true,
+  fullName = "Your Full Name",
+  username = "username",
+  bio = "Profile biography",
+}: {
+  isDark: boolean;
+  isCurrentUser?: boolean;
+  showBookmarks?: boolean;
+  fullName?: string | null;
+  username?: string | null;
+  bio?: string | null;
+}) => {
+  const reduceMotion = useReducedMotion();
+
   const styles = profileStyles(isDark);
+  const navigationContentStyle = useNavigationBarContentStyle();
+  const { width } = useWindowDimensions();
+  const favoritesStyles = FavoritesSectionStyles(isDark, (width - 24 - 16) / 3);
+  const tabs = showBookmarks
+    ? ["favorites", "badges", "predictions", "posts", "bookmarks"]
+    : ["favorites", "badges", "predictions", "posts"];
 
   // Smooth breathing pulse animation
   const [pulseAnim] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
+    if (reduceMotion) {
+      pulseAnim.setValue(0.7);
+      return;
+    }
+
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
-          toValue: 1.1,
+          toValue: 1,
           duration: 1200,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
@@ -32,13 +69,12 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
           useNativeDriver: true,
         }),
       ]),
-      { iterations: -1,
-      resetBeforeIteration: false },
+      { iterations: -1, resetBeforeIteration: false },
     );
 
     pulse.start();
     return () => pulse.stop();
-  }, [pulseAnim]);
+  }, [pulseAnim, reduceMotion]);
 
   // Base + overlay colors
   const baseColor = isDark
@@ -52,13 +88,18 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
   const skeletonBlock = {
     backgroundColor: baseColor,
     borderRadius: 8,
-    marginBottom: 10,
     overflow: "hidden" as const,
   };
 
   // Reusable skeleton wrapper
-  const ShimmerBlock = (props: ViewProps & { style?: any }) => (
-    <View {...props} style={[props.style, skeletonBlock]}>
+  const ShimmerBlock = (props: ViewProps) => (
+    <View
+      {...props}
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={[skeletonBlock, props.style]}
+    >
       <Animated.View
         style={[
           StyleSheet.absoluteFill,
@@ -71,123 +112,178 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
     </View>
   );
 
-  const itemWidth = "32%";
+  // Invisible real content reserves native font and control measurements.
+  const placeholder = (
+    content: React.ReactNode,
+    testID: string,
+    radius = 8,
+    textHeight?: number,
+  ) => (
+    <View
+      testID={testID}
+      pointerEvents="none"
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
+      <View style={{ opacity: 0 }}>{content}</View>
+      {ShimmerBlock({
+        style: [
+          textHeight === undefined
+            ? StyleSheet.absoluteFill
+            : {
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: "50%",
+                height: textHeight,
+                marginTop: -textHeight / 2,
+              },
+          { borderRadius: radius },
+        ],
+      })}
+    </View>
+  );
 
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={{ paddingBottom: 30 }}
+      contentContainerStyle={navigationContentStyle(styles.container)}
+      contentInsetAdjustmentBehavior="never"
+      showsVerticalScrollIndicator={false}
       testID="skeleton-profile-screen"
     >
-      {/* Banner + profile pic */}
       <View style={styles.bannerContainer}>
-        {ShimmerBlock({ style: styles.banner, testID: "skeleton-banner" })}
+        {ShimmerBlock({
+          style: [styles.banner, { borderRadius: 0 }],
+          testID: "skeleton-banner",
+        })}
         <View style={styles.profilePicWrapper}>
           {ShimmerBlock({
-            style: styles.profilePic,
+            style: [styles.profilePic, { borderRadius: 0 }],
             testID: "skeleton-profile-pic",
           })}
         </View>
       </View>
 
-      {/* Followers */}
       <View style={styles.followContainer}>
-        {[0, 1].map((key) => (
-          <View key={key} style={styles.followItem}>
-            {ShimmerBlock({
-              style: { height: 20, width: 60, marginBottom: 4 },
-              testID: `skeleton-follow-title-${key}`,
-            })}
-            {ShimmerBlock({
-              style: { height: 12, width: 40 },
-              testID: `skeleton-follow-subtitle-${key}`,
-            })}
+        {["Followers", "Following"].map((label, index) => (
+          <View key={label} style={styles.followItem}>
+            {placeholder(
+              <Text style={styles.followCount}>000</Text>,
+              `skeleton-follow-title-${index}`,
+              4,
+              styles.followCount.fontSize,
+            )}
+            {placeholder(
+              <Text style={styles.followLabel}>{label}</Text>,
+              `skeleton-follow-subtitle-${index}`,
+              4,
+              styles.followLabel.fontSize,
+            )}
           </View>
         ))}
       </View>
 
-      {/* Name + edit button */}
       <View style={styles.wrapper}>
         <View style={styles.nameContainer}>
-          {ShimmerBlock({
-            style: { height: 20, width: 120 },
-            testID: "skeleton-name-line1",
-          })}
-          {ShimmerBlock({
-            style: { height: 16, width: 100 },
-            testID: "skeleton-name-line2",
-          })}
+          {placeholder(
+            <Text style={styles.fullNameText}>{fullName}</Text>,
+            "skeleton-name-line1",
+            4,
+            styles.fullNameText.fontSize,
+          )}
+          {placeholder(
+            <Text style={styles.usernameText}>
+              {"@" + (username || "Your Username")}
+            </Text>,
+            "skeleton-name-line2",
+            4,
+            styles.usernameText.fontSize,
+          )}
         </View>
-        {ShimmerBlock({
-          style: [styles.editProfileBtn, { height: 40, width: 110 }],
-          testID: "skeleton-edit-profile-btn",
-        })}
+        {placeholder(
+          isCurrentUser ? (
+            <View style={styles.editProfileBtn}>
+              <Text style={styles.editProfileText}>Edit Profile</Text>
+              <Ionicons
+                name="create"
+                size={18}
+                color={isDark ? Colors.black : Colors.white}
+              />
+            </View>
+          ) : (
+            <FollowButton
+              isFollowing={false}
+              loading={false}
+              onToggle={() => {}}
+            />
+          ),
+          "skeleton-edit-profile-btn",
+          styles.editProfileBtn.borderRadius,
+        )}
       </View>
 
-      {/* Bio */}
       <View style={styles.bioContainer}>
-        {ShimmerBlock({
-          style: { height: 10, width: "100%" },
-          testID: "skeleton-bio",
-        })}
-        {ShimmerBlock({
-          style: { height: 10, width: "90%" },
-          testID: "skeleton-bio",
-        })}
-        {ShimmerBlock({
-          style: { height: 10, width: "80%" },
-          testID: "skeleton-bio",
-        })}
+        <View style={{ marginVertical: styles.bioText.marginVertical }}>
+          {placeholder(
+            <Text style={[styles.bioText, { marginVertical: 0 }]}>
+              {bio || ""}
+            </Text>,
+            "skeleton-bio",
+            4,
+            undefined,
+          )}
+        </View>
       </View>
 
-      {/* Favorites */}
-      <View style={[styles.contentContainer, { marginTop: 60 }]}>
-        <View style={styles.favoritesHeader}>
-          {ShimmerBlock({
-            style: { height: 20, width: 150 },
-            testID: "skeleton-favorites-header",
-          })}
-          {ShimmerBlock({
-            style: { height: 20, width: 20 },
-            testID: "skeleton-favorites-icon",
-          })}
-        </View>
+      <View
+        pointerEvents="none"
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <TabBar
+            tabs={tabs}
+            selected="favorites"
+            onTabPress={() => {}}
+            isDark={isDark}
+          />
+        </ScrollView>
+      </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          {[...Array(6)].map((_, i) => (
-            <Fragment key={i}>
-              {ShimmerBlock({
-                style: {
-                  width: itemWidth,
-                  height: 130,
-                  borderRadius: 8,
-                  paddingHorizontal: 2,
-                  paddingVertical: 20,
-                },
-                testID: `skeleton-favorite-item-${i}`,
-              })}
-            </Fragment>
-          ))}
-        </View>
-
-        {/* Edit Teams button */}
-        <View style={{ width: "100%", marginTop: 10 }}>
-          {ShimmerBlock({
-            style: {
-              height: 60,
-              width: "100%",
-              alignSelf: "center",
-              borderRadius: 20,
-            },
-            testID: "skeleton-edit-teams-button",
-          })}
-        </View>
+      <View style={styles.contentContainer}>
+        {["Sports", "Teams"].map((section) => (
+          <View key={section}>
+            <View
+              pointerEvents="none"
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            >
+              <Subheading collapsible>{`Favorite ${section}`}</Subheading>
+            </View>
+            <View style={favoritesStyles.grid}>
+              {[0, 1, 2].map((index) => (
+                <View key={index} style={favoritesStyles.gridItem}>
+                  {ShimmerBlock({
+                    style: StyleSheet.absoluteFill,
+                    testID: `skeleton-favorite-${section.toLowerCase()}-${index}`,
+                  })}
+                </View>
+              ))}
+            </View>
+          </View>
+        ))}
+        {isCurrentUser && (
+          <View style={favoritesStyles.buttonContainer}>
+            {placeholder(
+              <Button isDark={isDark} onPress={() => {}}>
+                Edit Favorites
+              </Button>,
+              "skeleton-edit-teams-button",
+              12,
+            )}
+          </View>
+        )}
       </View>
     </ScrollView>
   );

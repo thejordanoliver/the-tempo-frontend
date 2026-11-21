@@ -203,7 +203,7 @@ export function useExploreWidgetConfiguration(userId: number | null) {
             order: ordered.length,
             standingsLeague: type === "standings" ? "nba" : undefined,
             collegePollLeague: type === "college_polls" ? "cfb" : undefined,
-            collegePollType: type === "college_polls" ? "ap" : undefined,
+            collegePollType: undefined,
             collegePollAutoPlay: type === "college_polls" ? true : undefined,
             favoriteTeamsAutoPlay: type === "favorite_teams" ? true : undefined,
             favoriteGameLeagues:

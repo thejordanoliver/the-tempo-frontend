@@ -7,8 +7,10 @@ import { SkeletonBlock } from "./primitives";
 
 export default function FanPredictionHistorySkeleton({
   isDark,
+  count = 4,
 }: {
   isDark: boolean;
+  count?: number;
 }) {
   const row = useMemo(() => FanPredictionHistoryRowStyles(isDark), [isDark]);
   const screen = useMemo(() => fanPredictionRankingsStyles(isDark), [isDark]);
@@ -29,8 +31,8 @@ export default function FanPredictionHistorySkeleton({
     </View>
   );
   const score = () => (
-    <View style={row.scoreSection}>
-      <SkeletonBlock width={30} height={row.score.fontSize} />
+    <View style={row.winnerContainer}>
+      <SkeletonBlock width={30} height={row.teamScore.fontSize} />
     </View>
   );
   return (
@@ -38,7 +40,7 @@ export default function FanPredictionHistorySkeleton({
       accessibilityLabel="Loading prediction history"
       accessibilityState={{ busy: true }}
     >
-      {[0, 1, 2, 3].map((index) => (
+      {Array.from({ length: count }, (_, index) => (
         <View key={index}>
           {index > 0 ? <View style={screen.separator} /> : null}
           <View

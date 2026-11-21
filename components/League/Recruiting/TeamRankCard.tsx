@@ -1,3 +1,7 @@
+import {
+  getSportsCardGradient,
+  sportsCardBackgroundStyles,
+} from "styles/SportsCardBackgroundStyles";
 // components/CFB/TeamRankCard.tsx
 import { getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { RecruitTeamRanking } from "@/hooks/RecruitHooks/useTeamRecruitingRankings";
@@ -41,14 +45,14 @@ export default function TeamRankCard({ item, index, league }: Props) {
       Animated.timing(slideX, {
         toValue: 0,
         duration: 650,
-        delay: index * 60,
+        delay: Math.min(index, 8) * 60,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
       Animated.timing(fade, {
         toValue: 1,
         duration: 650,
-        delay: index * 60,
+        delay: Math.min(index, 8) * 60,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
@@ -88,33 +92,16 @@ export default function TeamRankCard({ item, index, league }: Props) {
             },
           ]}
         >
-          <Image source={logo} style={styles.backgroundLogo} />
+          <Image
+            source={logo}
+            style={styles.backgroundLogo}
+            resizeMode="contain"
+          />
         </Animated.View>
       )}
 
       <LinearGradient
-        colors={
-          isDark
-            ? [
-                "rgba(29,29,29,0.96)",
-                "rgba(29,29,29,1)",
-                "rgba(29,29,29,0.92)",
-                "rgba(29,29,29,0.62)",
-                "rgba(29,29,29,0.22)",
-                "rgba(0,0,0,0)",
-              ]
-            : [
-                "rgba(255,255,255,0.96)",
-                "rgba(255,255,255,1)",
-                "rgba(255,255,255,0.92)",
-                "rgba(255,255,255,0.62)",
-                "rgba(255,255,255,0.22)",
-                "rgba(255,255,255,0)",
-              ]
-        }
-        locations={[0, 0.35, 0.58, 0.74, 0.88, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+        {...getSportsCardGradient(isDark)}
         style={styles.cardGradient}
       />
 
@@ -144,9 +131,13 @@ export default function TeamRankCard({ item, index, league }: Props) {
                     ? isDark
                       ? Colors.dark.leafGreen
                       : Colors.light.green
-                    : isDark
-                      ? Colors.dark.lightRed
-                      : Colors.light.red
+                    : movedDown
+                      ? isDark
+                        ? Colors.dark.lightRed
+                        : Colors.light.red
+                      : isDark
+                        ? Colors.dark.secondaryText
+                        : Colors.light.secondaryText
                 }
                 style={[
                   styles.rankChangeText,
@@ -234,42 +225,25 @@ export default function TeamRankCard({ item, index, league }: Props) {
   );
 }
 
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
+const getStyles = (isDark: boolean) => {
+  const bgColor = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
+
+  return StyleSheet.create({
     cardWrapper: {
       position: "relative",
       minHeight: 116,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      marginHorizontal: 12,
+      marginBottom: 10,
+      borderRadius: 8,
+      backgroundColor: bgColor,
       overflow: "hidden",
     },
 
-    logoContainer: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      bottom: 0,
-      alignItems: "flex-end",
-      justifyContent: "center",
-      width: "48%",
-      overflow: "hidden",
-    },
-
-    backgroundLogo: {
-      height: "210%",
-      aspectRatio: 1,
-      marginRight: -42,
-      opacity: isDark ? 0.5 : 0.38,
-    },
-
-    cardGradient: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      left: 0,
-      width: "122%",
-    },
+    logoContainer: sportsCardBackgroundStyles.logoContainer,
+    backgroundLogo: sportsCardBackgroundStyles.backgroundLogo,
+    cardGradient: sportsCardBackgroundStyles.cardGradient,
 
     cardContent: {
       gap: 12,
@@ -303,7 +277,7 @@ const getStyles = (isDark: boolean) =>
       paddingHorizontal: 7,
       paddingVertical: 3,
       borderRadius: 999,
-      backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
+      backgroundColor: bgColor,
     },
 
     rankChangePillUp: {
@@ -329,37 +303,38 @@ const getStyles = (isDark: boolean) =>
     },
 
     teamBlock: {
+      flex: 1,
       minWidth: 0,
     },
 
     teamName: {
       fontFamily: Fonts.BOLD,
-      fontSize: 25,
-      lineHeight: 30,
+      fontSize: 20,
+      lineHeight: 26,
       color: isDark ? Colors.white : Colors.black,
     },
 
     points: {
       marginTop: 3,
       fontFamily: Fonts.REGULAR,
-      fontSize: 15,
+      fontSize: 13,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     statsRow: {
       flexDirection: "row",
       alignItems: "center",
-      alignSelf: "flex-start",
-      gap: 10,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-      borderRadius: 14,
-      backgroundColor: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.045)",
+      paddingTop: 10,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark
+        ? Colors.dark.transparentGray
+        : Colors.light.transparentGray,
     },
 
     statItem: {
       alignItems: "center",
-      minWidth: 34,
+      flex: 1,
+      minWidth: 0,
     },
 
     statLabelWrapper: {
@@ -370,8 +345,8 @@ const getStyles = (isDark: boolean) =>
     },
 
     statValue: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
+      fontFamily: Fonts.SPORTS_SEMIBOLD,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -387,3 +362,4 @@ const getStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });
+};

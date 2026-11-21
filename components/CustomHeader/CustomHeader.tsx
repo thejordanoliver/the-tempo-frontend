@@ -1,3 +1,5 @@
+import { useNotifications } from "contexts/NotificationContext";
+import type { NotificationTeamSport } from "types/notifications";
 import {
   cfbConferences,
   resolveCFBConferenceSelection,
@@ -270,6 +272,27 @@ export function CustomHeader({
   );
   const isLeagueScreen = Boolean(
     leagueConfig && !isTeamScreen && !isPlayerScreen && tabName !== "Game",
+  );
+  const { leagueSubscriptions, openLeagueNotificationSettings } =
+    useNotifications();
+  const leagueSport = leagueConfig?.route.split("/").pop();
+  const supportsLeagueNotifications =
+    isLeagueScreen &&
+    ["basketball", "football", "baseball", "hockey", "soccer"].includes(
+      leagueSport ?? "",
+    );
+  const leagueNotified = leagueSubscriptions.some(
+    (sub) =>
+      sub.sport === leagueSport &&
+      sub.league === leagueConfig?.id &&
+      [
+        sub.gameStartEnabled,
+        sub.touchdownEnabled,
+        sub.quarterEndEnabled,
+        sub.halftimeEnabled,
+        sub.closeGameEnabled,
+        sub.finalScoreEnabled,
+      ].some(Boolean),
   );
   const leagueHeaderLogo = leagueConfig?.logoLight ?? null;
   const leagueHeaderColor = leagueConfig?.color;
@@ -560,10 +583,19 @@ export function CustomHeader({
           notificationPending={notificationPending}
           favoriteIconColor={headerIconColor}
           onToggleFavorite={onToggleFavorite}
-          onToggleNotifications={onToggleNotifications}
+          onToggleNotifications={
+            supportsLeagueNotifications
+              ? () =>
+                  openLeagueNotificationSettings(
+                    leagueSport as NotificationTeamSport,
+                    leagueConfig!.id,
+                  )
+              : onToggleNotifications
+          }
+          isLeagueScreen={supportsLeagueNotifications}
           onOpenInfo={onOpenInfo}
           isFavorite={isFavorite}
-          isNotified={isNotified}
+          isNotified={supportsLeagueNotifications ? leagueNotified : isNotified}
           tabName={tabName}
           isDark={isDark}
           profileMenuVisible={profileMenuVisible}

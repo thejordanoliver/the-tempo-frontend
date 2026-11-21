@@ -229,3 +229,70 @@ test("tab navigation and its bar respond to theme changes without remounting", (
   assert.equal(h.state.props.children.props.tabBar({}).props.isDark, true);
   h.stop();
 });
+
+test("navigation bar preserves stacks, emits reselection, and respects prevented tab presses", () => {
+  const h = sportsHookHarness();
+  const navigations = [];
+  const events = [];
+  let preventNavigation = false;
+  const jsx = (type, props) => ({ type, props });
+  Object.assign(h.modules, {
+    "react/jsx-runtime": { jsx, jsxs: jsx },
+    "react-native": {
+      StyleSheet: { create: (styles) => styles, hairlineWidth: 1 },
+      View: "View",
+      Text: "Text",
+      TouchableOpacity: "TouchableOpacity",
+    },
+    "expo-router": {
+      useRouter: () => ({ navigate: (href) => navigations.push(href) }),
+    },
+    "expo-blur": { BlurView: "BlurView" },
+    "reicon-react-native": {
+      Balls: "Balls",
+      Compass: "Compass",
+      Home: "Home",
+      User: "User",
+    },
+    "contexts/NavigationBarInsetContext": {
+      useNavigationBarRowHeight: () => 70,
+    },
+  });
+  const { default: NavigationBar } = h.load("components/NavigationBar.tsx");
+  const routes = ["(home)", "(league)", "(explore)", "(profile)"].map(
+    (name) => ({ name, key: name }),
+  );
+  h.start(NavigationBar, [
+    {
+      state: { index: 0, routes },
+      emitter: {
+        emit(event) {
+          events.push({ ...event });
+          return { defaultPrevented: preventNavigation };
+        },
+      },
+      navigateToTab: (key) => navigations.push(key),
+      descriptors: Object.fromEntries(
+        routes.map(({ key }) => [key, { options: {} }]),
+      ),
+      insets: { bottom: 20 },
+      isDark: false,
+    },
+  ]);
+  const buttons = h.state.props.children[1].props.children;
+  buttons.forEach((button) => button.props.onPress());
+  assert.deepEqual(navigations, ["(league)", "(explore)", "(profile)"]);
+  assert.deepEqual(
+    events,
+    routes.map(({ key }) => ({
+      type: "tabPress",
+      target: key,
+      canPreventDefault: true,
+    })),
+  );
+  preventNavigation = true;
+  buttons[1].props.onPress();
+  assert.equal(navigations.length, 3);
+  assert.equal(events.length, 5);
+  h.stop();
+});

@@ -1,3 +1,4 @@
+import type { GameOdds, ScoreboardOdds } from "types/odds";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { GameVenueInfo } from "types/gameVenue";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
@@ -365,6 +366,7 @@ type BaseballLeaderTeam = {
 };
 
 export type Score = {
+  odds?: ScoreboardOdds | null;
   gameId: string;
   uid: string;
   date: string;
@@ -426,7 +428,7 @@ export type GameDetails = {
   headline?: string | null;
 
   predictor: Predictor | null;
-  odds?: any;
+  odds?: GameOdds | [] | null;
 
   records: {
     home: TeamRecords;

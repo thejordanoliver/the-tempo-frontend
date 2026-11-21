@@ -27,8 +27,9 @@ export default function PlayerDetailScreen() {
 
   const playerId = Number(id);
   const { player, loading, error } = usePlayerById(playerId, "mma");
+  const isActive = player?.active === true;
   const fightLog = useFighterFightLog(playerId);
-  const latestFight = useFighterLatestGame(fightLog.data);
+  const latestFight = useFighterLatestGame(isActive ? fightLog.data : null);
   const flag = player?.flag_url;
   const color = player?.citizenship_country_alt_color ?? Colors.midTone;
 
@@ -73,13 +74,15 @@ export default function PlayerDetailScreen() {
       overview={
         <>
           <PlayerHeader sport="mma" player={player} isDark={isDark} />
-          <LatestGame
-            game={latestFight.game}
-            loading={fightLog.loading || latestFight.loading}
-            error={fightLog.error || latestFight.error}
-            isDark={isDark}
-            league={league}
-          />
+          {isActive ? (
+            <LatestGame
+              game={latestFight.game}
+              loading={fightLog.loading || latestFight.loading}
+              error={fightLog.error || latestFight.error}
+              isDark={isDark}
+              league={league}
+            />
+          ) : null}
         </>
       }
       pages={[

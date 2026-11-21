@@ -58,7 +58,7 @@ export default function FollowersList({
     return (
       <View style={styles.itemRow}>
         <View style={styles.itemContainer}>
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button"
             onPress={() => onUserPress(item)}
             style={styles.userRow}
           >

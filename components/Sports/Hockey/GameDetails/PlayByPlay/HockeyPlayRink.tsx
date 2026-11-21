@@ -1,8 +1,8 @@
+import PlayLocationPulse from "@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayLocationPulse";
 import { Colors } from "constants/styles";
 import type { Play } from "hooks/HockeyHooks/useHockeyGameDetails";
 import { memo, useId } from "react";
 import { type ImageSourcePropType, View } from "react-native";
-import PlayLocationPulse from "components/Sports/PlayByPlay/PlayLocationPulse";
 import Svg, {
   Circle,
   ClipPath,

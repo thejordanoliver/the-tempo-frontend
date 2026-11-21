@@ -13,9 +13,11 @@ import FanPrediction from "./FanPrediction";
 export default function FeedFanPrediction({
   game,
   isDark,
+  showHeader,
 }: {
   game: FeedPrediction;
   isDark: boolean;
+  showHeader: boolean;
 }) {
   const input = useFeedPredictionInput(game);
   const router = useScopedRouter();
@@ -64,6 +66,7 @@ export default function FeedFanPrediction({
         awayColor={teamColor(game.away)}
         homeLogo={teamLogo(game.home)}
         homeColor={teamColor(game.home)}
+        showHeader={showHeader}
       >
         <View style={[styles.gameInfo, { borderBottomColor: theme.gray }]}>
           <View style={styles.gameMeta}>

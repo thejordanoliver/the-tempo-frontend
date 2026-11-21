@@ -1,12 +1,13 @@
 import { isAxiosError } from "axios";
-import type { ResultItem, SearchAffiliation } from "types/explore";
+import type { ResultItem, SearchSport } from "types/explore";
 import { normalizeExploreSearchQuery } from "utils/explore/exploreSearch";
 
 export type ExploreSearchAnalyticsScope = "all" | "players" | "teams" | "users";
 
 export type ExploreSearchImpression = {
   entityType: ResultItem["type"];
-  affiliation: SearchAffiliation | null;
+  league: string | null;
+  sport: SearchSport | null;
   entityId: string;
   position: number;
   matchClass: ResultItem["matchClass"];
@@ -53,7 +54,8 @@ export type ExploreSearchSettledEvent = ExploreSearchEventBase & {
 export type ExploreSearchResultSelectedEvent = ExploreSearchEventBase & {
   eventType: "search_result_selected";
   entityType: ResultItem["type"];
-  affiliation: SearchAffiliation | null;
+  league: string | null;
+  sport: SearchSport | null;
   entityId: string;
   position: number;
   searchRequestId: string;
@@ -96,17 +98,13 @@ export function getExploreSearchImpression(
 ): ExploreSearchImpression {
   return {
     entityType: item.type,
-    affiliation: item.type === "user" ? null : item.affiliation,
+    league: item.type === "user" ? null : item.league,
+    sport: item.type === "user" ? null : item.sport,
     entityId: String(item.id),
     position,
     matchClass: item.matchClass,
     textScore: item.textScore,
-    active:
-      item.type === "player"
-        ? (item.active ?? null)
-        : item.type === "team"
-          ? (item.is_active ?? null)
-          : null,
+    active: item.type === "player" ? (item.active ?? null) : null,
   };
 }
 
@@ -162,7 +160,8 @@ export function buildExploreSearchSelectionEvent({
     normalizedQuery: attributedEvent.normalizedQuery,
     scope: attributedEvent.scope,
     entityType: impression.entityType,
-    affiliation: impression.affiliation,
+    league: impression.league,
+    sport: impression.sport,
     entityId: impression.entityId,
     position: impression.position,
     searchRequestId: attributedEvent.searchRequestId,

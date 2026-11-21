@@ -534,7 +534,7 @@ export default function CommentThreadScreen() {
               </Text>
             </View>
 
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Remove comment attachment"
               onPress={handleRemoveAttachment}
               style={styles.previewCloseButton}
               activeOpacity={activeOpacity}
@@ -586,7 +586,7 @@ export default function CommentThreadScreen() {
               onOpenGifPicker={handleOpenGifPicker}
             />
 
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel={attachmentMenuVisible ? "Close attachment options" : "Add comment attachment"} accessibilityState={{ expanded: attachmentMenuVisible }}
               activeOpacity={activeOpacity}
               onPress={handleToggleAttachmentMenu}
               style={[
@@ -603,7 +603,7 @@ export default function CommentThreadScreen() {
             </TouchableOpacity>
           </View>
 
-          <TextInput
+          <TextInput accessibilityLabel={composerPlaceholder}
             ref={inputRef}
             placeholder={composerPlaceholder}
             value={newComment}
@@ -627,7 +627,7 @@ export default function CommentThreadScreen() {
             placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
           />
 
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: isSendDisabled }} accessibilityLabel="Send comment"
             activeOpacity={activeOpacity}
             onPress={handlePostComment}
             disabled={isSendDisabled}

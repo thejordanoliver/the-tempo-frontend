@@ -51,7 +51,7 @@ export function LeagueHeader({
 
   return (
     <View style={styles.leagueHeaderContainer}>
-      <TouchableOpacity
+      <TouchableOpacity accessibilityState={{ disabled: !onOpenLeagueModal }}
         activeOpacity={activeOpacity}
         accessibilityRole={onOpenLeagueModal ? "button" : "header"}
         accessibilityLabel={selectedConferenceName || tabName}

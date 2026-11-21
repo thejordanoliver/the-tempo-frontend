@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useState } from "react";
@@ -20,6 +21,8 @@ type StandingsSkeletonProps = {
 export const StandingsSkeleton = ({
   variant = "league",
 }: StandingsSkeletonProps) => {
+ const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const [pulse] = useState(() => new Animated.Value(0.42));
@@ -32,6 +35,8 @@ export const StandingsSkeleton = ({
   const filterCount = variant === "league" ? 2 : variant === "rankings" ? 1 : 0;
 
   useEffect(() => {
+ if (reduceMotion) { pulse.setValue(0.7); return; }
+
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, {
@@ -49,7 +54,7 @@ export const StandingsSkeleton = ({
 
     animation.start();
     return () => animation.stop();
-  }, [pulse]);
+  }, [pulse, reduceMotion]);
 
   const renderBlock = (style: StyleProp<ViewStyle>) => (
     <Animated.View

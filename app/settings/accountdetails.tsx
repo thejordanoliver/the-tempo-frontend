@@ -149,6 +149,9 @@ export default function AccountDetailsScreen() {
           <View style={styles.field}>
             <View style={[styles.input, fieldState.error && styles.inputError]}>
               <TextInput
+                aria-invalid={!!fieldState.error}
+                accessibilityHint={fieldState.error?.message}
+                accessibilityLabel="Current Password"
                 ref={field.ref}
                 placeholder="Current Password"
                 secureTextEntry
@@ -162,7 +165,7 @@ export default function AccountDetailsScreen() {
             </View>
 
             {fieldState.error?.message && (
-              <Text style={styles.fieldErrorText}>
+              <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={styles.fieldErrorText}>
                 {fieldState.error.message}
               </Text>
             )}
@@ -179,6 +182,9 @@ export default function AccountDetailsScreen() {
           <View style={styles.field}>
             <View style={[styles.input, fieldState.error && styles.inputError]}>
               <TextInput
+                aria-invalid={!!fieldState.error}
+                accessibilityHint={fieldState.error?.message}
+                accessibilityLabel="New Password"
                 ref={field.ref}
                 placeholder="New Password"
                 placeholderTextColor={Colors.midTone}
@@ -196,7 +202,7 @@ export default function AccountDetailsScreen() {
               rules={passwordRules}
             />
             {fieldState.error?.message && (
-              <Text style={styles.fieldErrorText}>
+              <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={styles.fieldErrorText}>
                 {fieldState.error.message}
               </Text>
             )}
@@ -211,6 +217,9 @@ export default function AccountDetailsScreen() {
           <View style={styles.field}>
             <View style={[styles.input, fieldState.error && styles.inputError]}>
               <TextInput
+                aria-invalid={!!fieldState.error}
+                accessibilityHint={fieldState.error?.message}
+                accessibilityLabel="Confirm New Password"
                 ref={field.ref}
                 placeholder="Confirm New Password"
                 placeholderTextColor={Colors.midTone}
@@ -223,7 +232,7 @@ export default function AccountDetailsScreen() {
             </View>
 
             {fieldState.error?.message && (
-              <Text style={styles.fieldErrorText}>
+              <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={styles.fieldErrorText}>
                 {fieldState.error.message}
               </Text>
             )}
@@ -256,7 +265,7 @@ const accountDetailsStyles = (isDark: boolean) =>
     input: {
       flexDirection: "row",
       alignItems: "center",
-      height: 54,
+      minHeight: 54,
       paddingHorizontal: 16,
       borderWidth: 1,
       borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",

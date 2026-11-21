@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 const COLUMN_WIDTH = 52;
@@ -47,9 +47,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
     },
 
     teamLogo: {
-      width: 30,
-      height: 30,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
     teamTextContainer: {
       flex: 1,

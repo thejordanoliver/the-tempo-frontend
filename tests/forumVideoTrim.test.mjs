@@ -82,6 +82,7 @@ function editor() {
     saved = [];
   const player = { pause() {}, currentTime: 0 };
   const render = harness("components/Forum/VideoEditorModal.tsx", "default", {
+    "hooks/useReducedMotion": { useReducedMotion: () => false },
     "@expo/vector-icons": { Ionicons: "Icon" },
     "@react-native-community/slider": "Slider",
     "constants/styles": { Colors: {}, Fonts: {} },

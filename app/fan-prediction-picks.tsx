@@ -1,3 +1,4 @@
+import { getPredictionGameHref } from "utils/navigation/predictionGameNavigation";
 import Button from "components/Buttons/Button";
 import { CustomHeader } from "components/CustomHeader";
 import FanPredictionHistoryHeader from "components/FanPrediction/FanPredictionHistoryHeader";
@@ -9,10 +10,28 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useUserPredictionPicks } from "hooks/useUserPredictionPicks";
-import { useLayoutEffect, useMemo, useState } from "react";
+import { memo, useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { fanPredictionRankingsStyles } from "styles/FanPredictionStyles/FanPredictionRankingsStyles";
-import type { FanPredictionSortOrder } from "types/fanPredictions";
+import type {
+  FanPredictionPick,
+  FanPredictionSortOrder,
+} from "types/fanPredictions";
+
+const PredictionListRow = memo(function PredictionListRow({
+  pick,
+  isDark,
+  onOpen,
+}: {
+  pick: FanPredictionPick;
+  isDark: boolean;
+  onOpen: (pick: FanPredictionPick) => void;
+}) {
+  const onPress = useCallback(() => onOpen(pick), [onOpen, pick]);
+  return (
+    <FanPredictionHistoryRow pick={pick} isDark={isDark} onPress={onPress} />
+  );
+});
 
 export default function FanPredictionPicksScreen() {
   const { userId } = useLocalSearchParams<{ userId: string }>();
@@ -22,6 +41,20 @@ export default function FanPredictionPicksScreen() {
   const styles = useMemo(() => fanPredictionRankingsStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const router = useScopedRouter();
+  const openPrediction = useCallback(
+    (pick: FanPredictionPick) => router.push(getPredictionGameHref(pick)),
+    [router],
+  );
+  const renderPrediction = useCallback(
+    ({ item }: { item: FanPredictionPick }) => (
+      <PredictionListRow pick={item} isDark={isDark} onOpen={openPrediction} />
+    ),
+    [isDark, openPrediction],
+  );
+  const renderSeparator = useCallback(
+    () => <View style={styles.separator} />,
+    [styles],
+  );
   const contentStyle = useNavigationBarContentStyle();
   const [sort, setSort] = useState<FanPredictionSortOrder>("newest");
   const { data, loading, error, refresh, loadMore } = useUserPredictionPicks(
@@ -50,7 +83,11 @@ export default function FanPredictionPicksScreen() {
       contentInsetAdjustmentBehavior="automatic"
       data={data?.picks ?? []}
       keyExtractor={(pick) => `${pick.sport}:${pick.league}:${pick.gameId}`}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      ItemSeparatorComponent={renderSeparator}
+      onEndReached={() => {
+        if (!loading && !error && data?.nextOffset != null) loadMore();
+      }}
+      onEndReachedThreshold={0.4}
       refreshControl={
         <RefreshControl
           refreshing={loading && data != null}
@@ -66,23 +103,7 @@ export default function FanPredictionPicksScreen() {
           onSort={setSort}
         />
       }
-      renderItem={({ item: pick }) => (
-        <FanPredictionHistoryRow
-          pick={pick}
-          isDark={isDark}
-          onPress={() =>
-            router.push({
-              pathname: "/game/[sport]/[game]",
-              params: {
-                sport: pick.sport,
-                game: pick.gameId,
-                league: pick.league,
-                date: pick.startsAt,
-              },
-            })
-          }
-        />
-      )}
+      renderItem={renderPrediction}
       ListEmptyComponent={
         loading ? (
           <FanPredictionHistorySkeleton isDark={isDark} />
@@ -105,16 +126,11 @@ export default function FanPredictionPicksScreen() {
               Try again
             </Button>
           </View>
-        ) : data?.nextOffset != null ? (
-          <Button
-            accessibilityRole="button"
-            accessibilityLabel="Load more predictions"
-            isDark={isDark}
-            onPress={loadMore}
-            disabled={loading}
-          >
-            {loading ? "Loading…" : "Load more predictions"}
-          </Button>
+        ) : loading && data && data.picks.length > 0 ? (
+          <View>
+            <View style={styles.separator} />
+            <FanPredictionHistorySkeleton isDark={isDark} count={1} />
+          </View>
         ) : undefined
       }
     />

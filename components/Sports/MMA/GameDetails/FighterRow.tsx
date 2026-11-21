@@ -73,7 +73,7 @@ export const FighterRow = ({
 
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
-        <Pressable onPress={handleTeamPress}>
+        <Pressable accessibilityRole="button" accessibilityLabel={`Open ${name} fighter profile`} onPress={handleTeamPress}>
           <View style={styles.headshotContainer}>
             <Image source={{ uri: headshot }} style={styles.headshot} />
           </View>

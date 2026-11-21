@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import RecruitDetails from "components/League/Recruiting/RecruitDetails";
 import OfferList from "@/components/League/Recruiting/OfferLists";
 import RecruitHeader from "@/components/League/Recruiting/RecruitHeader";
 import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
@@ -8,34 +9,37 @@ import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { Text, View } from "react-native";
+import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 
 export default function RecruitDetailScreen() {
-  const navigationContentStyle = useNavigationBarContentStyle();
-  const { id, teamId, league } = useLocalSearchParams<{
+  const { id, league: routeLeague } = useLocalSearchParams<{
     id?: string;
-    teamId: string;
-    league: any;
+    teamId?: string;
+    league?: string;
   }>();
+  const league = routeLeague?.toLowerCase() === "cfb" ? "cfb" : "mcbb";
   const recruitId = Number(id);
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = playerScreenStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const { data: player, loading, error } = useRecruit(recruitId, league);
-  const team = league === "cfb" ? getCFBTeam(teamId) : getMCBBTeam(teamId);
+  const teamId =
+    player?.committed_team_id == null
+      ? undefined
+      : String(player.committed_team_id);
+  const team =
+    league === "cfb" ? getCFBTeam(teamId ?? "") : getMCBBTeam(teamId ?? "");
   const teamCode = team?.code;
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamLogo =
     league === "cfb"
-      ? getCFBTeamLogo(teamId, true)
-      : getMCBBTeamLogo(teamId, true);
+      ? getCFBTeamLogo(teamId ?? "", true)
+      : getMCBBTeamLogo(teamId ?? "", true);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -84,14 +88,50 @@ export default function RecruitDetailScreen() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={navigationContentStyle(
-        styles.contentContainerStyle,
-      )}
-    >
-      <RecruitHeader player={player} isDark={isDark} />
-
-      <OfferList recruit={player} isDark={isDark} />
-    </ScrollView>
+    <PlayerDetailsPager
+      key={`${league}-${recruitId}`}
+      isDark={isDark}
+      overview={<RecruitHeader player={player} isDark={isDark} />}
+      pages={[
+        {
+          label: "Ratings & commitment",
+          content: (
+            <RecruitDetails
+              recruit={player}
+              isDark={isDark}
+              league={league}
+              section="ratings"
+            />
+          ),
+        },
+        {
+          label: "NIL",
+          content: (
+            <RecruitDetails
+              recruit={player}
+              isDark={isDark}
+              league={league}
+              section="nil"
+            />
+          ),
+        },
+        {
+          label: "School interests",
+          content: (
+            <>
+              <RecruitDetails
+                recruit={player}
+                isDark={isDark}
+                league={league}
+                section="interests"
+              />
+              {!!player.offers?.length && (
+                <OfferList recruit={player} isDark={isDark} />
+              )}
+            </>
+          ),
+        },
+      ]}
+    />
   );
 }

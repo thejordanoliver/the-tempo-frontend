@@ -1,5 +1,6 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
-import { Colors } from "constants/styles";
+import { Colors, gameDetailTeamLogo } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
@@ -10,11 +11,18 @@ type SkeletonCardProps = {
 
 // Reusable pulse block
 const PulseBlock = ({ style }: { style: any }) => {
+  const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const [pulseAnim] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
+    if (reduceMotion) {
+      pulseAnim.setValue(0.7);
+      return;
+    }
+
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -34,7 +42,7 @@ const PulseBlock = ({ style }: { style: any }) => {
 
     pulse.start();
     return () => pulse.stop();
-  }, [pulseAnim]);
+  }, [pulseAnim, reduceMotion]);
 
   return (
     <Animated.View
@@ -50,10 +58,17 @@ const PulseBlock = ({ style }: { style: any }) => {
 };
 
 const SkeletonCard = ({ noBorder = false }: SkeletonCardProps) => {
+  const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const [pulseAnim] = useState(() => new Animated.Value(0.3));
   useEffect(() => {
+    if (reduceMotion) {
+      pulseAnim.setValue(0.7);
+      return;
+    }
+
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -73,7 +88,7 @@ const SkeletonCard = ({ noBorder = false }: SkeletonCardProps) => {
 
     pulse.start();
     return () => pulse.stop();
-  }, [pulseAnim]);
+  }, [pulseAnim, reduceMotion]);
 
   // Interpolate between two subtle border shades
   const borderColor = pulseAnim.interpolate({
@@ -129,11 +144,18 @@ const SkeletonCard = ({ noBorder = false }: SkeletonCardProps) => {
 };
 
 export default function GameLeadersSkeleton() {
+  const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const [pulseAnim] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
+    if (reduceMotion) {
+      pulseAnim.setValue(0.7);
+      return;
+    }
+
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -153,7 +175,7 @@ export default function GameLeadersSkeleton() {
 
     pulse.start();
     return () => pulse.stop();
-  }, [pulseAnim]);
+  }, [pulseAnim, reduceMotion]);
 
   const borderColor = pulseAnim.interpolate({
     inputRange: [0.4, 1],
@@ -244,8 +266,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 8,
     right: 8,
-    width: 20,
-    height: 20,
+    ...gameDetailTeamLogo,
     borderRadius: 50,
   },
 });

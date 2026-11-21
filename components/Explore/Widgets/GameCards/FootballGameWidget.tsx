@@ -250,7 +250,7 @@ export default function FootballGameWidget({
   // Render widget
   // -------------------------
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.container}>
         {showHeadline && (
           <View style={styles.headlineContainer}>

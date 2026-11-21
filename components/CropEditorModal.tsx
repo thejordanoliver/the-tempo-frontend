@@ -424,7 +424,7 @@ export default function CropEditorModal({
         <View style={styles.wrapper}>
           <View style={styles.header}>
             <View style={{ width: 40, alignItems: "flex-start" }}>
-              <Pressable disabled={isCropping} onPress={onCancel}>
+              <Pressable accessibilityRole="button" accessibilityState={{ disabled: isCropping }} accessibilityLabel="Cancel image crop" disabled={isCropping} onPress={onCancel}>
                 <Ionicons
                   name="close"
                   size={28}
@@ -447,7 +447,7 @@ export default function CropEditorModal({
               }}
             >
               {ROTATION_ENABLED && (
-                <Pressable disabled>
+                <Pressable accessibilityState={{ disabled: true }} accessibilityLabel="Rotate image" disabled>
                   <Ionicons
                     name="refresh"
                     size={24}
@@ -456,7 +456,7 @@ export default function CropEditorModal({
                 </Pressable>
               )}
 
-              <TouchableOpacity disabled={!canSave} onPress={handleCrop}>
+              <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: !canSave }} disabled={!canSave} onPress={handleCrop}>
                 <Text
                   style={[
                     styles.saveText,

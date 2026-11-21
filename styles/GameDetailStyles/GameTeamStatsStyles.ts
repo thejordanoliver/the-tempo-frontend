@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const GAME_TEAM_STATS_ROW_HEIGHT = 80;
@@ -38,9 +38,7 @@ export const GameTeamStatsStyles = (isDark: boolean) =>
       gap: 4,
     },
     logo: {
-      width: 32,
-      height: 32,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
     teamLabel: {
       fontFamily: Fonts.MEDIUM,

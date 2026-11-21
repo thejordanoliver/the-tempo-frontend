@@ -1,14 +1,14 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
+import Input from "@/components/Inputs/Input";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
-import TextInputComponent from "components/TextInput";
 import { Colors, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useAuth } from "hooks/UserHooks/useAuth";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
   Linking,
@@ -136,7 +136,9 @@ export default function SettingsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Settings" onBack={navigation.goBack} />,
+      header: () => (
+        <CustomHeader title="Settings" onBack={navigation.goBack} />
+      ),
     });
   }, [navigation]);
 
@@ -147,6 +149,7 @@ export default function SettingsScreen() {
       >
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
+            accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => router.push("/settings/accountdetails")}
           >
@@ -162,6 +165,7 @@ export default function SettingsScreen() {
 
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
+            accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => router.push("/settings/preferences")}
           >
@@ -177,6 +181,7 @@ export default function SettingsScreen() {
 
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
+            accessibilityRole="button"
             style={styles.optionButton}
             accessibilityRole="button"
             accessibilityLabel="My Ticker"
@@ -263,6 +268,7 @@ export default function SettingsScreen() {
 
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
+            accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => setshowLogoutModal(true)}
           >
@@ -272,6 +278,7 @@ export default function SettingsScreen() {
 
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
+            accessibilityRole="button"
             style={styles.optionButton}
             onPress={() => {
               setDeleteError(null);
@@ -311,7 +318,7 @@ export default function SettingsScreen() {
           setDeleteError(null);
         }}
       >
-        <TextInputComponent
+        <Input
           placeholder="Current Password"
           placeholderTextColor={Colors.midTone}
           secureTextEntry

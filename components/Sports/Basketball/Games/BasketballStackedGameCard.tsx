@@ -1,22 +1,15 @@
-import {
-  getMCBBRivalry,
-  getMCBBTeam,
-  getMCBBTeamLogo,
-} from "@/constants/teamsMCBB";
-import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
+import { getMCBBRivalry, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import { getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
-import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import {
-  getWCBBRivalry,
-  getWCBBTeam,
-  getWCBBTeamLogo,
-} from "constants/teamsWCBB";
+import { getNBATeamLogo } from "constants/teams";
+import { getWCBBRivalry, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
+import { getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
@@ -37,6 +30,7 @@ export default function BasketballStackedGameCard({
   isMCBB,
   isWCBB,
   isWNBA,
+  isGLEAGUE,
 }: BasketballGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -64,29 +58,11 @@ export default function BasketballStackedGameCard({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam =
-    (isMCBB
-      ? getMCBBTeam(homeId)
-      : isWCBB
-        ? getWCBBTeam(homeId)
-        : isWNBA
-          ? getWNBATeam(homeId)
-          : getNBATeam(homeId)) ?? emptyHomeTeam;
-
-  const awayTeam =
-    (isMCBB
-      ? getMCBBTeam(awayId)
-      : isWCBB
-        ? getWCBBTeam(awayId)
-        : isWNBA
-          ? getWNBATeam(awayId)
-          : getNBATeam(awayId)) ?? emptyAwayTeam;
-
-  const homeName = game.home?.name;
-  const awayName = game.away?.name;
+  const homeName = game.home?.fullName;
+  const awayName = game.away?.fullName;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(homeId, isDark)
@@ -94,10 +70,12 @@ export default function BasketballStackedGameCard({
           ? getWCBBTeamLogo(homeId, isDark)
           : isWNBA
             ? getWNBATeamLogo(homeId, isDark)
-            : getNBATeamLogo(homeId, isDark);
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(homeId, isDark)
+              : getNBATeamLogo(homeId, isDark);
 
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(awayId, isDark)
@@ -105,7 +83,9 @@ export default function BasketballStackedGameCard({
           ? getWCBBTeamLogo(awayId, isDark)
           : isWNBA
             ? getWNBATeamLogo(awayId, isDark)
-            : getNBATeamLogo(awayId, isDark);
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(awayId, isDark)
+              : getNBATeamLogo(awayId, isDark);
 
   const rivalry = isMCBB
     ? getMCBBRivalry(homeId, awayId)?.name

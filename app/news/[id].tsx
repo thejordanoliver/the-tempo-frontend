@@ -215,7 +215,7 @@ export default function ArticleScreen() {
               }}
             />
           ) : videoThumbnail ? (
-            <Pressable style={styles.image} onPress={handlePlay}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Play article video" style={styles.image} onPress={handlePlay}>
               <Image source={{ uri: videoThumbnail }} style={styles.image} />
               <View
                 style={{

@@ -120,7 +120,7 @@ export default function OnTheCourt({
                 },
               ]}
             >
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 activeOpacity={0.6}
                 style={styles.playerInfo}
                 onPress={() => {

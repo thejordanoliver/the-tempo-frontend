@@ -1,3 +1,4 @@
+import { getPredictionGameHref } from "utils/navigation/predictionGameNavigation";
 import BadgePreviewSection from "@/components/Badges/ProfileBadgeSection";
 import ProfilePredictions from "@/components/FanPrediction/ProfilePredictions";
 import ProfileFavoritesSection from "@/components/Favorites/ProfileFavoritesSection";
@@ -152,6 +153,7 @@ export default function ProfileScreen() {
     deletePost: deleteBookmarkedPost,
     editPost: editBookmarkedPost,
   } = useBookmarkedPosts({
+    userId: currentUserId,
     enabled: selectedTab === "bookmarks" && Boolean(currentUserId),
   });
 
@@ -313,14 +315,6 @@ export default function ProfileScreen() {
     ]),
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      if (selectedTab === "bookmarks" && currentUserId) {
-        refreshBookmarks();
-      }
-    }, [currentUserId, refreshBookmarks, selectedTab]),
-  );
-
   useLayoutEffect(() => {
     const safeUsername =
       normalizeCachedString(username) ||
@@ -422,7 +416,14 @@ export default function ProfileScreen() {
   }, [currentUserId, router]);
 
   if (isLoading) {
-    return <SkeletonProfileScreen isDark={isDark} />;
+    return (
+      <SkeletonProfileScreen
+        isDark={isDark}
+        fullName={fullName ?? cachedUser?.fullName ?? undefined}
+        username={username ?? cachedUser?.username ?? undefined}
+        bio={bio}
+      />
+    );
   }
 
   return (
@@ -515,17 +516,7 @@ export default function ProfileScreen() {
               itemWidth={itemWidth}
               record={predictions.record}
               picks={predictions.picks}
-              onPick={(pick) =>
-                router.push({
-                  pathname: "/game/[sport]/[game]",
-                  params: {
-                    sport: pick.sport,
-                    game: pick.gameId,
-                    league: pick.league,
-                    date: pick.startsAt,
-                  },
-                })
-              }
+              onPick={(pick) => router.push(getPredictionGameHref(pick))}
               loading={predictions.loading}
               error={predictions.error}
               onRetry={predictions.refresh}

@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -8,9 +7,9 @@ import {
 } from "@/utils/common/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
-import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
+import { getCBTeamLogo } from "constants/teamsCB";
+import { getMLBTeamLogo } from "constants/teamsMLB";
+import { getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -18,6 +17,7 @@ import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { getBroadcastDisplay, winnerStyle } from "utils/games/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
@@ -52,24 +52,11 @@ function BaseballGameCard({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam =
-    (isSB
-      ? getSBTeam(homeId)
-      : isCB
-        ? getCBTeam(homeId)
-        : getMLBTeam(homeId)) ?? emptyHomeTeam;
-  const awayTeam =
-    (isSB
-      ? getSBTeam(awayId)
-      : isCB
-        ? getCBTeam(awayId)
-        : getMLBTeam(awayId)) ?? emptyAwayTeam;
-
   const homeName = game.home?.shortName ?? game.home?.name;
   const awayName = game.away?.shortName ?? game.away?.name;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : isSB
         ? getSBTeamLogo(homeId, isDark)
@@ -78,7 +65,7 @@ function BaseballGameCard({
           : getMLBTeamLogo(homeId, isDark);
 
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : isSB
         ? getSBTeamLogo(awayId, isDark)
@@ -87,7 +74,6 @@ function BaseballGameCard({
           : getMLBTeamLogo(awayId, isDark);
 
   const league = game?.league?.code ?? "mlb";
-
   const headline = game.headline ?? holidayLabel;
   const isChampionship =
     game?.season.slug === "championship-series" ||
@@ -113,8 +99,8 @@ function BaseballGameCard({
   const awayScore = away?.score ?? 0;
   const homeRecord = home?.record;
   const awayRecord = away?.record;
-  const homeRank = home?.homeRank;
-  const awayRank = away?.awayRank;
+  const homeRank = home?.rank;
+  const awayRank = away?.rank;
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
   const getOuts = [1, 2, 3].map((i) => (

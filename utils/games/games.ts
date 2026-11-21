@@ -159,7 +159,7 @@ export const formatVenueAddress = (address?: {
     .join(" ");
 };
 
-export function getBroadcastDisplay(broadcasts?: string[]) {
+export function getBroadcastDisplay(broadcasts?: string[], short?: boolean) {
   if (!broadcasts?.length) return "";
 
   const allNames = broadcasts.map((n) => n.toLowerCase()).filter(Boolean);
@@ -190,6 +190,7 @@ export function getBroadcastDisplay(broadcasts?: string[]) {
     ["hbo max", "MAX"],
     ["max", "MAX"],
     ["espn", "ESPN"],
+    ["spectrum sports net", short ? "SSN" : "Spectrum Sports Net"],
   ];
 
   // special combos

@@ -1,3 +1,4 @@
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
@@ -121,6 +122,7 @@ export default function GameDetailsScreen(
     if (!score) return undefined;
     return {
       id: Number(score.gameId),
+      odds: score.odds,
       league: { code: LEAGUE },
       date: score.date ?? "",
       home: { ...score.home, id: Number(score.home.id) },
@@ -431,6 +433,24 @@ export default function GameDetailsScreen(
               awayChance={awayChance}
               awayColor={awayColor}
               size={180}
+              isDark={isDark}
+              state={state}
+            />
+
+            <Odds
+              homeId={homeId}
+              homeCode={homeCode}
+              homeLogo={homeLogo}
+              awayId={awayId}
+              awayCode={awayCode}
+              awayLogo={awayLogo}
+              odds={
+                details?.odds === undefined
+                  ? (score?.odds ?? game?.odds)
+                  : Array.isArray(details.odds)
+                    ? null
+                    : details.odds
+              }
               isDark={isDark}
               state={state}
             />

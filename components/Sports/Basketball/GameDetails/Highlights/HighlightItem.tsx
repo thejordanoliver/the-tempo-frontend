@@ -168,7 +168,7 @@ export const HighlightItem = React.memo(function HighlightItem({
   }
 
   return (
-    <Pressable
+    <Pressable accessibilityState={{ disabled: !videoSource }}
       accessibilityHint={
         videoSource
           ? "Plays this highlight video"

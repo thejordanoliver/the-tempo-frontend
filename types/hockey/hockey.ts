@@ -1,3 +1,4 @@
+import type { ScoreboardOdds } from "types/odds";
 export interface NHLTeam {
   id: number;
   name: string;
@@ -23,6 +24,7 @@ export interface NHLTeam {
 }
 
 export type HockeyGame = {
+  odds?: ScoreboardOdds | null;
   league: {
     id: number;
     uid: string;
@@ -65,7 +67,8 @@ export type HockeyGame = {
   home: {
     id: number;
     name: string;
-    shortName?: string | null;
+    fullName: string;
+    shortName: string | null;
     code: string;
     primaryColor: string;
     secondaryColor: string;
@@ -79,7 +82,7 @@ export type HockeyGame = {
   away: {
     id: number;
     name: string;
-    shortName?: string | null;
+    shortName: string | null;
     fullName: string;
     code: string;
     primaryColor: string;

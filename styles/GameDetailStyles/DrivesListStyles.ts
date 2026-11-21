@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const DriveListStyles = (isDark: boolean) =>
@@ -17,8 +17,7 @@ export const DriveListStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     teamLogo: {
-      width: 28,
-      height: 28,
+      ...gameDetailTeamLogo,
       marginRight: 8,
     },
     driveDescription: {

@@ -1,4 +1,5 @@
 import type {
+  LeagueNotificationSubscription,
   GameNotificationSettings,
   GameNotificationSubscription,
   NotificationTeamSport,
@@ -79,4 +80,36 @@ export async function deleteGameNotificationSubscription(
   gameId: string | number,
 ) {
   await apiClient.delete(gameSubscriptionPath(sport, league, gameId));
+}
+
+export async function getLeagueNotificationSubscriptions() {
+  const response = await apiClient.get<{
+    subscriptions: LeagueNotificationSubscription[];
+  }>("/api/notification-subscriptions/leagues", {
+    timeout: NOTIFICATION_REQUEST_TIMEOUT_MS,
+  });
+  return response.data.subscriptions;
+}
+
+export async function saveLeagueNotificationSubscription(
+  sport: NotificationTeamSport,
+  league: string,
+  settings?: Partial<GameNotificationSettings>,
+) {
+  const response = await apiClient.put<{
+    subscription: LeagueNotificationSubscription;
+  }>(
+    `/api/notification-subscriptions/leagues/${encodeURIComponent(sport)}/${encodeURIComponent(league)}`,
+    settings ?? {},
+  );
+  return response.data.subscription;
+}
+
+export async function deleteLeagueNotificationSubscription(
+  sport: NotificationTeamSport,
+  league: string,
+) {
+  await apiClient.delete(
+    `/api/notification-subscriptions/leagues/${encodeURIComponent(sport)}/${encodeURIComponent(league)}`,
+  );
 }

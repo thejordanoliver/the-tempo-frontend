@@ -126,7 +126,7 @@ export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
   };
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>
         <View style={styles.headlineContainer}>
           <Text style={styles.headlineText} numberOfLines={1}>

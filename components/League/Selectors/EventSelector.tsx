@@ -209,7 +209,7 @@ export default function EventSelector({
           const isSelected = index === safeSelectedIndex;
 
           return (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }}
               key={getUFCEventKey(event)}
               activeOpacity={activeOpacity}
               onPress={() => handleSelectEvent(index)}

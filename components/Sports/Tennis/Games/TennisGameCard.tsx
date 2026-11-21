@@ -200,7 +200,7 @@ export default function TennisGameCard({ match }: Props) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

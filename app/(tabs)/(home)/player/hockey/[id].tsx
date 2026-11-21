@@ -34,6 +34,7 @@ export default function PlayerDetailScreen() {
   const navigation = useNavigation();
   const playerId = Number(id);
   const { player, loading, error } = usePlayerById(playerId, league);
+  const isActive = player?.active === true;
   const currentTeamId =
     player?.team_id != null
       ? String(player.team_id)
@@ -69,7 +70,12 @@ export default function PlayerDetailScreen() {
     game,
     loading: latestGameLoading,
     error: latestGameError,
-  } = usePlayerClosestGame<HockeyGame>("hockey", league, currentTeamId);
+  } = usePlayerClosestGame<HockeyGame>(
+    "hockey",
+    league,
+    currentTeamId,
+    isActive,
+  );
   const gameLoading = latestGameLoading;
   const gameError = latestGameError;
 
@@ -152,13 +158,15 @@ export default function PlayerDetailScreen() {
       overview={
         <>
           <PlayerHeader sport="hockey" player={player} isDark={isDark} />
-          <LatestGame
-            game={game}
-            loading={gameLoading}
-            error={gameError}
-            isDark={isDark}
-            league={league}
-          />
+          {isActive && currentTeamId ? (
+            <LatestGame
+              game={game}
+              loading={gameLoading}
+              error={gameError}
+              isDark={isDark}
+              league={league}
+            />
+          ) : null}
         </>
       }
     />

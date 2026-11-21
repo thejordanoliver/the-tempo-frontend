@@ -1,4 +1,4 @@
-import { Colors, Fonts, activeOpacity } from "constants/styles";
+import { Colors, Fonts, activeOpacity, MIN_TOUCH_TARGET } from "constants/styles";
 
 import { memo, useMemo } from "react";
 import {
@@ -62,11 +62,7 @@ function ChatMessage({
   });
   const profileImage = item.profile_image ?? profilePlaceholder;
 
-  return (
-    <>
-      <Pressable
-        onLongPress={
-          isCurrentUser && item.delivery === "sent"
+  const openMessageActions = isCurrentUser && item.delivery === "sent"
             ? () =>
                 Alert.alert(
                   "Delete message?",
@@ -82,8 +78,14 @@ function ChatMessage({
                 )
             : isCurrentUser
               ? undefined
-              : safety.open
-        }
+              : safety.open;
+
+  return (
+    <>
+      <Pressable accessibilityRole="button"
+        accessible={false}
+        focusable={false}
+        onLongPress={openMessageActions}
         delayLongPress={350}
         accessibilityHint={
           isCurrentUser ? undefined : "Long press for safety actions"
@@ -159,7 +161,8 @@ function ChatMessage({
               item.reactions?.[emoji]?.includes(String(currentUserId)) ?? false;
 
             return (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: item.delivery !== "sent", selected }}
+                accessibilityLabel={`${emoji} reaction, ${count} ${count === 1 ? "person" : "people"}`}
                 key={emoji}
                 activeOpacity={activeOpacity}
                 disabled={item.delivery !== "sent"}
@@ -182,6 +185,16 @@ function ChatMessage({
           })}
         </View>
       </Pressable>
+      {openMessageActions && (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={`Message options for ${item.user}: ${item.message || "GIF"}`}
+          onPress={openMessageActions}
+          style={styles.optionsButton}
+        >
+          <Text style={styles.message}>Message options</Text>
+        </TouchableOpacity>
+      )}
       <SafetyActionsModal {...safety.modalProps} />
     </>
   );
@@ -203,6 +216,7 @@ export default memo(
 
 const ChatMessageStyles = (isDark: boolean) =>
   StyleSheet.create({
+    optionsButton: { minHeight: MIN_TOUCH_TARGET, minWidth: MIN_TOUCH_TARGET, justifyContent: "center", alignSelf: "flex-start", paddingHorizontal: 12 },
     messageContainer: {
       width: "100%",
       paddingHorizontal: 12,

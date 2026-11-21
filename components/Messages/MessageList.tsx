@@ -1,15 +1,15 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { MessageListStyles } from "@/styles/MessageStyles/MessageListStyles";
 import { Ionicons } from "@expo/vector-icons";
 import MessageListItem from "components/Messages/MessageListItem";
 import PinnedConversations from "components/Messages/PinnedConversations";
 import SearchBar from "components/SearchBars/SearchBar";
-import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
+import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useCallback, useMemo } from "react";
 import {
   FlatList,
   type ListRenderItem,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -61,7 +61,7 @@ export default function MessageList({
   const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => messageListStyles(isDark), [isDark]);
+  const styles = useMemo(() => MessageListStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const keyExtractor = useCallback((item: MessageItem) => String(item.id), []);
@@ -175,6 +175,7 @@ export default function MessageList({
         <Text style={global.errorText}>Messages unavailable</Text>
 
         <TouchableOpacity
+          accessibilityRole="button"
           activeOpacity={activeOpacity}
           style={styles.retryButton}
           onPress={onRetry}
@@ -217,63 +218,3 @@ export default function MessageList({
     </View>
   );
 }
-
-const messageListStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-
-    contentContainer: {
-      flexGrow: 1,
-      paddingHorizontal: 12,
-      paddingBottom: 100,
-    },
-
-    searchContainer: {
-      paddingHorizontal: 12,
-      paddingTop: 10,
-      paddingBottom: 12,
-    },
-
-    emptyContentContainer: {
-      flexGrow: 1,
-    },
-
-    emptyState: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      paddingHorizontal: 24,
-      paddingBottom: 20,
-    },
-
-    footerLoader: {
-      paddingVertical: 18,
-    },
-
-    emptyIconContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 64,
-      height: 64,
-      marginBottom: 16,
-      borderWidth: 2,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 32,
-    },
-
-    retryButton: {
-      marginTop: 16,
-      paddingHorizontal: 18,
-      paddingVertical: 9,
-      borderRadius: 18,
-      backgroundColor: isDark ? Colors.white : Colors.black,
-    },
-
-    retryButtonText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      color: isDark ? Colors.black : Colors.white,
-    },
-  });

@@ -1,3 +1,4 @@
+import type { GameOdds, ScoreboardOdds } from "types/odds";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { GameVenueInfo } from "types/gameVenue";
 import type { SoccerPlayByPlayEvent } from "types/soccer/playByPlay";
@@ -189,6 +190,7 @@ export type Predictor = {
 };
 
 export type Score = {
+  odds?: ScoreboardOdds | null;
   gameId: string;
   uid: string;
   date: string;
@@ -297,7 +299,7 @@ export type Details = {
   predictor: Predictor;
   injuries: any[];
   highlights: any[];
-  odds?: any;
+  odds?: GameOdds | [] | null;
   plays: any[];
 
   seasonState?: string | null;

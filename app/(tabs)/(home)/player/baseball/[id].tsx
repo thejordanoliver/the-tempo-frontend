@@ -131,7 +131,12 @@ export default function PlayerDetailScreen() {
     game,
     loading: latestGameLoading,
     error: latestGameError,
-  } = usePlayerClosestGame<BaseballGame>("baseball", league, currentTeamId);
+  } = usePlayerClosestGame<BaseballGame>(
+    "baseball",
+    league,
+    currentTeamId,
+    isActive,
+  );
   const gameLoading = latestGameLoading;
   const gameError = latestGameError;
 
@@ -232,13 +237,15 @@ export default function PlayerDetailScreen() {
             rankings={currentSeasonRankings}
             teamColor={teamColor}
           />
-          <LatestGame
-            game={game}
-            loading={gameLoading}
-            error={gameError}
-            isDark={isDark}
-            league={league}
-          />
+          {isActive && currentTeamId ? (
+            <LatestGame
+              game={game}
+              loading={gameLoading}
+              error={gameError}
+              isDark={isDark}
+              league={league}
+            />
+          ) : null}
         </>
       }
     />

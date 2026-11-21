@@ -959,9 +959,10 @@ const editControlStyles = (isDark: boolean, compact: boolean) =>
       borderRadius: 999,
       backgroundColor: isDark ? "rgba(0,0,0,0.82)" : "rgba(255,255,255,0.92)",
       shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.16,
-      shadowRadius: 8,
+      boxShadow:
+        Platform.OS === "android"
+          ? undefined
+          : `0px 3px 16px ${Colors.black}29`,
       elevation: 5,
     },
     moveControls: {

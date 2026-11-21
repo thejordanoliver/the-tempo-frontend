@@ -3,7 +3,7 @@ import { Play } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
 import MCBBCourtImage from "assets/Placeholders/MCBBCourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
@@ -437,8 +437,7 @@ export const shotChartStyles = (isDark: boolean) =>
     },
 
     legendLogo: {
-      width: 20,
-      height: 20,
+      ...gameDetailTeamLogo,
     },
 
     divider: {

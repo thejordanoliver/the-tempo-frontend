@@ -90,11 +90,6 @@ export const AwardTableStyles = (isDark: boolean) =>
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
-    showMoreLess: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
-    },
     dropdownRow: {
       flexDirection: "row",
       justifyContent: "flex-end",

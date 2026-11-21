@@ -6,7 +6,8 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { FlatList, Keyboard, Text, TouchableOpacity, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
-import type { ResultItem, TeamResult } from "types/explore";
+import type { ResultItem } from "types/explore";
+import { getExploreResultIdentity } from "utils/explore/exploreSearch";
 import ResultItemRow from "./ResultItemRow";
 import SearchBar from "./SearchBar";
 
@@ -27,38 +28,6 @@ type Props = {
   canExpandResults?: boolean;
   isSearching?: boolean;
 };
-
-function getTeamLeagueKey(item: TeamResult) {
-  if (item.isNFL) return "nfl";
-  if (item.isGLEAGUE) return "gleague";
-  if (item.isWNBA) return "wnba";
-  if (item.isMLB) return "mlb";
-  if (item.isCB) return "cb";
-  if (item.isSB) return "sb";
-  if (item.isMCVB) return "mcvb";
-  if (item.isWCVB) return "wcvb";
-  if (item.isNHL) return "nhl";
-  if (item.isCFB) return "cfb";
-  if (item.isMCBB) return "mcbb";
-  if (item.isWCBB) return "wcbb";
-  if (item.isNBA) return "nba";
-
-  return item.leagueKey ?? item.league ?? null;
-}
-
-function getResultKey(item: ResultItem, index: number) {
-  if (item.type === "team") {
-    const league = getTeamLeagueKey(item) ?? "unknown";
-
-    const teamKey = item.id != null ? String(item.id) : `idx-${index}`;
-
-    return `team-${league}-${teamKey}`;
-  }
-
-  const id = item.id != null ? String(item.id) : `idx-${index}`;
-
-  return `${item.type}-${id}-${index}`;
-}
 
 export default function SearchResultsList({
   data,
@@ -134,7 +103,7 @@ export default function SearchResultsList({
     return (
       <FlatList
         data={visibleData}
-        keyExtractor={getResultKey}
+        keyExtractor={getExploreResultIdentity}
         renderItem={({ item }) => {
           return (
             <ResultItemRow

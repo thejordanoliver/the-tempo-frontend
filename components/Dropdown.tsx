@@ -1,10 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
-import { useReducedMotion } from "hooks/useReducedMotion";
+import {
+  activeOpacity,
+  Colors,
+  Fonts,
+  MIN_TOUCH_TARGET,
+} from "constants/styles";
 import { BlurView } from "expo-blur";
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { useMemo, useState } from "react";
 import {
   Animated,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +19,8 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
+
+const OPTION_BATCH_SIZE = 20;
 
 export type DropdownOption = {
   label: string;
@@ -40,9 +48,11 @@ export default function Dropdown({
 }: DropdownProps) {
   const reduceMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
+  const [visibleOptionCount, setVisibleOptionCount] =
+    useState(OPTION_BATCH_SIZE);
   const [anim] = useState(() => new Animated.Value(0));
 
-  const styles = dropDownStyles({
+  const styles = DropdownStyles({
     isDark,
     width,
     visible,
@@ -69,6 +79,7 @@ export default function Dropdown({
   const openDropdown = () => {
     anim.stopAnimation();
 
+    setVisibleOptionCount(OPTION_BATCH_SIZE);
     setVisible(true);
 
     Animated.timing(anim, {
@@ -118,8 +129,23 @@ export default function Dropdown({
       showsVerticalScrollIndicator={false}
       nestedScrollEnabled
       keyboardShouldPersistTaps="handled"
+      scrollEventThrottle={16}
+      onScroll={({ nativeEvent }) => {
+        const { contentOffset, layoutMeasurement, contentSize } = nativeEvent;
+        if (
+          visibleOptionCount < options.length &&
+          contentOffset.y + layoutMeasurement.height >= contentSize.height - 80
+        ) {
+          setVisibleOptionCount((count) =>
+            Math.min(
+              options.length,
+              Math.max(count, visibleOptionCount + OPTION_BATCH_SIZE),
+            ),
+          );
+        }
+      }}
     >
-      {options.map((option, index) => {
+      {options.slice(0, visibleOptionCount).map((option, index) => {
         const isSelected = selectedValue === option.value;
         const isLast = index === options.length - 1;
 
@@ -129,7 +155,7 @@ export default function Dropdown({
             accessibilityRole="button"
             accessibilityLabel={option.label}
             accessibilityState={{ selected: isSelected }}
-            activeOpacity={0.7}
+            activeOpacity={activeOpacity}
             onPress={() => handleSelect(option.value)}
             style={[
               styles.optionButton,
@@ -142,21 +168,18 @@ export default function Dropdown({
                 styles.optionText,
                 isSelected && styles.selectedOptionText,
               ]}
+              numberOfLines={1}
             >
               {option.label}
             </Text>
 
-            {isSelected ? (
+            {isSelected && (
               <Ionicons
                 name="checkmark"
                 size={18}
-                color={
-                  isDark
-                    ? Colors.dark.secondaryText
-                    : Colors.light.actionBackground
-                }
+                color={isDark ? Colors.white : Colors.black}
               />
-            ) : null}
+            )}
           </TouchableOpacity>
         );
       })}
@@ -166,7 +189,7 @@ export default function Dropdown({
   return (
     <View style={[styles.container, style]}>
       <TouchableOpacity
-        activeOpacity={0.7}
+        activeOpacity={activeOpacity}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
         accessibilityValue={{ text: selectedLabel }}
@@ -174,7 +197,9 @@ export default function Dropdown({
         onPress={toggleDropdown}
         style={styles.toggleButton}
       >
-        <Text style={styles.selectedLabel}>{selectedLabel}</Text>
+        <Text style={styles.selectedLabel} numberOfLines={1}>
+          {selectedLabel}
+        </Text>
 
         <Animated.View
           style={[
@@ -213,17 +238,17 @@ export default function Dropdown({
   );
 }
 
-type DropDownStylesParams = {
+type DropdownStylesParams = {
   isDark: boolean;
   width: number;
   visible: boolean;
 };
 
-export const dropDownStyles = ({
+export const DropdownStyles = ({
   isDark,
   width,
   visible,
-}: DropDownStylesParams) =>
+}: DropdownStylesParams) =>
   StyleSheet.create({
     container: {
       position: "relative",
@@ -269,12 +294,10 @@ export const dropDownStyles = ({
       borderRadius: 12,
 
       shadowColor: Colors.black,
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-      shadowOpacity: 0.2,
-      shadowRadius: 8,
+      boxShadow:
+        Platform.OS === "android"
+          ? undefined
+          : `0px 4px 16px ${Colors.black}33`,
 
       elevation: 9999,
     },
@@ -293,13 +316,8 @@ export const dropDownStyles = ({
       maxHeight: 260,
       overflow: "hidden",
       borderRadius: 12,
-
-      backgroundColor: isDark
-        ? Colors.transparentDarkGray
-        : Colors.transparentLightGray,
-
+      backgroundColor: "transparent",
       borderWidth: StyleSheet.hairlineWidth,
-
       borderColor: isDark ? "rgba(255, 255, 255, 0.16)" : "rgba(0, 0, 0, 0.12)",
     },
 
@@ -322,16 +340,13 @@ export const dropDownStyles = ({
 
     optionBorder: {
       borderBottomWidth: StyleSheet.hairlineWidth,
-
-      borderBottomColor: isDark
-        ? "rgba(255, 255, 255, 0.1)"
-        : "rgba(0, 0, 0, 0.08)",
+      borderBottomColor: Colors.midTone,
     },
 
     selectedOptionButton: {
       backgroundColor: isDark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(0, 0, 0, 0.05)",
+        ? Colors.transparentDarkGray
+        : Colors.transparentLightGray,
     },
 
     optionText: {
@@ -339,10 +354,10 @@ export const dropDownStyles = ({
       marginRight: 8,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     selectedOptionText: {
-      color: isDark ? Colors.dark.secondaryText : Colors.light.actionBackground,
+      color: isDark ? Colors.white : Colors.black,
     },
   });

@@ -2,8 +2,8 @@ import { activeOpacity } from "@/constants/styles";
 import { getWCBBTeam } from "@/constants/teamsWCBB";
 import placeholder from "assets/Placeholders/playerPlaceholder.png";
 import { getNBATeam } from "constants/teams";
-import { getMCBBTeam } from "constants/teamsMCBB";
 import { getCFBTeam } from "constants/teamsCFB";
+import { getMCBBTeam } from "constants/teamsMCBB";
 import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
@@ -11,7 +11,7 @@ import { getWNBATeam } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { playerCardStyles } from "styles/PlayerStyles/PlayerCardStyles";
+import { PlayerCardStyles } from "styles/PlayerStyles/PlayerCardStyles";
 import type { LeagueType } from "types/types";
 
 interface PlayerCardBaseProps {
@@ -70,7 +70,7 @@ export default function PlayerCard({
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = playerCardStyles(isDark);
+  const styles = PlayerCardStyles(isDark);
 
   const isNBA = league === "nba";
   const isWNBA = league === "wnba";
@@ -137,6 +137,7 @@ export default function PlayerCard({
 
   return (
     <TouchableOpacity
+      accessibilityRole="button"
       activeOpacity={activeOpacity}
       style={styles.card}
       onPress={handlePress}

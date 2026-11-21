@@ -62,7 +62,7 @@ export default function FavoriteTeamsSlider({
   const renderSlide = useCallback(
     (item: FavoriteTeamSlide) => {
       return (
-        <Pressable
+        <Pressable accessibilityRole="button" accessibilityState={{ disabled: disabled }} accessibilityLabel={`Open ${item.fullName}, ${item.favorite.league.toUpperCase()}`}
           disabled={disabled}
           style={styles.slideButton}
           onPress={() => {

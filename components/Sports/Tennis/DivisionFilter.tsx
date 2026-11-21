@@ -100,7 +100,7 @@ function DivisionFilter({
           const isSelected = index === selectedIndex;
 
           return (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }}
               key={String(division.id)}
               activeOpacity={activeOpacity}
               onPress={() => handleSelectDivision(division.slug)}
