@@ -1,4 +1,24 @@
+import type { ScoreboardOdds } from "types/odds";
+export type Team = {
+  id: number;
+  name: string;
+  fullName: string;
+  shortName: string;
+  code: string;
+  logo: string;
+  logoDark: string;
+  primaryColor: string;
+  secondaryColor: string;
+  score: number;
+  hits: number;
+  errors: number;
+  record: string;
+  rank: number | null;
+  winner: boolean;
+};
+
 export type BaseballGame = {
+  odds?: ScoreboardOdds | null;
   league: {
     id: number;
     uid: string;
@@ -52,35 +72,8 @@ export type BaseballGame = {
   broadcasts: string[];
   geoBroadcasts: unknown[];
   innings: number;
-  home: {
-    id: number;
-    name: string;
-    shortName?: string | null;
-    code: string;
-    primaryColor: string;
-    secondaryColor: string;
-    score: number;
-    hits: number;
-    errors: number;
-    record: string;
-    homeRank: number;
-    winner: boolean;
-  };
-  away: {
-    id: number;
-    name: string;
-    shortName?: string | null;
-    fullName: string;
-    code: string;
-    primaryColor: string;
-    secondaryColor: string;
-    score: number;
-    hits: number;
-    errors: number;
-    record: string;
-    awayRank: number;
-    winner: boolean;
-  };
+  home: Team;
+  away: Team;
   isConferenceGame: boolean;
   isNeutralSite: boolean;
   attendance: number;
@@ -141,59 +134,6 @@ export type BaseballGame = {
     eventId: string;
     competitionId: string;
   };
-};
-
-export type MLBPlayoffLeague = "american" | "national" | "world-series";
-export type MLBPlayoffRound =
-  | "wild-card"
-  | "division-series"
-  | "championship-series"
-  | "world-series";
-
-export type MLBPlayoffTeam = {
-  id: string;
-  name: string;
-  abbreviation: string;
-  logo: string | null;
-  seed: number;
-  wins: number;
-  league: Exclude<MLBPlayoffLeague, "world-series">;
-};
-
-export type MLBPlayoffSeries = {
-  id: string;
-  league: MLBPlayoffLeague;
-  round: MLBPlayoffRound;
-  label: string;
-  bestOf: number;
-  teams: MLBPlayoffTeam[];
-  games: MLBPlayoffGame[];
-  winnerTeamId: string | null;
-};
-
-export type MLBPlayoffGame = BaseballGame & {
-  series: Omit<MLBPlayoffSeries, "games"> & {
-    gameNumber: number | null;
-  };
-};
-
-export type MLBPlayoffBracketResponse = {
-  season: number;
-  count: number;
-  games: MLBPlayoffGame[];
-  format: {
-    teams: 12;
-    teamsPerLeague: 6;
-    firstRoundByes: number[];
-    wildCardMatchups: number[][];
-    divisionSeriesPaths: {
-      seed: number;
-      receivesWinnerOf: number[];
-    }[];
-  };
-  teams: MLBPlayoffTeam[];
-  series: MLBPlayoffSeries[];
-  updatedAt: string;
 };
 
 export type BaseballGameCardProps = {

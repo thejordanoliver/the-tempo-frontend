@@ -1,5 +1,5 @@
+import PlayByPlayHeader from "@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayByPlayHeader";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import { Colors } from "constants/styles";
 import type {
   GameStatus,

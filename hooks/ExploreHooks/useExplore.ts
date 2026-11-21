@@ -24,6 +24,7 @@ import {
   canSearchExploreQuery,
   getExploreResultIdentity,
   normalizeExploreSearchQuery,
+  parseRecentExploreSearches,
 } from "utils/explore/exploreSearch";
 
 const RECENT_SEARCHES_KEY_PREFIX = "recentSearches";
@@ -52,47 +53,8 @@ async function getCurrentRecentSearchesKey() {
   return userId ? getRecentSearchesKey(userId) : null;
 }
 
-function isValidResultItem(item: unknown): item is ResultItem {
-  if (!item || typeof item !== "object") return false;
-
-  const value = item as Partial<ResultItem>;
-
-  if (!("type" in value)) return false;
-
-  if (value.type === "player") {
-    return (
-      "id" in value &&
-      value.id !== undefined &&
-      typeof value.affiliation === "string"
-    );
-  }
-
-  if (value.type === "team") {
-    return (
-      "id" in value &&
-      value.id !== undefined &&
-      typeof value.affiliation === "string"
-    );
-  }
-
-  if (value.type === "user") {
-    return "id" in value && value.id !== undefined;
-  }
-
-  return false;
-}
-
 function safeParseRecentSearches(value: string | null): ResultItem[] {
-  if (!value) return [];
-
-  try {
-    const parsed = JSON.parse(value);
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed.filter(isValidResultItem).slice(0, RECENT_SEARCHES_LIMIT);
-  } catch {
-    return [];
-  }
+  return parseRecentExploreSearches(value).slice(0, RECENT_SEARCHES_LIMIT);
 }
 
 function isCanceledRequest(error: unknown) {
@@ -267,7 +229,7 @@ export function useExplore() {
       }
 
       if (requestId !== recentSearchLoadRequestIdRef.current) return;
-      if (visibleSearches.length !== parsedSearches.length) {
+      if (stored && JSON.stringify(visibleSearches) !== stored) {
         await persistRecentSearches(storageKey, visibleSearches);
       }
       setRecentSearches(visibleSearches);

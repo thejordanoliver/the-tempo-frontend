@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
@@ -8,13 +7,14 @@ import {
   safeDate,
 } from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   formatPeriod,
   getBroadcastDisplay,
@@ -47,18 +47,16 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
-  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
-
-  const homeName = game.home?.name;
-  const awayName = game.away?.name;
+  const homeName = game.home?.fullName;
+  const awayName = game.away?.fullName;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : getNHLTeamLogo(homeId, isDark);
+
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : getNHLTeamLogo(awayId, isDark);
 

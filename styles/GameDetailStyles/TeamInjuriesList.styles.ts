@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const teamInjuryStyles = (isDark: boolean) =>
@@ -84,9 +84,7 @@ export const teamInjuryStyles = (isDark: boolean) =>
       alignItems: "flex-end",
     },
     tabLogo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
     position: {
       fontFamily: Fonts.REGULAR,
@@ -132,8 +130,7 @@ export const teamInjuryStyles = (isDark: boolean) =>
       gap: 4,
     },
     logo: {
-      width: 28,
-      height: 28,
+      ...gameDetailTeamLogo,
     },
     emptyItem: {
       flexDirection: "row",

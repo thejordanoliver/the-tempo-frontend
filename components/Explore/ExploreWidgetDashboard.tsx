@@ -427,7 +427,7 @@ function WidgetDashboardContent({
             width={width}
             height={height}
             league={widget.collegePollLeague ?? "cfb"}
-            pollType={widget.collegePollType ?? "ap"}
+            pollType={widget.collegePollType}
             onChangeSelection={(league, pollType) =>
               onSetCollegePollSelection(widget.id, league, pollType)
             }

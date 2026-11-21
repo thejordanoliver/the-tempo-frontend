@@ -23,6 +23,7 @@ export type ExploreWidgetConfig = {
   order: number;
   standingsLeague?: ExploreStandingsLeague;
   collegePollLeague?: ExploreCollegePollLeague;
+  /** When unset, prefer published CFP rankings, otherwise AP. */
   collegePollType?: ExploreCollegePollType;
   /** Defaults to true for new and legacy College Poll widgets. */
   collegePollAutoPlay?: boolean;

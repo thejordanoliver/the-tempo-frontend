@@ -1,30 +1,21 @@
 import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
-import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import {
   FlatList,
   Image,
-  LayoutAnimation,
   ListRenderItem,
-  Platform,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  UIManager,
   View,
 } from "react-native";
 import { AwardCategory } from "types/types";
 
 const ROW_HEIGHT = 50;
-const COLLAPSED_ROWS = 10;
-
-if (Platform.OS === "android") {
-  UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
 
 type LeagueType = "cfb" | "mcbb" | "wcbb";
 
@@ -67,11 +58,6 @@ export default function AwardSchoolsTable({
   const useLightLogo = isDark;
 
   const styles = useMemo(() => tableStyles(isDark), [isDark]);
-  const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }, [expanded]);
 
   const rows = useMemo(() => {
     const merged = new Map<string, AwardSchoolRow>();
@@ -123,14 +109,9 @@ export default function AwardSchoolsTable({
     });
   }, [data]);
 
-  const visibleRows = useMemo(
-    () => (expanded ? rows : rows.slice(0, COLLAPSED_ROWS)),
-    [expanded, rows],
-  );
-
   const renderItem: ListRenderItem<AwardSchoolRow> = useCallback(
     ({ item, index }) => {
-      const isLastRow = index === visibleRows.length - 1;
+      const isLastRow = index === rows.length - 1;
       const wcbbLogo = item.team.logo ? { uri: item.team.logo } : null;
 
       const logo =
@@ -166,7 +147,7 @@ export default function AwardSchoolsTable({
         </View>
       );
     },
-    [league, styles, useLightLogo, visibleRows.length],
+    [league, styles, useLightLogo, rows.length],
   );
 
   const keyExtractor = useCallback(
@@ -180,7 +161,7 @@ export default function AwardSchoolsTable({
   if (loading) {
     return (
       <View style={styles.container}>
-        <AwardSeasonTableSkeleton teams={1} />
+        <AwardSeasonTableSkeleton teams={1} variant="schools" />
       </View>
     );
   }
@@ -207,7 +188,7 @@ export default function AwardSchoolsTable({
         </View>
 
         <FlatList
-          data={visibleRows}
+          data={rows}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           scrollEnabled={false}
@@ -216,18 +197,6 @@ export default function AwardSchoolsTable({
             <Text style={styles.muted}>No award schools found</Text>
           }
         />
-
-        {rows.length > COLLAPSED_ROWS && (
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            onPress={() => setExpanded((prev) => !prev)}
-            style={styles.showMoreButton}
-          >
-            <Text style={styles.showMoreLess}>
-              {expanded ? "Show Less" : "Show More"}
-            </Text>
-          </TouchableOpacity>
-        )}
       </View>
     </View>
   );
@@ -319,19 +288,6 @@ const tableStyles = (isDark: boolean) =>
       padding: 12,
       opacity: 0.6,
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    showMoreButton: {
-      alignItems: "center",
-      paddingVertical: 14,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: Colors.lightGray,
-    },
-
-    showMoreLess: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
   });

@@ -8,6 +8,7 @@ import type {
   ForumShareMutationResponse,
 } from "types/forum";
 import { apiClient } from "utils/apiClient";
+import { notifyForumBookmarksChanged } from "services/forumBookmarkUpdates";
 
 const postPath = (postId: string) =>
   `/api/forum/post/${encodeURIComponent(postId)}`;
@@ -62,6 +63,7 @@ export async function setPostBookmark(postId: string, bookmark: boolean) {
   const response = await apiClient.patch<
     ForumBookmarkMutationResponse<Partial<ForumPost>>
   >(`${postPath(postId)}/bookmark`, { bookmark });
+  notifyForumBookmarksChanged();
   return response.data;
 }
 

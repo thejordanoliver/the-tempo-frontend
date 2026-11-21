@@ -1,20 +1,13 @@
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { useNavigationBarRowHeight } from "contexts/NavigationBarInsetContext";
 import { BlurView } from "expo-blur";
-import { Tabs, useRouter } from "expo-router";
+import { Tabs } from "expo-router";
 import { useMemo, type ComponentProps } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Balls, Compass, Home, User } from "reicon-react-native";
 
 type TabBarRenderer = NonNullable<ComponentProps<typeof Tabs>["tabBar"]>;
 type NavigationBarProps = Parameters<TabBarRenderer>[0] & { isDark: boolean };
-
-const TAB_PATHS = {
-  "(home)": "/(tabs)/(home)",
-  "(league)": "/(tabs)/(league)",
-  "(explore)": "/(tabs)/(explore)",
-  "(profile)": "/(tabs)/(profile)",
-} as const;
 
 const TAB_DETAILS = {
   "(home)": { label: "Home", Icon: Home },
@@ -26,10 +19,11 @@ const TAB_DETAILS = {
 export default function NavigationBar({
   state,
   descriptors,
+  emitter,
+  navigateToTab,
   insets,
   isDark,
 }: NavigationBarProps) {
-  const router = useRouter();
   const iconColor = isDark ? Colors.white : Colors.black;
   const rowHeight = useNavigationBarRowHeight();
   const styles = useMemo(
@@ -55,8 +49,16 @@ export default function NavigationBar({
           const { options } = descriptors[route.key];
 
           const handlePress = () => {
-            if (!focused) {
-              router.navigate(TAB_PATHS[route.name as keyof typeof TAB_PATHS]);
+            // The stack listens for presses on its active tab to pop to its root.
+            const event = emitter.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!focused && !event.defaultPrevented) {
+              // Focus the existing tab without navigating to its stack's root.
+              navigateToTab(route.key);
             }
           };
 
@@ -106,11 +108,7 @@ const CustomTabBarStyles = (
       borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
       backgroundColor: "transparent",
       paddingBottom: bottomInset,
-      shadowColor: "rgba(0, 0, 0, 0.8)",
-      shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.25,
-      shadowRadius: 12,
-      elevation: 12,
+      boxShadow: "0px 5px 12px rgba(0, 0, 0, 0.2)",
     },
     blurBackground: {
       position: "absolute",

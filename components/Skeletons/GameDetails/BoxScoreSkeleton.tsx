@@ -1,5 +1,6 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 // components/GameDetails/BoxScoreSkeleton.tsx
-import { Colors } from "constants/styles";
+import { Colors, gameDetailTeamLogo } from "constants/styles";
 import React, { useEffect, useState } from "react";
 import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
@@ -20,13 +21,20 @@ export default function BoxScoreSkeleton({
   teams = 2,
   showTeamHeader = true, // ✅ default ON
 }: Props) {
+  const reduceMotion = useReducedMotion();
+
   const styles = getStyles(isDark);
 
   // Shared pulse animation
   const [pulseAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
-    Animated.loop(
+    if (reduceMotion) {
+      pulseAnim.setValue(0.7);
+      return;
+    }
+
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
           toValue: 0.4,
@@ -39,8 +47,10 @@ export default function BoxScoreSkeleton({
           useNativeDriver: true,
         }),
       ]),
-    ).start();
-  }, [pulseAnim]);
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [pulseAnim, reduceMotion]);
 
   const Skeleton = ({ style }: { style: any }) => (
     <Animated.View style={[style, { opacity: pulseAnim }]} />
@@ -149,8 +159,7 @@ const getStyles = (isDark: boolean) =>
     },
 
     teamLogo: {
-      width: 28,
-      height: 28,
+      ...gameDetailTeamLogo,
       borderRadius: 14,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },

@@ -13,7 +13,7 @@ export default function FollowStats({
 
   return (
     <View style={styles.followContainer}>
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         onPress={onFollowersPress} // <-- use handler from props
         style={styles.followItem}
         activeOpacity={0.6}
@@ -22,7 +22,7 @@ export default function FollowStats({
         <Text style={styles.followLabel}>Followers</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
+      <TouchableOpacity accessibilityRole="button"
         onPress={onFollowingPress} // <-- use handler from props
         style={styles.followItem}
         activeOpacity={0.6}

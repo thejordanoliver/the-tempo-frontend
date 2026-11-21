@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AppState,
+  Platform,
   type LayoutChangeEvent,
   RefreshControl,
   ScrollView,
@@ -201,7 +202,6 @@ function SortableWidget({
       setSharedValue(currentIndexValue, targetIndex);
       scheduleOnRN(onTargetIndexChange, widget.id, targetIndex);
     },
-    [layout.height, layout.width, onTargetIndexChange, widget.id],
   );
 
   const panGesture = useMemo(
@@ -311,7 +311,10 @@ function SortableWidget({
     return {
       zIndex: active ? 1000 : 1,
       elevation: active ? 12 : 0,
-      shadowOpacity: active ? 0.24 : 0,
+      boxShadow:
+        Platform.OS === "android"
+          ? "none"
+          : `0px 8px 24px rgba(0, 0, 0, ${active ? 0.24 : 0})`,
       transform: [{ translateX: x }, { translateY: y }, { scale: scale.value }],
     };
   });
@@ -734,8 +737,7 @@ const sortableStyles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
+    borderRadius: 8,
     shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 12,
   },
 });

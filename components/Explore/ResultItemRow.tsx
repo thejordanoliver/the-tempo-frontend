@@ -1,19 +1,6 @@
-import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
-import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
-import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
-import { getGLeagueTeam, getGLeagueTeamLogo } from "constants/teamsGLeague";
-import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
-import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-
 import { useCallback, useState } from "react";
 import { useFocusEffect } from "expo-router";
 import {
@@ -26,7 +13,6 @@ import {
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type {
   PlayerResult,
-  SearchAffiliation,
   ResultItem,
   TeamResult,
   UserResult,
@@ -43,44 +29,17 @@ const playerPlaceholderImage = require("../../assets/Placeholders/playerPlacehol
 const userPlaceholderImage = require("../../assets/Placeholders/ProfilePlaceholder.png");
 const teamPlaceholderImage = require("../../assets/Placeholders/teamPlaceholder.png");
 
-const teamLookups = {
-  nba: getNBATeam,
-  gleague: getGLeagueTeam,
-  wnba: getWNBATeam,
-  mlb: getMLBTeam,
-  nhl: getNHLTeam,
-  nfl: getNFLTeam,
-  cfb: getCFBTeam,
-  mcbb: getMCBBTeam,
-  wcbb: getWCBBTeam,
-  soccer: getSOCCTeam,
-  cb: getCBTeam,
-  sb: getSBTeam,
-  mcvb: () => undefined,
-  wcvb: () => undefined,
+const TEAM_LEAGUE_LABELS: Record<string, string> = {
+  mcvb: "Men’s College Volleyball",
+  wcvb: "Women’s College Volleyball",
+  wcbb: "Women's College Basketball",
+  mcbb: "Men's College Basketball",
+  cb: "College Baseball",
+  sb: "College Softball",
+  cfb: "College Football",
+  msoc: "Men's College Soccer",
+  wsoc: "Women's College Soccer",
 };
-const logoLookups = {
-  nba: getNBATeamLogo,
-  gleague: getGLeagueTeamLogo,
-  wnba: getWNBATeamLogo,
-  mlb: getMLBTeamLogo,
-  nhl: getNHLTeamLogo,
-  nfl: getNFLTeamLogo,
-  cfb: getCFBTeamLogo,
-  mcbb: getMCBBTeamLogo,
-  wcbb: getWCBBTeamLogo,
-  soccer: getSOCCTeamLogo,
-  cb: getCBTeamLogo,
-  sb: getSBTeamLogo,
-  mcvb: () => undefined,
-  wcvb: () => undefined,
-};
-
-function getTeam(affiliation: SearchAffiliation, id: string | number | null) {
-  return id == null || affiliation === "mma"
-    ? null
-    : teamLookups[affiliation]?.(id);
-}
 
 // Remount on source changes so a failed image cannot poison a reused row.
 function ResultImage({
@@ -120,16 +79,12 @@ export default function ResultItemRow({
   // TEAM
   // -------------------------
   const renderTeam = (team: TeamResult) => {
-    if (team.is_active === false) return null;
-    const backendLogo = (
-      isDark ? team.logoLight || team.logo : team.logo
-    )?.trim();
-    const teamLogo: ImageProps["source"] =
-      backendLogo ||
-      (team.affiliation === "mma"
-        ? null
-        : logoLookups[team.affiliation]?.(team.id, isDark)) ||
-      teamPlaceholderImage;
+    const teamName = team.fullName?.trim() || team.name;
+    const backendLogo =
+      (isDark ? team.logoDark?.trim() : undefined) || team.logo?.trim();
+    const teamLogo: ImageProps["source"] = backendLogo
+      ? { uri: backendLogo }
+      : teamPlaceholderImage;
 
     return (
       <View style={styles.itemRow}>
@@ -138,11 +93,11 @@ export default function ResultItemRow({
           onPress={() => onSelect(team)}
           style={styles.itemContainer}
           accessibilityRole="button"
-          accessibilityLabel={`Open ${team.full_name || team.name}`}
+          accessibilityLabel={`Open ${teamName}`}
         >
           <View style={styles.userRow}>
             <ResultImage
-              key={`${team.affiliation}:${team.id}:${isDark}:${backendLogo}`}
+              key={`${team.league}:${team.id}:${isDark}:${backendLogo}`}
               source={teamLogo}
               fallback={teamPlaceholderImage}
               style={styles.teamLogo}
@@ -150,48 +105,11 @@ export default function ResultItemRow({
             />
             <View style={styles.resultText}>
               <Text style={styles.name} numberOfLines={1}>
-                {team.full_name || team.name}
+                {teamName}
               </Text>
-              {(team.affiliation === "mcvb" || team.affiliation === "wcvb") && (
-                <Text style={styles.subtext}>
-                  {team.affiliation === "mcvb"
-                    ? "Men’s College Volleyball"
-                    : "Women’s College Volleyball"}
-                </Text>
-              )}
-              {team.affiliation === "wcbb" && (
+              {TEAM_LEAGUE_LABELS[team.league] && (
                 <Text style={styles.subtext} numberOfLines={1}>
-                  {"Women's College Basketball"}
-                </Text>
-              )}
-              {team.affiliation === "mcbb" && (
-                <Text style={styles.subtext} numberOfLines={1}>
-                  {"Men's College Basketball"}
-                </Text>
-              )}
-              {team.affiliation === "cb" && (
-                <Text style={styles.subtext} numberOfLines={1}>
-                  College Baseball
-                </Text>
-              )}
-              {team.affiliation === "sb" && (
-                <Text style={styles.subtext} numberOfLines={1}>
-                  College Softball
-                </Text>
-              )}
-              {team.affiliation === "cfb" && (
-                <Text style={styles.subtext} numberOfLines={1}>
-                  College Football
-                </Text>
-              )}
-              {team.affiliation === "soccer" && team.league === "msoc" && (
-                <Text style={styles.subtext} numberOfLines={1}>
-                  {"Men's College Soccer"}
-                </Text>
-              )}
-              {team.affiliation === "soccer" && team.league === "wsoc" && (
-                <Text style={styles.subtext} numberOfLines={1}>
-                  {"Women's College Soccer"}
+                  {TEAM_LEAGUE_LABELS[team.league]}
                 </Text>
               )}
             </View>
@@ -203,7 +121,7 @@ export default function ResultItemRow({
             style={styles.deleteButton}
             onPress={() => onDelete(team)}
             accessibilityRole="button"
-            accessibilityLabel={`Delete ${team.full_name || team.name} from recent searches`}
+            accessibilityLabel={`Delete ${teamName} from recent searches`}
           >
             <Ionicons
               name="close"
@@ -222,11 +140,12 @@ export default function ResultItemRow({
   const renderPlayer = (player: PlayerResult) => {
     const headshot = player.headshot_url?.trim();
     const playerName = player.full_name?.trim() || "Unknown player";
-    const team = getTeam(player.affiliation, player.team_id);
+    const team = player.team;
     const association =
-      team?.fullName ||
+      team?.fullName?.trim() ||
+      team?.name?.trim() ||
       player.association_name?.trim() ||
-      (player.affiliation === "mma" ? null : "Free Agent");
+      (player.sport !== "mma" && player.team_id == null ? "Free Agent" : null);
     // A new daily key bypasses stale native cache entries at an unchanged URL.
     const cacheKey = headshot ? `${headshot}:${cacheDay}` : undefined;
 
@@ -242,7 +161,7 @@ export default function ResultItemRow({
           <View style={styles.playerRow}>
             <View style={styles.playerAvatarContainer}>
               <ResultImage
-                key={`${player.affiliation}:${player.id}:${cacheKey}`}
+                key={`${player.league}:${player.id}:${cacheKey}`}
                 source={headshot ? { uri: headshot } : playerPlaceholderImage}
                 fallback={playerPlaceholderImage}
                 style={styles.avatar}

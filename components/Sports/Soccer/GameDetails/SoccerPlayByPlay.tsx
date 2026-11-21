@@ -1,4 +1,4 @@
-import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
+import PlayByPlayHeader from "@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayByPlayHeader";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { memo, useMemo } from "react";
 import { Image, type ImageSourcePropType, Text, View } from "react-native";

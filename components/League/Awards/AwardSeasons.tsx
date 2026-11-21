@@ -1,9 +1,8 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import Dropdown from "components/Dropdown";
 import { Colors } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
-import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
@@ -13,6 +12,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useAwardSchools } from "hooks/LeagueHooks/useAwardSchools";
 import { useAwardSeasons } from "hooks/LeagueHooks/useAwardSeasons";
 import { useChampionTeams } from "hooks/LeagueHooks/useChampionTeams";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useMemo, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { AwardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
@@ -45,7 +45,13 @@ export default function AwardSeasons({ league }: Props) {
   const styles = useMemo(() => AwardTableStyles(isDark), [isDark]);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshSignal, setRefreshSignal] = useState(0);
-  const [selectedAward, setSelectedAward] = useState<AwardCategory>("all");
+  const awards = AWARD_CONFIG[league] ?? [];
+  const [selectedAwardValue, setSelectedAward] = useState<
+    Exclude<AwardCategory, "all"> | undefined
+  >(() => awards[0]?.value);
+  const selectedAward =
+    awards.find(({ value }) => value === selectedAwardValue)?.value ??
+    awards[0]?.value;
   const [viewMode, setViewMode] = useState<ViewMode>("players");
 
   const VIEW_MODE_OPTIONS = [
@@ -129,7 +135,6 @@ export default function AwardSeasons({ league }: Props) {
   });
 
   const championTeams = supportsChampionTeams ? championTeamsResult.data : [];
-  const awards = AWARD_CONFIG[league] ?? [];
   /* ------------------------------------------------ */
   /* Refresh                                          */
   /* ------------------------------------------------ */
@@ -168,9 +173,10 @@ export default function AwardSeasons({ league }: Props) {
           <Dropdown
             options={awards.map(({ label, value }) => ({ label, value }))}
             selectedValue={selectedAward}
-            onSelect={(val) => setSelectedAward(val as AwardCategory)}
+            onSelect={(val) =>
+              setSelectedAward(val as Exclude<AwardCategory, "all">)
+            }
             isDark={isDark}
-            width={120}
           />
         )}
 
@@ -252,9 +258,7 @@ export default function AwardSeasons({ league }: Props) {
       {(league === "cfb" || league === "mcbb" || league === "wcbb") &&
         viewMode === "teams" &&
         awards.map(({ value, title }) => {
-          if (value === "all") return null;
-
-          if (selectedAward !== "all" && selectedAward !== value) return null;
+          if (selectedAward !== value) return null;
 
           return (
             <AwardSchoolsTable
@@ -283,9 +287,7 @@ export default function AwardSeasons({ league }: Props) {
           league === "mlb" ||
           league === "wcbb") &&
         awards.map(({ value, title }) => {
-          if (value === "all") return null;
-
-          if (selectedAward !== "all" && selectedAward !== value) return null;
+          if (selectedAward !== value) return null;
 
           return (
             <AwardSeasonsTable

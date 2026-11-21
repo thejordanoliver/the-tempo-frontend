@@ -105,8 +105,6 @@ function setup(league = "cfb") {
       return { games: [], loading: false };
     },
     useLeaguesNews: () => ({}),
-    useCFBPlayoffs: () => ({}),
-    useNFLPlayoffs: () => ({}),
     useSeasonLeaders: () => ({}),
     useConferenceStandings: () => ({}),
   };

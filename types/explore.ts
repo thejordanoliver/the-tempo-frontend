@@ -1,18 +1,10 @@
 import type { UserFollowCounts } from "types/user";
-export type SearchAffiliation =
-  | "nba"
-  | "gleague"
-  | "wnba"
-  | "mlb"
-  | "cb"
-  | "sb"
-  | "mcvb"
-  | "wcvb"
-  | "nhl"
-  | "nfl"
-  | "cfb"
-  | "mcbb"
-  | "wcbb"
+export type SearchSport =
+  | "basketball"
+  | "baseball"
+  | "football"
+  | "volleyball"
+  | "hockey"
   | "mma"
   | "soccer";
 
@@ -24,6 +16,17 @@ type SearchRankingFields = {
   score: number;
 };
 
+export type SearchTeamInfo = {
+  id: number | string;
+  name: string;
+  fullName?: string | null;
+  shortName: string | null;
+  league: string;
+  sport: SearchSport;
+  logo?: string | null;
+  logoDark?: string | null;
+};
+
 export type PlayerResult = SearchRankingFields & {
   id: number | string;
   team_id: number | string | null;
@@ -31,56 +34,18 @@ export type PlayerResult = SearchRankingFields & {
   headshot_url: string | null;
   nickname: string | null;
   association_name: string | null;
-  affiliation: SearchAffiliation;
+  league: string;
+  sport: SearchSport;
+  team: SearchTeamInfo | null;
   position: string | null;
   active?: boolean | null;
-  isNFL?: boolean;
-  isMMA?: boolean;
-  isNBA?: boolean;
-  isGLEAGUE?: boolean;
-  isMLB?: boolean;
-  isCB?: boolean;
-  isSB?: boolean;
-  isMCVB?: boolean;
-  isWCVB?: boolean;
-  isCFB?: boolean;
-  isMCBB?: boolean;
-  isWCBB?: boolean;
-  isWNBA?: boolean;
-  isNHL?: boolean;
-  isSOCC?: boolean;
   type: "player";
 };
 
-export type TeamResult = SearchRankingFields & {
-  id: number | string;
-  name: string;
-  full_name?: string | null;
-  short_name: string;
-  affiliation: SearchAffiliation;
-  logo?: string | null;
-  logoLight?: string | null;
-  primaryColor?: string | null;
-  secondaryColor?: string | null;
-  league?: string;
-  leagueKey?: string | null;
-  isNFL?: boolean;
-  isNBA?: boolean;
-  isGLEAGUE?: boolean;
-  isMLB?: boolean;
-  isCB?: boolean;
-  isSB?: boolean;
-  isMCVB?: boolean;
-  isWCVB?: boolean;
-  isNHL?: boolean;
-  isCFB?: boolean;
-  isMCBB?: boolean;
-  isWCBB?: boolean;
-  isWNBA?: boolean;
-  isSOCC?: boolean;
-  is_active?: boolean;
-  type: "team";
-};
+export type TeamResult = SearchRankingFields &
+  SearchTeamInfo & {
+    type: "team";
+  };
 
 export type UserResult = SearchRankingFields &
   UserFollowCounts & {

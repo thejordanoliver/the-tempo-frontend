@@ -308,12 +308,12 @@ export const TeamRowStyles = (isDark: boolean, _isTie?: boolean) =>
      * Game Status
      * -------------------------------------------------------- */
 
-    possessionIcon: {
+    possession: {
       position: "absolute",
-      bottom: -10,
+      bottom: -12,
       alignSelf: "center",
-      width: 20,
-      height: 20,
+      width: 24,
+      height: 24,
       resizeMode: "contain",
     },
 

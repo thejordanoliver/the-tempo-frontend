@@ -48,9 +48,8 @@ export const TeamRow = ({
    * --------------------------------------------------- */
   const handleTeamPress = () => {
     if (!isActive) return;
-    if (league === "NHL") {
-      router.push(`/team/nhl/${id}`);
-    }
+
+    return router.push(`/team/${league}/${id}`);
   };
 
   /* -----------------------------------------------------
@@ -125,7 +124,11 @@ export const TeamRow = ({
 
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
-        <Pressable onPress={handleTeamPress}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${name} team details`}
+          onPress={handleTeamPress}
+        >
           <Image source={logo} style={styles.logo} />
         </Pressable>
 

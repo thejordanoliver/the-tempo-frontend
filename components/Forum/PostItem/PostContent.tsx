@@ -65,7 +65,7 @@ export const PostContent = memo(function PostContent({
 
   if (isEditing) {
     return (
-      <TextInput
+      <TextInput accessibilityLabel="Edit your post..."
         style={styles.editPostText}
         multiline
         value={editText}

@@ -1,3 +1,4 @@
+import type { ScoreboardOdds } from "types/odds";
 export type TennisLeague = "atp" | "wta";
 
 export type TennisStatus = {
@@ -54,6 +55,7 @@ export type TennisDivision = {
 };
 
 export type TennisMatch = {
+  odds?: ScoreboardOdds | null;
   id: string;
   uid: string | null;
   eventId: string;

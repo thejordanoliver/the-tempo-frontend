@@ -1,12 +1,12 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { RacingDriver, RacingEventCardProps } from "@/types/racing/racing";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useScopedRouter } from "hooks/useScopedRouter";
 
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { racingCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { RacingCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { getBroadcastDisplay } from "utils/games/games";
 
 export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
@@ -51,7 +51,7 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
     .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
     .slice(0, 4);
 
-  const styles = racingCardStyles(isDark);
+  const styles = RacingCardStyles(isDark);
   const gameStatusDescription = game?.status?.description;
   const gameStatusDetail = game?.status?.shortDetail ?? "";
   const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;
@@ -125,7 +125,11 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
   };
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+    >
       <View style={styles.card}>
         <View style={styles.headlineContainer}>
           <Text style={styles.headlineText} numberOfLines={1}>

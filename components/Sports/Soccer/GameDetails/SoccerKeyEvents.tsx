@@ -4,7 +4,12 @@ import HomeAwayTabBar from "@/components/TabBars/HomeAwayTabBar";
 import { getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { KeyEvent } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { formatPeriod } from "@/utils/games/games";
-import { Colors, Fonts, globalStyles } from "constants/styles";
+import {
+  Colors,
+  Fonts,
+  gameDetailTeamLogo,
+  globalStyles,
+} from "constants/styles";
 import { useMemo, useState } from "react";
 import { Image, StyleSheet, Text, TextStyle, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
@@ -320,9 +325,7 @@ const KeyEventsStyles = (isDark: boolean) =>
       gap: 4,
     },
     tabLogo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
     listContainer: {
       marginTop: 12,

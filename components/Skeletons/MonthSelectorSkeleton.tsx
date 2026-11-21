@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import {
   DATE_SELECTOR_ITEM_SPACING,
   DATE_SELECTOR_ITEM_WIDTH,
@@ -20,6 +21,8 @@ type Props = {
 };
 
 export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
+ const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
@@ -59,6 +62,8 @@ export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
   };
 
   useEffect(() => {
+ if (reduceMotion) { pulseAnim.setValue(0.7); return; }
+
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -79,7 +84,7 @@ export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
     return () => {
       animation.stop();
     };
-  }, [pulseAnim]);
+  }, [pulseAnim, reduceMotion]);
 
   const SkeletonBlock = ({ style }: { style: object }) => (
     <Animated.View style={[style, { opacity: pulseAnim }]} />

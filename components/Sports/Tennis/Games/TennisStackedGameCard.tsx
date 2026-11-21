@@ -86,7 +86,7 @@ export default function TennisStackedGameCard({ match }: Props) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>
         <View style={styles.main}>
           <View style={styles.header}>

@@ -69,7 +69,6 @@ export type Coach = {
   id: string | number;
   firstName: string;
   lastName: string;
-  image: string | null;
   role: string;
   season: number;
   teamId: number;

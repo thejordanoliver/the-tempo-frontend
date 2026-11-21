@@ -12,6 +12,7 @@ import {
   TeamInjuries,
   Venue,
 } from "@/components/Sports/Basketball/GameDetails";
+import Odds from "@/components/Sports/Basketball/GameDetails/Odds";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
@@ -152,26 +153,7 @@ export default function GameDetailsScreen(
   const game = useMemo(() => {
     if (routeGame) return routeGame;
     if (!score) return undefined;
-
-    return {
-      id: Number(score.gameId),
-      date: score.date,
-      league: { code: LEAGUE },
-      home: {
-        ...score.home,
-        logo: score.home.logo ?? "",
-        primaryColor: score.home.color,
-        conferenceId: null,
-      },
-      away: {
-        ...score.away,
-        logo: score.away.logo ?? "",
-        primaryColor: score.away.color,
-        conferenceId: null,
-      },
-      situation: { isRedZone: false },
-    };
-  }, [LEAGUE, routeGame, score]);
+  }, [routeGame, score]);
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
@@ -339,6 +321,13 @@ export default function GameDetailsScreen(
   })();
 
   const downDistance = currentDrives[0]?.end?.downDistanceText;
+
+  const odds =
+    details?.odds === undefined
+      ? game?.odds
+      : Array.isArray(details.odds)
+        ? null
+        : details.odds;
 
   const homeHasPossession = score?.home?.possession ?? false;
   const awayHasPossession = score?.away?.possession ?? false;
@@ -582,6 +571,18 @@ export default function GameDetailsScreen(
               awayChance={awayChance}
               awayColor={awayColor}
               size={180}
+              isDark={isDark}
+              state={state}
+            />
+
+            <Odds
+              homeId={homeId}
+              homeCode={homeCode}
+              homeLogo={homeLogo}
+              awayId={awayId}
+              awayCode={awayCode}
+              awayLogo={awayLogo}
+              odds={odds}
               isDark={isDark}
               state={state}
             />

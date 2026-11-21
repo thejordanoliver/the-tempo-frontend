@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import vm from "node:vm";
 import test from "node:test";
+import vm from "node:vm";
 import ts from "typescript";
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -132,7 +132,7 @@ function setup(league, entries = [], storageFails = false) {
   modules["utils/standings/collegeRankings"] = load(
     "utils/standings/collegeRankings.ts",
   );
-  hook = load("hooks/LeagueHooks/useCollegeRankings.ts").useCollegeRankings;
+  hook = load("hooks/LeagueHooks/useRankings.ts").useRankings;
   function render() {
     index = 0;
     state = hook(league);

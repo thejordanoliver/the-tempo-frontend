@@ -1,11 +1,14 @@
+import {
+  getSportsCardGradient,
+  sportsCardBackgroundStyles,
+} from "styles/SportsCardBackgroundStyles";
 // components/NBA/DraftCard.tsx
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
@@ -77,7 +80,7 @@ export default function DraftCard({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = draftCardStyles(isDark);
+  const styles = DraftCardStyles(isDark);
   const isNFL = league === "nfl";
   const isWNBA = league === "wnba";
   const team = isNFL
@@ -116,7 +119,7 @@ export default function DraftCard({
   const [fade] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
-    const delay = index * 60;
+    const delay = Math.min(index, 8) * 60;
 
     cardSlideX.setValue(70);
     cardFade.setValue(0);
@@ -176,19 +179,16 @@ export default function DraftCard({
             { opacity: fade, transform: [{ translateX: slideX }] },
           ]}
         >
-          <Image source={logo} style={styles.backgroundLogo} />
+          <Image
+            source={logo}
+            style={styles.backgroundLogo}
+            resizeMode="contain"
+          />
         </Animated.View>
       )}
 
       <LinearGradient
-        colors={
-          isDark
-            ? [Colors.dark.background, "rgba(0, 0, 0, 0)"]
-            : [Colors.light.background, "rgba(255, 255, 255, 0)"]
-        }
-        locations={[0.4, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+        {...getSportsCardGradient(isDark)}
         style={styles.cardGradient}
       />
     </>
@@ -205,13 +205,16 @@ export default function DraftCard({
         >
           <Text style={styles.pickIsIn}>{label}</Text>
           <View style={styles.rankingBadge}>
-            <BlurView intensity={100} style={StyleSheet.absoluteFill} />
             <Text style={styles.rankingText}>#{player.overall}</Text>
+            <Text style={styles.rankLabel}>OVERALL</Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.playerBioRow} />
+      <Text style={styles.subText}>
+        {team?.name ?? "Team unavailable"} · Round {player.round} · Pick{" "}
+        {player.pick}
+      </Text>
     </View>
   );
 
@@ -221,28 +224,36 @@ export default function DraftCard({
         <View style={styles.playerHeader}>
           <Image source={headshotSource} style={styles.headshot} />
 
-          <Text style={styles.name}>{athlete?.name ?? "N/A"}</Text>
-
-          <View style={styles.divider} />
-
-          <Text style={styles.positionText}>{positionAbbr ?? "N/A"}</Text>
+          <View style={styles.playerInfo}>
+            <Text style={styles.name} numberOfLines={1}>
+              {athlete?.name ?? "Awaiting selection"}
+            </Text>
+            <Text style={styles.positionText}>
+              {athlete ? (positionAbbr ?? "N/A") : "Upcoming pick"}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.rankingBadge}>
-          <BlurView intensity={100} style={StyleSheet.absoluteFill} />
           <Text style={styles.rankingText}>#{player.overall}</Text>
+          <Text style={styles.rankLabel}>OVERALL</Text>
         </View>
       </View>
 
       <View style={styles.playerBioRow}>
-        <Text style={styles.subText}>{athlete?.college || "N/A"}</Text>
+        <Text style={[styles.subText, styles.college]} numberOfLines={1}>
+          {athlete?.college || "N/A"}
+        </Text>
         <View style={styles.divider} />
         <Text style={styles.subText}>{athlete?.height || "N/A"}</Text>
         <View style={styles.divider} />
         <Text style={styles.subText}>{athlete?.weight || "N/A"}</Text>
       </View>
 
-      <View style={styles.playerBioRow}>
+      <View style={styles.pickDetails}>
+        <Text style={[styles.subText, styles.teamName]} numberOfLines={1}>
+          {team?.name ?? "Team unavailable"}
+        </Text>
         <Text style={styles.subText}>RD: {player.round}</Text>
         <View style={styles.divider} />
         <Text style={styles.subText}>Pick: {player.pick}</Text>
@@ -278,131 +289,79 @@ export default function DraftCard({
   );
 }
 
-const draftCardStyles = (isDark: boolean) =>
-  StyleSheet.create({
+export const DraftCardStyles = (isDark: boolean) => {
+  const theme = isDark ? Colors.dark : Colors.light;
+  const typography = globalStyles(isDark);
+  
+  return StyleSheet.create({
     cardWrapper: {
       position: "relative",
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      marginHorizontal: 12,
+      marginBottom: 10,
+      borderRadius: 8,
+      backgroundColor: theme.itemBackground,
       overflow: "hidden",
     },
-
-    logoContainer: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      bottom: 0,
-      alignItems: "flex-end",
-      justifyContent: "center",
-      width: "45%",
-      overflow: "hidden",
-    },
-
-    backgroundLogo: {
-      height: "160%",
-      aspectRatio: 1,
-      marginRight: -20,
-      opacity: 1,
-    },
-
-    cardGradient: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      left: 0,
-      width: "175%",
-    },
-
-    cardContent: {
-      gap: 4,
-      padding: 12,
-    },
-
+    logoContainer: sportsCardBackgroundStyles.logoContainer,
+    backgroundLogo: sportsCardBackgroundStyles.backgroundLogo,
+    cardGradient: sportsCardBackgroundStyles.cardGradient,
+    cardContent: { gap: 10, padding: 12 },
     row: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      gap: 8,
     },
     playerHeader: {
       flex: 1,
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: 4,
+      minWidth: 0,
+      gap: 10,
     },
-
+    playerInfo: { flex: 1, minWidth: 0, gap: 2 },
     headshot: {
       width: 50,
       height: 50,
-      marginRight: 8,
-      paddingTop: 4,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 25,
+      backgroundColor: theme.background,
     },
-
-    name: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 20,
-      color: isDark ? Colors.dark.white : Colors.light.black,
-    },
-
+    name: { ...typography.subtitle, fontFamily: Fonts.BOLD, fontSize: 18 },
     rankingBadge: {
-      overflow: "hidden",
       alignItems: "center",
       justifyContent: "center",
-      width: 44,
-      height: 44,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 999,
-      borderCurve: "circular",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3,
-      elevation: 4,
+      minWidth: 50,
     },
-
     rankingText: {
       fontFamily: Fonts.BOLD,
-      fontSize: 18,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 28,
+      color: theme.text,
     },
-
-    playerBioRow: {
+    rankLabel: { ...typography.label, fontSize: 9, lineHeight: 12 },
+    playerBioRow: { flexDirection: "row", alignItems: "center" },
+    pickDetails: {
       flexDirection: "row",
       alignItems: "center",
+      paddingTop: 8,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.transparentGray,
+      gap: 6,
     },
-
-    positionText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
-      color: isDark ? Colors.dark.white : Colors.light.black,
-    },
-
+    college: { flexShrink: 1 },
+    teamName: { flex: 1, minWidth: 0, fontFamily: Fonts.MEDIUM },
+    positionText: { ...typography.caption },
     divider: {
-      width: 1,
-      height: 18,
-      marginHorizontal: 6,
-      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
+      width: StyleSheet.hairlineWidth,
+      height: 12,
+      marginHorizontal: 8,
+      backgroundColor: theme.gray,
     },
-
-    subText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.dark.white : Colors.light.black,
-    },
-    pickIsIn: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 50,
-      color: isDark ? Colors.dark.white : Colors.light.black,
-    },
+    subText: { ...typography.caption },
+    pickIsIn: { ...typography.title, flexShrink: 1, color: theme.green },
     tradeNoteText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.dark.white : Colors.light.black,
+      ...typography.caption,
+      flexShrink: 1,
+      color: theme.orange,
     },
   });
+};

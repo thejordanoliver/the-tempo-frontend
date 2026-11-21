@@ -1,5 +1,5 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
-import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
+import { ConferenceStandingsList } from "@/components/League/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Team/FootballRosterStats";
 import Roster from "@/components/Team/Roster";

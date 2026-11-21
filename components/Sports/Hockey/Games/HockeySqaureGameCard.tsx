@@ -1,4 +1,3 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
   formatDate,
@@ -7,7 +6,7 @@ import {
   safeDate,
 } from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -15,6 +14,7 @@ import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   formatPeriod,
   getBroadcastDisplay,
@@ -48,23 +48,21 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
-  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
-
   const homeName = game.home?.code;
   const awayName = game.away?.code;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : getNHLTeamLogo(homeId, isDark);
+
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : getNHLTeamLogo(awayId, isDark);
 
   const headlineText = game?.headline ?? holidayLabel;
-  const broadcast = getBroadcastDisplay(game?.broadcasts);
+  const broadcast = getBroadcastDisplay(game?.broadcasts, true);
   const state = game.status.state ?? "";
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";

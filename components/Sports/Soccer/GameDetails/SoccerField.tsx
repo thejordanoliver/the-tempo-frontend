@@ -1,6 +1,6 @@
 import Dropdown from "@/components/Dropdown";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "@/constants/styles";
 import type {
   Shot,
   ShotOutcome,
@@ -964,8 +964,7 @@ const shotMapStyles = (isDark: boolean) =>
     },
 
     legendLogo: {
-      width: 20,
-      height: 20,
+      ...gameDetailTeamLogo,
     },
 
     shotMeta: {

@@ -1,4 +1,5 @@
-import { Colors } from "constants/styles";
+import { useReducedMotion } from "hooks/useReducedMotion";
+import { Colors, gameDetailTeamLogo } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
@@ -10,11 +11,19 @@ type Props = {
 };
 
 export default function TeamInjuriesSkeleton({ rows = 4 }: Props) {
+  const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const [pulseAnim] = useState(() => new Animated.Value(0.3));
   const [borderPulse] = useState(() => new Animated.Value(0.3));
   useEffect(() => {
+    if (reduceMotion) {
+      pulseAnim.setValue(0.7);
+      borderPulse.setValue(0.7);
+      return;
+    }
+
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -56,7 +65,7 @@ export default function TeamInjuriesSkeleton({ rows = 4 }: Props) {
       pulse.stop();
       border.stop();
     };
-  }, [borderPulse, pulseAnim]);
+  }, [borderPulse, pulseAnim, reduceMotion]);
 
   const styles = skeletonStyles(isDark);
   const borderBottomColor = borderPulse.interpolate({
@@ -156,8 +165,7 @@ const skeletonStyles = (isDark: boolean) =>
     },
 
     teamLogo: {
-      width: 28,
-      height: 28,
+      ...gameDetailTeamLogo,
       borderRadius: 100,
     },
 

@@ -234,7 +234,7 @@ function VolleyballGameCard({
       <VolleyballSquareGameCard game={game} isMCVB={isMCVB} isWCVB={isWCVB} />
     );
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

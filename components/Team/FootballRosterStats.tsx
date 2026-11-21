@@ -37,7 +37,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
+import { RosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 
 export default function RosterStats({
   rosterStats,
@@ -53,7 +53,7 @@ export default function RosterStats({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = rosterStatsStyles(isDark);
+  const styles = RosterStatsStyles(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const router = useScopedRouter();
   const roster = useMemo(
@@ -207,6 +207,7 @@ export default function RosterStats({
   ) => (
     <View key={leader.label} style={styles.cardWrapper}>
       <TouchableOpacity
+        accessibilityRole="button"
         activeOpacity={activeOpacity}
         onPress={() => handlePress(leader.player)}
         style={styles.cardContainer}
@@ -265,6 +266,7 @@ export default function RosterStats({
               ]}
             >
               <TouchableOpacity
+                accessibilityRole="button"
                 activeOpacity={activeOpacity}
                 onPress={() => handlePress(player)}
                 style={[styles.tableCell, { width: 140 }]}

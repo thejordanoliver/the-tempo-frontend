@@ -442,7 +442,7 @@ export default function BoxScore({
                     },
                   ]}
                 >
-                  <TouchableOpacity
+                  <TouchableOpacity accessibilityRole="button"
                     activeOpacity={activeOpacity}
                     onPress={() =>
                       handlePlayerPress(playerId, playerTeamId, league)
@@ -527,7 +527,7 @@ export default function BoxScore({
         </View>
 
         {players.length > COLLAPSED_ROWS && (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityState={{ expanded: isExpanded }}
             activeOpacity={activeOpacity}
             onPress={() => toggleExpand(sectionKey)}
             style={{

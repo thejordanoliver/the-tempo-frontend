@@ -279,7 +279,7 @@ function FeaturedProspectCard({
   const weight = prospect.displayWeight || prospect.weight;
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: !prospect.link }}
       activeOpacity={prospect.link ? 0.85 : 1}
       onPress={() => openProspectLink(prospect.link)}
       disabled={!prospect.link}

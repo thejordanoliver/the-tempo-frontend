@@ -47,15 +47,8 @@ export const TeamRow = ({
     if (league === "nba") {
       router.push(`/team/${id}`);
     }
-    if (league === "wnba") {
-      router.push(`/team/wnba/${id}`);
-    }
-    if (league === "mcbb") {
-      router.push(`/team/mcbb/${id}`);
-    }
-    if (league === "wcbb") {
-      router.push(`/team/wcbb/${id}`);
-    }
+
+    return router.push(`/team/${league}/${id}`);
   };
 
   /* -----------------------------------------------------
@@ -138,7 +131,11 @@ export const TeamRow = ({
 
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
-        <Pressable onPress={handleTeamPress}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${name} team details`}
+          onPress={handleTeamPress}
+        >
           <Image source={logo} style={styles.logo} />
         </Pressable>
 

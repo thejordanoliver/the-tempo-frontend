@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { useForumMediaLike } from "hooks/ForumHooks/useForumMediaLike";
 import { supportsLiquidGlass } from "@/utils/ui/glass";
 import { Ionicons } from "@expo/vector-icons";
@@ -53,6 +54,7 @@ export default function PostImagesModal({
   postAuthorUserId,
   currentUserId,
 }: ForumPostImagesModalProps) {
+  const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
@@ -86,7 +88,7 @@ export default function PostImagesModal({
   /* -------------------- Open / Close Animation -------------------- */
 
   const toggleCaption = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    if (!reduceMotion) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpanded((prev) => !prev);
   };
 
@@ -96,13 +98,13 @@ export default function PostImagesModal({
     Animated.parallel([
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 300,
+        duration: reduceMotion ? 0 : 300,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
       Animated.timing(scale, {
         toValue: 1,
-        duration: 300,
+        duration: reduceMotion ? 0 : 300,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
@@ -120,18 +122,18 @@ export default function PostImagesModal({
         }
       });
     });
-  }, [initialIndex, media.length, opacity, scale, visible]);
+  }, [initialIndex, media.length, opacity, reduceMotion, scale, visible]);
 
   useEffect(() => {
     if (!collapsedHeight || !expandedHeight) return;
 
     Animated.timing(animatedHeight, {
       toValue: expanded ? expandedHeight : collapsedHeight,
-      duration: 300,
+      duration: reduceMotion ? 0 : 300,
       easing: Easing.out(Easing.ease),
       useNativeDriver: false, // ❗ height animation
     }).start();
-  }, [animatedHeight, collapsedHeight, expanded, expandedHeight]);
+  }, [animatedHeight, collapsedHeight, expanded, expandedHeight, reduceMotion]);
 
   useEffect(() => {
     let cancelled = false;
@@ -187,7 +189,7 @@ export default function PostImagesModal({
 
     Animated.timing(captionOpacity, {
       toValue,
-      duration: 200,
+      duration: reduceMotion ? 0 : 200,
       useNativeDriver: true,
     }).start();
 
@@ -230,9 +232,9 @@ export default function PostImagesModal({
   /* -------------------- Render -------------------- */
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
-      <SafeAreaView style={styles.modalContainer}>
-        <BlurView intensity={90} style={StyleSheet.absoluteFill} />
+    <Modal visible={visible} transparent animationType={reduceMotion ? "none" : "fade"} onRequestClose={onClose}>
+      <SafeAreaView style={styles.modalContainer} accessibilityViewIsModal onAccessibilityEscape={onClose}>
+        <BlurView intensity={100} style={StyleSheet.absoluteFill} />
         <View style={styles.modalBackground} />
 
         <Animated.View
@@ -249,7 +251,7 @@ export default function PostImagesModal({
               )}
               <Text style={styles.username}>{username}</Text>
             </View>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Close post media" onPress={onClose}>
               <Ionicons name="close" size={28} color={Colors.white} />
             </TouchableOpacity>
           </View>
@@ -271,7 +273,7 @@ export default function PostImagesModal({
             })}
             initialScrollIndex={initialIndex}
             renderItem={({ item, index }) => (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Image ${index + 1}. ${captionVisible ? "Hide" : "Show"} caption`}
                 activeOpacity={1}
                 onPress={toggleCaptionVisibility}
                 style={styles.imageContainer}
@@ -287,7 +289,7 @@ export default function PostImagesModal({
                       onEnd={() => setPlayingIndex(null)}
                     />
                   ) : (
-                    <TouchableOpacity
+                    <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Play video ${index + 1}`}
                       activeOpacity={0.9}
                       onPress={() => setPlayingIndex(index)}
                     >
@@ -356,14 +358,14 @@ export default function PostImagesModal({
               {postText}
             </Text>
             {isTruncated && (
-              <TouchableOpacity onPress={toggleCaption}>
+              <TouchableOpacity accessibilityRole="button" accessibilityState={{ expanded }} onPress={toggleCaption}>
                 <Text style={styles.showMoreText}>
                   {expanded ? "Show less" : "Show more"}
                 </Text>
               </TouchableOpacity>
             )}
             <View style={styles.engagementRow}>
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: likePending }} accessibilityLabel={`${liked ? "Unlike" : "Like"} post, ${likeCount} likes`}
                 onPress={toggleLikePress}
                 disabled={likePending}
                 style={styles.iconWithText}

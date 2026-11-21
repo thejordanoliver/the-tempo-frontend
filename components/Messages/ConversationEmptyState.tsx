@@ -47,7 +47,7 @@ export default function ConversationEmptyState({
 
         <Text style={styles.emptyTitle}>Couldn’t load messages</Text>
 
-        <TouchableOpacity
+        <TouchableOpacity accessibilityRole="button"
           activeOpacity={activeOpacity}
           style={styles.retryButton}
           onPress={refresh}

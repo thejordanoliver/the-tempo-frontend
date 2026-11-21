@@ -238,7 +238,7 @@ export default function Venue({
           </View>
 
           {address && (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button"
               onPress={openInMaps}
               activeOpacity={activeOpacity}
               style={styles.mapCard}

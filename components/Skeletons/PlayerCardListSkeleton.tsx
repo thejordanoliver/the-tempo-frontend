@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -14,6 +15,8 @@ export default function PlayerCardSkeletonList({
   count = 5,
   showHeader = true,
 }: PlayerCardSkeletonListProps) {
+ const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = playerCardSkeletonListStyles(isDark);
@@ -21,6 +24,8 @@ export default function PlayerCardSkeletonList({
   const [pulseAnim] = useState(() => new Animated.Value(0.3)); // start at low opacity
 
   useEffect(() => {
+ if (reduceMotion) { pulseAnim.setValue(0.7); return; }
+
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -42,7 +47,7 @@ export default function PlayerCardSkeletonList({
 
     pulse.start();
     return () => pulse.stop();
-  }, [pulseAnim]);
+  }, [pulseAnim, reduceMotion]);
 
   const PlayerCardSkeleton = () => (
     <Animated.View

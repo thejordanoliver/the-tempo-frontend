@@ -1,24 +1,12 @@
 import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  LayoutAnimation,
-  Platform,
-  Text,
-  TouchableOpacity,
-  UIManager,
-  View,
-} from "react-native";
+import { useCallback, useMemo } from "react";
+import { Text, View } from "react-native";
 import { AwardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 import { AwardCategory } from "types/types";
 
 const NAME_COLUMN_WIDTH = "100%";
-const COLLAPSED_ROWS = 5;
-
-if (Platform.OS === "android") {
-  UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
 
 type Props = {
   category: AwardCategory;
@@ -34,16 +22,6 @@ export function AwardSeasonsTable({ title, loading, error, data }: Props) {
   const isDark = resolvedColorScheme === "dark";
   const styles = AwardTableStyles(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-  const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }, [expanded]);
-
-  const visibleRows = useMemo(
-    () => (expanded ? data : data?.slice(0, COLLAPSED_ROWS)),
-    [expanded, data],
-  );
 
   const getRowBackground = useCallback(
     (index: number) =>
@@ -79,11 +57,12 @@ export function AwardSeasonsTable({ title, loading, error, data }: Props) {
             <Text style={styles.headerName}>{title}</Text>
           </View>
 
-          {visibleRows?.map((row, index) => (
+          {data?.map((row, index) => (
             <View
               key={`${row.award_type ?? "type"}-${row.season ?? "season"}-${row.player_name ?? "player"}-${row.team_code ?? "team"}-${index}`}
               style={[
                 styles.nameRow,
+                index === data.length - 1 && { borderBottomWidth: 0 },
                 { backgroundColor: getRowBackground(index) },
               ]}
             >
@@ -92,16 +71,6 @@ export function AwardSeasonsTable({ title, loading, error, data }: Props) {
             </View>
           ))}
         </View>
-        {data?.length > COLLAPSED_ROWS && (
-          <TouchableOpacity
-            onPress={() => setExpanded((p) => !p)}
-            style={{ paddingVertical: 14, alignItems: "center" }}
-          >
-            <Text style={styles.showMoreLess}>
-              {expanded ? "Show Less" : "Show More"}
-            </Text>
-          </TouchableOpacity>
-        )}
       </View>
     </View>
   );

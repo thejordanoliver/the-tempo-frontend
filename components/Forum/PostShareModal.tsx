@@ -118,7 +118,7 @@ const PostShareModal = forwardRef<PostShareModalRef, Props>(
                   keyboardShouldPersistTaps="handled"
                   contentContainerStyle={styles.externalRail}
                 >
-                  <Pressable
+                  <Pressable accessibilityState={{ disabled: share.pending }}
                     accessibilityRole="button"
                     accessibilityLabel={`Share using ${messagingName}`}
                     disabled={share.pending}
@@ -140,7 +140,7 @@ const PostShareModal = forwardRef<PostShareModalRef, Props>(
                       {messagingName}
                     </Text>
                   </Pressable>
-                  <Pressable
+                  <Pressable accessibilityState={{ disabled: share.pending }}
                     accessibilityRole="button"
                     accessibilityLabel="More sharing apps"
                     disabled={share.pending}
@@ -206,7 +206,7 @@ const PostShareModal = forwardRef<PostShareModalRef, Props>(
               </View>
             }
             renderItem={({ item }) => (
-              <Pressable
+              <Pressable accessibilityState={{ disabled: share.pending }}
                 accessibilityRole="button"
                 accessibilityLabel={`Send post to ${item.username}`}
                 disabled={share.pending}

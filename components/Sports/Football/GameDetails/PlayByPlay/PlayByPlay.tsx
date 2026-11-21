@@ -17,10 +17,10 @@ import {
 } from "react-native";
 
 import HeadingTwo from "@/components/Headings/HeadingTwo";
+import PlayByPlayHeader from "@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayByPlayHeader";
 import { PlayByPlayStyles } from "@/styles/GameDetailStyles/PlayByPlayStyles";
 import { formatPeriod } from "@/utils/games/games";
 import { isFootballRedZonePlay } from "@/utils/sports/football/footballRedZone";
-import PlayByPlayHeader from "components/Sports/PlayByPlay/PlayByPlayHeader";
 import FootballFieldPlay from "./FootballField";
 
 type FootballFieldProps = {

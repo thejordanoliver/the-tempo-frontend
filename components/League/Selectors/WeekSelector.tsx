@@ -251,7 +251,7 @@ export default function WeekSelector({
             safeSelectedIndex != null && index === safeSelectedIndex;
 
           return (
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityState={{ selected: isSelected }}
               key={group.key || `${group.season?.slug}-${group.week?.number}`}
               activeOpacity={activeOpacity}
               onPress={() => handleSelectWeek(index)}

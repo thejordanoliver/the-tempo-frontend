@@ -1,3 +1,5 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
+import { useScreenReaderEnabled } from "hooks/useScreenReaderEnabled";
 import { Ionicons } from "@expo/vector-icons";
 import { BROWSEABLE_LEAGUES, LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, globalStyles } from "constants/styles";
@@ -5,7 +7,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "expo-router";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  AccessibilityInfo,
   AppState,
   Image,
   Platform,
@@ -108,11 +109,14 @@ const OrbitCard = memo(function OrbitCard({
           height: cardWidth * 1.5,
           left: (width - cardWidth) / 2,
           borderRadius,
+          backgroundColor: theme.itemBackground,
         },
         animatedStyle,
       ]}
     >
       <Pressable
+        disabled={!active}
+        focusable={active}
         accessibilityRole="button"
         accessibilityLabel={`Open ${config.shortName}`}
         onPress={() => onSelect(league)}
@@ -204,7 +208,8 @@ export default function LeagueCarousel({
   const [width, setWidth] = useState(320);
   const [interacting, setInteracting] = useState(false);
   const [paused, setPaused] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const screenReaderEnabled = useScreenReaderEnabled();
   const [appActive, setAppActive] = useState(
     AppState.currentState === "active",
   );
@@ -238,20 +243,10 @@ export default function LeagueCarousel({
   );
 
   useEffect(() => {
-    let mounted = true;
-    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
-      if (mounted) setReduceMotion(enabled);
-    });
-    const motion = AccessibilityInfo.addEventListener(
-      "reduceMotionChanged",
-      setReduceMotion,
-    );
     const app = AppState.addEventListener("change", (state) =>
       setAppActive(state === "active"),
     );
     return () => {
-      mounted = false;
-      motion.remove();
       app.remove();
       cancelAnimation(rotation);
     };
@@ -268,7 +263,7 @@ export default function LeagueCarousel({
     const action = leagueCarouselMotionAction({
       focused,
       appActive,
-      paused,
+      paused: paused || screenReaderEnabled,
       reduceMotion,
       interacting,
       searching,
@@ -297,6 +292,7 @@ export default function LeagueCarousel({
     focused,
     interacting,
     paused,
+    screenReaderEnabled,
     reduceMotion,
     searching,
     rotation,

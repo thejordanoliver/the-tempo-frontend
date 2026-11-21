@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 // components/Forum/PostItemSkeleton.tsx
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -8,6 +9,8 @@ import type { ForumPostItemSkeletonProps } from "types/forum";
 export default function PostItemSkeleton({
   showMedia = true,
 }: ForumPostItemSkeletonProps) {
+ const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
@@ -15,6 +18,8 @@ export default function PostItemSkeleton({
   const [pulse] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
+ if (reduceMotion) { pulse.setValue(0.7); return; }
+
     const anim = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, {
@@ -31,7 +36,7 @@ export default function PostItemSkeleton({
     );
     anim.start();
     return () => anim.stop();
-  }, [pulse]);
+  }, [pulse, reduceMotion]);
 
   const PulseBlock = ({ style }: { style?: any }) => (
     <Animated.View style={[styles.block, style, { opacity: pulse }]} />
@@ -86,7 +91,6 @@ function getStyles(isDark: boolean) {
   return StyleSheet.create({
     containerWrapper: {
       paddingTop: 12,
-      paddingHorizontal: 12,
     },
     postContainer: {
       paddingVertical: 10,

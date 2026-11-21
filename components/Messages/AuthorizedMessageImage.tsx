@@ -1,17 +1,18 @@
+import { Colors } from "@/constants/styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Image,
-  type ImageResizeMode,
-  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  type ImageResizeMode,
   type ImageStyle,
   type StyleProp,
 } from "react-native";
 import { getAuthorizedMessageAttachment } from "services/messageAttachmentUrls";
 import type { MessageAttachment } from "types/messages";
+import CustomActivityIndicator from "../CustomActivityIndicator";
 
 type Props = {
   attachment: MessageAttachment;
@@ -24,6 +25,7 @@ export default function AuthorizedMessageImage({
   resizeMode = "cover",
   style,
 }: Props) {
+  const styles = AuthorizedMessageImageStyles;
   const [url, setUrl] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
   const [loading, setLoading] = useState(Boolean(attachment.id));
@@ -96,25 +98,29 @@ export default function AuthorizedMessageImage({
 
   if (loading && !url) {
     return (
-      <View style={[style, localStyles.state]}>
-        <ActivityIndicator color="#ffffff" />
+      <View style={[style, styles.state]}>
+        <CustomActivityIndicator />
       </View>
     );
   }
 
   if (failed || !url) {
     return (
-      <View style={[style, localStyles.state]}>
-        <Text style={localStyles.stateText}>Image unavailable</Text>
-        <TouchableOpacity onPress={handleManualRetry} hitSlop={8}>
-          <Text style={localStyles.retryText}>Retry</Text>
+      <View style={[style, styles.state]}>
+        <Text style={styles.stateText}>Image unavailable</Text>
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={handleManualRetry}
+          hitSlop={8}
+        >
+          <Text style={styles.retryText}>Retry</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={[style, localStyles.imageContainer]}>
+    <View style={[style, styles.imageContainer]}>
       <Image
         source={{ uri: url }}
         style={StyleSheet.absoluteFill}
@@ -122,15 +128,15 @@ export default function AuthorizedMessageImage({
         onError={handleImageError}
       />
       {loading && (
-        <View style={[StyleSheet.absoluteFill, localStyles.loading]}>
-          <ActivityIndicator color="#ffffff" />
+        <View style={[StyleSheet.absoluteFill, styles.loading]}>
+          <CustomActivityIndicator />
         </View>
       )}
     </View>
   );
 }
 
-const localStyles = StyleSheet.create({
+export const AuthorizedMessageImageStyles = StyleSheet.create({
   imageContainer: {
     overflow: "hidden",
   },
@@ -141,7 +147,7 @@ const localStyles = StyleSheet.create({
   },
   retryText: {
     marginTop: 4,
-    color: "#ffffff",
+    color: Colors.white,
     fontSize: 12,
     fontWeight: "600",
   },
@@ -151,7 +157,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: "#555555",
   },
   stateText: {
-    color: "#ffffff",
+    color: Colors.white,
     fontSize: 12,
   },
 });

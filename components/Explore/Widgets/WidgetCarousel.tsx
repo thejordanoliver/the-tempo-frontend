@@ -109,7 +109,6 @@ function WidgetCarouselComponent<Item>({
       if (visiblePageIndex === previousPageIndex) return;
       scheduleOnRN(syncPageIndex, visiblePageIndex);
     },
-    [items.length, syncPageIndex, viewportWidth],
   );
 
   // Keep the current page valid when data or the measured viewport changes.

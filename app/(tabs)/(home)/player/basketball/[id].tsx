@@ -158,6 +158,7 @@ export default function PlayerDetailScreen() {
     "basketball",
     playerLeague,
     resolvedTeamId,
+    isActive,
   );
 
   const game = playerGame;
@@ -278,7 +279,7 @@ export default function PlayerDetailScreen() {
             rankings={currentSeasonRankings}
             teamColor={teamColor}
           />
-          {(hasPlayerGameLog && playerId) || (isActive && resolvedTeamId) ? (
+          {isActive && resolvedTeamId ? (
             <LatestGame
               game={game}
               loading={gameLoading}

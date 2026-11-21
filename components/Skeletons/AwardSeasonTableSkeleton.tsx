@@ -1,33 +1,37 @@
-// components/GameDetails/AwardSeasonTableSkeleton.tsx
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useReducedMotion } from "hooks/useReducedMotion";
 import React, { useEffect, useState } from "react";
-import { Animated, ScrollView, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
+import { AwardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 
-const COLUMN_WIDTH = 70;
-const NAME_COLUMN_WIDTH = "100%";
-const ROW_HEIGHT = 50;
-const ROWS = 5;
+const ROWS = 25;
 
 type Props = {
   lighter?: boolean;
   teams?: number;
   showTeamHeader?: boolean;
+  variant?: "players" | "champions" | "schools";
 };
 
 export default function AwardSeasonTableSkeleton({
-  lighter = false,
   teams = 1,
+  variant = "players",
 }: Props) {
+  const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark, lighter);
-
-  // Shared pulse animation
+  const tableStyles = AwardTableStyles(isDark);
+  const placeholderColor = isDark ? Colors.darkGray : Colors.lightGray;
   const [pulseAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
-    Animated.loop(
+    if (reduceMotion) {
+      pulseAnim.setValue(0.7);
+      return;
+    }
+
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
           toValue: 0.4,
@@ -40,158 +44,82 @@ export default function AwardSeasonTableSkeleton({
           useNativeDriver: true,
         }),
       ]),
-    ).start();
-  }, [pulseAnim]);
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [pulseAnim, reduceMotion]);
 
-  const Skeleton = ({ style }: { style: any }) => (
-    <Animated.View style={[style, { opacity: pulseAnim }]} />
-  );
+  const placeholderStyle = {
+    backgroundColor: placeholderColor,
+    opacity: pulseAnim,
+  };
+  const isSchools = variant === "schools";
 
-  const rowsArray = Array.from({ length: ROWS });
-
-  const getRowStyle = (index: number) => [
-    styles.row,
-
-    // ✅ alternating stripes
-    index % 2 === 1 && {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-
-    // ✅ remove border from last row
-    index === rowsArray.length - 1 && {
-      borderBottomWidth: 0,
-    },
-  ];
-
-  const renderTeam = (key: number) => (
-    <View key={key} style={styles.teamBox}>
-      {/* Table */}
-      <View style={{ flexDirection: "row" }}>
-        {/* Player names */}
-        <View style={{ width: NAME_COLUMN_WIDTH }}>
-          <View style={styles.headerRow}>
-            <Skeleton style={styles.headerCellWide} />
+  return (
+    <View>
+      {Array.from({ length: teams }, (_, teamIndex) => (
+        <View key={teamIndex} style={tableStyles.table}>
+          <View
+            style={[tableStyles.headerRow, isSchools && styles.schoolHeader]}
+          >
+            <Animated.View style={[styles.header, placeholderStyle]} />
           </View>
-
-          {rowsArray.map((_, i) => (
-            <View key={`name-${key}-${i}`} style={getRowStyle(i)}>
-              <Skeleton style={styles.playerName} />
-              <Skeleton style={styles.playerTeam} />
+          {Array.from({ length: ROWS }, (_, index) => (
+            <View
+              key={index}
+              style={[
+                tableStyles.nameRow,
+                isSchools && styles.schoolRow,
+                !isSchools &&
+                  index % 2 === 1 && {
+                    backgroundColor: isDark
+                      ? Colors.dark.itemBackground
+                      : Colors.light.itemBackground,
+                  },
+                index === ROWS - 1 && styles.lastRow,
+              ]}
+            >
+              <View style={[tableStyles.leftContainer, styles.left]}>
+                {variant !== "players" && (
+                  <Animated.View
+                    style={[
+                      tableStyles.teamLogo,
+                      styles.placeholder,
+                      placeholderStyle,
+                    ]}
+                  />
+                )}
+                <Animated.View style={[styles.name, placeholderStyle]} />
+              </View>
+              <View style={tableStyles.rightContainer}>
+                <Animated.View style={[styles.season, placeholderStyle]} />
+                {isSchools && (
+                  <Animated.View
+                    style={[styles.playerCount, placeholderStyle]}
+                  />
+                )}
+              </View>
             </View>
           ))}
         </View>
-      </View>
-
-      {/* Full-width button */}
-      <View style={styles.button}>
-        <Skeleton style={styles.buttonSkeleton} />
-      </View>
-    </View>
-  );
-
-  return (
-    <ScrollView>
-      {Array.from({ length: teams }).map((_, i) => (
-        <View key={`team-skeleton-${i}`}>{renderTeam(i)}</View>
       ))}
-    </ScrollView>
+    </View>
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Styles                                                                      */
-/* -------------------------------------------------------------------------- */
-
-const getStyles = (isDark: boolean, lighter: boolean) =>
-  StyleSheet.create({
-    teamBox: {
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 10,
-      overflow: "hidden",
-    },
-
-    headerRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      height: ROW_HEIGHT,
-      paddingHorizontal: 6,
-      borderBottomWidth: 1,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-    },
-
-    headerCellWide: {
-      width: 80,
-      height: 12,
-      borderRadius: 4,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-
-    headerCell: {
-      width: COLUMN_WIDTH - 20,
-      height: 12,
-      marginHorizontal: 5,
-      borderRadius: 4,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      height: ROW_HEIGHT,
-      paddingHorizontal: 6,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-    },
-
-    button: {
-      alignItems: "center",
-      justifyContent: "center",
-      height: ROW_HEIGHT,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-    },
-
-    buttonSkeleton: {
-      width: "20%",
-      height: 16,
-      borderRadius: 8,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-
-    playerName: {
-      width: 120,
-      height: 14,
-      borderRadius: 4,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    playerTeam: {
-      width: 60,
-      height: 14,
-      borderRadius: 4,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-
-    statCell: {
-      width: COLUMN_WIDTH - 20,
-      height: 14,
-      marginHorizontal: 5,
-      borderRadius: 4,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-  });
+const styles = StyleSheet.create({
+  placeholder: { borderRadius: 4 },
+  header: {
+    width: "55%",
+    height: 20,
+    marginHorizontal: 10,
+    borderRadius: 4,
+  },
+  left: { flex: 1, paddingRight: 12 },
+  name: { width: 120, maxWidth: "70%", height: 14, borderRadius: 4 },
+  season: { width: 40, height: 14, borderRadius: 4 },
+  playerCount: { width: 55, height: 12, marginTop: 6, borderRadius: 4 },
+  schoolHeader: { borderBottomColor: Colors.midTone },
+  schoolRow: { height: "auto", minHeight: 68, padding: 14 },
+  lastRow: { borderBottomWidth: 0 },
+});

@@ -232,10 +232,12 @@ export type AwardSeason = {
 };
 
 export const AWARD_CONFIG: Partial<
-  Record<string, { label: string; value: AwardCategory; title: string }[]>
+  Record<
+    string,
+    { label: string; value: Exclude<AwardCategory, "all">; title: string }[]
+  >
 > = {
   nba: [
-    { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "NBA MVP" },
     { label: "ROTY", value: "roy", title: "NBA Rookie of the Year" },
     { label: "DPOY", value: "dpoy", title: "NBA Defensive Player of the Year" },
@@ -246,7 +248,6 @@ export const AWARD_CONFIG: Partial<
   ],
 
   wnba: [
-    { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "WNBA MVP" },
     { label: "ROTY", value: "roy", title: "WNBA Rookie of the Year" },
     {
@@ -260,7 +261,6 @@ export const AWARD_CONFIG: Partial<
   ],
 
   cfb: [
-    { label: "All Awards", value: "all", title: "" },
     { label: "Heisman Trophy", value: "heisman", title: "Heisman Trophy" },
     {
       label: "AP Player of the Year",
@@ -321,7 +321,6 @@ export const AWARD_CONFIG: Partial<
   ],
 
   mcbb: [
-    { label: "All Awards", value: "all", title: "" },
     {
       label: "Men's AP Player of the Year",
       value: "apoy",
@@ -364,7 +363,6 @@ export const AWARD_CONFIG: Partial<
     },
   ],
   wcbb: [
-    { label: "All Awards", value: "all", title: "" },
     {
       label: "Women's AP Player of the Year",
       value: "apoy",
@@ -398,7 +396,6 @@ export const AWARD_CONFIG: Partial<
     },
   ],
   nfl: [
-    { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "NFL Most Valuable Player" },
     {
       label: "OROY",
@@ -419,7 +416,6 @@ export const AWARD_CONFIG: Partial<
     },
   ],
   nhl: [
-    { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "NHL Most Valuable Player" },
     {
       label: "James Norris Memorial Trophy",
@@ -438,7 +434,6 @@ export const AWARD_CONFIG: Partial<
     },
   ],
   mlb: [
-    { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "MLB Most Valuable Player" },
     {
       label: "Cy Young Award",

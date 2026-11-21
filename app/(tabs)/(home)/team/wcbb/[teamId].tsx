@@ -1,6 +1,6 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
+import { ConferenceStandingsList } from "@/components/League/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
-import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import RosterStats from "@/components/Team/BasketballRosterStats";
 import Roster from "@/components/Team/Roster";
 import { Colors } from "@/constants/styles";

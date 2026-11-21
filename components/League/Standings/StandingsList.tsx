@@ -1,6 +1,3 @@
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -12,6 +9,8 @@ import {
   StandingsTeam,
   useLeagueStandings,
 } from "hooks/LeagueHooks/useLeagueStandings";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
@@ -383,14 +382,11 @@ export const StandingsList = ({
     data: StandingsTeam[];
   }) => {
     const team = item;
-    const route = getTeamRoute();
-
-    const teamLogo = getStandingsTeamLogo(team, isDark);
     const id = team?.id ?? item.id;
+    const route = getTeamRoute();
+    const logo = isDark ? team.logoDark || team.logo : team.logo;
     const teamCode = team?.code;
-
     const favorited = team ? isFavorite(league, team.id) : false;
-
     const isLastRow = index === data.length - 1;
 
     return (
@@ -415,6 +411,7 @@ export const StandingsList = ({
         </View>
 
         <TouchableOpacity
+          accessibilityRole="button"
           style={styles.teamInfo}
           onPress={() =>
             router.push({
@@ -426,11 +423,7 @@ export const StandingsList = ({
             })
           }
         >
-          {teamLogo ? (
-            <Image source={teamLogo} style={styles.logo} />
-          ) : (
-            <View style={styles.logo} />
-          )}
+          {logo && <Image source={{ uri: logo }} style={styles.logo} />}
 
           <Text
             style={styles.teamName}

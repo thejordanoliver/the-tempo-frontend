@@ -1,6 +1,3 @@
-import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
-import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
-import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import ConferenceListModal, {
@@ -12,21 +9,17 @@ import SeasonLeadersList from "@/components/League/SeasonLeaders/SeasonLeaderLis
 import WeekSelector, {
   FootballWeekGroup,
 } from "@/components/League/Selectors/WeekSelector";
+import { ConferenceStandingsList } from "@/components/League/Standings/ConferenceStandingsList";
+import Rankings from "@/components/League/Standings/Rankings";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
 import TransactionList from "@/components/League/Transactions/TransactionList";
 import NewsList from "@/components/News/NewsList";
-import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
-import { CFPBracket } from "@/components/Sports/Football/Playoffs/CFBPlayoffs/CFPBracket";
-import { NFLPlayoffBracket } from "@/components/Sports/Football/Playoffs/NFLPlayoffs/NFLPlayoffBracket";
-import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStandingsList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { getCFBConferenceSelectionName } from "@/constants/conferences/cfbConferences";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
-import { useCFBPlayoffs } from "@/hooks/FootballHooks/useCFBPlayoffs";
 import { useFootballGames } from "@/hooks/FootballHooks/useFootballGames";
-import { useNFLPlayoffs } from "@/hooks/FootballHooks/useNFLPlayoffs";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "@/hooks/LeagueHooks/useLeagueTabs";
 import { useSeasonLeaders } from "@/hooks/LeagueHooks/useSeasonLeaders";
@@ -35,11 +28,16 @@ import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
 import { getFootballSeason, getRecruitYear } from "@/utils/common/dateUtils";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
+import PagerView from "components/PagerView";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import {
   useCallback,
@@ -50,7 +48,6 @@ import {
   useState,
 } from "react";
 import { View } from "react-native";
-import PagerView from "components/PagerView";
 import { CustomHeader } from "../../components/CustomHeader";
 
 dayjs.extend(utc);
@@ -250,14 +247,6 @@ function NFLLeagueScreen() {
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
   const {
-    playoffData: nflPlayoffData,
-    playoffLoading: nflPlayoffLoading,
-    playoffError: nflPlayoffError,
-    onRefresh: refreshNFLPlayoffs,
-    playoffRefreshing: nflPlayoffRefreshing,
-  } = useNFLPlayoffs(currentSeason, { enabled: hasVisitedTab("playoffs") });
-
-  const {
     categories,
     loading: leadersLoading,
     error: leadersError,
@@ -328,6 +317,7 @@ function NFLLeagueScreen() {
 
       <View style={styles.container}>
         <PagerView
+          scrollEnabled={selectedTab !== "playoffs"}
           key={league}
           ref={pagerRef}
           style={styles.container}
@@ -379,14 +369,11 @@ function NFLLeagueScreen() {
             ) : null}
           </View>
 
-          <View key="playoffs" style={styles.contentArea}>
+          <View key="playoffs" style={styles.contentArea} collapsable={false}>
             {hasVisitedTab("playoffs") ? (
-              <NFLPlayoffBracket
-                bracket={nflPlayoffData}
-                loading={nflPlayoffLoading}
-                error={nflPlayoffError}
-                refreshing={nflPlayoffRefreshing}
-                onRefresh={refreshNFLPlayoffs}
+              <LeaguePlayoffs
+                league="nfl"
+                active={selectedTab === "playoffs"}
               />
             ) : null}
           </View>
@@ -602,17 +589,6 @@ function CFBLeagueScreen() {
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
   const {
-    games: cfpGames,
-    loading: cfpLoading,
-    refreshing: cfpRefreshing,
-    error: cfpError,
-    refetch: refetchCFPPlayoffs,
-  } = useCFBPlayoffs({
-    season: currentSeason,
-    enabled: hasVisitedTab("playoffs"),
-  });
-
-  const {
     categories,
     loading: leadersLoading,
     error: leadersError,
@@ -765,7 +741,7 @@ function CFBLeagueScreen() {
           <View key="standings" style={styles.contentArea}>
             {hasVisitedTab("standings") ? (
               !selectedConferenceGroupId ? (
-                <CFBStandingsList />
+                <Rankings league={league} />
               ) : (
                 <ConferenceStandingsList
                   conferences={conferences}
@@ -787,20 +763,6 @@ function CFBLeagueScreen() {
                 categories={categories}
                 league={league}
                 season={currentSeason}
-              />
-            ) : null}
-          </View>
-
-          <View key="playoffs" style={styles.contentArea}>
-            {hasVisitedTab("playoffs") ? (
-              <CFPBracket
-                games={cfpGames}
-                loading={cfpLoading}
-                refreshing={cfpRefreshing}
-                error={cfpError}
-                onRetry={() => {
-                  void refetchCFPPlayoffs();
-                }}
               />
             ) : null}
           </View>

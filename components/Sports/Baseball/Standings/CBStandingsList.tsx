@@ -1,4 +1,3 @@
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
 import Dropdown from "@/components/Dropdown";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { StandingsStyles } from "@/styles/LeagueStyles/StandingsStyles";
@@ -209,7 +208,7 @@ export const CBStandingsList = ({ league }: Props) => {
           : undefined;
       const team = item.team;
       const teamId = apiTeamId;
-      const teamLogo = getStandingsTeamLogo(team, isDark);
+      const logo = isDark ? team?.logoDark || team?.logo : team?.logo;
       const teamCode = team?.code || item.team?.name || "N/A";
       const trendNum = parseTrend(item.trend);
       const isUp = trendNum > 0;
@@ -232,6 +231,7 @@ export const CBStandingsList = ({ league }: Props) => {
 
           <View style={styles.teamInfo}>
             <TouchableOpacity
+              accessibilityRole="button"
               style={styles.teamInfoWrapper}
               onPress={() => {
                 if (!teamId) return;
@@ -242,7 +242,7 @@ export const CBStandingsList = ({ league }: Props) => {
                 });
               }}
             >
-              {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+              {logo && <Image source={{ uri: logo }} style={styles.logo} />}
               <Text style={styles.teamName} numberOfLines={1}>
                 {teamCode}
               </Text>

@@ -728,7 +728,7 @@ const PlayerNameRow = memo(function PlayerNameRow({
 }) {
   return (
     <View style={rowStyle(styles, index)}>
-      <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
+      <TouchableOpacity accessibilityRole="button" activeOpacity={0.7} onPress={onPress}>
         <Text style={styles.cellName} numberOfLines={1}>
           {playerName}
         </Text>
@@ -994,7 +994,7 @@ const ExpandToggle = memo(function ExpandToggle({
   onPress: () => void;
 }) {
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessibilityRole="button" accessibilityState={{ expanded }}
       activeOpacity={activeOpacity}
       onPress={onPress}
       style={styles.showMoreLessButton}

@@ -1,12 +1,12 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { RacingDriver, RacingEventCardProps } from "@/types/racing/racing";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useScopedRouter } from "hooks/useScopedRouter";
 
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { racingCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { RacingCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { getBroadcastDisplay } from "utils/games/games";
 
 function parseEventDate(value?: string | null) {
@@ -57,7 +57,7 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
   const { resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";
-  const styles = racingCardStyles(isDark);
+  const styles = RacingCardStyles(isDark);
 
   const handlePress = () => {
     const gameId = game.id ?? game.uid;
@@ -300,6 +300,8 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
 
   return (
     <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !game.id && !game.uid }}
       activeOpacity={activeOpacity}
       onPress={handlePress}
       disabled={!game.id && !game.uid}

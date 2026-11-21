@@ -58,8 +58,7 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   const isPreFight = gameStatusDescription === "Pre-fight";
   const inWalkouts = gameStatusDescription === "Walkouts";
   const isIntros = gameStatusDescription === "Intros";
-  const broadcasts = game.broadcasts;
-  const broadcast = getBroadcastDisplay(broadcasts);
+  const broadcast = getBroadcastDisplay(game?.broadcasts, true);
   const period = formatPeriod({ period: game?.status?.period, isMMA: true });
   const clock = game?.status?.displayClock;
   const styles = SquareGameCardStyles(isDark);
@@ -222,7 +221,11 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+    >
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );
