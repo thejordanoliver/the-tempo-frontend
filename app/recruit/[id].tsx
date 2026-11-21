@@ -9,14 +9,12 @@ import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { Text, View } from "react-native";
+import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 
 export default function RecruitDetailScreen() {
-  const navigationContentStyle = useNavigationBarContentStyle();
   const { id, league: routeLeague } = useLocalSearchParams<{
     id?: string;
     teamId?: string;
@@ -27,7 +25,6 @@ export default function RecruitDetailScreen() {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = playerScreenStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const { data: player, loading, error } = useRecruit(recruitId, league);
@@ -91,17 +88,50 @@ export default function RecruitDetailScreen() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={navigationContentStyle(
-        styles.contentContainerStyle,
-      )}
-    >
-      <RecruitHeader player={player} isDark={isDark} />
-
-      <RecruitDetails recruit={player} isDark={isDark} />
-      {!!player.offers?.length && (
-        <OfferList recruit={player} isDark={isDark} />
-      )}
-    </ScrollView>
+    <PlayerDetailsPager
+      key={`${league}-${recruitId}`}
+      isDark={isDark}
+      overview={<RecruitHeader player={player} isDark={isDark} />}
+      pages={[
+        {
+          label: "Ratings & commitment",
+          content: (
+            <RecruitDetails
+              recruit={player}
+              isDark={isDark}
+              league={league}
+              section="ratings"
+            />
+          ),
+        },
+        {
+          label: "NIL",
+          content: (
+            <RecruitDetails
+              recruit={player}
+              isDark={isDark}
+              league={league}
+              section="nil"
+            />
+          ),
+        },
+        {
+          label: "School interests",
+          content: (
+            <>
+              <RecruitDetails
+                recruit={player}
+                isDark={isDark}
+                league={league}
+                section="interests"
+              />
+              {!!player.offers?.length && (
+                <OfferList recruit={player} isDark={isDark} />
+              )}
+            </>
+          ),
+        },
+      ]}
+    />
   );
 }

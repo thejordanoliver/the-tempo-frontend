@@ -24,6 +24,7 @@ export default function BracketMatchupCard({
   onMatchupPress,
 }: Props) {
   const colors = isDark ? Colors.dark : Colors.light;
+  const styles = BracketMatchupCardStyles(isDark);
   const global = globalStyles(isDark);
   const matchup = node.matchup;
   const canOpenMatchup = Boolean(matchup && onMatchupPress);
@@ -37,8 +38,6 @@ export default function BracketMatchupCard({
         {
           left: node.x,
           top: node.y + BRACKET_HEADER_HEIGHT,
-          backgroundColor: colors.background,
-          borderColor: colors.transparentGray,
         },
       ]}
     >
@@ -77,25 +76,30 @@ export default function BracketMatchupCard({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    position: "absolute",
-    width: BRACKET_CARD_WIDTH,
-    height: BRACKET_CARD_HEIGHT,
-    borderWidth: 1,
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  bye: { height: 76, justifyContent: "center" },
-  footer: {
-    flex: 1,
-    minHeight: MIN_TOUCH_TARGET,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-    paddingHorizontal: 6,
-  },
-  footerText: { fontSize: 11 },
-});
+const BracketMatchupCardStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    card: {
+      position: "absolute",
+      width: BRACKET_CARD_WIDTH,
+      height: BRACKET_CARD_HEIGHT,
+      borderRadius: 10,
+      overflow: "hidden",
+      borderColor: Colors.midTone,
+      borderWidth: StyleSheet.hairlineWidth,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    bye: { height: 76, justifyContent: "center" },
+    footer: {
+      flex: 1,
+      minHeight: MIN_TOUCH_TARGET,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 4,
+      paddingHorizontal: 6,
+    },
+    footerText: { fontSize: 11 },
+  });

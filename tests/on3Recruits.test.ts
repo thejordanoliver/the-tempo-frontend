@@ -5,8 +5,8 @@ import {
   getRecruitRanking,
   getRecruitStatus,
   formatRecruitRating,
-} from "../utils/recruiting/recruits.ts";
-import type { Recruit } from "../types/recruiting/players.ts";
+} from "../utils/recruiting/recruits";
+import type { Recruit } from "../types/recruiting/players";
 
 const record = {
   id: 1000000000,

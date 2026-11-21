@@ -1,20 +1,17 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useRecruitingTeams } from "hooks/RecruitHooks/useRecruitingTeams";
 import { useAllRecruits } from "@/hooks/RecruitHooks/useAllRecruits";
 import {
   RecruitTeamRanking,
   useTeamRecruitingRankings,
 } from "@/hooks/RecruitHooks/useTeamRecruitingRankings";
-import {
-  getRecruitRanking,
-  type RecruitRankingSource,
-} from "utils/recruiting/recruits";
 import { Recruit } from "@/types/recruiting/players";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
+import PillTabs, { type PillTabOption } from "components/TabBars/PillTabs";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useRecruitingTeams } from "hooks/RecruitHooks/useRecruitingTeams";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import React, {
   memo,
   useCallback,
@@ -30,6 +27,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import {
+  getRecruitRanking,
+  type RecruitRankingSource,
+} from "utils/recruiting/recruits";
 import RecruitCardSkeleton from "../../Skeletons/RecruitCardSkeleton";
 import TeamRankCardSkeleton from "../../Skeletons/TeamRankCardSkeleton";
 import RecruitCard from "./RecruitCard";
@@ -60,14 +61,12 @@ type RecruitsHeaderProps = {
   searchOpen: boolean;
   yearOptions: DropdownOption[];
   teamOptions: DropdownOption[];
-  viewOptions: DropdownOption[];
+  viewOptions: PillTabOption<"players" | "teams">[];
   onYearChange: (y: string) => void;
   onTeamChange: (t: string) => void;
   onViewChange: (v: "players" | "teams") => void;
   onSearchChange: (value: string) => void;
   onToggleSearch: () => void;
-  rankingSource: RecruitRankingSource;
-  onRankingSourceChange: (source: RecruitRankingSource) => void;
 };
 
 const CHUNK_SIZE = 20;
@@ -118,11 +117,14 @@ const RecruitsHeader = memo(function RecruitsHeader({
   onViewChange,
   onSearchChange,
   onToggleSearch,
-  rankingSource,
-  onRankingSourceChange,
 }: RecruitsHeaderProps) {
   return (
     <View style={styles.headerContainer}>
+      <PillTabs
+        tabs={viewOptions}
+        selectedValue={view}
+        onChange={onViewChange}
+      />
       <View style={styles.filterRow}>
         <TouchableOpacity onPress={onToggleSearch} hitSlop={10}>
           <Ionicons
@@ -152,38 +154,9 @@ const RecruitsHeader = memo(function RecruitsHeader({
               width={120}
             />
           )}
-
-          <Dropdown
-            accessibilityLabel="Recruiting view"
-            options={viewOptions}
-            selectedValue={view}
-            onSelect={(v) => onViewChange(v as "players" | "teams")}
-            isDark={isDark}
-            width={120}
-          />
         </View>
       </View>
 
-      {view === "players" && (
-        <View style={styles.rankingSources}>
-          {(["industry", "on3"] as const).map((source) => (
-            <TouchableOpacity
-              key={source}
-              accessibilityRole="button"
-              accessibilityState={{ selected: rankingSource === source }}
-              onPress={() => onRankingSourceChange(source)}
-              style={[
-                styles.sourceButton,
-                rankingSource === source && styles.selectedSource,
-              ]}
-            >
-              <Text style={styles.sourceText}>
-                {source === "industry" ? "Industry" : "On3"}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
       <SearchBar
         value={search}
         onChangeText={onSearchChange}
@@ -212,8 +185,7 @@ export default function RecruitsList({
 
   const listRef = useRef<FlatList<any>>(null);
 
-  const [rankingSource, setRankingSource] =
-    useState<RecruitRankingSource>("industry");
+  const rankingSource: RecruitRankingSource = "industry";
   const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -257,7 +229,7 @@ export default function RecruitsList({
     });
   }, []);
 
-  const viewOptions = useMemo(
+  const viewOptions = useMemo<PillTabOption<"players" | "teams">[]>(
     () => [
       { label: "Players", value: "players" },
       { label: "Teams", value: "teams" },
@@ -432,8 +404,6 @@ export default function RecruitsList({
           onViewChange={onViewChange}
           onSearchChange={handleSearchChange}
           onToggleSearch={toggleSearch}
-          rankingSource={rankingSource}
-          onRankingSourceChange={setRankingSource}
         />
         {view === "players" && teamFilterError && (
           <Text style={styles.errorText}>{teamFilterError}</Text>
@@ -457,7 +427,6 @@ export default function RecruitsList({
       viewOptions,
       year,
       yearOptions,
-      rankingSource,
     ],
   );
 
@@ -625,7 +594,6 @@ const recruitListStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 14,
     },
     listContent: {
       paddingBottom: 100,
@@ -649,22 +617,6 @@ const recruitListStyles = (isDark: boolean) =>
       paddingHorizontal: 12,
       overflow: "visible",
       elevation: 1000,
-    },
-    rankingSources: { flexDirection: "row", gap: 8, marginBottom: 8 },
-    sourceButton: {
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderRadius: 8,
-    },
-    selectedSource: {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    sourceText: {
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      fontSize: 14,
     },
     filterRow: {
       flexDirection: "row",
@@ -711,6 +663,7 @@ const recruitListStyles = (isDark: boolean) =>
       paddingVertical: 20,
     },
     footerText: {
+      fontFamily: Fonts.REGULAR,
       color: Colors.lightGray,
       textAlign: "center",
     },

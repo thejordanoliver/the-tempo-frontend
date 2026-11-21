@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const playerCardStyles = (isDark: boolean) =>
+export const PlayerCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",

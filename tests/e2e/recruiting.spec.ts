@@ -119,14 +119,16 @@ for (const league of ["cfb", "mcbb"]) {
     await page
       .getByRole("button", { name: "Recruiting class", exact: true })
       .click();
-    await page.getByRole("button", {name:"2026",exact:true}).click();
+    await page.getByRole("button", { name: "2026", exact: true }).click();
     await page
       .getByRole("button", { name: "Open DeMarcus Henry", exact: true })
       .click();
     await expect(
       page.getByText("DEMARCUS HENRY", { exact: true }),
     ).toBeVisible();
-    await expect(page.getByText("Industry", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("Industry", { exact: true }).last(),
+    ).toBeVisible();
     await expect(
       page.getByText("5 stars · Rating 98.73", { exact: true }),
     ).toBeVisible();
