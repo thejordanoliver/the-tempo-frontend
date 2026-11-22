@@ -1,6 +1,6 @@
 import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import ConfirmModal from "components/ConfirmModal";
-import TextInputComponent from "components/TextInput";
+import Input from "components/Inputs/Input";
 import { useState } from "react";
 import { Text } from "react-native";
 import { hasBlockingTickerCommand } from "services/ticker/controller";
@@ -88,7 +88,7 @@ function RenameControl() {
         onCancel={() => setEditingId(null)}
         onConfirm={saveName}
       >
-        <TextInputComponent
+        <Input
           value={draft}
           onChangeText={(value) => {
             setDraft(value);

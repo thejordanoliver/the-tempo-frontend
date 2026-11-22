@@ -1,6 +1,6 @@
 import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import ConfirmModal from "components/ConfirmModal";
-import TextInputComponent from "components/TextInput";
+import Input from "components/Inputs/Input";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import {
@@ -84,7 +84,7 @@ function CustomHeaderControl({
         onCancel={() => setEditing(false)}
         onConfirm={save}
       >
-        <TextInputComponent
+        <Input
           value={draft}
           onChangeText={(value) => {
             setDraft(value);

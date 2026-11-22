@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Modal, Text, View } from "react-native";
 import ForegroundNotificationBanner from "components/Notifications/ForegroundNotificationBanner";
 import PillTabs from "components/TabBars/PillTabs";
-import TextInputComponent from "components/TextInput";
+import Input from "components/Inputs/Input";
 import {
   TickerAction,
   TickerCard,
@@ -64,7 +64,7 @@ function NotificationBannerPreview() {
         )}
         <TickerCard>
           <Text style={text.label}>Title</Text>
-          <TextInputComponent
+          <Input
             accessibilityLabel="Preview notification title"
             value={notification.title}
             onChangeText={(title) =>
@@ -72,7 +72,7 @@ function NotificationBannerPreview() {
             }
           />
           <Text style={text.label}>Message</Text>
-          <TextInputComponent
+          <Input
             accessibilityLabel="Preview notification message"
             multiline
             value={notification.body}

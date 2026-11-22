@@ -2,7 +2,7 @@ import { Colors } from "constants/styles";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Slider from "@react-native-community/slider";
 import ConfirmModal from "components/ConfirmModal";
-import TextInputComponent from "components/TextInput";
+import Input from "components/Inputs/Input";
 import PillTabs from "components/TabBars/PillTabs";
 import {
   TICKER_TIME_ZONES,
@@ -397,7 +397,7 @@ function QuietTimePicker({
     >
       {Platform.OS === "web" ? (
         <>
-          <TextInputComponent
+          <Input
             accessibilityLabel="Time in 24-hour format"
             value={clock}
             onChangeText={setClock}
