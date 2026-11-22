@@ -66,9 +66,7 @@ export const settingsOverviewStyles = (isDark: boolean) => {
       backgroundColor: theme.background,
     },
     content: {
-      width: "100%",
-      maxWidth: 600,
-      alignSelf: "center",
+      alignSelf: "stretch",
       paddingHorizontal: 12,
       paddingTop: 12,
       gap: 20,
