@@ -160,12 +160,6 @@ export const Fonts = {
   MEDIUM: "Oswald_500Medium",
   SEMIBOLD: "Oswald_600SemiBold",
   BOLD: "Oswald_700Bold",
-
-  // Sports / display
-  SPORTS_MEDIUM: "BarlowCondensed_500Medium",
-  SPORTS_SEMIBOLD: "BarlowCondensed_600SemiBold",
-  SPORTS_BOLD: "BarlowCondensed_700Bold",
-  SPORTS_EXTRA_BOLD: "BarlowCondensed_800ExtraBold",
 };
 
 export const globalStyles = (isDark: boolean) =>

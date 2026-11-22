@@ -1,21 +1,13 @@
-import {
-  getSportsCardGradient,
-  sportsCardBackgroundStyles,
-} from "styles/SportsCardBackgroundStyles";
-import { useScopedRouter } from "hooks/useScopedRouter";
-// components/CFB/RecruitCard.tsx
 import { getMCBBTeamLogo } from "@/constants/teamsMCBB";
-import type { RecruitPredictedSchool } from "@/types/recruiting/players";
-import { Recruit } from "@/types/recruiting/players";
+import type { RecruitPredictedSchool } from "@/types/recruiting/recruits";
+import { Recruit } from "@/types/recruiting/recruits";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
-import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useMemo, useState } from "react";
+import { useScopedRouter } from "hooks/useScopedRouter";
+import { memo, useMemo } from "react";
 import {
-  Animated,
-  Easing,
   Image,
   ImageSourcePropType,
   StyleSheet,
@@ -24,16 +16,22 @@ import {
   View,
 } from "react-native";
 import {
+  getSportsCardGradient,
+  sportsCardBackgroundStyles,
+} from "styles/SportsCardBackgroundStyles";
+import {
   formatRecruitRating,
   getRecruitRanking,
   getRecruitStatus,
   type RecruitRankingSource,
 } from "utils/recruiting/recruits";
+import RecruitingCardLogo from "./RecruitingCardLogo";
 
 type Props = {
   recruit: Recruit;
   league: "mcbb" | "cfb";
-  index: number;
+  isDark: boolean;
+  animationIndex?: number;
   rankingSource?: RecruitRankingSource;
 };
 
@@ -85,15 +83,14 @@ function getTopTiedPredictions(
   );
 }
 
-export default function RecruitCard({
+const RecruitCard = memo(function RecruitCard({
   recruit,
-  index,
   league,
+  isDark,
+  animationIndex,
   rankingSource = "industry",
 }: Props) {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => RecruitCardStyles(isDark), [isDark]);
+  const styles = isDark ? darkStyles : lightStyles;
   const router = useScopedRouter();
 
   const sortedPredictions = useMemo(
@@ -207,28 +204,6 @@ export default function RecruitCard({
     league,
   ]);
 
-  const [slideX] = useState(() => new Animated.Value(70));
-  const [fade] = useState(() => new Animated.Value(0));
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(slideX, {
-        toValue: 0,
-        duration: 650,
-        delay: Math.min(index, 8) * 60,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(fade, {
-        toValue: 1,
-        duration: 650,
-        delay: Math.min(index, 8) * 60,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [fade, index, slideX]);
-
   const ranking = getRecruitRanking(recruit, rankingSource);
   const starCount = ranking.stars ?? 0;
   const avatar = recruit.image_url;
@@ -259,15 +234,7 @@ export default function RecruitCard({
         }
       >
         {logoItems.length > 0 && (
-          <Animated.View
-            style={[
-              styles.logoContainer,
-              {
-                opacity: fade,
-                transform: [{ translateX: slideX }],
-              },
-            ]}
-          >
+          <RecruitingCardLogo animationIndex={animationIndex}>
             {logoItems.length > 1 ? (
               <View style={styles.splitLogoStack}>
                 {logoItems.map((item, logoIndex) => (
@@ -277,10 +244,7 @@ export default function RecruitCard({
                   >
                     <Image
                       source={item.logo}
-                      style={[
-                        styles.backgroundLogo,
-                        styles.splitBackgroundLogo,
-                      ]}
+                      style={[styles.backgroundLogo]}
                       resizeMode="contain"
                     />
                   </View>
@@ -293,7 +257,7 @@ export default function RecruitCard({
                 resizeMode="contain"
               />
             )}
-          </Animated.View>
+          </RecruitingCardLogo>
         )}
 
         <LinearGradient
@@ -408,7 +372,9 @@ export default function RecruitCard({
       </TouchableOpacity>
     </View>
   );
-}
+});
+
+export default RecruitCard;
 
 export const RecruitCardStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -422,8 +388,6 @@ export const RecruitCardStyles = (isDark: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
-
-    logoContainer: sportsCardBackgroundStyles.logoContainer,
 
     splitLogoStack: {
       width: "100%",
@@ -439,12 +403,6 @@ export const RecruitCardStyles = (isDark: boolean) =>
     },
 
     backgroundLogo: sportsCardBackgroundStyles.backgroundLogo,
-
-    splitBackgroundLogo: {
-      height: "190%",
-      marginRight: -34,
-      opacity: 0.16,
-    },
 
     cardGradient: sportsCardBackgroundStyles.cardGradient,
 
@@ -478,8 +436,8 @@ export const RecruitCardStyles = (isDark: boolean) =>
       height: 50,
       marginRight: 8,
       borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 25,
+      borderColor: Colors.midTone,
+      borderRadius: 30,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       overflow: "hidden",
     },
@@ -517,7 +475,6 @@ export const RecruitCardStyles = (isDark: boolean) =>
     rankingText: {
       fontFamily: Fonts.BOLD,
       fontSize: 28,
-      lineHeight: 30,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     rankLabel: {
@@ -573,3 +530,6 @@ export const RecruitCardStyles = (isDark: boolean) =>
       color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText,
     },
   });
+
+const lightStyles = RecruitCardStyles(false);
+const darkStyles = RecruitCardStyles(true);

@@ -1248,8 +1248,8 @@ function MCBBLeagueScreen() {
   const [recruitYear, setRecruitYear] = useState(() =>
     String(getRecruitYear()),
   );
-  const [recruitView, setRecruitView] = useState<"players" | "teams">(
-    "players",
+  const [recruitView, setRecruitView] = useState<"recruits" | "teams">(
+    "recruits",
   );
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);

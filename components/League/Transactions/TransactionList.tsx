@@ -1,4 +1,4 @@
-import SearchItemSkeleton from "components/Skeletons/ResultItemSkeleton";
+import TransactionItemSkeleton from "components/Skeletons/TransactionItemSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
@@ -86,7 +86,10 @@ export default function TransactionList({
         loading ? (
           <View accessibilityLabel="Loading transactions">
             {Array.from({ length: 6 }, (_, index) => (
-              <SearchItemSkeleton key={index} />
+              <View key={index}>
+                {index > 0 && <View style={styles.separator} />}
+                <TransactionItemSkeleton isDark={isDark} />
+              </View>
             ))}
           </View>
         ) : (

@@ -354,11 +354,15 @@ test("the list wires rows, refresh, pagination, skeletons, and retry feedback", 
     ],
   };
   h.modules["styles/LeagueStyles/TransactionsStyles"] = {
-    TransactionsStyles: () => ({ contentContainerStyle: { flexGrow: 1 } }),
+    TransactionsStyles: () => ({
+      contentContainerStyle: { flexGrow: 1 },
+      separator: "separator",
+    }),
   };
   h.modules["./TransactionItem"] = { default: "TransactionItem" };
-  h.modules["components/Skeletons/ResultItemSkeleton"] = {
-    default: "Skeleton",
+  h.modules["components/Skeletons/TransactionItemSkeleton"] = {
+    __esModule: true,
+    default: "TransactionItemSkeleton",
   };
   const TransactionList = h.load(
     "components/League/Transactions/TransactionList.tsx",
@@ -389,7 +393,14 @@ test("the list wires rows, refresh, pagination, skeletons, and retry feedback", 
   );
   state.error = null;
   state.loading = true;
-  assert.equal(render().ListEmptyComponent.props.children.length, 6);
+  const placeholders = render().ListEmptyComponent.props.children;
+  assert.equal(placeholders.length, 6);
+  for (const [index, placeholder] of placeholders.entries()) {
+    const [separator, skeleton] = placeholder.props.children;
+    assert.equal(separator && separator.props.style, index > 0 && "separator");
+    assert.equal(skeleton.type, "TransactionItemSkeleton");
+    assert.equal(skeleton.props.isDark, true);
+  }
   state.loading = false;
   assert.equal(
     render().ListEmptyComponent.props.children[0].props.children,

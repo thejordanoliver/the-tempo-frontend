@@ -1,7 +1,7 @@
-import { normalizeRecruit } from "utils/recruiting/recruits";
-import { Recruit } from "@/types/recruiting/players";
+import { Recruit } from "@/types/recruiting/recruits";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import { normalizeRecruit } from "utils/recruiting/recruits";
 
 interface useRecruitsResult {
   data: Recruit[];

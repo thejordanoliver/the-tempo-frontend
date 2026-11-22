@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const seasonStatCardStyles = (isDark: boolean) => {
+export const StatCardStyles = (isDark: boolean) => {
   const surface = isDark
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground;

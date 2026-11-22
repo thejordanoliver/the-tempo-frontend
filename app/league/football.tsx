@@ -452,8 +452,8 @@ function CFBLeagueScreen() {
   const [selectedConference, setSelectedConference] =
     useState<SelectedConference>("top25");
   const [isConferenceModalOpen, setIsConferenceModalOpen] = useState(false);
-  const [recruitView, setRecruitView] = useState<"players" | "teams">(
-    "players",
+  const [recruitView, setRecruitView] = useState<"recruits" | "teams">(
+    "recruits",
   );
   const [recruitYear, setRecruitYear] = useState(() => currentRecruitCycle);
   const [recruitTeam, setRecruitTeam] = useState("all");

@@ -18,10 +18,12 @@ function TeamRowSkeleton() {
       <View style={styles.seed}>
         <SkeletonBlock width={10} height={14} />
       </View>
-      <SkeletonBlock width={25} height={25} radius={0} />
+      <SkeletonBlock width={25} height={25} radius={999} />
+
       <View style={styles.teamCode}>
         <SkeletonBlock width={44} height={14} />
       </View>
+
       <SkeletonBlock width={26} height={18} />
     </View>
   );

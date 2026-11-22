@@ -1,6 +1,11 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import RecruitDetails from "components/League/Recruiting/RecruitDetails";
-import OfferList from "@/components/League/Recruiting/OfferLists";
+import {
+  RecruitRankingSummary,
+  RecruitRankingsPanel,
+  RecruitSchoolsPanel,
+  RecruitValuationPanel,
+} from "components/League/Recruiting/RecruitProfileSections";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import RecruitHeader from "@/components/League/Recruiting/RecruitHeader";
 import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useRecruit } from "@/hooks/RecruitHooks/useRecruit";
@@ -17,7 +22,6 @@ import PlayerDetailsPager from "components/Player/PlayerDetailsPager";
 export default function RecruitDetailScreen() {
   const { id, league: routeLeague } = useLocalSearchParams<{
     id?: string;
-    teamId?: string;
     league?: string;
   }>();
   const league = routeLeague?.toLowerCase() === "cfb" ? "cfb" : "mcbb";
@@ -45,7 +49,7 @@ export default function RecruitDetailScreen() {
     navigation.setOptions({
       header: () => {
         if (loading && !player) {
-          return null;
+          return <GameHeaderPlaceholder />;
         }
 
         return (
@@ -54,6 +58,7 @@ export default function RecruitDetailScreen() {
             teamColor={teamColor}
             onBack={() => router.back()}
             teamCode={teamCode}
+            isTeamScreen
             isPlayerScreen
             league={league}
           />
@@ -91,45 +96,40 @@ export default function RecruitDetailScreen() {
     <PlayerDetailsPager
       key={`${league}-${recruitId}`}
       isDark={isDark}
-      overview={<RecruitHeader player={player} isDark={isDark} />}
+      overview={
+        <>
+          <RecruitHeader player={player} isDark={isDark} />
+          <RecruitRankingSummary
+            recruit={player}
+            isDark={isDark}
+            teamColor={teamColor}
+          />
+        </>
+      }
       pages={[
         {
-          label: "Ratings & commitment",
+          label: "Rankings",
           content: (
-            <RecruitDetails
+            <RecruitRankingsPanel
               recruit={player}
               isDark={isDark}
               league={league}
-              section="ratings"
+            />
+          ),
+        },
+        {
+          label: "Schools",
+          content: (
+            <RecruitSchoolsPanel
+              recruit={player}
+              isDark={isDark}
+              league={league}
             />
           ),
         },
         {
           label: "NIL",
-          content: (
-            <RecruitDetails
-              recruit={player}
-              isDark={isDark}
-              league={league}
-              section="nil"
-            />
-          ),
-        },
-        {
-          label: "School interests",
-          content: (
-            <>
-              <RecruitDetails
-                recruit={player}
-                isDark={isDark}
-                league={league}
-                section="interests"
-              />
-              {!!player.offers?.length && (
-                <OfferList recruit={player} isDark={isDark} />
-              )}
-            </>
-          ),
+          content: <RecruitValuationPanel recruit={player} isDark={isDark} />,
         },
       ]}
     />

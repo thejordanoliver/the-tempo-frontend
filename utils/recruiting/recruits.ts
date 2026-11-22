@@ -1,7 +1,7 @@
 import type {
   Recruit,
   RecruitPredictedSchool,
-} from "../../types/recruiting/players";
+} from "../../types/recruiting/recruits";
 
 function parseJsonArray<T>(value: T[] | string | null | undefined): T[] {
   if (Array.isArray(value)) {

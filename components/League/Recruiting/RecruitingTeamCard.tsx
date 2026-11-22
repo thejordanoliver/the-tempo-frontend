@@ -1,23 +1,24 @@
-import {
-  getSportsCardGradient,
-  sportsCardBackgroundStyles,
-} from "styles/SportsCardBackgroundStyles";
-// components/CFB/TeamRankCard.tsx
 import { getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { RecruitTeamRanking } from "@/hooks/RecruitHooks/useTeamRecruitingRankings";
+import { RecruitingTeamCardStyles } from "@/styles/PlayerStyles/RecruitStyles";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
-import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useMemo, useState } from "react";
-import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
+import { memo } from "react";
+import { Image, Text, View } from "react-native";
+import { getSportsCardGradient } from "styles/SportsCardBackgroundStyles";
+import RecruitingCardLogo from "./RecruitingCardLogo";
 
 type Props = {
   item: RecruitTeamRanking;
   league: "mcbb" | "cfb";
-  index: number;
+  isDark: boolean;
+  animationIndex?: number;
 };
+
+const lightStyles = RecruitingTeamCardStyles(false);
+const darkStyles = RecruitingTeamCardStyles(true);
 
 function toNumber(value: string | number | null | undefined) {
   if (value === null || value === undefined) return null;
@@ -31,41 +32,19 @@ function formatDecimal(value: string | number | null | undefined, digits = 2) {
   return parsed === null ? "—" : parsed.toFixed(digits);
 }
 
-export default function TeamRankCard({ item, index, league }: Props) {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-
-  const styles = useMemo(() => getStyles(isDark), [isDark]);
-
-  const [slideX] = useState(() => new Animated.Value(70));
-  const [fade] = useState(() => new Animated.Value(0));
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(slideX, {
-        toValue: 0,
-        duration: 650,
-        delay: Math.min(index, 8) * 60,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(fade, {
-        toValue: 1,
-        duration: 650,
-        delay: Math.min(index, 8) * 60,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [fade, index, slideX]);
+const RecruitingTeamCard = memo(function RecruitingTeamCard({
+  item,
+  league,
+  isDark,
+  animationIndex,
+}: Props) {
+  const styles = isDark ? darkStyles : lightStyles;
 
   const teamId = item.team_id ?? 0;
   const logo =
     league === "cfb"
       ? getCFBTeamLogo(teamId, isDark)
-      : league === "mcbb"
-        ? getMCBBTeamLogo(teamId, isDark)
-        : null;
+      : getMCBBTeamLogo(teamId, isDark);
 
   const rankChange =
     item.previous_rank && item.rank ? item.previous_rank - item.rank : 0;
@@ -83,21 +62,13 @@ export default function TeamRankCard({ item, index, league }: Props) {
   return (
     <View style={styles.cardWrapper}>
       {logo && (
-        <Animated.View
-          style={[
-            styles.logoContainer,
-            {
-              opacity: fade,
-              transform: [{ translateX: slideX }],
-            },
-          ]}
-        >
+        <RecruitingCardLogo animationIndex={animationIndex}>
           <Image
             source={logo}
             style={styles.backgroundLogo}
             resizeMode="contain"
           />
-        </Animated.View>
+        </RecruitingCardLogo>
       )}
 
       <LinearGradient
@@ -223,143 +194,6 @@ export default function TeamRankCard({ item, index, league }: Props) {
       </View>
     </View>
   );
-}
+});
 
-const getStyles = (isDark: boolean) => {
-  const bgColor = isDark
-    ? Colors.dark.itemBackground
-    : Colors.light.itemBackground;
-
-  return StyleSheet.create({
-    cardWrapper: {
-      position: "relative",
-      minHeight: 116,
-      marginHorizontal: 12,
-      marginBottom: 10,
-      borderRadius: 8,
-      backgroundColor: bgColor,
-      overflow: "hidden",
-    },
-
-    logoContainer: sportsCardBackgroundStyles.logoContainer,
-    backgroundLogo: sportsCardBackgroundStyles.backgroundLogo,
-    cardGradient: sportsCardBackgroundStyles.cardGradient,
-
-    cardContent: {
-      gap: 12,
-      paddingHorizontal: 12,
-      paddingVertical: 12,
-    },
-
-    topRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-    },
-
-    rankBlock: {
-      gap: 5,
-      width: 76,
-    },
-
-    rank: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 30,
-      lineHeight: 34,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    rankChangePill: {
-      flexDirection: "row",
-      alignItems: "center",
-      alignSelf: "flex-start",
-      gap: 4,
-      paddingHorizontal: 7,
-      paddingVertical: 3,
-      borderRadius: 999,
-      backgroundColor: bgColor,
-    },
-
-    rankChangePillUp: {
-      backgroundColor: "rgba(34,197,94,0.14)",
-    },
-
-    rankChangePillDown: {
-      backgroundColor: "rgba(239,68,68,0.14)",
-    },
-
-    rankChangeText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
-    rankChangeTextUp: {
-      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
-    },
-
-    rankChangeTextDown: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-    },
-
-    teamBlock: {
-      flex: 1,
-      minWidth: 0,
-    },
-
-    teamName: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 20,
-      lineHeight: 26,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    points: {
-      marginTop: 3,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 13,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
-    statsRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingTop: 10,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark
-        ? Colors.dark.transparentGray
-        : Colors.light.transparentGray,
-    },
-
-    statItem: {
-      alignItems: "center",
-      flex: 1,
-      minWidth: 0,
-    },
-
-    statLabelWrapper: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 2,
-      marginTop: 2,
-    },
-
-    statValue: {
-      fontFamily: Fonts.SPORTS_SEMIBOLD,
-      fontSize: 20,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    statLabel: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
-    statDivider: {
-      width: StyleSheet.hairlineWidth,
-      height: 26,
-      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-  });
-};
+export default RecruitingTeamCard;

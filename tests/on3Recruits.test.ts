@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import type { Recruit } from "../types/recruiting/recruits";
 import {
-  normalizeRecruit,
+  formatRecruitRating,
   getRecruitRanking,
   getRecruitStatus,
-  formatRecruitRating,
+  normalizeRecruit,
 } from "../utils/recruiting/recruits";
-import type { Recruit } from "../types/recruiting/players";
 
 const record = {
   id: 1000000000,

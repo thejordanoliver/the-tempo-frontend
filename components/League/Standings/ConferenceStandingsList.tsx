@@ -104,8 +104,8 @@ export const ConferenceStandingsList = ({
           },
           favorited && {
             backgroundColor: isDark
-              ? Colors.dark.itemBackground
-              : Colors.light.itemBackground,
+              ? Colors.dark.transparentGold
+              : Colors.light.transparentGold,
           },
         ]}
       >
@@ -162,8 +162,8 @@ export const ConferenceStandingsList = ({
           },
           favorited && {
             backgroundColor: isDark
-              ? Colors.dark.itemBackground
-              : Colors.light.itemBackground,
+              ? Colors.dark.transparentGold
+              : Colors.light.transparentGold,
           },
         ]}
       >
