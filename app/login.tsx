@@ -33,6 +33,7 @@ export default function LoginScreen() {
     signUp,
     cropEditor,
     alertConfig,
+    isAlertVisible,
     closeAlert,
     previousSignupStep,
     toggleLayout,
@@ -121,7 +122,7 @@ export default function LoginScreen() {
       </PagerView>
       {cropEditor && <CropEditorModal {...cropEditor} />}
       <ConfirmModal
-        visible={Boolean(alertConfig)}
+        visible={isAlertVisible}
         title={alertConfig?.title}
         message={alertConfig?.message}
         confirmText={alertConfig?.confirmText ?? "OK"}

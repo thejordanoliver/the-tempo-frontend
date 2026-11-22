@@ -1,7 +1,7 @@
-import { normalizeRecruit } from "utils/recruiting/recruits";
-import { Recruit } from "@/types/recruiting/players";
+import { Recruit } from "@/types/recruiting/recruits";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import { normalizeRecruit } from "utils/recruiting/recruits";
 
 export function useRecruit(id: number, league: "mcbb" | "cfb") {
   const [data, setData] = useState<Recruit | null>(null);

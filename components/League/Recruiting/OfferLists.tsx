@@ -1,7 +1,7 @@
-import { Recruit } from "@/types/recruiting/players";
+import { Recruit } from "@/types/recruiting/recruits";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import {
   FlatList,
   LayoutAnimation,
@@ -26,29 +26,28 @@ if (Platform.OS === "android") {
 
 export default function OfferList({ recruit, isDark }: Props) {
   const styles = offerListStyles(isDark);
-  const global = useMemo(() => globalStyles(isDark), [isDark]);
-  const offer = useMemo(() => recruit.offers ?? [], [recruit.offers]);
+  const global = globalStyles(isDark);
+  const offers = recruit.offers ?? [];
 
   const [expanded, setExpanded] = useState(false);
 
-  useEffect(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }, [expanded]);
+  const visibleOffers = expanded ? offers : offers.slice(0, COLLAPSED_ROWS);
 
-  const visibleOffers = useMemo(() => {
-    return expanded ? offer : offer.slice(0, COLLAPSED_ROWS);
-  }, [expanded, offer]);
+  function toggleExpanded() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded((previous) => !previous);
+  }
 
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Offers</HeadingTwo>
       <View style={styles.wrapper}>
         <View style={styles.itemContainer}>
-          <Text style={styles.headerText}>School</Text>
+          <Text style={[styles.headerText, styles.schoolColumn]}>School</Text>
           <Text style={styles.headerText}>Status</Text>
         </View>
 
-        {offer.length === 0 ? (
+        {offers.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={global.emptyText}>No offers yet</Text>
           </View>
@@ -59,17 +58,17 @@ export default function OfferList({ recruit, isDark }: Props) {
             renderItem={({ item, index }) => {
               const isSigned =
                 item.status === "Signed" || item.status === "Enrolled";
-              const hasOffer = item.hasOffer;
-              const isAlt = index % 2 === 1;
-              const zebra = isAlt
-                ? isDark
-                  ? styles.rowAltDark
-                  : styles.rowAltLight
-                : null;
 
               return (
-                <View style={[styles.itemContainer, zebra]}>
-                  <Text style={styles.schoolText}>{item.school}</Text>
+                <View
+                  style={[
+                    styles.itemContainer,
+                    index % 2 === 1 && styles.rowAlt,
+                  ]}
+                >
+                  <Text style={[styles.schoolText, styles.schoolColumn]}>
+                    {item.school}
+                  </Text>
 
                   {isSigned ? (
                     <Text
@@ -86,7 +85,7 @@ export default function OfferList({ recruit, isDark }: Props) {
                     </Text>
                   ) : (
                     <Text style={styles.schoolText}>
-                      Offers: {hasOffer ? "Yes" : "No"}
+                      Offers: {item.hasOffer ? "Yes" : "No"}
                     </Text>
                   )}
                 </View>
@@ -96,9 +95,11 @@ export default function OfferList({ recruit, isDark }: Props) {
           />
         )}
 
-        {offer.length > COLLAPSED_ROWS && (
-          <TouchableOpacity accessibilityRole="button" accessibilityState={{ expanded }}
-            onPress={() => setExpanded((prev) => !prev)}
+        {offers.length > COLLAPSED_ROWS && (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityState={{ expanded }}
+            onPress={toggleExpanded}
             style={styles.showMoreButton}
           >
             <Text style={styles.showMoreText}>
@@ -118,7 +119,8 @@ const offerListStyles = (isDark: boolean) =>
     },
     wrapper: {
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.white : Colors.black,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      overflow: "hidden",
       borderRadius: 8,
     },
     itemContainer: {
@@ -126,7 +128,7 @@ const offerListStyles = (isDark: boolean) =>
       justifyContent: "space-between",
       padding: 8,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.white : Colors.black,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     emptyContainer: {
       flexDirection: "row",
@@ -138,21 +140,16 @@ const offerListStyles = (isDark: boolean) =>
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
+    schoolColumn: { flex: 1, minWidth: 0, paddingRight: 12 },
     schoolText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
-    statusText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    rowAltLight: {
-      backgroundColor: Colors.light.itemBackground,
-    },
-    rowAltDark: {
-      backgroundColor: Colors.dark.itemBackground,
+    rowAlt: {
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
     showMoreButton: {
       alignItems: "center",

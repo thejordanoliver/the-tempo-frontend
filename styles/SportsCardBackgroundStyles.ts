@@ -15,11 +15,11 @@ export const sportsCardBackgroundStyles = StyleSheet.create({
   },
   backgroundLogo: {
     position: "relative",
-    right: -65,
+    right: -105,
     top: 0,
     height: "170%",
     aspectRatio: 1,
-    opacity: 0.18,
+    opacity: 0.5,
     transform: [{ rotate: "-15deg" }],
   },
   cardGradient: {

@@ -79,3 +79,8 @@ export interface Recruit {
   predicted_schools: RecruitPredictedSchool[];
   offers?: RecruitOffer[];
 }
+
+export type RecruitSectionProps = { recruit: Recruit; isDark: boolean };
+export type RecruitSchoolSectionProps = RecruitSectionProps & {
+  league: "cfb" | "mcbb";
+};

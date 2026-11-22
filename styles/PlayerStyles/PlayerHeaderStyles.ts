@@ -1,160 +1,102 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const PlayerHeaderStyles = (isDark: boolean) => {
-  const bg = isDark ? Colors.black : Colors.white;
-  const surface = isDark
-    ? Colors.dark.itemBackground
-    : Colors.light.itemBackground;
-  const text = isDark ? Colors.white : Colors.black;
-  const muted = Colors.midTone;
-  const divider = isDark ? Colors.darkGray : Colors.lightGray;
+  const theme = isDark ? Colors.dark : Colors.light;
+  const global = globalStyles(isDark);
 
   return StyleSheet.create({
-    container: {
+    container: { paddingTop: 20, gap: 18 },
+    identityRow: {
+      flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
-      paddingVertical: 12,
+      gap: 16,
     },
+    identityContent: { flex: 1, minWidth: 0, alignItems: "flex-start", gap: 6 },
 
-    // ── Avatar ──────────────────────────────────────────────
-    headshotContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    avatarRing: {
-      zIndex: 10,
-      alignItems: "center",
-      width: 140,
-      height: 140,
-      borderWidth: 2,
-      borderColor: text,
-      borderRadius: "100%",
-      backgroundColor: bg,
-      overflow: "hidden",
-    },
     avatarContainer: {
-      zIndex: 10,
-      alignItems: "center",
-      width: 140,
-      height: 140,
-      borderWidth: 2,
-      borderColor: text,
-      borderRadius: "100%",
-      backgroundColor: bg,
+      width: 100,
+      height: 100,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: theme.gray,
       overflow: "hidden",
+      flexShrink: 0,
     },
-    avatar: {
-      width: "100%",
-      height: "100%",
-    },
+    avatar: { width: "100%", height: "100%", resizeMode: "cover" },
     avatarPlaceholder: {
+      flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      width: "100%",
-      height: "100%",
-      backgroundColor: Colors.midTone,
+      backgroundColor: theme.itemBackground,
     },
     initial: {
       fontFamily: Fonts.BOLD,
-      fontSize: 42,
-      color: text,
-    },
-
-    // ── Position badge ───────────────────────────────────────
-    badgeRow: {
-      flexDirection: "row",
-      marginTop: 10,
+      fontSize: 48,
+      color: theme.secondaryText,
     },
     positionBadge: {
-      marginTop: 10,
-      paddingHorizontal: 16,
-      paddingVertical: 5,
-      borderRadius: 4,
-      backgroundColor: surface,
+      paddingHorizontal: 9,
+      paddingVertical: 3,
+      borderRadius: 5,
+      backgroundColor: theme.itemBackground,
     },
-    positionText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
-      color: text,
+    positionText: { ...global.label, color: theme.text, letterSpacing: 0.6 },
+    positionRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    positionDivider: {
+      width: StyleSheet.hairlineWidth,
+      height: 12,
+      backgroundColor: theme.gray,
     },
-
-    // ── Name ─────────────────────────────────────────────────
-    nameContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 12,
-    },
+    nameContainer: { alignSelf: "stretch" },
     name: {
       fontFamily: Fonts.BOLD,
-      fontSize: 24,
-      letterSpacing: 4,
-      color: text,
-      textAlign: "center",
+      width: "90%",
+      fontSize: 32,
+      lineHeight: 35,
+      color: theme.text,
       textTransform: "uppercase",
     },
-
-    // ── Stats row ────────────────────────────────────────────
     statsRow: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-evenly",
-      gap: 8,
-      width: "100%",
       paddingVertical: 14,
-      paddingHorizontal: 12,
-      borderRadius: 8,
-      backgroundColor: surface,
+      borderRadius: 12,
+      backgroundColor: theme.itemBackground,
     },
     statChip: {
+      flex: 1,
+      minWidth: 0,
       alignItems: "center",
-      width: 80,
-      paddingHorizontal: 12,
+      paddingHorizontal: 4,
     },
     statValue: {
       fontFamily: Fonts.BOLD,
-      fontSize: 20,
-      color: text,
+      fontSize: 24,
+      color: theme.text,
     },
     statLabel: {
-      marginTop: 3,
-      fontFamily: Fonts.MEDIUM,
+      ...global.label,
+      marginTop: 2,
       fontSize: 10,
-      letterSpacing: 1.8,
-      color: muted,
+      letterSpacing: 0.6,
     },
     statDivider: {
-      width: 1,
-      height: 32,
-      backgroundColor: divider,
+      width: StyleSheet.hairlineWidth,
+      height: 28,
+      backgroundColor: theme.gray,
     },
-
-    // ── Info grid ────────────────────────────────────────────
-    infoGrid: {
-      alignSelf: "stretch",
-      marginTop: 14,
-    },
+    infoGrid: { alignSelf: "stretch" },
     infoRow: {
       flexDirection: "row",
-      alignItems: "center",
+      alignItems: "baseline",
       justifyContent: "space-between",
-      paddingVertical: 10,
+      gap: 16,
+      paddingVertical: 9,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: divider,
+      borderBottomColor: theme.transparentGray,
     },
-    infoLabel: {
-      width: 80,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 10,
-      letterSpacing: 1.8,
-      color: muted,
-    },
-    infoValue: {
-      flex: 1,
-      fontFamily: Fonts.LIGHT,
-      fontSize: 14,
-      color: text,
-      textAlign: "right",
-    },
+    infoLabel: { ...global.label, width: 80, fontSize: 10, letterSpacing: 0.8 },
+    infoValue: { ...global.text, flex: 1, fontSize: 14, textAlign: "right" },
   });
 };

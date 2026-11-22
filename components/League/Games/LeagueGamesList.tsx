@@ -164,6 +164,18 @@ const getSectionTitle = (section: HomeGameSection): string => {
     if (hasThursdayNightGame) return "Thursday Night Football";
   }
 
+   if (section.id === "cfb") {
+     const hasPlayoffGame = section.data.some((item) => {
+       const game = item.game as FootballGame;
+
+       return game.season?.type === 3 && game.headline.includes("Playoff");
+     });
+
+     if (hasPlayoffGame) return "CFB Playoffs";
+   }
+
+
+
   if (section.id === "cfb") {
     const hasSaturdayGame = section.data.some(
       (item) => getGameDate(item)?.getDay() === 6,
