@@ -48,6 +48,7 @@ The backend is separate. Frontend code must consume the backend API and must not
 
 ## Styling and UX Rules
 
+- Read [Tempo UI Style Guide](docs/ui-style-guide.md) at the start of every UI redesign or new UI task, before proposing a design or editing code. Use it to find the relevant screen, shared components, and verification steps.
 - Use `constants/styles.ts` for shared colors, fonts, and global styles.
 - Before designing new UI or changing styles, review `constants/styles.ts` and reuse its global styles and tokens so the result aligns with the app's design.
 - Respect the app's light/dark preference flow from `contexts/PreferencesContext`.
