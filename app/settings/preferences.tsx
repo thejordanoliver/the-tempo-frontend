@@ -1,20 +1,57 @@
-import { CustomHeader } from "@/components/CustomHeader";
-import { Ionicons } from "@expo/vector-icons";
-import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigation } from "expo-router";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
+import { CustomHeader } from "components/CustomHeader";
+import SettingsChoiceGroup, {
+  type SettingsChoice,
+} from "components/Settings/SettingsChoiceGroup";
+import SettingsSection from "components/Settings/SettingsSection";
+import { Colors, globalStyles } from "constants/styles";
 import {
-  getActivityStatusPreference,
-  updateActivityStatusPreference,
-} from "services/usersApi";
-import { settingsStyles } from "styles/SettingsStyles";
+  usePreferences,
+  type ColorSchemePreference,
+} from "contexts/PreferencesContext";
+import { useNavigation } from "expo-router";
+import { useSettingsContentStyle } from "hooks/useSettingsContentStyle";
+import { useActivityStatusPreference } from "hooks/UserHooks/useActivityStatusPreference";
+import { useLayoutEffect } from "react";
+import { Platform, ScrollView, Switch, Text, View } from "react-native";
+import {
+  settingsDetailStyles,
+  settingsOverviewStyles,
+} from "styles/SettingsStyles";
+import type { GameCardLayout, LeagueLayout } from "types/preferences";
 
-const PreferencesScreen = () => {
-  const navigationContentStyle = useNavigationBarContentStyle();
+const themes = [
+  {
+    value: "light",
+    label: "Light",
+    accessibilityLabel: "Light theme",
+    icon: "sunny-outline",
+  },
+  {
+    value: "dark",
+    label: "Dark",
+    accessibilityLabel: "Dark theme",
+    icon: "moon-outline",
+  },
+  {
+    value: "system",
+    label: "System",
+    accessibilityLabel: "System theme",
+    icon: "phone-portrait-outline",
+  },
+] as const satisfies readonly SettingsChoice<ColorSchemePreference>[];
+
+const gameLayouts = [
+  { value: "list", label: "List", icon: "list-outline" },
+  { value: "grid", label: "Grid", icon: "grid-outline" },
+  { value: "stacked", label: "Stacked", icon: "layers-outline" },
+] as const satisfies readonly SettingsChoice<GameCardLayout>[];
+
+const leagueLayouts = [
+  { value: "carousel", label: "Carousel", icon: "albums-outline" },
+  { value: "list", label: "List", icon: "list-outline" },
+] as const satisfies readonly SettingsChoice<LeagueLayout>[];
+
+export default function PreferencesScreen() {
   const {
     leagueLayout,
     setLeagueLayout,
@@ -31,291 +68,81 @@ const PreferencesScreen = () => {
     setColorScheme,
   } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = settingsStyles(isDark);
+  const theme = Colors[resolvedColorScheme];
+  const page = settingsOverviewStyles(isDark);
+  const styles = settingsDetailStyles(isDark);
+  const text = globalStyles(isDark);
+  const contentStyle = useSettingsContentStyle(page.content);
   const navigation = useNavigation();
-  const [showActivityStatus, setShowActivityStatus] = useState(true);
-  const [isUpdatingActivityStatus, setIsUpdatingActivityStatus] =
-    useState(false);
-  const textColor = isDark ? Colors.white : Colors.black;
-  const selectedBorderColor = isDark ? Colors.white : Colors.black;
-  const notSelected = isDark
-    ? Colors.dark.secondaryText
-    : Colors.light.secondaryText;
+  const activityStatus = useActivityStatusPreference();
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Preferences" onBack={navigation.goBack} />,
+      header: () => (
+        <CustomHeader title="Preferences" onBack={navigation.goBack} />
+      ),
     });
-  }, [navigation, isDark]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    getActivityStatusPreference()
-      .then((value) => {
-        if (isMounted) {
-          setShowActivityStatus(value);
-        }
-      })
-      .catch(() => {});
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const handleToggleActivityStatus = useCallback(
-    async (next: boolean) => {
-      if (isUpdatingActivityStatus) return;
-
-      const previous = showActivityStatus;
-
-      setShowActivityStatus(next);
-      setIsUpdatingActivityStatus(true);
-
-      try {
-        const saved = await updateActivityStatusPreference(next);
-        setShowActivityStatus(saved);
-      } catch {
-        setShowActivityStatus(previous);
-      } finally {
-        setIsUpdatingActivityStatus(false);
-      }
-    },
-    [isUpdatingActivityStatus, showActivityStatus],
-  );
+  }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={navigationContentStyle(styles.scrollContent)}
-      >
-        <HeadingTwo isDark={isDark}>Gamecard Layout</HeadingTwo>
-        <View>
-          {(["list", "grid", "stacked"] as const).map((layout) => (
-            <View
-              key={layout}
-              style={[
-                styles.optionButtonContainer,
-                viewMode === layout && {
-                  borderBottomColor: selectedBorderColor,
-                },
-              ]}
-            >
-              <TouchableOpacity
-                accessibilityRole="radio"
-                accessibilityState={{
-                  checked: viewMode === layout,
-                  disabled: viewModeLoading || viewModeSaving,
-                }}
-                disabled={viewModeLoading || viewModeSaving}
-                onPress={() => {
-                  void setViewMode(layout);
-                }}
-                style={styles.optionButton}
-              >
-                <Text
-                  style={[
-                    styles.optionText,
-                    { color: viewMode === layout ? textColor : notSelected },
-                  ]}
-                >
-                  {layout === "list"
-                    ? "List"
-                    : layout === "grid"
-                      ? "Grid"
-                      : "Stacked"}
-                </Text>
-                {viewMode === layout && (
-                  <Ionicons name="checkmark" size={24} color={textColor} />
-                )}
-              </TouchableOpacity>
+    <ScrollView style={page.overview} contentContainerStyle={contentStyle}>
+      <SettingsChoiceGroup
+        title="Theme"
+        choices={themes}
+        value={colorScheme}
+        onChange={setColorScheme}
+      />
+
+      <SettingsChoiceGroup
+        title="Game Card Layout"
+        choices={gameLayouts}
+        value={viewMode}
+        onChange={(value) => void setViewMode(value)}
+        busy={viewModeLoading || viewModeSaving}
+        error={viewModeError}
+      />
+
+      <SettingsChoiceGroup
+        title="League Screen Layout"
+        choices={leagueLayouts}
+        value={leagueLayout}
+        onChange={(value) => void setLeagueLayout(value)}
+        busy={leagueLayoutLoading || leagueLayoutSaving}
+        error={leagueLayoutError}
+      />
+
+      <SettingsSection title="Activity Status">
+        <View style={page.group}>
+          <View style={page.row}>
+            <View style={page.copy}>
+              <Text style={text.subtitle}>Show Activity Status</Text>
+              <Text style={[text.secondaryText, page.secondary]}>
+                Let others see when you’re active.
+              </Text>
             </View>
-          ))}
-          {viewModeError && (
-            <Text
-              accessibilityRole="alert"
-              style={[
-                styles.optionText,
-                { color: isDark ? Colors.dark.lightRed : Colors.light.red },
-              ]}
-            >
-              {viewModeError}
-            </Text>
-          )}
-        </View>
-
-        <View style={styles.seperator} />
-
-        <HeadingTwo isDark={isDark}>League Screen Layout</HeadingTwo>
-        <View>
-          {(["carousel", "list"] as const).map((layout) => (
-            <View
-              key={layout}
-              style={[
-                styles.optionButtonContainer,
-                leagueLayout === layout && {
-                  borderBottomColor: selectedBorderColor,
-                },
-              ]}
-            >
-              <TouchableOpacity
-                accessibilityRole="radio"
-                accessibilityState={{
-                  checked: leagueLayout === layout,
-                  disabled: leagueLayoutLoading || leagueLayoutSaving,
-                }}
-                disabled={leagueLayoutLoading || leagueLayoutSaving}
-                onPress={() => {
-                  void setLeagueLayout(layout);
-                }}
-                style={styles.optionButton}
-              >
-                <Text
-                  style={[
-                    styles.optionText,
-                    {
-                      color: leagueLayout === layout ? textColor : notSelected,
-                    },
-                  ]}
-                >
-                  {layout === "carousel" ? "Carousel" : "List"}
-                </Text>
-                {leagueLayout === layout && (
-                  <Ionicons name="checkmark" size={24} color={textColor} />
-                )}
-              </TouchableOpacity>
-            </View>
-          ))}
-
-          {leagueLayoutError && (
-            <Text
-              accessibilityRole="alert"
-              style={[
-                styles.optionText,
-                { color: isDark ? Colors.dark.lightRed : Colors.light.red },
-              ]}
-            >
-              {leagueLayoutError}
-            </Text>
-          )}
-        </View>
-        <View style={styles.seperator} />
-
-        <HeadingTwo isDark={isDark}>Theme</HeadingTwo>
-        <View
-          style={[
-            styles.optionButtonContainer,
-            colorScheme === "light" && {
-              borderBottomColor: selectedBorderColor,
-            },
-          ]}
-        >
-          <TouchableOpacity
-            accessibilityRole="radio"
-            accessibilityLabel="Light theme"
-            accessibilityState={{ checked: colorScheme === "light" }}
-            onPress={() => setColorScheme("light")}
-            style={styles.optionButton}
-          >
-            <Text
-              style={[
-                styles.optionText,
-                {
-                  color: colorScheme === "light" ? textColor : notSelected,
-                },
-              ]}
-            >
-              Light
-            </Text>
-
-            {colorScheme === "light" && (
-              <Ionicons name="checkmark" size={24} color={textColor} />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View
-          style={[
-            styles.optionButtonContainer,
-            colorScheme === "dark" && {
-              borderBottomColor: selectedBorderColor,
-            },
-          ]}
-        >
-          <TouchableOpacity
-            accessibilityRole="radio"
-            accessibilityLabel="Dark theme"
-            accessibilityState={{ checked: colorScheme === "dark" }}
-            onPress={() => setColorScheme("dark")}
-            style={styles.optionButton}
-          >
-            <Text
-              style={[
-                styles.optionText,
-                {
-                  color: colorScheme === "dark" ? textColor : notSelected,
-                },
-              ]}
-            >
-              Dark
-            </Text>
-
-            {colorScheme === "dark" && (
-              <Ionicons name="checkmark" size={24} color={textColor} />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View
-          style={[
-            styles.optionButtonContainer,
-            colorScheme === "system" && {
-              borderBottomColor: selectedBorderColor,
-            },
-          ]}
-        >
-          <TouchableOpacity
-            accessibilityRole="radio"
-            accessibilityLabel="System theme"
-            accessibilityState={{ checked: colorScheme === "system" }}
-            onPress={() => setColorScheme("system")}
-            style={styles.optionButton}
-          >
-            <Text
-              style={[
-                styles.optionText,
-                {
-                  color: colorScheme === "system" ? textColor : notSelected,
-                },
-              ]}
-            >
-              System
-            </Text>
-
-            {colorScheme === "system" && (
-              <Ionicons name="checkmark" size={24} color={textColor} />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.seperator} />
-
-        <HeadingTwo isDark={isDark}>Activity Status</HeadingTwo>
-        <View style={styles.optionButtonContainer}>
-          <View style={styles.optionButton}>
-            <Text style={styles.optionText}>Show Activity Status</Text>
             <Switch
               accessibilityLabel="Show Activity Status"
-              value={showActivityStatus}
-              onValueChange={handleToggleActivityStatus}
-              disabled={isUpdatingActivityStatus}
+              accessibilityHint="Let others see when you’re active"
+              accessibilityState={{ busy: activityStatus.busy }}
+              aria-busy={activityStatus.busy}
+              value={activityStatus.value}
+              onValueChange={(next) => void activityStatus.update(next)}
+              disabled={activityStatus.busy}
+              thumbColor={Colors.white}
+              {...(Platform.OS === "web" && { activeThumbColor: Colors.white })}
+              trackColor={{ false: theme.gray, true: theme.blue }}
             />
           </View>
         </View>
-      </ScrollView>
-    </View>
+        {activityStatus.error && (
+          <Text
+            accessibilityRole="alert"
+            style={[text.errorText, styles.errorPanel]}
+          >
+            {activityStatus.error}
+          </Text>
+        )}
+      </SettingsSection>
+    </ScrollView>
   );
-};
-
-export default PreferencesScreen;
+}
