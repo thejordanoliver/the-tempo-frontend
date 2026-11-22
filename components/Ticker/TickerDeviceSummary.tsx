@@ -7,7 +7,11 @@ import { useTickerController, useTickerStore } from "store/tickerStore";
 import { connectionBusy, type TickerState } from "services/ticker/controller";
 import { TickerAction, TickerFeedback, connectionLabel } from "./TickerUI";
 
-export default function TickerDeviceSummary() {
+export default function TickerDeviceSummary({
+  variant = "default",
+}: {
+  variant?: "default" | "settings";
+}) {
   const state = useTickerStore();
   const ticker = useTickerController();
   const { colors, text } = useTickerTheme();
@@ -15,22 +19,38 @@ export default function TickerDeviceSummary() {
   const device = state.selectedDevice ?? state.lastDevice;
   const connected = state.connection === "connected";
   const busy = connectionBusy(state.connection);
+  const settings = variant === "settings";
   return (
     <View
-      style={[styles.container, { backgroundColor: colors.itemBackground }]}
+      style={[
+        styles.container,
+        { backgroundColor: colors.itemBackground },
+        settings && styles.settingsCard,
+      ]}
     >
       <View style={styles.heading}>
-        <Ionicons
-          name="hardware-chip-outline"
-          size={28}
-          color={colors.text}
-          accessibilityElementsHidden
-        />
+        <View
+          style={
+            settings && [
+              styles.settingsIcon,
+              { backgroundColor: colors.background },
+            ]
+          }
+          aria-hidden
+        >
+          <Ionicons
+            name="hardware-chip-outline"
+            size={28}
+            color={colors.text}
+          />
+        </View>
         <View style={styles.copy}>
-          <Text style={text.subtitle}>
+          <Text style={settings ? text.title : text.subtitle}>
             {device?.name ?? "No ticker connected"}
           </Text>
-          <Text style={text.caption}>{getDeviceStatus(state)}</Text>
+          <Text style={settings ? text.secondaryText : text.caption}>
+            {getDeviceStatus(state)}
+          </Text>
         </View>
         <View
           accessibilityLabel={connectionLabel[state.connection]}

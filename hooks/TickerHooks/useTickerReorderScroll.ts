@@ -74,8 +74,8 @@ export function useTickerReorderPageScroll(
   const measureViewport = useCallback(() => {
     const epoch = ++measureEpoch.current;
     scrollRef.current
-      ?.getNativeScrollRef()
-      ?.measureInWindow((_x, y, _width, height) => {
+      ?.getNativeScrollRef?.()
+      ?.measureInWindow?.((_x, y, _width, height) => {
         if (epoch !== measureEpoch.current || !Number.isFinite(y)) return;
         viewportTop.current = y;
         if (height > 0 && Number.isFinite(height))
@@ -117,7 +117,8 @@ export function useTickerReorderPageScroll(
     phase.current = "idle";
     translation.current = 0;
     ++measureEpoch.current;
-    scrollRef.current?.setNativeProps({ scrollEnabled: true });
+    // Native scroll views can update immediately. Expo web uses scrollEnabled.
+    scrollRef.current?.setNativeProps?.({ scrollEnabled: true });
   }, [stopFrames]);
 
   const finishDrag = useCallback(() => {
@@ -138,7 +139,7 @@ export function useTickerReorderPageScroll(
       startPageY.current = pageY;
       translation.current = 0;
       // Lock on press-in rather than waiting for the long-press drag callback.
-      scrollRef.current?.setNativeProps({ scrollEnabled: false });
+      scrollRef.current?.setNativeProps?.({ scrollEnabled: false });
       setScrollEnabled(false);
       // Stop existing momentum without changing the page's current position.
       scrollRef.current?.scrollTo({ y: offset.current, animated: false });
@@ -151,7 +152,7 @@ export function useTickerReorderPageScroll(
     stopFrames();
     phase.current = "dragging";
     translation.current = 0;
-    scrollRef.current?.setNativeProps({ scrollEnabled: false });
+    scrollRef.current?.setNativeProps?.({ scrollEnabled: false });
     setScrollEnabled(false);
   }, [stopFrames]);
 

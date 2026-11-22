@@ -66,7 +66,7 @@ function CustomHeaderControl({
       <TickerSettingOption
         label="Custom name"
         value={state.customHeader || undefined}
-        description={state.customHeaderIssue ?? "Set your own display heading."}
+        description={state.customHeaderIssue ?? undefined}
         selected={state.settings?.headerMode === "custom"}
         disabled={unavailable}
         onPress={() => {
@@ -78,7 +78,6 @@ function CustomHeaderControl({
       <ConfirmModal
         visible={editing && state.connection === "connected"}
         title="Custom header name"
-        message="Choose the heading shown above your games."
         confirmText={state.savingCustomHeader ? "Saving…" : "Save header"}
         confirmDisabled={unavailable || !draft.trim()}
         onCancel={() => setEditing(false)}

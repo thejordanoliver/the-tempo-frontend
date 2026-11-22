@@ -1,7 +1,7 @@
 import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import { tickerContentControlStyles as styles } from "styles/TickerStyles/TickerContentControlStyles";
 import { useMemo, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, useWindowDimensions, View } from "react-native";
 import { TICKER_TEAMS } from "constants/tickerTeams";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import PillTabs from "components/TabBars/PillTabs";
@@ -40,21 +40,12 @@ function getScheduleTeams(league: SupportedTickerLeague | null | undefined) {
     .sort((a, b) => a.fullName.localeCompare(b.fullName));
 }
 
-function getScoreDescription(
-  league: SupportedTickerLeague | null | undefined,
-  top25Only: boolean,
-) {
-  if (top25Only) return "Games featuring a Top 25 team, updated automatically.";
-  return league === "cfb" || league === "nfl"
-    ? "This week’s games, updated automatically."
-    : "Today’s games, updated automatically.";
-}
-
 export default function TickerContentControl() {
   const state = useTickerStore();
   const ticker = useTickerController();
   const favorites = useTickerFavorites();
   const { isDark, text } = useTickerTheme();
+  const { fontScale } = useWindowDimensions();
   const [picker, setPicker] = useState<"league" | "team" | null>(null);
   const league = state.settings?.selectedLeague;
   const mode = state.settings?.viewMode ?? "scores";
@@ -145,44 +136,32 @@ export default function TickerContentControl() {
           onPress={() => setPicker("league")}
         />
       )}
-      <View style={styles.contentType}>
-        <Text style={text.label}>Show on your ticker</Text>
-        <PillTabs
-          tabs={[
-            { label: "Scores", value: "scores" },
-            { label: "Schedule", value: "schedule" },
-            ...(college ? [{ label: "Rankings", value: "rankings" }] : []),
-            ...(supported("favorites_commit")
-              ? [{ label: "Favorites", value: "favorites" }]
-              : []),
-          ]}
-          selectedValue={contentType}
-          containerStyle={styles.contentTabs}
-          tabStyle={styles.contentTab}
-          disabled={!enabled("set_view")}
-          onChange={changeContentType}
-        />
-      </View>
+      <PillTabs
+        tabs={[
+          { label: "Scores", value: "scores" },
+          { label: "Schedule", value: "schedule" },
+          ...(college ? [{ label: "Rankings", value: "rankings" }] : []),
+          ...(supported("favorites_commit")
+            ? [{ label: "Favorites", value: "favorites" }]
+            : []),
+        ]}
+        selectedValue={contentType}
+        containerStyle={styles.contentTabs}
+        tabStyle={styles.contentTab}
+        minTabWidth={76 * Math.max(1, fontScale)}
+        disabled={!enabled("set_view")}
+        onChange={changeContentType}
+      />
       {contentType === "rotation" && (
         <Text style={text.caption}>
-          Custom rotation is active. Edit its list in Rotation below, or select
-          other content to stop it.
+          Choosing another content type stops the custom rotation.
         </Text>
       )}
-      {supported("favorites_commit") &&
-        favorites.ready &&
-        favorites.count === 0 && (
-          <Text style={text.caption}>
-            Add favorite teams from NBA, NFL, CFB, MLB, MCBB, WNBA or WCBB in
-            Tempo to use Favorites.
-          </Text>
-        )}
       {contentType === "favorites" && (
         <>
           <Text style={text.caption}>
-            Games involving your saved Tempo teams across supported leagues.
-            Basketball and baseball show today’s games; football shows this
-            week’s games.
+            Football shows this week’s games. Other supported sports show
+            today’s games.
           </Text>
           <TickerSettingOption
             icon="heart-outline"
@@ -195,7 +174,7 @@ export default function TickerContentControl() {
             description={
               favorites.signature !== state.settings?.favoritesSignature
                 ? "Your favorites changed. Sync to update the ticker."
-                : "Your favorite teams are synced to this ticker."
+                : undefined
             }
             disabled={
               !enabled("favorites_commit") ||
@@ -213,9 +192,11 @@ export default function TickerContentControl() {
           )}
         </>
       )}
-      {contentType === "scores" && (
+      {contentType === "scores" && league && (
         <Text style={text.caption}>
-          {getScoreDescription(league, college && !!state.settings?.top25Only)}
+          {league === "cfb" || league === "nfl"
+            ? "This week’s games."
+            : "Today’s games."}
         </Text>
       )}
       {contentType === "schedule" && (
@@ -235,7 +216,7 @@ export default function TickerContentControl() {
             onPress={() => setPicker("team")}
           />
           <Text style={text.caption}>
-            Completed and upcoming games from this team’s current season.
+            Completed and upcoming games this season.
           </Text>
         </>
       )}
@@ -263,7 +244,6 @@ export default function TickerContentControl() {
           <TickerSettingToggle
             label="Show team rankings"
             icon="ribbon-outline"
-            description="Add Top 25 ranks beside team names."
             value={state.settings?.showRankings ?? false}
             disabled={
               !enabled("set_show_rankings") ||
@@ -283,7 +263,7 @@ export default function TickerContentControl() {
           description={
             contentType === "rotation"
               ? "Only games featuring a ranked team in college score items."
-              : "Only games featuring a ranked team."
+              : undefined
           }
           value={state.settings?.top25Only ?? false}
           disabled={

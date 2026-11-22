@@ -2,7 +2,7 @@ import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import { tickerDisplayControlsStyles as styles } from "styles/TickerStyles/TickerDisplayControlsStyles";
 import Slider from "@react-native-community/slider";
 import { useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { useTickerController } from "store/tickerStore";
 import { TickerRow } from "./TickerUI";
 
@@ -77,7 +77,7 @@ export function DurationControl({
 }) {
   const ticker = useTickerController();
   const [draft, setDraft] = useState<number | null>(null);
-  const { colors, text } = useTickerTheme();
+  const { colors } = useTickerTheme();
   const value = draft ?? confirmed;
   return (
     <View style={styles.control}>
@@ -109,9 +109,6 @@ export function DurationControl({
             .finally(() => setDraft(null));
         }}
       />
-      <Text style={text.caption}>
-        How long each {poll ? "ranked team" : "game"} stays on screen.
-      </Text>
     </View>
   );
 }

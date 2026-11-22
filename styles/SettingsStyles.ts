@@ -20,7 +20,7 @@ export const settingsStyles = (isDark: boolean) =>
       marginBottom: 12,
       paddingBottom: 4,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.midTone : Colors.midTone,
+      borderBottomColor: Colors.midTone,
       fontFamily: Fonts.MEDIUM,
       fontSize: 24,
       color: isDark ? Colors.dark.white : Colors.light.black,

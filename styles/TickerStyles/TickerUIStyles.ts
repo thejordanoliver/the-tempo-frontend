@@ -1,3 +1,4 @@
+import { Colors } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const tickerStyles = StyleSheet.create({
@@ -13,6 +14,7 @@ export const tickerStyles = StyleSheet.create({
   feedbackCopy: { flex: 1 },
   content: { padding: 12, paddingTop: 20, gap: 16 },
   card: { borderRadius: 12, padding: 16, gap: 14 },
+  borderedCard: { borderWidth: StyleSheet.hairlineWidth, borderColor: Colors.midTone },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",

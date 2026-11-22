@@ -23,7 +23,7 @@ function TickerPreview() {
   return (
     <TickerControllerContext.Provider value={controller}>
       <TickerSettingsView title="Ticker Preview">
-        <TickerCard>
+        <TickerCard bordered>
           <Text style={text.subtitle}>Ticker design preview</Text>
           <Text style={text.secondaryText}>
             Try the real controls, pickers, and rename dialog with sample data.

@@ -1,8 +1,11 @@
 import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import type { PropsWithChildren } from "react";
+import SettingsSection from "components/Settings/SettingsSection";
+import { Colors } from "constants/styles";
+import { createContext, useContext, type PropsWithChildren } from "react";
 import {
   Image,
+  Platform,
   type ImageSourcePropType,
   Pressable,
   Switch,
@@ -13,6 +16,16 @@ import { settingsStyles } from "styles/SettingsStyles";
 import { tickerSettingsSectionStyles } from "styles/TickerStyles/TickerSettingsSectionStyles";
 import TickerIcon, { type TickerIconName } from "./TickerIcon";
 
+const TickerSettingsLayoutContext = createContext(false);
+
+export function TickerSettingsLayout({ children }: PropsWithChildren) {
+  return (
+    <TickerSettingsLayoutContext.Provider value>
+      {children}
+    </TickerSettingsLayoutContext.Provider>
+  );
+}
+
 type SectionProps = PropsWithChildren<{
   title: string;
   icon?: TickerIconName;
@@ -22,6 +35,7 @@ type OptionProps = {
   label: string;
   value?: string;
   description?: string;
+  accessibilityHint?: string;
   icon?: TickerIconName;
   logo?: ImageSourcePropType;
   swatchColor?: string;
@@ -44,6 +58,16 @@ type ToggleProps = {
 
 export function TickerSettingsSection({ title, icon, children }: SectionProps) {
   const { isDark, colors } = useTickerTheme();
+  const grouped = useContext(TickerSettingsLayoutContext);
+
+  if (grouped) {
+    return (
+      <SettingsSection title={title}>
+        <View style={tickerSettingsSectionStyles.group}>{children}</View>
+      </SettingsSection>
+    );
+  }
+
   return (
     <View style={tickerSettingsSectionStyles.wrapper}>
       <HeadingTwo isDark={isDark}>
@@ -63,6 +87,7 @@ export function TickerSettingOption({
   label,
   value,
   description,
+  accessibilityHint,
   icon,
   logo,
   swatchColor,
@@ -73,20 +98,54 @@ export function TickerSettingOption({
   onPress,
 }: OptionProps) {
   const { isDark, colors, text } = useTickerTheme();
+  const grouped = useContext(TickerSettingsLayoutContext);
   const preferences = settingsStyles(isDark);
   const accessory = selected
     ? "checkmark"
     : selected === undefined
       ? expanded
         ? "chevron-up"
-        : "chevron-forward"
+        : expanded === false && grouped
+          ? "chevron-down"
+          : "chevron-forward"
       : null;
+  const leading = swatchColor ? (
+    <View
+      aria-hidden
+      style={[
+        tickerSettingsSectionStyles.swatch,
+        { backgroundColor: swatchColor, borderColor: colors.icon },
+      ]}
+    />
+  ) : logo ? (
+    <Image
+      source={logo}
+      style={tickerSettingsSectionStyles.logo}
+      resizeMode="contain"
+      accessibilityElementsHidden
+    />
+  ) : (
+    icon && (
+      <TickerIcon
+        name={icon}
+        size={grouped ? 18 : 20}
+        color={grouped ? colors.text : colors.icon}
+      />
+    )
+  );
 
   return (
     <View
       style={[
-        preferences.optionButtonContainer,
-        tickerSettingsSectionStyles.optionContainer,
+        grouped
+          ? [
+              tickerSettingsSectionStyles.groupedOptionContainer,
+              { borderBottomColor: colors.gray },
+            ]
+          : [
+              preferences.optionButtonContainer,
+              tickerSettingsSectionStyles.optionContainer,
+            ],
         selected && { borderBottomColor: colors.text },
         hideBottomBorder && tickerSettingsSectionStyles.noBottomBorder,
       ]}
@@ -94,40 +153,53 @@ export function TickerSettingOption({
       <Pressable
         accessibilityRole={selected === undefined ? "button" : "radio"}
         accessibilityLabel={label}
+        accessibilityHint={
+          grouped
+            ? [accessibilityHint, value, description]
+                .filter(Boolean)
+                .join(". ") || undefined
+            : accessibilityHint
+        }
         accessibilityState={{
           disabled,
           ...(selected === undefined ? {} : { checked: selected }),
           ...(expanded === undefined ? {} : { expanded }),
         }}
+        aria-checked={selected}
+        aria-expanded={expanded}
         disabled={disabled}
         onPress={onPress}
         style={({ pressed }) => [
           preferences.optionButton,
           tickerSettingsSectionStyles.option,
+          grouped && tickerSettingsSectionStyles.groupedRow,
           (disabled || pressed) && tickerSettingsSectionStyles.muted,
         ]}
       >
-        {swatchColor ? (
+        {grouped && leading && !swatchColor && !logo ? (
           <View
-            accessibilityElementsHidden
             style={[
-              tickerSettingsSectionStyles.swatch,
-              { backgroundColor: swatchColor, borderColor: colors.icon },
+              tickerSettingsSectionStyles.iconBadge,
+              { backgroundColor: colors.itemBackground },
             ]}
-          />
-        ) : logo ? (
-          <Image
-            source={logo}
-            style={tickerSettingsSectionStyles.logo}
-            resizeMode="contain"
-            accessibilityElementsHidden
-          />
+            aria-hidden
+          >
+            {leading}
+          </View>
         ) : (
-          icon && <TickerIcon name={icon} color={colors.icon} />
+          leading
         )}
         <View style={tickerSettingsSectionStyles.optionCopy}>
-          <Text style={preferences.optionText}>{label}</Text>
-          {description && <Text style={text.caption}>{description}</Text>}
+          <Text style={grouped ? text.subtitle : preferences.optionText}>
+            {label}
+          </Text>
+          {description && (
+            <Text
+              style={[text.caption, grouped && { color: colors.secondaryText }]}
+            >
+              {description}
+            </Text>
+          )}
         </View>
         {value && (
           <Text
@@ -142,8 +214,8 @@ export function TickerSettingOption({
         {accessory && (
           <TickerIcon
             name={accessory}
-            size={selected ? 24 : 20}
-            color={colors.text}
+            size={grouped ? 16 : selected ? 24 : 20}
+            color={grouped && !selected ? colors.secondaryText : colors.text}
           />
         )}
       </Pressable>
@@ -161,29 +233,68 @@ export function TickerSettingToggle({
   onValueChange,
 }: ToggleProps) {
   const { isDark, colors, text } = useTickerTheme();
+  const grouped = useContext(TickerSettingsLayoutContext);
   const preferences = settingsStyles(isDark);
   return (
     <View
       style={[
-        preferences.optionButtonContainer,
-        tickerSettingsSectionStyles.optionContainer,
+        grouped
+          ? [
+              tickerSettingsSectionStyles.groupedOptionContainer,
+              { borderBottomColor: colors.gray },
+            ]
+          : [
+              preferences.optionButtonContainer,
+              tickerSettingsSectionStyles.optionContainer,
+            ],
         hideBottomBorder && tickerSettingsSectionStyles.noBottomBorder,
       ]}
     >
       <View
-        style={[preferences.optionButton, tickerSettingsSectionStyles.toggle]}
+        style={[
+          preferences.optionButton,
+          tickerSettingsSectionStyles.toggle,
+          grouped && tickerSettingsSectionStyles.groupedRow,
+        ]}
       >
-        {icon && <TickerIcon name={icon} color={colors.icon} />}
+        {icon &&
+          (grouped ? (
+            <View
+              style={[
+                tickerSettingsSectionStyles.iconBadge,
+                { backgroundColor: colors.itemBackground },
+              ]}
+              aria-hidden
+            >
+              <TickerIcon name={icon} size={18} color={colors.text} />
+            </View>
+          ) : (
+            <TickerIcon name={icon} color={colors.icon} />
+          ))}
         <View style={tickerSettingsSectionStyles.toggleCopy}>
-          <Text style={preferences.optionText}>{label}</Text>
-          {description && <Text style={text.caption}>{description}</Text>}
+          <Text style={grouped ? text.subtitle : preferences.optionText}>
+            {label}
+          </Text>
+          {description && (
+            <Text
+              style={[text.caption, grouped && { color: colors.secondaryText }]}
+            >
+              {description}
+            </Text>
+          )}
         </View>
         <Switch
           accessibilityLabel={label}
+          accessibilityHint={grouped ? description : undefined}
           value={value}
           disabled={disabled}
           onValueChange={onValueChange}
           trackColor={{ true: colors.blue, false: colors.gray }}
+          thumbColor={grouped ? Colors.white : undefined}
+          {...(grouped &&
+            Platform.OS === "web" && {
+              activeThumbColor: Colors.white,
+            })}
         />
       </View>
     </View>

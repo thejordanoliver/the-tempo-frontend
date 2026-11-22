@@ -1,16 +1,15 @@
-import { Colors } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const tickerSettingsViewStyles = StyleSheet.create({
-  headerPreview: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    padding: 12,
-    borderBottomWidth: 2,
-    backgroundColor: Colors.dark.transparentItemBackground,
+  columns: { gap: 16 },
+  wide: { flexDirection: "row", alignItems: "flex-start" },
+  column: { gap: 16 },
+  wideColumn: { flex: 1, minWidth: 0 },
+  picker: {
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
-  headerPreviewTitle: { flex: 1 },
-  headerPreviewLeague: { color: Colors.lightGray },
-  deviceDetails: { gap: 12, paddingVertical: 8 },
+  deviceDetails: { gap: 12, padding: 10, borderRadius: 8 },
 });

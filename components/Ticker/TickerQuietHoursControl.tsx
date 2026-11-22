@@ -1,6 +1,7 @@
 import { Colors } from "constants/styles";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Slider from "@react-native-community/slider";
+import Button from "components/Buttons/Button";
 import ConfirmModal from "components/ConfirmModal";
 import Input from "components/Inputs/Input";
 import PillTabs from "components/TabBars/PillTabs";
@@ -48,7 +49,7 @@ export default function TickerQuietHoursControl() {
 function QuietHoursEditor() {
   const state = useTickerStore();
   const ticker = useTickerController();
-  const { text, colors } = useTickerTheme();
+  const { text, colors, isDark } = useTickerTheme();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<TickerQuietHoursConfig>({
     ...DEFAULT_QUIET_HOURS,
@@ -84,7 +85,7 @@ function QuietHoursEditor() {
             .map(({ name }) => name)
             .join(", ");
   const status = !config.enabled
-    ? "Quiet hours is off."
+    ? null
     : !state.settings?.quietHoursClockReady
       ? "Waiting for the ticker’s clock. Connect it to Wi-Fi to start quiet hours."
       : overridden
@@ -93,7 +94,7 @@ function QuietHoursEditor() {
           ? config.behavior === "dim"
             ? `Quiet hours is active. Brightness is capped at ${config.dimPercent}%.`
             : "Quiet hours is active. The display is sleeping."
-          : "Your saved schedule is ready.";
+          : null;
   const newDraft = (enable?: boolean) => {
     const phoneZone = tickerPhoneTimeZone();
     setDraft({
@@ -126,7 +127,7 @@ function QuietHoursEditor() {
         value={value.enabled}
         disabled={disabled}
         description={
-          !supported
+          state.status && !supported
             ? "Requires ticker firmware 0.15.0 or newer."
             : (state.quietHoursIssue ??
               "Automatically turn off or dim your ticker on a schedule.")
@@ -145,7 +146,7 @@ function QuietHoursEditor() {
         disabled={disabled}
         onPress={() => (editing ? setEditing(false) : newDraft())}
       />
-      {!editing && state.quietHoursAvailable && (
+      {!editing && state.quietHoursAvailable && status && (
         <Text accessibilityLiveRegion="polite" style={text.caption}>
           {status}
         </Text>
@@ -155,7 +156,11 @@ function QuietHoursEditor() {
           label={
             overridden ? "Resume quiet hours" : "Stay on until quiet hours ends"
           }
-          description="Temporarily skip this quiet period. Your normal power and brightness settings apply."
+          description={
+            overridden
+              ? undefined
+              : "Uses your normal power and brightness settings."
+          }
           disabled={
             disabled || (!overridden && state.settings?.displayOn !== true)
           }
@@ -170,8 +175,7 @@ function QuietHoursEditor() {
       {editing && (
         <View style={styles.editor}>
           <Text style={text.caption}>
-            Changes take effect when you save. Each selected day is the day the
-            quiet period starts, including overnight schedules.
+            For overnight schedules, select the day quiet hours begins.
           </Text>
           <View style={styles.days}>
             {DAYS.map(({ name, day }) => {
@@ -276,8 +280,7 @@ function QuietHoursEditor() {
             onPress={() => setZonePicker(true)}
           />
           <Text style={text.caption}>
-            Your normal brightness returns when quiet hours ends. The saved
-            schedule runs on the ticker without the app connected.
+            Saved schedules run without the app connected.
           </Text>
           {!draft.days && (
             <Text style={text.errorText}>Select at least one day.</Text>
@@ -311,11 +314,14 @@ function QuietHoursEditor() {
             }
             onPress={save}
           />
-          <TickerSettingOption
-            label="Cancel changes"
+          <Button
+            isDark={isDark}
+            variant="text"
             disabled={state.savingQuietHours}
             onPress={() => setEditing(false)}
-          />
+          >
+            Cancel changes
+          </Button>
         </View>
       )}
       <TickerSelectionSheet

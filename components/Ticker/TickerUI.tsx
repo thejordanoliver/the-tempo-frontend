@@ -82,11 +82,18 @@ export function TickerPage({
     page
   );
 }
-export function TickerCard({ children }: PropsWithChildren) {
+export function TickerCard({
+  children,
+  bordered = false,
+}: PropsWithChildren<{ bordered?: boolean }>) {
   const { colors } = useTickerTheme();
   return (
     <View
-      style={[tickerStyles.card, { backgroundColor: colors.itemBackground }]}
+      style={[
+        tickerStyles.card,
+        { backgroundColor: colors.itemBackground },
+        bordered && tickerStyles.borderedCard,
+      ]}
     >
       {children}
     </View>

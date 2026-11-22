@@ -1,14 +1,20 @@
 import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
+import ReorderButtons from "components/Accessibility/ReorderButtons";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { TICKER_TEAMS } from "constants/tickerTeams";
 import { useTickerTheme } from "hooks/TickerHooks/useTickerTheme";
 import { useEffect, useRef, useState } from "react";
-import { AccessibilityInfo, Pressable, Text, View } from "react-native";
+import {
+  AccessibilityInfo,
+  Platform,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import DraggableFlatList, {
   type DraggableFlatListProps,
   ScaleDecorator,
-  type RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { Colors } from "constants/styles";
 import { useTickerReorderScroll } from "hooks/TickerHooks/useTickerReorderScroll";
@@ -64,6 +70,7 @@ function RotationEditor() {
   const state = useTickerStore();
   const ticker = useTickerController();
   const { text, colors, isDark } = useTickerTheme();
+  const web = Platform.OS === "web";
   const [expanded, setExpanded] = useState(false);
   const [rows, setRows] = useState<RotationDraft[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -154,6 +161,158 @@ function RotationEditor() {
                 (college && (view !== "cfp" || league === "cfb")),
             )
             .map(([id, name]) => ({ id, name }));
+  const renderRow = (
+    item: RotationDraft,
+    index: number,
+    isActive = false,
+    drag?: () => void,
+  ) => {
+    const entry = item.entry;
+    return (
+      <View
+        key={item.id}
+        style={[
+          styles.item,
+          {
+            borderColor: isActive ? colors.blue : colors.gray,
+            backgroundColor: isActive
+              ? colors.itemBackground
+              : colors.background,
+          },
+          isActive && styles.draggingItem,
+        ]}
+      >
+        <View style={styles.itemHeader}>
+          {drag && (
+            <Pressable
+              accessibilityRole="adjustable"
+              accessibilityLabel={`Reorder item ${index + 1}`}
+              accessibilityHint="Touch and hold, then drag. Swipe up or down to change position with a screen reader."
+              accessibilityValue={{
+                min: 1,
+                max: rows.length,
+                now: index + 1,
+              }}
+              accessibilityState={{ disabled: locked }}
+              accessibilityActions={[
+                { name: "increment", label: "Move down" },
+                { name: "decrement", label: "Move up" },
+              ]}
+              onAccessibilityAction={({ nativeEvent }) => {
+                if (locked) return;
+                if (nativeEvent.actionName === "increment") move(item.id, 1);
+                if (nativeEvent.actionName === "decrement") move(item.id, -1);
+              }}
+              disabled={locked}
+              delayLongPress={180}
+              onPressIn={(event) => hold(event.nativeEvent.pageY)}
+              onPressOut={cancelHold}
+              onLongPress={drag}
+              style={({ pressed }) => [
+                styles.iconButton,
+                disabled && styles.muted,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Ionicons
+                name="reorder-three-outline"
+                size={24}
+                color={isActive ? colors.blue : colors.icon}
+                accessible={false}
+              />
+            </Pressable>
+          )}
+          <Text style={[text.label, styles.title]}>Item {index + 1}</Text>
+          {!drag && (
+            <ReorderButtons
+              label={`item ${index + 1}`}
+              isDark={isDark}
+              canMoveEarlier={!locked && index > 0}
+              canMoveLater={!locked && index < rows.length - 1}
+              onMove={(direction) => move(item.id, direction)}
+            />
+          )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Remove item ${index + 1}`}
+            accessibilityState={{ disabled: locked }}
+            disabled={locked}
+            onPress={() =>
+              setRows((current) => current.filter((row) => row.id !== item.id))
+            }
+            style={({ pressed }) => [
+              styles.iconButton,
+              locked && styles.muted,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons
+              name="trash-outline"
+              size={22}
+              color={isDark ? Colors.dark.lightRed : Colors.light.red}
+              accessible={false}
+            />
+          </Pressable>
+        </View>
+        <TickerSettingOption
+          label="League"
+          value={
+            entry.league
+              ? LEAGUE_CONFIG[entry.league].shortName
+              : "Across your leagues"
+          }
+          disabled={locked || isActive}
+          onPress={() => setPicker({ id: item.id, type: "league" })}
+        />
+        <TickerSettingOption
+          label="Content"
+          value={VIEW_LABELS[entry.view]}
+          disabled={locked || isActive}
+          onPress={() => setPicker({ id: item.id, type: "view" })}
+        />
+        {entry.view === "schedule" && (
+          <TickerSettingOption
+            label="Team"
+            value={
+              teamsFor(entry.league!).find((team) => team.id === entry.teamId)
+                ?.fullName ?? "Choose a team"
+            }
+            disabled={locked || isActive}
+            onPress={() => setPicker({ id: item.id, type: "team" })}
+          />
+        )}
+        {entry.view === "favorites" && (
+          <Text style={text.caption}>
+            Uses the favorite teams last synced to this ticker. Sync them from
+            Content → Favorites before starting this rotation.
+          </Text>
+        )}
+        <Text style={text.secondaryText}>
+          {entry.seconds} seconds per{" "}
+          {entry.view === "ap" ||
+          entry.view === "coaches" ||
+          entry.view === "cfp"
+            ? "ranked team"
+            : "game"}
+        </Text>
+        <Slider
+          accessibilityLabel={`Seconds per card for rotation item ${index + 1}`}
+          minimumValue={3}
+          maximumValue={60}
+          step={1}
+          value={entry.seconds}
+          disabled={locked || isActive}
+          minimumTrackTintColor={colors.text}
+          maximumTrackTintColor={colors.gray}
+          thumbTintColor={colors.text}
+          onValueChange={(seconds) =>
+            update(item.id, { seconds: Math.round(seconds) })
+          }
+        />
+      </View>
+    );
+  };
+
   return (
     <>
       <TickerSettingOption
@@ -166,7 +325,7 @@ function RotationEditor() {
               : "Set up"
         }
         description={
-          !supported
+          state.status && !supported
             ? "Requires ticker firmware 0.12.0 or newer."
             : (state.rotationIssue ??
               "Mix leagues, schedules, rankings, and favorites in your own order.")
@@ -178,200 +337,62 @@ function RotationEditor() {
       {expanded && (
         <>
           <Text style={text.caption}>
-            Each item plays through once, then the next begins. Empty slates
-            advance after one card interval. Your saved rotation runs without
-            the app connected.
+            Each item plays once. Empty slates advance after one card interval.
+            Saved rotations run without the app connected.
           </Text>
-          <Text style={text.caption}>
-            Touch and hold the drag handle to reorder. Release to snap an item
-            into place. Drag near the screen edge to scroll farther.
-          </Text>
-          <DraggableFlatList<RotationDraft>
-            data={rows}
-            keyExtractor={(item) => item.id}
-            extraData={{ locked, picker, isDark }}
-            initialNumToRender={MAX_ROTATION_ENTRIES}
-            removeClippedSubviews={false}
-            activationDistance={8}
-            scrollEnabled={false}
-            outerScrollOffset={pageScroll.scrollOffset}
-            autoscrollThreshold={1}
-            autoscrollSpeed={0}
-            onAnimValInit={setDragAnimation}
-            onRelease={releaseDrag}
-            animationConfig={{
-              damping: 22,
-              stiffness: 180,
-              mass: 0.4,
-              overshootClamping: true,
-            }}
-            onDragBegin={() => {
-              beginDrag();
-              setDragging(true);
-            }}
-            onDragEnd={({ data, from, to }) => {
-              setRows(data);
-              setDragging(false);
-              finishDrag();
-              if (from !== to)
-                AccessibilityInfo.announceForAccessibility(
-                  `Item ${from + 1} moved to position ${to + 1} of ${data.length}.`,
-                );
-            }}
-            renderItem={({
-              item,
-              getIndex,
-              drag,
-              isActive,
-            }: RenderItemParams<RotationDraft>) => {
-              const index =
-                getIndex() ?? rows.findIndex((row) => row.id === item.id);
-              const entry = item.entry;
-              return (
+          {!web && (
+            <Text style={text.caption}>
+              Touch and hold a handle to reorder. Drag near the screen edge to
+              scroll.
+            </Text>
+          )}
+          {web ? (
+            rows.map((item, index) => renderRow(item, index))
+          ) : (
+            <DraggableFlatList<RotationDraft>
+              data={rows}
+              keyExtractor={(item) => item.id}
+              extraData={{ locked, picker, isDark }}
+              initialNumToRender={MAX_ROTATION_ENTRIES}
+              removeClippedSubviews={false}
+              activationDistance={8}
+              scrollEnabled={false}
+              outerScrollOffset={pageScroll.scrollOffset}
+              autoscrollThreshold={1}
+              autoscrollSpeed={0}
+              onAnimValInit={setDragAnimation}
+              onRelease={releaseDrag}
+              animationConfig={{
+                damping: 22,
+                stiffness: 180,
+                mass: 0.4,
+                overshootClamping: true,
+              }}
+              onDragBegin={() => {
+                beginDrag();
+                setDragging(true);
+              }}
+              onDragEnd={({ data, from, to }) => {
+                setRows(data);
+                setDragging(false);
+                finishDrag();
+                if (from !== to)
+                  AccessibilityInfo.announceForAccessibility(
+                    `Item ${from + 1} moved to position ${to + 1} of ${data.length}.`,
+                  );
+              }}
+              renderItem={({ item, getIndex, drag, isActive }) => (
                 <ScaleDecorator activeScale={1.015}>
-                  <View
-                    style={[
-                      styles.item,
-                      {
-                        borderColor: isActive ? colors.blue : colors.gray,
-                        backgroundColor: isActive
-                          ? colors.itemBackground
-                          : colors.background,
-                      },
-                      isActive && styles.draggingItem,
-                    ]}
-                  >
-                    <View style={styles.itemHeader}>
-                      <Pressable
-                        accessibilityRole="adjustable"
-                        accessibilityLabel={`Reorder item ${index + 1}`}
-                        accessibilityHint="Touch and hold, then drag. Swipe up or down to change position with a screen reader."
-                        accessibilityValue={{
-                          min: 1,
-                          max: rows.length,
-                          now: index + 1,
-                        }}
-                        accessibilityState={{ disabled: locked }}
-                        accessibilityActions={[
-                          { name: "increment", label: "Move down" },
-                          { name: "decrement", label: "Move up" },
-                        ]}
-                        onAccessibilityAction={({ nativeEvent }) => {
-                          if (locked) return;
-                          if (nativeEvent.actionName === "increment")
-                            move(item.id, 1);
-                          if (nativeEvent.actionName === "decrement")
-                            move(item.id, -1);
-                        }}
-                        disabled={locked}
-                        delayLongPress={180}
-                        onPressIn={(event) => hold(event.nativeEvent.pageY)}
-                        onPressOut={cancelHold}
-                        onLongPress={drag}
-                        style={({ pressed }) => [
-                          styles.iconButton,
-                          disabled && styles.muted,
-                          pressed && styles.pressed,
-                        ]}
-                      >
-                        <Ionicons
-                          name="reorder-three-outline"
-                          size={24}
-                          color={isActive ? colors.blue : colors.icon}
-                          accessible={false}
-                        />
-                      </Pressable>
-                      <Text style={[text.label, styles.title]}>
-                        Item {index + 1}
-                      </Text>
-                      <Pressable
-                        accessibilityRole="button"
-                        accessibilityLabel={`Remove item ${index + 1}`}
-                        accessibilityState={{ disabled: locked }}
-                        disabled={locked}
-                        onPress={() =>
-                          setRows((current) =>
-                            current.filter((row) => row.id !== item.id),
-                          )
-                        }
-                        style={({ pressed }) => [
-                          styles.iconButton,
-                          locked && styles.muted,
-                          pressed && styles.pressed,
-                        ]}
-                      >
-                        <Ionicons
-                          name="trash-outline"
-                          size={22}
-                          color={
-                            isDark ? Colors.dark.lightRed : Colors.light.red
-                          }
-                          accessible={false}
-                        />
-                      </Pressable>
-                    </View>
-                    <TickerSettingOption
-                      label="League"
-                      value={
-                        entry.league
-                          ? LEAGUE_CONFIG[entry.league].shortName
-                          : "Across your leagues"
-                      }
-                      disabled={locked || isActive}
-                      onPress={() => setPicker({ id: item.id, type: "league" })}
-                    />
-                    <TickerSettingOption
-                      label="Content"
-                      value={VIEW_LABELS[entry.view]}
-                      disabled={locked || isActive}
-                      onPress={() => setPicker({ id: item.id, type: "view" })}
-                    />
-                    {entry.view === "schedule" && (
-                      <TickerSettingOption
-                        label="Team"
-                        value={
-                          teamsFor(entry.league!).find(
-                            (team) => team.id === entry.teamId,
-                          )?.fullName ?? "Choose a team"
-                        }
-                        disabled={locked || isActive}
-                        onPress={() => setPicker({ id: item.id, type: "team" })}
-                      />
-                    )}
-                    {entry.view === "favorites" && (
-                      <Text style={text.caption}>
-                        Uses the favorite teams last synced to this ticker. Sync
-                        them from Content → Favorites before starting this
-                        rotation.
-                      </Text>
-                    )}
-                    <Text style={text.secondaryText}>
-                      {entry.seconds} seconds per{" "}
-                      {entry.view === "ap" ||
-                      entry.view === "coaches" ||
-                      entry.view === "cfp"
-                        ? "ranked team"
-                        : "game"}
-                    </Text>
-                    <Slider
-                      accessibilityLabel={`Seconds per card for rotation item ${index + 1}`}
-                      minimumValue={3}
-                      maximumValue={60}
-                      step={1}
-                      value={entry.seconds}
-                      disabled={locked || isActive}
-                      minimumTrackTintColor={colors.text}
-                      maximumTrackTintColor={colors.gray}
-                      thumbTintColor={colors.text}
-                      onValueChange={(seconds) =>
-                        update(item.id, { seconds: Math.round(seconds) })
-                      }
-                    />
-                  </View>
+                  {renderRow(
+                    item,
+                    getIndex() ?? rows.findIndex((row) => row.id === item.id),
+                    isActive,
+                    drag,
+                  )}
                 </ScaleDecorator>
-              );
-            }}
-          />
+              )}
+            />
+          )}
           <TickerSettingOption
             label="Add rotation item"
             value={`${entries.length}/${MAX_ROTATION_ENTRIES}`}

@@ -66,7 +66,6 @@ function RenameControl() {
       <TickerSettingOption
         icon="pencil-outline"
         label="Rename ticker"
-        value={device?.name}
         disabled={disabled}
         description={
           connected && !supported
@@ -82,7 +81,6 @@ function RenameControl() {
       <ConfirmModal
         visible={editingId !== null && connected && editingId === device?.id}
         title="Rename ticker"
-        message="Choose a name you’ll recognize when connecting to your ticker."
         confirmText="Save name"
         confirmDisabled={disabled || !draft.trim()}
         onCancel={() => setEditingId(null)}
