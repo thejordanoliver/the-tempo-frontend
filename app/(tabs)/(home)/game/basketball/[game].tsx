@@ -190,10 +190,12 @@ export default function GameDetailsScreen(
             ? getGLeagueTeam(awayId)
             : getNBATeam(awayId)) ?? emptyAwayTeam;
 
-  const homeCode = home?.code ?? "";
-  const awayCode = away?.code ?? "";
-  const homeName = home?.fullName ?? "";
-  const awayName = away?.fullName ?? "";
+  const homeCode = home?.code ?? game?.home?.name ?? "";
+  const awayCode = away?.code ?? game?.away?.code ?? "";
+  const homeName =
+    home?.fullName ?? game?.home?.shortName ?? game?.home?.name ?? "";
+  const awayName =
+    away?.fullName ?? game?.away?.shortName ?? game?.away?.name ?? "";
 
   const isHomeActive = homeTeam.isActive;
   const isAwayActive = awayTeam.isActive;

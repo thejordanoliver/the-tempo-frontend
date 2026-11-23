@@ -330,6 +330,7 @@ import IUColumbusLogo from "assets/College_Logos/IUColumbusLogo.png";
 import IUColumbusLogoLight from "assets/College_Logos/IUColumbusLogoLight.png";
 import IUIndianapolisLogo from "assets/College_Logos/IUIndianapolisLogo.png";
 import IUIndianapolisLogoLight from "assets/College_Logos/IUIndianapolisLogoLight.png";
+import IUSouthBendLogo from "assets/College_Logos/IUSouthBendLogo.png";
 import JacksonStateLogo from "assets/College_Logos/JacksonStateLogo.png";
 import JacksonStateLogoLight from "assets/College_Logos/JacksonStateLogoLight.png";
 import JacksonvilleLogo from "assets/College_Logos/JacksonvilleLogo.png";
@@ -6555,6 +6556,23 @@ export const mcbbTeams: Team[] = [
     isNational: false,
     league: "mcbb",
     logoLight: IUIndianapolisLogoLight,
+  },
+  {
+    id: 2288,
+    name: "IU South Bend",
+    fullName: "IU South Bend Titans",
+    shortName: "IU South Bend",
+    code: "IUSB",
+    primaryColor: "#990000",
+    secondaryColor: "#EDEBEB",
+    logo: IUSouthBendLogo,
+    isActive: true,
+    isAllStar: false,
+    city: "South Bend",
+    location: "South Bend, IN",
+    established: 0,
+    isNational: false,
+    league: "mcbb",
   },
   {
     id: 2427,

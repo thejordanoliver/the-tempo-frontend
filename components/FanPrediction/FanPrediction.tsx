@@ -23,7 +23,7 @@ type Props = FanPredictionInput & {
   homeLogo: ImageProps["source"] | string;
   homeColor?: string | null;
   children?: ReactNode;
-  showHeader: boolean;
+  showHeader?: boolean;
 };
 
 export default function FanPrediction(props: Props) {
@@ -45,7 +45,7 @@ function FanPredictionContent(props: Props) {
     scoringError,
     retryScoring,
     children,
-    showHeader
+    showHeader = true
   } = props;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

@@ -1,4 +1,9 @@
-import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
+import {
+  activeOpacity,
+  Colors,
+  Fonts,
+  MIN_TOUCH_TARGET,
+} from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const settingsStyles = (isDark: boolean) =>
@@ -83,7 +88,7 @@ export const settingsOverviewStyles = (isDark: boolean) => {
       backgroundColor: isDark ? theme.itemBackground : theme.itemBackground,
     },
     accountPressed: {
-      backgroundColor: Colors.darkGray,
+      opacity: activeOpacity,
     },
     avatar: {
       alignItems: "center",
@@ -129,7 +134,7 @@ export const settingsOverviewStyles = (isDark: boolean) => {
       backgroundColor: theme.background,
     },
     rowPressed: {
-      backgroundColor: theme.transparentGray,
+      opacity: activeOpacity,
     },
     rowIcon: {
       alignItems: "center",
