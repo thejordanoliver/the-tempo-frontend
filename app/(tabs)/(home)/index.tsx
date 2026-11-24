@@ -45,14 +45,6 @@ export default function HomeScreen() {
     pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
   }, []);
 
-  const handleFavoritesInteractionStart = useCallback(() => {
-    setFavoritesInteracting(true);
-  }, []);
-
-  const handleFavoritesInteractionEnd = useCallback(() => {
-    setFavoritesInteracting(false);
-  }, []);
-
   const {
     refreshing,
     handleRefresh,
@@ -124,9 +116,8 @@ export default function HomeScreen() {
               refreshControl={refreshControl()}
             >
               <FavoritesScroll
-                onInteractionStart={handleFavoritesInteractionStart}
-                onInteractionEnd={handleFavoritesInteractionEnd}
                 isDark={isDark}
+                onInteractionChange={setFavoritesInteracting}
               />
 
               <LeagueGamesList

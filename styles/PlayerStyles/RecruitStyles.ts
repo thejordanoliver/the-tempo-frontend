@@ -104,11 +104,6 @@ export const RecruitingTeamCardStyles = (isDark: boolean) => {
       gap: 12,
     },
 
-    rankBlock: {
-      gap: 5,
-      width: 76,
-    },
-
     rank: {
       fontFamily: Fonts.BOLD,
       fontSize: 30,
@@ -119,7 +114,6 @@ export const RecruitingTeamCardStyles = (isDark: boolean) => {
     rankChangePill: {
       flexDirection: "row",
       alignItems: "center",
-      alignSelf: "flex-start",
       gap: 4,
       paddingHorizontal: 7,
       paddingVertical: 3,

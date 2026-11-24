@@ -4,30 +4,25 @@ import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import * as Haptics from "expo-haptics";
-import { type Href } from "expo-router";
+import type { Href } from "expo-router";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import DraggableFlatList, {
-  type DragEndParams,
-  type DraggableFlatListProps,
-  type RenderItemParams,
-} from "react-native-draggable-flatlist";
-import { useAnimatedReaction } from "react-native-reanimated";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  FlatList,
+  Pressable,
+  Text,
+  View,
+  type ListRenderItem,
+} from "react-native";
 import {
   FAVORITES_RAIL_CELL_WIDTH,
   FavoritesScrollStyles,
 } from "styles/HomeStyles/FavoritesScrollStyles";
-import type {
-  FavoriteItem,
-  FavoriteLeagueItem,
-  FavoriteTeamItem,
-} from "types/favorites";
 import {
   isFavoriteLeague,
-  normalizeFavoriteTeamKeys,
-  reorderFavoriteRailItems,
-  splitFavoriteRailOrder,
+  type FavoriteItem,
+  type FavoriteLeagueItem,
+  type FavoriteTeamItem,
 } from "types/favorites";
 import {
   getFavoriteBaseTeam,
@@ -35,176 +30,48 @@ import {
 } from "utils/favorites/favoriteTeams";
 import { FavoritesTab } from "./FavoritesTab";
 
-function setSharedValue<T>(sharedValue: { value: T }, value: T) {
-  "worklet";
-  sharedValue.value = value;
-}
-
 type Props = {
-  onInteractionStart?: () => void;
-  onInteractionEnd?: () => void;
   isDark: boolean;
-};
-
-type FavoriteSection = FavoriteItem["kind"];
-
-type FavoriteRailOrder = {
-  userId: number | null;
-  sectionKeys: Record<FavoriteSection, string[]>;
-};
-
-const createRailOrder = (userId: number | null): FavoriteRailOrder => ({
-  userId,
-  sectionKeys: {
-    league: [],
-    team: [],
-  },
-});
-
-const FAVORITES_SNAP_ANIMATION = {
-  damping: 24,
-  stiffness: 320,
-  mass: 0.3,
-  overshootClamping: true,
-  restDisplacementThreshold: 0.25,
-  restSpeedThreshold: 2,
+  onInteractionChange: (interacting: boolean) => void;
 };
 
 const FAVORITE_NAVIGATION_LOCK_MS = 750;
-const FAVORITE_DRAG_ACTIVATION_DISTANCE = 24;
 
-type FavoriteDragAnimationValues = Parameters<
-  NonNullable<DraggableFlatListProps<FavoriteItem>["onAnimValInit"]>
->[0];
-
-type FavoriteDragBoundaryProps = {
-  animationValues: FavoriteDragAnimationValues;
-  itemCount: number;
-  sportCount: number;
-};
-
-function FavoriteDragBoundary({
-  animationValues,
-  itemCount,
-  sportCount,
-}: FavoriteDragBoundaryProps) {
-  const {
-    activeCellSize,
-    activeIndexAnim,
-    autoScrollDistance,
-    spacerIndexAnim,
-    touchTranslate,
-  } = animationValues;
-
-  useAnimatedReaction(
-    () => ({
-      activeIndex: activeIndexAnim.value,
-      translatedDistance: touchTranslate.value + autoScrollDistance.value,
-    }),
-    ({ activeIndex, translatedDistance }) => {
-      if (activeIndex < 0) {
-        return;
-      }
-
-      const draggingSport = activeIndex < sportCount;
-      const minimumIndex = draggingSport ? 0 : sportCount;
-      const maximumIndex = draggingSport ? sportCount - 1 : itemCount - 1;
-      const minimumTranslation =
-        (minimumIndex - activeIndex) * activeCellSize.value;
-      const maximumTranslation =
-        (maximumIndex - activeIndex) * activeCellSize.value;
-      const boundedTranslation = Math.min(
-        maximumTranslation,
-        Math.max(minimumTranslation, translatedDistance),
-      );
-
-      if (spacerIndexAnim.value < minimumIndex) {
-        setSharedValue(spacerIndexAnim, minimumIndex);
-      } else if (spacerIndexAnim.value > maximumIndex) {
-        setSharedValue(spacerIndexAnim, maximumIndex);
-      }
-
-      if (boundedTranslation !== translatedDistance) {
-        setSharedValue(
-          touchTranslate,
-          boundedTranslation - autoScrollDistance.value,
-        );
-      }
-    },
-  );
-
-  return null;
+function getItemLayout(
+  _: ArrayLike<FavoriteItem> | null | undefined,
+  index: number,
+) {
+  return {
+    length: FAVORITES_RAIL_CELL_WIDTH,
+    offset: FAVORITES_RAIL_CELL_WIDTH * index,
+    index,
+  };
 }
-
-function orderFavoriteItems<T extends FavoriteItem>(
-  items: readonly T[],
-  orderedKeys: readonly string[],
-): T[] {
-  const itemsByKey = new Map(items.map((item) => [item.key, item]));
-  const orderedItems: T[] = [];
-
-  for (const key of orderedKeys) {
-    const item = itemsByKey.get(key);
-
-    if (item) {
-      orderedItems.push(item);
-      itemsByKey.delete(key);
-    }
-  }
-
-  return [...orderedItems, ...itemsByKey.values()];
-}
-
-type FavoriteItemSeparatorProps = {
-  leadingItem?: FavoriteItem;
-};
 
 export default function FavoritesScroll({
-  onInteractionStart,
-  onInteractionEnd,
   isDark,
+  onInteractionChange,
 }: Props) {
   const router = useScopedRouter();
   const styles = useMemo(() => FavoritesScrollStyles(isDark), [isDark]);
-
-  const latestReorderIdRef = useRef<Record<FavoriteSection, number>>({
-    league: 0,
-    team: 0,
-  });
-  const reorderQueueRef = useRef<Record<FavoriteSection, Promise<void>>>({
-    league: Promise.resolve(),
-    team: Promise.resolve(),
-  });
-  const committedOrderRef = useRef<Record<FavoriteSection, string[]>>({
-    league: [],
-    team: [],
-  });
-  const currentUserIdRef = useRef<number | null>(null);
-  const interactionActiveRef = useRef(false);
-  const navigationLockedRef = useRef(false);
-  const navigationUnlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+  const navigationUnlockTimer = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
-  const [dragAnimationValues, setDragAnimationValues] =
-    useState<FavoriteDragAnimationValues | null>(null);
 
   const {
     favorites: favoriteTeamIds,
     allTeams,
-    syncFavorites,
-    setFavorites,
-    isLoading,
+    teamFavoritesLoading,
+    directoryLoading,
+    directoryError,
+    refreshDirectory,
     ready: teamsReady,
     favoriteSports,
-    favoriteSportsLoading,
+    favoriteSportsError,
+    loadFavoriteSports,
     favoriteSportsReady,
-    updateFavoriteSports,
     userId,
   } = useFavoriteTeamsContext();
-
-  const [railOrder, setRailOrder] = useState<FavoriteRailOrder>(() =>
-    createRailOrder(userId),
-  );
 
   const teamData = useMemo<FavoriteTeamItem[]>(() => {
     return favoriteTeamIds.reduce<FavoriteTeamItem[]>((teams, favorite) => {
@@ -262,93 +129,30 @@ export default function FavoritesScroll({
     });
   }, [favoriteSports]);
 
-  const data = useMemo<FavoriteItem[]>(() => {
-    const sectionKeys =
-      railOrder.userId === userId
-        ? railOrder.sectionKeys
-        : createRailOrder(userId).sectionKeys;
-
-    return [
-      ...orderFavoriteItems(leagueData, sectionKeys.league),
-      ...orderFavoriteItems(teamData, sectionKeys.team),
-    ];
-  }, [leagueData, railOrder, teamData, userId]);
-
-  useEffect(() => {
-    currentUserIdRef.current = userId;
-    latestReorderIdRef.current.league += 1;
-    latestReorderIdRef.current.team += 1;
-    reorderQueueRef.current = {
-      league: Promise.resolve(),
-      team: Promise.resolve(),
-    };
-    committedOrderRef.current = {
-      league: [],
-      team: [],
-    };
-  }, [userId]); // Data for the new user is committed below as it hydrates.
-
-  useEffect(() => {
-    if (
-      railOrder.userId === userId &&
-      railOrder.sectionKeys.league.length > 0
-    ) {
-      return;
-    }
-
-    committedOrderRef.current.league = leagueData.map((item) => item.key);
-  }, [leagueData, railOrder, userId]);
-
-  useEffect(() => {
-    if (railOrder.userId === userId && railOrder.sectionKeys.team.length > 0) {
-      return;
-    }
-
-    committedOrderRef.current.team = teamData.map((item) => item.key);
-  }, [railOrder, teamData, userId]);
-
-  const handleInteractionStart = useCallback(() => {
-    if (interactionActiveRef.current) {
-      return;
-    }
-
-    interactionActiveRef.current = true;
-    onInteractionStart?.();
-  }, [onInteractionStart]);
-
-  const handleInteractionEnd = useCallback(() => {
-    if (!interactionActiveRef.current) {
-      return;
-    }
-
-    interactionActiveRef.current = false;
-    onInteractionEnd?.();
-  }, [onInteractionEnd]);
+  const data = useMemo(
+    () => [...leagueData, ...teamData],
+    [leagueData, teamData],
+  );
 
   useEffect(
     () => () => {
-      handleInteractionEnd();
-
-      if (navigationUnlockTimerRef.current) {
-        clearTimeout(navigationUnlockTimerRef.current);
+      if (navigationUnlockTimer.current) {
+        clearTimeout(navigationUnlockTimer.current);
+        navigationUnlockTimer.current = null;
       }
     },
-    [handleInteractionEnd],
+    [],
   );
 
   const pushOnce = useCallback(
     (href: Href) => {
-      if (navigationLockedRef.current) {
-        return;
-      }
+      if (navigationUnlockTimer.current) return;
 
-      navigationLockedRef.current = true;
-      navigationUnlockTimerRef.current = setTimeout(() => {
-        navigationLockedRef.current = false;
-        navigationUnlockTimerRef.current = null;
+      navigationUnlockTimer.current = setTimeout(() => {
+        navigationUnlockTimer.current = null;
       }, FAVORITE_NAVIGATION_LOCK_MS);
 
-      void Haptics.selectionAsync();
+      void Haptics.selectionAsync().catch(() => {});
       router.push(href);
     },
     [router],
@@ -371,7 +175,7 @@ export default function FavoritesScroll({
             league: item.id,
             leagueLabel: config.shortName,
           },
-        } as Href);
+        });
         return;
       }
 
@@ -381,18 +185,7 @@ export default function FavoritesScroll({
         pushOnce({
           pathname: "/(tabs)/(home)/league/[sport]",
           params: { sport: "volleyball", league: item.league },
-        } as Href);
-        return;
-      }
-
-      if (route === "/team/[teamId]") {
-        pushOnce({
-          pathname: "/(tabs)/(home)/team/[teamId]",
-          params: {
-            teamId: item.id,
-            league: item.league,
-          },
-        } as Href);
+        });
         return;
       }
 
@@ -402,154 +195,15 @@ export default function FavoritesScroll({
           teamId: item.id,
           league: item.league,
         },
-      } as unknown as Href);
+      });
     },
     [pushOnce],
   );
 
-  const handleDragBegin = useCallback(() => {
-    handleInteractionStart();
-
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  }, [handleInteractionStart]);
-
-  const handleAnimationValuesInit = useCallback(
-    (animationValues: FavoriteDragAnimationValues) => {
-      setDragAnimationValues(animationValues);
-    },
-    [],
-  );
-
-  const handleDragEnd = useCallback(
-    ({ from, to }: DragEndParams<FavoriteItem>) => {
-      handleInteractionEnd();
-
-      const draggedItem = data[from];
-
-      if (!draggedItem) {
-        return;
-      }
-
-      const section = draggedItem.kind;
-      const previousKeys = data
-        .filter((item) => item.kind === section)
-        .map((item) => item.key);
-      const reordered = reorderFavoriteRailItems(data, from, to);
-      const orderedKeys = reordered
-        .filter((item) => item.kind === section)
-        .map((item) => item.key);
-
-      if (orderedKeys.every((key, index) => key === previousKeys[index])) {
-        return;
-      }
-
-      const reorderId = ++latestReorderIdRef.current[section];
-
-      setRailOrder((current) => {
-        const activeOrder =
-          current.userId === userId ? current : createRailOrder(userId);
-
-        return {
-          ...activeOrder,
-          sectionKeys: {
-            ...activeOrder.sectionKeys,
-            [section]: orderedKeys,
-          },
-        };
-      });
-
-      void Haptics.selectionAsync();
-
-      const {
-        favoriteTeamIds: orderedTeamFavorites,
-        favoriteSports: orderedFavoriteSports,
-      } = splitFavoriteRailOrder(reordered);
-
-      if (section === "team") {
-        setFavorites(orderedTeamFavorites);
-      }
-
-      const persistReorder = async () => {
-        // A queued save may outlive the signed-in account that created it.
-        if (currentUserIdRef.current !== userId) {
-          return;
-        }
-
-        const saved =
-          section === "team"
-            ? await syncFavorites(orderedTeamFavorites)
-            : await updateFavoriteSports(orderedFavoriteSports);
-
-        if (currentUserIdRef.current !== userId) {
-          return;
-        }
-
-        if (saved) {
-          committedOrderRef.current[section] = orderedKeys;
-        }
-
-        if (reorderId !== latestReorderIdRef.current[section]) {
-          return;
-        }
-
-        if (saved) {
-          setRailOrder((current) => {
-            if (current.userId !== userId) {
-              return current;
-            }
-
-            return {
-              ...current,
-              sectionKeys: {
-                ...current.sectionKeys,
-                [section]: [],
-              },
-            };
-          });
-          return;
-        }
-
-        const committedKeys = committedOrderRef.current[section];
-
-        setRailOrder((current) => {
-          const activeOrder =
-            current.userId === userId ? current : createRailOrder(userId);
-
-          return {
-            ...activeOrder,
-            sectionKeys: {
-              ...activeOrder.sectionKeys,
-              [section]: committedKeys,
-            },
-          };
-        });
-
-        if (section === "team") {
-          setFavorites(normalizeFavoriteTeamKeys(committedKeys));
-        }
-
-        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      };
-
-      reorderQueueRef.current[section] = reorderQueueRef.current[section].then(
-        persistReorder,
-        persistReorder,
-      );
-    },
-    [
-      data,
-      handleInteractionEnd,
-      setFavorites,
-      syncFavorites,
-      updateFavoriteSports,
-      userId,
-    ],
-  );
-
-  const renderItem = useCallback(
-    (props: RenderItemParams<FavoriteItem>) => (
+  const renderItem = useCallback<ListRenderItem<FavoriteItem>>(
+    ({ item }) => (
       <FavoritesTab
-        {...props}
+        item={item}
         onPressItem={handleFavoritePress}
         styles={styles}
       />
@@ -557,57 +211,26 @@ export default function FavoritesScroll({
     [handleFavoritePress, styles],
   );
 
+  const lastLeagueKey = leagueData.at(-1)?.key;
+  const showSectionDivider = lastLeagueKey !== undefined && teamData.length > 0;
   const renderItemSeparator = useCallback(
-    ({ leadingItem }: FavoriteItemSeparatorProps) => {
-      const lastLeague = data[leagueData.length - 1];
-
-      if (
-        teamData.length === 0 ||
-        leadingItem?.kind !== "league" ||
-        leadingItem.key !== lastLeague?.key
-      ) {
-        return null;
-      }
-
-      return (
+    ({ leadingItem }: { leadingItem?: FavoriteItem }) =>
+      leadingItem?.key === lastLeagueKey ? (
         <View pointerEvents="none" style={styles.sectionDividerSlot}>
           <View style={styles.sectionDivider} />
         </View>
-      );
-    },
-    [data, leagueData.length, styles, teamData.length],
+      ) : null,
+    [lastLeagueKey, styles],
   );
 
-  const renderPlaceholder = useCallback(() => {
-    return (
-      <View style={styles.dragPlaceholder}>
-        <View style={styles.dragPlaceholderCircle} />
-      </View>
-    );
-  }, [styles]);
-
-  const handleEditFavorites = useCallback(() => {
-    pushOnce("/(tabs)/(home)/edit-favorites");
-  }, [pushOnce]);
-
-  const getItemLayout = useCallback(
-    (_: ArrayLike<FavoriteItem> | null | undefined, index: number) => ({
-      length: FAVORITES_RAIL_CELL_WIDTH,
-      offset: FAVORITES_RAIL_CELL_WIDTH * index,
-      index,
-    }),
-    [],
-  );
-
-  const renderFooter = useCallback(() => {
-    const hasFavorites = data.length > 0;
-
-    return (
+  const hasFavorites = favoriteTeamIds.length > 0 || favoriteSports.length > 0;
+  const renderFooter = useCallback(
+    () => (
       <View style={styles.cell}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Edit favorites"
-          onPress={handleEditFavorites}
+          accessibilityLabel={hasFavorites ? "Edit favorites" : "Add favorites"}
+          onPress={() => pushOnce("/(tabs)/(home)/edit-favorites")}
           style={({ pressed }) => [
             styles.tabContainer,
             pressed && styles.pressed,
@@ -620,7 +243,6 @@ export default function FavoritesScroll({
               color={isDark ? Colors.dark.background : Colors.light.background}
             />
           </View>
-
           <View style={styles.labelContainer}>
             <Text style={styles.tabLabel}>
               {hasFavorites ? "Edit" : "Add favorites"}
@@ -628,63 +250,82 @@ export default function FavoritesScroll({
           </View>
         </Pressable>
       </View>
-    );
-  }, [data.length, handleEditFavorites, isDark, styles]);
+    ),
+    [hasFavorites, isDark, pushOnce, styles],
+  );
 
   const favoritesLoading =
     !teamsReady ||
-    isLoading ||
-    (userId !== null && !favoriteSportsReady) ||
-    (favoriteSportsLoading && !favoriteSportsReady);
+    (teamFavoritesLoading && favoriteTeamIds.length === 0) ||
+    (userId !== null && !favoriteSportsReady && !favoriteSportsError);
+
+  // Release the Home pager if loading replaces the list during a touch.
+  useEffect(() => {
+    if (!favoritesLoading) return () => onInteractionChange(false);
+  }, [favoritesLoading, onInteractionChange]);
 
   if (favoritesLoading) {
     return <FavoritesScrollSkeleton isDark={isDark} />;
   }
 
-  return (
-    <View style={styles.railContainer}>
-      {dragAnimationValues && (
-        <FavoriteDragBoundary
-          animationValues={dragAnimationValues}
-          itemCount={data.length}
-          sportCount={leagueData.length}
-        />
-      )}
+  const hasMissingTeams = favoriteTeamIds.length > teamData.length;
+  const sportsUnavailable = !favoriteSportsReady && !!favoriteSportsError;
 
-      <DraggableFlatList
+  return (
+    <>
+      <FlatList
         data={data}
         horizontal
         keyExtractor={(item) => item.key}
         getItemLayout={getItemLayout}
-        initialNumToRender={8}
-        maxToRenderPerBatch={8}
-        updateCellsBatchingPeriod={50}
-        windowSize={5}
         showsHorizontalScrollIndicator={false}
         contentInsetAdjustmentBehavior="never"
         contentContainerStyle={styles.container}
         directionalLockEnabled
         nestedScrollEnabled
-        activationDistance={FAVORITE_DRAG_ACTIVATION_DISTANCE}
-        autoscrollThreshold={56}
-        autoscrollSpeed={180}
-        dragItemOverflow={false}
-        animationConfig={FAVORITES_SNAP_ANIMATION}
         renderItem={renderItem}
-        ItemSeparatorComponent={renderItemSeparator}
-        onTouchStart={handleInteractionStart}
-        onTouchEnd={handleInteractionEnd}
-        onTouchCancel={handleInteractionEnd}
-        onScrollBeginDrag={handleInteractionStart}
-        onScrollEndDrag={handleInteractionEnd}
-        onMomentumScrollBegin={handleInteractionStart}
-        onMomentumScrollEnd={handleInteractionEnd}
-        onDragBegin={handleDragBegin}
-        onDragEnd={handleDragEnd}
-        onAnimValInit={handleAnimationValuesInit}
-        renderPlaceholder={renderPlaceholder}
+        ItemSeparatorComponent={
+          showSectionDivider ? renderItemSeparator : undefined
+        }
         ListFooterComponent={renderFooter}
+        onTouchStart={() => onInteractionChange(true)}
+        onTouchEnd={() => onInteractionChange(false)}
+        onTouchCancel={() => onInteractionChange(false)}
       />
-    </View>
+      {sportsUnavailable && (
+        <View style={styles.directoryStatus} accessibilityLiveRegion="polite">
+          <Text style={styles.statusText}>
+            Favorite sports are unavailable.
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Retry loading favorite sports"
+            onPress={() => void loadFavoriteSports()}
+            style={styles.retryButton}
+          >
+            <Text style={styles.retryLabel}>Retry</Text>
+          </Pressable>
+        </View>
+      )}
+      {hasMissingTeams && (
+        <View style={styles.directoryStatus} accessibilityLiveRegion="polite">
+          <Text style={styles.statusText}>
+            {directoryLoading
+              ? "Loading some favorite teams…"
+              : "Some favorite teams are unavailable."}
+          </Text>
+          {directoryError && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Retry loading favorite teams"
+              onPress={() => void refreshDirectory()}
+              style={styles.retryButton}
+            >
+              <Text style={styles.retryLabel}>Retry</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
+    </>
   );
 }

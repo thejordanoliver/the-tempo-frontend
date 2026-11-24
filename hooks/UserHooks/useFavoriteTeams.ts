@@ -595,6 +595,8 @@ export function useFavoriteTeams() {
 
     userId,
     isLoading: isLoading || volleyball.loading,
+    teamFavoritesLoading: isLoading,
+    directoryLoading: volleyball.loading,
     directoryError: volleyball.error,
     refreshDirectory: volleyball.refresh,
     isGridView,

@@ -52,13 +52,6 @@ const RecruitingTeamCard = memo(function RecruitingTeamCard({
   const movedUp = rankChange > 0;
   const movedDown = rankChange < 0;
 
-  const rankChangeLabel =
-    rankChange === 0
-      ? "No change"
-      : movedUp
-        ? `Up ${Math.abs(rankChange)}`
-        : `Down ${Math.abs(rankChange)}`;
-
   return (
     <View style={styles.cardWrapper}>
       {logo && (
@@ -78,55 +71,7 @@ const RecruitingTeamCard = memo(function RecruitingTeamCard({
 
       <View style={styles.cardContent}>
         <View style={styles.topRow}>
-          <View style={styles.rankBlock}>
-            <Text style={styles.rank}>#{item.rank}</Text>
-
-            <View
-              style={[
-                styles.rankChangePill,
-                movedUp && styles.rankChangePillUp,
-                movedDown && styles.rankChangePillDown,
-              ]}
-            >
-              <Ionicons
-                name={
-                  rankChange === 0
-                    ? "remove"
-                    : movedUp
-                      ? "arrow-up"
-                      : "arrow-down"
-                }
-                size={10}
-                color={
-                  movedUp
-                    ? isDark
-                      ? Colors.dark.leafGreen
-                      : Colors.light.green
-                    : movedDown
-                      ? isDark
-                        ? Colors.dark.lightRed
-                        : Colors.light.red
-                      : isDark
-                        ? Colors.dark.secondaryText
-                        : Colors.light.secondaryText
-                }
-                style={[
-                  styles.rankChangeText,
-                  movedUp && styles.rankChangeTextUp,
-                  movedDown && styles.rankChangeTextDown,
-                ]}
-              />
-              <Text
-                style={[
-                  styles.rankChangeText,
-                  movedUp && styles.rankChangeTextUp,
-                  movedDown && styles.rankChangeTextDown,
-                ]}
-              >
-                {rankChangeLabel}
-              </Text>
-            </View>
-          </View>
+          <Text style={styles.rank}>#{item.rank}</Text>
           <View style={styles.teamBlock}>
             <Text numberOfLines={1} style={styles.teamName}>
               {item.team_name}
@@ -136,6 +81,40 @@ const RecruitingTeamCard = memo(function RecruitingTeamCard({
               {formatDecimal(item.points)} points
             </Text>
           </View>
+          {(movedUp || movedDown) && (
+            <View
+              style={[
+                styles.rankChangePill,
+                movedUp ? styles.rankChangePillUp : styles.rankChangePillDown,
+              ]}
+            >
+              <Ionicons
+                name={movedUp ? "arrow-up" : "arrow-down"}
+                size={10}
+                color={
+                  movedUp
+                    ? isDark
+                      ? Colors.dark.leafGreen
+                      : Colors.light.green
+                    : isDark
+                      ? Colors.dark.lightRed
+                      : Colors.light.red
+                }
+                style={[
+                  styles.rankChangeText,
+                  movedUp ? styles.rankChangeTextUp : styles.rankChangeTextDown,
+                ]}
+              />
+              <Text
+                style={[
+                  styles.rankChangeText,
+                  movedUp ? styles.rankChangeTextUp : styles.rankChangeTextDown,
+                ]}
+              >
+                {movedUp ? "Up" : "Down"} {Math.abs(rankChange)}
+              </Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.statsRow}>
