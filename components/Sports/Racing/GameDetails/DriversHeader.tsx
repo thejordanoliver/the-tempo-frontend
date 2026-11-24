@@ -38,7 +38,7 @@ export default function DriversHeader({
   gameStatusDescription,
   isDark,
 }: Props) {
-  const styles = DriversHeaderStyles(isDark);
+  const styles = DriversHeaderStyles;
 
   return (
     <View style={styles.container}>

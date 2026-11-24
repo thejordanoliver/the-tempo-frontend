@@ -48,7 +48,6 @@ function HomeAwayTabBar({
   onTabPress,
   isDark,
   showTeamName = true,
-  showHomeAwayLabel = false,
   showAllTab = true,
 }: HomeAwayTabBarProps) {
   const reduceMotion = useReducedMotion();

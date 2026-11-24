@@ -48,7 +48,6 @@ export default function GamesList({
   onRefresh,
   showHeaders,
   expectedCount,
-  day,
   scrollEnabled = true,
   showCountdown = false,
   countdownGame = null,
@@ -82,11 +81,11 @@ export default function GamesList({
 
       const cardContent =
         viewMode === "list" ? (
-          <NHLGameCard game={game} isNHL={true} isMCH={false} />
+          <NHLGameCard game={game} />
         ) : viewMode === "grid" ? (
-          <NHLSquareGameCard game={game} isNHL={true} isMCH={false} />
+          <NHLSquareGameCard game={game} />
         ) : (
-          <NHLStackedGameCard game={game} isNHL={true} isMCH={false} />
+          <NHLStackedGameCard game={game} />
         );
 
       return (
@@ -232,8 +231,6 @@ export default function GamesList({
       {modalVisible && previewGame && (
         <NHLGamePreviewModal
           game={previewGame}
-          isNHL={true}
-          isMCH={false}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />

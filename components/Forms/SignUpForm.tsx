@@ -47,8 +47,6 @@ export type SignupStepsProps = {
   onToggleFavorite: (league: string, id: string) => void;
   onToggleFavoriteSport: (sport: FavoriteSportId) => void;
   onOpenImagePickerFor: (target: "profile" | "banner") => void;
-  isGridView: boolean;
-  fadeAnim: Animated.Value;
   isSubmitting: boolean;
   isValidating: boolean;
   onSubmit: () => Promise<void>;
@@ -108,8 +106,6 @@ export default function SignUpForm({
   onToggleFavorite,
   onToggleFavoriteSport,
   onOpenImagePickerFor,
-  isGridView,
-  fadeAnim,
   isSubmitting,
   isValidating,
   onSubmit,

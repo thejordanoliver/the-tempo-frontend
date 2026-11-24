@@ -1,3 +1,8 @@
+import {
+  getRouteGameId,
+  getRouteLeague,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   BasketballPlayByPlay,
@@ -39,7 +44,6 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useBasketballSummary } from "hooks/BasketballHooks/useBasketballSummary";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
@@ -68,57 +72,6 @@ type RouteParams = {
 
 type BasketballGame = BasketballGameCardProps["game"];
 
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) return value[0];
-  return value;
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): BasketballGame | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // Dynamic route params are often just the game id.
-  // Only JSON strings should be parsed into a full game object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as BasketballGame;
-  } catch {
-    return undefined;
-  }
-}
-
-function getRouteGameId(value?: string | string[]) {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return null;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-  return decodedValue && !decodedValue.startsWith("{") ? decodedValue : null;
-}
-
-function getRouteLeague(value?: string | string[]) {
-  const league = getFirstParam(value)?.trim().toLowerCase();
-  return league && /^[a-z0-9][a-z0-9._-]*$/.test(league) ? league : null;
-}
-
 export default function GameDetailsScreen(
   props: Partial<BasketballGameCardProps> = {},
 ) {
@@ -131,14 +84,16 @@ export default function GameDetailsScreen(
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
-  const routeGame = useMemo(() => {
+  const game = useMemo(() => {
     return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+      props.game ??
+      parseGameParam<BasketballGame>(params.data) ??
+      parseGameParam<BasketballGame>(params.game)
     );
   }, [params.data, params.game, props.game]);
 
   const LEAGUE = (
-    routeGame?.league?.code ??
+    game?.league?.code ??
     getRouteLeague(params.league) ??
     "nba"
   ).toLowerCase();
@@ -147,22 +102,17 @@ export default function GameDetailsScreen(
   const isMCBB = LEAGUE === "mcbb";
   const isGLEAGUE = LEAGUE === "gleague";
 
-  const rawGameId = routeGame?.id ?? getRouteGameId(params.game);
+  const rawGameId = game?.id ?? getRouteGameId(params.game);
   const parsedGameId = Number(rawGameId);
   const gameId = Number.isFinite(parsedGameId) ? parsedGameId : 0;
   const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
 
-  const game = useMemo(() => {
-    if (routeGame) return routeGame;
-    if (!score) return undefined;
-  }, [routeGame, score]);
-
-  const gameDateObj = game?.date ? new Date(game.date) : null;
+  const chatDate = score?.date || game?.date;
+  const gameDateObj = chatDate ? new Date(chatDate) : null;
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  const showGameChat = useGameChatAvailability(gameDateObj);
   const home = game?.home;
   const away = game?.away;
   const homeId = home?.id ?? 0;
@@ -449,6 +399,7 @@ export default function GameDetailsScreen(
       <ScrollView
         contentContainerStyle={navigationContentStyle(styles.container)}
         onScrollBeginDrag={handleScrollStart}
+        onScrollEndDrag={handleScrollEnd}
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
@@ -706,16 +657,16 @@ export default function GameDetailsScreen(
         </View>
       </ScrollView>
 
-      {!dontShowDetails && showGameChat && (
+      {!dontShowDetails && gameDateObj && (
         <GameLiveChatOverlay
           context={{
             sport: "basketball",
             league: LEAGUE,
-            date: gameDateObj?.toISOString(),
+            date: gameDateObj.toJSON() ?? undefined,
           }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
-          state={state}
+          isLive={state === "in"}
         />
       )}
     </>

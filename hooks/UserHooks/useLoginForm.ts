@@ -441,7 +441,6 @@ export function useLoginForm() {
       onToggleFavoriteSport: handleToggleFavoriteSport,
       onOpenImagePickerFor: openImagePickerFor,
       isGridView,
-      fadeAnim,
       isSubmitting: isSigningUp,
       isValidating: isSignupValidating || isCheckingSignupAvailability,
       onSubmit: handleSignupSubmit(handleSignup, handleInvalidSignup),

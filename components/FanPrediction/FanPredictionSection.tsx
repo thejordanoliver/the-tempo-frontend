@@ -9,7 +9,7 @@ export default function FanPredictionSection({
   showHeader = true,
 }: {
   children: ReactNode;
-  showHeader: boolean;
+  showHeader?: boolean;
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

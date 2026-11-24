@@ -57,7 +57,7 @@ export default function PostImagesModal({
   const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = getStyles();
 
   const flatListRef = useRef<FlatList<ForumDisplayMediaItem>>(null);
   const [opacity] = useState(() => new Animated.Value(0));
@@ -402,7 +402,7 @@ export default function PostImagesModal({
 
 /* -------------------- Styles -------------------- */
 
-function getStyles(isDark: boolean) {
+function getStyles() {
   return StyleSheet.create({
     modalContainer: {
       position: "relative",

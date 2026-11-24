@@ -68,8 +68,6 @@ export default function GamePreviewContent({
   awayCode,
   homeId,
   awayId,
-  homeName,
-  awayName,
   awayLogo,
   homeCoach,
   awayCoach,

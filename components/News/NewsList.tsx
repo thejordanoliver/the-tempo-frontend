@@ -1,4 +1,4 @@
-import { NewsListStyles } from "@/styles/NewsStyles/NewsListStyles";
+import { NewsListStyles } from "@/styles/NewsStyles/newsListStyles";
 import { globalStyles } from "constants/styles";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";

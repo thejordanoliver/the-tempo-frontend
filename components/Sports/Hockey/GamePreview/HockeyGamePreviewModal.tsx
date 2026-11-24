@@ -32,16 +32,12 @@ import GamePreviewContent from "./GamePreviewContent";
 
 type Props = {
   game: HockeyGame;
-  isNHL: boolean;
-  isMCH: boolean;
   visible: boolean;
   onClose: () => void;
 };
 
 export default function HockeyGamePreviewModal({
   game,
-  isNHL = false,
-  isMCH = false,
   visible,
   onClose,
 }: Props) {

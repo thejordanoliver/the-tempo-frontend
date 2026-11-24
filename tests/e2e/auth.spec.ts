@@ -14,8 +14,13 @@ test("wrong-password alert keeps its error text while closing", async ({
   await page.getByLabel("Password", { exact: true }).fill("wrong-password");
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
 
-  const modal = page.getByTestId("confirm-modal");
+  const modal = page.getByRole("dialog", { name: "Login failed" });
+  await expect(modal).toHaveAccessibleDescription(message);
   await expect(modal.getByText(message)).toBeVisible();
+  const ok = modal.getByRole("button", { name: "OK" });
+  await expect(ok).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(ok).toBeFocused();
   // Capture transient renders that a single assertion after the click could miss.
   const displayedText = await modal.evaluateHandle((element) => {
     const seen = new Set([element.textContent]);
@@ -28,8 +33,11 @@ test("wrong-password alert keeps its error text while closing", async ({
     });
     return seen;
   });
-  await modal.getByRole("button", { name: "OK" }).click();
+  await page.keyboard.press("Escape");
   await expect(modal).toBeHidden();
+  await expect(
+    page.getByRole("button", { name: "Sign In", exact: true }),
+  ).toBeFocused();
   for (const text of await displayedText.evaluate((seen) => [...seen])) {
     expect(text).toContain("Login failed");
     expect(text).toContain(message);

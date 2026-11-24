@@ -4,8 +4,7 @@ import { StyleSheet } from "react-native";
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
-export const isSmallGameWidgetLayout = (height: number, width: number) =>
-  width < 260;
+export const isSmallGameWidgetLayout = (width: number) => width < 260;
 
 export const gameWidgetStyles = (
   isDark: boolean,
@@ -14,7 +13,7 @@ export const gameWidgetStyles = (
 ) => {
   const w = width;
   const h = height;
-  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(width);
   const isLargeLayout = width >= 260 && height >= 320;
 
   // Scale from the constrained axis. Using the taller axis made narrow/tall

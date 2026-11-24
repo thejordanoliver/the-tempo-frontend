@@ -39,9 +39,6 @@ type BaseProps = {
   isNFL?: boolean;
   isCFB?: boolean;
 
-  isNHL?: boolean;
-  isMCH?: boolean;
-
   isDark: boolean;
 };
 
@@ -153,7 +150,7 @@ export default function LatestGame(props: Props) {
         return <FootballGameCard game={game} isNFL={false} isCFB={isCFB} />;
 
       case "nhl":
-        return <HockeyGameCard game={game} isNHL={true} isMCH={false} />;
+        return <HockeyGameCard game={game} />;
 
       case "mma":
       case "ufc":
@@ -263,8 +260,6 @@ export default function LatestGame(props: Props) {
             game={game}
             visible={modalVisible}
             onClose={handleCloseModal}
-            isNHL={true}
-            isMCH={false}
           />
         );
 

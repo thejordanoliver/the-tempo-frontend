@@ -41,8 +41,6 @@ type Props = {
 
 export default function GameHeader({
   state,
-  isTopInning,
-  isBottomInning,
   headline,
   homeId,
   awayId,

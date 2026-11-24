@@ -1,10 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import { BlurView } from "expo-blur";
-import { memo, useContext, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Animated, Platform, StyleSheet, TouchableOpacity } from "react-native";
 
 type Props = {
@@ -23,11 +22,7 @@ function FloatingButton({
   const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const navigationBarInset = useContext(NavigationBarInsetContext);
-  const styles = useMemo(
-    () => FloatingButtonStyles(isDark, navigationBarInset),
-    [isDark, navigationBarInset],
-  );
+  const styles = useMemo(() => FloatingButtonStyles(isDark), [isDark]);
   const [opacityAnim] = useState(() => new Animated.Value(isOpen ? 0 : 1));
 
   useEffect(() => {
@@ -77,7 +72,7 @@ function FloatingButton({
 
 export default memo(FloatingButton);
 
-const FloatingButtonStyles = (isDark: boolean, navigationBarInset: number) =>
+const FloatingButtonStyles = (isDark: boolean) =>
   StyleSheet.create({
     floatingButtonWrapper: {
       position: "absolute",

@@ -40,7 +40,6 @@ function FlagStack({
 }
 
 export const CompetitorRow = ({
-  id,
   flags,
   isHome,
   name,

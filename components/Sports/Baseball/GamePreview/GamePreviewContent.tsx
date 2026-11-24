@@ -113,10 +113,8 @@ export default function GamePreviewContent({
   venueCapacity,
   venueAttendance,
   weather,
-  isChampionship,
   state,
   league,
-  isMLB,
   isDark,
 }: GamePreviewContentProps) {
   const styles = GamePreviewModalStyles({ isDark: isDark });

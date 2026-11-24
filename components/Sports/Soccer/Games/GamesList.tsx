@@ -48,7 +48,6 @@ export default function GamesList({
   onRefresh,
   error,
   expectedCount,
-  day,
   showHeaders,
   scrollEnabled = true,
 }: Props) {

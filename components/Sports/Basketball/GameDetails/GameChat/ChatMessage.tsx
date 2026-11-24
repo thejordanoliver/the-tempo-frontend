@@ -1,9 +1,9 @@
+import ConfirmModal from "components/ConfirmModal";
 import { Colors, Fonts, activeOpacity, MIN_TOUCH_TARGET } from "constants/styles";
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import {
   Image,
-  Alert,
   Pressable,
   StyleSheet,
   Text,
@@ -34,13 +34,13 @@ function ChatMessage({
   onRetry,
   onDelete,
   item,
-  userName,
   isDark,
   emojis,
   onReaction,
   onBlockedUser,
 }: Props) {
   const styles = useMemo(() => ChatMessageStyles(isDark), [isDark]);
+  const [deleteVisible, setDeleteVisible] = useState(false);
 
   const time = new Date(item.time).toLocaleTimeString([], {
     hour: "2-digit",
@@ -62,23 +62,12 @@ function ChatMessage({
   });
   const profileImage = item.profile_image ?? profilePlaceholder;
 
-  const openMessageActions = isCurrentUser && item.delivery === "sent"
-            ? () =>
-                Alert.alert(
-                  "Delete message?",
-                  "This removes the message for everyone.",
-                  [
-                    { text: "Cancel", style: "cancel" },
-                    {
-                      text: "Delete",
-                      style: "destructive",
-                      onPress: () => onDelete(item.id),
-                    },
-                  ],
-                )
-            : isCurrentUser
-              ? undefined
-              : safety.open;
+  const canDelete = isCurrentUser && item.delivery === "sent";
+  const openMessageActions = canDelete
+    ? () => setDeleteVisible(true)
+    : isCurrentUser
+      ? undefined
+      : safety.open;
 
   return (
     <>
@@ -195,6 +184,18 @@ function ChatMessage({
           <Text style={styles.message}>Message options</Text>
         </TouchableOpacity>
       )}
+      <ConfirmModal
+        visible={canDelete && deleteVisible}
+        title="Delete message?"
+        message="This removes the message for everyone."
+        confirmText="Delete"
+        variant="danger"
+        onCancel={() => setDeleteVisible(false)}
+        onConfirm={() => {
+          setDeleteVisible(false);
+          onDelete(item.id);
+        }}
+      />
       <SafetyActionsModal {...safety.modalProps} />
     </>
   );

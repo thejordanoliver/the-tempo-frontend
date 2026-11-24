@@ -580,19 +580,6 @@ export default function WidgetSlider({
           );
 
         case "cfb":
-          return (
-            <View style={{ height: slideHeight, width: slideWidth }}>
-              <FootballGameWidget
-                game={item.data}
-                height={slideHeight}
-                width={slideWidth}
-                isDark={isDark}
-                isNFL={false}
-                isCFB={true}
-              />
-            </View>
-          );
-
         case "ufl":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>

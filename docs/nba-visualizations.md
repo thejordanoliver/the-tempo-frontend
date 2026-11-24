@@ -54,7 +54,7 @@ New frontend files:
 | Charts          | `components/Sports/Basketball/GameDetails/Charts/BasketballTimelineChart.tsx`, `BasketballGameCharts.tsx`, `NBAShotChart.tsx`                                                       |
 | Hooks           | `hooks/BasketballHooks/useBasketballPlayback.ts`, `useBasketballAnimation.ts`                                                                                                       |
 | Geometry/models | `utils/sports/basketball/basketballCourtGeometry.ts`, `basketballEvents.ts`, `basketballCharts.ts`, `basketballAnimationScene.ts`                                                   |
-| Types/styles    | `types/basketball/visualizations.ts`, `styles/GameDetailStyles/BasketballVisualizationStyles.ts`                                                                                    |
+| Types           | `types/basketball/visualizations.ts`                                                                                                                                                |
 | Verification    | `tests/basketballVisualizations.test.ts`, `basketballVisualizationLifecycle.test.mjs`, `basketballVisualizationRendering.test.mjs`, `scripts/profile-basketball-visualizations.mjs` |
 | Report          | `docs/nba-visualizations.md`                                                                                                                                                        |
 

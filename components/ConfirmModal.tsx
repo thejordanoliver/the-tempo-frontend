@@ -4,7 +4,14 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import type { ReactNode } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   AccessibilityInfo,
   ActivityIndicator,
@@ -16,9 +23,11 @@ import {
   Pressable,
   ScrollView,
   Text,
+  useWindowDimensions,
   View,
   type TextInstance,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ConfirmModalVariant = "default" | "danger";
 
@@ -57,10 +66,18 @@ export default function ConfirmModal({
 }: ConfirmModalProps) {
   const reduceMotion = useReducedMotion();
   const titleRef = useRef<TextInstance>(null);
+  const dialogId = useId();
+  const titleId = `${dialogId}-title`;
+  const messageId = `${dialogId}-message`;
+  const { fontScale } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => ConfirmModalStyles(isDark), [isDark]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [focusedAction, setFocusedAction] = useState<
+    "cancel" | "confirm" | null
+  >(null);
 
   const [presented, setPresented] = useState(visible);
   const [progress] = useState(() => new Animated.Value(0));
@@ -109,6 +126,15 @@ export default function ConfirmModal({
 
   const isDanger = variant === "danger";
   const isConfirmDisabled = confirmDisabled || isSubmitting;
+  const confirmTextColor = isDanger && isDark ? Colors.black : Colors.white;
+  const webDialogProps =
+    Platform.OS === "web"
+      ? {
+          "aria-labelledby": title ? titleId : undefined,
+          "aria-describedby": message ? messageId : undefined,
+          accessibilityLabel: title ? undefined : "Confirmation",
+        }
+      : {};
 
   useEffect(() => {
     let cancelled = false;
@@ -157,6 +183,7 @@ export default function ConfirmModal({
       onRequestClose={handleCancel}
       statusBarTranslucent
       testID={testID}
+      {...webDialogProps}
     >
       <Animated.View style={[styles.modal, { opacity: progress }]}>
         <KeyboardAvoidingView
@@ -167,15 +194,24 @@ export default function ConfirmModal({
           <ScrollView
             pointerEvents="box-none"
             bounces={false}
-            showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.scrollContent}
+            contentContainerStyle={[
+              styles.scrollContent,
+              {
+                paddingTop: insets.top + 24,
+                paddingRight: insets.right + 20,
+                paddingBottom: insets.bottom + 24,
+                paddingLeft: insets.left + 20,
+              },
+            ]}
           >
-            <Pressable
+            <View
               style={styles.backdrop}
-              onPress={handleCancel}
+              onStartShouldSetResponder={() => true}
+              onResponderRelease={handleCancel}
               accessible={false}
-              importantForAccessibility="no"
+              aria-hidden
+              importantForAccessibility="no-hide-descendants"
             />
 
             <View
@@ -184,7 +220,12 @@ export default function ConfirmModal({
               style={styles.card}
             >
               {isDanger && (
-                <View style={[styles.iconWrap, styles.dangerIconWrap]}>
+                <View
+                  aria-hidden
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                  style={[styles.iconWrap, styles.dangerIconWrap]}
+                >
                   <Ionicons
                     name="alert"
                     size={28}
@@ -197,6 +238,8 @@ export default function ConfirmModal({
                 {!!title && (
                   <Text
                     ref={titleRef}
+                    nativeID={titleId}
+                    accessible
                     accessibilityRole="header"
                     style={styles.title}
                   >
@@ -204,15 +247,26 @@ export default function ConfirmModal({
                   </Text>
                 )}
 
-                {!!message && <Text style={styles.message}>{message}</Text>}
+                {!!message && (
+                  <Text nativeID={messageId} style={styles.message}>
+                    {message}
+                  </Text>
+                )}
               </View>
 
               {!!children && <View style={styles.children}>{children}</View>}
 
-              <View style={styles.buttonRow}>
+              <View
+                style={[
+                  styles.buttonRow,
+                  fontScale >= 1.3 && styles.stackedButtons,
+                ]}
+              >
                 {showCancel && (
                   <Pressable
                     onPress={handleCancel}
+                    onFocus={() => setFocusedAction("cancel")}
+                    onBlur={() => setFocusedAction(null)}
                     disabled={isSubmitting}
                     hitSlop={8}
                     accessibilityRole="button"
@@ -220,6 +274,7 @@ export default function ConfirmModal({
                     accessibilityState={{ disabled: isSubmitting }}
                     style={({ pressed }) => [
                       styles.button,
+                      focusedAction === "cancel" && styles.focusedButton,
                       styles.cancelButton,
                       pressed && !isSubmitting && styles.buttonPressed,
                       isSubmitting && styles.buttonDisabled,
@@ -232,6 +287,8 @@ export default function ConfirmModal({
                 {showConfirm && (
                   <Pressable
                     onPress={handleConfirm}
+                    onFocus={() => setFocusedAction("confirm")}
+                    onBlur={() => setFocusedAction(null)}
                     disabled={isConfirmDisabled}
                     hitSlop={8}
                     accessibilityRole="button"
@@ -242,6 +299,7 @@ export default function ConfirmModal({
                     }}
                     style={({ pressed }) => [
                       styles.button,
+                      focusedAction === "confirm" && styles.focusedButton,
                       styles.confirmButton,
                       isDanger
                         ? styles.dangerConfirmButton
@@ -250,14 +308,18 @@ export default function ConfirmModal({
                       isConfirmDisabled && styles.confirmButtonDisabled,
                     ]}
                   >
-                    {isSubmitting ? (
+                    {isSubmitting && (
                       <ActivityIndicator
+                        aria-hidden
                         size="small"
-                        color={isDanger && isDark ? Colors.black : Colors.white}
+                        color={confirmTextColor}
                       />
-                    ) : (
-                      <Text style={[styles.confirmText]}>{confirmText}</Text>
                     )}
+                    <Text
+                      style={[styles.confirmText, { color: confirmTextColor }]}
+                    >
+                      {confirmText}
+                    </Text>
                   </Pressable>
                 )}
               </View>

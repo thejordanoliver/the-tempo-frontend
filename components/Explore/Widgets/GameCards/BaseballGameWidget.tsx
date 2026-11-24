@@ -25,7 +25,6 @@ type BaseballGameWidgetProps = {
   isDark: boolean;
   isMLB: boolean;
   isCB: boolean;
-  loading?: boolean;
 };
 
 export default function BaseballGameWidget({
@@ -34,7 +33,6 @@ export default function BaseballGameWidget({
   isCB,
   height = 150,
   width = 150,
-  loading = false,
   isDark,
 }: BaseballGameWidgetProps) {
   const league = isMLB ? "mlb" : isCB ? "cb" : "sb";
@@ -50,7 +48,7 @@ export default function BaseballGameWidget({
     } as any);
   };
   const styles = gameWidgetStyles(isDark, height, width);
-  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(width);
   const showHeadline = !isSmallLayout || height >= 170;
 
   const gameDateObj = new Date(game.date);

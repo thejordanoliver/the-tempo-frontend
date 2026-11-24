@@ -9,7 +9,6 @@ export const DriverRow = ({
   id,
   headshot,
   name,
-  flag,
   laps,
   time,
   rank,

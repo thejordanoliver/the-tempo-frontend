@@ -108,8 +108,6 @@ export type HockeyGame = {
 
 export type HockeyGameCardProps = {
   game: HockeyGame;
-  isNHL?: boolean;
-  isMCH?: boolean;
 };
 
 export interface NHLPlayer {

@@ -1,8 +1,11 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const ConfirmModalStyles = (isDark: boolean) =>
-  StyleSheet.create({
+export const ConfirmModalStyles = (isDark: boolean) => {
+  const theme = isDark ? Colors.dark : Colors.light;
+  const typography = globalStyles(isDark);
+
+  return StyleSheet.create({
     backdrop: {
       position: "absolute",
       top: 0,
@@ -25,18 +28,15 @@ export const ConfirmModalStyles = (isDark: boolean) =>
       flexGrow: 1,
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: 22,
-      paddingVertical: 28,
     },
     card: {
       width: "100%",
-      maxWidth: 480,
-      paddingHorizontal: 20,
-      paddingTop: 22,
-      paddingBottom: 18,
-      borderRadius: 28,
-      backgroundColor: isDark ? Colors.black : Colors.white,
-      overflow: "hidden",
+      maxWidth: 440,
+      padding: 24,
+      borderRadius: 20,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.gray,
+      backgroundColor: theme.background,
       shadowColor: Colors.black,
       shadowOffset: { width: 0, height: 16 },
       shadowOpacity: isDark ? 0.42 : 0.18,
@@ -46,7 +46,6 @@ export const ConfirmModalStyles = (isDark: boolean) =>
 
     iconWrap: {
       alignItems: "center",
-      alignSelf: "center",
       justifyContent: "center",
       width: 44,
       height: 44,
@@ -59,25 +58,13 @@ export const ConfirmModalStyles = (isDark: boolean) =>
       backgroundColor: isDark ? "rgba(239,68,68,0.16)" : "rgba(239,68,68,0.1)",
     },
     messageContainer: {
-      gap: 9,
-      marginBottom: 18,
+      gap: 8,
+      marginBottom: 24,
     },
-    title: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 22,
-      lineHeight: 28,
-      letterSpacing: -0.25,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlign: "center",
-    },
+    title: typography.subheading,
     message: {
-      alignSelf: "center",
-      maxWidth: 310,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 15,
-      lineHeight: 22,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
+      ...typography.text,
+      color: theme.secondaryText,
     },
     children: {
       width: "100%",
@@ -91,15 +78,20 @@ export const ConfirmModalStyles = (isDark: boolean) =>
       width: "100%",
       marginTop: 2,
     },
+    stackedButtons: {
+      flexDirection: "column",
+      flexWrap: "nowrap",
+    },
     button: {
       flexGrow: 1,
-      flexBasis: 120,
+      minWidth: 120,
+      maxWidth: "100%",
       alignItems: "center",
       justifyContent: "center",
       minHeight: 48,
       paddingVertical: 13,
       paddingHorizontal: 16,
-      borderRadius: 999,
+      borderRadius: 12,
     },
     cancelButton: {
       borderWidth: StyleSheet.hairlineWidth,
@@ -109,11 +101,15 @@ export const ConfirmModalStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
     },
     confirmButton: {
-      shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: isDark ? 0.24 : 0.14,
-      shadowRadius: 10,
-      elevation: 5,
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    focusedButton: {
+      outlineColor: theme.text,
+      outlineOffset: 2,
+      outlineStyle: "solid",
+      outlineWidth: 2,
     },
     defaultConfirmButton: {
       backgroundColor: Colors.light.actionBackground,
@@ -129,18 +125,20 @@ export const ConfirmModalStyles = (isDark: boolean) =>
     },
     buttonPressed: {
       opacity: 0.88,
-      transform: [{ scale: 0.985 }],
     },
     cancelText: {
       fontFamily: Fonts.MEDIUM,
-      fontSize: 15,
+      fontSize: 16,
+      lineHeight: 22,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
     confirmText: {
       fontFamily: Fonts.MEDIUM,
-      fontSize: 15,
-      color: Colors.white,
+      fontSize: 16,
+      lineHeight: 22,
+      flexShrink: 1,
       textAlign: "center",
     },
   });
+};

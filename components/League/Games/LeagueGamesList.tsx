@@ -171,10 +171,8 @@ const getSectionTitle = (section: HomeGameSection): string => {
        return game.season?.type === 3 && game.headline.includes("Playoff");
      });
 
-     if (hasPlayoffGame) return "CFB Playoffs";
-   }
-
-
+    if (hasPlayoffGame) return "CFB Playoffs";
+  }
 
   if (section.id === "cfb") {
     const hasSaturdayGame = section.data.some(
@@ -196,7 +194,7 @@ export default function LeagueGamesList({
   isDark,
 }: LeagueGamesListProps) {
   const { viewModeReady } = usePreferences();
-  const styles = leagueGamesListStyles(isDark);
+  const styles = leagueGamesListStyles;
   const [previewItem, setPreviewItem] = useState<HomeGameItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -342,10 +340,10 @@ export default function LeagueGamesList({
       case "nhl": {
         const game = item.game as HockeyGame;
         if (viewMode === "list")
-          return wrapper(<NHLGameCard game={game} isNHL isMCH={false} />);
+          return wrapper(<NHLGameCard game={game} />);
         if (viewMode === "grid")
-          return wrapper(<NHLGameSquareCard game={game} isNHL isMCH={false} />);
-        return wrapper(<NHLStackedGameCard game={game} isNHL isMCH={false} />);
+          return wrapper(<NHLGameSquareCard game={game} />);
+        return wrapper(<NHLStackedGameCard game={game} />);
       }
 
       case "msoc":
@@ -595,8 +593,6 @@ export default function LeagueGamesList({
           visible={modalVisible}
           game={previewGame as HockeyGame}
           onClose={() => setModalVisible(false)}
-          isNHL
-          isMCH={false}
         />
       )}
 

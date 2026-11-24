@@ -21,7 +21,7 @@ import {
   winnerStyle,
 } from "utils/games/games";
 
-function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
+function HockeyGameCard({ game }: HockeyGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

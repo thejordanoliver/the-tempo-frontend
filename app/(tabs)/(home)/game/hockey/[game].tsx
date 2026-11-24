@@ -1,3 +1,7 @@
+import {
+  getFirstParam,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
 import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
@@ -36,7 +40,6 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useNotifications } from "contexts/NotificationContext";
 import { isGameFinalStatus } from "utils/games/gameStatus";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
@@ -59,41 +62,6 @@ type RouteParams = {
 
 type HockeyGame = HockeyGameCardProps["game"];
 
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) return value[0];
-  return value;
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): HockeyGame | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // Dynamic route params are often just the game id.
-  // Only JSON strings should be parsed into a full game object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as HockeyGame;
-  } catch {
-    return undefined;
-  }
-}
-
 export default function GameDetailsScreen(
   props: Partial<HockeyGameCardProps> = {},
 ) {
@@ -108,7 +76,9 @@ export default function GameDetailsScreen(
 
   const routeGame = useMemo(() => {
     return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+      props.game ??
+      parseGameParam<HockeyGame>(params.data) ??
+      parseGameParam<HockeyGame>(params.game)
     );
   }, [params.data, params.game, props.game]);
 
@@ -130,15 +100,12 @@ export default function GameDetailsScreen(
     };
   }, [LEAGUE, routeGame, score]);
 
-  const gameDateObj = useMemo(() => {
-    return game?.date ? new Date(game.date) : null;
-  }, [game]);
-
+  const chatDate = score?.date || game?.date;
+  const gameDateObj = chatDate ? new Date(chatDate) : null;
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  const showGameChat = useGameChatAvailability(gameDateObj);
 
   const home = game?.home;
   const away = game?.away;
@@ -543,16 +510,16 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      {!dontShowDetails && showGameChat && (
+      {!dontShowDetails && gameDateObj && (
         <GameLiveChatOverlay
           context={{
             sport: "hockey",
             league: LEAGUE,
-            date: gameDateObj?.toISOString(),
+            date: gameDateObj.toJSON() ?? undefined,
           }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
-          state={state}
+          isLive={state === "in"}
         />
       )}
     </>

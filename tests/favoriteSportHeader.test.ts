@@ -102,7 +102,7 @@ test("rapid repeated presses cannot start overlapping sport requests", async () 
   let resolveRequest!: (favorites: FavoriteSportId[]) => void;
   let requestCount = 0;
 
-  const save = (favoriteSports: FavoriteSportId[]) => {
+  const save = (_favoriteSports: FavoriteSportId[]) => {
     requestCount += 1;
     return new Promise<FavoriteSportId[]>((resolve) => {
       resolveRequest = resolve;

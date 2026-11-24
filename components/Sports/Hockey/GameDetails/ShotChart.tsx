@@ -93,7 +93,6 @@ export default function ShotChart({
   awayColor,
   homeLogo,
   awayLogo,
-  league,
   neutralSite = false,
   state,
 }: ShotChartProps) {

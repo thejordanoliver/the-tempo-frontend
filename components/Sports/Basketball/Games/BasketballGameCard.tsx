@@ -27,7 +27,6 @@ import {
 
 export default function BasketballGameCard({
   game,
-  isSL,
   isMCBB,
   isWCBB,
   isWNBA,

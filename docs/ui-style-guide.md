@@ -43,9 +43,8 @@ when an approved redesign changes a shared pattern.
   league and team logos from the existing `constants/` lookup helpers and
   `assets/` collections. Keep logos contained and preserve their aspect ratio.
   Follow the owning game component for live, final, and scheduled treatments.
-  Reuse team-color treatments from [TeamBackground](../components/CustomHeader/TeamBackground.tsx),
-  [GameHeader](../components/CustomHeader/GameHeader.tsx), and
-  [teamCardGradient](../utils/games/teamCardGradient.ts) on matching surfaces.
+  Reuse team-color treatments from [TeamBackground](../components/CustomHeader/TeamBackground.tsx) and
+  [GameHeader](../components/CustomHeader/GameHeader.tsx) on matching surfaces.
   Check text over the actual team colors and missing-image fallbacks.
 
 ## Shared components

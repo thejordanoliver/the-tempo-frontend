@@ -18,7 +18,6 @@ export const TeamRow = ({
   score,
   isWinner,
   league,
-  gameStatusDescription,
   state,
 }: BaseballProps) => {
   const router = useScopedRouter();

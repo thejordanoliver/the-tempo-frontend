@@ -59,7 +59,6 @@ const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
 export default function PlayerCard({
   id,
   name,
-  position,
   rank,
   teamId,
   headshot,

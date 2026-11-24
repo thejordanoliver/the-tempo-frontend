@@ -22,7 +22,6 @@ type GameWidgetProps = {
   height?: number;
   width?: number;
   isDark: boolean;
-  loading?: boolean;
 };
 
 export default function HockeyGameWidget({
@@ -30,7 +29,6 @@ export default function HockeyGameWidget({
   isNHL,
   height = 150,
   width = 150,
-  loading = false,
   isDark,
 }: GameWidgetProps) {
   const league = isNHL ? "nhl" : null;
@@ -46,7 +44,7 @@ export default function HockeyGameWidget({
     } as any);
   };
   const styles = gameWidgetStyles(isDark, height, width);
-  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(width);
   const showHeadline = !isSmallLayout || height >= 170;
 
   const home = game.home;

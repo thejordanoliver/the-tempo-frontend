@@ -43,13 +43,11 @@ const getLogoSource = (logo: any) =>
   typeof logo === "string" ? { uri: logo } : logo;
 
 export default function MatchupPredictor({
-  homeId,
   homeCode,
   homeLogo,
   homeHeaderLogo,
   homeColor,
   homeChance,
-  awayId,
   awayCode,
   awayLogo,
   awayHeaderLogo,
