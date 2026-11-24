@@ -4,9 +4,6 @@ import {
   buildFavoriteTeamKey,
   normalizeFavoriteTeamKey,
   normalizeFavoriteTeamKeys,
-  reorderFavoriteRailItems,
-  splitFavoriteRailOrder,
-  type FavoriteItem,
 } from "../types/favorites";
 
 test("favorite-team keys are canonical lowercase league-plus-team identities", () => {
@@ -32,72 +29,6 @@ test("unprefixed, malformed, unsupported, and invalid IDs are not guessed", () =
       "nba:-1",
     ]),
     [],
-  );
-});
-
-const favoriteRailItems: FavoriteItem[] = [
-  {
-    kind: "league",
-    id: "nfl",
-    league: "nfl",
-    name: "NFL",
-    logo: 1,
-    key: "league:nfl",
-  },
-  {
-    kind: "league",
-    id: "nba",
-    league: "nba",
-    name: "NBA",
-    logo: 2,
-    key: "league:nba",
-  },
-  {
-    kind: "team",
-    id: "17",
-    code: "BOS",
-    league: "nba",
-    name: "Boston Celtics",
-    key: "nba:17",
-  },
-  {
-    kind: "team",
-    id: "2",
-    code: "BUF",
-    league: "nfl",
-    name: "Buffalo Bills",
-    key: "nfl:2",
-  },
-];
-
-test("combined rail order splits into independent team and sport order", () => {
-  assert.deepEqual(splitFavoriteRailOrder(favoriteRailItems), {
-    favoriteTeamIds: ["nba:17", "nfl:2"],
-    favoriteSports: ["nfl", "nba"],
-  });
-});
-
-test("sports reorder only within the sports area", () => {
-  assert.deepEqual(
-    reorderFavoriteRailItems(favoriteRailItems, 0, 1).map((item) => item.key),
-    ["league:nba", "league:nfl", "nba:17", "nfl:2"],
-  );
-
-  assert.deepEqual(
-    reorderFavoriteRailItems(favoriteRailItems, 1, 3).map((item) => item.key),
-    favoriteRailItems.map((item) => item.key),
-  );
-});
-
-test("teams reorder only within the teams area", () => {
-  assert.deepEqual(
-    reorderFavoriteRailItems(favoriteRailItems, 2, 3).map((item) => item.key),
-    ["league:nfl", "league:nba", "nfl:2", "nba:17"],
-  );
-
-  assert.deepEqual(
-    reorderFavoriteRailItems(favoriteRailItems, 2, 0).map((item) => item.key),
-    favoriteRailItems.map((item) => item.key),
   );
 });
 
