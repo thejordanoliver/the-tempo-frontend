@@ -88,6 +88,7 @@ If a command cannot be run in the current environment, mention that in the final
 
 ## Working Guidelines
 
+- Before finishing a task, stop any servers or background processes you started and verify they released their listening ports. Leave pre-existing processes running.
 - Keep changes scoped to the requested frontend behavior.
 - Preserve user-facing behavior unless the task explicitly asks to change it.
 - Do not remove existing assets, route files, or generated Expo files unless the task requires it.

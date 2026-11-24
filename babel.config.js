@@ -3,6 +3,9 @@ module.exports = function (api) {
   // Expo resolves the aliases declared in tsconfig.json.
   return {
     presets: ["babel-preset-expo"],
-    plugins: [require.resolve("./plugins/babelNativeReanimatedDependencies")],
+    plugins: [
+      require.resolve("./plugins/babelNativeReanimatedDependencies"),
+      require.resolve("./plugins/babelDraggableFlatListReset"),
+    ],
   };
 };
