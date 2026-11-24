@@ -21,6 +21,7 @@ test("Home preserves its stack across tab switches and returns to its root on re
       calendar: [],
       items: [],
       notifications: [],
+      subscriptions: [],
       unreadCount: 0,
       favorites: [],
       favoriteTeams: [],
