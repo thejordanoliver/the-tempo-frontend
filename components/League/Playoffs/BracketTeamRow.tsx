@@ -45,7 +45,7 @@ export default function BracketTeamRow({
     >
       <Text style={[styles.seed]}>{team?.seed ?? ""}</Text>
       <Image
-        source={{ uri: teamLogo ?? PlaceholderLogo }}
+        source={teamLogo ? { uri: teamLogo } : PlaceholderLogo}
         style={styles.logo}
         resizeMode="contain"
         accessible={false}

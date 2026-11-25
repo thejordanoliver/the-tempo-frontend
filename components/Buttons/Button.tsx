@@ -18,6 +18,7 @@ import {
 type ButtonVariant = "filled" | "outline" | "text";
 
 type ButtonProps = AccessibilityProps & {
+  ref?: React.ComponentPropsWithRef<typeof Pressable>["ref"];
   onPress: () => void;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -30,6 +31,7 @@ type ButtonProps = AccessibilityProps & {
 };
 
 export default function Button({
+  ref,
   onPress,
   disabled = false,
   style,
@@ -47,6 +49,7 @@ export default function Button({
   return (
     <Pressable
       {...accessibilityProps}
+      ref={ref}
       onPress={onPress}
       disabled={disabled}
       accessibilityRole={accessibilityRole}

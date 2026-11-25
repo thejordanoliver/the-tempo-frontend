@@ -1,7 +1,13 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useNavigation } from "expo-router";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { Keyboard, View } from "react-native";
+import {
+  type ComponentRef,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { Keyboard, Platform, type Pressable, View } from "react-native";
 import PagerView from "components/PagerView";
 import ConfirmModal from "components/ConfirmModal";
 import CropEditorModal from "components/CropEditorModal";
@@ -39,6 +45,7 @@ export default function LoginScreen() {
     toggleLayout,
   } = useLoginForm();
   const pagerRef = useRef<PagerView>(null);
+  const signInSubmitRef = useRef<ComponentRef<typeof Pressable>>(null);
   const [selectedTab, setSelectedTab] = useState<AuthHeaderTab>("sign in");
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
     usePagerTabScrollProgress();
@@ -109,6 +116,7 @@ export default function LoginScreen() {
         >
           <SignInForm
             {...signIn}
+            submitRef={signInSubmitRef}
             onForgotPassword={() => router.push("/forgot-password")}
           />
         </View>
@@ -132,6 +140,11 @@ export default function LoginScreen() {
         variant={alertConfig?.variant ?? "default"}
         onCancel={closeAlert}
         onConfirm={alertConfig?.onConfirm ?? closeAlert}
+        onDismiss={
+          Platform.OS === "web" && !isSignup
+            ? () => signInSubmitRef.current?.focus()
+            : undefined
+        }
       />
     </View>
   );

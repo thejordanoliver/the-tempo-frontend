@@ -9,6 +9,7 @@ import { formStyles } from "styles/FormStyles";
 import AuthFormLayout from "./AuthFormLayout";
 
 type SignInFormProps = {
+  submitRef?: React.ComponentPropsWithRef<typeof Button>["ref"];
   isSubmitting?: boolean;
   username: string;
   password: string;
@@ -20,7 +21,7 @@ type SignInFormProps = {
   onForgotPassword: () => void;
 };
 
-export default function SignInForm({ ...props }: SignInFormProps) {
+export default function SignInForm({ submitRef, ...props }: SignInFormProps) {
   const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -117,6 +118,7 @@ export default function SignInForm({ ...props }: SignInFormProps) {
 
         <View style={styles.buttonContainer}>
           <Button
+            ref={submitRef}
             isDark={isDark}
             onPress={props.onSubmit}
             disabled={props.isSubmitting}

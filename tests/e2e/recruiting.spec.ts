@@ -169,7 +169,7 @@ for (const league of ["cfb", "mcbb"]) {
 
   test(`${league} industry rankings, class selection and player-style profile`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize({ width: 320, height: 850 });
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
@@ -192,19 +192,18 @@ for (const league of ["cfb", "mcbb"]) {
       .getByRole("button", { name: "Open DeMarcus Henry", exact: true })
       .click();
     await expect(
-      page.getByText("DEMARCUS HENRY", { exact: true }),
+      page.getByText("DeMarcus Henry", { exact: true }),
     ).toBeVisible();
     await expect(
       page.getByText("Industry", { exact: true }).last(),
     ).toBeVisible();
     await expect(
-      page.getByLabel("Industry rating: 98.73", { exact: true }),
+      page.getByLabel("Industry stars: 5", { exact: true }),
     ).toBeVisible();
     const statLabels = [
       "HEIGHT: 6-5.5",
       "LBS: 200",
       "CLASS: 2027",
-      "Industry stars: 5",
       "Industry rating: 98.73",
     ];
     const statBounds = await Promise.all(
@@ -220,9 +219,8 @@ for (const league of ["cfb", "mcbb"]) {
       expect(Math.abs(bounds!.width - statBounds[0]!.width)).toBeLessThan(2);
     }
 
-    await expect(
-      page.getByText("Committed Oct 30", { exact: true }),
-    ).toBeVisible();
+    await expect(page.getByText("Signed", { exact: true })).toBeVisible();
+    await expect(page.getByText("Oct 30", { exact: true })).toBeVisible();
     await page
       .getByRole("tab", { name: "Switch to Schools tab", exact: true })
       .click();
@@ -230,7 +228,7 @@ for (const league of ["cfb", "mcbb"]) {
       page.getByText("No predictions available", { exact: true }),
     ).toBeVisible();
     await expect(
-      page.getByText("No offers yet", { exact: true }),
+      page.getByText("School interests", { exact: true }),
     ).toBeVisible();
     await page
       .getByRole("tab", { name: "Switch to NIL tab", exact: true })
@@ -242,7 +240,7 @@ for (const league of ["cfb", "mcbb"]) {
       .getByRole("tab", { name: "Switch to Rankings tab", exact: true })
       .click();
     await page.screenshot({
-      path: `/private/tmp/tempo-on3-${league}-profile.png`,
+      path: testInfo.outputPath(`tempo-on3-${league}-profile.png`),
       fullPage: true,
     });
     expect(errors).toEqual([]);
