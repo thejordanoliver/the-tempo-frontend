@@ -171,9 +171,7 @@ export const GradientGameCardStyles = (
       zIndex: 2,
     },
 
-    footballScoreColumnActive: {
-      paddingBottom: 14,
-    },
+   
 
     footballScoreText: {
       flex: 0,
@@ -194,7 +192,7 @@ export const GradientGameCardStyles = (
       zIndex: 1,
     },
 
-    footballBelowScore: {
+    possesion: {
       position: "absolute",
       bottom: 0,
       alignSelf: "center",

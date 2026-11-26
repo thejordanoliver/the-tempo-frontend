@@ -211,12 +211,7 @@ function FootballGradientGameCard({
     const showRecord = isScheduled;
 
     return (
-      <View
-        style={[
-          styles.footballScoreColumn,
-          hasPossession && styles.footballScoreColumnActive,
-        ]}
-      >
+      <View style={[styles.footballScoreColumn]}>
         <Text
           numberOfLines={1}
           adjustsFontSizeToFit
@@ -242,7 +237,7 @@ function FootballGradientGameCard({
         {hasPossession && (
           <Image
             source={footballIcon}
-            style={styles.footballBelowScore}
+            style={styles.possesion}
             resizeMode="contain"
             accessible={false}
           />
