@@ -9,6 +9,7 @@ import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import MonthSelector from "components/League/Selectors/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import TransactionList from "components/League/Transactions/TransactionList";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
@@ -180,6 +181,14 @@ export default function TeamDetailScreen() {
           year={standingsYear}
           onYearChange={setStandingsYear}
           league={league}
+        />
+      </View>
+
+      <View key="transactions" style={styles.contentArea}>
+        <TransactionList
+          league={league}
+          team={teamIdNum}
+          active={selectedTab === "transactions"}
         />
       </View>
 

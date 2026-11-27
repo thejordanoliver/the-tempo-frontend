@@ -7,6 +7,7 @@ import { useTeamStats } from "@/hooks/BaseballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import MonthSelector from "components/League/Selectors/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import TransactionList from "components/League/Transactions/TransactionList";
 import NewsList from "components/News/NewsList";
 import Roster from "components/Team/Roster";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -198,6 +199,14 @@ export default function TeamDetailScreen() {
       </View>
 
       {/* FORUM */}
+      <View key="transactions" style={styles.contentArea}>
+        <TransactionList
+          league={league}
+          team={teamIdNum}
+          active={selectedTab === "transactions"}
+        />
+      </View>
+
       <View key="forum" style={styles.contentArea}>
         <ForumFeed teamId={teamIdStr} league={league} />
       </View>

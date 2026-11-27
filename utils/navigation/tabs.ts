@@ -102,19 +102,43 @@ export const LEAGUE_TABS = {
 
 export const TEAM_TABS = {
   // Basketball
-  nba: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  nba: [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "transactions",
+    "forum",
+  ],
   gleague: ["schedule", "news", "roster", "forum"],
   mcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wnba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
 
   // Football
-  nfl: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  nfl: [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "transactions",
+    "forum",
+  ],
   cfb: ["schedule", "news", "roster", "stats", "standings", "forum"],
   ufl: ["schedule", "news", "standings", "forum"],
 
   // Baseball
-  mlb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  mlb: [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "transactions",
+    "forum",
+  ],
   cb: ["schedule", "news", "standings", "forum"],
   sb: ["schedule", "news", "standings", "forum"],
 

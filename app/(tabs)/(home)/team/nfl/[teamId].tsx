@@ -6,6 +6,7 @@ import { Colors } from "@/constants/styles";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import TransactionList from "components/League/Transactions/TransactionList";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -180,6 +181,14 @@ export default function TeamDetailScreen() {
       </View>
 
       {/* FORUM */}
+      <View key="transactions" style={styles.contentArea}>
+        <TransactionList
+          league={league}
+          team={teamIdNum}
+          active={selectedTab === "transactions"}
+        />
+      </View>
+
       <View key="forum" style={styles.contentArea}>
         <ForumFeed teamId={teamIdStr ?? ""} league={league} />
       </View>

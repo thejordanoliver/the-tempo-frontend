@@ -54,6 +54,7 @@ test("fetches pages for the same calendar year, deduplicates overlaps, and stops
     assert.equal(h.requests[0].url, "/api/transactions/nfl");
     assert.equal(h.requests[0].params.page, 1);
     assert.equal(h.requests[0].params.limit, 2);
+    assert.equal(Object.hasOwn(h.requests[0].params, "team"), false);
     h.requests[0].resolve({ data: page([item("first"), item("overlap")]) });
     await flush();
     h.state.loadMore();
@@ -170,6 +171,38 @@ test("a season change hides old data and ignores late responses", async () => {
     await flush();
     assert.equal(h.state.data.season, 2025);
     assert.equal(h.state.transactions[0].description, "2025");
+  } finally {
+    h.stop();
+  }
+});
+
+test("keeps the team filter through pagination, refresh, and team changes", async () => {
+  const h = harness("nba", { team: 1, limit: 2 });
+  try {
+    await flush();
+    assert.equal(h.requests[0].params.team, 1);
+    h.requests[0].resolve({ data: page([item("Hawks", 1)]) });
+    await flush();
+
+    h.state.loadMore();
+    assert.equal(h.requests[1].params.team, 1);
+    assert.equal(h.requests[1].params.page, 2);
+    h.state.onRefresh();
+    assert.equal(h.requests[1].signal.aborted, true);
+    assert.equal(h.requests[2].params.team, 1);
+    assert.equal(h.requests[2].params.page, 1);
+
+    h.update(["nba", { team: 2, limit: 2 }]);
+    assert.equal(h.state.transactions.length, 0);
+    assert.equal(h.requests[2].signal.aborted, true);
+    await flush();
+
+    assert.equal(h.requests[3].params.team, 2);
+    assert.equal(h.requests[3].params.page, 1);
+    h.requests[3].resolve({ data: page([item("Celtics", 2)], 1, 1) });
+    h.requests[2].resolve({ data: page([item("Late Hawks", 1)]) });
+    await flush();
+    assert.deepEqual(Array.from(h.state.transactions, (row) => row.teamId), [2]);
   } finally {
     h.stop();
   }
@@ -316,6 +349,7 @@ test("the list wires rows, refresh, pagination, skeletons, and retry feedback", 
   const h = sportsHookHarness();
   const jsx = (type, props) => ({ type, props });
   let retries = 0;
+  let requestOptions;
   const state = {
     transactions: [item("signed")],
     loading: false,
@@ -344,7 +378,10 @@ test("the list wires rows, refresh, pagination, skeletons, and retry feedback", 
     usePreferences: () => ({ resolvedColorScheme: "dark" }),
   };
   h.modules["hooks/LeagueHooks/useTransactions"] = {
-    useTransactions: () => state,
+    useTransactions: (league, options) => {
+      requestOptions = { ...options, league };
+      return state;
+    },
     getTransactionKey: () => "key",
   };
   h.modules["hooks/useNavigationBarContentStyle"] = {
@@ -369,6 +406,8 @@ test("the list wires rows, refresh, pagination, skeletons, and retry feedback", 
   ).default;
   const render = () => TransactionList({ league: "nfl" }).props;
   const list = render();
+  TransactionList({ league: "nfl", team: 12 });
+  assert.equal(requestOptions.team, 12);
   assert.equal(
     list.renderItem({ item: state.transactions[0] }).props.data,
     state.transactions[0],

@@ -10,6 +10,7 @@ type FetchMode = "initial" | "refresh" | "more";
 type Options = {
   /** Calendar year for transactions, independent of the league playing season. */
   season?: number;
+  team?: number;
   enabled?: boolean;
   limit?: number;
 };
@@ -32,13 +33,13 @@ export const getTransactionKey = (transaction: LeagueTransaction) =>
 
 export function useTransactions(
   league: string,
-  { season, enabled = true, limit = 25 }: Options = {},
+  { season, team, enabled = true, limit = 25 }: Options = {},
 ) {
   const { active: screenActive, activeRef } = useScreenActivity();
   const active = screenActive && enabled;
   const year = season ?? new Date().getUTCFullYear();
   const pageSize = Math.min(100, Math.max(1, Math.trunc(limit) || 25));
-  const key = JSON.stringify([league, year, pageSize]);
+  const key = JSON.stringify([league, year, pageSize, team]);
   const initial: State = {
     key,
     data: null,
@@ -80,7 +81,12 @@ export function useTransactions(
         const { data } = await apiClient.get<TransactionsResponse>(
           `/api/transactions/${league}`,
           {
-            params: { season: year, page, limit: pageSize },
+            params: {
+              season: year,
+              page,
+              limit: pageSize,
+              ...(team === undefined ? {} : { team }),
+            },
             signal: controller.signal,
           },
         );
@@ -126,7 +132,7 @@ export function useTransactions(
         }
       }
     },
-    [active, activeRef, cancel, key, league, pageSize, year],
+    [active, activeRef, cancel, key, league, pageSize, team, year],
   );
 
   useEffect(() => {
