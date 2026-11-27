@@ -173,7 +173,7 @@ const inferSport = (leagueInput: string): NotificationTeamSport => {
     ["mlb", "cb", "sb", "college-baseball", "college-softball"].includes(league)
   )
     return "baseball";
-  if (league === "nhl") return "hockey";
+  if (["nhl", "mch", "wch"].includes(league)) return "hockey";
   return "soccer";
 };
 

@@ -12,11 +12,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { MMAFightCardProps } from "types/mma/mma";
-import {
-  formatPeriod,
-  formatRound,
-  getBroadcastDisplay,
-} from "utils/games/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games/games";
 
 export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   const router = useScopedRouter();
@@ -130,8 +126,7 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
     )
       return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
-    if (isEndOfRound)
-      return <Text style={styles.clock}>End of {formatRound(period)}</Text>;
+    if (isEndOfRound) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)
       return (
@@ -234,7 +229,11 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   );
 
   return (
-    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+    >
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

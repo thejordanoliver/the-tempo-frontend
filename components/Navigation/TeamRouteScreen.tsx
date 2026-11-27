@@ -12,6 +12,8 @@ import GLeagueTeamScreen from "app/(tabs)/(home)/team/gleague/[teamId]";
 import MCBBTeamScreen from "app/(tabs)/(home)/team/mcbb/[teamId]";
 import MLBTeamScreen from "app/(tabs)/(home)/team/mlb/[teamId]";
 import NFLTeamScreen from "app/(tabs)/(home)/team/nfl/[teamId]";
+import MCHTeamScreen from "app/(tabs)/(home)/team/mch/[teamId]";
+import WCHTeamScreen from "app/(tabs)/(home)/team/wch/[teamId]";
 import NHLTeamScreen from "app/(tabs)/(home)/team/nhl/[teamId]";
 import SBTeamScreen from "app/(tabs)/(home)/team/sb/[teamId]";
 import SoccerTeamScreen from "app/(tabs)/(home)/team/soccer/[teamId]";
@@ -28,6 +30,8 @@ const TEAM_SCREENS = {
   mlb: MLBTeamScreen,
   nfl: NFLTeamScreen,
   nhl: NHLTeamScreen,
+  mch: MCHTeamScreen,
+  wch: WCHTeamScreen,
   sb: SBTeamScreen,
   soccer: SoccerTeamScreen,
   ufl: UFLTeamScreen,

@@ -3,14 +3,16 @@
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
+import { getMCHTeamLogo } from "@/constants/teamsMCH";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { getWCHTeamLogo } from "@/constants/teamsWCH";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
@@ -64,6 +66,8 @@ type Props = {
   awayGames: LastFiveGame[];
   league: string;
   state?: string | null;
+  homeLogo: any;
+  awayLogo: any;
 };
 
 export default function LastFiveGames({
@@ -76,6 +80,8 @@ export default function LastFiveGames({
   awayGames,
   league,
   state,
+  homeLogo,
+  awayLogo,
 }: Props) {
   const styles = lastFiveGameStyles(isDark);
 
@@ -161,6 +167,12 @@ export default function LastFiveGames({
 
       case "nhl":
         return getNHLTeamLogo(teamId, isDark);
+
+      case "mch":
+        return getMCHTeamLogo(teamId, isDark);
+
+      case "wch":
+        return getWCHTeamLogo(teamId, isDark);
 
       case "mlb": {
         return getMLBTeamLogo(teamId, isDark);
@@ -294,12 +306,12 @@ export default function LastFiveGames({
           awayTeam={{
             id: awayId,
             name: awayCode || "AWAY",
-            logo: resolveLogo(awayId),
+            logo: awayLogo,
           }}
           homeTeam={{
             id: homeId,
             name: homeCode || "HOME",
-            logo: resolveLogo(homeId),
+            logo: homeLogo,
           }}
           selected={selectedTab}
           onTabPress={setSelectedTab}

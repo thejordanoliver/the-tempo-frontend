@@ -49,6 +49,8 @@ export type LeagueType =
   | "wcbb"
   | "mlb"
   | "nhl"
+  | "mch"
+  | "wch"
   | "ufc"
   | "f1"
   | "nascarpremier"

@@ -13,6 +13,13 @@ import {
   getWCBBConferenceSelectionName,
   wcbbConferences,
 } from "@/constants/conferences/wcbbConferences";
+import {
+  COLLEGE_CONFERENCES,
+  isCollegeConferenceLeague,
+  resolveCollegeConference,
+  type CollegeConferenceLeague,
+} from "constants/conferences/collegeConferences";
+import { resolveLeagueConfig } from "constants/leagues";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -36,7 +43,7 @@ export type ConferenceListModalRef = {
   close: () => void;
 };
 
-type ConferenceLeague = "cfb" | "mcbb" | "wcbb";
+type ConferenceLeague = "cfb" | "mcbb" | "wcbb" | CollegeConferenceLeague;
 
 type ConferenceOption = {
   label: string;
@@ -121,10 +128,26 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         return WCBBLogo;
       }
 
-      return MCBBLogo;
-    }, [isCFB, isWCBB]);
+      return isMCBB ? MCBBLogo : resolveLeagueConfig(league)?.logo;
+    }, [isCFB, isMCBB, isWCBB, league]);
 
     const conferences = useMemo<ConferenceOption[]>(() => {
+      if (isCollegeConferenceLeague(league)) {
+        return [
+          { label: "Rankings", value: "top25", logo: defaultLeagueLogo },
+          ...COLLEGE_CONFERENCES[league].map((conference) => {
+            const branding = resolveCollegeConference(league, conference.groupId);
+            return {
+              label: conference.shortName,
+              value: conference.groupId,
+              logo:
+                (isDark ? branding?.logoLight || branding?.logo : branding?.logo) ??
+                defaultLeagueLogo,
+            };
+          }),
+        ];
+      }
+
       if (isCFB) {
         return [
           {
@@ -186,7 +209,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
       }
 
       return [];
-    }, [defaultLeagueLogo, isMCBB, isCFB, isDark, isWCBB]);
+    }, [defaultLeagueLogo, isMCBB, isCFB, isDark, isWCBB, league]);
 
     const fallbackIcon = isCFB
       ? "american-football-outline"

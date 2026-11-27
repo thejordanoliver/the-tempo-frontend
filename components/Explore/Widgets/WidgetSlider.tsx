@@ -50,7 +50,7 @@ export type WidgetSlide =
   | { type: "mcbb"; data: BasketballGame }
   | { type: "wcbb"; data: BasketballGame }
   | { type: "wnba"; data: BasketballGame }
-  | { type: "nhl"; data: HockeyGame };
+  | { type: "hockey"; data: HockeyGame };
 
 type WidgetSliderOrientation = "vertical" | "horizontal";
 
@@ -660,7 +660,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "nhl":
+        case "hockey":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <HockeyGameWidget
@@ -668,7 +668,6 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
-                isNHL={true}
               />
             </View>
           );

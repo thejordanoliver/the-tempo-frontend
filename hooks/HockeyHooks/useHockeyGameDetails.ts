@@ -38,6 +38,9 @@ export type TeamRecord = {
 };
 
 export type Team = {
+  logo?: string | null;
+  logoDark?: string | null;
+  primaryColor?: string | null;
   id: string;
   guid: string;
   uid: string;

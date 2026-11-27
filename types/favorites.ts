@@ -14,6 +14,8 @@ export const FAVORITE_LEAGUES = [
   "mcvb",
   "wcvb",
   "nhl",
+  "mch",
+  "wch",
   "socc",
 ] as const;
 

@@ -369,6 +369,8 @@ export const StandingsList = ({
       return "/team/mlb/[teamId]" as const;
     }
 
+    if (league === "mch") return "/team/mch/[teamId]" as const;
+    if (league === "wch") return "/team/wch/[teamId]" as const;
     return "/team/nhl/[teamId]" as const;
   };
 
@@ -488,7 +490,8 @@ export const StandingsList = ({
         >
           {activeColumns.map((label) => {
             const key = columnKeyMap[label];
-            let value = item[key];
+            const rawValue = item[key];
+            let value = typeof rawValue === "object" ? rawValue?.name : rawValue;
 
             if (label === "W-L") {
               value = `${item.wins ?? 0}-${item.losses ?? 0}`;
@@ -625,42 +628,44 @@ export const StandingsList = ({
   const conferenceConfig =
     leagueConferences[league as PlayoffLeague]?.conferences ?? {};
 
-  const conferenceSections = soccer
-    ? conferences
-        .filter((conference) => conference.standings.length > 0)
-        .map((conference) => ({
-          title: conference.name,
-          data: conference.standings,
-        }))
-    : Object.values(conferenceConfig)
-        .map((conference) => {
-          const data =
-            conferences?.find(
-              (item) =>
-                item.abbreviation === conference.code ||
-                item.name === conference.name,
-            )?.standings ?? [];
-
-          if (!data.length) {
-            return null;
-          }
-
-          return {
+  const isCollegeHockey = league === "mch" || league === "wch";
+  const conferenceSections =
+    soccer || isCollegeHockey
+      ? conferences
+          .filter((conference) => conference.standings.length > 0)
+          .map((conference) => ({
             title: conference.name,
-            data,
-          };
-        })
-        .filter(
-          (
-            section,
-          ): section is {
-            title: string;
-            data: StandingsTeam[];
-          } => section !== null,
-        );
+            data: conference.standings,
+          }))
+      : Object.values(conferenceConfig)
+          .map((conference) => {
+            const data =
+              conferences?.find(
+                (item) =>
+                  item.abbreviation === conference.code ||
+                  item.name === conference.name,
+              )?.standings ?? [];
+
+            if (!data.length) {
+              return null;
+            }
+
+            return {
+              title: conference.name,
+              data,
+            };
+          })
+          .filter(
+            (
+              section,
+            ): section is {
+              title: string;
+              data: StandingsTeam[];
+            } => section !== null,
+          );
 
   const displayedSections =
-    soccer || sortMode === "conference"
+    soccer || isCollegeHockey || sortMode === "conference"
       ? conferenceSections
       : divisionStandings;
 
@@ -675,7 +680,7 @@ export const StandingsList = ({
       {isGameDetailScreen && <HeadingTwo isDark={isDark}>Standings</HeadingTwo>}
 
       <View style={styles.dropdownRow}>
-        {!soccer && league !== "wnba" && (
+        {!soccer && !isCollegeHockey && league !== "wnba" && (
           <Dropdown
             options={viewOptions}
             selectedValue={sortMode}

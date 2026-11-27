@@ -35,6 +35,8 @@ const COLLEGE_LEAGUES = new Set([
   "sb",
   "mcvb",
   "wcvb",
+  "mch",
+  "wch",
 ]);
 
 const getTeamLogo = (

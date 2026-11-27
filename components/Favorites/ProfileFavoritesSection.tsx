@@ -99,6 +99,8 @@ const getTeamLogo = (team: Team) => {
   const id = Number(team.id);
 
   switch (team.league) {
+    case "mch":
+    case "wch":
     case "mcvb":
     case "wcvb":
       return team.logoLight ?? team.logo;
@@ -395,12 +397,15 @@ export default function ProfileFavoritesSection({
       "sb",
       "mcvb",
       "wcvb",
+      "mch",
+      "wch",
     ].includes(league);
 
     const teamName = team.name ?? team.shortName ?? String(id);
 
     return (
-      <Pressable accessibilityRole="button"
+      <Pressable
+        accessibilityRole="button"
         key={`${league}:${id}`}
         delayLongPress={300}
         onLongPress={() => {

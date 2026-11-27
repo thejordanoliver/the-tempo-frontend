@@ -3,7 +3,7 @@ import BasketballSquareGameCard from "@/components/Sports/Basketball/Games/Baske
 import BasketballStackedGameCard from "@/components/Sports/Basketball/Games/BasketballStackedGameCard";
 import FootballGameCard from "@/components/Sports/Football/Games/FootballGameCard";
 import FootballStackedGameCard from "@/components/Sports/Football/Games/FootballStackedGameCard";
-import NHLStackedGameCard from "@/components/Sports/Hockey/Games/HockeyStackedGameCard";
+import HockeyStackedGameCard from "@/components/Sports/Hockey/Games/HockeyStackedGameCard";
 import TennisGameCard from "@/components/Sports/Tennis/Games/TennisGameCard";
 import TennisSquareGameCard from "@/components/Sports/Tennis/Games/TennisSquareGameCard";
 import TennisStackedGameCard from "@/components/Sports/Tennis/Games/TennisStackedGameCard";
@@ -16,6 +16,7 @@ import type { HomeGameItem, HomeGameSection } from "@/types/leagues";
 import type { SoccerGame } from "@/types/soccer/soccer";
 import type { TennisMatch } from "@/types/tennis/tennis";
 import type { VolleyballGame } from "@/types/volleyball/volleyball";
+import { getHolidayLabel } from "@/utils/common/dateUtils";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
@@ -25,7 +26,7 @@ import BaseballStackedGameCard from "components/Sports/Baseball/Games/BaseballSt
 import VolleyballGameCard from "components/Sports/Volleyball/VolleyballGameCard";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import { useMemo, useState, type ReactElement, type ReactNode } from "react";
+import { memo, useCallback, useMemo, useState, type ReactNode } from "react";
 import { SectionList, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { leagueGamesListStyles } from "styles/GamecardStyles/LeagueGamesListStyles";
@@ -37,9 +38,9 @@ import HeaderSkeleton from "../../Skeletons/HeaderSkeleton";
 import BasketballGamePreviewModal from "../../Sports/Basketball/GamePreview/BasketballGamePreviewModal";
 import FootballGamePreviewModal from "../../Sports/Football/GamePreview/FootballGamePreviewModal";
 import FootballSquareGameCard from "../../Sports/Football/Games/FootballSquareGameCard";
-import NHLGamePreviewModal from "../../Sports/Hockey/GamePreview/HockeyGamePreviewModal";
-import NHLGameCard from "../../Sports/Hockey/Games/HockeyGameCard";
-import NHLGameSquareCard from "../../Sports/Hockey/Games/HockeySqaureGameCard";
+import HockeyGamePreviewModal from "../../Sports/Hockey/GamePreview/HockeyGamePreviewModal";
+import HockeyGameCard from "../../Sports/Hockey/Games/HockeyGameCard";
+import HockeyGameSquareCard from "../../Sports/Hockey/Games/HockeySqaureGameCard";
 import MMAGamePreviewModal from "../../Sports/MMA/GamePreview/MMAGamePreviewModal";
 import MMAGameCard from "../../Sports/MMA/Games/MMAGameCard";
 import MMASquareGameCard from "../../Sports/MMA/Games/MMASquareGameCard";
@@ -51,14 +52,33 @@ import SoccerStackedGameCard from "../../Sports/Soccer/Games/SoccerStackedGameCa
 import TennisMatchPreviewModal from "../../Sports/Tennis/GamePreview/TennisMatchPreviewModal";
 import ChampionshipGameCard from "./ChampionshipGameCard";
 
+type ViewMode = "list" | "grid" | "stacked";
+type LeagueGamesListProps = {
+  sections: HomeGameSection[];
+  loading: boolean;
+  expectedCount?: number;
+  showHeaders?: boolean;
+  isDark: boolean;
+  viewMode: ViewMode;
+};
+
+type GameCardProps = {
+  item: HomeGameItem;
+  viewMode: ViewMode;
+  onPreview: (item: HomeGameItem) => void;
+};
+
+const styles = leagueGamesListStyles;
+const LONG_PRESS_MS = 300;
 const BASKETBALL_LEAGUES = new Set<HomeLeagueId>([
   "nba",
   "mcbb",
   "wcbb",
   "wnba",
 ]);
-const BASEBALL_LEAGUES = new Set<HomeLeagueId>(["mlb", "cb", "sb"]);
 const FOOTBALL_LEAGUES = new Set<HomeLeagueId>(["nfl", "cfb", "ufl"]);
+const BASEBALL_LEAGUES = new Set<HomeLeagueId>(["mlb", "cb", "sb"]);
+const HOCKEY_LEAGUES = new Set<HomeLeagueId>(["nhl", "mch", "wch"]);
 const SOCCER_LEAGUES = new Set<HomeLeagueId>([
   "mls",
   "msoc",
@@ -74,116 +94,353 @@ const SOCCER_LEAGUES = new Set<HomeLeagueId>([
   "epl",
 ]);
 
-type LeagueGamesListProps = {
-  sections: HomeGameSection[];
-  loading: boolean;
-  expectedCount?: number;
-  showHeaders?: boolean;
-  isDark: boolean;
-  viewMode: "list" | "grid" | "stacked";
-};
+const CHAMPIONSHIP_HEADLINES = [
+  "NBA Finals",
+  "WNBA Finals",
+  "Super Bowl",
+  "World Series",
+  "Stanley Cup Final",
+  "NBA Summer League - Final",
+  "NCAA Men's Hockey National Championship",
+  "NCAA Women's Ice Hockey Championship",
+  "Men's College World Series Championship Final",
+  "Women's College World Series Championship Finals",
+  "College Football Playoff National Championship",
+  "Men's Basketball Championship - National Championship",
+  "Women's Basketball Championship - National Championship",
+].map((headline) => headline.toLowerCase());
 
-const isChampionshipGame = (item: HomeGameItem): boolean => {
-  const headline =
-    "headline" in item.game ? String(item.game.headline ?? "") : "";
-  return (
-    headline.includes("NBA Finals") ||
-    headline.includes("WNBA Finals") ||
-    headline.includes("Super Bowl") ||
-    headline.includes("World Series") ||
-    headline.includes("Stanley Cup Final") ||
-    headline?.includes("NBA Summer League - Final") ||
-    headline?.includes("NCAA Men's Hockey National Championship") ||
-    headline?.includes("NCAA Women's Ice Hockey Championship") ||
-    headline?.includes("Men's College World Series Championship Final") ||
-    headline?.includes("Women's College World Series Championship Finals") ||
-    headline?.includes("College Football Playoff National Championship ") ||
-    headline?.includes(
-      "Men's Basketball Championship - National Championship",
-    ) ||
-    headline?.includes(
-      "Women's Basketball Championship - National Championship",
-    )
-  );
-};
+function basketballFlags(league: HomeLeagueId) {
+  return {
+    isNBA: league === "nba",
+    isMCBB: league === "mcbb",
+    isWCBB: league === "wcbb",
+    isWNBA: league === "wnba",
+  };
+}
+function footballFlags(league: HomeLeagueId) {
+  return { isNFL: league === "nfl", isCFB: league === "cfb" };
+}
+function baseballFlags(league: HomeLeagueId) {
+  return {
+    isMLB: league === "mlb",
+    isCB: league === "cb",
+    isSB: league === "sb",
+  };
+}
 
-const getGameDate = (item: HomeGameItem): Date | null => {
-  const { game } = item;
-  const value =
-    "date" in game
-      ? game.date
-      : "startDate" in game
-        ? game.startDate
-        : "timestamp" in game
-          ? game.timestamp
+function getGameDate({ game }: HomeGameItem): Date | null {
+  const values: unknown[] = [
+    "date" in game ? game.date : null,
+    "startDate" in game ? game.startDate : null,
+    "timestamp" in game ? game.timestamp : null,
+  ];
+  for (const value of values) {
+    const date =
+      value instanceof Date
+        ? value
+        : typeof value === "string" || typeof value === "number"
+          ? new Date(value)
           : null;
-
-  if (typeof value !== "string" && typeof value !== "number") return null;
-
-  const date = new Date(value);
-
-  return Number.isNaN(date.getTime()) ? null : date;
-};
-
-const getSectionTitle = (section: HomeGameSection): string => {
-  if (section.id === "wnba") {
-    const hasPlayoffGame = section.data.some((item) => {
-      const game = item.game as BasketballGame;
-
-      return game.season?.type === 3;
-    });
-
-    if (hasPlayoffGame) return "WNBA Playoffs";
+    if (date && !Number.isNaN(date.getTime())) return date;
   }
+  return null;
+}
 
-  if (section.id === "mlb") {
-    const hasPlayoffGame = section.data.some((item) => {
-      const game = item.game as BaseballGame;
+function isChampionshipGame(item: HomeGameItem): boolean {
+  const { league, game } = item;
+  if (!league) return false;
+  if (
+    !BASKETBALL_LEAGUES.has(league) &&
+    !FOOTBALL_LEAGUES.has(league) &&
+    !BASEBALL_LEAGUES.has(league) &&
+    league !== "nhl"
+  )
+    return false;
+  const headline =
+    "headline" in game ? String(game.headline ?? "").toLowerCase() : "";
+  return CHAMPIONSHIP_HEADLINES.some((pattern) => headline.includes(pattern));
+}
 
-      return game.season?.type === 3 && !game.headline.includes("World Series");
-    });
-
-    if (hasPlayoffGame) return "MLB Playoffs";
+function getSectionTitle(section: HomeGameSection): string {
+  switch (section.id) {
+    case "nba":
+    case "nfl": {
+      const dates = section.data.map(getGameDate);
+      const holidays = new Set(dates.map(getHolidayLabel));
+      if (section.id === "nba") {
+        return holidays.has("Christmas Day")
+          ? "NBA Christmas Day"
+          : section.title;
+      }
+      if (holidays.has("Thanksgiving Day")) return "NFL Thanksgiving Day";
+      if (holidays.has("Christmas Day")) return "NFL Christmas Day";
+      const hasNightGame = (weekday: number) =>
+        dates.some(
+          (date) =>
+            date !== null && date.getDay() === weekday && date.getHours() >= 18,
+        );
+      if (hasNightGame(1)) return "Monday Night Football";
+      if (hasNightGame(4)) return "Thursday Night Football";
+      break;
+    }
+    case "wnba":
+      if (
+        section.data.some(
+          ({ game }) => (game as BasketballGame).season?.type === 3,
+        )
+      )
+        return "WNBA Playoffs";
+      break;
+    case "mlb":
+      if (
+        section.data.some(({ game }) => {
+          const baseball = game as BaseballGame;
+          return (
+            baseball.season?.type === 3 &&
+            !baseball.headline?.includes("World Series")
+          );
+        })
+      )
+        return "MLB Playoffs";
+      break;
+    case "cfb":
+      if (
+        section.data.some(({ game }) => {
+          const football = game as FootballGame;
+          return (
+            football.season?.type === 3 &&
+            football.headline?.includes("Playoff")
+          );
+        })
+      )
+        return "CFB Playoffs";
+      if (section.data.some((item) => getGameDate(item)?.getDay() === 6))
+        return "College Football Saturday";
+      break;
   }
-
-  if (section.id === "nfl") {
-    const hasMondayNightGame = section.data.some((item) => {
-      const date = getGameDate(item);
-
-      return date?.getDay() === 1 && date.getHours() >= 18;
-    });
-
-    if (hasMondayNightGame) return "Monday Night Football";
-
-    const hasThursdayNightGame = section.data.some((item) => {
-      const date = getGameDate(item);
-
-      return date?.getDay() === 4 && date.getHours() >= 18;
-    });
-
-    if (hasThursdayNightGame) return "Thursday Night Football";
-  }
-
-   if (section.id === "cfb") {
-     const hasPlayoffGame = section.data.some((item) => {
-       const game = item.game as FootballGame;
-
-       return game.season?.type === 3 && game.headline.includes("Playoff");
-     });
-
-    if (hasPlayoffGame) return "CFB Playoffs";
-  }
-
-  if (section.id === "cfb") {
-    const hasSaturdayGame = section.data.some(
-      (item) => getGameDate(item)?.getDay() === 6,
-    );
-
-    if (hasSaturdayGame) return "College Football Saturday";
-  }
-
   return section.title;
-};
+}
+
+const CARDS = {
+  basketball: {
+    list: BasketballGameCard,
+    grid: BasketballSquareGameCard,
+    stacked: BasketballStackedGameCard,
+  },
+  football: {
+    list: FootballGameCard,
+    grid: FootballSquareGameCard,
+    stacked: FootballStackedGameCard,
+  },
+  baseball: {
+    list: BaseballGameCard,
+    grid: BaseballSquareGameCard,
+    stacked: BaseballStackedGameCard,
+  },
+  hockey: {
+    list: HockeyGameCard,
+    grid: HockeyGameSquareCard,
+    stacked: HockeyStackedGameCard,
+  },
+  soccer: {
+    list: SoccerGameCard,
+    grid: SoccerSquareGameCard,
+    stacked: SoccerStackedGameCard,
+  },
+  mma: {
+    list: MMAGameCard,
+    grid: MMASquareGameCard,
+    stacked: MMAStackedGameCard,
+  },
+  tennis: {
+    list: TennisGameCard,
+    grid: TennisSquareGameCard,
+    stacked: TennisStackedGameCard,
+  },
+} as const;
+
+function renderCard({ league, game }: HomeGameItem, mode: ViewMode): ReactNode {
+  if (!league) return null;
+  if (BASKETBALL_LEAGUES.has(league)) {
+    const Card = CARDS.basketball[mode];
+    return <Card game={game as BasketballGame} {...basketballFlags(league)} />;
+  }
+  if (FOOTBALL_LEAGUES.has(league)) {
+    const Card = CARDS.football[mode];
+    return <Card game={game as FootballGame} {...footballFlags(league)} />;
+  }
+  if (BASEBALL_LEAGUES.has(league)) {
+    const Card = CARDS.baseball[mode];
+    return <Card game={game as BaseballGame} {...baseballFlags(league)} />;
+  }
+  if (HOCKEY_LEAGUES.has(league)) {
+    const Card = CARDS.hockey[mode];
+    return <Card game={game as HockeyGame} />;
+  }
+  if (SOCCER_LEAGUES.has(league)) {
+    const Card = CARDS.soccer[mode];
+    return <Card game={game as SoccerGame} />;
+  }
+  switch (league) {
+    case "ufc": {
+      const Card = CARDS.mma[mode];
+      return <Card game={game as MMAFight} />;
+    }
+    case "atp":
+    case "wta": {
+      const Card = CARDS.tennis[mode];
+      return <Card match={game as TennisMatch} />;
+    }
+    case "mcvb":
+    case "wcvb":
+      return (
+        <VolleyballGameCard
+          game={game as VolleyballGame}
+          compact={mode === "grid"}
+        />
+      );
+    default:
+      return null;
+  }
+}
+
+function renderChampionshipCard(item: HomeGameItem): ReactNode {
+  const { league, game } = item;
+  if (!league) return null;
+  if (BASKETBALL_LEAGUES.has(league))
+    return (
+      <ChampionshipGameCard
+        game={game as BasketballGame}
+        {...basketballFlags(league)}
+      />
+    );
+  if (FOOTBALL_LEAGUES.has(league))
+    return <ChampionshipGameCard game={game} {...footballFlags(league)} />;
+  if (BASEBALL_LEAGUES.has(league))
+    return <ChampionshipGameCard game={game} {...baseballFlags(league)} />;
+  if (league === "nhl") return <ChampionshipGameCard game={game} isNHL />;
+
+  return renderCard(item, "list");
+}
+
+const GameCard = memo(function GameCard({
+  item,
+  viewMode,
+  onPreview,
+  championship = false,
+}: GameCardProps & { championship?: boolean }) {
+  const child = championship
+    ? renderChampionshipCard(item)
+    : renderCard(item, viewMode);
+  if (!child) return null;
+  const content = (
+    <View
+      style={championship || viewMode === "grid" ? undefined : styles.listItem}
+    >
+      {child}
+    </View>
+  );
+  if (item.league === "mcvb" || item.league === "wcvb") return content;
+  return (
+    <LongPressGestureHandler
+      minDurationMs={LONG_PRESS_MS}
+      onHandlerStateChange={({ nativeEvent }) => {
+        if (nativeEvent.state === State.ACTIVE) onPreview(item);
+      }}
+    >
+      {content}
+    </LongPressGestureHandler>
+  );
+});
+
+function GamePreview({
+  item,
+  onClose,
+}: {
+  item: HomeGameItem;
+  onClose: () => void;
+}) {
+  const { league, game } = item;
+  if (!league) return null;
+  const common = { visible: true, onClose };
+  if (BASKETBALL_LEAGUES.has(league))
+    return (
+      <BasketballGamePreviewModal
+        {...common}
+        game={game as BasketballGame}
+        isMCBB={league === "mcbb"}
+        isWCBB={league === "wcbb"}
+        isWNBA={league === "wnba"}
+        isSL={false}
+        isGLEAGUE={false}
+      />
+    );
+  if (FOOTBALL_LEAGUES.has(league))
+    return (
+      <FootballGamePreviewModal
+        {...common}
+        game={game as FootballGame}
+        {...footballFlags(league)}
+      />
+    );
+  if (BASEBALL_LEAGUES.has(league))
+    return (
+      <BaseballGamePreviewModal
+        {...common}
+        game={game as BaseballGame}
+        {...baseballFlags(league)}
+      />
+    );
+  if (HOCKEY_LEAGUES.has(league))
+    return <HockeyGamePreviewModal {...common} game={game as HockeyGame} />;
+  if (SOCCER_LEAGUES.has(league))
+    return <SoccerGamePreviewModal {...common} game={game as SoccerGame} />;
+  switch (league) {
+    case "ufc":
+      return <MMAGamePreviewModal {...common} game={game as MMAFight} />;
+    case "atp":
+    case "wta":
+      return (
+        <TennisMatchPreviewModal {...common} match={game as TennisMatch} />
+      );
+    default:
+      return null;
+  }
+}
+
+const SkeletonCards = memo(function SkeletonCards({
+  count,
+  viewMode,
+}: {
+  count: number;
+  viewMode: ViewMode;
+}) {
+  const items = Array.from({ length: count }, (_, index) => index);
+  if (viewMode === "grid")
+    return (
+      <View style={styles.skeletonGridWrapper}>
+        {chunkIntoGridRows(items).map((row, rowIndex) => (
+          <View key={rowIndex} style={styles.gridRow}>
+            {row.map((item, columnIndex) => (
+              <View key={columnIndex} style={styles.gridItem}>
+                {item !== null && <SquareGameCardSkeleton />}
+              </View>
+            ))}
+          </View>
+        ))}
+      </View>
+    );
+  const Skeleton =
+    viewMode === "list" ? GameCardSkeleton : StackedGameCardSkeleton;
+  return (
+    <View style={styles.skeletonWrapper}>
+      {items.map((index) => (
+        <Skeleton key={index} />
+      ))}
+    </View>
+  );
+});
 
 export default function LeagueGamesList({
   sections,
@@ -194,335 +451,125 @@ export default function LeagueGamesList({
   isDark,
 }: LeagueGamesListProps) {
   const { viewModeReady } = usePreferences();
-  const styles = leagueGamesListStyles;
   const [previewItem, setPreviewItem] = useState<HomeGameItem | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  // Separate championship games from regular games
   const { championshipGames, regularSections } = useMemo(() => {
-    const champs: HomeGameItem[] = [];
-    const regular: HomeGameSection[] = [];
-
+    const championshipGames: HomeGameItem[] = [];
+    const regularSections: HomeGameSection[] = [];
     for (const section of sections) {
-      const regularInSection: HomeGameItem[] = [];
-
+      const data: HomeGameItem[] = [];
       for (const item of section.data) {
-        if (!section.id.startsWith("general-") && isChampionshipGame(item)) {
-          champs.push(item);
-        } else {
-          regularInSection.push(item);
-        }
+        if (!section.id.startsWith("general-") && isChampionshipGame(item))
+          championshipGames.push(item);
+        else data.push(item);
       }
-
-      if (regularInSection.length > 0) {
-        regular.push({
+      if (data.length)
+        regularSections.push({
           ...section,
-          data: regularInSection,
+          data,
+          title: getSectionTitle({ ...section, data }),
         });
-      }
     }
-
-    return {
-      championshipGames: champs,
-      regularSections: regular,
-    };
+    return { championshipGames, regularSections };
   }, [sections]);
-
-  const handleLongPress = (item: HomeGameItem) => {
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  const gridSections = useMemo(
+    () =>
+      viewMode === "grid"
+        ? regularSections.map((section) => ({
+            ...section,
+            rows: chunkIntoGridRows(section.data),
+          }))
+        : [],
+    [regularSections, viewMode],
+  );
+  const handlePreview = useCallback((item: HomeGameItem) => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
+      () => undefined,
+    );
     setPreviewItem(item);
-    setModalVisible(true);
-  };
-
-  const renderGameCard = (item: HomeGameItem): ReactElement | null => {
-    const wrapper = (child: ReactNode) => {
+  }, []);
+  const closePreview = useCallback(() => setPreviewItem(null), []);
+  const renderItem = useCallback(
+    ({ item }: { item: HomeGameItem }) => (
+      <GameCard item={item} viewMode={viewMode} onPreview={handlePreview} />
+    ),
+    [viewMode, handlePreview],
+  );
+  const renderHeader = useCallback(
+    ({ section }: { section: HomeGameSection }) => {
+      if (!showHeaders) return null;
       return (
-        <LongPressGestureHandler
-          key={item.key}
-          minDurationMs={300}
-          onHandlerStateChange={({ nativeEvent }) => {
-            if (nativeEvent.state === State.ACTIVE) handleLongPress(item);
+        <View
+          style={{
+            marginHorizontal: 12,
+            marginTop: regularSections[0]?.id === section.id ? 0 : 8,
           }}
         >
-          <View style={viewMode === "grid" ? styles.gridItem : styles.listItem}>
-            {child}
-          </View>
-        </LongPressGestureHandler>
-      );
-    };
-
-    switch (item.league) {
-      case "mcvb":
-      case "wcvb":
-        return (
-          <View
-            key={item.key}
-            style={viewMode === "grid" ? styles.gridItem : styles.listItem}
-          >
-            <VolleyballGameCard
-              game={item.game as VolleyballGame}
-              compact={viewMode === "grid"}
-            />
-          </View>
-        );
-      case "nba": {
-        const game = item.game as BasketballGame;
-        if (viewMode === "list")
-          return wrapper(<BasketballGameCard game={game} isNBA />);
-        if (viewMode === "grid")
-          return wrapper(<BasketballSquareGameCard game={game} isNBA />);
-        return wrapper(<BasketballStackedGameCard game={game} isNBA />);
-      }
-
-      case "mcbb": {
-        const game = item.game as BasketballGame;
-        if (viewMode === "list")
-          return wrapper(<BasketballGameCard game={game} isMCBB />);
-        if (viewMode === "grid")
-          return wrapper(<BasketballSquareGameCard game={game} isMCBB />);
-        return wrapper(<BasketballStackedGameCard game={game} isMCBB />);
-      }
-
-      case "wcbb": {
-        const game = item.game as BasketballGame;
-        if (viewMode === "list")
-          return wrapper(<BasketballGameCard game={game} isWCBB />);
-        if (viewMode === "grid")
-          return wrapper(<BasketballSquareGameCard game={game} isWCBB />);
-        return wrapper(<BasketballStackedGameCard game={game} isWCBB />);
-      }
-
-      case "wnba": {
-        const game = item.game as BasketballGame;
-        if (viewMode === "list")
-          return wrapper(<BasketballGameCard game={game} isWNBA />);
-        if (viewMode === "grid")
-          return wrapper(<BasketballSquareGameCard game={game} isWNBA />);
-        return wrapper(<BasketballStackedGameCard game={game} isWNBA />);
-      }
-
-      case "nfl": {
-        const game = item.game as FootballGame;
-        if (viewMode === "list")
-          return wrapper(<FootballGameCard game={game} isNFL />);
-        if (viewMode === "grid")
-          return wrapper(<FootballSquareGameCard game={game} isNFL />);
-        return wrapper(<FootballStackedGameCard game={game} isNFL />);
-      }
-
-      case "cfb": {
-        const game = item.game as FootballGame;
-        if (viewMode === "list")
-          return wrapper(<FootballGameCard game={game} isCFB />);
-        if (viewMode === "grid")
-          return wrapper(<FootballSquareGameCard game={game} isCFB />);
-        return wrapper(<FootballStackedGameCard game={game} isCFB />);
-      }
-
-      case "ufl": {
-        const game = item.game as FootballGame;
-        if (viewMode === "list")
-          return wrapper(<FootballGameCard game={game} />);
-        if (viewMode === "grid")
-          return wrapper(<FootballSquareGameCard game={game} />);
-        return wrapper(<FootballStackedGameCard game={game} />);
-      }
-
-      case "mlb": {
-        const game = item.game as BaseballGame;
-        if (viewMode === "list")
-          return wrapper(<BaseballGameCard game={game} isMLB />);
-        if (viewMode === "grid")
-          return wrapper(<BaseballSquareGameCard game={game} isMLB />);
-        return wrapper(<BaseballStackedGameCard game={game} isMLB />);
-      }
-
-      case "nhl": {
-        const game = item.game as HockeyGame;
-        if (viewMode === "list")
-          return wrapper(<NHLGameCard game={game} />);
-        if (viewMode === "grid")
-          return wrapper(<NHLGameSquareCard game={game} />);
-        return wrapper(<NHLStackedGameCard game={game} />);
-      }
-
-      case "msoc":
-      case "wsoc":
-      case "mls":
-      case "fifa":
-      case "bundesliga":
-      case "laliga":
-      case "ligue1":
-      case "ligue2":
-      case "champions":
-      case "europa":
-      case "leaguescup":
-      case "epl": {
-        const game = item.game as SoccerGame;
-        if (viewMode === "list") return wrapper(<SoccerGameCard game={game} />);
-        if (viewMode === "grid")
-          return wrapper(<SoccerSquareGameCard game={game} />);
-        return wrapper(<SoccerStackedGameCard game={game} />);
-      }
-
-      case "ufc": {
-        const game = item.game as MMAFight;
-        if (viewMode === "list") return wrapper(<MMAGameCard game={game} />);
-        if (viewMode === "grid")
-          return wrapper(<MMASquareGameCard game={game} />);
-        return wrapper(<MMAStackedGameCard game={game} />);
-      }
-
-      case "atp":
-      case "wta": {
-        const match = item.game as TennisMatch;
-        if (viewMode === "grid")
-          return wrapper(<TennisSquareGameCard match={match} />);
-        if (viewMode === "stacked")
-          return wrapper(<TennisStackedGameCard match={match} />);
-        return wrapper(<TennisGameCard match={match} />);
-      }
-    }
-
-    return null;
-  };
-
-  const renderSkeletons = (count: number) => {
-    if (viewMode === "list") {
-      return (
-        <View style={styles.skeletonWrapper}>
-          {Array.from({ length: count }).map((_, index) => (
-            <GameCardSkeleton key={index} />
-          ))}
+          <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
         </View>
       );
-    }
-
-    if (viewMode === "grid") {
-      return (
-        <View style={styles.skeletonGridWrapper}>
-          {chunkIntoGridRows(Array.from({ length: count })).map(
-            (row, rowIndex) => (
-              <View key={`skeleton-row-${rowIndex}`} style={styles.gridRow}>
-                {row.map((item, columnIndex) => (
-                  <View key={columnIndex} style={styles.gridItem}>
-                    {item !== null && <SquareGameCardSkeleton />}
-                  </View>
-                ))}
-              </View>
-            ),
-          )}
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.skeletonWrapper}>
-        {Array.from({ length: count }).map((_, index) => (
-          <StackedGameCardSkeleton key={index} />
-        ))}
-      </View>
-    );
-  };
+    },
+    [showHeaders, isDark, regularSections],
+  );
 
   if (loading || !viewModeReady) {
-    const skeletonCount = expectedCount ?? 4;
-    const skeletonSectionIds = sections.length
-      ? sections.map((section) => section.id)
-      : ["loading"];
-
+    const ids = sections.length ? sections.map(({ id }) => id) : ["loading"];
     return (
       <View style={styles.contentContainer}>
-        {skeletonSectionIds.map((sectionId) => (
-          <View key={sectionId}>
+        {ids.map((id) => (
+          <View key={id}>
             {showHeaders && (
               <View style={styles.headerSkeleton}>
                 <HeaderSkeleton />
               </View>
             )}
-            {renderSkeletons(skeletonCount)}
+            <SkeletonCards count={expectedCount ?? 4} viewMode={viewMode} />
           </View>
         ))}
       </View>
     );
   }
 
-  const visibleSections = regularSections.filter(
-    (section) => section.data.length > 0,
-  );
-
-  const previewLeague = previewItem?.league;
-  const previewGame = previewItem?.game;
-
   return (
     <>
-      {/* Championship Games Section */}
       {championshipGames.length > 0 && (
         <View style={{ marginTop: 4, marginBottom: 4 }}>
-          {championshipGames.map((game) => (
-            <LongPressGestureHandler
-              key={game.key}
-              minDurationMs={300}
-              onHandlerStateChange={({ nativeEvent }) => {
-                if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
-              }}
-            >
-              <View>
-                {game.league && BASKETBALL_LEAGUES.has(game.league) && (
-                  <ChampionshipGameCard
-                    game={game.game as BasketballGame}
-                    isNBA={game.league === "nba"}
-                    isMCBB={game.league === "mcbb"}
-                    isWCBB={game.league === "wcbb"}
-                    isWNBA={game.league === "wnba"}
-                  />
-                )}
-                {game.league && FOOTBALL_LEAGUES.has(game.league) && (
-                  <ChampionshipGameCard
-                    game={game.game}
-                    isNFL={game.league === "nfl"}
-                    isCFB={game.league === "cfb"}
-                  />
-                )}
-                {game.league && BASEBALL_LEAGUES.has(game.league) && (
-                  <ChampionshipGameCard
-                    game={game.game}
-                    isMLB={game.league === "mlb"}
-                    isCB={game.league === "cb"}
-                    isSB={game.league === "sb"}
-                  />
-                )}
-              </View>
-            </LongPressGestureHandler>
+          {championshipGames.map((item) => (
+            <GameCard
+              key={item.key}
+              item={item}
+              viewMode="list"
+              onPreview={handlePreview}
+              championship
+            />
           ))}
         </View>
       )}
-
-      {/* Regular Games Section */}
       {viewMode === "grid" ? (
         <View style={styles.gridListContainer}>
-          {visibleSections.map((section, sectionIndex) => (
+          {gridSections.map((section, index) => (
             <View key={section.id} style={styles.gridSection}>
               {showHeaders && (
-                <View
-                  style={sectionIndex > 0 ? styles.sectionSpacing : undefined}
-                >
-                  <HeadingTwo isDark={isDark}>
-                    {getSectionTitle(section)}
-                  </HeadingTwo>
+                <View style={index > 0 ? styles.sectionSpacing : undefined}>
+                  <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
                 </View>
               )}
-              {chunkIntoGridRows(section.data).map((row, rowIndex) => (
+              {section.rows.map((row, rowIndex) => (
                 <View
                   key={`${section.id}-row-${rowIndex}`}
                   style={styles.gridRow}
                 >
                   {row.map((item, columnIndex) => (
                     <View
-                      key={item?.key ?? `${section.id}-empty-${columnIndex}`}
+                      key={item?.key ?? `empty-${columnIndex}`}
                       style={styles.gridItem}
                     >
-                      {item ? renderGameCard(item) : null}
+                      {item && (
+                        <GameCard
+                          item={item}
+                          viewMode="grid"
+                          onPreview={handlePreview}
+                        />
+                      )}
                     </View>
                   ))}
                 </View>
@@ -532,114 +579,28 @@ export default function LeagueGamesList({
         </View>
       ) : (
         <SectionList<HomeGameItem, HomeGameSection>
-          sections={visibleSections}
-          keyExtractor={(item) => item.key}
-          renderItem={({ item }) => renderGameCard(item)}
-          renderSectionHeader={({ section }) => {
-            if (!showHeaders) return null;
-
-            const multipleSections = visibleSections.length > 1;
-            const isFirstSection = visibleSections[0]?.id === section.id;
-
-            return (
-              <View
-                style={{
-                  marginHorizontal: 12,
-                  marginTop: multipleSections && !isFirstSection ? 8 : 0,
-                }}
-              >
-                <HeadingTwo isDark={isDark}>
-                  {getSectionTitle(section)}
-                </HeadingTwo>
-              </View>
-            );
-          }}
+          sections={regularSections}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          renderSectionHeader={renderHeader}
           contentContainerStyle={styles.contentContainer}
           stickySectionHeadersEnabled={false}
           scrollEnabled={false}
-          ItemSeparatorComponent={() => (
-            <View style={styles.itemSeparatorComponent} />
-          )}
-          renderSectionFooter={() => <View style={{ height: 16 }} />}
+          ItemSeparatorComponent={ItemSeparator}
+          renderSectionFooter={SectionFooter}
         />
       )}
-
-      {modalVisible &&
-        previewGame &&
-        previewLeague &&
-        FOOTBALL_LEAGUES.has(previewLeague) && (
-          <FootballGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as FootballGame}
-            onClose={() => setModalVisible(false)}
-            isNFL={previewLeague === "nfl"}
-            isCFB={previewLeague === "cfb"}
-          />
-        )}
-
-      {modalVisible && previewGame && previewLeague === "mlb" && (
-        <BaseballGamePreviewModal
-          visible={modalVisible}
-          game={previewGame as BaseballGame}
-          onClose={() => setModalVisible(false)}
-          isMLB
-          isCB={false}
-          isSB={false}
-        />
-      )}
-
-      {modalVisible && previewGame && previewLeague === "nhl" && (
-        <NHLGamePreviewModal
-          visible={modalVisible}
-          game={previewGame as HockeyGame}
-          onClose={() => setModalVisible(false)}
-        />
-      )}
-
-      {modalVisible &&
-        previewGame &&
-        previewLeague &&
-        SOCCER_LEAGUES.has(previewLeague) && (
-          <SoccerGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as SoccerGame}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
-
-      {modalVisible &&
-        previewGame &&
-        previewLeague &&
-        BASKETBALL_LEAGUES.has(previewLeague) && (
-          <BasketballGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as BasketballGame}
-            isMCBB={previewLeague === "mcbb"}
-            isWCBB={previewLeague === "wcbb"}
-            isWNBA={previewLeague === "wnba"}
-            isSL={false}
-            isGLEAGUE={false}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
-
-      {modalVisible && previewGame && previewLeague === "ufc" && (
-        <MMAGamePreviewModal
-          visible={modalVisible}
-          game={previewGame as MMAFight}
-          onClose={() => setModalVisible(false)}
-        />
-      )}
-
-      {modalVisible &&
-        previewGame &&
-        (previewLeague === "atp" || previewLeague === "wta") && (
-          <TennisMatchPreviewModal
-            visible={modalVisible}
-            match={previewGame as TennisMatch}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
+      {previewItem && <GamePreview item={previewItem} onClose={closePreview} />}
     </>
   );
+}
+
+function keyExtractor(item: HomeGameItem): string {
+  return String(item.key);
+}
+function ItemSeparator() {
+  return <View style={styles.itemSeparatorComponent} />;
+}
+function SectionFooter() {
+  return <View style={{ height: 16 }} />;
 }

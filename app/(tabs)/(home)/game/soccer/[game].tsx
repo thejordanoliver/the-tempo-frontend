@@ -1,16 +1,13 @@
-import { parseGameParam } from "utils/navigation/gameRouteParams";
-import Odds from "components/Sports/Basketball/GameDetails/Odds";
-import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import {
   FanPrediction,
   GameLiveChatOverlay,
-  Venue,
   GameTeamStats,
   Highlights,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
   Officials,
+  Venue,
 } from "@/components/Sports/Basketball/GameDetails";
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
@@ -29,6 +26,8 @@ import {
 } from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -44,6 +43,7 @@ import {
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games/games";
+import { parseGameParam } from "utils/navigation/gameRouteParams";
 
 type RouteParams = {
   game?: string | string[];
@@ -72,7 +72,6 @@ export default function GameDetailsScreen(
       parseGameParam<SoccerGame>(params.game)
     );
   }, [params.data, params.game, props.game]);
-
 
   const LEAGUE = game?.league?.code ?? "soccer";
   const gameId = game?.id ?? 0;
@@ -439,6 +438,8 @@ export default function GameDetailsScreen(
               awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
               homeGames={homeLastGames}
               awayGames={awayLastGames}
               league={"soccer"}

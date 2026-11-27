@@ -9,7 +9,8 @@ import { mcbbTeams } from "constants/teamsMCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
-import { nhlTeams } from "constants/teamsNHL";
+import { useHockeyTeamDirectory } from "hooks/HockeyHooks/useHockeyTeamDirectory";
+import { getFavoriteTeamRoute } from "utils/favorites/favoriteTeams";
 import { soccerTeams } from "@/constants/teamsSOCC";
 import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
@@ -45,6 +46,13 @@ const getFavoritesStorageKey = (userId: number | string) =>
 
 export function useFavoriteTeams() {
   const volleyball = useVolleyballDirectory();
+  const hockey = useHockeyTeamDirectory();
+  const { refresh: refreshHockeyDirectory } = hockey;
+  const { refresh: refreshVolleyballDirectory } = volleyball;
+  const refreshDirectory = useCallback(async () => {
+    refreshHockeyDirectory();
+    await refreshVolleyballDirectory();
+  }, [refreshHockeyDirectory, refreshVolleyballDirectory]);
   const [search, setSearch] = useState("");
   const [favorites, setFavorites] = useState<FavoriteTeamKey[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
@@ -79,11 +87,11 @@ export function useFavoriteTeams() {
       ...cbTeams,
       ...sbTeams,
       ...mlbTeams,
-      ...nhlTeams,
+      ...hockey.teams,
       ...soccerTeams,
       ...volleyball.teams,
     ],
-    [volleyball.teams],
+    [hockey.teams, volleyball.teams],
   );
 
   const filteredTeams = useMemo(() => {
@@ -500,28 +508,7 @@ export function useFavoriteTeams() {
       return;
     }
 
-    const route =
-      league === "nfl"
-            ? "/team/nfl/[teamId]"
-            : league === "nba"
-              ? "/team/[teamId]"
-              : league === "wnba"
-                ? "/team/wnba/[teamId]"
-                : league === "cfb"
-                  ? "/team/cfb/[teamId]"
-                  : league === "mcbb"
-                    ? "/team/mcbb/[teamId]"
-                    : league === "wcbb"
-                      ? "/team/wcbb/[teamId]"
-                      : league === "mlb"
-                        ? "/team/mlb/[teamId]"
-                        : league === "cb"
-                          ? "/team/cb/[teamId]"
-                          : league === "sb"
-                            ? "/team/sb/[teamId]"
-                            : league === "socc"
-                              ? "/team/soccer/[teamId]"
-                              : "/team/nhl/[teamId]";
+    const route = getFavoriteTeamRoute(league);
 
     router.push({
       pathname: route,
@@ -594,11 +581,11 @@ export function useFavoriteTeams() {
     setFavorites,
 
     userId,
-    isLoading: isLoading || volleyball.loading,
+    isLoading: isLoading || volleyball.loading || hockey.loading,
     teamFavoritesLoading: isLoading,
-    directoryLoading: volleyball.loading,
-    directoryError: volleyball.error,
-    refreshDirectory: volleyball.refresh,
+    directoryLoading: volleyball.loading || hockey.loading,
+    directoryError: volleyball.error ?? hockey.error,
+    refreshDirectory,
     isGridView,
     ready,
 

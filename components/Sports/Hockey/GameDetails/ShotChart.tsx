@@ -3,7 +3,6 @@ import Dropdown from "@/components/Dropdown";
 import type { Play } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import rinkImage from "assets/Placeholders/NHLRinkPlaceholder.png";
 
-import { getNHLTeam, getNHLTeamLogo } from "@/constants/teamsNHL";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -113,12 +112,7 @@ export default function ShotChart({
   const [selectedEventFilter, setSelectedEventFilter] =
     useState<ShotEventFilter>("All Events");
 
-  const homeTeam = getNHLTeam(homeId);
-  const awayTeam = getNHLTeam(awayId);
-
-  const rinkLogo = useMemo(() => {
-    return getNHLTeamLogo(homeId, false);
-  }, [homeId]);
+  const rinkLogo = homeLogo;
 
   const tabs: ShotChartTab[] = ["All", "1st", "2nd", "3rd"];
 
@@ -340,7 +334,7 @@ export default function ShotChart({
         </View>
 
         <View style={styles.legendContainer}>
-          {awayTeam && (
+          {awayLogo && (
             <View style={styles.legendItem}>
               <Image
                 source={awayLogo}
@@ -358,7 +352,7 @@ export default function ShotChart({
             </View>
           )}
 
-          {homeTeam && (
+          {homeLogo && (
             <View style={styles.legendItem}>
               <Text style={styles.legendText}>Make</Text>
               {MadeView({ color: homeColorValue })}

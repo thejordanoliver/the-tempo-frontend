@@ -35,6 +35,8 @@ const LEGACY_SPORT_BY_LEAGUE: Record<string, SearchSport> = {
   cb: "baseball",
   sb: "baseball",
   nhl: "hockey",
+  mch: "hockey",
+  wch: "hockey",
   mcvb: "volleyball",
   wcvb: "volleyball",
   mma: "mma",

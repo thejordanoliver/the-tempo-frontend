@@ -52,6 +52,8 @@ export const LEAGUE_TABS = {
   ],
 
   nhl: ["scores", "news", "standings", "playoffs", "stats", "awards", "forum"],
+  mch: ["scores", "news", "standings", "awards", "forum"],
+  wch: ["scores", "news", "standings", "awards", "forum"],
 
   cfb: ["scores", "news", "standings", "stats", "recruits", "awards", "forum"],
 
@@ -144,6 +146,8 @@ export const TEAM_TABS = {
 
   // Hockey
   nhl: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  mch: ["schedule", "news", "roster", "standings", "forum"],
+  wch: ["schedule", "news", "roster", "standings", "forum"],
 
   // Soccer
   socc: ["schedule", "news", "roster", "forum"],

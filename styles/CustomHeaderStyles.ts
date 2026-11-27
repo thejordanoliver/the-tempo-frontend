@@ -93,11 +93,16 @@ export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
     /* ---------------------------------------------------------------- */
 
     leagueHeaderContainer: {
-      flex: 1,
+      position: "absolute",
+      top: 0,
+      bottom: 0,
       alignItems: "center",
       justifyContent: "center",
-      height: isTablet ? 64 : 56,
       overflow: "hidden",
+    },
+
+    leagueHeaderChevron: {
+      width: 24,
     },
 
     leagueHeaderButton: {

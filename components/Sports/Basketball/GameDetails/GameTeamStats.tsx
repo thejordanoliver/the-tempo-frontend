@@ -417,7 +417,7 @@ function getStatConfig(league?: string, state?: string | null) {
   if (isBaseballLeague(league)) return BASEBALL_STAT_KEYS;
   if (isSoccerLeague(league)) return SOCCER_STAT_KEYS;
   if (isFootballLeague(league)) return FOOTBALL_STAT_KEYS;
-  if (league === "nhl") return HOCKEY_STAT_KEYS;
+  if (["nhl", "mch", "wch"].includes(league ?? "")) return HOCKEY_STAT_KEYS;
   if (state === "pre") {
     // Lead with season comparisons instead of unplayed game totals.
     const seasonKeys = [

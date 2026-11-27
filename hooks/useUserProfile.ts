@@ -7,7 +7,6 @@ import { cfbTeams } from "constants/teamsCFB";
 import { mcbbTeams } from "constants/teamsMCBB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
-import { nhlTeams } from "constants/teamsNHL";
 import { sbTeams } from "constants/teamsSB";
 import { soccerTeams } from "constants/teamsSOCC";
 import { wcbbTeams } from "constants/teamsWCBB";
@@ -273,7 +272,9 @@ export function useUserProfile(
       mlb: createTeamLookup(mlbTeams),
       cb: createTeamLookup(cbTeams),
       sb: createTeamLookup(sbTeams),
-      nhl: createTeamLookup(nhlTeams),
+      nhl: createTeamLookup(allTeams.filter((team) => team.league === "nhl")),
+      mch: createTeamLookup(allTeams.filter((team) => team.league === "mch")),
+      wch: createTeamLookup(allTeams.filter((team) => team.league === "wch")),
       socc: createTeamLookup(soccerTeams),
       mcvb: createTeamLookup(allTeams.filter((team) => team.league === "mcvb")),
       wcvb: createTeamLookup(allTeams.filter((team) => team.league === "wcvb")),

@@ -29,12 +29,14 @@ type TeamDetailConfig = {
   tabLeague: string;
   header: TeamHeaderConfig;
   loading: boolean;
+  useStoredTeamIdentity?: boolean;
 };
 
 export function useTeamDetailScreen({
   tabLeague,
   header,
-  loading,
+  loading: contentLoading,
+  useStoredTeamIdentity = false,
 }: TeamDetailConfig) {
   const navigation = useNavigation();
   const router = useScopedRouter();
@@ -64,6 +66,12 @@ export function useTeamDetailScreen({
     error: teamDetailsError,
     refetch: refreshTeamDetails,
   } = useTeams(detailsLeague, header.teamId);
+  const loading =
+    contentLoading || (useStoredTeamIdentity && teamDetailsLoading);
+  const storedTeam = useStoredTeamIdentity ? teamDetails : null;
+  const teamName = storedTeam?.name ?? header.teamName;
+  const teamColor = storedTeam?.primaryColor ?? header.teamColor;
+  const logo = storedTeam?.logoDark || storedTeam?.logo || header.logo;
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useTeamTabs(tabLeague);
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
@@ -97,8 +105,10 @@ export function useTeamDetailScreen({
     }
   }, []);
 
-  const favoriteLookupId = header.favorite?.lookupId;
-  const favoriteToggleId = header.favorite?.toggleId;
+  const favoriteLookupId =
+    header.favorite?.lookupId ??
+    (storedTeam?.isActive ? storedTeam.id : undefined);
+  const favoriteToggleId = header.favorite?.toggleId ?? favoriteLookupId;
   const notificationTeamId = header.notificationTeamId ?? header.teamId;
   const favoriteLeague = header.favoriteLeague ?? header.league;
   const favorited =
@@ -117,9 +127,9 @@ export function useTeamDetailScreen({
         <CustomHeader
           title={header.title}
           teamId={header.teamId}
-          logo={header.logo}
-          teamName={header.teamName}
-          teamColor={header.teamColor}
+          logo={logo}
+          teamName={teamName}
+          teamColor={teamColor}
           onBack={router.back}
           isTeamScreen
           isFavorite={favorited}
@@ -154,9 +164,9 @@ export function useTeamDetailScreen({
     header.title,
     header.teamId,
     notificationTeamId,
-    header.logo,
-    header.teamName,
-    header.teamColor,
+    logo,
+    teamName,
+    teamColor,
     header.infoEnabled,
     header.notificationsEnabled,
     favoriteLeague,
@@ -177,8 +187,8 @@ export function useTeamDetailScreen({
       enabled: header.infoEnabled,
       league: detailsLeague,
       teamId: header.teamId,
-      teamLogo: header.logo,
-      teamColor: header.teamColor,
+      teamLogo: logo,
+      teamColor,
     },
     isDark,
     tabs,

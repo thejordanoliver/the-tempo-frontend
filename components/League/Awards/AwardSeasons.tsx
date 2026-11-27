@@ -3,10 +3,12 @@ import { Colors } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMCBBTeamLogo } from "constants/teamsMCBB";
+import { getMCHTeamLogo } from "constants/teamsMCH";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getWCHTeamLogo } from "constants/teamsWCH";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useAwardSchools } from "hooks/LeagueHooks/useAwardSchools";
@@ -32,6 +34,8 @@ const LEAGUE_CHAMPIONS_TITLE: Partial<Record<string, string>> = {
   nfl: "Super Bowl Champions",
   mlb: "World Series Champions",
   nhl: "Stanley Cup Champions",
+  mch: "Men's College Hockey National Champions",
+  wch: "Women's College Hockey National Champions",
 };
 
 type Props = {
@@ -52,7 +56,9 @@ export default function AwardSeasons({ league }: Props) {
   const selectedAward =
     awards.find(({ value }) => value === selectedAwardValue)?.value ??
     awards[0]?.value;
-  const [viewMode, setViewMode] = useState<ViewMode>("players");
+  const championshipsOnly = league === "mch" || league === "wch";
+  const [selectedViewMode, setViewMode] = useState<ViewMode>("players");
+  const viewMode = championshipsOnly ? "champions" : selectedViewMode;
 
   const VIEW_MODE_OPTIONS = [
     { label: "Players", value: "players" },
@@ -80,6 +86,7 @@ export default function AwardSeasons({ league }: Props) {
 
   const { data, loading, error, refetch } = useAwardSeasons({
     league,
+    enabled: !championshipsOnly,
   });
   const showAwardTopThree =
     (league === "cfb" || league === "mcbb" || league === "wcbb") &&
@@ -119,6 +126,7 @@ export default function AwardSeasons({ league }: Props) {
 
   const showChampionTopThree = viewMode === "champions";
   const supportsChampionTeams =
+    championshipsOnly ||
     league === "nhl" ||
     league === "mlb" ||
     league === "cfb" ||
@@ -168,26 +176,28 @@ export default function AwardSeasons({ league }: Props) {
         styles.contentContainerStyle,
       )}
     >
-      <View style={styles.dropdownRow}>
-        {viewMode !== "champions" && awards.length > 0 && (
-          <Dropdown
-            options={awards.map(({ label, value }) => ({ label, value }))}
-            selectedValue={selectedAward}
-            onSelect={(val) =>
-              setSelectedAward(val as Exclude<AwardCategory, "all">)
-            }
-            isDark={isDark}
-          />
-        )}
+      {!championshipsOnly && (
+        <View style={styles.dropdownRow}>
+          {viewMode !== "champions" && awards.length > 0 && (
+            <Dropdown
+              options={awards.map(({ label, value }) => ({ label, value }))}
+              selectedValue={selectedAward}
+              onSelect={(val) =>
+                setSelectedAward(val as Exclude<AwardCategory, "all">)
+              }
+              isDark={isDark}
+            />
+          )}
 
-        <Dropdown
-          options={VIEW_MODE_OPTIONS}
-          selectedValue={viewMode}
-          onSelect={(val) => setViewMode(val as ViewMode)}
-          isDark={isDark}
-          width={160}
-        />
-      </View>
+          <Dropdown
+            options={VIEW_MODE_OPTIONS}
+            selectedValue={viewMode}
+            onSelect={(val) => setViewMode(val as ViewMode)}
+            isDark={isDark}
+            width={160}
+          />
+        </View>
+      )}
 
       {/* ------------------------------------------------ */}
       {/* Champion Top 3                                   */}
@@ -199,21 +209,25 @@ export default function AwardSeasons({ league }: Props) {
             team: t.team,
             value: t.totalChampionships,
             logo:
-              league === "nba"
-                ? getNBATeamLogo(t.team.id, isDark)
-                : league === "wnba"
-                  ? getWNBATeamLogo(t.team.id, isDark)
-                  : league === "cfb"
-                    ? getCFBTeamLogo(t.team.id, isDark)
-                    : league === "mcbb"
-                      ? getMCBBTeamLogo(t.team.id, isDark)
-                      : league === "wcbb"
-                        ? getWCBBTeamLogo(t.team.id, isDark)
-                        : league === "mlb"
-                          ? getMLBTeamLogo(t.team.id, isDark)
-                          : league === "nhl"
-                            ? getNHLTeamLogo(t.team.id, isDark)
-                            : getNFLTeamLogo(t.team.id, isDark),
+              league === "mch"
+                ? getMCHTeamLogo(t.team.id, isDark)
+                : league === "wch"
+                  ? getWCHTeamLogo(t.team.id, isDark)
+                  : league === "nba"
+                    ? getNBATeamLogo(t.team.id, isDark)
+                    : league === "wnba"
+                      ? getWNBATeamLogo(t.team.id, isDark)
+                      : league === "cfb"
+                        ? getCFBTeamLogo(t.team.id, isDark)
+                        : league === "mcbb"
+                          ? getMCBBTeamLogo(t.team.id, isDark)
+                          : league === "wcbb"
+                            ? getWCBBTeamLogo(t.team.id, isDark)
+                            : league === "mlb"
+                              ? getMLBTeamLogo(t.team.id, isDark)
+                              : league === "nhl"
+                                ? getNHLTeamLogo(t.team.id, isDark)
+                                : getNFLTeamLogo(t.team.id, isDark),
           }))}
         />
       )}

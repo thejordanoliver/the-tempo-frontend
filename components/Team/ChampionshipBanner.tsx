@@ -105,7 +105,7 @@ export default function ChampionshipBanner({
         if (league === "wnba") {
           label = "WNBA CHAMPIONS";
         }
-        if (["cb", "sb", "mcbb", "wcbb"].includes(league)) {
+        if (["cb", "sb", "mcbb", "wcbb", "mch", "wch"].includes(league)) {
           label = "NATIONAL CHAMPIONS";
         }
 

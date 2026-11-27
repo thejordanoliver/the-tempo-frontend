@@ -223,6 +223,8 @@ export default function GamePreviewContent({
           awayId={awayId}
           homeCode={homeCode}
           awayCode={awayCode}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
           homeGames={homeLastGames}
           awayGames={awayLastGames}
           league={league}

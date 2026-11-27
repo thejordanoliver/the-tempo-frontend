@@ -1,8 +1,3 @@
-import {
-  getFirstParam,
-  parseGameParam,
-} from "utils/navigation/gameRouteParams";
-import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
@@ -21,7 +16,7 @@ import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
 import HockeyPlayByPlay from "@/components/Sports/Hockey/GameDetails/PlayByPlay/HockeyPlayByPlay";
 import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
-import { Colors } from "@/constants/styles";
+import { Colors, globalStyles } from "@/constants/styles";
 import { useLiveVotes } from "@/hooks/FanPredictionHooks/useLiveVotes";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
@@ -35,23 +30,28 @@ import {
 } from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { usePreferences } from "contexts/PreferencesContext";
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { useNotifications } from "contexts/NotificationContext";
-import { isGameFinalStatus } from "utils/games/gameStatus";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { resolveImage } from "utils/customheader/utils";
 import {
   formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games/games";
+import { isGameFinalStatus } from "utils/games/gameStatus";
+import {
+  getFirstParam,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
 
 type RouteParams = {
   game?: string | string[];
@@ -82,11 +82,22 @@ export default function GameDetailsScreen(
     );
   }, [params.data, params.game, props.game]);
 
-  const LEAGUE = routeGame?.league?.code ?? "nhl";
+  const routeLeague =
+    getFirstParam(params.league) ?? getFirstParam(params.leagueId);
+  const LEAGUE =
+    routeGame?.league?.code ??
+    (routeLeague === "91" || routeLeague === "mch"
+      ? "mch"
+      : routeLeague === "92" || routeLeague === "wch"
+        ? "wch"
+        : "nhl");
   const parsedGameId = Number(routeGame?.id ?? getFirstParam(params.game));
   const gameId =
     Number.isFinite(parsedGameId) && parsedGameId > 0 ? parsedGameId : 0;
-  const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
+  const { details, score, warning, refresh } = useHockeyGameDetails(
+    LEAGUE,
+    gameId,
+  );
   const game = useMemo(() => {
     if (routeGame) return routeGame;
     if (!score) return undefined;
@@ -112,30 +123,22 @@ export default function GameDetailsScreen(
 
   const homeId = home?.id ?? 0;
   const awayId = away?.id ?? 0;
-  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
-  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
-
-  const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
-      ? emptyHomeTeam.logo
-      : getNHLTeamLogo(homeId, isDark);
-  const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
-      ? emptyAwayTeam.logo
-      : getNHLTeamLogo(awayId, isDark);
+  const homeTeam = score?.home ?? home;
+  const awayTeam = score?.away ?? away;
   const homeHeaderLogo =
-    homeTeam.id === emptyHomeTeam.id
-      ? emptyHomeTeam.logo
-      : getNHLTeamLogo(homeId, true);
+    resolveImage(homeTeam?.logoDark || homeTeam?.logo) ?? emptyHomeTeam.logo;
   const awayHeaderLogo =
-    awayTeam.id === emptyAwayTeam.id
-      ? emptyAwayTeam.logo
-      : getNHLTeamLogo(awayId, true);
-  const awayCode = awayTeam.code ?? "";
-  const homeCode = homeTeam.code ?? "";
-
-  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
-  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
+    resolveImage(awayTeam?.logoDark || awayTeam?.logo) ?? emptyAwayTeam.logo;
+  const homeLogo = isDark
+    ? homeHeaderLogo
+    : (resolveImage(homeTeam?.logo) ?? emptyHomeTeam.logo);
+  const awayLogo = isDark
+    ? awayHeaderLogo
+    : (resolveImage(awayTeam?.logo) ?? emptyAwayTeam.logo);
+  const awayCode = awayTeam?.code ?? "";
+  const homeCode = homeTeam?.code ?? "";
+  const awayColor = awayTeam?.primaryColor ?? Colors.midTone;
+  const homeColor = homeTeam?.primaryColor ?? Colors.midTone;
 
   const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
@@ -290,6 +293,18 @@ export default function GameDetailsScreen(
     openGameNotificationSettings,
   ]);
 
+  if (isLoading && warning) {
+    const global = globalStyles(isDark);
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Couldn’t load game details</Text>
+        <Text accessibilityRole="button" style={global.text} onPress={refresh}>
+          Try again
+        </Text>
+      </View>
+    );
+  }
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -310,8 +325,8 @@ export default function GameDetailsScreen(
         onMomentumScrollEnd={handleScrollEnd}
       >
         <GameHeader
-          isHomeActive={homeTeam.isActive}
-          isAwayActive={awayTeam.isActive}
+          isHomeActive={homeTeamDetails?.isActive ?? false}
+          isAwayActive={awayTeamDetails?.isActive ?? false}
           // Game details
           headline={headline}
           league={LEAGUE}
@@ -322,6 +337,7 @@ export default function GameDetailsScreen(
           // Away team
           awayId={awayId}
           awayName={awayCode}
+          awayRank={score.away.rank ?? undefined}
           awayLogo={awayLogo}
           awayScore={awayScore}
           awayRecord={awayRecord}
@@ -330,6 +346,7 @@ export default function GameDetailsScreen(
           // Home team
           homeId={homeId}
           homeName={homeCode}
+          homeRank={score.home.rank ?? undefined}
           homeLogo={homeLogo}
           homeScore={homeScore}
           homeRecord={homeRecord}
@@ -448,6 +465,7 @@ export default function GameDetailsScreen(
             />
 
             <GameSummary
+              league={LEAGUE}
               plays={plays}
               isDark={isDark}
               homeId={homeId}
@@ -461,6 +479,8 @@ export default function GameDetailsScreen(
               awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
               homeGames={homeLastGames}
               awayGames={awayLastGames}
               league={LEAGUE}

@@ -62,8 +62,9 @@ export function useRankings(league: League) {
       controller.current = abort;
       const isCurrent = () =>
         generation.current === requestId && !abort.signal.aborted;
-      const cacheKey = `college_basketball_rankings_cache_${league}_v3`;
-      const lastRefreshKey = `college_basketball_rankings_last_refresh_${league}_v3`;
+      const cacheVersion = league === "mch" || league === "wch" ? "v4" : "v3";
+      const cacheKey = `college_basketball_rankings_cache_${league}_${cacheVersion}`;
+      const lastRefreshKey = `college_basketball_rankings_last_refresh_${league}_${cacheVersion}`;
       const useCache = league !== "cfb";
 
       setState((previous) => ({

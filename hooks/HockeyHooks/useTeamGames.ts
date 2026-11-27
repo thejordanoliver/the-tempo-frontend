@@ -14,7 +14,7 @@ import {
   isScheduleOpeningMonth,
 } from "utils/teams/teamSchedule";
 
-export type TeamScheduleLeague = "nhl" | "mch";
+export type TeamScheduleLeague = "nhl" | "mch" | "wch";
 
 export type ScheduleMonth = ScheduleMonthGroup<HockeyGame>;
 

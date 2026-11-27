@@ -24,6 +24,8 @@ export type FavoriteTeamRoute =
   | "/team/sb/[teamId]"
   | "/league/volleyball"
   | "/team/nhl/[teamId]"
+  | "/team/mch/[teamId]"
+  | "/team/wch/[teamId]"
   | "/team/soccer/[teamId]";
 
 export type FavoriteBaseTeam = {
@@ -145,6 +147,10 @@ export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
 
     case "nhl":
       return "/team/nhl/[teamId]";
+    case "mch":
+      return "/team/mch/[teamId]";
+    case "wch":
+      return "/team/wch/[teamId]";
 
     case "socc":
       return "/team/soccer/[teamId]";
@@ -162,6 +168,8 @@ export function isCollegeFavoriteLeague(league: string): boolean {
     league === "cb" ||
     league === "sb" ||
     league === "mcvb" ||
-    league === "wcvb"
+    league === "wcvb" ||
+    league === "mch" ||
+    league === "wch"
   );
 }

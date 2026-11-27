@@ -1,37 +1,26 @@
 import type { ScoreboardOdds } from "types/odds";
-export interface NHLTeam {
+
+type Team = {
   id: number;
+  uid: string;
   name: string;
+  shortName: string;
   fullName: string;
   code: string;
-  color: string;
-  secondaryColor: string;
-  logo: any;
-  logoLight?: any;
-  location?: string;
-  established?: number;
-  latitude?: number;
-  longitude?: number;
-  venueImage?: string;
-  venueName?: string;
-  venueCapacity?: string;
-  address?: string;
-  city?: string;
-  championships?: number[];
-  isAllStar: boolean;
-  isActive: boolean;
-  national: boolean;
-}
+  location: string;
+  logo: string;
+  logoDark: string;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  record: string;
+  rank: number;
+  score: number;
+  winner: boolean | null;
+};
 
 export type HockeyGame = {
   odds?: ScoreboardOdds | null;
-  league: {
-    id: number;
-    uid: string;
-    code: string;
-    name: string;
-    slug: string;
-  };
+  league: { id: number; uid: string; code: string; name: string; slug: string };
   id: number;
   uid: string;
   name: string;
@@ -40,11 +29,7 @@ export type HockeyGame = {
   date: string;
   startDate: string;
   timestamp: number;
-  season: {
-    year: number;
-    type: number;
-    slug: string;
-  };
+  season: { year: number; type: number; slug: string };
   status: {
     state: string;
     description: string;
@@ -63,65 +48,20 @@ export type HockeyGame = {
   };
   broadcasts: string[];
   geoBroadcasts: unknown[];
-  innings: number;
-  home: {
-    id: number;
-    name: string;
-    fullName: string;
-    shortName: string | null;
-    code: string;
-    primaryColor: string;
-    secondaryColor: string;
-    score: number;
-    hits: number;
-    errors: number;
-    record: string;
-    homeRank: number;
-    winner: boolean;
-  };
-  away: {
-    id: number;
-    name: string;
-    shortName: string | null;
-    fullName: string;
-    code: string;
-    primaryColor: string;
-    secondaryColor: string;
-    score: number;
-    hits: number;
-    errors: number;
-    record: string;
-    awayRank: number;
-    winner: boolean;
-  };
+  home: Team;
+  away: Team;
   isConferenceGame: boolean;
   isNeutralSite: boolean;
   attendance: number;
   playByPlayAvailable: boolean;
   recent: true;
   wasSuspended: boolean;
-  raw: {
-    eventId: string;
-    competitionId: string;
-  };
+  raw: { eventId: string; competitionId: string };
 };
 
 export type HockeyGameCardProps = {
   game: HockeyGame;
+  isNHL?: boolean;
+  isMCH?: boolean;
+  isWCH?: boolean;
 };
-
-export interface NHLPlayer {
-  id: string;
-  name: string;
-  shortName: string;
-  firstName: string;
-  lastName: string;
-  jersey: string | null;
-  position: string;
-  height: string;
-  weight: string;
-  age: number;
-  team: string;
-  teamId: string;
-  imageUrl: string;
-}

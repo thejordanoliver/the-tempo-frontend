@@ -1,7 +1,7 @@
 import Dropdown from "@/components/Dropdown";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
-import type { CollegeTeamRank } from "@/types/rankings";
+import type { CollegePollType, CollegeTeamRank, League } from "@/types/rankings";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -22,16 +22,13 @@ import {
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 import { getDefaultCollegePollType } from "utils/standings/collegeRankings";
 
-type PollMode = "ap" | "coaches" | "cfp" | "fcs";
-type League = "cfb" | "mcbb" | "wcbb";
-
 type Props = {
   league: League;
 };
 
 const POLL_OPTIONS: {
   label: string;
-  value: PollMode;
+  value: CollegePollType;
   league?: League;
 }[] = [
   { label: "AP Poll", value: "ap" },
@@ -40,11 +37,12 @@ const POLL_OPTIONS: {
   { label: "FCS Coaches Poll", value: "fcs", league: "cfb" },
 ];
 
-const POLL_TITLES: Record<PollMode, string> = {
+const POLL_TITLES: Record<CollegePollType, string> = {
   ap: "AP Poll",
   coaches: "Coaches Poll",
   cfp: "CFP Rankings",
   fcs: "FCS Coaches Poll",
+  uscho: "USCHO Poll",
 };
 
 export default function Rankings({ league }: Props) {
@@ -59,13 +57,15 @@ export default function Rankings({ league }: Props) {
   const styles = StandingsStyles(isDark);
   const router = useScopedRouter();
 
-  const [selectedPollMode, setPollMode] = useState<PollMode | null>(null);
+  const [selectedPollMode, setPollMode] = useState<CollegePollType | null>(null);
+  const isHockey = league === "mch" || league === "wch";
 
-  const pollMode =
-    selectedPollMode &&
-    (league === "cfb" ||
-      selectedPollMode === "ap" ||
-      selectedPollMode === "coaches")
+  const pollMode = isHockey
+    ? "uscho"
+    : selectedPollMode &&
+        (league === "cfb" ||
+          selectedPollMode === "ap" ||
+          selectedPollMode === "coaches")
       ? selectedPollMode
       : getDefaultCollegePollType(rankings);
 
@@ -386,14 +386,16 @@ export default function Rankings({ league }: Props) {
         <RefreshControl refreshing={refreshing} onRefresh={refresh} />
       }
     >
-      <View style={styles.dropdownRow}>
-        <Dropdown
-          options={pollOptions}
-          selectedValue={pollMode}
-          onSelect={(value) => setPollMode(value as PollMode)}
-          isDark={isDark}
-        />
-      </View>
+      {!isHockey && (
+        <View style={styles.dropdownRow}>
+          <Dropdown
+            options={pollOptions}
+            selectedValue={pollMode}
+            onSelect={(value) => setPollMode(value as CollegePollType)}
+            isDark={isDark}
+          />
+        </View>
+      )}
 
       {Section({ title: pollTitle, data: filteredRankings })}
 

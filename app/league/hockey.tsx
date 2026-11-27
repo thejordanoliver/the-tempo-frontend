@@ -1,16 +1,19 @@
-import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
+import { useHockeyGames } from "@/hooks/HockeyHooks/useHockeyGames";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
-import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
-import { useHockeyGames } from "@/hooks/HockeyHooks/useHockeyGames";
+import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
+import PagerView from "components/PagerView";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import ConferenceListModal from "components/League/ConferenceListModal";
+import { CollegeConferenceStandings } from "components/League/Standings/CollegeConferenceStandings";
+import { useCollegeConferenceSelector } from "hooks/LeagueHooks/useCollegeConferenceSelector";
+import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useScoreboardCalendar } from "hooks/LeagueHooks/useScoreboardCalendar";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
-import PagerView from "components/PagerView";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Shared                                   */
@@ -53,10 +56,16 @@ export default function HockeyLeagueScreen() {
     leagueLabel?: string;
   }>();
 
-  const league = params.league;
+  const league = Array.isArray(params.league)
+    ? params.league[0]
+    : params.league;
   const isNHL = league === "nhl";
+  const isMCH = league === "mch";
+  const isWCH = league === "wch";
 
   if (isNHL) return <NHLLeagueScreen />;
+  if (isMCH) return <MCHLeagueScreen />;
+  if (isWCH) return <WCHLeagueScreen />;
 
   return <NHLLeagueScreen />;
 }
@@ -332,6 +341,536 @@ function NHLLeagueScreen() {
           {pagerPages}
         </PagerView>
       </View>
+
+      <CalendarModal
+        visible={showCalendarModal}
+        selectedDate={dayjs(selectedDate).format("YYYY-MM-DD")}
+        onClose={() => setShowCalendarModal(false)}
+        onSelectDate={(dateString) => {
+          const nextDate = dayjs(dateString, "YYYY-MM-DD")
+            .startOf("day")
+            .toDate();
+
+          setSelectedDate(nextDate);
+          setShowCalendarModal(false);
+        }}
+        markedDates={markedDates}
+      />
+    </>
+  );
+}
+
+/* ========================================================================== */
+/*                                    NHL                                     */
+/* ========================================================================== */
+
+function MCHLeagueScreen() {
+  const league = "mch";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = LeagueScreenStyles(isDark);
+
+  const navigation = useNavigation();
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [gamesRefreshing, setGamesRefreshing] = useState(false);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(
+    league,
+    "raw",
+    undefined,
+    scoreboardCalendar,
+  );
+  const [selectedDate, setSelectedDate] = useState<Date>(
+    dayjs().startOf("day").toDate(),
+  );
+  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
+    useLeagueTabs(league);
+  const { conferenceGroupId, conferenceHeaderProps, conferenceModalProps } =
+    useCollegeConferenceSelector(league, selectedTab === "standings");
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
+
+  const markedDates = useMemo(() => {
+    return (calendar ?? []).reduce(
+      (dates, calendarDate) => {
+        if (typeof calendarDate !== "string") {
+          return dates;
+        }
+
+        const dateKey =
+          getLeagueCalendarDateKey(calendarDate) ??
+          dayjs(calendarDate).format("YYYY-MM-DD");
+
+        if (!dateKey) {
+          return dates;
+        }
+
+        dates[dateKey] = {
+          marked: true,
+          dotColor: isDark ? Colors.white : Colors.black,
+        };
+
+        return dates;
+      },
+      {} as Record<
+        string,
+        {
+          marked: boolean;
+          dotColor: string;
+        }
+      >,
+    );
+  }, [calendar, isDark]);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                   Games                                  */
+  /* ------------------------------------------------------------------------ */
+
+  const {
+    games,
+    error: gamesError,
+    refreshGames,
+    loading: loadingGames,
+  } = useHockeyGames(selectedDate, league, onScoreboardCalendar);
+
+  const {
+    articles,
+    loading: newsLoading,
+    refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
+    error: newsError,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
+
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
+  useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
+    navigation.setOptions({
+      header: () => (
+        <CustomHeader
+          tabName={"Men's College Hockey"}
+          league={league}
+          onBack={navigation.goBack}
+          {...conferenceHeaderProps}
+          {...favoriteHeaderProps}
+        />
+      ),
+    });
+  }, [
+    conferenceHeaderProps,
+    entryLoading,
+    favoriteHeaderProps,
+    navigation,
+    league,
+  ]);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                 Handlers                                 */
+  /* ------------------------------------------------------------------------ */
+
+  const handleScoresRefresh = useCallback(async () => {
+    setGamesRefreshing(true);
+
+    try {
+      await refreshGames();
+    } catch (error) {
+      console.warn("Failed to refresh MCH games:", error);
+    } finally {
+      setGamesRefreshing(false);
+    }
+  }, [refreshGames]);
+
+  const changeDateByDays = useCallback((days: number) => {
+    setSelectedDate((previousDate) =>
+      dayjs(previousDate).add(days, "day").startOf("day").toDate(),
+    );
+  }, []);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  Pages                                   */
+  /* ------------------------------------------------------------------------ */
+
+  const scoresPage = (
+    <View key="scores" style={styles.contentArea}>
+      <DateNavigator
+        selectedDate={selectedDate}
+        onChangeDate={changeDateByDays}
+        onOpenCalendar={() => setShowCalendarModal(true)}
+        isDark={isDark}
+      />
+
+      <GamesList
+        games={games}
+        error={gamesError}
+        loading={loadingGames}
+        refreshing={gamesRefreshing}
+        onRefresh={handleScoresRefresh}
+        scrollEnabled={true}
+        showHeaders={false}
+      />
+    </View>
+  );
+
+  const newsPage = (
+    <View key="news" style={styles.contentArea}>
+      {hasVisitedTab("news") ? (
+        <NewsList
+          items={articles}
+          loading={newsLoading}
+          error={newsError}
+          refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
+          onRefresh={refreshNews}
+          isDark={isDark}
+        />
+      ) : null}
+    </View>
+  );
+
+  const standingsPage = (
+    <View key="standings" style={styles.contentArea}>
+      {hasVisitedTab("standings") ? (
+        <CollegeConferenceStandings
+          league={league}
+          groupId={conferenceGroupId}
+        />
+      ) : null}
+    </View>
+  );
+
+  const awardsPage = (
+    <View key="awards" style={styles.contentArea}>
+      {hasVisitedTab("awards") ? <AwardSeasons league={league} /> : null}
+    </View>
+  );
+
+  const forumPage = (
+    <View key="forum" style={styles.contentArea}>
+      {hasVisitedTab("forum") ? <ForumFeed league={league} /> : null}
+    </View>
+  );
+
+  const pagerPages = [
+    scoresPage,
+    newsPage,
+    standingsPage,
+    awardsPage,
+    forumPage,
+  ];
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  Render                                  */
+  /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
+
+  return (
+    <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
+        isDark={isDark}
+        scrollProgress={scrollProgress}
+      />
+
+      <View style={styles.container}>
+        <PagerView
+          key={league}
+          ref={pagerRef}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
+        >
+          {pagerPages}
+        </PagerView>
+      </View>
+
+      <ConferenceListModal {...conferenceModalProps} />
+
+      <CalendarModal
+        visible={showCalendarModal}
+        selectedDate={dayjs(selectedDate).format("YYYY-MM-DD")}
+        onClose={() => setShowCalendarModal(false)}
+        onSelectDate={(dateString) => {
+          const nextDate = dayjs(dateString, "YYYY-MM-DD")
+            .startOf("day")
+            .toDate();
+
+          setSelectedDate(nextDate);
+          setShowCalendarModal(false);
+        }}
+        markedDates={markedDates}
+      />
+    </>
+  );
+}
+
+function WCHLeagueScreen() {
+  const league = "wch";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = LeagueScreenStyles(isDark);
+
+  const navigation = useNavigation();
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [gamesRefreshing, setGamesRefreshing] = useState(false);
+  const { scoreboardCalendar, onScoreboardCalendar } =
+    useScoreboardCalendar(league);
+  const { calendar } = useLeagueCalendar(
+    league,
+    "raw",
+    undefined,
+    scoreboardCalendar,
+  );
+  const [selectedDate, setSelectedDate] = useState<Date>(
+    dayjs().startOf("day").toDate(),
+  );
+  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
+    useLeagueTabs(league);
+  const { conferenceGroupId, conferenceHeaderProps, conferenceModalProps } =
+    useCollegeConferenceSelector(league, selectedTab === "standings");
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
+
+  const markedDates = useMemo(() => {
+    return (calendar ?? []).reduce(
+      (dates, calendarDate) => {
+        if (typeof calendarDate !== "string") {
+          return dates;
+        }
+
+        const dateKey =
+          getLeagueCalendarDateKey(calendarDate) ??
+          dayjs(calendarDate).format("YYYY-MM-DD");
+
+        if (!dateKey) {
+          return dates;
+        }
+
+        dates[dateKey] = {
+          marked: true,
+          dotColor: isDark ? Colors.white : Colors.black,
+        };
+
+        return dates;
+      },
+      {} as Record<
+        string,
+        {
+          marked: boolean;
+          dotColor: string;
+        }
+      >,
+    );
+  }, [calendar, isDark]);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                   Games                                  */
+  /* ------------------------------------------------------------------------ */
+
+  const {
+    games,
+    error: gamesError,
+    refreshGames,
+    loading: loadingGames,
+  } = useHockeyGames(selectedDate, league, onScoreboardCalendar);
+
+  const {
+    articles,
+    loading: newsLoading,
+    refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
+    error: newsError,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
+
+  const entryLoading = useLeagueEntryLoading(loadingGames, league);
+
+  useLayoutEffect(() => {
+    if (entryLoading) {
+      navigation.setOptions({ header: () => <GameHeaderPlaceholder /> });
+      return;
+    }
+
+    navigation.setOptions({
+      header: () => (
+        <CustomHeader
+          tabName={"Women's College Hockey"}
+          league={league}
+          onBack={navigation.goBack}
+          {...conferenceHeaderProps}
+          {...favoriteHeaderProps}
+        />
+      ),
+    });
+  }, [
+    conferenceHeaderProps,
+    entryLoading,
+    favoriteHeaderProps,
+    navigation,
+    league,
+  ]);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                 Handlers                                 */
+  /* ------------------------------------------------------------------------ */
+
+  const handleScoresRefresh = useCallback(async () => {
+    setGamesRefreshing(true);
+
+    try {
+      await refreshGames();
+    } catch (error) {
+      console.warn("Failed to refresh WCH games:", error);
+    } finally {
+      setGamesRefreshing(false);
+    }
+  }, [refreshGames]);
+
+  const changeDateByDays = useCallback((days: number) => {
+    setSelectedDate((previousDate) =>
+      dayjs(previousDate).add(days, "day").startOf("day").toDate(),
+    );
+  }, []);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  Pages                                   */
+  /* ------------------------------------------------------------------------ */
+
+  const scoresPage = (
+    <View key="scores" style={styles.contentArea}>
+      <DateNavigator
+        selectedDate={selectedDate}
+        onChangeDate={changeDateByDays}
+        onOpenCalendar={() => setShowCalendarModal(true)}
+        isDark={isDark}
+      />
+
+      <GamesList
+        games={games}
+        error={gamesError}
+        loading={loadingGames}
+        refreshing={gamesRefreshing}
+        onRefresh={handleScoresRefresh}
+        scrollEnabled={true}
+        showHeaders={false}
+      />
+    </View>
+  );
+
+  const newsPage = (
+    <View key="news" style={styles.contentArea}>
+      {hasVisitedTab("news") ? (
+        <NewsList
+          items={articles}
+          loading={newsLoading}
+          error={newsError}
+          refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
+          onRefresh={refreshNews}
+          isDark={isDark}
+        />
+      ) : null}
+    </View>
+  );
+
+  const standingsPage = (
+    <View key="standings" style={styles.contentArea}>
+      {hasVisitedTab("standings") ? (
+        <CollegeConferenceStandings
+          league={league}
+          groupId={conferenceGroupId}
+        />
+      ) : null}
+    </View>
+  );
+
+  const awardsPage = (
+    <View key="awards" style={styles.contentArea}>
+      {hasVisitedTab("awards") ? <AwardSeasons league={league} /> : null}
+    </View>
+  );
+
+  const forumPage = (
+    <View key="forum" style={styles.contentArea}>
+      {hasVisitedTab("forum") ? <ForumFeed league={league} /> : null}
+    </View>
+  );
+
+  const pagerPages = [
+    scoresPage,
+    newsPage,
+    standingsPage,
+    awardsPage,
+    forumPage,
+  ];
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  Render                                  */
+  /* ------------------------------------------------------------------------ */
+
+  if (entryLoading) return <LeagueLoadingScreen isDark={isDark} />;
+
+  return (
+    <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
+        isDark={isDark}
+        scrollProgress={scrollProgress}
+      />
+
+      <View style={styles.container}>
+        <PagerView
+          key={league}
+          ref={pagerRef}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
+        >
+          {pagerPages}
+        </PagerView>
+      </View>
+
+      <ConferenceListModal {...conferenceModalProps} />
 
       <CalendarModal
         visible={showCalendarModal}

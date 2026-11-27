@@ -570,6 +570,8 @@ export default function GameDetailsScreen(
               awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
               homeGames={homeLastGames}
               awayGames={awayLastGames}
               league={LEAGUE}

@@ -263,6 +263,8 @@ const teamRoutes = [
     "mlb",
     "nfl",
     "nhl",
+    "mch",
+    "wch",
     "sb",
     "soccer",
     "ufl",
@@ -273,7 +275,9 @@ const teamRoutes = [
 
 for (const route of teamRoutes) {
   test(`${route} uses its primary schedule request to control entry loading`, () => {
-    const file = `app/(tabs)/(home)/team/${route}`;
+    const file = /^(nhl|mch|wch)\//.test(route)
+      ? "components/Sports/Hockey/HockeyTeamScreen.tsx"
+      : `app/(tabs)/(home)/team/${route}`;
     const source = ts.createSourceFile(
       file,
       fs.readFileSync(file, "utf8"),
@@ -326,7 +330,7 @@ for (const route of teamRoutes) {
     for (const [team, loading, expected] of [
       [{ id: 1 }, true, true],
       [{ id: 1 }, false, false],
-      [undefined, true, false],
+      [undefined, true, file.includes("HockeyTeamScreen")],
     ]) {
       let requests = 0;
       const context = vm.createContext({

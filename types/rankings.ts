@@ -1,7 +1,7 @@
 import type { StandingsTeamInfo } from "types/standings";
 
-export type League = "mcbb" | "wcbb" | "cfb";
-export type CollegePollType = "ap" | "coaches" | "cfp" | "fcs";
+export type League = "cfb" | "mcbb" | "wcbb" | "cb" | "sb" | "mch" | "wch";
+export type CollegePollType = "ap" | "coaches" | "cfp" | "fcs" | "uscho";
 
 export type CollegeRankingTeam = StandingsTeamInfo & {
   groups?: {

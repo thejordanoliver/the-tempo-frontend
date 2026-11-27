@@ -1,18 +1,18 @@
 import {
-  Venue,
   GameTeamStats,
   HeadCoaches,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
   Officials,
+  Venue,
 } from "@/components/Sports/Basketball/GameDetails";
 import {
   PlayerStatsByTeam,
   TeamStat,
 } from "@/hooks/BaseballHooks/useBaseballGameDetails";
-import type { Coach } from "@/types/team";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import type { Coach } from "@/types/team";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
@@ -200,6 +200,8 @@ export default function GamePreviewContent({
           awayId={awayId}
           homeCode={homeCode}
           awayCode={awayCode}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
           homeGames={homeLastGames}
           awayGames={awayLastGames}
           league={league}

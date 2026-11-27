@@ -22,7 +22,7 @@ import {
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
-  league: "cfb" | "mcbb" | "wcbb";
+  league: "cfb" | "mcbb" | "wcbb" | "cb" | "sb" | "mch" | "wch";
   selectedConference?: string | number;
   conferences: StandingConference[];
   loading: boolean;
@@ -89,9 +89,10 @@ export const ConferenceStandingsList = ({
 
     const handleTeamPress = () => {
       if (!teamId) return;
-      if (league === "cfb") return router.push(`/team/cfb/${teamId}`);
-      if (league === "mcbb") return router.push(`/team/mcbb/${teamId}`);
-      if (league === "wcbb") return router.push(`/team/wcbb/${teamId}`);
+      router.push({
+        pathname: `/team/${league}/[teamId]`,
+        params: { teamId: String(teamId) },
+      });
     };
 
     return (

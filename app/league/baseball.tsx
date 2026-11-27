@@ -1,6 +1,9 @@
 import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
+import ConferenceListModal from "components/League/ConferenceListModal";
+import { CollegeConferenceStandings } from "components/League/Standings/CollegeConferenceStandings";
+import { useCollegeConferenceSelector } from "hooks/LeagueHooks/useCollegeConferenceSelector";
 import { useLeagueEntryLoading } from "hooks/LeagueHooks/useLeagueEntryLoading";
 import { useBaseballGames } from "@/hooks/BaseballHooks/useBaseballGames";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
@@ -33,7 +36,6 @@ import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
 import TransactionList from "@/components/League/Transactions/TransactionList";
-import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { getMLBSeason, getMLBStandingsSeason } from "@/utils/common/dateUtils";
 import SeasonLeadersList from "../../components/League/SeasonLeaders/SeasonLeaderList";
@@ -419,6 +421,8 @@ function CBLeagueScreen() {
   );
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
+  const { conferenceGroupId, conferenceHeaderProps, conferenceModalProps } =
+    useCollegeConferenceSelector(league, selectedTab === "standings");
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
@@ -502,11 +506,18 @@ function CBLeagueScreen() {
           tabName="College Baseball"
           league={league}
           onBack={navigation.goBack}
+          {...conferenceHeaderProps}
           {...favoriteHeaderProps}
         />
       ),
     });
-  }, [entryLoading, favoriteHeaderProps, navigation, league]);
+  }, [
+    conferenceHeaderProps,
+    entryLoading,
+    favoriteHeaderProps,
+    navigation,
+    league,
+  ]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -572,8 +583,13 @@ function CBLeagueScreen() {
   );
 
   const standingsPage = (
-    <View key="standings">
-      {hasVisitedTab("standings") ? <CBStandingsList league={league} /> : null}
+    <View key="standings" style={styles.contentArea}>
+      {hasVisitedTab("standings") ? (
+        <CollegeConferenceStandings
+          league={league}
+          groupId={conferenceGroupId}
+        />
+      ) : null}
     </View>
   );
 
@@ -615,6 +631,8 @@ function CBLeagueScreen() {
           {pagerPages}
         </PagerView>
       </View>
+
+      <ConferenceListModal {...conferenceModalProps} />
 
       <CalendarModal
         visible={showCalendarModal}
@@ -659,6 +677,8 @@ function SBLeagueScreen() {
   );
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
+  const { conferenceGroupId, conferenceHeaderProps, conferenceModalProps } =
+    useCollegeConferenceSelector(league, selectedTab === "standings");
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
@@ -742,11 +762,18 @@ function SBLeagueScreen() {
           tabName="College Softball"
           league={league}
           onBack={navigation.goBack}
+          {...conferenceHeaderProps}
           {...favoriteHeaderProps}
         />
       ),
     });
-  }, [entryLoading, favoriteHeaderProps, navigation, league]);
+  }, [
+    conferenceHeaderProps,
+    entryLoading,
+    favoriteHeaderProps,
+    navigation,
+    league,
+  ]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -811,8 +838,13 @@ function SBLeagueScreen() {
   );
 
   const standingsPage = (
-    <View key="standings">
-      {hasVisitedTab("standings") ? <CBStandingsList league={league} /> : null}
+    <View key="standings" style={styles.contentArea}>
+      {hasVisitedTab("standings") ? (
+        <CollegeConferenceStandings
+          league={league}
+          groupId={conferenceGroupId}
+        />
+      ) : null}
     </View>
   );
 
@@ -854,6 +886,8 @@ function SBLeagueScreen() {
           {pagerPages}
         </PagerView>
       </View>
+
+      <ConferenceListModal {...conferenceModalProps} />
 
       <CalendarModal
         visible={showCalendarModal}

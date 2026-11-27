@@ -13,6 +13,8 @@ const TEAM_ROUTE_LEAGUES = new Set([
   "cb",
   "sb",
   "nhl",
+  "mch",
+  "wch",
 ]);
 
 // Recover fixed leagues from paths and retain soccer competition metadata.

@@ -136,7 +136,8 @@ export default function PlayerCard({
 
   return (
     <TouchableOpacity
-      accessibilityRole="button"
+      accessibilityRole={route ? "button" : undefined}
+      disabled={!route}
       activeOpacity={activeOpacity}
       style={styles.card}
       onPress={handlePress}

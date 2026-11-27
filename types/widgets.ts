@@ -74,6 +74,8 @@ export const EXPLORE_WIDGET_LEAGUES = [
   "cfb",
   "ufl",
   "nhl",
+  "mch",
+  "wch",
 ] as const;
 
 export type ExploreWidgetLeague = (typeof EXPLORE_WIDGET_LEAGUES)[number];
@@ -107,7 +109,7 @@ export type ExploreWidgetGame =
     })
   | (ExploreWidgetGameBase & {
       sport: "hockey";
-      league: "nhl";
+      league: "nhl" | "mch" | "wch";
       game: HockeyGame;
     });
 

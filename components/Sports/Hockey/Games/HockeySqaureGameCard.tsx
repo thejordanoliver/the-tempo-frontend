@@ -1,3 +1,6 @@
+import { getMCHTeamLogo } from "@/constants/teamsMCH";
+import { getNHLTeamLogo } from "@/constants/teamsNHL";
+import { getWCHTeamLogo } from "@/constants/teamsWCH";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
   formatDate,
@@ -6,7 +9,6 @@ import {
   safeDate,
 } from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
-import { getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -21,7 +23,12 @@ import {
   winnerStyle,
 } from "utils/games/games";
 
-function HockeySqaureGameCard({ game }: HockeyGameCardProps) {
+function HockeySqaureGameCard({
+  isNHL,
+  isMCH,
+  isWCH,
+  game,
+}: HockeyGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -45,8 +52,9 @@ function HockeySqaureGameCard({ game }: HockeyGameCardProps) {
 
   const home = game?.home;
   const away = game?.away;
-  const homeId = home?.id;
-  const awayId = away?.id;
+
+  const homeId = home.id;
+  const awayId = away.id;
 
   const homeName = game.home?.code;
   const awayName = game.away?.code;
@@ -54,12 +62,20 @@ function HockeySqaureGameCard({ game }: HockeyGameCardProps) {
   const homeLogo =
     homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
-      : getNHLTeamLogo(homeId, isDark);
+      : isMCH
+        ? getMCHTeamLogo(homeId, isDark)
+        : isWCH
+          ? getWCHTeamLogo(homeId, isDark)
+          : getNHLTeamLogo(homeId, isDark);
 
   const awayLogo =
     awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
-      : getNHLTeamLogo(awayId, isDark);
+      : isMCH
+        ? getMCHTeamLogo(awayId, isDark)
+        : isWCH
+          ? getWCHTeamLogo(awayId, isDark)
+          : getNHLTeamLogo(awayId, isDark);
 
   const headlineText = game?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(game?.broadcasts, true);
@@ -99,7 +115,7 @@ function HockeySqaureGameCard({ game }: HockeyGameCardProps) {
   }: {
     score: number | undefined;
     record: string | undefined;
-    isWinner: boolean;
+    isWinner: boolean | null;
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
 
@@ -111,7 +127,7 @@ function HockeySqaureGameCard({ game }: HockeyGameCardProps) {
             : [
                 styles.teamScore,
                 winnerStyle({
-                  isWinner: isWinner,
+                  isWinner: isWinner ?? false,
                   isTie: isTie,
                   isDark: isDark,
                 }),

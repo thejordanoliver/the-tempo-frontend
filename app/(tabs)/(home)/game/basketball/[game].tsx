@@ -1,8 +1,3 @@
-import {
-  getRouteGameId,
-  getRouteLeague,
-  parseGameParam,
-} from "utils/navigation/gameRouteParams";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   BasketballPlayByPlay,
@@ -62,6 +57,11 @@ import {
   getBroadcastDisplay,
 } from "utils/games/games";
 import { isGameFinalStatus } from "utils/games/gameStatus";
+import {
+  getRouteGameId,
+  getRouteLeague,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
 
 type RouteParams = {
   game?: string | string[];
@@ -97,6 +97,7 @@ export default function GameDetailsScreen(
     getRouteLeague(params.league) ??
     "nba"
   ).toLowerCase();
+
   const isWNBA = LEAGUE === "wnba";
   const isWCBB = LEAGUE === "wcbb";
   const isMCBB = LEAGUE === "mcbb";
@@ -256,7 +257,7 @@ export default function GameDetailsScreen(
   const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const period = formatPeriod({
     period: score?.status.period ?? 0,
-    isMCBB: isMCBB || isWCBB,
+    isMCBB: isMCBB,
   });
 
   const odds =
@@ -607,6 +608,8 @@ export default function GameDetailsScreen(
                 awayId={awayId}
                 homeCode={homeCode}
                 awayCode={awayCode}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
                 homeGames={homeLastGames}
                 awayGames={awayLastGames}
                 league={LEAGUE}

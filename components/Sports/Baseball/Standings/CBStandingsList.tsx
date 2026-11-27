@@ -46,7 +46,7 @@ type Props = {
   league: "cb" | "sb";
 };
 
-export const standingLabels = ["W-L", "Points", "1st Votes"];
+export const standingLabels = ["W-L", "Points", "1st Votes", "Conference"];
 
 export const CBStandingsList = ({ league }: Props) => {
   const { rankingsByKey, loading, refreshing, error, refresh } =
@@ -309,6 +309,13 @@ export const CBStandingsList = ({ league }: Props) => {
           <View style={styles.statCell}>
             <Text style={styles.statText}>
               {formatRankValue(item.firstPlaceVotes, "0")}
+            </Text>
+          </View>
+          <View style={styles.statCell}>
+            <Text style={styles.statText}>
+              {item.team?.conference?.shortName ||
+                item.team?.groups?.shortName ||
+                "—"}
             </Text>
           </View>
         </View>

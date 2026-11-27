@@ -10,7 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
-type League = "nhl" | "mch";
+type League = "nhl" | "mch" | "wch";
 
 type FetchGamesOptions = {
   forceRefresh?: boolean;
@@ -48,8 +48,7 @@ export function useHockeyGames(
     async ({ forceRefresh = false }: FetchGamesOptions = {}) => {
       const request = begin();
       if (!request) return;
-      const endpoint =
-        league === "mch" ? "api/games/hockey/mch" : "api/games/hockey";
+      const endpoint = `api/games/hockey/${league}`;
 
       try {
         setError(null);

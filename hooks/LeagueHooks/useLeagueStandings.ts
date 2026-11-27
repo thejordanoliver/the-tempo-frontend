@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { StandingsTeamInfo } from "types/standings";
 import { apiClient } from "utils/apiClient";
 
 export type StandingsTeam = {
@@ -10,7 +11,9 @@ export type StandingsTeam = {
   name: string;
   shortName: string | null;
   code: string;
-  conference: string;
+  conference: string | StandingsTeamInfo["conference"];
+  conferenceId?: number | null;
+  conferenceName?: string;
   division: string;
   gamesPlayed?: number | null;
   wins: number;

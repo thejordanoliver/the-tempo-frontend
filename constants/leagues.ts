@@ -4,10 +4,12 @@ import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBLogo from "assets/College_Logos/Conference_Logos/CB.png";
 import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
 import MCBBLogo from "assets/College_Logos/Conference_Logos/MCBB.png";
+import MCHLogo from "assets/College_Logos/Conference_Logos/MCH.png";
 import MCSLogo from "assets/College_Logos/Conference_Logos/MCS.png";
 import MCVBLogo from "assets/College_Logos/Conference_Logos/MCVB.png";
 import SBLogo from "assets/College_Logos/Conference_Logos/SB.png";
 import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
+import WCHLogo from "assets/College_Logos/Conference_Logos/WCH.png";
 import WCSLogo from "assets/College_Logos/Conference_Logos/WCS.png";
 import WCVBLogo from "assets/College_Logos/Conference_Logos/WCVB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
@@ -95,6 +97,8 @@ export const BROWSEABLE_LEAGUES = [
   "nba",
   "nfl",
   "nhl",
+  "mch",
+  "wch",
   "sb",
   "mcvb",
   "wcvb",
@@ -392,6 +396,28 @@ export const LEAGUE_CONFIG = {
     route: "/league/hockey",
   },
 
+  mch: {
+    id: "mch",
+    shortName: "M. College Hockey",
+    name: "Men's College Hockey",
+    color: "#009CDE",
+    secondaryColor: "#000000",
+    logo: MCHLogo,
+    logoLight: MCHLogo,
+    route: "/league/hockey",
+  },
+
+  wch: {
+    id: "wch",
+    shortName: "W. College Hockey",
+    name: "Women's College Hockey",
+    color: "#009CDE",
+    secondaryColor: "#000000",
+    logo: WCHLogo,
+    logoLight: WCHLogo,
+    route: "/league/hockey",
+  },
+
   sb: {
     id: "sb",
     shortName: "College Softball",
@@ -492,6 +518,8 @@ export const HOME_SCORE_LEAGUES = [
   "ufl",
   "mlb",
   "nhl",
+  "mch",
+  "wch",
   "cfb",
   "mls",
   "msoc",

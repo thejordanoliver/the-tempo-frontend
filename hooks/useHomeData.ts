@@ -130,6 +130,18 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useHockeyGames(selectedDate, "nhl", undefined, requestOptions("nhl"));
 
   const {
+    games: mchGames,
+    loading: mchLoading,
+    refreshGames: refreshMCHGames,
+  } = useHockeyGames(selectedDate, "mch", undefined, requestOptions("mch"));
+
+  const {
+    games: wchGames,
+    loading: wchLoading,
+    refreshGames: refreshWCHGames,
+  } = useHockeyGames(selectedDate, "wch", undefined, requestOptions("wch"));
+
+  const {
     games: cfbGames,
     loading: cfbLoading,
     refreshGames: refreshCFBGames,
@@ -356,6 +368,16 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => normalizeGames(nhlGames, "nhl"),
     [nhlGames],
   );
+
+  const normalizedMCH = useMemo(
+    () => normalizeGames(mchGames, "mch"),
+    [mchGames],
+  );
+
+  const normalizedWCH = useMemo(
+    () => normalizeGames(wchGames, "wch"),
+    [wchGames],
+  );
   const normalizedCFB = useMemo(
     () => normalizeGames(cfbGames, "cfb"),
     [cfbGames],
@@ -469,6 +491,16 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => safeFilterByDate(normalizedNHL, true),
     [normalizedNHL, safeFilterByDate],
   );
+
+  const filteredMCH = useMemo(
+    () => safeFilterByDate(normalizedMCH, true),
+    [normalizedMCH, safeFilterByDate],
+  );
+
+  const filteredWCH = useMemo(
+    () => safeFilterByDate(normalizedWCH, true),
+    [normalizedWCH, safeFilterByDate],
+  );
   const filteredCFB = useMemo(
     () => safeFilterByDate(normalizedCFB, true),
     [normalizedCFB, safeFilterByDate],
@@ -549,6 +581,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       cb: filteredCB,
       sb: filteredSB,
       nhl: filteredNHL,
+      mch: filteredMCH,
+      wch: filteredWCH,
       cfb: filteredCFB,
       msoc: filteredMensSoccer,
       wsoc: filteredWomensSoccer,
@@ -587,6 +621,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     filteredCB,
     filteredSB,
     filteredNHL,
+    filteredMCH,
+    filteredWCH,
     filteredCFB,
     filteredMensSoccer,
     filteredWomensSoccer,
@@ -670,6 +706,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
                 refreshCBGames(),
                 refreshSBGames(),
                 refreshNHLGames(),
+                refreshMCHGames(),
+                refreshWCHGames(),
                 refreshNFLGames(),
                 refreshUFLGames(),
                 refreshCFBGames(),
@@ -715,6 +753,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     cbLoading ||
     sbLoading ||
     nhlLoading ||
+    mchLoading ||
+    wchLoading ||
     nflLoading ||
     uflLoading ||
     cfbLoading ||

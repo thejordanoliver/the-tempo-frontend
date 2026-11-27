@@ -1,0 +1,51 @@
+export const mchConferences = [
+  {
+    groupId: 61,
+    uid: "s:70~l:91~g:61",
+    name: "Atlantic Hockey America",
+    shortName: "AHA",
+    parentGroupId: null,
+  },
+  {
+    groupId: 62,
+    uid: "s:70~l:91~g:62",
+    name: "Big Ten Conference",
+    shortName: "Big Ten",
+    parentGroupId: null,
+  },
+  {
+    groupId: 54,
+    uid: "s:70~l:91~g:54",
+    name: "Central Collegiate Hockey Association",
+    shortName: "CCHA",
+    parentGroupId: null,
+  },
+  {
+    groupId: 53,
+    uid: "s:70~l:91~g:53",
+    name: "ECAC Hockey",
+    shortName: "ECAC",
+    parentGroupId: null,
+  },
+  {
+    groupId: 52,
+    uid: "s:70~l:91~g:52",
+    name: "Hockey East",
+    shortName: "Hockey East",
+    parentGroupId: null,
+  },
+  {
+    groupId: 59,
+    uid: "s:70~l:91~g:59",
+    name: "Independent",
+    shortName: "IND",
+    parentGroupId: null,
+  },
+  {
+    groupId: 63,
+    uid: "s:70~l:91~g:63",
+    name: "National Collegiate Hockey Conference",
+    shortName: "NCHC",
+    parentGroupId: null,
+  },
+] as const;

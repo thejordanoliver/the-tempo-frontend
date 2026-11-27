@@ -1,6 +1,9 @@
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import { getMCHTeamLogo } from "@/constants/teamsMCH";
+import { getNHLTeamLogo } from "@/constants/teamsNHL";
+import { getWCHTeamLogo } from "@/constants/teamsWCH";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
@@ -16,7 +19,6 @@ import {
 } from "@/utils/common/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
@@ -34,12 +36,18 @@ type Props = {
   game: HockeyGame;
   visible: boolean;
   onClose: () => void;
+  isNHL?: boolean;
+  isMCH?: boolean;
+  isWCH?: boolean;
 };
 
 export default function HockeyGamePreviewModal({
   game,
   visible,
   onClose,
+  isNHL,
+  isMCH,
+  isWCH,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -59,16 +67,24 @@ export default function HockeyGamePreviewModal({
   const away = game.away;
   const awayId = away.id;
   const homeId = home.id;
-  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
-  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
+
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
-      : getNHLTeamLogo(homeId, true);
+      : isMCH
+        ? getMCHTeamLogo(homeId, isDark)
+        : isWCH
+          ? getWCHTeamLogo(homeId, isDark)
+          : getNHLTeamLogo(homeId, isDark);
+
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
-      : getNHLTeamLogo(awayId, true);
+      : isMCH
+        ? getMCHTeamLogo(awayId, isDark)
+        : isWCH
+          ? getWCHTeamLogo(awayId, isDark)
+          : getNHLTeamLogo(awayId, isDark);
 
   // Modal open/close
   useEffect(() => {
@@ -76,13 +92,13 @@ export default function HockeyGamePreviewModal({
     else sheetRef.current?.dismiss();
   }, [visible]);
 
-  const awayCode = awayTeam.code ?? "TBD";
-  const homeCode = homeTeam.code ?? "TBD";
-  const awayName = awayTeam.name ?? "TBD";
-  const homeName = homeTeam.name ?? "TBD";
+  const awayCode = game.away.code ?? "TBD";
+  const homeCode = game.home.code ?? "TBD";
+  const awayName = game.away.shortName ?? game.away.name ?? "TBD";
+  const homeName = game.home.shortName ?? game.home.name ?? "TBD";
 
-  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
-  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
+  const homeColor = game.home.primaryColor ?? Colors.midTone;
+  const awayColor = game.away.primaryColor ?? Colors.midTone;
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
@@ -90,6 +106,8 @@ export default function HockeyGamePreviewModal({
   const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
+  const isHomeActive = homeTeamDetails?.isActive ?? false;
+  const isAwayActive = awayTeamDetails?.isActive ?? false;
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
@@ -200,7 +218,7 @@ export default function HockeyGamePreviewModal({
                 {/* Away Team Row */}
                 <TeamRow
                   id={awayId}
-                  isActive={awayTeam.isActive}
+                  isActive={isAwayActive}
                   name={awayCode}
                   logo={awayLogo}
                   rank={awayRank}
@@ -229,7 +247,7 @@ export default function HockeyGamePreviewModal({
                 {/* Home Team Row */}
                 <TeamRow
                   id={homeId}
-                  isActive={homeTeam.isActive}
+                  isActive={isHomeActive}
                   name={homeCode}
                   logo={homeLogo}
                   rank={homeRank}

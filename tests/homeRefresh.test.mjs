@@ -100,7 +100,7 @@ test("home sources retain volleyball games using the canonical league IDs", () =
     )) {
       assert.equal(config.id, key);
     }
-    for (const league of ["mcvb", "wcvb"]) {
+    for (const league of ["mcvb", "wcvb", "mch", "wch"]) {
       const section = h.state.homeGameSections.find(({ id }) => id === league);
       assert.ok(section, `${league} must be included in home sources`);
       assert.equal(section.data.length, 1);
@@ -120,13 +120,13 @@ test("Scores refresh starts favorites and all leagues together, keeps content, a
     const sections = h.state.homeGameSections;
     const pending = h.state.handleRefresh();
     await flush();
-    assert.equal(h.requests.length, 30);
-    assert.equal(new Set(h.requests.map(({ kind }) => kind)).size, 30);
+    assert.equal(h.requests.length, 32);
+    assert.equal(new Set(h.requests.map(({ kind }) => kind)).size, 32);
     assert.equal(h.state.refreshing, true);
     assert.equal(h.state.loading, false);
     assert.equal(h.state.homeGameSections, sections);
     await h.state.handleRefresh();
-    assert.equal(h.requests.length, 30);
+    assert.equal(h.requests.length, 32);
     h.requests.slice(1).forEach((r) => r.resolve());
     await flush();
     assert.equal(h.state.refreshing, true, "favorite teams are still pending");
@@ -151,10 +151,10 @@ test("a date reset uses automatic date requests and waits for all of them", asyn
     const sections = h.state.homeGameSections;
     const pending = h.state.handleRefresh();
     await flush();
-    assert.equal(h.requests.length, 30);
+    assert.equal(h.requests.length, 32);
     assert.equal(
       h.requests.filter(({ kind }) => kind.startsWith("date:")).length,
-      28,
+      30,
     );
     assert.equal(h.state.homeGameSections, sections);
     assert.equal(h.state.loading, false);

@@ -121,7 +121,7 @@ function render(sport, game = {}, overrides = {}, isDark = true) {
 
 test("women's college basketball uses quarters; men's college basketball uses halves", () => {
   assert(render("basketball", {}, { league: "wcbb" }).includes("4th"));
-  assert(render("basketball", {}, { league: "mcbb" }).includes("2OT"));
+  assert(render("basketball", {}, { league: "mcbb" }).includes("2nd OT"));
 });
 test("hockey and soccer follow their own period labels", () => {
   assert(render("hockey").includes("OT"));

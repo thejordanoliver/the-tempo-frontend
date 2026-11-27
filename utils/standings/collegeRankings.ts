@@ -25,6 +25,7 @@ const POLL_NAMES: Record<PollType, string> = {
   coaches: "Coaches Poll",
   cfp: "CFP Rankings",
   fcs: "FCS Coaches Poll",
+  uscho: "USCHO Poll",
 };
 
 const POLL_TYPES: PollType[] = ["ap", "coaches", "cfp", "fcs"];
@@ -180,6 +181,14 @@ const normalizeRankings = (rawValue: unknown): RankPoll[] => {
 // These are backend poll responses; football keeps its four selector slots.
 export function getRankingPolls(response: unknown, league: League): RankPoll[] {
   if (league === "cfb") return normalizeRankings(response);
+  if (league === "mch" || league === "wch") {
+    const type = league === "mch" ? "uschomenspoll" : "uschowomenspoll";
+    const poll = getPollCandidates(response).find((poll) => {
+      const rawType = toStringValue(poll.type).trim().toLowerCase();
+      return rawType === type || rawType === "uscho";
+    });
+    return poll ? [normalizePoll(poll, "uscho")] : [];
+  }
   return isRecord(response) && Array.isArray(response.rankings)
     ? (response.rankings as RankPoll[])
     : [];
@@ -188,7 +197,7 @@ export function getRankingPolls(response: unknown, league: League): RankPoll[] {
 // Empty CFP selector slots do not count as published rankings.
 export function getDefaultCollegePollType(
   rankings: readonly RankPoll[],
-): CollegePollType {
+): "ap" | "cfp" {
   return rankings.some((poll) => poll.type === "cfp" && poll.ranks.length > 0)
     ? "cfp"
     : "ap";
