@@ -1,3 +1,4 @@
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import Dropdown from "components/Dropdown";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -19,14 +20,6 @@ import {
 } from "utils/playoffs/playoffConfig";
 import PlayoffBracket from "./PlayoffBracket";
 import PlayoffBracketSkeleton from "./PlayoffBracketSkeleton";
-
-const TEAM_ROUTES = {
-  nba: "/team/[teamId]",
-  wnba: "/team/wnba/[teamId]",
-  mlb: "/team/mlb/[teamId]",
-  nfl: "/team/nfl/[teamId]",
-  nhl: "/team/nhl/[teamId]",
-} as const;
 
 type Props = { league: PlayoffLeague; active?: boolean };
 export default function LeaguePlayoffs({ league, active = true }: Props) {
@@ -55,10 +48,8 @@ function LeaguePlayoffSeason({ league, active }: Props) {
   }));
   const openTeam = (team: PlayoffTeam) => {
     if (team.id === null) return;
-    router.push({
-      pathname: TEAM_ROUTES[league],
-      params: { teamId: String(team.id) },
-    });
+    const sport = getTeamSport(league);
+    if (sport) router.push(getTeamHref(sport, team.id, league));
   };
   return (
     <ScrollView

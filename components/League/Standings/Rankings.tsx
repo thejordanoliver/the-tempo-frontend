@@ -1,3 +1,4 @@
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import Dropdown from "@/components/Dropdown";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
@@ -151,10 +152,8 @@ export default function Rankings({ league }: Props) {
             onPress={() => {
               if (!teamId) return;
 
-              router.push({
-                pathname: `/team/${league}/[teamId]`,
-                params: { teamId: String(teamId) },
-              });
+              const sport = getTeamSport(league);
+              if (sport) router.push(getTeamHref(sport, teamId, league));
             }}
             style={styles.teamInfoWrapper}
           >

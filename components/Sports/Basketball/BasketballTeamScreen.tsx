@@ -4,32 +4,57 @@ import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import RosterStats from "@/components/Team/BasketballRosterStats";
 import Roster from "@/components/Team/Roster";
 import { Colors } from "@/constants/styles";
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useRosterStats } from "@/hooks/BasketballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import MonthSelector from "components/League/Selectors/MonthSelector";
+import { StandingsList } from "components/League/Standings/StandingsList";
+import TransactionList from "components/League/Transactions/TransactionList";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
-import { useLocalSearchParams } from "expo-router";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
+import { getGLeagueTeam, getGLeagueTeamLogo } from "constants/teamsGLeague";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
+import { useState } from "react";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
+import { getNBASeason, getWNBASeason } from "utils/common/dateUtils";
+import type { TeamLeague } from "utils/navigation/teamNavigation";
 
-export default function TeamDetailScreen() {
-  const league = "mcbb";
+const teamLookups = {
+  nba: { getTeam: getNBATeam, getLogo: getNBATeamLogo },
+  wnba: { getTeam: getWNBATeam, getLogo: getWNBATeamLogo },
+  gleague: { getTeam: getGLeagueTeam, getLogo: getGLeagueTeamLogo },
+  mcbb: { getTeam: getMCBBTeam, getLogo: getMCBBTeamLogo },
+  wcbb: { getTeam: getWCBBTeam, getLogo: getWCBBTeamLogo },
+};
+
+export default function BasketballTeamScreen({
+  league,
+  teamId: teamIdStr,
+}: {
+  league: TeamLeague<"basketball">;
+  teamId: string;
+}) {
   const styles = TeamDetailStyles;
-  const { teamId } = useLocalSearchParams();
-  const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
-  const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
-  const team = getMCBBTeam(teamIdNum);
+  const teamIdNum = Number.parseInt(teamIdStr, 10);
+  const { getTeam, getLogo } = teamLookups[league];
+  const team = getTeam(teamIdNum);
   const teamColor = team?.primaryColor ?? Colors.midTone;
-  const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
   const teamName = team?.name;
-  const teamLogo = getMCBBTeamLogo(teamIdNum, true);
+  const teamLogo = getLogo(teamIdNum, true);
+  const isCollege = league === "mcbb" || league === "wcbb";
+  const teamSecondaryColor =
+    team?.secondaryColor ?? (league === "mcbb" ? Colors.white : Colors.midTone);
+  const [standingsYear, setStandingsYear] = useState(() =>
+    (league === "wnba" ? getWNBASeason() : getNBASeason()).toString(),
+  );
   const {
     games,
     months,
@@ -52,24 +77,28 @@ export default function TeamDetailScreen() {
       teamName,
       teamColor,
       logo: teamLogo,
-      favorite: team
-        ? { lookupId: team.id ?? 0, toggleId: teamIdNum }
-        : undefined,
+      favorite: team ? { lookupId: team.id, toggleId: teamIdNum } : undefined,
       infoEnabled: true,
     },
   });
-  const { teamDetails, teamDetailsLoading, teamDetailsError } = screen;
-  const conferenceId = teamDetails?.conferenceId;
-  const { runRefresh, hasVisitedTab, selectedTab, refreshing, isDark } = screen;
-
+  const {
+    hasVisitedTab,
+    selectedTab,
+    refreshing,
+    isDark,
+    teamDetails,
+    teamDetailsLoading,
+    teamDetailsError,
+  } = screen;
   const {
     conferences,
     conferencesLoading,
     ConferencesRefreshing,
     conferencesError,
     refresh: refreshConferenceStandings,
-  } = useConferenceStandings(league, conferenceId, {
-    enabled: selectedTab === "standings" || hasVisitedTab("standings"),
+  } = useConferenceStandings(league, teamDetails?.conferenceId, {
+    enabled:
+      isCollege && (selectedTab === "standings" || hasVisitedTab("standings")),
   });
 
   const {
@@ -110,7 +139,7 @@ export default function TeamDetailScreen() {
   } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
 
   const handleRefresh = async () => {
-    await runRefresh(async () => {
+    await screen.runRefresh(async () => {
       if (selectedTab === "schedule") {
         await refreshTeamGames();
       }
@@ -148,11 +177,11 @@ export default function TeamDetailScreen() {
           showCountdown={showCountdown}
           countdownGame={firstSeasonGame}
           scrollEnabled={true}
-          showHeaders={true}
-          teamLogo={teamLogo}
-          teamColor={teamColor}
-          teamSecondaryColor={teamSecondaryColor}
-          teamName={teamName}
+          showHeaders
+          teamLogo={isCollege ? teamLogo : undefined}
+          teamColor={isCollege ? teamColor : undefined}
+          teamSecondaryColor={isCollege ? teamSecondaryColor : undefined}
+          teamName={isCollege ? teamName : undefined}
         />
       </View>
 
@@ -182,7 +211,7 @@ export default function TeamDetailScreen() {
       <View key="stats" style={styles.contentArea}>
         <RosterStats
           rosterStats={teamRoster}
-          teamId={teamIdStr ?? ""}
+          teamId={isCollege ? teamIdStr : teamIdNum}
           teamStats={teamStats}
           loading={rosterStatsLoading || teamStatsLoading}
           error={rosterStatsError || teamStatsError}
@@ -192,19 +221,34 @@ export default function TeamDetailScreen() {
         />
       </View>
 
-      {/* STANDINGS */}
       <View key="standings" style={styles.contentArea}>
-        <ConferenceStandingsList
-          conferences={conferences}
-          loading={
-            conferencesLoading ||
-            teamDetailsLoading ||
-            (!teamDetails && !teamDetailsError)
-          }
-          refreshing={ConferencesRefreshing}
-          error={conferencesError || teamDetailsError}
-          onRefresh={refreshConferenceStandings}
+        {isCollege ? (
+          <ConferenceStandingsList
+            conferences={conferences}
+            loading={
+              conferencesLoading ||
+              teamDetailsLoading ||
+              (!teamDetails && !teamDetailsError)
+            }
+            refreshing={ConferencesRefreshing}
+            error={conferencesError || teamDetailsError}
+            onRefresh={refreshConferenceStandings}
+            league={league}
+          />
+        ) : (
+          <StandingsList
+            year={standingsYear}
+            onYearChange={setStandingsYear}
+            league={league}
+          />
+        )}
+      </View>
+
+      <View key="transactions" style={styles.contentArea}>
+        <TransactionList
           league={league}
+          team={teamIdNum}
+          active={selectedTab === "transactions"}
         />
       </View>
 

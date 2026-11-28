@@ -1,3 +1,4 @@
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import Dropdown from "@/components/Dropdown";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { StandingsStyles } from "@/styles/LeagueStyles/StandingsStyles";
@@ -235,11 +236,7 @@ export const CBStandingsList = ({ league }: Props) => {
               style={styles.teamInfoWrapper}
               onPress={() => {
                 if (!teamId) return;
-                router.push({
-                  pathname:
-                    league === "sb" ? "/team/sb/[teamId]" : "/team/cb/[teamId]",
-                  params: { teamId: String(teamId), league },
-                });
+                router.push(getTeamHref("baseball", teamId, league));
               }}
             >
               {logo && <Image source={{ uri: logo }} style={styles.logo} />}

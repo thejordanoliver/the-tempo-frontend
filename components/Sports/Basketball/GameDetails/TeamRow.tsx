@@ -1,3 +1,4 @@
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import { Colors } from "constants/styles";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
@@ -42,13 +43,8 @@ export const TeamRow = ({
    * Routing
    * --------------------------------------------------- */
   const handleTeamPress = () => {
-    if (id === null || id === undefined || !isActive) return;
-
-    if (league === "nba") {
-      router.push(`/team/${id}`);
-    }
-
-    return router.push(`/team/${league}/${id}`);
+    if (id == null || !isActive) return;
+    router.push(getTeamHref("basketball", id, league));
   };
 
   /* -----------------------------------------------------

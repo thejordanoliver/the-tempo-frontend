@@ -1,3 +1,4 @@
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import { Colors } from "constants/styles";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
@@ -27,11 +28,10 @@ export const TeamRow = ({
   const inProgress = state === "in";
   const isFinal = state === "post";
 
- const handleTeamPress = () => {
-   if (!isActive) return;
-
-   return router.push(`/team/${league}/${id}`);
- };
+  const handleTeamPress = () => {
+    if (!isActive) return;
+    router.push(getTeamHref("baseball", id, league));
+  };
 
   const showRecordInsteadOfScore = state === "pre";
   /* -----------------------------------------------------

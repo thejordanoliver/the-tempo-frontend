@@ -1,55 +1,57 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
-import GamesList from "@/components/Sports/Baseball/Games/GamesList";
-import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
+import MonthSelector from "@/components/League/Selectors/MonthSelector";
+import Roster, { SupportedRosterLeague } from "@/components/Team/Roster";
+import GamesList from "@/components/Sports/Soccer/Games/GamesList";
 import { Colors } from "@/constants/styles";
-import { getSBTeam, getSBTeamLogo } from "@/constants/teamsSB";
-import MonthSelector from "components/League/Selectors/MonthSelector";
+import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
+import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { useSoccerTeamGames } from "@/hooks/SoccerHooks/useSoccerTeamGames";
 import NewsList from "components/News/NewsList";
-import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
-import { useLocalSearchParams } from "expo-router";
-import { useBaseballTeamGames } from "hooks/BaseballHooks/useBaseballTeamGames";
+import TeamDetailScreenShell from "components/Team/TeamDetailScreen";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
-export default function SoftballTeamDetailScreen() {
-  const league = "sb";
+export default function SoccerTeamScreen({
+  league,
+  teamId: teamIdStr,
+}: {
+  league: string;
+  teamId: string;
+}) {
   const styles = TeamDetailStyles;
-  const { teamId } = useLocalSearchParams();
-  const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
-  const team = getSBTeam(teamIdNum);
-  const teamLogo = getSBTeamLogo(teamIdNum, true);
+  const team = getSOCCTeam(teamIdNum);
+  const teamLogo = getSOCCTeamLogo(teamIdNum, true);
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamName = team?.name;
   const {
-    games,
+    games: teamGames,
     months,
+    selectedMonthKey,
+    selectMonth,
     loading: gamesLoading,
     refreshing: gamesRefreshing,
     error: gamesError,
     refresh: refreshTeamGames,
-    selectedMonthKey,
-    selectMonth,
-    firstSeasonGame,
-    showCountdown,
-  } = useBaseballTeamGames("sb", teamIdNum ?? null);
+  } = useSoccerTeamGames(teamIdNum, league);
 
   const screen = useTeamDetailScreen({
     loading: Boolean(team) && gamesLoading,
-    tabLeague: league,
+    tabLeague: league === "msoc" || league === "wsoc" ? league : "SOCC",
     header: {
       league,
-      teamId: team?.id ?? teamIdNum,
-      notificationTeamId: teamIdNum,
+      teamId: teamIdNum,
       teamName,
       teamColor,
       logo: teamLogo,
+      favoriteLeague: "socc",
       favorite: team ? { lookupId: team.id, toggleId: team.id } : undefined,
       infoEnabled: true,
     },
   });
+  const { selectedTab, hasVisitedTab, refreshing, isDark } = screen;
 
   const {
     articles,
@@ -59,22 +61,35 @@ export default function SoftballTeamDetailScreen() {
     loadingMore: loadingMoreNews,
     refresh: refreshNews,
   } = useTeamNews(league, teamIdNum, 10, {
-    enabled: screen.hasVisitedTab("news"),
+    enabled: hasVisitedTab("news"),
+  });
+
+  const {
+    sections,
+    loading: playersLoading,
+    error: playersError,
+    refreshPlayers,
+  } = useRoster(teamIdNum, "socc", {
+    enabled: screen.tabs.includes("roster") && hasVisitedTab("roster"),
   });
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {
-      if (screen.selectedTab === "schedule") {
+      if (selectedTab === "schedule") {
         await refreshTeamGames();
       }
 
-      if (screen.selectedTab === "news") {
+      if (selectedTab === "news") {
         await refreshNews();
+      }
+      if (selectedTab === "roster") {
+        await refreshPlayers();
       }
     });
 
   return (
-    <SharedTeamDetailScreen ready={Boolean(team)} screen={screen}>
+    <TeamDetailScreenShell ready={Boolean(team)} screen={screen}>
+      {/* SCHEDULE */}
       <View key="schedule" style={styles.contentArea}>
         <MonthSelector
           months={months}
@@ -84,19 +99,17 @@ export default function SoftballTeamDetailScreen() {
         />
 
         <GamesList
-          games={games}
+          games={teamGames}
           error={gamesError}
           loading={gamesLoading}
-          refreshing={gamesRefreshing || screen.refreshing}
+          refreshing={gamesRefreshing || refreshing}
           onRefresh={handleRefresh}
-          scrollEnabled={true}
           showHeaders={true}
-          showCountdown={showCountdown}
-          countdownGame={firstSeasonGame}
-          isSB={true}
+          scrollEnabled={true}
         />
       </View>
 
+      {/* NEWS */}
       <View key="news" style={styles.contentArea}>
         <NewsList
           items={articles}
@@ -105,17 +118,26 @@ export default function SoftballTeamDetailScreen() {
           refreshing={refreshingNews}
           loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
-          isDark={screen.isDark}
+          isDark={isDark}
         />
       </View>
 
-      <View key="standings" style={styles.contentArea}>
-        <CBStandingsList league="sb" />
+      {/* ROSTER */}
+      <View key="roster" style={styles.contentArea}>
+        <Roster
+          sections={sections}
+          loading={playersLoading}
+          error={playersError}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          league={league as SupportedRosterLeague}
+        />
       </View>
 
+      {/* FORUM */}
       <View key="forum" style={styles.contentArea}>
-        <ForumFeed teamId={teamIdStr ?? ""} league={league} />
+        <ForumFeed teamId={teamIdStr} league={league} />
       </View>
-    </SharedTeamDetailScreen>
+    </TeamDetailScreenShell>
   );
 }

@@ -32,7 +32,7 @@ import {
   View,
 } from "react-native";
 import type { Team } from "types/types";
-import { getFavoriteTeamRoute } from "utils/favorites/favoriteTeams";
+import { getFavoriteTeamHref } from "utils/favorites/favoriteTeams";
 import Subheading from "../Headings/Subheading";
 
 type Props = {
@@ -283,68 +283,18 @@ export default function ProfileFavoritesSection({
       const id = team.id;
       const { league } = team;
 
+      if (id == null) return;
       if (!isFavoriteLeague(league)) {
         console.warn(`Unsupported favorite league: ${league}`);
         return;
       }
 
-      const route = getFavoriteTeamRoute(league);
-
-      if (route === "/league/volleyball") {
-        router.push({
-          pathname:
-            scopedStack === "profile"
-              ? "/(tabs)/(profile)/league/[sport]"
-              : scopedStack === "explore"
-                ? "/(tabs)/(explore)/league/[sport]"
-                : "/(tabs)/(home)/league/[sport]",
-          params: { sport: "volleyball", league },
-        });
-        return;
-      }
-
-      if (!scopedStack) {
-        router.push({
-          pathname: route,
-          params: {
-            teamId: String(id),
-            league,
-          },
-        });
-        return;
-      }
-
-      if (route === "/team/[teamId]") {
-        router.push({
-          pathname:
-            scopedStack === "profile"
-              ? "/(tabs)/(profile)/team/[teamId]"
-              : "/(tabs)/(explore)/team/[teamId]",
-          params: {
-            teamId: String(id),
-            league,
-          },
-        } as any);
-        return;
-      }
-
-      const teamType = route.split("/")[2];
-
-      if (!teamType) {
-        return;
-      }
-
-      router.push({
-        pathname:
-          scopedStack === "profile"
-            ? "/(tabs)/(profile)/team/[teamType]/[teamId]"
-            : "/(tabs)/(explore)/team/[teamType]/[teamId]",
-        params: {
-          teamType,
-          teamId: String(id),
-          league,
-        },
-      } as any);
+      const fallbackGroup =
+        league === "mcvb" || league === "wcvb" ? "(home)" : undefined;
+      const tabGroup = scopedStack
+        ? (`(${scopedStack})` as const)
+        : fallbackGroup;
+      router.push(getFavoriteTeamHref(league, id, tabGroup));
     },
     [router, scopedStack],
   );

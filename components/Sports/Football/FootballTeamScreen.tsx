@@ -1,8 +1,10 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
+import { ConferenceStandingsList } from "@/components/League/Standings/ConferenceStandingsList";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Team/FootballRosterStats";
 import Roster from "@/components/Team/Roster";
 import { Colors } from "@/constants/styles";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { StandingsList } from "components/League/Standings/StandingsList";
@@ -10,7 +12,8 @@ import TransactionList from "components/League/Transactions/TransactionList";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { useLocalSearchParams } from "expo-router";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getUFLTeam, getUFLTeamLogo } from "constants/teamsUFL";
 import { useRosterStats } from "hooks/FootballHooks/useRosterStats";
 import { useTeamStats } from "hooks/FootballHooks/useTeamStats";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
@@ -20,15 +23,28 @@ import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getFootballSeason } from "utils/common/dateUtils";
 import { getFirstSeasonGame } from "utils/games/seasonGames";
+import type { TeamLeague } from "utils/navigation/teamNavigation";
 
-export default function TeamDetailScreen() {
-  const league = "nfl";
+const teamLookups = {
+  nfl: { getTeam: getNFLTeam, getLogo: getNFLTeamLogo },
+  cfb: { getTeam: getCFBTeam, getLogo: getCFBTeamLogo },
+  ufl: { getTeam: getUFLTeam, getLogo: getUFLTeamLogo },
+};
+
+export default function FootballTeamScreen({
+  league,
+  teamId: teamIdStr,
+}: {
+  league: TeamLeague<"football">;
+  teamId: string;
+}) {
   const styles = TeamDetailStyles;
-  const { teamId } = useLocalSearchParams();
-  const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
-  const team = getNFLTeam(teamIdNum);
-  const teamLogo = getNFLTeamLogo(teamIdNum, true);
+  const { getTeam, getLogo } = teamLookups[league];
+  const team = getTeam(teamIdNum);
+  const teamLogo = getLogo(teamIdNum, true);
+  const isCollege = league === "cfb";
+  const hasRoster = league !== "ufl";
   const teamColor = team?.primaryColor ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
@@ -53,10 +69,28 @@ export default function TeamDetailScreen() {
     },
   });
 
-  const { runRefresh, selectedTab, hasVisitedTab, refreshing, isDark } = screen;
-
-  const [standingsYear, setStandingsYear] = useState(
-    getFootballSeason().toString(),
+  const {
+    runRefresh,
+    selectedTab,
+    hasVisitedTab,
+    refreshing,
+    isDark,
+    teamDetails,
+    teamDetailsLoading,
+    teamDetailsError,
+  } = screen;
+  const {
+    conferences,
+    conferencesLoading,
+    ConferencesRefreshing,
+    conferencesError,
+    refresh: refreshConferenceStandings,
+  } = useConferenceStandings(league, teamDetails?.conferenceId, {
+    enabled:
+      isCollege && (selectedTab === "standings" || hasVisitedTab("standings")),
+  });
+  const [standingsYear, setStandingsYear] = useState(() =>
+    getFootballSeason(undefined, league).toString(),
   );
 
   const {
@@ -76,20 +110,6 @@ export default function TeamDetailScreen() {
     refreshPlayers,
   } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
 
-  const {
-    teamRoster,
-    refreshingStats,
-    loading: rosterStatsLoading,
-    error: rosterStatsError,
-    refetch,
-  } = useRosterStats(teamIdNum, league, { enabled: hasVisitedTab("stats") });
-
-  const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
-    teamIdNum,
-    league,
-    { enabled: hasVisitedTab("stats") },
-  );
-
   const firstSeasonGame = useMemo(
     () => getFirstSeasonGame(teamGames),
     [teamGames],
@@ -102,8 +122,8 @@ export default function TeamDetailScreen() {
           await refreshTeamGames?.();
         } else if (selectedTab === "roster") {
           await refreshPlayers();
-        } else if (selectedTab === "stats") {
-          await Promise.all([refetch(), refresh?.()]);
+        } else if (selectedTab === "news") {
+          await refreshNews();
         }
       });
     } catch (err) {
@@ -122,13 +142,14 @@ export default function TeamDetailScreen() {
           onRefresh={handleRefresh}
           error={gamesError}
           countdownGame={firstSeasonGame}
-          isNFL={true}
+          isNFL={league === "nfl"}
+          isCFB={isCollege}
           showHeaders={true}
           showCountdown={true}
-          teamLogo={teamLogo}
-          teamColor={teamColor}
-          teamSecondaryColor={teamSecondaryColor}
-          teamName={teamName}
+          teamLogo={hasRoster ? teamLogo : undefined}
+          teamColor={hasRoster ? teamColor : undefined}
+          teamSecondaryColor={hasRoster ? teamSecondaryColor : undefined}
+          teamName={hasRoster ? teamName : undefined}
         />
       </View>
 
@@ -147,37 +168,52 @@ export default function TeamDetailScreen() {
 
       {/* ROSTER */}
       <View key="roster" style={styles.contentArea}>
-        <Roster
-          sections={sections}
-          loading={playersLoading}
-          error={playersError}
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          league={league}
-        />
+        {hasRoster && (
+          <Roster
+            sections={sections}
+            loading={playersLoading}
+            error={playersError}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            league={league}
+          />
+        )}
       </View>
 
       {/* STATS */}
       <View key="stats" style={styles.contentArea}>
-        <RosterStats
-          rosterStats={teamRoster}
-          teamId={teamIdNum}
-          teamStats={teamStats}
-          loading={rosterStatsLoading || teamStatsLoading}
-          error={rosterStatsError || teamStatsError}
-          refreshing={refreshingStats || refreshing}
-          onRefresh={handleRefresh}
-          league={league}
-        />
+        {hasRoster && (
+          <FootballTeamStats
+            league={league}
+            teamId={teamIdNum}
+            refreshing={refreshing}
+            runRefresh={runRefresh}
+          />
+        )}
       </View>
 
       {/* STANDINGS */}
       <View key="standings" style={styles.contentArea}>
-        <StandingsList
-          year={standingsYear}
-          onYearChange={setStandingsYear}
-          league={league}
-        />
+        {isCollege ? (
+          <ConferenceStandingsList
+            conferences={conferences}
+            loading={
+              conferencesLoading ||
+              teamDetailsLoading ||
+              (!teamDetails && !teamDetailsError)
+            }
+            refreshing={ConferencesRefreshing}
+            error={conferencesError || teamDetailsError}
+            onRefresh={refreshConferenceStandings}
+            league={league}
+          />
+        ) : (
+          <StandingsList
+            year={standingsYear}
+            onYearChange={setStandingsYear}
+            league={league}
+          />
+        )}
       </View>
 
       {/* FORUM */}
@@ -190,8 +226,50 @@ export default function TeamDetailScreen() {
       </View>
 
       <View key="forum" style={styles.contentArea}>
-        <ForumFeed teamId={teamIdStr ?? ""} league={league} />
+        <ForumFeed teamId={teamIdStr} league={league} />
       </View>
     </SharedTeamDetailScreen>
+  );
+}
+
+function FootballTeamStats({
+  league,
+  teamId: teamIdNum,
+  refreshing,
+  runRefresh,
+}: {
+  league: "nfl" | "cfb";
+  teamId: number;
+  refreshing: boolean;
+  runRefresh: ReturnType<typeof useTeamDetailScreen>["runRefresh"];
+}) {
+  const {
+    teamRoster,
+    refreshingStats,
+    loading: rosterStatsLoading,
+    error: rosterStatsError,
+    refetch,
+  } = useRosterStats(teamIdNum, league);
+
+  const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
+    teamIdNum,
+    league,
+  );
+
+  return (
+    <RosterStats
+      rosterStats={teamRoster}
+      teamId={teamIdNum}
+      teamStats={teamStats}
+      loading={rosterStatsLoading || teamStatsLoading}
+      error={rosterStatsError || teamStatsError}
+      refreshing={refreshingStats || refreshing}
+      onRefresh={() =>
+        runRefresh(async () => {
+          await Promise.all([refetch(), refresh()]);
+        })
+      }
+      league={league}
+    />
   );
 }

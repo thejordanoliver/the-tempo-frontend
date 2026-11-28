@@ -26,7 +26,7 @@ import {
 } from "types/favorites";
 import {
   getFavoriteBaseTeam,
-  getFavoriteTeamRoute,
+  getFavoriteTeamHref,
 } from "utils/favorites/favoriteTeams";
 import { FavoritesTab } from "./FavoritesTab";
 
@@ -179,23 +179,7 @@ export default function FavoritesScroll({
         return;
       }
 
-      const route = getFavoriteTeamRoute(item.league);
-
-      if (route === "/league/volleyball") {
-        pushOnce({
-          pathname: "/(tabs)/(home)/league/[sport]",
-          params: { sport: "volleyball", league: item.league },
-        });
-        return;
-      }
-
-      pushOnce({
-        pathname: `/(tabs)/(home)${route}`,
-        params: {
-          teamId: item.id,
-          league: item.league,
-        },
-      });
+      pushOnce(getFavoriteTeamHref(item.league, item.id, "(home)"));
     },
     [pushOnce],
   );

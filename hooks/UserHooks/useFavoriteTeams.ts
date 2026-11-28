@@ -10,7 +10,7 @@ import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { useHockeyTeamDirectory } from "hooks/HockeyHooks/useHockeyTeamDirectory";
-import { getFavoriteTeamRoute } from "utils/favorites/favoriteTeams";
+import { getFavoriteTeamHref } from "utils/favorites/favoriteTeams";
 import { soccerTeams } from "@/constants/teamsSOCC";
 import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
@@ -499,24 +499,7 @@ export function useFavoriteTeams() {
     }
 
     const league = previewTeam.league.toLowerCase();
-    if (league === "mcvb" || league === "wcvb") {
-      router.push({
-        pathname: "/league/[sport]",
-        params: { sport: "volleyball", league },
-      });
-      setModalVisible(false);
-      return;
-    }
-
-    const route = getFavoriteTeamRoute(league);
-
-    router.push({
-      pathname: route,
-      params: {
-        teamId: String(id),
-        league,
-      },
-    });
+    router.push(getFavoriteTeamHref(league, id));
 
     setModalVisible(false);
   }, [previewTeam, router]);

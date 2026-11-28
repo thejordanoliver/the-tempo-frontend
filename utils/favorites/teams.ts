@@ -42,38 +42,6 @@ export function buildLeagueTeams<T>({
     }));
 }
 
-export function getTeamRoute(league: LeagueType): string {
-  switch (league) {
-    case "nba":
-      return "/team/[teamId]";
-    case "wnba":
-      return "/team/wnba/[teamId]";
-    case "nfl":
-      return "/team/nfl/[teamId]";
-    case "cfb":
-      return "/team/cfb/[teamId]";
-    case "mcbb":
-      return "/team/mcbb/[teamId]";
-    case "wcbb":
-      return "/team/wcbb/[teamId]";
-    case "mlb":
-      return "/team/mlb/[teamId]";
-    case "cb":
-      return "/team/cb/[teamId]";
-    case "sb":
-      return "/team/sb/[teamId]";
-    case "mcvb":
-    case "wcvb":
-      return "/league/volleyball";
-    case "nhl":
-      return "/team/nhl/[teamId]";
-    case "ufc":
-      return "/player/mma/[id]";
-    default:
-      throw new Error(`Invalid league: ${league}`);
-  }
-}
-
 const staticFavoriteTeamsList = [
   ...buildLeagueTeams({
     teams,

@@ -1,3 +1,4 @@
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import { Colors } from "constants/styles";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
@@ -59,16 +60,8 @@ export const TeamRow = ({
   };
 
   const handleTeamPress = () => {
-    if (!isActive) return;
-    if (!id || isNational || isAllStar) return;
-
-    router.push({
-      pathname: "/team/soccer/[teamId]",
-      params: {
-        teamId: id,
-        league,
-      },
-    });
+    if (!isActive || !id || isNational || isAllStar) return;
+    router.push(getTeamHref("soccer", id, league));
   };
 
   const renderScore = () => (

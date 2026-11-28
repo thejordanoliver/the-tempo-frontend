@@ -10,22 +10,22 @@ import Roster from "components/Team/Roster";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { resolveImage } from "utils/customheader/utils";
-import { useLocalSearchParams } from "expo-router";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getNHLSeason } from "utils/common/dateUtils";
+import type { TeamLeague } from "utils/navigation/teamNavigation";
 
 export default function HockeyTeamScreen({
   league,
+  teamId: teamIdStr,
 }: {
-  league: "nhl" | "mch" | "wch";
+  league: TeamLeague<"hockey">;
+  teamId: string;
 }) {
   const styles = TeamDetailStyles;
-  const { teamId } = useLocalSearchParams();
-  const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
   const currentSeason = getNHLSeason();
   const [standingsYear, setStandingsYear] = useState(currentSeason);
@@ -169,7 +169,7 @@ export default function HockeyTeamScreen({
       </View>
 
       <View key="forum" style={styles.contentArea}>
-        <ForumFeed teamId={teamIdStr ?? ""} league={league} />
+        <ForumFeed teamId={teamIdStr} league={league} />
       </View>
     </SharedTeamDetailScreen>
   );

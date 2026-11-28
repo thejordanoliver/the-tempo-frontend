@@ -74,7 +74,7 @@ test("user recent-search identity remains globally keyed by user id", () => {
   });
 });
 
-test("routes G League team search results to the G League team screen", () => {
+test("routes G League team search results through the basketball screen", () => {
   const team: TeamResult = {
     ...ranking,
     id: 2,
@@ -87,8 +87,8 @@ test("routes G League team search results to the G League team screen", () => {
 
   assert.equal(getExploreResultIdentity(team), "team:gleague:2");
   assert.deepEqual(getExploreRouteForResult(team), {
-    pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
-    params: { teamType: "gleague", teamId: "2", league: "gleague" },
+    pathname: "/(tabs)/(explore)/team/[sport]/[teamId]",
+    params: { sport: "basketball", teamId: "2", league: "gleague" },
   });
 });
 
@@ -120,14 +120,14 @@ test("routes players without legacy flags through the Explore stack", () => {
 });
 
 test("team routes use backend sport and league without flags or catalog lookups", () => {
-  for (const [league, sport, teamType] of [
-    ["nba", "basketball", "nba"],
-    ["wnba", "basketball", "wnba"],
-    ["nfl", "football", "nfl"],
-    ["mlb", "baseball", "mlb"],
-    ["epl", "soccer", "soccer"],
-    ["msoc", "soccer", "soccer"],
-    ["wsoc", "soccer", "soccer"],
+  for (const [league, sport] of [
+    ["nba", "basketball"],
+    ["wnba", "basketball"],
+    ["nfl", "football"],
+    ["mlb", "baseball"],
+    ["epl", "soccer"],
+    ["msoc", "soccer"],
+    ["wsoc", "soccer"],
   ] as const) {
     const team: TeamResult = {
       ...ranking,
@@ -139,14 +139,11 @@ test("team routes use backend sport and league without flags or catalog lookups"
       sport,
     };
     assert.deepEqual(getExploreRouteForResult(team), {
-      pathname:
-        teamType === "nba"
-          ? "/(tabs)/(explore)/team/[teamId]"
-          : "/(tabs)/(explore)/team/[teamType]/[teamId]",
+      pathname: "/(tabs)/(explore)/team/[sport]/[teamId]",
       params: {
         teamId: "999999",
         league,
-        ...(teamType === "nba" ? {} : { teamType }),
+        sport,
       },
     });
   }

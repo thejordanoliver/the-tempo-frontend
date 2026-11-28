@@ -24,6 +24,7 @@ import {
   DefaultTheme as NavigationLightTheme,
   Stack,
   ThemeProvider,
+  useGlobalSearchParams,
   usePathname,
 } from "expo-router";
 import {
@@ -111,6 +112,7 @@ function BadgeRealtimeBridge({
 
 function AppLayout() {
   const pathname = usePathname();
+  const { league: routeLeague } = useGlobalSearchParams<{ league?: string }>();
 
   const { resolvedColorScheme } = usePreferences();
 
@@ -219,7 +221,7 @@ function AppLayout() {
     if (pathname?.startsWith("/team/")) {
       void refreshTeamSubscriptions();
     }
-  }, [pathname, refreshTeamSubscriptions]);
+  }, [pathname, routeLeague, refreshTeamSubscriptions]);
 
   useEffect(() => {
     if (!loadingUser && !checkingStoredSession) {

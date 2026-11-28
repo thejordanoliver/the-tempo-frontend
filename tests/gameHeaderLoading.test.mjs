@@ -252,8 +252,7 @@ for (const tab of ["home", "league", "explore", "profile"]) {
       "player/basketball/[id]",
       "player/[sport]/[id]",
       "team/[teamId]",
-      "team/nfl/[teamId]",
-      "team/[teamType]/[teamId]",
+      "team/[sport]/[teamId]",
       "league/[sport]",
     ]) {
       assert.equal(headerFor(route).type, GameHeaderPlaceholder);

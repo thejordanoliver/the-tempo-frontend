@@ -1,3 +1,4 @@
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import { getUserProfileParams } from "utils/navigation/userProfileNavigation";
 import type { ResultItem } from "types/explore";
 
@@ -25,18 +26,7 @@ export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
       };
     }
 
-    const teamType = item.sport === "soccer" ? "soccer" : item.league;
-    return {
-      pathname:
-        teamType === "nba"
-          ? "/(tabs)/(explore)/team/[teamId]"
-          : "/(tabs)/(explore)/team/[teamType]/[teamId]",
-      params: {
-        teamId: String(item.id),
-        league: item.league,
-        ...(teamType === "nba" ? {} : { teamType }),
-      },
-    };
+    return getTeamHref(item.sport, item.id, item.league, "(explore)");
   }
 
   return {

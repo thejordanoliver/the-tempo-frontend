@@ -1,3 +1,4 @@
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
@@ -152,11 +153,8 @@ function StandingsTable({
   const router = useScopedRouter();
   const openTeam = useCallback(
     (team: StandingsTeam) => {
-      const teamId = team.id;
-      router.push({
-        pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
-        params: { teamType: league, teamId: String(teamId), league },
-      });
+      const sport = getTeamSport(league);
+      if (sport) router.push(getTeamHref(sport, team.id, league, "(explore)"));
     },
     [league, router],
   );

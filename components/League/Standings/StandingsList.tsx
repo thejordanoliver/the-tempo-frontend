@@ -1,3 +1,4 @@
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -347,32 +348,7 @@ export const StandingsList = ({
     );
   }
 
-  const getTeamRoute = () => {
-    if (soccer) return "/team/soccer/[teamId]" as const;
-    if (league === "nba") {
-      return "/team/[teamId]" as const;
-    }
-
-    if (league === "nfl") {
-      return "/team/nfl/[teamId]" as const;
-    }
-
-    if (league === "ufl") {
-      return "/team/ufl/[teamId]" as const;
-    }
-
-    if (league === "wnba") {
-      return "/team/wnba/[teamId]" as const;
-    }
-
-    if (league === "mlb") {
-      return "/team/mlb/[teamId]" as const;
-    }
-
-    if (league === "mch") return "/team/mch/[teamId]" as const;
-    if (league === "wch") return "/team/wch/[teamId]" as const;
-    return "/team/nhl/[teamId]" as const;
-  };
+  const teamSport = soccer ? "soccer" : getTeamSport(league);
 
   const renderLeftItem = ({
     item,
@@ -385,7 +361,6 @@ export const StandingsList = ({
   }) => {
     const team = item;
     const id = team?.id ?? item.id;
-    const route = getTeamRoute();
     const logo = isDark ? team.logoDark || team.logo : team.logo;
     const teamCode = team?.code;
     const favorited = team ? isFavorite(league, team.id) : false;
@@ -415,15 +390,9 @@ export const StandingsList = ({
         <TouchableOpacity
           accessibilityRole="button"
           style={styles.teamInfo}
-          onPress={() =>
-            router.push({
-              pathname: route,
-              params: {
-                teamId: String(id),
-                ...(soccer ? { league } : {}),
-              },
-            })
-          }
+          onPress={() => {
+            if (teamSport) router.push(getTeamHref(teamSport, id, league));
+          }}
         >
           {logo && <Image source={{ uri: logo }} style={styles.logo} />}
 

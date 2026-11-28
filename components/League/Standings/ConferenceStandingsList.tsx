@@ -1,3 +1,4 @@
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import { Colors, globalStyles } from "constants/styles";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -89,10 +90,8 @@ export const ConferenceStandingsList = ({
 
     const handleTeamPress = () => {
       if (!teamId) return;
-      router.push({
-        pathname: `/team/${league}/[teamId]`,
-        params: { teamId: String(teamId) },
-      });
+      const sport = getTeamSport(league);
+      if (sport) router.push(getTeamHref(sport, teamId, league));
     };
 
     return (

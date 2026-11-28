@@ -1,3 +1,4 @@
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import type { CollegeTeamRank } from "@/types/rankings";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -82,14 +83,10 @@ const CollegePollTable = memo(function CollegePollTable({
     (row: CollegePollRow) => {
       if (row.teamId == null) return;
 
-      router.push({
-        pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
-        params: {
-          teamType: league,
-          teamId: String(row.teamId),
-          league,
-        },
-      } as any);
+      const sport = getTeamSport(league);
+      if (sport) {
+        router.push(getTeamHref(sport, row.teamId, league, "(explore)"));
+      }
     },
     [league, router],
   );
