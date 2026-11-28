@@ -23,6 +23,7 @@ type Props = FanPredictionInput & {
   homeLogo: ImageProps["source"] | string;
   homeColor?: string | null;
   children?: ReactNode;
+  showHeader?: boolean;
 };
 
 export default function FanPrediction(props: Props) {
@@ -44,6 +45,7 @@ function FanPredictionContent(props: Props) {
     scoringError,
     retryScoring,
     children,
+    showHeader = true
   } = props;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -101,7 +103,7 @@ function FanPredictionContent(props: Props) {
 
   if (phase === "error") {
     return (
-      <FanPredictionSection>
+      <FanPredictionSection showHeader={showHeader}>
         {children}
         <Text style={global.errorText}>
           {errorMessage ?? "We couldn't load this poll."}
@@ -112,7 +114,7 @@ function FanPredictionContent(props: Props) {
   }
 
   return (
-    <FanPredictionSection>
+    <FanPredictionSection showHeader={showHeader}>
       {children}
       <FanPredictionHeader
         isDark={isDark}

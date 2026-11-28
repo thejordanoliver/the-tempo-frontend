@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { Colors, Fonts } from "constants/styles";
@@ -30,6 +31,7 @@ export default function VideoEditorModal({
   onClose,
   onSave,
 }: ForumVideoEditorModalProps) {
+  const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
@@ -117,18 +119,18 @@ export default function VideoEditorModal({
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
-      <SafeAreaView style={styles.container}>
+    <Modal visible={visible} animationType={reduceMotion ? "none" : "slide"} onRequestClose={onClose} transparent={true}>
+      <SafeAreaView style={styles.container} accessibilityViewIsModal onAccessibilityEscape={onClose}>
         <View style={styles.wrapper}>
           {/* HEADER */}
           <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} style={styles.headerBtn}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel="Close video editor" onPress={onClose} style={styles.headerBtn}>
               <Ionicons name="close" size={24} color={Colors.white} />
             </TouchableOpacity>
 
             <Text style={styles.headerTitle}>Edit video</Text>
 
-            <TouchableOpacity
+            <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: saving || !videoReady || durationMs <= 1 }}
               style={styles.headerBtn}
               disabled={saving || !videoReady || durationMs <= 1}
               onPress={async () => {
@@ -170,7 +172,7 @@ export default function VideoEditorModal({
             <Text style={styles.label}>Start</Text>
             <Text style={styles.value}>{Math.floor(trimStartMs / 1000)}s</Text>
           </View>
-          <Slider
+          <Slider accessibilityLabel="Video trim start" accessibilityValue={{ text: `${(trimStartMs / 1000).toFixed(1)} seconds` }}
             disabled={saving || !videoReady}
             minimumValue={0}
             maximumValue={durationMs || 1}
@@ -192,7 +194,7 @@ export default function VideoEditorModal({
               {Math.floor((trimEndMs || maxEnd) / 1000)}s
             </Text>
           </View>
-          <Slider
+          <Slider accessibilityLabel="Video trim end" accessibilityValue={{ text: `${((trimEndMs || maxEnd) / 1000).toFixed(1)} seconds` }}
             disabled={saving || !videoReady}
             minimumValue={0}
             maximumValue={durationMs || 1}
@@ -216,7 +218,7 @@ export default function VideoEditorModal({
             <Text style={styles.value}>{Math.floor(thumbTimeMs / 1000)}s</Text>
           </View>
 
-          <Slider
+          <Slider accessibilityLabel="Video thumbnail time" accessibilityValue={{ text: `${(thumbTimeMs / 1000).toFixed(1)} seconds` }}
             disabled={saving || !videoReady}
             minimumValue={0}
             maximumValue={durationMs || 1}
@@ -228,7 +230,7 @@ export default function VideoEditorModal({
             }}
           />
 
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: saving || !videoReady }}
             style={[styles.thumbBtn, !videoReady && { opacity: 0.5 }]}
             disabled={saving || !videoReady}
             onPress={async () => {

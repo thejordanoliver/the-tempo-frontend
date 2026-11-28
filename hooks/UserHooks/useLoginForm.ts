@@ -96,13 +96,15 @@ export function useLoginForm() {
     target: CropTarget;
   } | null>(null);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
 
   const showAlert = useCallback((config: AlertConfig) => {
     setAlertConfig(config);
+    setIsAlertVisible(true);
   }, []);
 
   const closeAlert = useCallback(() => {
-    setAlertConfig(null);
+    setIsAlertVisible(false);
   }, []);
 
   const closeCropEditor = useCallback(() => {
@@ -439,7 +441,6 @@ export function useLoginForm() {
       onToggleFavoriteSport: handleToggleFavoriteSport,
       onOpenImagePickerFor: openImagePickerFor,
       isGridView,
-      fadeAnim,
       isSubmitting: isSigningUp,
       isValidating: isSignupValidating || isCheckingSignupAvailability,
       onSubmit: handleSignupSubmit(handleSignup, handleInvalidSignup),
@@ -454,6 +455,7 @@ export function useLoginForm() {
         }
       : null,
     alertConfig,
+    isAlertVisible,
     closeAlert,
     previousSignupStep: handlePreviousSignupStep,
     toggleLayout,

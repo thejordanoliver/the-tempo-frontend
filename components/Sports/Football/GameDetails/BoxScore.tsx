@@ -139,7 +139,7 @@ const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
                   athleteIndex % 2 === 1 && styles.rowAlt,
                 ]}
               >
-                <TouchableOpacity
+                <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: playerId === null || playerId === undefined }}
                   activeOpacity={activeOpacity}
                   onPress={() => onPlayerPress(playerId, teamId)}
                   style={styles.playerLink}
@@ -367,7 +367,7 @@ export default function BoxScore({
         ))}
 
         {canExpand && (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityState={{ expanded: isExpanded }}
             activeOpacity={activeOpacity}
             onPress={() => toggleTeam(teamKey)}
             style={styles.showMoreLessButton}

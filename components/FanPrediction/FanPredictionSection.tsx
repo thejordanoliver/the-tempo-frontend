@@ -6,8 +6,10 @@ import { View } from "react-native";
 
 export default function FanPredictionSection({
   children,
+  showHeader = true,
 }: {
   children: ReactNode;
+  showHeader?: boolean;
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -15,7 +17,7 @@ export default function FanPredictionSection({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo isDark={isDark}>Fan Prediction</HeadingTwo>
+      {showHeader && <HeadingTwo isDark={isDark}>Fan Prediction</HeadingTwo>}
       <View style={styles.wrapper}>{children}</View>
     </View>
   );

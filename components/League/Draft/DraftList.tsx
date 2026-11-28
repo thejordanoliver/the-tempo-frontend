@@ -299,7 +299,7 @@ export default function DraftList({
       <>
         <View style={styles.dropdownContainer}>
           <View style={styles.dropdownWrapper}>
-            <TouchableOpacity onPress={toggleSearch}>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel={searchOpen ? "Close draft search" : "Search draft"} onPress={toggleSearch}>
               <Ionicons
                 name={searchOpen ? "close" : "search"}
                 size={22}
@@ -364,7 +364,7 @@ export default function DraftList({
     <>
       <View style={styles.dropdownContainer}>
         <View style={styles.dropdownWrapper}>
-          <TouchableOpacity onPress={toggleSearch}>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={searchOpen ? "Close draft search" : "Search draft"} onPress={toggleSearch}>
             <Ionicons
               name={searchOpen ? "close" : "search"}
               size={22}

@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import type { FavoriteLeague, FavoriteTeamKey } from "types/favorites";
-import { getFavoriteTeamRoute } from "utils/favorites/favoriteTeams";
+import { getFavoriteTeamHref } from "utils/favorites/favoriteTeams";
 import WidgetCarousel from "./WidgetCarousel";
 
 export type FavoriteTeamSlide = {
@@ -62,31 +62,17 @@ export default function FavoriteTeamsSlider({
   const renderSlide = useCallback(
     (item: FavoriteTeamSlide) => {
       return (
-        <Pressable
+        <Pressable accessibilityRole="button" accessibilityState={{ disabled: disabled }} accessibilityLabel={`Open ${item.fullName}, ${item.favorite.league.toUpperCase()}`}
           disabled={disabled}
           style={styles.slideButton}
           onPress={() => {
-            const route = getFavoriteTeamRoute(item.favorite.league);
-            if (route === "/league/volleyball") {
-              router.push({
-                pathname: "/(tabs)/(explore)/league/[sport]",
-                params: { sport: "volleyball", league: item.favorite.league },
-              });
-              return;
-            }
-            const teamType =
-              route === "/team/[teamId]" ? null : route.split("/")[2];
-
-            router.push({
-              pathname: teamType
-                ? "/(tabs)/(explore)/team/[teamType]/[teamId]"
-                : "/(tabs)/(explore)/team/[teamId]",
-              params: {
-                teamId: item.favorite.id,
-                league: item.favorite.league,
-                ...(teamType ? { teamType } : {}),
-              },
-            } as any);
+            router.push(
+              getFavoriteTeamHref(
+                item.favorite.league,
+                item.favorite.id,
+                "(explore)",
+              ),
+            );
           }}
         >
           <LinearGradient

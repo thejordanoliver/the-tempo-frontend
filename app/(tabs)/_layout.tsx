@@ -4,12 +4,16 @@ import {
   useNavigationBarRowHeight,
   NavigationBarInsetContext,
 } from "contexts/NavigationBarInsetContext";
+import { useAuth } from "hooks/UserHooks/useAuth";
+import { parseImageUrl } from "utils/ui/imageUtils";
 import NavigationBar from "../../components/NavigationBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 
 export default function TabLayout() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const { user } = useAuth();
+  const profileImageUri = parseImageUrl(user?.profile_image?.trim());
   const insets = useSafeAreaInsets();
   const navigationBarRowHeight = useNavigationBarRowHeight();
   const pathname = usePathname();
@@ -26,7 +30,11 @@ export default function TabLayout() {
       <Tabs
         tabBar={(props) =>
           hideNavigationBar ? null : (
-            <NavigationBar {...props} isDark={isDark} />
+            <NavigationBar
+              {...props}
+              isDark={isDark}
+              profileImageUri={profileImageUri}
+            />
           )
         }
         screenOptions={{

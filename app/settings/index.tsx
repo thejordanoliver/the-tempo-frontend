@@ -1,37 +1,29 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
-import { Ionicons } from "@expo/vector-icons";
+import Input from "@/components/Inputs/Input";
 import ConfirmModal from "components/ConfirmModal";
-import TextInputComponent from "components/TextInput";
+import SettingsOverview from "components/Settings/SettingsOverview";
 import { Colors, globalStyles } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import {
-  Linking,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Linking, Text, View } from "react-native";
 import { settingsStyles } from "styles/SettingsStyles";
 import { AlertConfig } from "types/alert";
 
 export default function SettingsScreen() {
-  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const { clearFavorites } = useFavoriteTeamsContext();
-  const { deleteAccount, logout } = useAuth();
+  const { user, deleteAccount, logout } = useAuth();
   const router = useScopedRouter();
   const navigation = useNavigation();
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
   const [pendingAlertConfig, setPendingAlertConfig] =
     useState<AlertConfig | null>(null);
-  const [showLogoutModal, setshowLogoutModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [password, setPassword] = useState("");
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -94,7 +86,7 @@ export default function SettingsScreen() {
     } catch (error) {
       console.warn("Failed to sign out:", error);
 
-      setshowLogoutModal(false);
+      setShowLogoutModal(false);
 
       queueAlert({
         title: "Sign Out Failed",
@@ -136,111 +128,80 @@ export default function SettingsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Settings" onBack={navigation.goBack} />,
+      header: () => (
+        <CustomHeader title="Settings" onBack={navigation.goBack} />
+      ),
     });
   }, [navigation]);
 
+  const accountName =
+    (user?.full_name ?? user?.fullName)?.trim() ||
+    (user?.username ? `@${user.username}` : undefined);
+
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={navigationContentStyle(styles.scrollContent)}
-      >
-        <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => router.push("/settings/accountdetails")}
-          >
-            <Text style={styles.optionText}>Account Details</Text>
-
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => router.push("/settings/preferences")}
-          >
-            <Text style={styles.optionText}>Preferences</Text>
-
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => router.push("/settings/blocked-users")}
-          >
-            <Text style={styles.optionText}>Blocked Accounts</Text>
-
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {[
+      <SettingsOverview
+        accountName={accountName}
+        avatarUri={user?.profile_image ?? user?.profileImage}
+        onAccountPress={() => router.push("/settings/accountdetails")}
+        sections={[
           {
-            label: "Privacy Policy",
-            url: "https://thetemposports.com/privacy/",
+            title: "App",
+            actions: [
+              {
+                label: "Preferences",
+                description: "Theme and score layouts",
+                icon: "options-outline",
+                onPress: () => router.push("/settings/preferences"),
+              },
+            ],
           },
           {
-            label: "Help & Support",
-            url: "https://thetemposports.com/support/",
+            title: "Privacy & Support",
+            actions: [
+              {
+                label: "Blocked Accounts",
+                icon: "ban-outline",
+                onPress: () => router.push("/settings/blocked-users"),
+              },
+              {
+                label: "Privacy Policy",
+                icon: "shield-checkmark-outline",
+                kind: "external",
+                onPress: () =>
+                  void openSupportPage("https://thetemposports.com/privacy/"),
+              },
+              {
+                label: "Help & Support",
+                icon: "help-circle-outline",
+                kind: "external",
+                onPress: () =>
+                  void openSupportPage("https://thetemposports.com/support/"),
+              },
+            ],
           },
-        ].map(({ label, url }) => (
-          <View key={url} style={styles.optionButtonContainer}>
-            <TouchableOpacity
-              style={styles.optionButton}
-              accessibilityRole="link"
-              accessibilityLabel={label}
-              accessibilityHint="Opens the Tempo website in your browser"
-              onPress={() => void openSupportPage(url)}
-            >
-              <Text style={styles.optionText}>{label}</Text>
-              <Ionicons
-                name="open-outline"
-                size={20}
-                color={isDark ? Colors.white : Colors.black}
-                importantForAccessibility="no"
-                accessibilityElementsHidden
-              />
-            </TouchableOpacity>
-          </View>
-        ))}
-
-        <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => setshowLogoutModal(true)}
-          >
-            <Text style={styles.dangerText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => {
-              setDeleteError(null);
-              setShowDeleteModal(true);
-            }}
-          >
-            <Text style={styles.dangerText}>Delete Account</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+          {
+            title: "Account Actions",
+            actions: [
+              {
+                label: "Logout",
+                icon: "log-out-outline",
+                kind: "confirmation",
+                onPress: () => setShowLogoutModal(true),
+              },
+              {
+                label: "Delete Account",
+                icon: "trash-outline",
+                kind: "destructive",
+                onPress: () => {
+                  setDeleteError(null);
+                  setShowDeleteModal(true);
+                },
+              },
+            ],
+          },
+        ]}
+      />
 
       <ConfirmModal
         visible={showLogoutModal}
@@ -250,10 +211,10 @@ export default function SettingsScreen() {
         cancelText="Cancel"
         variant="danger"
         onConfirm={() => {
-          setshowLogoutModal(false);
+          setShowLogoutModal(false);
           signOut();
         }}
-        onCancel={() => setshowLogoutModal(false)}
+        onCancel={() => setShowLogoutModal(false)}
       />
 
       <ConfirmModal
@@ -270,7 +231,7 @@ export default function SettingsScreen() {
           setDeleteError(null);
         }}
       >
-        <TextInputComponent
+        <Input
           placeholder="Current Password"
           placeholderTextColor={Colors.midTone}
           secureTextEntry

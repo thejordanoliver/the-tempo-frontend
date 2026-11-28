@@ -228,16 +228,16 @@ export default function RacingLeagueScreen() {
               selectedEventIndex={safeSelectedEventIndex}
               onSelectEvent={handleSelectEvent}
               isDark={isDark}
-            />
-
-            <GamesList
-              games={games ?? []}
-              error={gamesError}
-              loading={loadingGames}
-              refreshing={gamesRefreshing}
-              onRefresh={handleScoresRefresh}
-              scrollEnabled
-            />
+            >
+              <GamesList
+                games={games ?? []}
+                error={gamesError}
+                loading={loadingGames}
+                refreshing={gamesRefreshing}
+                onRefresh={handleScoresRefresh}
+                scrollEnabled
+              />
+            </EventSelector>
           </View>
 
           <View key="news" style={styles.contentArea}>

@@ -21,6 +21,7 @@ import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
 import { useFootballGames } from "./FootballHooks/useFootballGames";
 import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
 import { useMMAEvents } from "./MMAHooks/useMMAEvents";
+import { useRacingEvents } from "./RacingHooks/useRacingEvents";
 import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 import { useTennisMatches } from "./TennisHooks/useTennisMatches";
 import { useVolleyballGames } from "./VolleyballHooks/useVolleyball";
@@ -105,6 +106,13 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     refreshGames: refreshNBAGames,
   } = useBasketballGames(selectedDate, "nba", undefined, requestOptions("nba"));
 
+  const gleague = useBasketballGames(
+    selectedDate,
+    "gleague",
+    undefined,
+    requestOptions("gleague"),
+  );
+
   const {
     games: mlbGames,
     loading: mlbLoading,
@@ -128,6 +136,18 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     loading: nhlLoading,
     refreshGames: refreshNHLGames,
   } = useHockeyGames(selectedDate, "nhl", undefined, requestOptions("nhl"));
+
+  const {
+    games: mchGames,
+    loading: mchLoading,
+    refreshGames: refreshMCHGames,
+  } = useHockeyGames(selectedDate, "mch", undefined, requestOptions("mch"));
+
+  const {
+    games: wchGames,
+    loading: wchLoading,
+    refreshGames: refreshWCHGames,
+  } = useHockeyGames(selectedDate, "wch", undefined, requestOptions("wch"));
 
   const {
     games: cfbGames,
@@ -166,10 +186,9 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useBasketballGames(
     selectedDate,
     "mcbb",
-    undefined,
+    50, // All Division I teams
     requestOptions("mcbb"),
   );
-
   const {
     games: womensBasketballGames,
     loading: womensMCBBLoading,
@@ -177,7 +196,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   } = useBasketballGames(
     selectedDate,
     "wcbb",
-    undefined,
+    50, // All Division I teams
     requestOptions("wcbb"),
   );
 
@@ -237,6 +256,13 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     loading: fifaLoading,
     refreshGames: refreshFIFAGames,
   } = useSoccerGames(selectedDate, "fifa", undefined, requestOptions("fifa"));
+
+  const fifaw = useSoccerGames(
+    selectedDate,
+    "fifaw",
+    undefined,
+    requestOptions("fifaw"),
+  );
 
   const {
     games: eplGames,
@@ -335,6 +361,18 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     requestOptions("wcvb"),
   );
 
+  const racingDate = dayjs(selectedDate).format("YYYYMMDD");
+  const f1 = useRacingEvents({
+    date: racingDate,
+    league: "f1",
+    ...requestOptions("f1"),
+  });
+  const nascar = useRacingEvents({
+    date: racingDate,
+    league: "nascarpremier",
+    ...requestOptions("nascarpremier"),
+  });
+
   const normalizedNBA = useMemo(
     () => normalizeGames(nbaGames, "nba"),
     [nbaGames],
@@ -356,6 +394,16 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   const normalizedNHL = useMemo(
     () => normalizeGames(nhlGames, "nhl"),
     [nhlGames],
+  );
+
+  const normalizedMCH = useMemo(
+    () => normalizeGames(mchGames, "mch"),
+    [mchGames],
+  );
+
+  const normalizedWCH = useMemo(
+    () => normalizeGames(wchGames, "wch"),
+    [wchGames],
   );
   const normalizedCFB = useMemo(
     () => normalizeGames(cfbGames, "cfb"),
@@ -470,6 +518,16 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => safeFilterByDate(normalizedNHL, true),
     [normalizedNHL, safeFilterByDate],
   );
+
+  const filteredMCH = useMemo(
+    () => safeFilterByDate(normalizedMCH, true),
+    [normalizedMCH, safeFilterByDate],
+  );
+
+  const filteredWCH = useMemo(
+    () => safeFilterByDate(normalizedWCH, true),
+    [normalizedWCH, safeFilterByDate],
+  );
   const filteredCFB = useMemo(
     () => safeFilterByDate(normalizedCFB, true),
     [normalizedCFB, safeFilterByDate],
@@ -538,24 +596,45 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => safeFilterByDate(normalizedMMA, true),
     [normalizedMMA, safeFilterByDate],
   );
+  const filteredGLeague = useMemo(
+    () => safeFilterByDate(normalizeGames(gleague.games, "gleague"), true),
+    [gleague.games, safeFilterByDate],
+  );
+  const filteredFIFAW = useMemo(
+    () => safeFilterByDate(normalizeGames(fifaw.games, "fifaw")),
+    [fifaw.games, safeFilterByDate],
+  );
+  // A racing scoreboard can include sessions from the entire race weekend.
+  const filteredF1 = useMemo(
+    () => safeFilterByDate(f1.games),
+    [f1.games, safeFilterByDate],
+  );
+  const filteredNASCAR = useMemo(
+    () => safeFilterByDate(nascar.games),
+    [nascar.games, safeFilterByDate],
+  );
 
   const homeLeagueSources = useMemo<HomeLeagueSource[]>(() => {
     const gamesByLeague: Record<HomeLeagueId, readonly LeagueGame[]> = {
       mcvb: mcvb.games,
       wcvb: wcvb.games,
       nba: filteredNBA,
+      gleague: filteredGLeague,
       nfl: filteredNFL,
       ufl: filteredUFL,
       mlb: filteredMLB,
       cb: filteredCB,
       sb: filteredSB,
       nhl: filteredNHL,
+      mch: filteredMCH,
+      wch: filteredWCH,
       cfb: filteredCFB,
       msoc: filteredMensSoccer,
       wsoc: filteredWomensSoccer,
       mls: filteredMLS,
       leaguescup: filteredLeaguesCup,
       fifa: filteredFIFA,
+      fifaw: filteredFIFAW,
       europa: filteredEuropa,
       champions: filteredChampions,
       epl: filteredEPL,
@@ -569,6 +648,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       ufc: filteredMMA,
       atp: atpMatches,
       wta: wtaMatches,
+      f1: filteredF1,
+      nascarpremier: filteredNASCAR,
     };
 
     return HOME_SCORE_LEAGUES.filter((id) =>
@@ -582,18 +663,22 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     mcvb.games,
     wcvb.games,
     filteredNBA,
+    filteredGLeague,
     filteredNFL,
     filteredUFL,
     filteredMLB,
     filteredCB,
     filteredSB,
     filteredNHL,
+    filteredMCH,
+    filteredWCH,
     filteredCFB,
     filteredMensSoccer,
     filteredWomensSoccer,
     filteredMLS,
     filteredLeaguesCup,
     filteredFIFA,
+    filteredFIFAW,
     filteredEuropa,
     filteredChampions,
     filteredEPL,
@@ -607,6 +692,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     filteredMMA,
     atpMatches,
     wtaMatches,
+    filteredF1,
+    filteredNASCAR,
   ]);
 
   const homeGameSections = useMemo(
@@ -667,10 +754,13 @@ export function useHomeData(selectedTab: "scores" | "for you") {
                 mcvb.refreshGames(),
                 wcvb.refreshGames(),
                 refreshNBAGames(),
+                gleague.refreshGames(),
                 refreshMLBGames(),
                 refreshCBGames(),
                 refreshSBGames(),
                 refreshNHLGames(),
+                refreshMCHGames(),
+                refreshWCHGames(),
                 refreshNFLGames(),
                 refreshUFLGames(),
                 refreshCFBGames(),
@@ -683,6 +773,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
                 refreshLeaguesCupGames(),
                 refreshEPLGames(),
                 refreshFIFAGames(),
+                fifaw.refreshGames(),
                 refreshChampionsGames(),
                 refreshEuropaGames(),
                 refreshBundesligaGames(),
@@ -692,6 +783,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
                 refreshMMAGames(),
                 refreshATPMatches(),
                 refreshWTAMatches(),
+                f1.refreshGames(),
+                nascar.refreshGames(),
               ]),
         ]);
       } else {
@@ -712,10 +805,13 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     mcvb.loading ||
     wcvb.loading ||
     nbaLoading ||
+    gleague.loading ||
     mlbLoading ||
     cbLoading ||
     sbLoading ||
     nhlLoading ||
+    mchLoading ||
+    wchLoading ||
     nflLoading ||
     uflLoading ||
     cfbLoading ||
@@ -727,6 +823,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     mlsLoading ||
     leaguesCupLoading ||
     fifaLoading ||
+    fifaw.loading ||
     eplLoading ||
     europaLoading ||
     bundesligaLoading ||
@@ -736,7 +833,9 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     championsLoading ||
     mmaLoading ||
     atpLoading ||
-    wtaLoading;
+    wtaLoading ||
+    f1.loading ||
+    nascar.loading;
 
   const searchingUpcoming =
     isGeneralHome &&

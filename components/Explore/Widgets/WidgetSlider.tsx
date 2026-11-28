@@ -50,7 +50,7 @@ export type WidgetSlide =
   | { type: "mcbb"; data: BasketballGame }
   | { type: "wcbb"; data: BasketballGame }
   | { type: "wnba"; data: BasketballGame }
-  | { type: "nhl"; data: HockeyGame };
+  | { type: "hockey"; data: HockeyGame };
 
 type WidgetSliderOrientation = "vertical" | "horizontal";
 
@@ -580,19 +580,6 @@ export default function WidgetSlider({
           );
 
         case "cfb":
-          return (
-            <View style={{ height: slideHeight, width: slideWidth }}>
-              <FootballGameWidget
-                game={item.data}
-                height={slideHeight}
-                width={slideWidth}
-                isDark={isDark}
-                isNFL={false}
-                isCFB={true}
-              />
-            </View>
-          );
-
         case "ufl":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
@@ -673,7 +660,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "nhl":
+        case "hockey":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <HockeyGameWidget
@@ -681,7 +668,6 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
-                isNHL={true}
               />
             </View>
           );
@@ -959,9 +945,10 @@ const editControlStyles = (isDark: boolean, compact: boolean) =>
       borderRadius: 999,
       backgroundColor: isDark ? "rgba(0,0,0,0.82)" : "rgba(255,255,255,0.92)",
       shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.16,
-      shadowRadius: 8,
+      boxShadow:
+        Platform.OS === "android"
+          ? undefined
+          : `0px 3px 16px ${Colors.black}29`,
       elevation: 5,
     },
     moveControls: {

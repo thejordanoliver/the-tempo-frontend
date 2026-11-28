@@ -27,8 +27,8 @@ export const fanRankingRowStyles = (isDark: boolean) => {
       justifyContent: "center",
     },
     goldBadge: { borderWidth: 2, borderColor: Colors.gold },
-    silverBadge: { backgroundColor: Colors.silver },
-    bronzeBadge: { backgroundColor: Colors.bronze },
+    silverBadge: { borderWidth: 2, borderColor: Colors.silver },
+    bronzeBadge: { borderWidth: 2, borderColor: Colors.bronze },
     rank: {
       color: colors.text,
       fontFamily: Fonts.BOLD,

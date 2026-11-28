@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import { AppState } from "react-native";
 import { shouldShowGameChat } from "utils/common/dateUtils";
 
-export function useGameChatAvailability(gameDate: Date | null): boolean {
+export function useGameChatAvailability(
+  gameDate: Date | null,
+  isLive: boolean,
+): boolean {
   const [, setTick] = useState(0);
   const gameTime = gameDate?.getTime();
 
@@ -41,5 +44,5 @@ export function useGameChatAvailability(gameDate: Date | null): boolean {
     };
   }, [gameTime]);
 
-  return shouldShowGameChat(gameDate);
+  return isLive || shouldShowGameChat(gameDate);
 }

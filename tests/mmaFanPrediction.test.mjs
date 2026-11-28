@@ -43,6 +43,7 @@ for (const id of [401234567, "401234567"]) {
                 }
               : {},
         },
+        "components/Sports/Basketball/GameDetails/Odds": { default: "Odds" },
         "@/components/CustomHeader": { CustomHeader: "CustomHeader" },
         "components/CustomHeader/GameHeaderPlaceholder": {
           GameHeaderPlaceholder: "Placeholder",

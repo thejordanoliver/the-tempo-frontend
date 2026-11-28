@@ -6,6 +6,7 @@ import type { ImageSourcePropType } from "react-native";
 type Props = {
   plays?: Play[];
   loading?: boolean;
+  league: string;
   isDark: boolean;
   homeId: string | number;
   awayId: string | number;
@@ -17,6 +18,7 @@ const EMPTY_PLAYS: Play[] = [];
 
 export default function HockeyGameSummary({
   plays = EMPTY_PLAYS,
+  league,
   ...props
 }: Props) {
   const model = useHockeySummary(plays);
@@ -24,7 +26,7 @@ export default function HockeyGameSummary({
     <GameSummary
       {...props}
       model={model}
-      scope={`nhl:${props.homeId}:${props.awayId}`}
+      scope={`${league}:${props.homeId}:${props.awayId}`}
     />
   );
 }

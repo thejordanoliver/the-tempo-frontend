@@ -69,6 +69,8 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const clock = game?.status?.displayClock;
   const resultText = game.method;
 
+  console.log(JSON.stringify(game, null, 2));
+
   const results =
     resultText?.toLowerCase() === "submission"
       ? "SUB"
@@ -243,7 +245,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

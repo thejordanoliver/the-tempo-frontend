@@ -1,4 +1,4 @@
-import SearchItemSkeleton from "components/Skeletons/ResultItemSkeleton";
+import TransactionItemSkeleton from "components/Skeletons/TransactionItemSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
@@ -21,6 +21,7 @@ type Props = {
   league: string;
   isDark?: boolean;
   season?: number;
+  team?: number;
   active?: boolean;
 };
 
@@ -28,6 +29,7 @@ export default function TransactionList({
   league,
   isDark: theme,
   season,
+  team,
   active = true,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
@@ -45,7 +47,7 @@ export default function TransactionList({
     loadMore,
     onRefresh,
     retry,
-  } = useTransactions(league, { season, enabled: active });
+  } = useTransactions(league, { season, team, enabled: active });
 
   const feedback = error ? (
     <View style={global.emptyContainer}>
@@ -64,7 +66,7 @@ export default function TransactionList({
 
   return (
     <FlatList
-      key={JSON.stringify([league, season])}
+      key={JSON.stringify([league, season, team])}
       style={styles.list}
       data={transactions}
       keyExtractor={getTransactionKey}
@@ -86,7 +88,10 @@ export default function TransactionList({
         loading ? (
           <View accessibilityLabel="Loading transactions">
             {Array.from({ length: 6 }, (_, index) => (
-              <SearchItemSkeleton key={index} />
+              <View key={index}>
+                {index > 0 && <View style={styles.separator} />}
+                <TransactionItemSkeleton isDark={isDark} />
+              </View>
             ))}
           </View>
         ) : (

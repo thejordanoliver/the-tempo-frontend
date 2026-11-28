@@ -28,7 +28,6 @@ export type FootballGameWidgetProps = {
   isDark: boolean;
   height?: number;
   width?: number;
-  loading?: boolean;
 };
 
 export default function FootballGameWidget({
@@ -37,7 +36,6 @@ export default function FootballGameWidget({
   isCFB,
   height = 150,
   width = 150,
-  loading = false,
   isDark,
 }: FootballGameWidgetProps) {
   const league = isNFL ? "nfl" : isCFB ? "cfb" : "ufl";
@@ -53,7 +51,7 @@ export default function FootballGameWidget({
     } as any);
   };
   const styles = gameWidgetStyles(isDark, height, width);
-  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(width);
   const showHeadline = !isSmallLayout || height >= 170;
 
   const gameDate = safeDate(game.date);
@@ -250,7 +248,7 @@ export default function FootballGameWidget({
   // Render widget
   // -------------------------
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.container}>
         {showHeadline && (
           <View style={styles.headlineContainer}>

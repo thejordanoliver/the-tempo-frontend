@@ -222,6 +222,8 @@ import EastWestUniversityLogo from "assets/College_Logos/EastWestUniversityLogo.
 import EastWestUniversityLogoLight from "assets/College_Logos/EastWestUniversityLogoLight.png";
 import EcclesiaLogo from "assets/College_Logos/EcclesiaLogo.png";
 import EcclesiaLogoLight from "assets/College_Logos/EcclesiaLogoLight.png";
+import ElmiraLogo from "assets/College_Logos/ElmiraLogo.png";
+import ElmiraLogoLight from "assets/College_Logos/ElmiraLogoLight.png";
 import ElonLogo from "assets/College_Logos/ElonLogo.png";
 import ElonLogoLight from "assets/College_Logos/ElonLogoLight.png";
 import EmersonLogo from "assets/College_Logos/EmersonLogo.png";
@@ -236,6 +238,8 @@ import FAULogo from "assets/College_Logos/FAULogo.png";
 import FAULogoLight from "assets/College_Logos/FAULogoLight.png";
 import FisherCollegeLogo from "assets/College_Logos/FisherCollegeLogo.png";
 import FisherCollegeLogoLight from "assets/College_Logos/FisherCollegeLogoLight.png";
+import FiskLogo from "assets/College_Logos/FiskLogo.png";
+import FiskLogoLight from "assets/College_Logos/FiskLogoLight.png";
 import FIULogo from "assets/College_Logos/FIULogo.png";
 import FIULogoLight from "assets/College_Logos/FIULogoLight.png";
 import FloridaAAndMLogo from "assets/College_Logos/FloridaAAndMLogo.png";
@@ -330,6 +334,7 @@ import IUColumbusLogo from "assets/College_Logos/IUColumbusLogo.png";
 import IUColumbusLogoLight from "assets/College_Logos/IUColumbusLogoLight.png";
 import IUIndianapolisLogo from "assets/College_Logos/IUIndianapolisLogo.png";
 import IUIndianapolisLogoLight from "assets/College_Logos/IUIndianapolisLogoLight.png";
+import IUSouthBendLogo from "assets/College_Logos/IUSouthBendLogo.png";
 import JacksonStateLogo from "assets/College_Logos/JacksonStateLogo.png";
 import JacksonStateLogoLight from "assets/College_Logos/JacksonStateLogoLight.png";
 import JacksonvilleLogo from "assets/College_Logos/JacksonvilleLogo.png";
@@ -416,6 +421,8 @@ import MarshallLogo from "assets/College_Logos/MarshallLogo.png";
 import MarshallLogoLight from "assets/College_Logos/MarshallLogoLight.png";
 import MarylandLogo from "assets/College_Logos/MarylandLogo.png";
 import MarylandLogoLight from "assets/College_Logos/MarylandLogoLight.png";
+import McDanielLogo from "assets/College_Logos/McDanielLogo.png";
+import McDanielLogoLight from "assets/College_Logos/McDanielLogoLight.png";
 import McNeeseLogo from "assets/College_Logos/McNeeseLogo.png";
 import McNeeseLogoLight from "assets/College_Logos/McNeeseLogoLight.png";
 import MdEastShoreLogo from "assets/College_Logos/MdEastShoreLogo.png";
@@ -482,6 +489,8 @@ import MountStMarysLogo from "assets/College_Logos/MountStMarysLogo.png";
 import MountStMarysLogoLight from "assets/College_Logos/MountStMarysLogoLight.png";
 import MurrayStateLogo from "assets/College_Logos/MurrayStateLogo.png";
 import MurrayStateLogoLight from "assets/College_Logos/MurrayStateLogoLight.png";
+import MuskingumLogo from "assets/College_Logos/MuskingumLogo.png";
+import MuskingumLogoLight from "assets/College_Logos/MuskingumLogoLight.png";
 import NavyLogo from "assets/College_Logos/NavyLogo.png";
 import NavyLogoLight from "assets/College_Logos/NavyLogoLight.png";
 import NCStateLogo from "assets/College_Logos/NCStateLogo.png";
@@ -682,6 +691,8 @@ import SetonHallLogo from "assets/College_Logos/SetonHallLogo.png";
 import SetonHallLogoLight from "assets/College_Logos/SetonHallLogoLight.png";
 import SienaLogo from "assets/College_Logos/SienaLogo.png";
 import SienaLogoLight from "assets/College_Logos/SienaLogoLight.png";
+import SimpsonIALogo from "assets/College_Logos/SimpsonIALogo.png";
+import SimpsonIALogoLight from "assets/College_Logos/SimpsonIALogoLight.png";
 import SIUEdwardsvilleLogo from "assets/College_Logos/SIUEdwardsvilleLogo.png";
 import SIUEdwardsvilleLogoLight from "assets/College_Logos/SIUEdwardsvilleLogoLight.png";
 import SMULogo from "assets/College_Logos/SMULogo.png";
@@ -888,6 +899,8 @@ import WesternMichiganLogo from "assets/College_Logos/WesternMichiganLogo.png";
 import WesternMichiganLogoLight from "assets/College_Logos/WesternMichiganLogoLight.png";
 import WesternOregonLogo from "assets/College_Logos/WesternOregonLogo.png";
 import WesternOregonLogoLight from "assets/College_Logos/WesternOregonLogoLight.png";
+import WestFloridaLogo from "assets/College_Logos/WestFloridaLogo.png";
+import WestFloridaLogoLight from "assets/College_Logos/WestFloridaLogoLight.png";
 import WestGeorgiaLogo from "assets/College_Logos/WestGeorgiaLogo.png";
 import WestGeorgiaLogoLight from "assets/College_Logos/WestGeorgiaLogoLight.png";
 import WestLibertyLogo from "assets/College_Logos/WestLibertyLogo.png";
@@ -918,21 +931,6 @@ import YaleLogo from "assets/College_Logos/YaleLogo.png";
 import YaleLogoLight from "assets/College_Logos/YaleLogoLight.png";
 import YoungstownStateLogo from "assets/College_Logos/YoungstownStateLogo.png";
 import YoungstownStateLogoLight from "assets/College_Logos/YoungstownStateLogoLight.png";
-
-//Logos
-
-import ElmiraLogo from "assets/College_Logos/ElmiraLogo.png";
-import ElmiraLogoLight from "assets/College_Logos/ElmiraLogoLight.png";
-import FiskLogo from "assets/College_Logos/FiskLogo.png";
-import FiskLogoLight from "assets/College_Logos/FiskLogoLight.png";
-import McDanielLogo from "assets/College_Logos/McDanielLogo.png";
-import McDanielLogoLight from "assets/College_Logos/McDanielLogoLight.png";
-import MuskingumLogo from "assets/College_Logos/MuskingumLogo.png";
-import MuskingumLogoLight from "assets/College_Logos/MuskingumLogoLight.png";
-import SimpsonIALogo from "assets/College_Logos/SimpsonIALogo.png";
-import SimpsonIALogoLight from "assets/College_Logos/SimpsonIALogoLight.png";
-import WestFloridaLogo from "assets/College_Logos/WestFloridaLogo.png";
-import WestFloridaLogoLight from "assets/College_Logos/WestFloridaLogoLight.png";
 
 export const mcbbTeams: Team[] = [
   {
@@ -6555,6 +6553,23 @@ export const mcbbTeams: Team[] = [
     isNational: false,
     league: "mcbb",
     logoLight: IUIndianapolisLogoLight,
+  },
+  {
+    id: 2288,
+    name: "IU South Bend",
+    fullName: "IU South Bend Titans",
+    shortName: "IU South Bend",
+    code: "IUSB",
+    primaryColor: "#990000",
+    secondaryColor: "#EDEBEB",
+    logo: IUSouthBendLogo,
+    isActive: true,
+    isAllStar: false,
+    city: "South Bend",
+    location: "South Bend, IN",
+    established: 0,
+    isNational: false,
+    league: "mcbb",
   },
   {
     id: 2427,

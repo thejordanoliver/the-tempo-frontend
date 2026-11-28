@@ -14,6 +14,8 @@ export const FAVORITE_LEAGUES = [
   "mcvb",
   "wcvb",
   "nhl",
+  "mch",
+  "wch",
   "socc",
 ] as const;
 
@@ -42,11 +44,6 @@ export type FavoriteLeagueItem = FavoriteItemBase & {
 };
 
 export type FavoriteItem = FavoriteTeamItem | FavoriteLeagueItem;
-
-export type FavoriteRailOrder = {
-  favoriteTeamIds: FavoriteTeamKey[];
-  favoriteSports: FavoriteSportId[];
-};
 
 export function isFavoriteLeague(value: string): value is FavoriteLeague {
   return (FAVORITE_LEAGUES as readonly string[]).includes(value);
@@ -95,59 +92,4 @@ export function buildFavoriteTeamKey(
   teamId: string | number,
 ): FavoriteTeamKey | null {
   return normalizeFavoriteTeamKey(`${league}:${teamId}`);
-}
-
-export function splitFavoriteRailOrder(
-  items: readonly FavoriteItem[],
-): FavoriteRailOrder {
-  const favoriteTeamIds = normalizeFavoriteTeamKeys(
-    items.flatMap((item) =>
-      item.kind === "team" ? [`${item.league}:${item.id}`] : [],
-    ),
-  );
-  const favoriteSports = items.flatMap((item) =>
-    item.kind === "league" ? [item.id] : [],
-  );
-
-  return {
-    favoriteTeamIds,
-    favoriteSports,
-  };
-}
-
-export function reorderFavoriteRailItems(
-  items: readonly FavoriteItem[],
-  from: number,
-  to: number,
-): FavoriteItem[] {
-  const draggedItem = items[from];
-
-  if (!draggedItem || from === to) {
-    return [...items];
-  }
-
-  const sectionIndexes = items.flatMap((item, index) =>
-    item.kind === draggedItem.kind ? [index] : [],
-  );
-  const firstIndex = sectionIndexes[0];
-  const lastIndex = sectionIndexes.at(-1);
-
-  if (firstIndex === undefined || lastIndex === undefined) {
-    return [...items];
-  }
-
-  const destination = Math.min(lastIndex, Math.max(firstIndex, to));
-
-  if (destination === from) {
-    return [...items];
-  }
-
-  const reordered = [...items];
-  const [removedItem] = reordered.splice(from, 1);
-
-  if (removedItem) {
-    reordered.splice(destination, 0, removedItem);
-  }
-
-  return reordered;
 }

@@ -1,3 +1,5 @@
+import type { TabGroup } from "utils/navigation/tabStackNavigation";
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
@@ -11,20 +13,6 @@ import { getSOCCTeam, getSOCCTeamLogo } from "constants/teamsSOCC";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import type { ImageSourcePropType } from "react-native";
 import type { FavoriteLeague, FavoriteTeamItem } from "types/favorites";
-
-export type FavoriteTeamRoute =
-  | "/team/[teamId]"
-  | "/team/wnba/[teamId]"
-  | "/team/nfl/[teamId]"
-  | "/team/cfb/[teamId]"
-  | "/team/mcbb/[teamId]"
-  | "/team/wcbb/[teamId]"
-  | "/team/mlb/[teamId]"
-  | "/team/cb/[teamId]"
-  | "/team/sb/[teamId]"
-  | "/league/volleyball"
-  | "/team/nhl/[teamId]"
-  | "/team/soccer/[teamId]";
 
 export type FavoriteBaseTeam = {
   name: string;
@@ -111,47 +99,21 @@ export function getFavoriteTeamLogo(
   }
 }
 
-export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
-  switch (league) {
-    case "nba":
-      return "/team/[teamId]";
-
-    case "wnba":
-      return "/team/wnba/[teamId]";
-
-    case "nfl":
-      return "/team/nfl/[teamId]";
-
-    case "cfb":
-      return "/team/cfb/[teamId]";
-
-    case "mcbb":
-      return "/team/mcbb/[teamId]";
-
-    case "wcbb":
-      return "/team/wcbb/[teamId]";
-
-    case "mlb":
-      return "/team/mlb/[teamId]";
-
-    case "cb":
-      return "/team/cb/[teamId]";
-
-    case "sb":
-      return "/team/sb/[teamId]";
-    case "mcvb":
-    case "wcvb":
-      return "/league/volleyball";
-
-    case "nhl":
-      return "/team/nhl/[teamId]";
-
-    case "socc":
-      return "/team/soccer/[teamId]";
-
-    default:
-      throw new Error(`Unsupported favorite team league: ${league}`);
+export function getFavoriteTeamHref(
+  league: string,
+  teamId: string | number,
+  tabGroup?: TabGroup,
+) {
+  if (league === "mcvb" || league === "wcvb") {
+    const pathname = tabGroup
+      ? (`/(tabs)/${tabGroup}/league/[sport]` as const)
+      : ("/league/[sport]" as const);
+    return { pathname, params: { sport: "volleyball", league } };
   }
+
+  const sport = getTeamSport(league);
+  if (!sport) throw new Error(`Unsupported favorite team league: ${league}`);
+  return getTeamHref(sport, teamId, league, tabGroup);
 }
 
 export function isCollegeFavoriteLeague(league: string): boolean {
@@ -162,6 +124,8 @@ export function isCollegeFavoriteLeague(league: string): boolean {
     league === "cb" ||
     league === "sb" ||
     league === "mcvb" ||
-    league === "wcvb"
+    league === "wcvb" ||
+    league === "mch" ||
+    league === "wch"
   );
 }

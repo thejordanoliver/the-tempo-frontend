@@ -29,6 +29,8 @@ export interface RosterPlayer {
 export type SupportedRosterLeague =
   | "mlb"
   | "nhl"
+  | "mch"
+  | "wch"
   | "nfl"
   | "cfb"
 

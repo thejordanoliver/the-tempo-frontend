@@ -51,7 +51,7 @@ export default function BasketballGameWidget({
     } as any);
   };
   const styles = gameWidgetStyles(isDark, height, width);
-  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(width);
   const showHeadline = !isSmallLayout || height >= 170;
 
   const home = game.home;
@@ -217,7 +217,7 @@ export default function BasketballGameWidget({
   // Render widget
   // -------------------------
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.container}>
         {showHeadline && (
           <View style={styles.headlineContainer}>

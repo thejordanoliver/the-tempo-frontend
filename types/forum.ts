@@ -244,6 +244,7 @@ export type UseForumOptions = {
 };
 
 export type UseBookmarkedPostsOptions = {
+  userId?: string | number | null;
   enabled?: boolean;
   limit?: number;
 };

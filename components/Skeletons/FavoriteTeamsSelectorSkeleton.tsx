@@ -23,26 +23,23 @@ export default function FavoritesSelectorSkeleton({
     [isDark, itemWidth],
   );
 
-  const renderItem = useCallback(
-    ({ item }: { item: any }) => {
-      return (
-        <SkeletonBlock
-          style={[
-            styles.skeletonCard,
-            {
-              width: itemWidth,
-              height: CARD_HEIGHT,
-              marginBottom: 12,
-            },
-          ]}
-        >
-          <SkeletonCircle size={40} style={styles.logoSkeleton} />
-          <SkeletonBlock style={styles.nameSkeleton} />
-        </SkeletonBlock>
-      );
-    },
-    [styles, itemWidth],
-  );
+  const renderItem = useCallback(() => {
+    return (
+      <SkeletonBlock
+        style={[
+          styles.skeletonCard,
+          {
+            width: itemWidth,
+            height: CARD_HEIGHT,
+            marginBottom: 12,
+          },
+        ]}
+      >
+        <SkeletonCircle size={40} style={styles.logoSkeleton} />
+        <SkeletonBlock style={styles.nameSkeleton} />
+      </SkeletonBlock>
+    );
+  }, [styles, itemWidth]);
 
   return (
     <View style={styles.container}>

@@ -84,7 +84,7 @@ export default function SafetyActionsModal(props: SafetyActionsModalProps) {
       <View style={styles.options}>
         {isReport ? (
           REPORT_REASONS.map((reason) => (
-            <Pressable
+            <Pressable accessibilityState={{ disabled: props.pending }}
               key={reason.value}
               disabled={props.pending}
               onPress={() => void props.onSubmitReport(reason.value)}

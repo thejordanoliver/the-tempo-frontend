@@ -68,19 +68,6 @@ expectRoutes("Home exposes every reusable detail-screen family", [
   "app/(tabs)/(home)/player/mma/[id].tsx",
   "app/(tabs)/(home)/player/racing/[id].tsx",
   "app/(tabs)/(home)/player/soccer/[id].tsx",
-  "app/(tabs)/(home)/team/[teamId].tsx",
-  "app/(tabs)/(home)/team/cb/[teamId].tsx",
-  "app/(tabs)/(home)/team/mcbb/[teamId].tsx",
-  "app/(tabs)/(home)/team/cfb/[teamId].tsx",
-  "app/(tabs)/(home)/team/gleague/[teamId].tsx",
-  "app/(tabs)/(home)/team/mlb/[teamId].tsx",
-  "app/(tabs)/(home)/team/nfl/[teamId].tsx",
-  "app/(tabs)/(home)/team/nhl/[teamId].tsx",
-  "app/(tabs)/(home)/team/sb/[teamId].tsx",
-  "app/(tabs)/(home)/team/soccer/[teamId].tsx",
-  "app/(tabs)/(home)/team/ufl/[teamId].tsx",
-  "app/(tabs)/(home)/team/wcbb/[teamId].tsx",
-  "app/(tabs)/(home)/team/wnba/[teamId].tsx",
   "app/(tabs)/(home,league)/user/[id].tsx",
 ]);
 
@@ -88,8 +75,6 @@ expectRoutes("Leagues exposes every reusable detail-screen family", [
   "app/(tabs)/(league)/league/[sport].tsx",
   "app/(tabs)/(league,explore,profile)/game/[sport]/[game].tsx",
   "app/(tabs)/(league,profile)/player/[sport]/[id].tsx",
-  "app/(tabs)/(league)/team/[teamId].tsx",
-  "app/(tabs)/(league)/team/[teamType]/[teamId].tsx",
   "app/(tabs)/(home,league)/user/[id].tsx",
 ]);
 
@@ -97,8 +82,6 @@ expectRoutes("Explore exposes every reusable detail-screen family", [
   "app/(tabs)/(explore)/league/[sport].tsx",
   "app/(tabs)/(league,explore,profile)/game/[sport]/[game].tsx",
   "app/(tabs)/(explore)/player/[sport]/[id].tsx",
-  "app/(tabs)/(explore)/team/[teamId].tsx",
-  "app/(tabs)/(explore)/team/[teamType]/[teamId].tsx",
   "app/(tabs)/(explore)/user/[id].tsx",
 ]);
 
@@ -106,15 +89,21 @@ expectRoutes("Profile exposes every reusable detail-screen family", [
   "app/(tabs)/(profile)/league/[sport].tsx",
   "app/(tabs)/(league,explore,profile)/game/[sport]/[game].tsx",
   "app/(tabs)/(league,profile)/player/[sport]/[id].tsx",
-  "app/(tabs)/(profile)/team/[teamId].tsx",
-  "app/(tabs)/(profile)/team/[teamType]/[teamId].tsx",
   "app/(tabs)/(profile)/user/[id].tsx",
 ]);
+
+expectRoutes(
+  "all four tab stacks expose sport team routes and legacy NBA links",
+  [
+    "app/(tabs)/(home,league,explore,profile)/team/[sport]/[teamId].tsx",
+    "app/(tabs)/(home,league,explore,profile)/team/[teamId].tsx",
+  ],
+);
 
 test("unqualified detail routes stay inside their active tab stack", () => {
   assert.equal(
     scopeHrefToTab("/team/nfl/12", "(league)"),
-    "/(tabs)/(league)/team/nfl/12?league=nfl",
+    "/(tabs)/(league)/team/football/12?league=nfl",
   );
 
   assert.deepEqual(
@@ -161,7 +150,7 @@ test("query strings, fragments, and trailing slashes preserve root routes", () =
 test("detail query strings and object params stay intact inside the active tab", () => {
   assert.equal(
     scopeHrefToTab("/team/nfl/12?season=2026#games", "(league)"),
-    "/(tabs)/(league)/team/nfl/12?season=2026&league=nfl#games",
+    "/(tabs)/(league)/team/football/12?season=2026&league=nfl#games",
   );
   assert.deepEqual(
     scopeHrefToTab(
@@ -188,5 +177,8 @@ test("external, relative, qualified, and unsupported paths remain unchanged", ()
   ]) {
     assert.equal(scopeHrefToTab(route as Href, "(home)"), route);
   }
-  assert.equal(scopeHrefToTab("/team/nfl/12", null), "/team/nfl/12?league=nfl");
+  assert.equal(
+    scopeHrefToTab("/team/nfl/12", null),
+    "/team/football/12?league=nfl",
+  );
 });

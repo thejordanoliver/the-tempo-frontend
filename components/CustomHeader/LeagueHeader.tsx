@@ -19,6 +19,7 @@ type LeagueHeaderProps = {
   isDark: boolean;
   logo?: HeaderImageSource;
   hasLeagueColor?: boolean;
+  sideInset: number;
 };
 
 export function LeagueHeader({
@@ -29,6 +30,7 @@ export function LeagueHeader({
   rotate,
   isDark,
   hasLeagueColor = false,
+  sideInset,
 }: LeagueHeaderProps) {
   const { width } = useWindowDimensions();
   const styles = CustomHeaderStyles(isDark, width);
@@ -50,8 +52,15 @@ export function LeagueHeader({
   };
 
   return (
-    <View style={styles.leagueHeaderContainer}>
+    <View
+      pointerEvents="box-none"
+      style={[
+        styles.leagueHeaderContainer,
+        { left: sideInset, right: sideInset },
+      ]}
+    >
       <TouchableOpacity
+        accessibilityState={{ disabled: !onOpenLeagueModal }}
         activeOpacity={activeOpacity}
         accessibilityRole={onOpenLeagueModal ? "button" : "header"}
         accessibilityLabel={selectedConferenceName || tabName}
@@ -64,6 +73,9 @@ export function LeagueHeader({
         style={styles.leagueHeaderButton}
         disabled={!onOpenLeagueModal}
       >
+        {onOpenLeagueModal ? (
+          <View style={styles.leagueHeaderChevron} />
+        ) : null}
         <HeaderTitle
           style={
             selectedConference || hasLeagueColor ? brandedTextStyle : textStyle
@@ -74,23 +86,15 @@ export function LeagueHeader({
 
         {onOpenLeagueModal ? (
           <Animated.View
-            style={{
-              transform: [
-                {
-                  rotate,
-                },
-              ],
-            }}
+            style={[styles.leagueHeaderChevron, { transform: [{ rotate }] }]}
           >
             <Ionicons
               name="chevron-down"
-              size={24}
+              size={styles.leagueHeaderChevron.width}
               color={
-                selectedConference
+                selectedConference || hasLeagueColor || isDark
                   ? Colors.white
-                  : isDark
-                    ? Colors.white
-                    : Colors.black
+                  : Colors.black
               }
             />
           </Animated.View>

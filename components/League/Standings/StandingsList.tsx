@@ -1,6 +1,4 @@
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -12,6 +10,8 @@ import {
   StandingsTeam,
   useLeagueStandings,
 } from "hooks/LeagueHooks/useLeagueStandings";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
@@ -348,30 +348,7 @@ export const StandingsList = ({
     );
   }
 
-  const getTeamRoute = () => {
-    if (soccer) return "/team/soccer/[teamId]" as const;
-    if (league === "nba") {
-      return "/team/[teamId]" as const;
-    }
-
-    if (league === "nfl") {
-      return "/team/nfl/[teamId]" as const;
-    }
-
-    if (league === "ufl") {
-      return "/team/ufl/[teamId]" as const;
-    }
-
-    if (league === "wnba") {
-      return "/team/wnba/[teamId]" as const;
-    }
-
-    if (league === "mlb") {
-      return "/team/mlb/[teamId]" as const;
-    }
-
-    return "/team/nhl/[teamId]" as const;
-  };
+  const teamSport = soccer ? "soccer" : getTeamSport(league);
 
   const renderLeftItem = ({
     item,
@@ -383,14 +360,10 @@ export const StandingsList = ({
     data: StandingsTeam[];
   }) => {
     const team = item;
-    const route = getTeamRoute();
-
-    const teamLogo = getStandingsTeamLogo(team, isDark);
     const id = team?.id ?? item.id;
+    const logo = isDark ? team.logoDark || team.logo : team.logo;
     const teamCode = team?.code;
-
     const favorited = team ? isFavorite(league, team.id) : false;
-
     const isLastRow = index === data.length - 1;
 
     return (
@@ -415,22 +388,13 @@ export const StandingsList = ({
         </View>
 
         <TouchableOpacity
+          accessibilityRole="button"
           style={styles.teamInfo}
-          onPress={() =>
-            router.push({
-              pathname: route,
-              params: {
-                teamId: String(id),
-                ...(soccer ? { league } : {}),
-              },
-            })
-          }
+          onPress={() => {
+            if (teamSport) router.push(getTeamHref(teamSport, id, league));
+          }}
         >
-          {teamLogo ? (
-            <Image source={teamLogo} style={styles.logo} />
-          ) : (
-            <View style={styles.logo} />
-          )}
+          {logo && <Image source={{ uri: logo }} style={styles.logo} />}
 
           <Text
             style={styles.teamName}
@@ -495,7 +459,8 @@ export const StandingsList = ({
         >
           {activeColumns.map((label) => {
             const key = columnKeyMap[label];
-            let value = item[key];
+            const rawValue = item[key];
+            let value = typeof rawValue === "object" ? rawValue?.name : rawValue;
 
             if (label === "W-L") {
               value = `${item.wins ?? 0}-${item.losses ?? 0}`;
@@ -632,42 +597,44 @@ export const StandingsList = ({
   const conferenceConfig =
     leagueConferences[league as PlayoffLeague]?.conferences ?? {};
 
-  const conferenceSections = soccer
-    ? conferences
-        .filter((conference) => conference.standings.length > 0)
-        .map((conference) => ({
-          title: conference.name,
-          data: conference.standings,
-        }))
-    : Object.values(conferenceConfig)
-        .map((conference) => {
-          const data =
-            conferences?.find(
-              (item) =>
-                item.abbreviation === conference.code ||
-                item.name === conference.name,
-            )?.standings ?? [];
-
-          if (!data.length) {
-            return null;
-          }
-
-          return {
+  const isCollegeHockey = league === "mch" || league === "wch";
+  const conferenceSections =
+    soccer || isCollegeHockey
+      ? conferences
+          .filter((conference) => conference.standings.length > 0)
+          .map((conference) => ({
             title: conference.name,
-            data,
-          };
-        })
-        .filter(
-          (
-            section,
-          ): section is {
-            title: string;
-            data: StandingsTeam[];
-          } => section !== null,
-        );
+            data: conference.standings,
+          }))
+      : Object.values(conferenceConfig)
+          .map((conference) => {
+            const data =
+              conferences?.find(
+                (item) =>
+                  item.abbreviation === conference.code ||
+                  item.name === conference.name,
+              )?.standings ?? [];
+
+            if (!data.length) {
+              return null;
+            }
+
+            return {
+              title: conference.name,
+              data,
+            };
+          })
+          .filter(
+            (
+              section,
+            ): section is {
+              title: string;
+              data: StandingsTeam[];
+            } => section !== null,
+          );
 
   const displayedSections =
-    soccer || sortMode === "conference"
+    soccer || isCollegeHockey || sortMode === "conference"
       ? conferenceSections
       : divisionStandings;
 
@@ -682,7 +649,7 @@ export const StandingsList = ({
       {isGameDetailScreen && <HeadingTwo isDark={isDark}>Standings</HeadingTwo>}
 
       <View style={styles.dropdownRow}>
-        {!soccer && league !== "wnba" && (
+        {!soccer && !isCollegeHockey && league !== "wnba" && (
           <Dropdown
             options={viewOptions}
             selectedValue={sortMode}

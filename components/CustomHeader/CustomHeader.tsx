@@ -1,3 +1,5 @@
+import { useNotifications } from "contexts/NotificationContext";
+import type { NotificationTeamSport } from "types/notifications";
 import {
   cfbConferences,
   resolveCFBConferenceSelection,
@@ -8,6 +10,10 @@ import { getMCBBTeam, mcbbTeams } from "@/constants/teamsMCBB";
 import { getWCBBTeam, wcbbTeams } from "@/constants/teamsWCBB";
 import { resolveRacingLeague } from "@/utils/customheader/racingConfig";
 import { CustomHeaderProps, HeaderTeamLike } from "@/utils/customheader/types";
+import {
+  isCollegeConferenceLeague,
+  resolveCollegeConference,
+} from "constants/conferences/collegeConferences";
 import { resolveLeagueConfig } from "constants/leagues";
 import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
@@ -20,10 +26,11 @@ import { sbTeams } from "constants/teamsSB";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRoute, useSegments } from "expo-router";
-import { HeaderTitle } from "expo-router/react-navigation";
+import { HeaderTitle, useNavigationState } from "expo-router/react-navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
+  type LayoutChangeEvent,
   TextStyle,
   useWindowDimensions,
   View,
@@ -42,6 +49,8 @@ import { LeagueHeader } from "./LeagueHeader";
 import { MessageThreadHeader } from "./MessageThreadHeader";
 import { NotificationsHeaderMenu } from "./NotificationsHeaderMenu";
 import { TeamBackground } from "./TeamBackground";
+
+const HEADER_HORIZONTAL_PADDING = 16;
 
 const isConferenceSelectorTab = (tabName?: string) =>
   tabName === "College Football" ||
@@ -128,13 +137,12 @@ export function CustomHeader({
   const styles = CustomHeaderStyles(isDark, width);
 
   const isTabRoute = routeSegments.includes("(tabs)");
-  const navigationState = navigation.getState();
-  const canPopCurrentTabStack =
-    isTabRoute &&
-    navigationState != null &&
-    navigationState.type === "stack" &&
-    navigationState.routes.findIndex((route) => route.key === headerRoute.key) >
-      0;
+  const canPopCurrentTabStack = useNavigationState(
+    (state) =>
+      isTabRoute &&
+      state.type === "stack" &&
+      state.routes.findIndex((route) => route.key === headerRoute.key) > 0,
+  );
 
   const handleTabStackBack = useCallback(() => {
     const state = navigation.getState();
@@ -162,6 +170,17 @@ export function CustomHeader({
       ? handleTabStackBack
       : undefined
     : onBack;
+
+  const [leftActionWidth, setLeftActionWidth] = useState(0);
+  const [rightActionWidth, setRightActionWidth] = useState(0);
+
+  const measureLeftActions = useCallback((event: LayoutChangeEvent) => {
+    setLeftActionWidth(event.nativeEvent.layout.width);
+  }, []);
+
+  const measureRightActions = useCallback((event: LayoutChangeEvent) => {
+    setRightActionWidth(event.nativeEvent.layout.width);
+  }, []);
 
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
   const [notificationsMenuVisible, setNotificationsMenuVisible] =
@@ -234,6 +253,10 @@ export function CustomHeader({
       return null;
     }
 
+    if (isCollegeConferenceLeague(league)) {
+      return resolveCollegeConference(league, selectedConferenceName) ?? null;
+    }
+
     if (tabName === "College Football") {
       return resolveCFBConferenceSelection(selectedConferenceName) ?? null;
     }
@@ -254,7 +277,7 @@ export function CustomHeader({
             String(conference.groupId) === String(selectedConferenceName)),
       ) ?? null
     );
-  }, [selectedConferenceName, tabName]);
+  }, [league, selectedConferenceName, tabName]);
 
   const conferenceLogo = selectedConference?.logoLight ?? null;
 
@@ -270,6 +293,27 @@ export function CustomHeader({
   );
   const isLeagueScreen = Boolean(
     leagueConfig && !isTeamScreen && !isPlayerScreen && tabName !== "Game",
+  );
+  const { leagueSubscriptions, openLeagueNotificationSettings } =
+    useNotifications();
+  const leagueSport = leagueConfig?.route.split("/").pop();
+  const supportsLeagueNotifications =
+    isLeagueScreen &&
+    ["basketball", "football", "baseball", "hockey", "soccer"].includes(
+      leagueSport ?? "",
+    );
+  const leagueNotified = leagueSubscriptions.some(
+    (sub) =>
+      sub.sport === leagueSport &&
+      sub.league === leagueConfig?.id &&
+      [
+        sub.gameStartEnabled,
+        sub.touchdownEnabled,
+        sub.quarterEndEnabled,
+        sub.halftimeEnabled,
+        sub.closeGameEnabled,
+        sub.finalScoreEnabled,
+      ].some(Boolean),
   );
   const leagueHeaderLogo = leagueConfig?.logoLight ?? null;
   const leagueHeaderColor = leagueConfig?.color;
@@ -404,7 +448,7 @@ export function CustomHeader({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: HEADER_HORIZONTAL_PADDING,
     height: 56,
   };
 
@@ -424,6 +468,82 @@ export function CustomHeader({
 
   const shouldRenderGameHeader = tabName === "Game" || isRacingHeader;
 
+  const shouldRenderLeagueHeader =
+    !shouldRenderGameHeader &&
+    (isConferenceSelectorTab(tabName) || isLeagueScreen);
+  const leagueTitleInset =
+    HEADER_HORIZONTAL_PADDING + Math.max(leftActionWidth, rightActionWidth);
+
+  const leftActions = (
+    <HeaderLeftActions
+      tabName={tabName}
+      showBackButton={showBackButton}
+      onBack={resolvedOnBack}
+      onAddWidget={onAddWidget}
+      onToggleWidgetEditing={onToggleWidgetEditing}
+      isWidgetEditing={isWidgetEditing}
+      onProfileMessages={onMessages ? handleProfileMessages : undefined}
+      isDark={isDark}
+      headerIconColor={headerIconColor}
+    />
+  );
+
+  const rightActions = (
+    <HeaderRightActions
+      rightAction={rightAction}
+      isTeamScreen={isTeamScreen}
+      isPlayerScreen={isPlayerScreen}
+      showFavoriteAction={showFavoriteAction}
+      favoritePending={favoritePending}
+      notificationPending={notificationPending}
+      favoriteIconColor={headerIconColor}
+      onToggleFavorite={onToggleFavorite}
+      onToggleNotifications={
+        supportsLeagueNotifications
+          ? () =>
+              openLeagueNotificationSettings(
+                leagueSport as NotificationTeamSport,
+                leagueConfig!.id,
+              )
+          : onToggleNotifications
+      }
+      isLeagueScreen={supportsLeagueNotifications}
+      onOpenInfo={onOpenInfo}
+      isFavorite={isFavorite}
+      isNotified={supportsLeagueNotifications ? leagueNotified : isNotified}
+      tabName={tabName}
+      isDark={isDark}
+      profileMenuVisible={profileMenuVisible}
+      onToggleProfileMenu={toggleProfileMenu}
+      onProfileSettings={handleProfileSettings}
+      onEditProfile={handleEditProfile}
+      onProfileLogout={handleProfileLogout}
+      onSearchToggle={onSearchToggle}
+      onNotificationsCenter={onNotificationsCenter}
+      notificationsMenu={
+        tabName === "Notifications" ? (
+          <NotificationsHeaderMenu
+            visible={notificationsMenuVisible}
+            isDark={isDark}
+            isEditing={isNotificationEditing}
+            selectionDisabled={!hasNotifications && !isNotificationEditing}
+            markAllDisabled={!hasUnreadNotifications}
+            onMarkAllRead={handleMarkAllNotificationsRead}
+            onToggleEditing={handleToggleNotificationEditing}
+          />
+        ) : undefined
+      }
+      notificationsMenuVisible={notificationsMenuVisible}
+      onToggleNotificationsMenu={toggleNotificationsMenu}
+      unreadNotificationCount={unreadNotificationCount}
+      onOpenThemesSettings={onOpenThemesSettings}
+      isMessagesListScreen={isMessagesListScreen}
+      onCreateMessage={onCreateMessage}
+      onToggleLayout={onToggleLayout}
+      isGrid={isGrid}
+    />
+  );
+
   return (
     <View
       style={{
@@ -440,7 +560,9 @@ export function CustomHeader({
           selectedTeam={selectedConference}
           logo={conferenceLogo ?? leagueHeaderLogo}
           conferenceColor={
-            selectedConference ? primaryColor : leagueHeaderColor
+            selectedConference && !isCollegeConferenceLeague(league)
+              ? primaryColor
+              : selectedConference?.color ?? leagueHeaderColor
           }
           isConferenceScreen
         />
@@ -466,17 +588,11 @@ export function CustomHeader({
           },
         ]}
       >
-        <HeaderLeftActions
-          tabName={tabName}
-          showBackButton={showBackButton}
-          onBack={resolvedOnBack}
-          onAddWidget={onAddWidget}
-          onToggleWidgetEditing={onToggleWidgetEditing}
-          isWidgetEditing={isWidgetEditing}
-          onProfileMessages={onMessages ? handleProfileMessages : undefined}
-          isDark={isDark}
-          headerIconColor={headerIconColor}
-        />
+        {shouldRenderLeagueHeader ? (
+          <View onLayout={measureLeftActions}>{leftActions}</View>
+        ) : (
+          leftActions
+        )}
 
         {shouldRenderGameHeader ? (
           <GameHeader
@@ -496,7 +612,7 @@ export function CustomHeader({
             eventLogo={logo ?? homeLogo}
             isDark={false}
           />
-        ) : isConferenceSelectorTab(tabName) || isLeagueScreen ? (
+        ) : shouldRenderLeagueHeader ? (
           <LeagueHeader
             selectedConference={selectedConference}
             selectedConferenceName={selectedConferenceName}
@@ -506,6 +622,7 @@ export function CustomHeader({
             isDark={isDark}
             logo={selectedConference?.logoLight ?? leagueHeaderLogo}
             hasLeagueColor={isLeagueScreen}
+            sideInset={leagueTitleInset}
           />
         ) : tabName === "Message" ? (
           <MessageThreadHeader
@@ -551,50 +668,11 @@ export function CustomHeader({
           </View>
         )}
 
-        <HeaderRightActions
-          rightAction={rightAction}
-          isTeamScreen={isTeamScreen}
-          isPlayerScreen={isPlayerScreen}
-          showFavoriteAction={showFavoriteAction}
-          favoritePending={favoritePending}
-          notificationPending={notificationPending}
-          favoriteIconColor={headerIconColor}
-          onToggleFavorite={onToggleFavorite}
-          onToggleNotifications={onToggleNotifications}
-          onOpenInfo={onOpenInfo}
-          isFavorite={isFavorite}
-          isNotified={isNotified}
-          tabName={tabName}
-          isDark={isDark}
-          profileMenuVisible={profileMenuVisible}
-          onToggleProfileMenu={toggleProfileMenu}
-          onProfileSettings={handleProfileSettings}
-          onEditProfile={handleEditProfile}
-          onProfileLogout={handleProfileLogout}
-          onSearchToggle={onSearchToggle}
-          onNotificationsCenter={onNotificationsCenter}
-          notificationsMenu={
-            tabName === "Notifications" ? (
-              <NotificationsHeaderMenu
-                visible={notificationsMenuVisible}
-                isDark={isDark}
-                isEditing={isNotificationEditing}
-                selectionDisabled={!hasNotifications && !isNotificationEditing}
-                markAllDisabled={!hasUnreadNotifications}
-                onMarkAllRead={handleMarkAllNotificationsRead}
-                onToggleEditing={handleToggleNotificationEditing}
-              />
-            ) : undefined
-          }
-          notificationsMenuVisible={notificationsMenuVisible}
-          onToggleNotificationsMenu={toggleNotificationsMenu}
-          unreadNotificationCount={unreadNotificationCount}
-          onOpenThemesSettings={onOpenThemesSettings}
-          isMessagesListScreen={isMessagesListScreen}
-          onCreateMessage={onCreateMessage}
-          onToggleLayout={onToggleLayout}
-          isGrid={isGrid}
-        />
+        {shouldRenderLeagueHeader ? (
+          <View onLayout={measureRightActions}>{rightActions}</View>
+        ) : (
+          rightActions
+        )}
       </View>
     </View>
   );

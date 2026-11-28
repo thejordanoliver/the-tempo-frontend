@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useState } from "react";
@@ -9,6 +10,8 @@ type Props = {
 };
 
 export default function LineScoreSkeleton({ league }: Props) {
+ const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const baseColor = isDark ? Colors.darkGray : Colors.lightGray;
@@ -17,7 +20,9 @@ export default function LineScoreSkeleton({ league }: Props) {
   const [pulse] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
-    Animated.loop(
+ if (reduceMotion) { pulse.setValue(0.7); return; }
+
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, {
           toValue: 1,
@@ -30,8 +35,10 @@ export default function LineScoreSkeleton({ league }: Props) {
           useNativeDriver: true,
         }),
       ]),
-    ).start();
-  }, [pulse]);
+    );
+ animation.start();
+ return () => animation.stop();
+  }, [pulse, reduceMotion]);
 
   // Correct periods by league
   const PERIOD_MAP: Record<Props["league"], number | null> = {

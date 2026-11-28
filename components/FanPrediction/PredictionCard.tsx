@@ -156,7 +156,6 @@ function PredictionCard({
               </View>
             ) : (
               <View style={styles.matchupAction}>
-                <View style={styles.selectionRing} />
                 <Text numberOfLines={1} style={styles.matchupActionText}>
                   {disabled ? "Picks unavailable" : `Pick ${teamLabel}`}
                 </Text>

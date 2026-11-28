@@ -1,4 +1,4 @@
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import Dropdown from "@/components/Dropdown";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { StandingsStyles } from "@/styles/LeagueStyles/StandingsStyles";
@@ -47,7 +47,7 @@ type Props = {
   league: "cb" | "sb";
 };
 
-export const standingLabels = ["W-L", "Points", "1st Votes"];
+export const standingLabels = ["W-L", "Points", "1st Votes", "Conference"];
 
 export const CBStandingsList = ({ league }: Props) => {
   const { rankingsByKey, loading, refreshing, error, refresh } =
@@ -209,7 +209,7 @@ export const CBStandingsList = ({ league }: Props) => {
           : undefined;
       const team = item.team;
       const teamId = apiTeamId;
-      const teamLogo = getStandingsTeamLogo(team, isDark);
+      const logo = isDark ? team?.logoDark || team?.logo : team?.logo;
       const teamCode = team?.code || item.team?.name || "N/A";
       const trendNum = parseTrend(item.trend);
       const isUp = trendNum > 0;
@@ -232,17 +232,14 @@ export const CBStandingsList = ({ league }: Props) => {
 
           <View style={styles.teamInfo}>
             <TouchableOpacity
+              accessibilityRole="button"
               style={styles.teamInfoWrapper}
               onPress={() => {
                 if (!teamId) return;
-                router.push({
-                  pathname:
-                    league === "sb" ? "/team/sb/[teamId]" : "/team/cb/[teamId]",
-                  params: { teamId: String(teamId), league },
-                });
+                router.push(getTeamHref("baseball", teamId, league));
               }}
             >
-              {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+              {logo && <Image source={{ uri: logo }} style={styles.logo} />}
               <Text style={styles.teamName} numberOfLines={1}>
                 {teamCode}
               </Text>
@@ -309,6 +306,13 @@ export const CBStandingsList = ({ league }: Props) => {
           <View style={styles.statCell}>
             <Text style={styles.statText}>
               {formatRankValue(item.firstPlaceVotes, "0")}
+            </Text>
+          </View>
+          <View style={styles.statCell}>
+            <Text style={styles.statText}>
+              {item.team?.conference?.shortName ||
+                item.team?.groups?.shortName ||
+                "—"}
             </Text>
           </View>
         </View>

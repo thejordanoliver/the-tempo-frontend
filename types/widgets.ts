@@ -23,6 +23,7 @@ export type ExploreWidgetConfig = {
   order: number;
   standingsLeague?: ExploreStandingsLeague;
   collegePollLeague?: ExploreCollegePollLeague;
+  /** When unset, prefer published CFP rankings, otherwise AP. */
   collegePollType?: ExploreCollegePollType;
   /** Defaults to true for new and legacy College Poll widgets. */
   collegePollAutoPlay?: boolean;
@@ -73,6 +74,8 @@ export const EXPLORE_WIDGET_LEAGUES = [
   "cfb",
   "ufl",
   "nhl",
+  "mch",
+  "wch",
 ] as const;
 
 export type ExploreWidgetLeague = (typeof EXPLORE_WIDGET_LEAGUES)[number];
@@ -106,7 +109,7 @@ export type ExploreWidgetGame =
     })
   | (ExploreWidgetGameBase & {
       sport: "hockey";
-      league: "nhl";
+      league: "nhl" | "mch" | "wch";
       game: HockeyGame;
     });
 

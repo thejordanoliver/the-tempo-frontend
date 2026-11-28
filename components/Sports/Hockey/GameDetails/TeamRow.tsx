@@ -1,3 +1,4 @@
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import { Colors } from "constants/styles";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
@@ -47,10 +48,8 @@ export const TeamRow = ({
    * Routing
    * --------------------------------------------------- */
   const handleTeamPress = () => {
-    if (!isActive) return;
-    if (league === "NHL") {
-      router.push(`/team/nhl/${id}`);
-    }
+    if (!isActive || id == null) return;
+    router.push(getTeamHref("hockey", id, league));
   };
 
   /* -----------------------------------------------------
@@ -125,7 +124,11 @@ export const TeamRow = ({
 
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
-        <Pressable onPress={handleTeamPress}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${name} team details`}
+          onPress={handleTeamPress}
+        >
           <Image source={logo} style={styles.logo} />
         </Pressable>
 

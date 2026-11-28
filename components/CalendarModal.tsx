@@ -1,4 +1,5 @@
-import { CalendarModalProps, CalendarMonth } from "@/types/date";
+import { useReducedMotion } from "hooks/useReducedMotion";
+import type { CalendarModalProps, CalendarMonth } from "@/types/date";
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -6,10 +7,16 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { BlurView } from "expo-blur";
-import { useEffect, useMemo, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
-import Modal from "react-native-modal";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -96,17 +103,38 @@ const getMonthAnchor = (value: string): string => {
 
 export default function CalendarModal({
   visible,
+  ...props
+}: CalendarModalProps) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType={reduceMotion ? "none" : "fade"}
+      presentationStyle="overFullScreen"
+      onRequestClose={props.onClose}
+      statusBarTranslucent
+    >
+      {visible ? <CalendarContent key={props.selectedDate} {...props} /> : null}
+    </Modal>
+  );
+}
+
+// Mount only while open so score updates do not render a hidden calendar.
+// A fresh instance also opens on the selected date without a deferred reset.
+function CalendarContent({
   selectedDate,
   onClose,
   onSelectDate,
   onMonthChange,
   markedDates,
-}: CalendarModalProps) {
+}: Omit<CalendarModalProps, "visible">) {
   const { resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";
 
-  const styles = calendarModalStyles(isDark);
+  const styles = useMemo(() => calendarModalStyles(isDark), [isDark]);
 
   const [selectedDay, setSelectedDay] = useState(() =>
     getValidCalendarDate(selectedDate),
@@ -116,30 +144,13 @@ export default function CalendarModal({
     getValidCalendarDate(selectedDate),
   );
 
-  const [calendarKey, setCalendarKey] = useState(0);
+  const displayedMonth = useRef(getMonthAnchor(displayedCalendarDate));
 
   useEffect(() => {
-    let cancelled = false;
-
-    void Promise.resolve().then(() => {
-      if (cancelled) return;
-
-      if (!visible) {
-        return;
-      }
-
-      const validSelectedDate = getValidCalendarDate(selectedDate);
-
-      setSelectedDay(validSelectedDate);
-      setDisplayedCalendarDate(validSelectedDate);
-
-      setCalendarKey((previous) => previous + 1);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [visible, selectedDate]);
+    // Browsing a month updates the parent's markers even if no day is picked.
+    // Reopening must request markers for the selected month again.
+    onMonthChange?.(displayedMonth.current);
+  }, [onMonthChange]);
 
   const combinedMarkedDates = useMemo(() => {
     const existingSelectedDateMark = markedDates[selectedDay] ?? {};
@@ -156,15 +167,26 @@ export default function CalendarModal({
     };
   }, [markedDates, selectedDay]);
 
-  const handleMonthChange = (month: CalendarMonth) => {
-    const monthString = String(month.month).padStart(2, "0");
+  const notifyMonthChange = useCallback(
+    (anchorDate: string) => {
+      if (displayedMonth.current === anchorDate) return;
+      displayedMonth.current = anchorDate;
+      onMonthChange?.(anchorDate);
+    },
+    [onMonthChange],
+  );
 
-    const anchorDate = `${month.year}-${monthString}-01`;
+  const handleMonthChange = useCallback(
+    (month: CalendarMonth) => {
+      const monthString = String(month.month).padStart(2, "0");
+      const anchorDate = `${month.year}-${monthString}-01`;
+      if (displayedMonth.current === anchorDate) return;
 
-    setDisplayedCalendarDate(anchorDate);
-
-    onMonthChange?.(anchorDate);
-  };
+      setDisplayedCalendarDate(anchorDate);
+      notifyMonthChange(anchorDate);
+    },
+    [notifyMonthChange],
+  );
 
   const goToToday = () => {
     const today = dayjs().tz("America/New_York").format("YYYY-MM-DD");
@@ -172,105 +194,95 @@ export default function CalendarModal({
     setSelectedDay(today);
     setDisplayedCalendarDate(today);
 
-    setCalendarKey((previous) => previous + 1);
-
-    onMonthChange?.(getMonthAnchor(today));
+    notifyMonthChange(getMonthAnchor(today));
   };
 
   return (
-    <Modal
-      isVisible={visible}
-      onBackdropPress={onClose}
-      onBackButtonPress={onClose}
-      backdropOpacity={0.5}
-      style={styles.modal}
-      useNativeDriver
+    <BlurView
+      intensity={100}
+      tint={"systemMaterial"}
+      style={styles.blurContainer}
     >
-      <BlurView
-        intensity={100}
-        tint={"systemMaterial"}
-        style={styles.blurContainer}
+      <Pressable
+        accessible={false}
+        style={StyleSheet.absoluteFill}
+        onPress={onClose}
+      />
+      <View
+        accessibilityViewIsModal
+        onAccessibilityEscape={onClose}
+        style={styles.calendarWrapper}
       >
-        <View style={styles.calendarWrapper}>
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            style={styles.closeButton}
-            onPress={onClose}
-          >
-            <Ionicons
-              name={"close"}
-              size={28}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            style={styles.todayButton}
-            onPress={goToToday}
-          >
-            <Ionicons
-              name={"calendar"}
-              size={18}
-              color={isDark ? Colors.white : Colors.black}
-              style={styles.todayIcon}
-            />
-
-            <Text style={styles.todayText}>Today</Text>
-          </TouchableOpacity>
-
-          <Calendar
-            key={calendarKey}
-            current={displayedCalendarDate}
-            markedDates={combinedMarkedDates}
-            onMonthChange={handleMonthChange}
-            onDayPress={(day: CalendarDay) => {
-              setSelectedDay(day.dateString);
-
-              setDisplayedCalendarDate(day.dateString);
-
-              onSelectDate(day.dateString);
-
-              onClose();
-            }}
-            enableSwipeMonths
-            disableMonthChange={false}
-            hideExtraDays={false}
-            theme={{
-              backgroundColor: "transparent",
-              calendarBackground: "transparent",
-              textSectionTitleColor: isDark ? Colors.white : Colors.black,
-              todayTextColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-              dayTextColor: isDark ? Colors.white : Colors.black,
-              textDisabledColor: isDark ? Colors.darkGray : Colors.lightGray,
-              dotColor: isDark ? Colors.white : Colors.black,
-              selectedDotColor: isDark ? Colors.white : Colors.black,
-              selectedDayBackgroundColor: "transparent",
-              selectedDayTextColor: Colors.dark.limeGreen,
-              monthTextColor: isDark ? Colors.white : Colors.black,
-              arrowColor: isDark ? Colors.white : Colors.black,
-              textDayFontFamily: Fonts.BOLD,
-              textMonthFontFamily: Fonts.BOLD,
-              textDayHeaderFontFamily: Fonts.BOLD,
-              textMonthFontSize: 24,
-              textDayFontSize: 20,
-              textDayHeaderFontSize: 18,
-            }}
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Close calendar"
+          activeOpacity={activeOpacity}
+          style={styles.closeButton}
+          onPress={onClose}
+        >
+          <Ionicons
+            name={"close"}
+            size={28}
+            color={isDark ? Colors.white : Colors.black}
           />
-        </View>
-      </BlurView>
-    </Modal>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          accessibilityRole="button"
+          activeOpacity={activeOpacity}
+          style={styles.todayButton}
+          onPress={goToToday}
+        >
+          <Ionicons
+            name={"calendar"}
+            size={18}
+            color={isDark ? Colors.white : Colors.black}
+            style={styles.todayIcon}
+          />
+
+          <Text style={styles.todayText}>Today</Text>
+        </TouchableOpacity>
+
+        <Calendar
+          initialDate={displayedCalendarDate}
+          markedDates={combinedMarkedDates}
+          onMonthChange={handleMonthChange}
+          onDayPress={(day: CalendarDay) => {
+            onSelectDate(day.dateString);
+
+            onClose();
+          }}
+          enableSwipeMonths
+          disableMonthChange={false}
+          hideExtraDays={false}
+          theme={{
+            backgroundColor: "transparent",
+            calendarBackground: "transparent",
+            textSectionTitleColor: isDark ? Colors.white : Colors.black,
+            todayTextColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+            dayTextColor: isDark ? Colors.white : Colors.black,
+            textDisabledColor: isDark ? Colors.darkGray : Colors.lightGray,
+            dotColor: isDark ? Colors.white : Colors.black,
+            selectedDotColor: isDark ? Colors.white : Colors.black,
+            selectedDayBackgroundColor: "transparent",
+            selectedDayTextColor: Colors.dark.limeGreen,
+            monthTextColor: isDark ? Colors.white : Colors.black,
+            arrowColor: isDark ? Colors.white : Colors.black,
+            textDayFontFamily: Fonts.BOLD,
+            textMonthFontFamily: Fonts.BOLD,
+            textDayHeaderFontFamily: Fonts.BOLD,
+            textMonthFontSize: 24,
+            textDayFontSize: 20,
+            textDayHeaderFontSize: 18,
+          }}
+        />
+      </View>
+    </BlurView>
   );
 }
 
 const calendarModalStyles = (isDark: boolean) =>
   StyleSheet.create({
-    modal: {
-      alignItems: "center",
-      justifyContent: "center",
-      margin: 0,
-    },
-
     blurContainer: {
       flex: 1,
       alignItems: "center",
@@ -278,6 +290,7 @@ const calendarModalStyles = (isDark: boolean) =>
       width: "100%",
       height: "100%",
       paddingTop: 100,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
 
     calendarWrapper: {

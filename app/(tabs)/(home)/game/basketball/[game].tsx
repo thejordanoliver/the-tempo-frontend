@@ -20,6 +20,7 @@ import {
   TeamInjuries,
   Venue,
 } from "@/components/Sports/Basketball/GameDetails";
+import Odds from "@/components/Sports/Basketball/GameDetails/Odds";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
@@ -38,7 +39,6 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useBasketballSummary } from "hooks/BasketballHooks/useBasketballSummary";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
@@ -57,6 +57,11 @@ import {
   getBroadcastDisplay,
 } from "utils/games/games";
 import { isGameFinalStatus } from "utils/games/gameStatus";
+import {
+  getRouteGameId,
+  getRouteLeague,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
 
 type RouteParams = {
   game?: string | string[];
@@ -66,57 +71,6 @@ type RouteParams = {
 };
 
 type BasketballGame = BasketballGameCardProps["game"];
-
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) return value[0];
-  return value;
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): BasketballGame | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // Dynamic route params are often just the game id.
-  // Only JSON strings should be parsed into a full game object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as BasketballGame;
-  } catch {
-    return undefined;
-  }
-}
-
-function getRouteGameId(value?: string | string[]) {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return null;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-  return decodedValue && !decodedValue.startsWith("{") ? decodedValue : null;
-}
-
-function getRouteLeague(value?: string | string[]) {
-  const league = getFirstParam(value)?.trim().toLowerCase();
-  return league && /^[a-z0-9][a-z0-9._-]*$/.test(league) ? league : null;
-}
 
 export default function GameDetailsScreen(
   props: Partial<BasketballGameCardProps> = {},
@@ -130,60 +84,36 @@ export default function GameDetailsScreen(
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
-  const routeGame = useMemo(() => {
+  const game = useMemo(() => {
     return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+      props.game ??
+      parseGameParam<BasketballGame>(params.data) ??
+      parseGameParam<BasketballGame>(params.game)
     );
   }, [params.data, params.game, props.game]);
 
   const LEAGUE = (
-    routeGame?.league?.code ??
+    game?.league?.code ??
     getRouteLeague(params.league) ??
     "nba"
   ).toLowerCase();
+
   const isWNBA = LEAGUE === "wnba";
   const isWCBB = LEAGUE === "wcbb";
   const isMCBB = LEAGUE === "mcbb";
   const isGLEAGUE = LEAGUE === "gleague";
 
-  const rawGameId = routeGame?.id ?? getRouteGameId(params.game);
+  const rawGameId = game?.id ?? getRouteGameId(params.game);
   const parsedGameId = Number(rawGameId);
   const gameId = Number.isFinite(parsedGameId) ? parsedGameId : 0;
   const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
 
-  const game = useMemo(() => {
-    if (routeGame) return routeGame;
-    if (!score) return undefined;
-
-    const toGameTeam = (team: typeof score.home) => ({
-      ...team,
-      id: Number(team.id),
-      name: team.fullName ?? team.name,
-      shortName: team.shortName,
-      city: "",
-      state: "",
-      logo: "",
-      primaryColor: "",
-      secondaryColor: "",
-      rank: team.rank ?? 0,
-    });
-
-    return {
-      id: Number(score.gameId),
-      date: score.date ?? "",
-      league: { code: LEAGUE },
-      home: toGameTeam(score.home),
-      away: toGameTeam(score.away),
-      attendance: 0,
-    };
-  }, [LEAGUE, routeGame, score]);
-
-  const gameDateObj = game?.date ? new Date(game.date) : null;
+  const chatDate = score?.date || game?.date;
+  const gameDateObj = chatDate ? new Date(chatDate) : null;
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  const showGameChat = useGameChatAvailability(gameDateObj);
   const home = game?.home;
   const away = game?.away;
   const homeId = home?.id ?? 0;
@@ -211,10 +141,12 @@ export default function GameDetailsScreen(
             ? getGLeagueTeam(awayId)
             : getNBATeam(awayId)) ?? emptyAwayTeam;
 
-  const homeCode = homeTeam.code ?? home?.code ?? "";
-  const awayCode = awayTeam.code ?? away?.code ?? "";
-  const homeName = homeTeam.fullName ?? home?.name ?? "";
-  const awayName = awayTeam.fullName ?? away?.name ?? "";
+  const homeCode = home?.code ?? game?.home?.name ?? "";
+  const awayCode = away?.code ?? game?.away?.code ?? "";
+  const homeName =
+    home?.fullName ?? game?.home?.shortName ?? game?.home?.name ?? "";
+  const awayName =
+    away?.fullName ?? game?.away?.shortName ?? game?.away?.name ?? "";
 
   const isHomeActive = homeTeam.isActive;
   const isAwayActive = awayTeam.isActive;
@@ -232,7 +164,7 @@ export default function GameDetailsScreen(
     Colors.midTone;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(homeId, isDark)
@@ -245,7 +177,7 @@ export default function GameDetailsScreen(
               : getNBATeamLogo(homeId, isDark);
 
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(awayId, isDark)
@@ -258,7 +190,7 @@ export default function GameDetailsScreen(
               : getNBATeamLogo(awayId, isDark);
 
   const homeHeaderLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(homeId, true)
@@ -271,7 +203,7 @@ export default function GameDetailsScreen(
               : getNBATeamLogo(homeId, true);
 
   const awayHeaderLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(awayId, true)
@@ -325,8 +257,16 @@ export default function GameDetailsScreen(
   const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const period = formatPeriod({
     period: score?.status.period ?? 0,
-    isMCBB: isMCBB || isWCBB,
+    isMCBB: isMCBB,
   });
+
+  const odds =
+    details?.odds === undefined
+      ? game?.odds
+      : Array.isArray(details.odds)
+        ? null
+        : details.odds;
+
   const clock = score?.status.displayClock ?? "0:00";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -460,6 +400,7 @@ export default function GameDetailsScreen(
       <ScrollView
         contentContainerStyle={navigationContentStyle(styles.container)}
         onScrollBeginDrag={handleScrollStart}
+        onScrollEndDrag={handleScrollEnd}
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
@@ -565,6 +506,18 @@ export default function GameDetailsScreen(
                 state={state}
               />
 
+              <Odds
+                homeId={homeId}
+                homeCode={homeCode}
+                homeLogo={homeLogo}
+                awayId={awayId}
+                awayCode={awayCode}
+                awayLogo={awayLogo}
+                odds={odds}
+                isDark={isDark}
+                state={state}
+              />
+
               <GameLeaders
                 leaders={leaders}
                 homeId={homeId}
@@ -655,6 +608,8 @@ export default function GameDetailsScreen(
                 awayId={awayId}
                 homeCode={homeCode}
                 awayCode={awayCode}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
                 homeGames={homeLastGames}
                 awayGames={awayLastGames}
                 league={LEAGUE}
@@ -705,16 +660,16 @@ export default function GameDetailsScreen(
         </View>
       </ScrollView>
 
-      {!dontShowDetails && showGameChat && (
+      {!dontShowDetails && gameDateObj && (
         <GameLiveChatOverlay
           context={{
             sport: "basketball",
             league: LEAGUE,
-            date: gameDateObj?.toISOString(),
+            date: gameDateObj.toJSON() ?? undefined,
           }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
-          state={state}
+          isLive={state === "in"}
         />
       )}
     </>

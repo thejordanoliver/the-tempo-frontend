@@ -47,12 +47,20 @@ export function useLastFiveGames(
 
     const fetchLastGames = async () => {
       try {
-        const response = await apiClient.get(
+        const response = await apiClient.get<{ games: LastFiveGameResult[] }>(
           `api/games/${sport}/team/last-five/${league}/${teamId}`,
+          {
+            validateStatus: (status) =>
+              status === 404 || (status >= 200 && status < 300),
+          },
         );
 
         if (!cancelled) {
-          setResult({ requestKey, games: response.data.games, error: null });
+          setResult({
+            requestKey,
+            games: response.status === 404 ? [] : response.data.games,
+            error: null,
+          });
         }
       } catch (requestError: unknown) {
         if (cancelled) return;

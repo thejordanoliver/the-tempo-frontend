@@ -1,3 +1,4 @@
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -85,6 +86,13 @@ export default function GameDetailsScreen() {
   const leftCompetitorFlags = leftCompetitor?.flags ?? [];
   const rightCompetitorFlags = rightCompetitor?.flags ?? [];
 
+  const oddsHome = match?.competitors?.find(
+    (participant) => participant.homeAway === "home",
+  );
+  const oddsAway = match?.competitors?.find(
+    (participant) => participant.homeAway === "away",
+  );
+
   const state = match?.status.state ?? "";
   const gameStatusDescription = match?.status.description ?? "";
   const gameStatusDetail = match?.status.detail ?? "";
@@ -165,6 +173,22 @@ export default function GameDetailsScreen() {
       />
 
       <View style={styles.innerContainer}>
+        {oddsHome && oddsAway && (
+          <Odds
+            homeId={Number(oddsHome.id)}
+            awayId={Number(oddsAway.id)}
+            homeCode={oddsHome.shortName ?? "Home"}
+            awayCode={oddsAway.shortName ?? "Away"}
+            homeLogo={oddsHome.flag ? { uri: oddsHome.flag } : null}
+            awayLogo={oddsAway.flag ? { uri: oddsAway.flag } : null}
+            homeLabel="Player"
+            awayLabel="Player"
+            odds={match?.odds}
+            state={state}
+            isDark={isDark}
+          />
+        )}
+
         <MatchInformation
           sets={sets}
           division={division}

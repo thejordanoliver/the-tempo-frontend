@@ -1,3 +1,8 @@
+import {
+  getFirstParam,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
@@ -37,7 +42,6 @@ import {
   type BaseballPlay,
   useBaseballGameDetails,
 } from "hooks/BaseballHooks/useBaseballGameDetails";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
@@ -59,41 +63,6 @@ type RouteParams = {
 
 type BaseballGame = BaseballGameCardProps["game"];
 
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) return value[0];
-  return value;
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): BaseballGame | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // Dynamic route params are often just the game id.
-  // Only JSON strings should be parsed into a full game object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as BaseballGame;
-  } catch {
-    return undefined;
-  }
-}
-
 export default function GameDetailsScreen(
   props: Partial<BaseballGameCardProps> = {},
 ) {
@@ -108,7 +77,9 @@ export default function GameDetailsScreen(
 
   const routeGame = useMemo(() => {
     return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+      props.game ??
+      parseGameParam<BaseballGame>(params.data) ??
+      parseGameParam<BaseballGame>(params.game)
     );
   }, [params.data, params.game, props.game]);
 
@@ -133,6 +104,7 @@ export default function GameDetailsScreen(
     if (!score) return undefined;
     return {
       id: Number(score.gameId),
+      odds: score.odds,
       league: { code: LEAGUE },
       date: score.date,
       headline: details?.headline,
@@ -140,27 +112,25 @@ export default function GameDetailsScreen(
       home: {
         ...score.home,
         id: Number(score.home.id),
-        homeRank: score.home.rank,
         primaryColor: undefined,
         secondaryColor: undefined,
       },
       away: {
         ...score.away,
         id: Number(score.away.id),
-        awayRank: score.away.rank,
         primaryColor: undefined,
         secondaryColor: undefined,
       },
     };
   }, [LEAGUE, details?.attendance, details?.headline, routeGame, score]);
 
-  const gameDateObj = score?.date ? new Date(score.date) : null;
+  const chatDate = score?.date || game?.date;
+  const gameDateObj = chatDate ? new Date(chatDate) : null;
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game?.headline ?? holidayLabel;
-  const showGameChat = useGameChatAvailability(gameDateObj);
 
   const home = game?.home;
   const away = game?.away;
@@ -309,8 +279,8 @@ export default function GameDetailsScreen(
   const awayRuns = score?.away.score;
   const homeRecord = score?.home?.record || home?.record || "—";
   const awayRecord = score?.away?.record || away?.record || "—";
-  const homeRank = score?.home?.rank ?? home?.homeRank;
-  const awayRank = score?.away?.rank ?? away?.awayRank;
+  const homeRank = score?.home?.rank ?? home?.rank;
+  const awayRank = score?.away?.rank ?? away?.rank;
   const plays = score?.plays ?? [];
   const situation = score?.situation ?? null;
   const fieldPlay = useMemo<BaseballPlay | null>(() => {
@@ -540,6 +510,24 @@ export default function GameDetailsScreen(
               state={state}
             />
 
+            <Odds
+              homeId={homeId}
+              homeCode={homeCode}
+              homeLogo={homeLogo}
+              awayId={awayId}
+              awayCode={awayCode}
+              awayLogo={awayLogo}
+              odds={
+                details?.odds === undefined
+                  ? (score?.odds ?? game?.odds)
+                  : Array.isArray(details.odds)
+                    ? null
+                    : details.odds
+              }
+              isDark={isDark}
+              state={state}
+            />
+
             <GameTeamStats
               stats={teamStats}
               awayName={awayCode}
@@ -582,6 +570,8 @@ export default function GameDetailsScreen(
               awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
               homeGames={homeLastGames}
               awayGames={awayLastGames}
               league={LEAGUE}
@@ -629,16 +619,16 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      {!dontShowDetails && showGameChat && (
+      {!dontShowDetails && gameDateObj && (
         <GameLiveChatOverlay
           context={{
             sport: "baseball",
             league: LEAGUE,
-            date: gameDateObj?.toISOString(),
+            date: gameDateObj.toJSON() ?? undefined,
           }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
-          state={state}
+          isLive={state === "in"}
         />
       )}
     </>

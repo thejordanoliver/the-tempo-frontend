@@ -1,59 +1,25 @@
-import { activeOpacity } from "@/constants/styles";
-import { DateSelectorStyles } from "@/styles/LeagueStyles/DateSelectorStyles";
-import WeekSelectorSkeleton from "components/Skeletons/WeekSelectorSkeleton";
-import {
-  DATE_SELECTOR_ITEM_SPACING,
-  DATE_SELECTOR_SIDE_PADDING,
-} from "constants/dateSelectorConstants";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  Animated,
-  LayoutChangeEvent,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-  type ScrollViewInstance,
-} from "react-native";
+import Dropdown from "components/Dropdown";
+import SelectorSkeleton from "components/Skeletons/SelectorSkeleton";
+import { DATE_SELECTOR_SIDE_PADDING } from "constants/dateSelectorConstants";
+import { useMemo, type ReactNode } from "react";
+import { StyleSheet, useWindowDimensions } from "react-native";
 
-export type UFCCalendarEvent = {
+type CalendarEvent = {
   label: string;
   startDate: string;
   endDate?: string | null;
-  event?: {
-    $ref?: string;
-  };
 };
 
 type Props = {
-  events: UFCCalendarEvent[];
+  events: CalendarEvent[];
   selectedEventIndex?: number;
   onSelectEvent: (index: number) => void;
   isDark: boolean;
   loading?: boolean;
-  containerStyle?: ViewStyle;
-  itemWidth?: number;
+  children: ReactNode;
 };
 
-const DEFAULT_ITEM_WIDTH = 140;
-
-export function getUFCEventId(event: UFCCalendarEvent | null | undefined) {
-  const ref = event?.event?.$ref;
-  return ref?.match(/\/events\/([^?]+)/)?.[1] ?? null;
-}
-
-export function getUFCEventKey(event: UFCCalendarEvent) {
-  return getUFCEventId(event) ?? `${event.label}-${event.startDate}`;
-}
-
-export function getDefaultUFCEventIndex(events: UFCCalendarEvent[]) {
+export function getDefaultUFCEventIndex(events: CalendarEvent[]) {
   if (!events.length) return 0;
 
   const now = Date.now();
@@ -80,153 +46,64 @@ export function getDefaultUFCEventIndex(events: UFCCalendarEvent[]) {
   return upcomingIndex >= 0 ? upcomingIndex : events.length - 1;
 }
 
-function getEventLabel(event: UFCCalendarEvent) {
-  const label = event.label || "";
-
-  if (label.includes(":")) {
-    const [shortLabel] = label.split(":");
-    return shortLabel.trim();
-  }
-
-  if (label.includes("Fight Night")) {
-    return "Fight Night";
-  }
-
-  return label || "Event";
-}
-
 export default function EventSelector({
   events,
-  selectedEventIndex = 0,
+  selectedEventIndex,
   onSelectEvent,
   isDark,
   loading = false,
-  containerStyle,
-  itemWidth = DEFAULT_ITEM_WIDTH,
+  children,
 }: Props) {
-  const styles = DateSelectorStyles(isDark, { itemWidth });
-
-  const scrollViewRef = useRef<ScrollViewInstance>(null);
-  const [indicatorX] = useState(() => new Animated.Value(0));
-
-  const [containerWidth, setContainerWidth] = useState(0);
-
-  const itemStep = itemWidth + DATE_SELECTOR_ITEM_SPACING;
-
-  const safeSelectedIndex = useMemo(() => {
-    if (!events.length) return 0;
-
-    return Math.min(Math.max(selectedEventIndex, 0), events.length - 1);
-  }, [events.length, selectedEventIndex]);
-
-  const onLayoutContainer = useCallback((event: LayoutChangeEvent) => {
-    setContainerWidth(event.nativeEvent.layout.width);
-  }, []);
-
-  const computeScrollOffset = useCallback(
-    (index: number) => {
-      if (!containerWidth || !events.length) return 0;
-
-      const targetOffset =
-        DATE_SELECTOR_SIDE_PADDING +
-        index * itemStep -
-        containerWidth / 2 +
-        itemWidth / 2;
-
-      const totalWidth =
-        DATE_SELECTOR_SIDE_PADDING * 2 +
-        events.length * itemWidth +
-        DATE_SELECTOR_ITEM_SPACING * Math.max(events.length - 1, 0);
-
-      const maxOffset = Math.max(0, totalWidth - containerWidth);
-
-      return Math.max(0, Math.min(targetOffset, maxOffset));
-    },
-    [containerWidth, events.length, itemStep, itemWidth],
+  const { width } = useWindowDimensions();
+  const selectorWidth = Math.min(480, width - 2 * DATE_SELECTOR_SIDE_PADDING);
+  const options = useMemo(
+    () =>
+      events.map((event, index) => ({
+        label: event.label.trim() || "Event",
+        value: String(index),
+      })),
+    [events],
   );
 
-  const handleSelectEvent = useCallback(
-    (index: number) => {
-      onSelectEvent(index);
-
-      scrollViewRef.current?.scrollTo({
-        x: computeScrollOffset(index),
-        animated: true,
-      });
-    },
-    [computeScrollOffset, onSelectEvent],
-  );
-
-  useEffect(() => {
-    if (!events.length) return;
-
-    Animated.spring(indicatorX, {
-      toValue: safeSelectedIndex * itemStep,
-      useNativeDriver: true,
-      tension: 90,
-      friction: 12,
-    }).start();
-  }, [safeSelectedIndex, itemStep, events.length, indicatorX]);
-
-  useEffect(() => {
-    if (!scrollViewRef.current || !containerWidth || !events.length) return;
-
-    scrollViewRef.current.scrollTo({
-      x: computeScrollOffset(safeSelectedIndex),
-      animated: true,
-    });
-  }, [safeSelectedIndex, containerWidth, events.length, computeScrollOffset]);
-
-  if (loading && !events.length) {
-    return <WeekSelectorSkeleton itemWidth={itemWidth} />;
+  if (!options.length) {
+    return (
+      <>
+        {loading && (
+          <SelectorSkeleton
+            itemCount={1}
+            itemWidth={selectorWidth}
+            itemHeight={38}
+          />
+        )}
+        {children}
+      </>
+    );
   }
 
-  if (!events.length) {
-    return null;
-  }
+  const index = selectedEventIndex ?? getDefaultUFCEventIndex(events);
+  const safeIndex = Math.min(Math.max(index, 0), options.length - 1);
 
   return (
-    <View style={[styles.wrapper, containerStyle]} onLayout={onLayoutContainer}>
-      <ScrollView
-        ref={scrollViewRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={itemStep}
-        decelerationRate="fast"
-        contentContainerStyle={styles.contentContainerStyle}
-      >
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.slidingSelectedContainer,
-            {
-              transform: [{ translateX: indicatorX }],
-            },
-          ]}
-        />
-
-        {events.map((event, index) => {
-          const isSelected = index === safeSelectedIndex;
-
-          return (
-            <TouchableOpacity
-              key={getUFCEventKey(event)}
-              activeOpacity={activeOpacity}
-              onPress={() => handleSelectEvent(index)}
-              style={styles.item}
-            >
-              <Text
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                minimumFontScale={0.8}
-                style={isSelected ? styles.selectedLabel : styles.label}
-              >
-                {getEventLabel(event)}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-    </View>
+    <Dropdown
+      options={options}
+      accessibilityLabel="Select event"
+      selectedValue={String(safeIndex)}
+      onSelect={(value) => onSelectEvent(Number(value))}
+      isDark={isDark}
+      width={selectorWidth}
+      style={styles.selector}
+      triggerIcon="calendar-outline"
+      labelLines={2}
+      scrollToSelected
+    >
+      {children}
+    </Dropdown>
   );
 }
+
+const styles = StyleSheet.create({
+  selector: {
+    marginHorizontal: DATE_SELECTOR_SIDE_PADDING,
+    marginVertical: 8,
+  },
+});

@@ -17,6 +17,7 @@ import {
 import { ProfileHeaderMenu } from "./ProfileHeaderMenu";
 
 type HeaderRightActionsProps = {
+  isLeagueScreen?: boolean;
   rightAction?: ReactNode;
   isTeamScreen: boolean;
   isPlayerScreen?: boolean;
@@ -93,6 +94,7 @@ function FavoriteHeaderButton({
 }
 
 export function HeaderRightActions({
+  isLeagueScreen = false,
   rightAction,
   isTeamScreen,
   isPlayerScreen,
@@ -129,7 +131,7 @@ export function HeaderRightActions({
 
   if (rightAction) return <>{rightAction}</>;
 
-  if (isTeamScreen) {
+  if (isTeamScreen || isLeagueScreen) {
     return (
       <View style={styles.teamHeaderActions}>
         {onToggleFavorite ? (
@@ -147,7 +149,11 @@ export function HeaderRightActions({
             onPress={onToggleNotifications}
             style={styles.teamHeaderActionButton}
             accessibilityRole="button"
-            accessibilityLabel="Open team notification settings"
+            accessibilityLabel={
+              isLeagueScreen
+                ? "Open league notification settings"
+                : "Open team notification settings"
+            }
             accessibilityState={{ selected: Boolean(isNotified) }}
             hitSlop={8}
           >

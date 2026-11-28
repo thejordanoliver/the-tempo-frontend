@@ -1,14 +1,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { StandingsTeamInfo } from "types/standings";
 import { apiClient } from "utils/apiClient";
 
 export type StandingsTeam = {
   id: string;
   logo?: string | null;
   logoDark?: string | null;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
   name: string;
   shortName: string | null;
   code: string;
-  conference: string;
+  conference: string | StandingsTeamInfo["conference"];
+  conferenceId?: number | null;
+  conferenceName?: string;
   division: string;
   gamesPlayed?: number | null;
   wins: number;

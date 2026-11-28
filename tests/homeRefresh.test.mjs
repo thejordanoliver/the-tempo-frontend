@@ -84,6 +84,9 @@ function homeHarness(tab = "scores") {
   h.modules["./MMAHooks/useMMAEvents"] = {
     useMMAEvents: ({ date, league }) => gameHook(date, league),
   };
+  h.modules["./RacingHooks/useRacingEvents"] = {
+    useRacingEvents: ({ date, league }) => gameHook(date, league),
+  };
   h.modules["./TennisHooks/useTennisMatches"] = { useTennisMatches: gameHook };
   h.modules["./VolleyballHooks/useVolleyball"] = {
     useVolleyballGames: gameHook,
@@ -92,15 +95,15 @@ function homeHarness(tab = "scores") {
   return Object.assign(h, { requests });
 }
 
-test("home sources retain volleyball games using the canonical league IDs", () => {
+test("home sources retain games for every browseable league using canonical IDs", () => {
   const h = homeHarness();
   try {
-    for (const [key, config] of Object.entries(
-      h.modules["constants/leagues"].LEAGUE_CONFIG,
-    )) {
+    const { BROWSEABLE_LEAGUES, LEAGUE_CONFIG } =
+      h.modules["constants/leagues"];
+    for (const [key, config] of Object.entries(LEAGUE_CONFIG)) {
       assert.equal(config.id, key);
     }
-    for (const league of ["mcvb", "wcvb"]) {
+    for (const league of BROWSEABLE_LEAGUES) {
       const section = h.state.homeGameSections.find(({ id }) => id === league);
       assert.ok(section, `${league} must be included in home sources`);
       assert.equal(section.data.length, 1);
@@ -116,17 +119,22 @@ test("home sources retain volleyball games using the canonical league IDs", () =
 
 test("Scores refresh starts favorites and all leagues together, keeps content, and waits for the last request", async () => {
   const h = homeHarness();
+  const requestCount =
+    h.modules["constants/leagues"].BROWSEABLE_LEAGUES.length + 2;
   try {
     const sections = h.state.homeGameSections;
     const pending = h.state.handleRefresh();
     await flush();
-    assert.equal(h.requests.length, 30);
-    assert.equal(new Set(h.requests.map(({ kind }) => kind)).size, 30);
+    assert.equal(h.requests.length, requestCount);
+    assert.equal(
+      new Set(h.requests.map(({ kind }) => kind)).size,
+      requestCount,
+    );
     assert.equal(h.state.refreshing, true);
     assert.equal(h.state.loading, false);
     assert.equal(h.state.homeGameSections, sections);
     await h.state.handleRefresh();
-    assert.equal(h.requests.length, 30);
+    assert.equal(h.requests.length, requestCount);
     h.requests.slice(1).forEach((r) => r.resolve());
     await flush();
     assert.equal(h.state.refreshing, true, "favorite teams are still pending");
@@ -142,6 +150,7 @@ test("Scores refresh starts favorites and all leagues together, keeps content, a
 
 test("a date reset uses automatic date requests and waits for all of them", async () => {
   const h = homeHarness();
+  const leagueCount = h.modules["constants/leagues"].BROWSEABLE_LEAGUES.length;
   try {
     h.state.setSelectedDate(dayjs().subtract(1, "day").startOf("day").toDate());
     await flush();
@@ -151,10 +160,10 @@ test("a date reset uses automatic date requests and waits for all of them", asyn
     const sections = h.state.homeGameSections;
     const pending = h.state.handleRefresh();
     await flush();
-    assert.equal(h.requests.length, 30);
+    assert.equal(h.requests.length, leagueCount + 2);
     assert.equal(
       h.requests.filter(({ kind }) => kind.startsWith("date:")).length,
-      28,
+      leagueCount,
     );
     assert.equal(h.state.homeGameSections, sections);
     assert.equal(h.state.loading, false);
@@ -360,6 +369,12 @@ for (const [sport, hookName, args, response] of [
     { events: [{ id: "game" }] },
   ],
   [
+    "Racing",
+    "useRacingEvents",
+    [{ date: new Date(), league: "f1" }],
+    { events: [{ id: "game" }] },
+  ],
+  [
     "Tennis",
     "useTennisMatches",
     [new Date(), "atp"],
@@ -405,7 +420,8 @@ for (const [sport, hookName, args, response] of [
       apiClient: { get: () => pending.promise },
     };
     const field = sport === "Tennis" ? "matches" : "games";
-    const responseField = sport === "MMA" ? "events" : field;
+    const responseField =
+      sport === "MMA" || sport === "Racing" ? "events" : field;
     const game = (state) => ({ id: "game", status: { state } });
     try {
       h.start(h.load(`hooks/${sport}Hooks/${hookName}.ts`)[hookName], args);

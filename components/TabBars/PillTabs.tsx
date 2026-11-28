@@ -4,19 +4,17 @@ import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Animated,
-  Easing,
   LayoutChangeEvent,
   Pressable,
   ScrollView,
   StyleProp,
   StyleSheet,
-  Text,
   TextStyle,
   View,
   ViewStyle,
   type ScrollViewInstance,
 } from "react-native";
+import Animated from "react-native-reanimated";
 
 export type PillTabOption<T extends string = string> = {
   label: string;
@@ -53,7 +51,7 @@ export default function PillTabs<T extends string = string>({
   activeTabStyle,
   labelStyle,
   activeLabelStyle,
-  animationDuration = 220,
+  animationDuration = 260,
   scrollable,
   minTabWidth = 112,
 }: Props<T>) {
@@ -63,50 +61,16 @@ export default function PillTabs<T extends string = string>({
   const styles = useMemo(() => pillTabsStyles(isDark), [isDark]);
 
   const scrollViewRef = useRef<ScrollViewInstance | null>(null);
-  const [translateX] = useState(() => new Animated.Value(0));
-  const [animatedWidth] = useState(() => new Animated.Value(0));
-  const hasPlacedIndicator = useRef(false);
-
   const [containerWidth, setContainerWidth] = useState(0);
   const [tabLayouts, setTabLayouts] = useState<Record<string, TabLayout>>({});
 
   const shouldScroll = scrollable ?? tabs.length > 3;
 
-  const selectedTabLayout = useMemo(() => {
-    return tabLayouts[String(selectedValue)];
-  }, [selectedValue, tabLayouts]);
-
-  useEffect(() => {
-    if (!selectedTabLayout) return;
-
-    if (!hasPlacedIndicator.current || reduceMotion) {
-      translateX.setValue(selectedTabLayout.x);
-      animatedWidth.setValue(selectedTabLayout.width);
-      hasPlacedIndicator.current = true;
-      return;
-    }
-
-    Animated.parallel([
-      Animated.timing(translateX, {
-        toValue: selectedTabLayout.x,
-        duration: animationDuration,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-      Animated.timing(animatedWidth, {
-        toValue: selectedTabLayout.width,
-        duration: animationDuration,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-    ]).start();
-  }, [
-    selectedTabLayout,
-    translateX,
-    animatedWidth,
-    animationDuration,
-    reduceMotion,
-  ]);
+  const selectedTabLayout = tabLayouts[String(selectedValue)];
+  const transition = {
+    transitionDuration: reduceMotion ? 0 : animationDuration,
+    transitionTimingFunction: "ease-in-out",
+  } as const;
 
   useEffect(() => {
     if (!shouldScroll || !selectedTabLayout || containerWidth <= 0) return;
@@ -167,8 +131,10 @@ export default function PillTabs<T extends string = string>({
               style={[
                 styles.tabContainerActive,
                 {
-                  width: animatedWidth,
-                  transform: [{ translateX }],
+                  width: selectedTabLayout.width,
+                  transform: [{ translateX: selectedTabLayout.x }],
+                  transitionProperty: ["transform", "width"],
+                  ...transition,
                 },
                 activeTabStyle,
               ]}
@@ -200,16 +166,17 @@ export default function PillTabs<T extends string = string>({
                   tabStyle,
                 ]}
               >
-                <Text
+                <Animated.Text
                   style={[
                     styles.tabLabel,
                     labelStyle,
                     active && styles.tabLabelActive,
                     active && activeLabelStyle,
+                    { transitionProperty: "color", ...transition },
                   ]}
                 >
                   {tab.label}
-                </Text>
+                </Animated.Text>
               </Pressable>
             );
           })}

@@ -140,7 +140,9 @@ function toWidgetSlide(envelope: ExploreWidgetGame): WidgetSlide {
     case "ufl":
       return { type: "ufl", data: envelope.game };
     case "nhl":
-      return { type: "nhl", data: envelope.game };
+    case "mch":
+    case "wch":
+      return { type: "hockey", data: envelope.game };
   }
 }
 
@@ -427,7 +429,7 @@ function WidgetDashboardContent({
             width={width}
             height={height}
             league={widget.collegePollLeague ?? "cfb"}
-            pollType={widget.collegePollType ?? "ap"}
+            pollType={widget.collegePollType}
             onChangeSelection={(league, pollType) =>
               onSetCollegePollSelection(widget.id, league, pollType)
             }

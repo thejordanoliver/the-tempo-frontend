@@ -1,3 +1,4 @@
+import type { GameOdds, ScoreboardOdds } from "types/odds";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
 import type { GameVenueInfo } from "types/gameVenue";
 import { Venue } from "@/types/types";
@@ -37,6 +38,9 @@ export type TeamRecord = {
 };
 
 export type Team = {
+  logo?: string | null;
+  logoDark?: string | null;
+  primaryColor?: string | null;
   id: string;
   guid: string;
   uid: string;
@@ -264,6 +268,7 @@ export type GameStatus = {
 };
 
 export type Score = {
+  odds?: ScoreboardOdds | null;
   gameId: string;
   uid?: string;
   date?: string;
@@ -291,6 +296,7 @@ export type TeamRecords = {
 };
 
 export type GameDetails = {
+  odds?: GameOdds | [] | null;
   playoffRound: string;
   seriesSummary: SeriesSummary;
   isPostseason: boolean;
@@ -348,7 +354,7 @@ export const useHockeyGameDetails = (
           params,
         });
 
-        if (data?.score) {
+        if (data?.score && data.details) {
           setScore(data.score);
           setDetails(data.details);
           setLastRefresh(new Date());
@@ -379,7 +385,7 @@ export const useHockeyGameDetails = (
       gameId: gameId || "",
     },
     onUpdate: (payload) => {
-      if (!payload?.score) return;
+      if (!payload?.score || !payload.details) return;
 
       setScore(payload.score);
       setDetails(payload.details);

@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "constants/styles";
 import { StyleSheet } from "react-native";
 export const lastFiveGameStyles = (isDark: boolean) => {
   const baseTextColor = isDark ? Colors.white : Colors.black;
@@ -26,9 +26,7 @@ export const lastFiveGameStyles = (isDark: boolean) => {
         gap: 6,
       },
       tabLogo: {
-        width: 28,
-        height: 28,
-        resizeMode: "contain",
+        ...gameDetailTeamLogo,
       },
       tabText: {
         fontFamily: Fonts.MEDIUM,
@@ -95,10 +93,8 @@ export const lastFiveGameStyles = (isDark: boolean) => {
         color: baseTextColor,
       },
       opponentLogo: {
-        width: 18,
-        height: 18,
+        ...gameDetailTeamLogo,
         marginLeft: 4,
-        resizeMode: "contain",
       },
     }),
   };

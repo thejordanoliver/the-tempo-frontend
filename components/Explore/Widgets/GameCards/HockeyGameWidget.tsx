@@ -1,6 +1,7 @@
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+import { resolveImage } from "utils/customheader/utils";
 import { activeOpacity } from "@/constants/styles";
 import { HockeyGame } from "@/types/hockey/hockey";
-import { getNHLTeamLogo } from "constants/teamsNHL";
 import { router } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -18,22 +19,18 @@ import displayeValue from "utils/widgets/widgetUtils";
 
 type GameWidgetProps = {
   game: HockeyGame;
-  isNHL: boolean;
   height?: number;
   width?: number;
   isDark: boolean;
-  loading?: boolean;
 };
 
 export default function HockeyGameWidget({
   game,
-  isNHL,
   height = 150,
   width = 150,
-  loading = false,
   isDark,
 }: GameWidgetProps) {
-  const league = isNHL ? "nhl" : null;
+  const league = game.league?.code ?? "nhl";
   const handlePress = () => {
     router.push({
       pathname: "/(tabs)/(explore)/game/[sport]/[game]",
@@ -46,20 +43,21 @@ export default function HockeyGameWidget({
     } as any);
   };
   const styles = gameWidgetStyles(isDark, height, width);
-  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(width);
   const showHeadline = !isSmallLayout || height >= 170;
 
   const home = game.home;
   const away = game.away;
 
-  const homeId = Number(home?.id);
-  const awayId = Number(away?.id);
-
   const homeName = home?.code;
   const awayName = away?.code;
 
-  const homeLogo = getNHLTeamLogo(homeId, isDark);
-  const awayLogo = getNHLTeamLogo(awayId, isDark);
+  const homeLogo =
+    resolveImage((isDark ? home?.logoDark : undefined) || home?.logo) ??
+    PlaceholderLogo;
+  const awayLogo =
+    resolveImage((isDark ? away?.logoDark : undefined) || away?.logo) ??
+    PlaceholderLogo;
 
   const gameDate = safeDate(game.date);
   const formattedDate = formatDate(gameDate);
@@ -180,7 +178,11 @@ export default function HockeyGameWidget({
   // Render widget
   // -------------------------
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+    >
       <View style={styles.container}>
         {showHeadline && (
           <View style={styles.headlineContainer}>

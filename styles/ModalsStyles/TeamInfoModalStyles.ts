@@ -1,7 +1,7 @@
 import { Colors } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
+export const TeamInfoModalStyles = (isDark: boolean) =>
   StyleSheet.create({
     handleStyle: {
       position: "absolute",

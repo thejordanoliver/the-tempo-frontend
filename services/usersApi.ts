@@ -51,9 +51,12 @@ export async function unblockUser(userId: string | number): Promise<void> {
   );
 }
 
-export async function getBlockedUsers(): Promise<BlockedUser[]> {
+export async function getBlockedUsers(
+  signal?: AbortSignal,
+): Promise<BlockedUser[]> {
   const response = await apiClient.get<{ users?: BlockedUser[] }>(
     "/api/safety/blocks",
+    { signal },
   );
   return response.data.users ?? [];
 }

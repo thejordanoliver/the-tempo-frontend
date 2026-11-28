@@ -1,3 +1,4 @@
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import { Colors } from "constants/styles";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
@@ -35,17 +36,8 @@ export const TeamRow = ({
   const showRecordInsteadOfScore = isScheduled || score == null;
 
   const handleTeamPress = () => {
-    if (!isActive) return;
-    if (!id || league === "ufl") return;
-
-    if (league === "nfl") {
-      router.push(`/team/nfl/${id}`);
-      return;
-    }
-
-    if (league === "cfb") {
-      router.push(`/team/cfb/${id}`);
-    }
+    if (!isActive || !id || league === "ufl") return;
+    router.push(getTeamHref("football", id, league));
   };
 
   const getScoreStyle = () => {
@@ -111,7 +103,7 @@ export const TeamRow = ({
       {hasPossession && (
         <Image
           source={isDark ? FootballLight : Football}
-          style={styles.possessionIcon}
+          style={styles.possession}
         />
       )}
     </View>
@@ -122,7 +114,11 @@ export const TeamRow = ({
       {isHome && renderScore()}
 
       <View style={styles.teamInfoContainer}>
-        <Pressable onPress={handleTeamPress}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${name} team details`}
+          onPress={handleTeamPress}
+        >
           <Image source={logo} style={styles.logo} />
         </Pressable>
 

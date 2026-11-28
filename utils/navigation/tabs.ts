@@ -51,31 +51,15 @@ export const LEAGUE_TABS = {
     "forum",
   ],
 
-  nhl: ["scores", "news", "standings", "stats", "awards", "forum"],
+  nhl: ["scores", "news", "standings", "playoffs", "stats", "awards", "forum"],
+  mch: ["scores", "news", "standings", "awards", "forum"],
+  wch: ["scores", "news", "standings", "awards", "forum"],
 
-  cfb: [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "playoffs",
-    "recruits",
-    "awards",
-    "forum",
-  ],
+  cfb: ["scores", "news", "standings", "stats", "recruits", "awards", "forum"],
 
-  mcbb: [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "bracket",
-    "recruits",
-    "awards",
-    "forum",
-  ],
+  mcbb: ["scores", "news", "standings", "stats", "recruits", "awards", "forum"],
 
-  wcbb: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
+  wcbb: ["scores", "news", "standings", "stats", "awards", "forum"],
 
   cb: ["scores", "news", "standings", "forum"],
 
@@ -120,24 +104,50 @@ export const LEAGUE_TABS = {
 
 export const TEAM_TABS = {
   // Basketball
-  nba: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  nba: [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "transactions",
+    "forum",
+  ],
   gleague: ["schedule", "news", "roster", "forum"],
   mcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wnba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
 
   // Football
-  nfl: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  nfl: [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "transactions",
+    "forum",
+  ],
   cfb: ["schedule", "news", "roster", "stats", "standings", "forum"],
   ufl: ["schedule", "news", "standings", "forum"],
 
   // Baseball
-  mlb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  mlb: [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "transactions",
+    "forum",
+  ],
   cb: ["schedule", "news", "standings", "forum"],
   sb: ["schedule", "news", "standings", "forum"],
 
   // Hockey
   nhl: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  mch: ["schedule", "news", "roster", "standings", "forum"],
+  wch: ["schedule", "news", "roster", "standings", "forum"],
 
   // Soccer
   socc: ["schedule", "news", "roster", "forum"],

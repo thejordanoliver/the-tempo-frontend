@@ -1,3 +1,5 @@
+import { parseGameParam } from "utils/navigation/gameRouteParams";
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
@@ -18,7 +20,6 @@ import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
 import MatchupComparison from "components/Sports/MMA/GameDetails/MatchupComparison";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
@@ -48,41 +49,6 @@ type RouteParams = {
 
 type MMAFight = MMAFightCardProps["game"];
 
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) return value[0];
-  return value;
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): MMAFight | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // Dynamic route params are often just the game id.
-  // Only JSON strings should be parsed into a full game object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as MMAFight;
-  } catch {
-    return undefined;
-  }
-}
-
 export default function GameDetailsScreen(
   props: Partial<MMAFightCardProps> = {},
 ) {
@@ -96,7 +62,9 @@ export default function GameDetailsScreen(
 
   const game = useMemo(() => {
     return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+      props.game ??
+      parseGameParam<MMAFight>(params.data) ??
+      parseGameParam<MMAFight>(params.game)
     );
   }, [params.data, params.game, props.game]);
 
@@ -107,7 +75,6 @@ export default function GameDetailsScreen(
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
-  const showGameChat = useGameChatAvailability(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
 
   // Backend fight IDs can be strings; prediction scoring requires a number.
@@ -164,6 +131,13 @@ export default function GameDetailsScreen(
   const secondFighterIsChampion = secondFighter?.isChampion ?? false;
 
   const gameStatusDescription = game?.status.description;
+
+  const oddsHome = game?.competitors?.find(
+    (participant) => participant.homeAway === "home",
+  );
+  const oddsAway = game?.competitors?.find(
+    (participant) => participant.homeAway === "away",
+  );
 
   const state = game?.status.state ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -318,6 +292,22 @@ export default function GameDetailsScreen(
               state={state}
             />
 
+            {oddsHome && oddsAway && (
+              <Odds
+                homeId={Number(oddsHome.id)}
+                awayId={Number(oddsAway.id)}
+                homeCode={oddsHome.shortName ?? "Home"}
+                awayCode={oddsAway.shortName ?? "Away"}
+                homeLogo={oddsHome.flag ? { uri: oddsHome.flag } : null}
+                awayLogo={oddsAway.flag ? { uri: oddsAway.flag } : null}
+                homeLabel="Fighter"
+                awayLabel="Fighter"
+                odds={game?.odds}
+                state={state}
+                isDark={isDark}
+              />
+            )}
+
             <MatchupComparison
               firstFighterId={firstFighterId}
               secondFighterId={secondFighterId}
@@ -363,16 +353,16 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      {!dontShowDetails && showGameChat && (
+      {!dontShowDetails && gameDateObj && (
         <GameLiveChatOverlay
           context={{
             sport: "mma",
             league: game?.league?.code ?? "ufc",
-            date: gameDateObj?.toISOString(),
+            date: gameDateObj.toJSON() ?? undefined,
           }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
-          state={state}
+          isLive={state === "in"}
         />
       )}
     </>

@@ -37,6 +37,7 @@ for (const league of ["mcvb", "wcvb"]) {
         calendar: [],
         items: [],
         notifications: [],
+        subscriptions: [],
         unreadCount: 0,
         favorites: [],
         favoriteTeams: [],

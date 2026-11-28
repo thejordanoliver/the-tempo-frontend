@@ -1,7 +1,7 @@
 import CenteredHeader from "components/Headings/CenteredHeader";
 import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
-import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
+import { StatCardStyles } from "styles/PlayerStyles/StatCardStyles";
 import type { PlayerStatRanking } from "types/playerSeasonRankings";
 import { getContrastingTextColor } from "utils/ui/color";
 
@@ -26,7 +26,7 @@ export default function SeasonStatCardLayout({
   teamColor,
   formatValue = (value) => value,
 }: Props) {
-  const styles = seasonStatCardStyles(isDark);
+  const styles = StatCardStyles(isDark);
   const backgroundColor = teamColor || Colors.midTone;
   const textColor = getContrastingTextColor(backgroundColor);
 

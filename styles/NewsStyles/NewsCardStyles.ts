@@ -10,21 +10,16 @@ export const NewsCardStyles = (isDark: boolean, screenWidth: number) => {
   return StyleSheet.create({
     card: {
       flexDirection: "column",
-
       width: "100%",
       maxWidth: isTablet ? MAX_CARD_WIDTH : undefined,
       alignSelf: "center",
-
       paddingBottom: isTablet ? 18 : 12,
-
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: isTablet ? 12 : 8,
-
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-
       overflow: "hidden",
     },
 

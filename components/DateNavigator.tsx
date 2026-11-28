@@ -1,7 +1,12 @@
 // components/DateNavigator.tsx
-import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
+import {
+  activeOpacity,
+  Colors,
+  Fonts,
+  MIN_TOUCH_TARGET,
+} from "constants/styles";
 import dayjs from "dayjs";
-import React from "react";
+import { useCallback, useMemo } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type Props = {
@@ -17,56 +22,55 @@ export default function DateNavigator({
   onOpenCalendar,
   isDark,
 }: Props) {
-  const styles = getStyles(isDark);
+  const styles = useMemo(() => getStyles(isDark), [isDark]);
   // Use the same calendar day as the scores request and calendar selection.
-  const date = dayjs(selectedDate);
+  const timestamp = selectedDate.getTime();
+  const { label, accessibilityLabel } = useMemo(() => {
+    const date = dayjs(timestamp);
+    return {
+      label: date.format("MMM D"),
+      accessibilityLabel: date.format("dddd, MMMM D, YYYY"),
+    };
+  }, [timestamp]);
+  const previousDay = useCallback(() => onChangeDate(-1), [onChangeDate]);
+  const nextDay = useCallback(() => onChangeDate(1), [onChangeDate]);
 
   return (
     <View style={styles.dateNavContainer}>
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel="Previous day"
-        onPress={() => onChangeDate(-1)}
+        onPress={previousDay}
         style={styles.dateNavButton}
-        activeOpacity={0.7}
+        activeOpacity={activeOpacity}
       >
         <Image
           source={require("../assets/icons/back.png")}
-          style={{
-            width: 20,
-            height: 20,
-            tintColor: isDark ? Colors.black : Colors.white,
-          }}
+          style={styles.arrowIcon}
         />
       </TouchableOpacity>
 
       <TouchableOpacity
         accessibilityRole="button"
-        accessibilityLabel={date.format("dddd, MMMM D, YYYY")}
+        accessibilityLabel={accessibilityLabel}
         accessibilityHint="Opens the calendar to choose a date"
         onPress={onOpenCalendar}
         style={styles.dateNavButton}
-        activeOpacity={0.7}
+        activeOpacity={activeOpacity}
       >
-        <Text style={styles.dateNavText}>
-          {date.format("MMM D")}
-        </Text>
+        <Text style={styles.dateNavText}>{label}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel="Next day"
-        onPress={() => onChangeDate(1)}
+        onPress={nextDay}
         style={styles.dateNavButton}
-        activeOpacity={0.7}
+        activeOpacity={activeOpacity}
       >
         <Image
           source={require("../assets/icons/forward.png")}
-          style={{
-            width: 20,
-            height: 20,
-            tintColor: isDark ? Colors.black : Colors.white,
-          }}
+          style={styles.arrowIcon}
         />
       </TouchableOpacity>
     </View>
@@ -96,5 +100,10 @@ const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.MEDIUM,
       fontSize: 18,
       color: isDark ? Colors.black : Colors.white,
+    },
+    arrowIcon: {
+      width: 20,
+      height: 20,
+      tintColor: isDark ? Colors.black : Colors.white,
     },
   });

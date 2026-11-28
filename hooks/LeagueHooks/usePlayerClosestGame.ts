@@ -17,7 +17,9 @@ export function usePlayerClosestGame<Game extends PlayerScheduleGame>(
   sport: PlayerGameLogSport,
   league: string,
   teamId: string | number | null | undefined,
+  isActive: boolean,
 ) {
+  const scheduleTeamId = isActive ? (teamId ?? null) : null;
   const schedule = useTeamSchedule<
     Game,
     ScheduleResponse<Game>,
@@ -26,14 +28,14 @@ export function usePlayerClosestGame<Game extends PlayerScheduleGame>(
   >({
     sport,
     league,
-    teamId: teamId ?? null,
-    endpoint: `/api/games/${sport}/team/${league}/${teamId}`,
+    teamId: scheduleTeamId,
+    endpoint: `/api/games/${sport}/team/${league}/${scheduleTeamId}`,
     normalize,
     errorFrom,
   });
   return {
-    game: getClosestPlayerGame(schedule.data?.games ?? []),
-    loading: schedule.loading,
-    error: schedule.error,
+    game: isActive ? getClosestPlayerGame(schedule.data?.games ?? []) : null,
+    loading: isActive && schedule.loading,
+    error: isActive ? schedule.error : null,
   };
 }

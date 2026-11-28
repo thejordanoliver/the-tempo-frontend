@@ -13,7 +13,9 @@ import type { ResultItem } from "../types/explore";
 const player = {
   id: "4430841",
   type: "player",
-  affiliation: "nfl",
+  league: "nfl",
+  sport: "football",
+  team: null,
   full_name: "Carson Beck",
   team_id: "1",
   headshot_url: null,
@@ -52,7 +54,8 @@ test("settled events normalize queries and record one-based impressions", () => 
   assert.equal(event.durationMs, 302);
   assert.deepEqual(event.results[0], {
     entityType: "player",
-    affiliation: "nfl",
+    league: "nfl",
+    sport: "football",
     entityId: "4430841",
     position: 1,
     matchClass: 2,
@@ -79,7 +82,7 @@ test("selection events preserve collision-safe entity identity", () => {
   });
 
   assert.equal(event.entityType, "player");
-  assert.equal(event.affiliation, "nfl");
+  assert.equal(event.league, "nfl");
   assert.equal(event.entityId, "4430841");
   assert.equal(event.position, 1);
   assert.equal(event.searchRequestId, searchMetadata.searchRequestId);

@@ -33,7 +33,6 @@ type Props = {
 };
 
 export default function GameHeader({
-  headline,
   leftCompetitorId,
   leftCompetitorName,
   leftCompetitorCountry,

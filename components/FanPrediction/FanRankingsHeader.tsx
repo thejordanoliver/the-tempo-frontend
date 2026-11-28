@@ -33,7 +33,6 @@ const RANKING_RULES = [
 export default function FanRankingsHeader({
   isDark,
   me,
-  rankings,
   showLeaderboard,
   onOpenUser,
   sport,

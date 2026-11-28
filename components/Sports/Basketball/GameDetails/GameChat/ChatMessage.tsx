@@ -1,9 +1,9 @@
-import { Colors, Fonts, activeOpacity } from "constants/styles";
+import ConfirmModal from "components/ConfirmModal";
+import { Colors, Fonts, activeOpacity, MIN_TOUCH_TARGET } from "constants/styles";
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import {
   Image,
-  Alert,
   Pressable,
   StyleSheet,
   Text,
@@ -34,13 +34,13 @@ function ChatMessage({
   onRetry,
   onDelete,
   item,
-  userName,
   isDark,
   emojis,
   onReaction,
   onBlockedUser,
 }: Props) {
   const styles = useMemo(() => ChatMessageStyles(isDark), [isDark]);
+  const [deleteVisible, setDeleteVisible] = useState(false);
 
   const time = new Date(item.time).toLocaleTimeString([], {
     hour: "2-digit",
@@ -62,28 +62,19 @@ function ChatMessage({
   });
   const profileImage = item.profile_image ?? profilePlaceholder;
 
+  const canDelete = isCurrentUser && item.delivery === "sent";
+  const openMessageActions = canDelete
+    ? () => setDeleteVisible(true)
+    : isCurrentUser
+      ? undefined
+      : safety.open;
+
   return (
     <>
-      <Pressable
-        onLongPress={
-          isCurrentUser && item.delivery === "sent"
-            ? () =>
-                Alert.alert(
-                  "Delete message?",
-                  "This removes the message for everyone.",
-                  [
-                    { text: "Cancel", style: "cancel" },
-                    {
-                      text: "Delete",
-                      style: "destructive",
-                      onPress: () => onDelete(item.id),
-                    },
-                  ],
-                )
-            : isCurrentUser
-              ? undefined
-              : safety.open
-        }
+      <Pressable accessibilityRole="button"
+        accessible={false}
+        focusable={false}
+        onLongPress={openMessageActions}
         delayLongPress={350}
         accessibilityHint={
           isCurrentUser ? undefined : "Long press for safety actions"
@@ -159,7 +150,8 @@ function ChatMessage({
               item.reactions?.[emoji]?.includes(String(currentUserId)) ?? false;
 
             return (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: item.delivery !== "sent", selected }}
+                accessibilityLabel={`${emoji} reaction, ${count} ${count === 1 ? "person" : "people"}`}
                 key={emoji}
                 activeOpacity={activeOpacity}
                 disabled={item.delivery !== "sent"}
@@ -182,6 +174,28 @@ function ChatMessage({
           })}
         </View>
       </Pressable>
+      {openMessageActions && (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={`Message options for ${item.user}: ${item.message || "GIF"}`}
+          onPress={openMessageActions}
+          style={styles.optionsButton}
+        >
+          <Text style={styles.message}>Message options</Text>
+        </TouchableOpacity>
+      )}
+      <ConfirmModal
+        visible={canDelete && deleteVisible}
+        title="Delete message?"
+        message="This removes the message for everyone."
+        confirmText="Delete"
+        variant="danger"
+        onCancel={() => setDeleteVisible(false)}
+        onConfirm={() => {
+          setDeleteVisible(false);
+          onDelete(item.id);
+        }}
+      />
       <SafetyActionsModal {...safety.modalProps} />
     </>
   );
@@ -203,6 +217,7 @@ export default memo(
 
 const ChatMessageStyles = (isDark: boolean) =>
   StyleSheet.create({
+    optionsButton: { minHeight: MIN_TOUCH_TARGET, minWidth: MIN_TOUCH_TARGET, justifyContent: "center", alignSelf: "flex-start", paddingHorizontal: 12 },
     messageContainer: {
       width: "100%",
       paddingHorizontal: 12,

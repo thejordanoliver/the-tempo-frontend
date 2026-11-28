@@ -67,7 +67,7 @@ function getHeaderRows(props: Props, player: HeaderPlayer) {
         if (age != null) stats.push(ageRow);
         if (experience != null) stats.push(experienceRow);
         info.push(
-          { label: "COLLEGE", value: player.college, truncate: true },
+          { label: "AFFILIATION", value: player.college, truncate: true },
           birthRow,
           draftRow,
         );
@@ -128,7 +128,6 @@ export default function PlayerHeader(props: Props) {
   const player = props.player ?? {};
   const styles = PlayerHeaderStyles(isDark);
   const { stats, info } = getHeaderRows(props, player);
-  const showAvatarPlaceholder = sport !== "baseball" && sport !== "hockey";
   const initial = player.first_name?.[0]?.toUpperCase() || "?";
   const name =
     sport === "mma"
@@ -146,33 +145,40 @@ export default function PlayerHeader(props: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.avatarContainer}>
-        {player.headshot_url ? (
-          <Image
-            source={{ uri: player.headshot_url }}
-            style={styles.avatar}
-            accessibilityLabel={`${sport === "mma" ? player.full_name : name} photo`}
-          />
-        ) : showAvatarPlaceholder ? (
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.initial}>{initial}</Text>
+      <View style={styles.identityRow}>
+        <View style={styles.avatarContainer}>
+          {player.headshot_url ? (
+            <Image
+              source={{ uri: player.headshot_url }}
+              style={styles.avatar}
+              accessibilityLabel={`${sport === "mma" ? player.full_name : name} photo`}
+            />
+          ) : (
+            <View style={styles.avatarPlaceholder}>
+              <Text style={styles.initial}>{initial}</Text>
+            </View>
+          )}
+        </View>
+        <View style={styles.identityContent}>
+          <View style={styles.nameContainer}>
+            <Text
+              style={styles.name}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.05}
+            >
+              {name.trim() || player.full_name || "Player"}
+            </Text>
           </View>
-        ) : null}
-      </View>
-      {sport === "football" ? (
-        positionBadge
-      ) : (
-        <View style={styles.badgeRow}>{positionBadge}</View>
-      )}
-      <View style={styles.nameContainer}>
-        <Text style={styles.name}>{name}</Text>
+          {positionBadge}
+        </View>
       </View>
       <View style={styles.statsRow}>
         {stats.map(({ label, value }, index) => (
           <Fragment key={label}>
             {index > 0 && <View style={styles.statDivider} />}
             <View style={styles.statChip}>
-              <Text style={styles.statValue}>{value}</Text>
+              <Text style={styles.statValue}>{value ?? "—"}</Text>
               <Text style={styles.statLabel}>{label}</Text>
             </View>
           </Fragment>
@@ -187,7 +193,7 @@ export default function PlayerHeader(props: Props) {
               numberOfLines={truncate ? 1 : undefined}
               ellipsizeMode={truncate ? "tail" : undefined}
             >
-              {value}
+              {value ?? "—"}
             </Text>
           </View>
         ))}

@@ -1,4 +1,6 @@
 import LiveChat from "@/components/Sports/Basketball/GameDetails/GameChat/LiveChat";
+import ConfirmModal from "components/ConfirmModal";
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useLiveGameChat, type GameChatContext } from "hooks/useLiveGameChat";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
@@ -25,7 +27,7 @@ type GameLiveChat = {
   context: GameChatContext;
   gameId: string;
   opacityAnim: Animated.Value;
-  state?: string | null;
+  isLive: boolean;
 };
 
 type MountedGameLiveChatOverlayProps = {
@@ -134,10 +136,16 @@ function MountedGameLiveChatOverlay({
 export default function GameLiveChatOverlay({
   context,
   gameId,
-  state,
   opacityAnim,
+  isLive,
 }: GameLiveChat) {
   const [chatOpen, setChatOpen] = useState(false);
+  const [availabilityNotice, setAvailabilityNotice] = useState<{
+    gameId: string;
+    message: string;
+  } | null>(null);
+  const gameDate = context.date ? new Date(context.date) : null;
+  const isAvailable = useGameChatAvailability(gameDate, isLive);
 
   const handleCloseChat = useCallback(() => {
     setChatOpen(false);
@@ -154,14 +162,48 @@ export default function GameLiveChatOverlay({
       if (cancelled) return;
 
       setChatOpen(false);
+      setAvailabilityNotice(null);
     });
 
     return () => {
       cancelled = true;
     };
-  }, [gameId]);
+  }, [gameId, isAvailable]);
 
-  if (state === "post") return null;
+  if (!context.date) return null;
+
+  if (!isAvailable) {
+    const showAvailability = () => {
+      const message =
+        gameDate && gameDate.getTime() > Date.now()
+          ? "Chat opens 15 minutes before the game starts."
+          : "Chat for this game has closed.";
+      setAvailabilityNotice({ gameId, message });
+    };
+
+    return (
+      <>
+        <Animated.View
+          pointerEvents="box-none"
+          style={[styles.floatingButtonLayer, { opacity: opacityAnim }]}
+        >
+          <FloatingButton
+            isOpen={false}
+            onPress={showAvailability}
+            accessibilityLabel="Game chat availability"
+          />
+        </Animated.View>
+        <ConfirmModal
+          visible={availabilityNotice?.gameId === gameId}
+          title="Game chat"
+          message={availabilityNotice?.message ?? ""}
+          showCancel={false}
+          onConfirm={() => setAvailabilityNotice(null)}
+          onCancel={() => setAvailabilityNotice(null)}
+        />
+      </>
+    );
+  }
 
   return (
     <MountedGameLiveChatOverlay

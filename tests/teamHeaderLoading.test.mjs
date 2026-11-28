@@ -3,6 +3,7 @@ import fs from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
 import ts from "typescript";
+import { resolveTeamRoute } from "../utils/navigation/teamNavigation.ts";
 
 const element = (type, props, key) => ({ type, props, key });
 
@@ -199,7 +200,7 @@ test("the shared team screen shows only its indicator while loading", () => {
 });
 
 test("unsupported team routes restore a visible error header and back navigation", () => {
-  let teamType = "unsupported";
+  let params = { teamId: "12", sport: "unsupported" };
   let options;
   let backCount = 0;
   const file = "components/Navigation/TeamRouteScreen.tsx";
@@ -217,7 +218,7 @@ test("unsupported team routes restore a visible error header and back navigation
       usePreferences: () => ({ resolvedColorScheme: "light" }),
     },
     "expo-router": {
-      useLocalSearchParams: () => ({ teamType }),
+      useLocalSearchParams: () => params,
       useNavigation: () => ({
         setOptions: (next) => (options = next),
         goBack: () => backCount++,
@@ -225,18 +226,23 @@ test("unsupported team routes restore a visible error header and back navigation
     },
     react: { useLayoutEffect: (callback) => callback() },
     "react-native": { Text: "Text", View: "View" },
+    "utils/navigation/teamNavigation": { resolveTeamRoute },
   };
   for (const node of source.statements) {
     if (
       ts.isImportDeclaration(node) &&
-      node.moduleSpecifier.text.startsWith("app/(tabs)/(home)/team/")
+      node.moduleSpecifier.text.startsWith("components/Sports/")
     ) {
-      modules[node.moduleSpecifier.text] = { default: () => {} };
+      modules[node.moduleSpecifier.text] = {
+        default: node.moduleSpecifier.text,
+      };
     }
   }
   const { default: renderRoute } = loadModule(file, modules);
-  for (teamType of ["unsupported", "invalid-sport", "mcvb", "wcvb"]) {
-    const result = descendants(renderRoute());
+  for (const sport of ["unsupported", "invalid-sport", "mcvb", "wcvb"]) {
+    params = { teamId: "12", sport };
+    const unavailable = renderRoute();
+    const result = descendants(unavailable.type());
     assert.ok(
       result.some((node) => node.props.children === "Team unavailable"),
     );
@@ -246,34 +252,38 @@ test("unsupported team routes restore a visible error header and back navigation
     header.props.onBack();
   }
   assert.equal(backCount, 4);
-  for (teamType of ["nba", "nfl", "wnba"]) {
+  for (const [sport, league, component] of [
+    [undefined, "nba", "Basketball"],
+    ["wnba", "wnba", "Basketball"],
+    ["basketball", "mcbb", "Basketball"],
+    ["football", "nfl", "Football"],
+    ["hockey", "mch", "Hockey"],
+    ["soccer", "epl", "Soccer"],
+    ["baseball", "sb", "Baseball"],
+  ]) {
+    params = { teamId: "12", sport, league };
     options = undefined;
-    assert.equal(typeof renderRoute().type, "function");
+    const result = renderRoute();
+    assert.equal(
+      result.type,
+      `components/Sports/${component}/${component}TeamScreen`,
+    );
+    assert.equal(result.props.teamId, "12");
+    assert.equal(result.props.league, league);
+    assert.equal(result.key, `${league}:12`);
     assert.equal(options, undefined, "supported team owns its header setup");
   }
 });
 
-const teamRoutes = [
-  "[teamId].tsx",
-  ...[
-    "cb",
-    "cfb",
-    "gleague",
-    "mcbb",
-    "mlb",
-    "nfl",
-    "nhl",
-    "sb",
-    "soccer",
-    "ufl",
-    "wcbb",
-    "wnba",
-  ].map((league) => `${league}/[teamId].tsx`),
-];
-
-for (const route of teamRoutes) {
-  test(`${route} uses its primary schedule request to control entry loading`, () => {
-    const file = `app/(tabs)/(home)/team/${route}`;
+for (const sport of [
+  "Basketball",
+  "Football",
+  "Hockey",
+  "Soccer",
+  "Baseball",
+]) {
+  test(`${sport} team screen uses its primary schedule request to control entry loading`, () => {
+    const file = `components/Sports/${sport}/${sport}TeamScreen.tsx`;
     const source = ts.createSourceFile(
       file,
       fs.readFileSync(file, "utf8"),
@@ -326,7 +336,7 @@ for (const route of teamRoutes) {
     for (const [team, loading, expected] of [
       [{ id: 1 }, true, true],
       [{ id: 1 }, false, false],
-      [undefined, true, false],
+      [undefined, true, file.includes("HockeyTeamScreen")],
     ]) {
       let requests = 0;
       const context = vm.createContext({

@@ -5,7 +5,7 @@ import { Pressable, Text, View } from "react-native";
 import { FanPredictionHistoryRowStyles } from "styles/FanPredictionStyles/FanPredictionHistoryRowStyles";
 import type { FanPredictionPick } from "types/fanPredictions";
 import { isUnavailablePrediction } from "utils/games/predictionAvailability";
-import PredictionGameSummary from "./PredictionGameSummary";
+import PredictionGameCard from "./PredictionGameCard";
 
 type Props = { pick: FanPredictionPick; isDark: boolean; onPress: () => void };
 
@@ -13,6 +13,7 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
   const styles = useMemo(() => FanPredictionHistoryRowStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
+  
   const outcome =
     pick.outcome === "void"
       ? "Not scored"
@@ -40,7 +41,7 @@ function FanPredictionHistoryRow({ pick, isDark, onPress }: Props) {
       onPress={onPress}
       style={({ pressed }) => [styles.container, pressed && global.pressed]}
     >
-      <PredictionGameSummary pick={pick} isDark={isDark} />
+      <PredictionGameCard pick={pick} isDark={isDark} />
       <View style={styles.footer}>
         <Text style={styles.pickSummary} numberOfLines={1}>
           Picked {pick.pickedShortName}

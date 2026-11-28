@@ -29,7 +29,7 @@ type Props = {
 export default function DraftNewsList({ year, league, active = true }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = draftNewsList(isDark);
+  const styles = draftNewsList;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const [tickerX] = useState(() => new Animated.Value(0));
   const { draft, loading, error, isActive } = useDraft(league, Number(year), {
@@ -108,25 +108,24 @@ export default function DraftNewsList({ year, league, active = true }: Props) {
   );
 }
 
-const draftNewsList = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      paddingHorizontal: 12,
-    },
-    tickerWindow: {
-      marginTop: 4,
-      overflow: "hidden",
-    },
-    tickerRow: {
-      flexDirection: "row",
-      alignItems: "stretch",
-    },
-    separator: {
-      width: CARD_SEPARATOR,
-    },
-    center: {
-      alignItems: "center",
-      justifyContent: "center",
-      paddingVertical: 24,
-    },
-  });
+const draftNewsList = StyleSheet.create({
+  container: {
+    paddingHorizontal: 12,
+  },
+  tickerWindow: {
+    marginTop: 4,
+    overflow: "hidden",
+  },
+  tickerRow: {
+    flexDirection: "row",
+    alignItems: "stretch",
+  },
+  separator: {
+    width: CARD_SEPARATOR,
+  },
+  center: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 24,
+  },
+});

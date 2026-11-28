@@ -15,7 +15,6 @@ import { globalStyles } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useRef } from "react";
 import { Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TeamInfo from "./TeamInfo";
 
 type Props = {
@@ -47,10 +46,9 @@ export default function TeamInfoModal({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
   const isPresentedRef = useRef(false);
-  const styles = TeamInfoModalStyles(isDark, insets);
+  const styles = TeamInfoModalStyles(isDark);
   const global = globalStyles(isDark);
 
   const renderBackdrop = useCallback(

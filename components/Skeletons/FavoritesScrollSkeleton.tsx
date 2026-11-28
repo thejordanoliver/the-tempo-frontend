@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors } from "constants/styles";
 import { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
@@ -8,12 +9,16 @@ type Props = {
 };
 
 export default function FavoritesScrollSkeleton({ isDark }: Props) {
+ const reduceMotion = useReducedMotion();
+
   const styles = FavoritesScrollSkeletonStyles(isDark);
 
   // Smooth breathing shimmer animation
   const [pulseAnim] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
+ if (reduceMotion) { pulseAnim.setValue(0.7); return; }
+
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -35,7 +40,7 @@ export default function FavoritesScrollSkeleton({ isDark }: Props) {
 
     pulse.start();
     return () => pulse.stop();
-  }, [pulseAnim]);
+  }, [pulseAnim, reduceMotion]);
 
   const baseColor = isDark
     ? Colors.dark.itemBackground

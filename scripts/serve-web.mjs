@@ -33,9 +33,12 @@ createServer(async (request, response) => {
       response.writeHead(403).end();
       return;
     }
-    const candidates = path.extname(file)
-      ? [file]
-      : [`${file}.html`, path.join(file, "index.html")];
+    const candidates =
+      file === root
+        ? [path.join(root, "index.html")]
+        : path.extname(file)
+          ? [file]
+          : [`${file}.html`, path.join(file, "index.html")];
     let resolved;
     for (const candidate of candidates) {
       if (

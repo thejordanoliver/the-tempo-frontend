@@ -1,3 +1,4 @@
+import { getTeamHref } from "utils/navigation/teamNavigation";
 import { Colors } from "constants/styles";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
@@ -18,7 +19,6 @@ export const TeamRow = ({
   score,
   isWinner,
   league,
-  gameStatusDescription,
   state,
 }: BaseballProps) => {
   const router = useScopedRouter();
@@ -30,9 +30,7 @@ export const TeamRow = ({
 
   const handleTeamPress = () => {
     if (!isActive) return;
-    if (id && league === "mlb") router.push(`/team/mlb/${id}`);
-    if (id && league === "cb") router.push(`/team/cb/${id}`);
-    if (id && league === "sb") router.push(`/team/sb/${id}`);
+    router.push(getTeamHref("baseball", id, league));
   };
 
   const showRecordInsteadOfScore = state === "pre";
@@ -80,7 +78,7 @@ export const TeamRow = ({
       {isHome && renderScore()}
 
       <View style={styles.teamInfoContainer}>
-        <Pressable onPress={handleTeamPress}>
+        <Pressable accessibilityRole="button" accessibilityLabel={`Open ${name} team details`} onPress={handleTeamPress}>
           <Image source={logo} style={styles.logo} />
         </Pressable>
 

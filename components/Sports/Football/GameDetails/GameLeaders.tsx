@@ -552,7 +552,7 @@ export default function GameLeaders({
           };
 
           return (
-            <Pressable
+            <Pressable accessibilityRole="button" accessibilityState={{ disabled: playerId === null || playerId === undefined }}
               key={`${side}-${category.name}-${playerId ?? playerName}`}
               onPress={handlePress}
               disabled={playerId === null || playerId === undefined}

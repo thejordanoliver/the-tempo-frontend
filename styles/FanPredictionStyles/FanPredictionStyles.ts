@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "@/constants/styles";
 import { StyleSheet } from "react-native";
 
 export const FanPredictionStyles = (isDark: boolean) =>
@@ -170,20 +170,12 @@ export const FanPredictionStyles = (isDark: boolean) =>
       justifyContent: "center",
       gap: 6,
       minHeight: 36,
-      paddingHorizontal: 6,
-      paddingVertical: 7,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.dark.gray : Colors.light.gray,
-      borderRadius: 6,
-      backgroundColor: isDark
-        ? Colors.dark.transparentBackground
-        : Colors.light.transparentBackground,
+      padding: 6,
     },
     matchupActionText: {
       flexShrink: 1,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 12,
-      lineHeight: 18,
+      fontFamily: Fonts.BOLD,
+      fontSize: 20,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     selectionRing: {
@@ -277,9 +269,7 @@ export const FanPredictionStyles = (isDark: boolean) =>
       zIndex: 1,
     },
     teamLogo: {
-      width: 40,
-      height: 40,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
       zIndex: 1,
     },
 

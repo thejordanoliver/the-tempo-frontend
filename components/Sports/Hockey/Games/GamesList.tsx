@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CountdownClock from "@/components/CountdownClock";
 import { HockeyGame } from "@/types/hockey/hockey";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
@@ -7,14 +6,15 @@ import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameC
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import NHLGamePreviewModal from "../GamePreview/HockeyGamePreviewModal";
-import NHLGameCard from "./HockeyGameCard";
-import NHLSquareGameCard from "./HockeySqaureGameCard";
-import NHLStackedGameCard from "./HockeyStackedGameCard";
+import HockeyGamePreviewModal from "../GamePreview/HockeyGamePreviewModal";
+import HockeyGameCard from "./HockeyGameCard";
+import HockeySquareGameCard from "./HockeySqaureGameCard";
+import HockeyStackedGameCard from "./HockeyStackedGameCard";
 
 type GamesListProps = {
   games: HockeyGame[];
@@ -48,7 +48,6 @@ export default function GamesList({
   onRefresh,
   showHeaders,
   expectedCount,
-  day,
   scrollEnabled = true,
   showCountdown = false,
   countdownGame = null,
@@ -68,6 +67,10 @@ export default function GamesList({
   const [previewGame, setPreviewGame] = useState<HockeyGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const isNHLGame = (game: HockeyGame) => game?.league?.id === 90;
+  const isMCHGame = (game: HockeyGame) => game?.league?.id === 91;
+  const isWCHGame = (game: HockeyGame) => game?.league?.id === 92;
+
   const handleLongPress = useCallback((game: HockeyGame) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
@@ -82,11 +85,26 @@ export default function GamesList({
 
       const cardContent =
         viewMode === "list" ? (
-          <NHLGameCard game={game} isNHL={true} isMCH={false} />
+          <HockeyGameCard
+            game={game}
+            isNHL={isNHLGame(game)}
+            isMCH={isMCHGame(game)}
+            isWCH={isWCHGame(game)}
+          />
         ) : viewMode === "grid" ? (
-          <NHLSquareGameCard game={game} isNHL={true} isMCH={false} />
+          <HockeySquareGameCard
+            game={game}
+            isNHL={isNHLGame(game)}
+            isMCH={isMCHGame(game)}
+            isWCH={isWCHGame(game)}
+          />
         ) : (
-          <NHLStackedGameCard game={game} isNHL={true} isMCH={false} />
+          <HockeyStackedGameCard
+            game={game}
+            isNHL={isNHLGame(game)}
+            isMCH={isMCHGame(game)}
+            isWCH={isWCHGame(game)}
+          />
         );
 
       return (
@@ -230,10 +248,8 @@ export default function GamesList({
         }
       />
       {modalVisible && previewGame && (
-        <NHLGamePreviewModal
+        <HockeyGamePreviewModal
           game={previewGame}
-          isNHL={true}
-          isMCH={false}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />

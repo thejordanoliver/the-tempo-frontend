@@ -9,7 +9,7 @@ interface LikeState {
   resetLikes: () => void;
 }
 
-export const useLikesStore = create<LikeState>((set, get) => ({
+export const useLikesStore = create<LikeState>((set) => ({
   currentUserId: null,
   likes: {},
 

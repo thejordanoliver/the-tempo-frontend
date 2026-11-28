@@ -54,7 +54,6 @@ export default function GamesList({
   refreshing,
   onRefresh,
   expectedCount,
-  day,
   scrollEnabled = true,
 }: GamesListProps) {
   const { viewMode, resolvedColorScheme } = usePreferences();

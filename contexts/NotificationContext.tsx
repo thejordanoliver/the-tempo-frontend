@@ -8,6 +8,9 @@ import {
   markNotificationRead,
 } from "@/services/notificationsApi";
 import {
+  getLeagueNotificationSubscriptions,
+  saveLeagueNotificationSubscription,
+  deleteLeagueNotificationSubscription,
   deleteGameNotificationSubscription,
   getGameNotificationSubscriptions,
   getTeamNotificationSubscriptions,
@@ -15,6 +18,7 @@ import {
   saveTeamNotificationSubscription,
 } from "@/services/notificationSubscriptionsApi";
 import type {
+  LeagueNotificationSubscription,
   AppNotification,
   GameNotificationSubscription,
   NotificationTeamSport,
@@ -57,6 +61,7 @@ export type Notification = {
 type MergeOptions = { showBanner?: boolean };
 
 type NotificationSettingsTarget =
+  | { scope: "league"; sport: NotificationTeamSport; league: string }
   | {
       scope: "team";
       sport: NotificationTeamSport;
@@ -98,6 +103,11 @@ type NotificationContextType = {
   removeCenterNotification: (id: string) => Promise<void>;
   removeAllCenterNotifications: () => Promise<void>;
   clearCenterNotifications: () => void;
+  leagueSubscriptions: LeagueNotificationSubscription[];
+  openLeagueNotificationSettings: (
+    sport: NotificationTeamSport,
+    league: string,
+  ) => void;
   teamSubscriptions: TeamNotificationSubscription[];
   gameSubscriptions: GameNotificationSubscription[];
   removeUnfavoritedTeamSubscriptions: (
@@ -163,7 +173,7 @@ const inferSport = (leagueInput: string): NotificationTeamSport => {
     ["mlb", "cb", "sb", "college-baseball", "college-softball"].includes(league)
   )
     return "baseball";
-  if (league === "nhl") return "hockey";
+  if (["nhl", "mch", "wch"].includes(league)) return "hockey";
   return "soccer";
 };
 
@@ -198,6 +208,9 @@ export function NotificationProvider({
   const [hasMore, setHasMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [leagueSubscriptions, setLeagueSubscriptions] = useState<
+    LeagueNotificationSubscription[]
+  >([]);
   const [teamSubscriptions, setTeamSubscriptions] = useState<
     TeamNotificationSubscription[]
   >([]);
@@ -208,6 +221,16 @@ export function NotificationProvider({
     useState<Set<string>>(new Set());
   const [notificationSettingsTarget, setNotificationSettingsTarget] =
     useState<NotificationSettingsTarget | null>(null);
+  const openLeagueNotificationSettings = useCallback(
+    (sport: NotificationTeamSport, league: string) => {
+      setNotificationSettingsTarget({
+        scope: "league",
+        sport,
+        league: league.toLowerCase(),
+      });
+    },
+    [],
+  );
   const [notificationSettingsSaving, setNotificationSettingsSaving] =
     useState(false);
 
@@ -289,6 +312,7 @@ export function NotificationProvider({
     setHasMore(false);
     setTeamSubscriptions([]);
     setGameSubscriptions([]);
+    setLeagueSubscriptions([]);
     pendingGameSubscriptionKeysRef.current.clear();
     setPendingGameSubscriptionKeys(new Set());
     setNotificationSettingsTarget(null);
@@ -329,6 +353,7 @@ export function NotificationProvider({
         setHasMore(false);
         setTeamSubscriptions([]);
         setGameSubscriptions([]);
+        setLeagueSubscriptions([]);
         pendingGameSubscriptionKeysRef.current.clear();
         setPendingGameSubscriptionKeys(new Set());
       }
@@ -343,12 +368,17 @@ export function NotificationProvider({
       const requestStartIds = new Set(requestStartVersions.keys());
 
       try {
-        const [page, subscriptions, gameSubscriptionResults] =
-          await Promise.all([
-            getNotificationsPage({ limit: PAGE_SIZE }),
-            getTeamNotificationSubscriptions(),
-            getGameNotificationSubscriptions(),
-          ]);
+        const [
+          page,
+          subscriptions,
+          gameSubscriptionResults,
+          leagueSubscriptionResults,
+        ] = await Promise.all([
+          getNotificationsPage({ limit: PAGE_SIZE }),
+          getTeamNotificationSubscriptions(),
+          getGameNotificationSubscriptions(),
+          getLeagueNotificationSubscriptions(),
+        ]);
         if (
           generationRef.current !== generation ||
           userIdRef.current !== userId
@@ -379,6 +409,7 @@ export function NotificationProvider({
         setHasMore(page.hasMore);
         setTeamSubscriptions(subscriptions);
         setGameSubscriptions(gameSubscriptionResults);
+        setLeagueSubscriptions(leagueSubscriptionResults);
         return true;
       } catch (caught) {
         if (generationRef.current === generation) {
@@ -411,10 +442,16 @@ export function NotificationProvider({
     setRefreshing(true);
     setError(null);
     try {
-      const [page, subscriptions, gameSubscriptionResults] = await Promise.all([
+      const [
+        page,
+        subscriptions,
+        gameSubscriptionResults,
+        leagueSubscriptionResults,
+      ] = await Promise.all([
         getNotificationsPage({ limit: PAGE_SIZE }),
         getTeamNotificationSubscriptions(),
         getGameNotificationSubscriptions(),
+        getLeagueNotificationSubscriptions(),
       ]);
       if (generationRef.current !== generation || userIdRef.current !== userId)
         return;
@@ -439,6 +476,7 @@ export function NotificationProvider({
       setHasMore(page.hasMore);
       setTeamSubscriptions(subscriptions);
       setGameSubscriptions(gameSubscriptionResults);
+      setLeagueSubscriptions(leagueSubscriptionResults);
     } catch (caught) {
       if (generationRef.current === generation) {
         setError(
@@ -864,11 +902,19 @@ export function NotificationProvider({
               subscription.league.toLowerCase() === league.toLowerCase() &&
               teamIds.has(String(subscription.teamId)),
           )
-          .map(notificationSettingsFromSubscription),
+          .map(notificationSettingsFromSubscription)
+          .concat(
+            leagueSubscriptions
+              .filter(
+                (sub) =>
+                  sub.sport === sport && sub.league === league.toLowerCase(),
+              )
+              .map(notificationSettingsFromSubscription),
+          ),
       );
       return hasEnabledNotificationSetting(inherited);
     },
-    [gameSubscriptions, teamSubscriptions],
+    [gameSubscriptions, teamSubscriptions, leagueSubscriptions],
   );
 
   const openGameNotificationSettings = useCallback(
@@ -1072,6 +1118,8 @@ export function NotificationProvider({
       removeCenterNotification,
       removeAllCenterNotifications,
       clearCenterNotifications,
+      leagueSubscriptions,
+      openLeagueNotificationSettings,
       teamSubscriptions,
       gameSubscriptions,
       removeUnfavoritedTeamSubscriptions,
@@ -1093,6 +1141,8 @@ export function NotificationProvider({
       clearCenterNotifications,
       error,
       hasMore,
+      leagueSubscriptions,
+      openLeagueNotificationSettings,
       gameSubscriptions,
       initializeNotifications,
       isGameNotificationPending,
@@ -1172,32 +1222,61 @@ export function NotificationProvider({
             subscription.league.toLowerCase() === target.league &&
             teamIds.has(String(subscription.teamId)),
         )
-        .map(notificationSettingsFromSubscription),
+        .map(notificationSettingsFromSubscription)
+        .concat(
+          leagueSubscriptions
+            .filter(
+              (sub) =>
+                sub.sport === target.sport && sub.league === target.league,
+            )
+            .map(notificationSettingsFromSubscription),
+        ),
     );
-  }, [notificationSettingsTarget, teamSubscriptions]);
+  }, [notificationSettingsTarget, teamSubscriptions, leagueSubscriptions]);
 
+  const activeLeagueSubscription =
+    notificationSettingsTarget?.scope === "league"
+      ? leagueSubscriptions.find(
+          (sub) =>
+            sub.sport === notificationSettingsTarget.sport &&
+            sub.league === notificationSettingsTarget.league,
+        )
+      : null;
   const activeSheetSettings = useMemo(
     () =>
-      activeTeamSubscription
-        ? notificationSettingsFromSubscription(activeTeamSubscription)
-        : activeGameSubscription
-          ? notificationSettingsFromSubscription(activeGameSubscription)
-          : (inheritedGameSettings ?? DEFAULT_NOTIFICATION_EVENT_SETTINGS),
-    [activeGameSubscription, activeTeamSubscription, inheritedGameSettings],
+      activeLeagueSubscription
+        ? notificationSettingsFromSubscription(activeLeagueSubscription)
+        : activeTeamSubscription
+          ? notificationSettingsFromSubscription(activeTeamSubscription)
+          : activeGameSubscription
+            ? notificationSettingsFromSubscription(activeGameSubscription)
+            : (inheritedGameSettings ?? DEFAULT_NOTIFICATION_EVENT_SETTINGS),
+    [
+      activeLeagueSubscription,
+      activeGameSubscription,
+      activeTeamSubscription,
+      inheritedGameSettings,
+    ],
   );
 
   const activeSheetEnabled =
-    notificationSettingsTarget?.scope === "team"
+    notificationSettingsTarget?.scope === "league"
       ? hasEnabledNotificationSetting(
-          activeTeamSubscription
-            ? notificationSettingsFromSubscription(activeTeamSubscription)
+          activeLeagueSubscription
+            ? notificationSettingsFromSubscription(activeLeagueSubscription)
             : null,
         )
-      : hasEnabledNotificationSetting(
-          activeGameSubscription
-            ? notificationSettingsFromSubscription(activeGameSubscription)
-            : inheritedGameSettings,
-        );
+      : notificationSettingsTarget?.scope === "team"
+        ? hasEnabledNotificationSetting(
+            activeTeamSubscription
+              ? notificationSettingsFromSubscription(activeTeamSubscription)
+              : null,
+          )
+        : hasEnabledNotificationSetting(
+            activeGameSubscription
+              ? notificationSettingsFromSubscription(activeGameSubscription)
+              : inheritedGameSettings,
+          );
 
   const closeNotificationSettings = useCallback(() => {
     if (!notificationSettingsSaving) setNotificationSettingsTarget(null);
@@ -1210,7 +1289,33 @@ export function NotificationProvider({
       setNotificationSettingsSaving(true);
       setError(null);
       try {
-        if (target.scope === "team") {
+        if (target.scope === "league") {
+          if (enabled) {
+            const saved = await saveLeagueNotificationSubscription(
+              target.sport,
+              target.league,
+              settings,
+            );
+            setLeagueSubscriptions((current) => [
+              ...current.filter(
+                (sub) =>
+                  sub.sport !== target.sport || sub.league !== target.league,
+              ),
+              saved,
+            ]);
+          } else {
+            await deleteLeagueNotificationSubscription(
+              target.sport,
+              target.league,
+            );
+            setLeagueSubscriptions((current) =>
+              current.filter(
+                (sub) =>
+                  sub.sport !== target.sport || sub.league !== target.league,
+              ),
+            );
+          }
+        } else if (target.scope === "team") {
           const key = subscriptionKey(
             target.sport,
             target.league,
@@ -1348,9 +1453,11 @@ export function NotificationProvider({
         {notificationSettingsTarget ? (
           <NotificationSettingsModal
             key={
-              notificationSettingsTarget.scope === "team"
-                ? `team:${notificationSettingsTarget.sport}:${notificationSettingsTarget.league}:${notificationSettingsTarget.teamId}`
-                : `game:${notificationSettingsTarget.sport}:${notificationSettingsTarget.league}:${notificationSettingsTarget.gameId}`
+              notificationSettingsTarget.scope === "league"
+                ? `league:${notificationSettingsTarget.sport}:${notificationSettingsTarget.league}`
+                : notificationSettingsTarget.scope === "team"
+                  ? `team:${notificationSettingsTarget.sport}:${notificationSettingsTarget.league}:${notificationSettingsTarget.teamId}`
+                  : `game:${notificationSettingsTarget.sport}:${notificationSettingsTarget.league}:${notificationSettingsTarget.gameId}`
             }
             visible
             scope={notificationSettingsTarget.scope}

@@ -1,10 +1,10 @@
-import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
-import { getStandingsTeamLogo } from "utils/teams/standingsTeamLogo";
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { BlurView } from "expo-blur";
+import { useWidgetLoadReady } from "hooks/ExploreHooks/useWidgetBoardLoading";
 
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -95,7 +95,7 @@ function StandingsConference({
       ) : null}
 
       {group.rows.map(({ conference, position, team }) => {
-        const logo = getStandingsTeamLogo(team, isDark);
+        const logo = isDark ? team.logoDark || team.logo : team.logo;
 
         return (
           <Pressable
@@ -114,18 +114,12 @@ function StandingsConference({
               {position}
             </Text>
             <View style={[styles.teamCell, styles.teamColumn]}>
-              {logo ? (
+              {logo && (
                 <Image
-                  source={logo}
+                  source={{ uri: logo }}
                   style={styles.teamLogo}
                   resizeMode="contain"
                 />
-              ) : (
-                <View style={styles.logoFallback}>
-                  <Text style={styles.logoFallbackText}>
-                    {(team.code || team.name).slice(0, 2).toUpperCase()}
-                  </Text>
-                </View>
               )}
               <Text style={styles.teamName} numberOfLines={1}>
                 {compact
@@ -159,11 +153,8 @@ function StandingsTable({
   const router = useScopedRouter();
   const openTeam = useCallback(
     (team: StandingsTeam) => {
-      const teamId = team.id;
-      router.push({
-        pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
-        params: { teamType: league, teamId: String(teamId), league },
-      });
+      const sport = getTeamSport(league);
+      if (sport) router.push(getTeamHref(sport, team.id, league, "(explore)"));
     },
     [league, router],
   );
@@ -265,7 +256,7 @@ function StandingsTable({
             }
 
             const { team, position } = slide.row;
-            const logo = getStandingsTeamLogo(team, isDark);
+            const logo = isDark ? team.logoDark || team.logo : team.logo;
             return (
               <Pressable
                 disabled={isEditing}
@@ -280,7 +271,7 @@ function StandingsTable({
               >
                 <LinearGradient
                   colors={[
-                    Colors.midTone,
+                    team?.primaryColor ?? Colors.midTone,
                     isDark ? Colors.black : Colors.white,
                   ]}
                   locations={[0, 0.8]}
@@ -291,16 +282,12 @@ function StandingsTable({
                 <BlurView intensity={100} style={styles.compactRankContainer}>
                   <Text style={styles.compactRank}>#{position}</Text>
                 </BlurView>
-                {logo ? (
+                {logo && (
                   <Image
-                    source={logo}
+                    source={{ uri: logo }}
                     style={styles.compactLogo}
                     resizeMode="contain"
                   />
-                ) : (
-                  <Text style={styles.compactConferenceName}>
-                    {team.code || team.shortName || team.name}
-                  </Text>
                 )}
                 <View style={styles.compactCopy}>
                   <Text style={styles.compactTeamName} numberOfLines={1}>
@@ -410,7 +397,11 @@ export default function StandingsWidget({
               resizeMode="contain"
             />
             <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
-            <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
+            <Ionicons
+              name="chevron-down"
+              size={13}
+              color={isDark ? Colors.white : Colors.black}
+            />
           </Pressable>
         ) : (
           <View style={styles.header}>

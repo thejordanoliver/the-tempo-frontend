@@ -1,4 +1,6 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
+import { getMCHTeamLogo } from "@/constants/teamsMCH";
+import { getNHLTeamLogo } from "@/constants/teamsNHL";
+import { getWCHTeamLogo } from "@/constants/teamsWCH";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
   formatDate,
@@ -7,7 +9,6 @@ import {
   safeDate,
 } from "@/utils/common/dateUtils";
 import { activeOpacity } from "constants/styles";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useScopedRouter } from "hooks/useScopedRouter";
@@ -15,13 +16,14 @@ import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   formatPeriod,
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
 
-function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
+function HockeyGameCard({ isNHL, isMCH, isWCH, game }: HockeyGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -45,23 +47,30 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
 
   const home = game?.home;
   const away = game?.away;
-  const homeId = home?.id;
-  const awayId = away?.id;
 
-  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
-  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
+  const homeId = home.id;
+  const awayId = away.id;
 
   const homeName = game.home?.shortName ?? game.home?.name;
   const awayName = game.away?.shortName ?? game.away?.name;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
-      : getNHLTeamLogo(homeId, isDark);
+      : isMCH
+        ? getMCHTeamLogo(homeId, isDark)
+        : isWCH
+          ? getWCHTeamLogo(homeId, isDark)
+          : getNHLTeamLogo(homeId, isDark);
+
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
-      : getNHLTeamLogo(awayId, isDark);
+      : isMCH
+        ? getMCHTeamLogo(awayId, isDark)
+        : isWCH
+          ? getWCHTeamLogo(awayId, isDark)
+          : getNHLTeamLogo(awayId, isDark);
 
   const headlineText = game?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
@@ -101,7 +110,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   }: {
     score: number | undefined;
     record: string | undefined;
-    isWinner: boolean;
+    isWinner: boolean | null;
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
 
@@ -113,7 +122,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
             : [
                 styles.teamScore,
                 winnerStyle({
-                  isWinner: isWinner,
+                  isWinner: isWinner ?? false,
                   isTie: isTie,
                   isDark: isDark,
                 }),
@@ -140,7 +149,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
     if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
-    
+
     if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)

@@ -3,10 +3,12 @@ import { Colors, globalStyles } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMCBBTeamLogo } from "constants/teamsMCBB";
+import { getMCHTeamLogo } from "constants/teamsMCH";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getWCHTeamLogo } from "constants/teamsWCH";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useChampions } from "hooks/LeagueHooks/useChampions";
@@ -38,7 +40,7 @@ export default function ChampionsTable({
   if (loading) {
     return (
       <View style={styles.container}>
-        <AwardSeasonTableSkeleton teams={1} />
+        <AwardSeasonTableSkeleton teams={1} variant="champions" />
       </View>
     );
   }
@@ -65,21 +67,25 @@ export default function ChampionsTable({
           scrollEnabled={false}
           renderItem={({ item: row, index }) => {
             const logo =
-              row.team && league === "cfb"
-                ? getCFBTeamLogo(row.team.id, isDark)
-                : row.team && league === "nba"
-                  ? getNBATeamLogo(row.team.id, isDark)
-                  : row.team && league === "wnba"
-                    ? getWNBATeamLogo(row.team.id, isDark)
-                    : row.team && league === "mlb"
-                      ? getMLBTeamLogo(row.team.id, isDark)
-                      : row.team && league === "nhl"
-                        ? getNHLTeamLogo(row.team.id, isDark)
-                        : row.team && league === "mcbb"
-                          ? getMCBBTeamLogo(row.team.id, isDark)
-                          : row.team && league === "wcbb"
-                            ? getWCBBTeamLogo(row.team.id, isDark)
-                            : getNFLTeamLogo(row.team?.id ?? 0, isDark);
+              league === "mch"
+                ? getMCHTeamLogo(row.team?.id, isDark)
+                : league === "wch"
+                  ? getWCHTeamLogo(row.team?.id, isDark)
+                  : row.team && league === "cfb"
+                    ? getCFBTeamLogo(row.team.id, isDark)
+                    : row.team && league === "nba"
+                      ? getNBATeamLogo(row.team.id, isDark)
+                      : row.team && league === "wnba"
+                        ? getWNBATeamLogo(row.team.id, isDark)
+                        : row.team && league === "mlb"
+                          ? getMLBTeamLogo(row.team.id, isDark)
+                          : row.team && league === "nhl"
+                            ? getNHLTeamLogo(row.team.id, isDark)
+                            : row.team && league === "mcbb"
+                              ? getMCBBTeamLogo(row.team.id, isDark)
+                              : row.team && league === "wcbb"
+                                ? getWCBBTeamLogo(row.team.id, isDark)
+                                : getNFLTeamLogo(row.team?.id ?? 0, isDark);
 
             const isSuperBowl = league === "nfl";
 

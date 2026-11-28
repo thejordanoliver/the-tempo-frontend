@@ -1,3 +1,4 @@
+import { useReducedMotion } from "hooks/useReducedMotion";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useState } from "react";
@@ -18,6 +19,8 @@ export default function SelectorSkeleton({
   itemHeight = 32,
   selectedIndex = 0,
 }: SelectorSkeletonProps) {
+ const reduceMotion = useReducedMotion();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const [pulseAnim] = useState(() => new Animated.Value(1));
@@ -29,6 +32,8 @@ export default function SelectorSkeleton({
   const styles = getStyles({ isDark, itemWidth, itemHeight });
 
   useEffect(() => {
+ if (reduceMotion) { pulseAnim.setValue(0.7); return; }
+
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -45,7 +50,7 @@ export default function SelectorSkeleton({
     );
     animation.start();
     return () => animation.stop();
-  }, [pulseAnim]);
+  }, [pulseAnim, reduceMotion]);
 
   return (
     <View style={styles.wrapper}>

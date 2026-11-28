@@ -35,6 +35,18 @@ type FormatPeriodArgs = {
   statusText?: string | null;
 };
 
+function formatOvertime(overtime: number) {
+  if (overtime === 1) return "OT";
+  if (!Number.isInteger(overtime) || overtime < 1) return `${overtime}OT`;
+
+  const lastTwoDigits = overtime % 100;
+  const suffix =
+    lastTwoDigits >= 11 && lastTwoDigits <= 13
+      ? "th"
+      : (["th", "st", "nd", "rd"][overtime % 10] ?? "th");
+  return `${overtime}${suffix} OT`;
+}
+
 export const formatPeriod = ({
   period,
   isMCBB = false,
@@ -49,7 +61,9 @@ export const formatPeriod = ({
 
   if (typeof period === "string") {
     const val = period.trim().toLowerCase();
+    const overtime = val.match(/^(\d+)(?:st|nd|rd|th)?\s*ot$/);
 
+    if (overtime) return formatOvertime(Number(overtime[1]));
     if (val.includes("ot")) return val.toUpperCase();
     if (val.includes("halftime")) return "Halftime";
     if (val.includes("half time")) return "Halftime";
@@ -73,8 +87,7 @@ export const formatPeriod = ({
     if (p === 1) return "1st";
     if (p === 2) return "2nd";
 
-    const ot = p - 2;
-    return ot === 1 ? "OT" : `${ot}OT`;
+    return formatOvertime(p - 2);
   }
 
   // Hockey: 3 periods
@@ -83,8 +96,7 @@ export const formatPeriod = ({
     if (p === 2) return "2nd";
     if (p === 3) return "3rd";
 
-    const ot = p - 3;
-    return ot === 1 ? "OT" : `${ot}OT`;
+    return formatOvertime(p - 3);
   }
 
   // MMA: rounds
@@ -95,7 +107,7 @@ export const formatPeriod = ({
     if (p === 4) return "4th";
     if (p === 5) return "5th";
 
-    return `R${p}`;
+    return `RD ${p}`;
   }
 
   // Soccer: halves / extra time / penalties
@@ -115,19 +127,7 @@ export const formatPeriod = ({
   if (p === 3) return "3rd";
   if (p === 4) return "4th";
 
-  const ot = p - 4;
-  return ot === 1 ? "OT" : `${ot}OT`;
-};
-
-export const formatRound = (round?: number | string) => {
-  if (!round) return "";
-
-  const r = Number(round);
-  if (isNaN(r)) return "";
-
-  const rounds = ["1st", "2nd", "3rd", "4th", "5th"];
-
-  return rounds[r - 1] ?? "";
+  return formatOvertime(p - 4);
 };
 
 export const normalizeVenueName = (name?: string | null) =>
@@ -159,7 +159,7 @@ export const formatVenueAddress = (address?: {
     .join(" ");
 };
 
-export function getBroadcastDisplay(broadcasts?: string[]) {
+export function getBroadcastDisplay(broadcasts?: string[], short?: boolean) {
   if (!broadcasts?.length) return "";
 
   const allNames = broadcasts.map((n) => n.toLowerCase()).filter(Boolean);
@@ -190,6 +190,7 @@ export function getBroadcastDisplay(broadcasts?: string[]) {
     ["hbo max", "MAX"],
     ["max", "MAX"],
     ["espn", "ESPN"],
+    ["spectrum sports net", short ? "SSN" : "Spectrum Sports Net"],
   ];
 
   // special combos

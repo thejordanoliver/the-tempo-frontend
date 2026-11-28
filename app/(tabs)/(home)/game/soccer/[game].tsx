@@ -1,14 +1,13 @@
-import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import {
   FanPrediction,
   GameLiveChatOverlay,
-  Venue,
   GameTeamStats,
   Highlights,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
   Officials,
+  Venue,
 } from "@/components/Sports/Basketball/GameDetails";
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
@@ -27,10 +26,11 @@ import {
 } from "@/utils/common/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
+import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
+import Odds from "components/Sports/Basketball/GameDetails/Odds";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
@@ -43,6 +43,7 @@ import {
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games/games";
+import { parseGameParam } from "utils/navigation/gameRouteParams";
 
 type RouteParams = {
   game?: string | string[];
@@ -52,41 +53,6 @@ type RouteParams = {
 };
 
 type SoccerGame = SoccerGameCardProps["game"];
-
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) return value[0];
-  return value;
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): SoccerGame | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // Dynamic route params are often just the game id.
-  // Only JSON strings should be parsed into a full game object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as SoccerGame;
-  } catch {
-    return undefined;
-  }
-}
 
 export default function GameDetailsScreen(
   props: Partial<SoccerGameCardProps> = {},
@@ -101,23 +67,22 @@ export default function GameDetailsScreen(
 
   const game = useMemo(() => {
     return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+      props.game ??
+      parseGameParam<SoccerGame>(params.data) ??
+      parseGameParam<SoccerGame>(params.game)
     );
   }, [params.data, params.game, props.game]);
-
-  const gameDateObj = useMemo(() => {
-    return game?.date ? new Date(game.date) : null;
-  }, [game]);
 
   const LEAGUE = game?.league?.code ?? "soccer";
   const gameId = game?.id ?? 0;
 
   const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
+  const chatDate = score?.date || game?.date;
+  const gameDateObj = chatDate ? new Date(chatDate) : null;
   const gameDate = safeDate(score?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  const showGameChat = useGameChatAvailability(gameDateObj);
 
   const home = score?.home;
   const away = score?.away;
@@ -407,6 +372,24 @@ export default function GameDetailsScreen(
               state={state}
             />
 
+            <Odds
+              homeId={homeId}
+              homeCode={homeCode}
+              homeLogo={homeLogo}
+              awayId={awayId}
+              awayCode={awayCode}
+              awayLogo={awayLogo}
+              odds={
+                details?.odds === undefined
+                  ? (score?.odds ?? game?.odds)
+                  : Array.isArray(details.odds)
+                    ? null
+                    : details.odds
+              }
+              isDark={isDark}
+              state={state}
+            />
+
             <SoccerShotMap
               shots={shotMap}
               awayId={awayId}
@@ -455,6 +438,8 @@ export default function GameDetailsScreen(
               awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
               homeGames={homeLastGames}
               awayGames={awayLastGames}
               league={"soccer"}
@@ -476,16 +461,16 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      {!dontShowDetails && showGameChat && (
+      {!dontShowDetails && gameDateObj && (
         <GameLiveChatOverlay
           context={{
             sport: "soccer",
             league: LEAGUE,
-            date: gameDateObj?.toISOString(),
+            date: gameDateObj.toJSON() ?? undefined,
           }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
-          state={state}
+          isLive={state === "in"}
         />
       )}
     </>

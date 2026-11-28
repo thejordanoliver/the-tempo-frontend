@@ -1,3 +1,7 @@
+import {
+  getFirstParam,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import {
   GameLiveChatOverlay,
@@ -9,13 +13,13 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useLayoutEffect, useMemo } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { resolveRacingLeague } from "utils/customheader/racingConfig";
 
 type RouteParams = {
   game?: string | string[];
@@ -25,44 +29,6 @@ type RouteParams = {
 };
 
 type RacingEvent = RacingEventCardProps["game"];
-
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-
-  return value;
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): RacingEvent | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // The dynamic route may contain only the event ID.
-  // Only attempt JSON parsing when the parameter is an object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as RacingEvent;
-  } catch {
-    return undefined;
-  }
-}
 
 export default function GameDetailsScreen(
   props: Partial<RacingEventCardProps> = {},
@@ -77,7 +43,9 @@ export default function GameDetailsScreen(
 
   const game = useMemo(() => {
     return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+      props.game ??
+      parseGameParam<RacingEvent>(params.data) ??
+      parseGameParam<RacingEvent>(params.game)
     );
   }, [params.data, params.game, props.game]);
 
@@ -86,11 +54,15 @@ export default function GameDetailsScreen(
   }, [game]);
 
   const gameId = game?.id;
-  const drivers = game?.drivers ?? [];
-  const showGameChat = useGameChatAvailability(gameDateObj);
+  const drivers = game?.drivers ?? game?.competitors ?? [];
+  const league =
+    resolveRacingLeague(
+      game?.league,
+      game?.leagueInfo?.key,
+      getFirstParam(params.league),
+    ) ?? "f1";
 
   const gameStatusDescription = game?.status?.description ?? "";
-  const state = game?.status.state ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
@@ -113,7 +85,9 @@ export default function GameDetailsScreen(
     }
 
     navigation.setOptions({
-      header: () => <CustomHeader tabName={gameName} onBack={navigation.goBack} />,
+      header: () => (
+        <CustomHeader tabName={gameName} onBack={navigation.goBack} />
+      ),
     });
   }, [isLoading, navigation, gameName]);
 
@@ -135,7 +109,9 @@ export default function GameDetailsScreen(
       >
         <DriversHeader
           drivers={drivers}
-          gameStatusDescription={gameStatusDescription}
+          league={league}
+          status={game.driverCompetition?.status ?? game.status}
+          sessionName={game.driverCompetition?.type?.text}
           isDark={isDark}
         />
 
@@ -156,16 +132,16 @@ export default function GameDetailsScreen(
         </View>
       </ScrollView>
 
-      {!dontShowDetails && showGameChat && (
+      {!dontShowDetails && gameDateObj && (
         <GameLiveChatOverlay
           context={{
             sport: "racing",
             league: game?.league ?? "f1",
-            date: gameDateObj?.toISOString(),
+            date: gameDateObj.toJSON() ?? undefined,
           }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
-          state={state}
+          isLive={game?.status.state === "in"}
         />
       )}
     </>

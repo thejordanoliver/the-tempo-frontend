@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, MIN_TOUCH_TARGET } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const FAVORITES_RAIL_CELL_WIDTH = 92;
@@ -7,27 +7,6 @@ const FAVORITES_RAIL_ITEM_SIZE = 80;
 
 export const FavoritesScrollStyles = (isDark: boolean) =>
   StyleSheet.create({
-    emptyCard: {
-      margin: 12,
-      padding: 16,
-      borderRadius: 12,
-      gap: 12,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    emptyCopy: { gap: 4 },
-    addButton: {
-      alignSelf: "flex-start",
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
-    },
-    railContainer: {
-      position: "relative",
-    },
     container: {
       flexDirection: "row",
       marginBottom: 20,
@@ -36,15 +15,11 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
     },
     cell: {
       alignItems: "center",
-      position: "relative",
       width: FAVORITES_RAIL_CELL_WIDTH,
     },
     tabContainer: {
       alignItems: "center",
       width: FAVORITES_RAIL_ITEM_SIZE,
-    },
-    activeTabContainer: {
-      zIndex: 10,
     },
     pressed: {
       opacity: 0.6,
@@ -110,19 +85,26 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
       overflow: "visible",
     },
 
-    dragPlaceholder: {
+    directoryStatus: {
+      flexDirection: "row",
+      flexWrap: "wrap",
       alignItems: "center",
-      width: FAVORITES_RAIL_CELL_WIDTH,
+      columnGap: 8,
+      paddingHorizontal: FAVORITES_RAIL_HORIZONTAL_PADDING,
     },
-    dragPlaceholderCircle: {
-      width: FAVORITES_RAIL_ITEM_SIZE,
-      height: FAVORITES_RAIL_ITEM_SIZE,
-      borderWidth: 1.5,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      borderStyle: "dashed",
-      borderRadius: 40,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+    statusText: {
+      fontFamily: Fonts.REGULAR,
+      color: isDark ? Colors.dark.secondaryText : Colors.light.secondaryText,
+    },
+    retryButton: {
+      minHeight: MIN_TOUCH_TARGET,
+      minWidth: MIN_TOUCH_TARGET,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    retryLabel: {
+      fontFamily: Fonts.REGULAR,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      textDecorationLine: "underline",
     },
   });

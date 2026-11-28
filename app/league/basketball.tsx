@@ -1,7 +1,8 @@
 import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import { LeagueLoadingScreen } from "components/League/LeagueLoadingScreen";
-import WNBAPlayoffBracket from "components/Sports/Basketball/Playoffs/WNBAPlayoffs/WNBAPlayoffBracket";
+import LeaguePlayoffs from "components/League/Playoffs/LeaguePlayoffs";
+import PagerView from "components/PagerView";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -16,7 +17,6 @@ import {
   useState,
 } from "react";
 import { View } from "react-native";
-import PagerView from "components/PagerView";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Shared                                   */
@@ -48,9 +48,6 @@ import Draft, {
   getDefaultDraftYear,
 } from "../../components/League/Draft/Draft";
 import { StandingsList } from "../../components/League/Standings/StandingsList";
-import { NBAPlayoffBracket } from "../../components/Sports/Basketball/Playoffs/NBAPlayoffs/NBAPlayoffBracket";
-
-import { useNBAPlayoffGames } from "../../hooks/BasketballHooks/useNBAPlayoffGames";
 
 /* -------------------------------------------------------------------------- */
 /*                                     MCBB/WCBB                                    */
@@ -59,15 +56,14 @@ import { useNBAPlayoffGames } from "../../hooks/BasketballHooks/useNBAPlayoffGam
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "@/components/League/ConferenceListModal";
+import { ConferenceStandingsList } from "@/components/League/Standings/ConferenceStandingsList";
+import Rankings from "@/components/League/Standings/Rankings";
 import TransactionList from "@/components/League/Transactions/TransactionList";
-import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import { getWCBBConferenceSelectionName } from "@/constants/conferences/wcbbConferences";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import SeasonLeadersList from "../../components/League/SeasonLeaders/SeasonLeaderList";
-import TournamentTreeBracket from "../../components/Sports/Basketball/Playoffs/MCBBTournament/TournamentTreeBracket";
-import { CollegeStandingsList } from "../../components/Sports/Basketball/Standings/CollegeStandingsList";
 import { getMCBBConferenceSelectionName } from "../../constants/conferences/mcbbConferences";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import {
@@ -157,8 +153,6 @@ function NBALeagueScreen() {
   const [standingsYear, setStandingsYear] = useState(() =>
     getNBASeason().toString(),
   );
-
-  const selectedSeason = getNBASeason();
 
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
@@ -299,21 +293,6 @@ function NBALeagueScreen() {
     summerUtahGamesError ??
     summerCaliforniaGamesError ??
     null;
-
-  /* ------------------------------------------------------------------------ */
-  /*                              NBA Playoffs                                */
-  /* ------------------------------------------------------------------------ */
-
-  const {
-    rounds: playoffRounds,
-    loading: playoffLoading,
-    error: playoffError,
-    refreshingGames: refreshingPlayoffGames,
-    refreshGames: refreshPlayoffGames,
-  } = useNBAPlayoffGames({
-    season: selectedSeason,
-    enabled: hasVisitedTab("playoffs"),
-  });
 
   /* ------------------------------------------------------------------------ */
   /*                              NBA Leaders                                 */
@@ -478,6 +457,7 @@ function NBALeagueScreen() {
 
       <View style={styles.container}>
         <PagerView
+          scrollEnabled={selectedTab !== "playoffs"}
           key={league}
           ref={pagerRef}
           style={styles.container}
@@ -530,14 +510,11 @@ function NBALeagueScreen() {
             ) : null}
           </View>
 
-          <View key="playoffs" style={styles.contentArea}>
+          <View key="playoffs" style={styles.contentArea} collapsable={false}>
             {hasVisitedTab("playoffs") ? (
-              <NBAPlayoffBracket
-                rounds={playoffRounds}
-                loading={playoffLoading}
-                error={playoffError}
-                refreshing={refreshingPlayoffGames}
-                onRefresh={refreshPlayoffGames}
+              <LeaguePlayoffs
+                league="nba"
+                active={selectedTab === "playoffs"}
               />
             ) : null}
           </View>
@@ -837,6 +814,7 @@ function WNBALeagueScreen() {
 
       <View style={styles.container}>
         <PagerView
+          scrollEnabled={selectedTab !== "playoffs"}
           key={league}
           ref={pagerRef}
           style={styles.container}
@@ -892,11 +870,10 @@ function WNBALeagueScreen() {
             ) : null}
           </View>
 
-          {/* PLAYOFFS */}
           <View collapsable={false} key="playoffs" style={styles.pagerPage}>
             {hasVisitedTab("playoffs") ? (
-              <WNBAPlayoffBracket
-                season={getWNBASeason()}
+              <LeaguePlayoffs
+                league="wnba"
                 active={selectedTab === "playoffs"}
               />
             ) : null}
@@ -1271,8 +1248,8 @@ function MCBBLeagueScreen() {
   const [recruitYear, setRecruitYear] = useState(() =>
     String(getRecruitYear()),
   );
-  const [recruitView, setRecruitView] = useState<"players" | "teams">(
-    "players",
+  const [recruitView, setRecruitView] = useState<"recruits" | "teams">(
+    "recruits",
   );
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
@@ -1499,7 +1476,7 @@ function MCBBLeagueScreen() {
     <View key="standings" style={styles.contentArea}>
       {hasVisitedTab("standings") ? (
         !selectedConferenceGroupId ? (
-          <CollegeStandingsList league={league} />
+          <Rankings league={league} />
         ) : (
           <ConferenceStandingsList
             conferences={conferences}
@@ -1524,14 +1501,6 @@ function MCBBLeagueScreen() {
           league={league}
           season={currentSeason}
         />
-      ) : null}
-    </View>
-  );
-
-  const bracketPage = (
-    <View key="bracket" style={styles.contentArea}>
-      {hasVisitedTab("bracket") ? (
-        <TournamentTreeBracket league={league} season={2025} />
       ) : null}
     </View>
   );
@@ -1569,7 +1538,6 @@ function MCBBLeagueScreen() {
     newsPage,
     standingsPage,
     statsPage,
-    bracketPage,
     recruitsPage,
     awardsPage,
     forumPage,
@@ -1888,7 +1856,7 @@ function WCBBLeagueScreen() {
     <View key="standings" style={styles.contentArea}>
       {hasVisitedTab("standings") ? (
         !selectedConferenceGroupId ? (
-          <CollegeStandingsList league={league} />
+          <Rankings league={league} />
         ) : (
           <ConferenceStandingsList
             conferences={conferences}
@@ -1917,14 +1885,6 @@ function WCBBLeagueScreen() {
     </View>
   );
 
-  const bracketPage = (
-    <View key="bracket" style={styles.contentArea}>
-      {hasVisitedTab("bracket") ? (
-        <TournamentTreeBracket league={league} season={currentSeason} />
-      ) : null}
-    </View>
-  );
-
   const awardsPage = (
     <View key="awards" style={styles.contentArea}>
       {hasVisitedTab("awards") ? <AwardSeasons league={league} /> : null}
@@ -1942,7 +1902,6 @@ function WCBBLeagueScreen() {
     newsPage,
     standingsPage,
     statsPage,
-    bracketPage,
     awardsPage,
     forumPage,
   ];

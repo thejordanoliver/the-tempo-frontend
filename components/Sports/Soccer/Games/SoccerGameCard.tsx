@@ -1,5 +1,4 @@
-import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
-import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
+import { getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import {
   formatDate,
   formatTime,
@@ -14,6 +13,7 @@ import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
+import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 import {
   formatPeriod,
   getBroadcastDisplay,
@@ -48,18 +48,18 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const away = game.away;
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
-  const homeTeam = getSOCCTeam(homeId) ?? emptyHomeTeam;
-  const awayTeam = getSOCCTeam(awayId) ?? emptyAwayTeam;
   const homeName = game.home?.shortName ?? game.home?.name;
   const awayName = game.away?.shortName ?? game.away?.name;
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : getSOCCTeamLogo(homeId, isDark);
+
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : getSOCCTeamLogo(awayId, isDark);
+
   const homeScore = Number(game?.home?.score ?? 0);
   const awayScore = Number(game?.away?.score ?? 0);
   const homeRecord = game?.home?.record ?? "0-0-0";

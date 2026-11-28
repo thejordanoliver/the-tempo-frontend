@@ -1,3 +1,4 @@
+import type { GameOdds, ScoreboardOdds } from "types/odds";
 import type { ScheduleMonthGroup } from "../schedule";
 import type { GameVenueInfo } from "../gameVenue";
 import type { Highlight } from "../types";
@@ -38,6 +39,7 @@ export type VolleyballTeam = {
 };
 
 export type VolleyballGame = {
+  odds?: ScoreboardOdds | null;
   id: string;
   uid?: string | null;
   league: VolleyballLeague;
@@ -217,6 +219,7 @@ export type VolleyballScore = VolleyballGame & {
 };
 
 export type VolleyballMatchDetails = {
+  odds?: GameOdds | null;
   headline: string | null;
   broadcast: string | null;
   broadcasts: string[];

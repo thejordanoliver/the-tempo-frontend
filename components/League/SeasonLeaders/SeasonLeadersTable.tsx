@@ -166,7 +166,7 @@ export default function SeasonLeadersTable({
             const teamLogo =
               isDark && team?.logoLight ? team.logoLight : team?.logo;
             return (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityState={{ disabled: !canOpen }}
                 key={`${item.id ?? "leader"}-${item.rank}-${index}`}
                 activeOpacity={activeOpacity}
                 disabled={!canOpen}
@@ -237,7 +237,7 @@ export default function SeasonLeadersTable({
               ))}
             </View>
             {leaders.map((item, index) => (
-              <TouchableOpacity
+              <TouchableOpacity accessibilityRole="button"
                 key={`${item.id ?? "stat"}-${item.rank}-${index}`}
                 activeOpacity={activeOpacity}
                 onPress={() => openPlayer(item)}

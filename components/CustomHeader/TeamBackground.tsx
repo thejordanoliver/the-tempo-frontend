@@ -27,7 +27,6 @@ export function TeamBackground({
   selectedTeam,
   logo,
   teamColor = Colors.midTone,
-  teamName,
   isTeamScreen,
   isPlayerScreen,
 }: TeamBackgroundProps) {

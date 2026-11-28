@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
 import { useState } from "react";
 import {
   Dimensions,
@@ -27,9 +26,7 @@ export default function PostImages({
   currentUserId,
   item,
 }: ForumPostImagesProps) {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = getStyles();
   const [modalVisible, setModalVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
 
@@ -46,7 +43,7 @@ export default function PostImages({
     <View>
       <View style={containerStyle}>
         {limitedMedia.map((m, idx) => (
-          <TouchableOpacity
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Open ${m.type === "video" ? "video" : "image"} ${idx + 1}`}
             key={idx}
             activeOpacity={0.9}
             onPress={() => {
@@ -102,7 +99,7 @@ export default function PostImages({
   );
 }
 
-function getStyles(isDark: boolean) {
+function getStyles() {
   return StyleSheet.create({
     singleImageWrapper: {
       width: "100%",

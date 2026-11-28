@@ -44,7 +44,7 @@ export default function MyPicksWidget({
     >
       <View style={styles.header}>
         <Text style={styles.title}>My Picks</Text>
-        <TouchableOpacity
+        <TouchableOpacity accessibilityState={{ disabled: loading || isEditing }}
           onPress={() => {
             void refresh();
           }}
@@ -62,7 +62,7 @@ export default function MyPicksWidget({
           <SkeletonBlock height={40} />
         </View>
       ) : error && !data ? (
-        <TouchableOpacity
+        <TouchableOpacity accessibilityState={{ disabled: isEditing }}
           onPress={() => {
             void refresh();
           }}
@@ -107,7 +107,7 @@ export default function MyPicksWidget({
               const date = formatDate(pick.startsAt);
               const pickedName = pick.pickedShortName || pick.pickedName;
               return (
-                <TouchableOpacity
+                <TouchableOpacity accessibilityState={{ disabled: isEditing }}
                   key={`${pick.sport}:${pick.league}:${pick.gameId}`}
                   disabled={isEditing}
                   activeOpacity={activeOpacity}

@@ -1,4 +1,9 @@
-import { activeOpacity, Colors, Fonts } from "constants/styles";
+import {
+  activeOpacity,
+  Colors,
+  Fonts,
+  gameDetailTeamLogo,
+} from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const GameLeadersStyles = (isDark: boolean) =>
@@ -77,10 +82,9 @@ export const GameLeadersStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     teamLogo: {
+      ...gameDetailTeamLogo,
       position: "absolute",
       top: 8,
       right: 8,
-      width: 28,
-      height: 28,
     },
   });

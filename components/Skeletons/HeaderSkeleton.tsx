@@ -10,7 +10,7 @@ type HeaderSkeletonProps = {
 export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = skeletonStyles(isDark);
+  const styles = skeletonStyles;
 
   return (
     <View
@@ -25,11 +25,10 @@ export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
   );
 }
 
-const skeletonStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      marginBottom: 12,
-      paddingBottom: 4,
-      borderBottomWidth: 1,
-    },
-  });
+const skeletonStyles = StyleSheet.create({
+  container: {
+    marginBottom: 12,
+    paddingBottom: 4,
+    borderBottomWidth: 1,
+  },
+});

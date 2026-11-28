@@ -177,15 +177,15 @@ function UFCLeagueScreen() {
               selectedEventIndex={safeSelectedEventIndex}
               onSelectEvent={setSelectedEventIndex}
               isDark={isDark}
-            />
-
-            <GamesList
-              games={mmaGames}
-              loading={loading}
-              error={error}
-              refreshing={refreshingGames}
-              onRefresh={refreshGames}
-            />
+            >
+              <GamesList
+                games={mmaGames}
+                loading={loading}
+                error={error}
+                refreshing={refreshingGames}
+                onRefresh={refreshGames}
+              />
+            </EventSelector>
           </View>
 
           <View key="news" style={styles.contentArea}>

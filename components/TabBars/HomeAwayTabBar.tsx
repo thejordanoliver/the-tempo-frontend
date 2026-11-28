@@ -1,5 +1,10 @@
 import { useReducedMotion } from "hooks/useReducedMotion";
-import { activeOpacity, Colors, Fonts } from "constants/styles";
+import {
+  activeOpacity,
+  Colors,
+  Fonts,
+  gameDetailTeamLogo,
+} from "constants/styles";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
@@ -43,7 +48,6 @@ function HomeAwayTabBar({
   onTabPress,
   isDark,
   showTeamName = true,
-  showHomeAwayLabel = false,
   showAllTab = true,
 }: HomeAwayTabBarProps) {
   const reduceMotion = useReducedMotion();
@@ -211,10 +215,7 @@ export const homeAwayTabBarStyles = (isDark: boolean) => {
       gap: 8,
       maxWidth: "100%",
     },
-    logo: {
-      width: 32,
-      height: 32,
-    },
+    logo: { ...gameDetailTeamLogo },
     unselectedLogo: {
       opacity: 0.45,
     },

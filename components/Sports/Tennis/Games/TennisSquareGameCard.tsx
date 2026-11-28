@@ -14,6 +14,7 @@ export default function TennisSquareGameCard({ match }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
+  
   const competitors = match.competitors.slice(0, 2);
   const isScheduled = match.status.state === "pre";
   const isTie =
@@ -81,7 +82,7 @@ export default function TennisSquareGameCard({ match }: Props) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity accessibilityRole="button" activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>
         <View style={styles.header}>
           <Text style={styles.tournament} numberOfLines={1}>

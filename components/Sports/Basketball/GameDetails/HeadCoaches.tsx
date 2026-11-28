@@ -1,5 +1,5 @@
 import HeadingTwo from "@/components/Headings/HeadingTwo";
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, gameDetailTeamLogo } from "@/constants/styles";
 import type { Coach } from "@/types/team";
 import { calculateAge } from "@/utils/common/dateUtils";
 
@@ -252,8 +252,6 @@ const coachesStyles = (isDark: boolean) =>
     },
 
     teamLogo: {
-      width: 32,
-      height: 32,
-      resizeMode: "contain",
+      ...gameDetailTeamLogo,
     },
   });

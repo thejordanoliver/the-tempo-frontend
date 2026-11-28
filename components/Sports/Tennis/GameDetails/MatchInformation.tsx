@@ -8,7 +8,6 @@ export default function MatchInformation({
   round,
   court,
   venue,
-  value,
   isDark,
 }: {
   sets: string | null;

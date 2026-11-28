@@ -52,10 +52,3 @@ export const gameHeaderStyles = (isDark: boolean) =>
       textAlign: "center",
     },
   });
-
-export const DriversHeaderStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      paddingHorizontal: 12,
-    },
-  });

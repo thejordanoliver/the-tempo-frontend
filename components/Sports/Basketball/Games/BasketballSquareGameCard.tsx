@@ -1,18 +1,10 @@
-import {
-  getMCBBRivalry,
-  getMCBBTeam,
-  getMCBBTeamLogo,
-} from "@/constants/teamsMCBB";
-import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
+import { getMCBBRivalry, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import { getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { SquareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
-import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import {
-  getWCBBRivalry,
-  getWCBBTeam,
-  getWCBBTeamLogo,
-} from "constants/teamsWCBB";
+import { getNBATeamLogo } from "constants/teams";
+import { getWCBBRivalry, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { getGameAccessibilityLabel } from "utils/games/gameAccessibility";
 
@@ -30,12 +22,14 @@ import {
   getBroadcastDisplay,
   winnerStyle,
 } from "utils/games/games";
+import { getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 
 export default function BasketballSquareGameCard({
   game,
   isMCBB,
   isWCBB,
   isWNBA,
+  isGLEAGUE,
 }: BasketballGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -69,29 +63,11 @@ export default function BasketballSquareGameCard({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam =
-    (isMCBB
-      ? getMCBBTeam(homeId)
-      : isWCBB
-        ? getWCBBTeam(homeId)
-        : isWNBA
-          ? getWNBATeam(homeId)
-          : getNBATeam(homeId)) ?? emptyHomeTeam;
-
-  const awayTeam =
-    (isMCBB
-      ? getMCBBTeam(awayId)
-      : isWCBB
-        ? getWCBBTeam(awayId)
-        : isWNBA
-          ? getWNBATeam(awayId)
-          : getNBATeam(awayId)) ?? emptyAwayTeam;
-
   const homeName = game.home?.code;
   const awayName = game.away?.code;
 
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
+    homeId === emptyHomeTeam.id
       ? emptyHomeTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(homeId, isDark)
@@ -99,10 +75,12 @@ export default function BasketballSquareGameCard({
           ? getWCBBTeamLogo(homeId, isDark)
           : isWNBA
             ? getWNBATeamLogo(homeId, isDark)
-            : getNBATeamLogo(homeId, isDark);
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(homeId, isDark)
+              : getNBATeamLogo(homeId, isDark);
 
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
+    awayId === emptyAwayTeam.id
       ? emptyAwayTeam.logo
       : isMCBB
         ? getMCBBTeamLogo(awayId, isDark)
@@ -110,7 +88,9 @@ export default function BasketballSquareGameCard({
           ? getWCBBTeamLogo(awayId, isDark)
           : isWNBA
             ? getWNBATeamLogo(awayId, isDark)
-            : getNBATeamLogo(awayId, isDark);
+            : isGLEAGUE
+              ? getGLeagueTeamLogo(awayId, isDark)
+              : getNBATeamLogo(awayId, isDark);
 
   const rivalry = isMCBB
     ? getMCBBRivalry(homeId, awayId)?.name
@@ -152,7 +132,7 @@ export default function BasketballSquareGameCard({
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const broadcast = getBroadcastDisplay(game?.broadcasts);
+  const broadcast = getBroadcastDisplay(game?.broadcasts, true);
 
   const homeRecord = game.home.record ?? "0-0";
   const awayRecord = game.away.record ?? "0-0";

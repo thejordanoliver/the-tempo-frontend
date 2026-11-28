@@ -1,3 +1,4 @@
+import { getTeamHref, getTeamSport } from "utils/navigation/teamNavigation";
 import AppVideo from "@/components/AppVideo";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
@@ -121,52 +122,8 @@ export default function ArticleScreen() {
       return;
     }
 
-    const params = { teamId: target.id, league: target.league };
-
-    switch (target.league) {
-      case "nba":
-        router.push({ pathname: "/team/[teamId]", params });
-        return;
-      case "gleague":
-        router.push({ pathname: "/team/gleague/[teamId]", params });
-        return;
-      case "wnba":
-        router.push({ pathname: "/team/wnba/[teamId]", params });
-        return;
-      case "nfl":
-        router.push({ pathname: "/team/nfl/[teamId]", params });
-        return;
-      case "ufl":
-        router.push({ pathname: "/team/ufl/[teamId]", params });
-        return;
-      case "cfb":
-        router.push({ pathname: "/team/cfb/[teamId]", params });
-        return;
-      case "mcbb":
-        router.push({ pathname: "/team/mcbb/[teamId]", params });
-        return;
-      case "wcbb":
-        router.push({ pathname: "/team/wcbb/[teamId]", params });
-        return;
-      case "mlb":
-        router.push({ pathname: "/team/mlb/[teamId]", params });
-        return;
-      case "cb":
-        router.push({ pathname: "/team/cb/[teamId]", params });
-        return;
-      case "sb":
-        router.push({ pathname: "/team/sb/[teamId]", params });
-        return;
-      case "nhl":
-        router.push({ pathname: "/team/nhl/[teamId]", params });
-        return;
-      default:
-        router.push({
-          pathname: "/team/soccer/[teamId]",
-          params: { ...params, league: target.league },
-        });
-        return;
-    }
+    const sport = getTeamSport(target.league) ?? "soccer";
+    router.push(getTeamHref(sport, target.id, target.league));
   };
 
   useLayoutEffect(() => {
@@ -215,7 +172,7 @@ export default function ArticleScreen() {
               }}
             />
           ) : videoThumbnail ? (
-            <Pressable style={styles.image} onPress={handlePlay}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Play article video" style={styles.image} onPress={handlePlay}>
               <Image source={{ uri: videoThumbnail }} style={styles.image} />
               <View
                 style={{

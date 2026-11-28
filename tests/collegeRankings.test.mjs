@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import vm from "node:vm";
 import test from "node:test";
+import vm from "node:vm";
 import ts from "typescript";
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -132,7 +132,7 @@ function setup(league, entries = [], storageFails = false) {
   modules["utils/standings/collegeRankings"] = load(
     "utils/standings/collegeRankings.ts",
   );
-  hook = load("hooks/LeagueHooks/useCollegeRankings.ts").useCollegeRankings;
+  hook = load("hooks/LeagueHooks/useRankings.ts").useRankings;
   function render() {
     index = 0;
     state = hook(league);
@@ -297,6 +297,30 @@ test("football retains separate AP, Coaches, CFP and FCS poll slots", async () =
     h.stop();
   }
 });
+
+for (const [league, type, conference] of [
+  ["mch", "USCHOMENSPOLL", "NCHC"],
+  ["wch", "USCHOWOMENSPOLL", "WCHA"],
+]) {
+  test(`${league} exposes the USCHO poll with conference metadata`, async () => {
+    const h = setup(league);
+    try {
+      await flush();
+      const ranks = [
+        { current: 1, team: { id: 2364, conference: { shortName: conference } } },
+      ];
+      h.requests[0].resolve({
+        rankings: [{ type, name: "USCHO Poll", ranks }],
+      });
+      await flush();
+      assert.equal(h.state.rankings.length, 1);
+      assert.equal(h.state.rankings[0].type, "uscho");
+      assert.deepEqual(h.state.rankings[0].ranks, ranks);
+    } finally {
+      h.stop();
+    }
+  });
+}
 
 test("a league change aborts and ignores the previous league's late response", async () => {
   const h = setup("mcbb");

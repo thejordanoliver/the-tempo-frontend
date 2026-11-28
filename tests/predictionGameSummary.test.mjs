@@ -1,11 +1,11 @@
-import assert from "node:assert/strict";
-import fs from "node:fs";
-import vm from "node:vm";
-import test from "node:test";
-import ts from "typescript";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone.js";
 import utc from "dayjs/plugin/utc.js";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import test from "node:test";
+import vm from "node:vm";
+import ts from "typescript";
 
 const jsx = (type, props) => ({ type, props });
 const colors = { text: "text", green: "green", lightRed: "red", red: "red" };
@@ -43,6 +43,8 @@ const modules = {
   "dayjs/plugin/utc": utc,
 };
 modules["@/constants/styles"] = modules["constants/styles"];
+modules["@/styles/FanPredictionStyles/FanPredictionHistoryRowStyles"] =
+  modules["styles/FanPredictionStyles/FanPredictionHistoryRowStyles"];
 function load(file) {
   const exports = {};
   const source = ts.transpileModule(fs.readFileSync(file, "utf8"), {
@@ -66,9 +68,7 @@ modules["utils/games/games"] = load("utils/games/games.ts");
 modules["utils/games/gameTeamIdentity"] = load(
   "utils/games/gameTeamIdentity.ts",
 );
-const Summary = load(
-  "components/FanPrediction/PredictionGameSummary.tsx",
-).default;
+const Summary = load("components/FanPrediction/PredictionGameCard.tsx").default;
 function nodes(tree) {
   if (tree == null || typeof tree === "boolean") return [];
   if (Array.isArray(tree)) return tree.flatMap(nodes);
@@ -76,7 +76,7 @@ function nodes(tree) {
     ? [tree, ...nodes(tree.props?.children)]
     : [String(tree)];
 }
-function render(sport, game = {}, overrides = {}) {
+function render(sport, game = {}, overrides = {}, isDark = true) {
   const team = (id) => ({
     id,
     name: `Team ${id}`,
@@ -87,7 +87,7 @@ function render(sport, game = {}, overrides = {}) {
   });
   return nodes(
     Summary({
-      isDark: true,
+      isDark,
       pick: {
         sport,
         league: "unknown",
@@ -121,7 +121,7 @@ function render(sport, game = {}, overrides = {}) {
 
 test("women's college basketball uses quarters; men's college basketball uses halves", () => {
   assert(render("basketball", {}, { league: "wcbb" }).includes("4th"));
-  assert(render("basketball", {}, { league: "mcbb" }).includes("2OT"));
+  assert(render("basketball", {}, { league: "mcbb" }).includes("2nd OT"));
 });
 test("hockey and soccer follow their own period labels", () => {
   assert(render("hockey").includes("OT"));
@@ -226,4 +226,63 @@ test("suspended games take precedence over live clocks and baseball base state",
   });
   assert(content.includes("Suspended"));
   assert(!content.some((node) => node.type === "Bases"));
+});
+
+test("hockey displays backend records before games and scores during live games", () => {
+  const teams = {
+    home: { id: 1, record: "12-4-2", score: 3 },
+    away: { id: 2, record: "10-6-1", score: 1 },
+  };
+  const pregame = render("hockey", { ...teams, status: { state: "pre" } });
+  assert(pregame.includes("12-4-2"));
+  assert(pregame.includes("10-6-1"));
+  assert(
+    !pregame.some((node) => typeof node === "string" && /pts/i.test(node)),
+  );
+  const live = render("hockey", { ...teams, status: { state: "in" } });
+  assert(live.includes("3"));
+  assert(live.includes("1"));
+  assert(!live.includes("12-4-2"));
+});
+
+test("football possession is hidden outside active play", () => {
+  for (const status of [
+    { state: "pre" },
+    { state: "post", completed: true },
+    { state: "in", description: "Suspended" },
+  ]) {
+    const content = render("football", {
+      status,
+      situation: { possession: "1" },
+    });
+    assert(
+      !content.some((node) => node.props?.accessibilityLabel === "Possession"),
+    );
+  }
+});
+
+test("team logos follow appearance with a fallback when no dark logo exists", () => {
+  const game = {
+    home: {
+      id: 1,
+      name: "Home",
+      shortName: "Home",
+      logo: "home.png",
+      logoDark: "home-dark.png",
+    },
+    away: {
+      id: 2,
+      name: "Away",
+      shortName: "Away",
+      logo: "away.png",
+      logoDark: null,
+    },
+  };
+  const logo = (content, name) =>
+    content.find(
+      (node) => node.type === "Image" && node.props.accessibilityLabel === name,
+    ).props.source.uri;
+  assert.equal(logo(render("hockey", game), "Home"), "home-dark.png");
+  assert.equal(logo(render("hockey", game), "Away"), "away.png");
+  assert.equal(logo(render("hockey", game, {}, false), "Home"), "home.png");
 });

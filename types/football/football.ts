@@ -2,6 +2,27 @@
 
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/styles";
+import type { ScoreboardOdds } from "types/odds";
+
+export type Team = {
+  id: number;
+  uid: string;
+  name: string;
+  fullName: string;
+  shortName: string;
+  code: string;
+  location: string;
+  city: string;
+  state: string;
+  logo: string;
+  logoDark: string;
+  primaryColor: string;
+  secondaryColor: string;
+  record: string;
+  rank: string | null;
+  score: number;
+  winner: boolean;
+};
 
 export type LastPlay = {
   id: string;
@@ -79,23 +100,17 @@ export type FootballGame = {
       region: string;
     },
   ];
-  odds: {
-    provider: string;
-    details: string;
-    spread: number;
-    overUnder: number;
-    homeMoneyline: null;
-    awayMoneyline: null;
-  };
-
+  odds: ScoreboardOdds | null;
   home: {
     id: number;
     uid: string;
     name: string;
-    shortName?: string | null;
+    fullName: string;
+    shortName: string;
     code: string;
     location: string;
     logo: string;
+    logoDark: string;
     primaryColor: string;
     secondaryColor: string;
     conferenceId: number | null;
@@ -108,10 +123,12 @@ export type FootballGame = {
     id: number;
     uid: string;
     name: string;
-    shortName?: string | null;
+    fullName: string;
+    shortName: string;
     code: string;
     location: string;
     logo: string;
+    logoDark: string;
     primaryColor: string;
     secondaryColor: string;
     conferenceId: number | null;
@@ -202,239 +219,4 @@ export type Conference = {
     primary: string;
     secondary: string;
   };
-};
-
-export interface CFBPlayoffBracketTeam {
-  id: number | string;
-  oddsId?: string;
-  name: string;
-  shortName?: string;
-  fullName?: string;
-  code: string;
-  logo: any;
-  logoLight?: any;
-  abbreviation?: string;
-  city?: string;
-  location?: string;
-  address?: string;
-  coach?: string;
-  coachImage?: string;
-  venueName?: string;
-  established?: number;
-  seed?: number | null;
-  score?: number;
-  record?: string | null; // "12-1"
-}
-
-export interface CFBPlayoffBracketBroadcast {
-  name: string;
-  type: string;
-}
-
-export type Round = "first" | "quarterfinal" | "semifinal" | "championship";
-
-export interface CFBPlayoffBracketGame {
-  id: string;
-  top: CFBPlayoffBracketTeam | null;
-  bottom: CFBPlayoffBracketTeam | null;
-  round: Round;
-  status: "scheduled" | "live" | "final";
-  startTime?: string;
-  topScore?: number | null;
-  bottomScore?: number | null;
-  broadcasts?: CFBPlayoffBracketBroadcast[];
-}
-
-export interface CFBPlayoffBracketRound {
-  title: string;
-  games: CFBPlayoffBracketGame[];
-}
-
-export type BracketTeam = CFBPlayoffBracketTeam;
-export type BracketGame = CFBPlayoffBracketGame;
-export type BracketRound = CFBPlayoffBracketRound;
-export type Game = FootballGame;
-
-export interface BracketData {
-  first: CFBPlayoffBracketRound;
-  quarterfinal: CFBPlayoffBracketRound;
-  semifinal: CFBPlayoffBracketRound;
-  championship: CFBPlayoffBracketRound;
-}
-
-export type NFLPlayoffLeagueInfo = {
-  id: number;
-  uid: string;
-  code: string;
-  name: string;
-  slug: string;
-};
-
-export type NFLPlayoffSeason = {
-  year: number;
-  type: number;
-  slug?: string | null;
-};
-
-export type NFLPlayoffWeek = {
-  number: number;
-};
-
-export type NFLPlayoffStatus = {
-  state: string;
-  description: string;
-  detail: string;
-  shortDetail: string;
-  period: number | null;
-  quarter: number | null;
-  clock: number | string | null;
-  displayClock: string | null;
-  completed: boolean;
-};
-
-export type NFLPlayoffVenue = {
-  id: number;
-  name: string;
-  city?: string | null;
-  state?: string | null;
-  country?: string | null;
-  indoor?: boolean;
-};
-
-export type NFLPlayoffTeam = {
-  id: number;
-  uid: string;
-  name: string;
-  code: string;
-  location?: string | null;
-  logo?: string | null;
-  primaryColor?: string | null;
-  secondaryColor?: string | null;
-  conferenceId?: number | null;
-  record?: string | null;
-  rank?: number | null;
-  score?: number | null;
-  winner?: boolean;
-};
-
-export type NFLPlayoffGeoBroadcast = {
-  type?: string | null;
-  market?: string | null;
-  media?: string | null;
-  region?: string | null;
-};
-
-export type NFLPlayoffSituation = {
-  down?: number | null;
-  distance?: number | null;
-  shortDownDistanceText?: string | null;
-  downDistanceText?: string | null;
-  yardLine?: number | null;
-  possession?: number | string | null;
-  possessionText?: string | null;
-  isRedZone?: boolean;
-  drive?: unknown;
-  lastPlay?: unknown;
-  teamWithPossession?: unknown;
-};
-
-export type NFLPlayoffGame = {
-  league: NFLPlayoffLeagueInfo;
-
-  id: number;
-  uid: string;
-
-  name: string;
-  shortName: string;
-  headline?: string | null;
-
-  date: string;
-  startDate: string;
-  timestamp: number;
-
-  season: NFLPlayoffSeason;
-  week: NFLPlayoffWeek;
-
-  status: NFLPlayoffStatus;
-  venue?: NFLPlayoffVenue | null;
-
-  broadcasts?: string[];
-  geoBroadcasts?: NFLPlayoffGeoBroadcast[];
-
-  odds?: unknown;
-
-  periods?: number | null;
-  period?: number | null;
-  quarter?: number | null;
-  clock?: number | string | null;
-  displayClock?: string | null;
-
-  down?: number | null;
-  distance?: number | null;
-  yardLine?: number | null;
-  possession?: number | string | null;
-  possessionText?: string | null;
-  redZone?: boolean;
-
-  drive?: unknown;
-  lastPlay?: unknown;
-  teamWithPossession?: unknown;
-
-  home: NFLPlayoffTeam;
-  away: NFLPlayoffTeam;
-
-  isConferenceGame?: boolean;
-  isNeutralSite?: boolean;
-  attendance?: number | null;
-  playByPlayAvailable?: boolean;
-  recent?: boolean;
-  wasSuspended?: boolean;
-
-  situation?: NFLPlayoffSituation;
-
-  raw?: {
-    eventId?: string;
-    competitionId?: string;
-  };
-};
-
-export type NFLPlayoffGroup = {
-  key: string;
-  label: string;
-
-  season: NFLPlayoffSeason;
-  week: NFLPlayoffWeek;
-
-  count: number;
-  games: NFLPlayoffGame[];
-};
-
-export type BracketApiResponse = {
-  success: boolean;
-  league: string;
-
-  leagueInfo: NFLPlayoffLeagueInfo;
-
-  season: {
-    type: number;
-    year: number;
-  };
-
-  week: number | null;
-  weeks: number[];
-
-  seasonType: number;
-  postseason: boolean;
-  playoffType: string;
-
-  includeBowls: boolean;
-  includeProBowl: boolean;
-
-  date: string | null;
-  conferenceId: number | null;
-
-  count: number;
-
-  groups: NFLPlayoffGroup[];
-  games: NFLPlayoffGame[];
 };

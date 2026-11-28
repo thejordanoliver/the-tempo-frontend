@@ -1,71 +1,76 @@
 import { CustomHeader } from "components/CustomHeader";
+import BaseballTeamScreen from "components/Sports/Baseball/BaseballTeamScreen";
+import BasketballTeamScreen from "components/Sports/Basketball/BasketballTeamScreen";
+import FootballTeamScreen from "components/Sports/Football/FootballTeamScreen";
+import HockeyTeamScreen from "components/Sports/Hockey/HockeyTeamScreen";
+import SoccerTeamScreen from "components/Sports/Soccer/SoccerTeamScreen";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
 import { Text, View } from "react-native";
-
-import NBATeamScreen from "app/(tabs)/(home)/team/[teamId]";
-import CBTeamScreen from "app/(tabs)/(home)/team/cb/[teamId]";
-import CFBTeamScreen from "app/(tabs)/(home)/team/cfb/[teamId]";
-import GLeagueTeamScreen from "app/(tabs)/(home)/team/gleague/[teamId]";
-import MCBBTeamScreen from "app/(tabs)/(home)/team/mcbb/[teamId]";
-import MLBTeamScreen from "app/(tabs)/(home)/team/mlb/[teamId]";
-import NFLTeamScreen from "app/(tabs)/(home)/team/nfl/[teamId]";
-import NHLTeamScreen from "app/(tabs)/(home)/team/nhl/[teamId]";
-import SBTeamScreen from "app/(tabs)/(home)/team/sb/[teamId]";
-import SoccerTeamScreen from "app/(tabs)/(home)/team/soccer/[teamId]";
-import UFLTeamScreen from "app/(tabs)/(home)/team/ufl/[teamId]";
-import WCBBTeamScreen from "app/(tabs)/(home)/team/wcbb/[teamId]";
-import WNBATeamScreen from "app/(tabs)/(home)/team/wnba/[teamId]";
-
-const TEAM_SCREENS = {
-  nba: NBATeamScreen,
-  cb: CBTeamScreen,
-  mcbb: MCBBTeamScreen,
-  cfb: CFBTeamScreen,
-  gleague: GLeagueTeamScreen,
-  mlb: MLBTeamScreen,
-  nfl: NFLTeamScreen,
-  nhl: NHLTeamScreen,
-  sb: SBTeamScreen,
-  soccer: SoccerTeamScreen,
-  ufl: UFLTeamScreen,
-  wcbb: WCBBTeamScreen,
-  wnba: WNBATeamScreen,
-} as const;
+import { resolveTeamRoute } from "utils/navigation/teamNavigation";
 
 export default function TeamRouteScreen() {
+  const params = useLocalSearchParams<{
+    sport?: string | string[];
+    teamId?: string | string[];
+    league?: string | string[];
+  }>();
+  const sport = Array.isArray(params.sport) ? params.sport[0] : params.sport;
+  const teamId = Array.isArray(params.teamId)
+    ? params.teamId[0]
+    : params.teamId;
+  const route = resolveTeamRoute(sport, teamId, params.league);
+
+  if (!route || !teamId) return <UnavailableTeamScreen />;
+
+  const key = `${route.league}:${teamId}`;
+
+  switch (route.sport) {
+    case "basketball":
+      return (
+        <BasketballTeamScreen key={key} teamId={teamId} league={route.league} />
+      );
+    case "football":
+      return (
+        <FootballTeamScreen key={key} teamId={teamId} league={route.league} />
+      );
+    case "hockey":
+      return (
+        <HockeyTeamScreen key={key} teamId={teamId} league={route.league} />
+      );
+    case "soccer":
+      return (
+        <SoccerTeamScreen key={key} teamId={teamId} league={route.league} />
+      );
+    case "baseball":
+      return (
+        <BaseballTeamScreen key={key} teamId={teamId} league={route.league} />
+      );
+  }
+}
+
+function UnavailableTeamScreen() {
   const navigation = useNavigation();
-  const { teamType } = useLocalSearchParams<{ teamType?: string | string[] }>();
   const { resolvedColorScheme } = usePreferences();
   const global = globalStyles(resolvedColorScheme === "dark");
-  const resolvedTeamType =
-    (Array.isArray(teamType) ? teamType[0] : teamType)?.toLowerCase() ?? "nba";
-  const TeamScreen =
-    TEAM_SCREENS[resolvedTeamType as keyof typeof TEAM_SCREENS];
 
   useLayoutEffect(() => {
-    if (!TeamScreen) {
-      navigation.setOptions({
-        header: () => (
-          <CustomHeader
-            title="Team unavailable"
-            onBack={() => navigation.goBack()}
-          />
-        ),
-      });
-    }
-  }, [TeamScreen, navigation]);
+    navigation.setOptions({
+      header: () => (
+        <CustomHeader
+          title="Team unavailable"
+          onBack={() => navigation.goBack()}
+        />
+      ),
+    });
+  }, [navigation]);
 
-  if (!TeamScreen) {
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>Team unavailable</Text>
-        <Text style={global.emptySubText}>This league is not supported.</Text>
-      </View>
-    );
-  }
-
-  return <TeamScreen />;
+  return (
+    <View style={global.emptyContainer}>
+      <Text style={global.emptyTitle}>Team unavailable</Text>
+      <Text style={global.emptySubText}>This team could not be found.</Text>
+    </View>
+  );
 }

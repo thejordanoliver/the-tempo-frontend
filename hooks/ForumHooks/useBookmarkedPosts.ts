@@ -8,6 +8,10 @@ import type {
   UseBookmarkedPostsOptions,
 } from "types/forum";
 import { apiClient } from "utils/apiClient";
+import {
+  getForumBookmarksVersion,
+  subscribeForumBookmarksChanged,
+} from "services/forumBookmarkUpdates";
 
 const getErrorMessage = (error: unknown, fallback: string) => {
   if (isAxiosError<{ error?: string; message?: string }>(error)) {
@@ -23,6 +27,7 @@ const getErrorMessage = (error: unknown, fallback: string) => {
 };
 
 export function useBookmarkedPosts({
+  userId,
   enabled = true,
   limit = 10,
 }: UseBookmarkedPostsOptions = {}) {
@@ -32,14 +37,24 @@ export function useBookmarkedPosts({
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const fetchingRef = useRef(false);
+  const queryKey = `${userId ?? "me"}:${limit}`;
+  const [dataQueryKey, setDataQueryKey] = useState(queryKey);
+  const activeQueryKeyRef = useRef(queryKey);
+  const loadedQueryKeyRef = useRef<string | null>(null);
+  const loadedVersionRef = useRef<number | null>(null);
+  const requestRef = useRef<AbortController | null>(null);
+  const [bookmarksVersion, setBookmarksVersion] = useState(
+    getForumBookmarksVersion,
+  );
 
   const fetchBookmarks = useCallback(
     async (pageNumber = 1, isRefresh = false) => {
       if (!enabled) return;
-      if (fetchingRef.current) return;
+      if (requestRef.current) return;
 
-      fetchingRef.current = true;
+      const request = new AbortController();
+      requestRef.current = request;
+      const version = getForumBookmarksVersion();
 
       if (isRefresh) {
         setRefreshing(true);
@@ -55,6 +70,7 @@ export function useBookmarkedPosts({
         const response = await apiClient.get<ForumPostsResponse>(
           "/api/forum/bookmarks",
           {
+            signal: request.signal,
             params: {
               page: pageNumber,
               limit,
@@ -63,22 +79,55 @@ export function useBookmarkedPosts({
         );
 
         const nextPosts = await loadPostPolls(response.data.posts ?? []);
+        if (request.signal.aborted) return;
         const nextTotalPages = response.data.pagination?.totalPages ?? 1;
 
-        setPosts((current) =>
-          pageNumber === 1 ? nextPosts : [...current, ...nextPosts],
-        );
+        setPosts((current) => {
+          if (pageNumber === 1) return nextPosts;
+          const existingIds = new Set(current.map((post) => String(post.id)));
+          return [
+            ...current,
+            ...nextPosts.filter((post) => !existingIds.has(String(post.id))),
+          ];
+        });
         setPage(pageNumber);
         setTotalPages(nextTotalPages);
+        if (pageNumber === 1) {
+          loadedQueryKeyRef.current = queryKey;
+          loadedVersionRef.current = version;
+        }
       } catch (err: unknown) {
-        setError(getErrorMessage(err, "Failed to load bookmarks"));
+        if (!request.signal.aborted)
+          setError(getErrorMessage(err, "Failed to load bookmarks"));
       } finally {
-        fetchingRef.current = false;
-        setLoading(false);
-        setRefreshing(false);
+        if (requestRef.current === request) {
+          requestRef.current = null;
+          setLoading(false);
+          setRefreshing(false);
+          // A bookmark changed while this request was in flight. Retry using
+          // the new revision rather than marking the older response current.
+          if (getForumBookmarksVersion() !== version)
+            setBookmarksVersion((previous) => previous + 1);
+        }
       }
     },
-    [enabled, limit],
+    [enabled, limit, queryKey],
+  );
+
+  useEffect(
+    () =>
+      subscribeForumBookmarksChanged(() => {
+        setBookmarksVersion((previous) => previous + 1);
+      }),
+    [],
+  );
+
+  useEffect(
+    () => () => {
+      requestRef.current?.abort();
+      requestRef.current = null;
+    },
+    [],
   );
 
   useEffect(() => {
@@ -87,21 +136,36 @@ export function useBookmarkedPosts({
     void Promise.resolve().then(() => {
       if (cancelled) return;
 
-      if (!enabled) {
+      if (activeQueryKeyRef.current !== queryKey) {
+        requestRef.current?.abort();
+        requestRef.current = null;
+        activeQueryKeyRef.current = queryKey;
+        loadedQueryKeyRef.current = null;
+        loadedVersionRef.current = null;
+        setDataQueryKey(queryKey);
         setPosts([]);
         setPage(1);
         setTotalPages(1);
         setError(null);
+        setLoading(false);
+        setRefreshing(false);
+      }
+
+      if (!enabled) return;
+      if (
+        loadedQueryKeyRef.current === queryKey &&
+        loadedVersionRef.current === getForumBookmarksVersion()
+      ) {
         return;
       }
 
-      fetchBookmarks(1);
+      void fetchBookmarks(1, loadedQueryKeyRef.current === queryKey);
     });
 
     return () => {
       cancelled = true;
     };
-  }, [enabled, fetchBookmarks]);
+  }, [enabled, fetchBookmarks, queryKey, bookmarksVersion]);
 
   const refresh = useCallback(() => {
     fetchBookmarks(1, true);
@@ -162,11 +226,11 @@ export function useBookmarkedPosts({
   );
 
   return {
-    posts,
-    loading,
-    refreshing,
-    error,
-    hasMore: page < totalPages,
+    posts: dataQueryKey === queryKey ? posts : [],
+    loading: enabled && (dataQueryKey !== queryKey || loading),
+    refreshing: dataQueryKey === queryKey && refreshing,
+    error: dataQueryKey === queryKey ? error : null,
+    hasMore: dataQueryKey === queryKey && page < totalPages,
     fetchBookmarks,
     refresh,
     loadMore,

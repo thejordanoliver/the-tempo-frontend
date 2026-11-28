@@ -37,13 +37,17 @@ test("password change installs the typed token pair before returning success", (
   const changePasswordIndex = screenSource.indexOf("await changePassword(");
   const resetIndex = screenSource.indexOf("reset();", changePasswordIndex);
   const successIndex = screenSource.indexOf(
-    'Alert.alert("Success"',
+    "setPasswordUpdated(true);",
     resetIndex,
   );
 
   assert.ok(changePasswordIndex >= 0);
   assert.ok(resetIndex > changePasswordIndex);
   assert.ok(successIndex > resetIndex);
+  assert.match(
+    screenSource,
+    /\{passwordUpdated && \([\s\S]*Password updated successfully\./,
+  );
 });
 
 test("authenticated requests read the newly stored access token on every call", () => {

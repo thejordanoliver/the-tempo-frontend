@@ -25,7 +25,6 @@ type BaseballGameWidgetProps = {
   isDark: boolean;
   isMLB: boolean;
   isCB: boolean;
-  loading?: boolean;
 };
 
 export default function BaseballGameWidget({
@@ -34,7 +33,6 @@ export default function BaseballGameWidget({
   isCB,
   height = 150,
   width = 150,
-  loading = false,
   isDark,
 }: BaseballGameWidgetProps) {
   const league = isMLB ? "mlb" : isCB ? "cb" : "sb";
@@ -50,7 +48,7 @@ export default function BaseballGameWidget({
     } as any);
   };
   const styles = gameWidgetStyles(isDark, height, width);
-  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(width);
   const showHeadline = !isSmallLayout || height >= 170;
 
   const gameDateObj = new Date(game.date);
@@ -73,8 +71,8 @@ export default function BaseballGameWidget({
     ? getCBTeamLogo(awayId, isDark)
     : getMLBTeamLogo(awayId, isDark);
 
-  const homeRank = home?.homeRank;
-  const awayRank = away?.awayRank;
+  const homeRank = home?.rank;
+  const awayRank = away?.rank;
 
   const homeRecord = home?.record;
   const awayRecord = away?.record;
@@ -236,7 +234,11 @@ export default function BaseballGameWidget({
   };
 
   return (
-    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+    <TouchableOpacity
+      accessibilityRole="button"
+      activeOpacity={activeOpacity}
+      onPress={handlePress}
+    >
       <View style={styles.container}>
         {showHeadline && (
           <View style={styles.headlineContainer}>

@@ -436,7 +436,7 @@ export default function ChampionshipGameCard({
     : (["#dbb145", Colors.light.background] as const);
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessibilityRole="button"
       activeOpacity={activeOpacity}
       onPress={handlePress}
       style={styles.container}

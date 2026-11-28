@@ -27,7 +27,7 @@ export default function DraftBoardTab({
   const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = DraftBoardStyles(isDark);
+  const styles = DraftBoardStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { draft, loading, error, refreshing, onRefresh } = useDraft(
     league,
@@ -82,10 +82,9 @@ export default function DraftBoardTab({
   );
 }
 
-export const DraftBoardStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      paddingVertical: 8,
-    },
-  });
+export const DraftBoardStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingVertical: 8,
+  },
+});

@@ -23,7 +23,7 @@ function setup() {
     Pressable: "Pressable",
     StyleSheet: { create: (x) => x },
   };
-  h.modules["components/Sports/PlayByPlay/PlayByPlayHeader"] = {
+  h.modules["@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayByPlayHeader"] = {
     default: "PlayByPlayHeader",
     __esModule: true,
   };
@@ -104,7 +104,7 @@ test("free throws show the pulsing shot marker on the line instead of a missing-
     default: "BasketballCourt",
     __esModule: true,
   };
-  h.modules["components/Sports/PlayByPlay/PlayLocationPulse"] = {
+  h.modules["@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayLocationPulse"] = {
     default: "PlayLocationPulse",
     __esModule: true,
   };
@@ -170,7 +170,7 @@ test("made shots pass through either rim and exit below the net; misses stay abo
     BasketballNet: "BasketballNet",
     __esModule: true,
   };
-  h.modules["components/Sports/PlayByPlay/PlayLocationPulse"] = {
+  h.modules["@/components/Sports/Basketball/GameDetails/PlayByPlay/PlayLocationPulse"] = {
     default: "PlayLocationPulse",
     __esModule: true,
   };

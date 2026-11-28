@@ -1,0 +1,123 @@
+import { Colors, Fonts, globalStyles } from "constants/styles";
+import { StyleSheet } from "react-native";
+
+export const RecruitProfileStyles = (isDark: boolean) => {
+  const theme = isDark ? Colors.dark : Colors.light;
+  const global = globalStyles(isDark);
+  return StyleSheet.create({
+    section: { paddingTop: 16 },
+    sections: { gap: 24 },
+    headerContainer: { width: "100%", minWidth: 0 },
+    headerStars: { flexDirection: "row", alignItems: "center", gap: 2 },
+    headerStatsRow: {
+      flexDirection: "row",
+      width: "100%",
+      alignItems: "center",
+      paddingVertical: 14,
+      borderRadius: 8,
+      backgroundColor: theme.itemBackground,
+    },
+    headerStatChip: {
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBasis: 0,
+      minWidth: 0,
+      alignItems: "center",
+      paddingHorizontal: 4,
+    },
+    headerStatLabel: { fontSize: 9, letterSpacing: 0.5 },
+    headerStarValue: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+      minWidth: 0,
+      gap: 3,
+    },
+    headerStatValue: { flexShrink: 1, textAlign: "center" },
+    headerName: { flex: 1, minWidth: 0 },
+    summaryCaption: { ...global.secondaryText, textAlign: "center" },
+    table: {
+      borderWidth: 1,
+      borderColor: theme.gray,
+      borderRadius: 8,
+      overflow: "hidden",
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      minHeight: 44,
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      gap: 8,
+    },
+    altRow: { backgroundColor: theme.itemBackground },
+    cell: {
+      flex: 1,
+      minWidth: 0,
+      textAlign: "center",
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 13,
+      color: theme.text,
+    },
+    sourceCell: { flex: 1.6, textAlign: "left" },
+    tableLabel: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 11,
+      color: theme.secondaryText,
+    },
+    school: {
+      flex: 1,
+      minWidth: 0,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    schoolName: { ...global.textMedium, flex: 1, fontSize: 14 },
+    commitmentCard: {
+      position: "relative",
+      padding: 20,
+      borderRadius: 12,
+      backgroundColor: theme.itemBackground,
+      overflow: "hidden",
+    },
+    commitmentWatermark: {
+      position: "absolute",
+      right: -35,
+      top: -35,
+      opacity: 0.3,
+      transform: [{ rotate: "-5deg" }],
+    },
+    commitmentGradient: {
+      position: "absolute",
+      top: 0,
+      bottom: 0,
+      right: -40,
+      width: 240,
+    },
+    commitmentInfo: { minWidth: 0, gap: 4 },
+    commitmentSchool: { ...global.title, fontSize: 22, lineHeight: 28 },
+    commitmentStatus: {
+      ...global.heading,
+      fontSize: 32,
+      lineHeight: 40,
+      textTransform: "uppercase",
+      color: theme.green,
+    },
+    commitmentStatusNeutral: { color: theme.secondaryText },
+    commitmentDate: { ...global.caption },
+    value: { ...global.textMedium, fontSize: 14 },
+    valuation: {
+      ...global.heading,
+      fontSize: 36,
+      lineHeight: 44,
+      textAlign: "center",
+    },
+    valuationCard: {
+      padding: 24,
+      borderRadius: 8,
+      backgroundColor: theme.itemBackground,
+      gap: 8,
+    },
+  });
+};

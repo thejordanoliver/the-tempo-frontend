@@ -1,6 +1,9 @@
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import { getMCHTeam } from "@/constants/teamsMCH";
+import { getNHLTeam } from "@/constants/teamsNHL";
+import { getWCHTeam } from "@/constants/teamsWCH";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
@@ -15,11 +18,11 @@ import {
   safeDate,
 } from "@/utils/common/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Colors } from "constants/styles";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { Colors, globalStyles } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
+import { resolveImage } from "utils/customheader/utils";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -32,16 +35,12 @@ import GamePreviewContent from "./GamePreviewContent";
 
 type Props = {
   game: HockeyGame;
-  isNHL: boolean;
-  isMCH: boolean;
   visible: boolean;
   onClose: () => void;
 };
 
 export default function HockeyGamePreviewModal({
   game,
-  isNHL = false,
-  isMCH = false,
   visible,
   onClose,
 }: Props) {
@@ -63,16 +62,24 @@ export default function HockeyGamePreviewModal({
   const away = game.away;
   const awayId = away.id;
   const homeId = home.id;
-  const homeTeam = getNHLTeam(homeId) ?? emptyHomeTeam;
-  const awayTeam = getNHLTeam(awayId) ?? emptyAwayTeam;
+  const getTeam =
+    LEAGUE === "mch" ? getMCHTeam : LEAGUE === "wch" ? getWCHTeam : getNHLTeam;
+  const localHome = getTeam(homeId);
+  const localAway = getTeam(awayId);
+
   const homeLogo =
-    homeTeam.id === emptyHomeTeam.id
-      ? emptyHomeTeam.logo
-      : getNHLTeamLogo(homeId, true);
+    resolveImage(
+      (isDark && (home.logoDark || localHome?.logoLight)) ||
+        home.logo ||
+        localHome?.logo,
+    ) ?? emptyHomeTeam.logo;
+
   const awayLogo =
-    awayTeam.id === emptyAwayTeam.id
-      ? emptyAwayTeam.logo
-      : getNHLTeamLogo(awayId, true);
+    resolveImage(
+      (isDark && (away.logoDark || localAway?.logoLight)) ||
+        away.logo ||
+        localAway?.logo,
+    ) ?? emptyAwayTeam.logo;
 
   // Modal open/close
   useEffect(() => {
@@ -80,24 +87,29 @@ export default function HockeyGamePreviewModal({
     else sheetRef.current?.dismiss();
   }, [visible]);
 
-  const awayCode = awayTeam.code ?? "TBD";
-  const homeCode = homeTeam.code ?? "TBD";
-  const awayName = awayTeam.name ?? "TBD";
-  const homeName = homeTeam.name ?? "TBD";
+  const awayCode = game.away.code ?? "TBD";
+  const homeCode = game.home.code ?? "TBD";
+  const awayName = game.away.shortName ?? game.away.name ?? "TBD";
+  const homeName = game.home.shortName ?? game.home.name ?? "TBD";
 
-  const homeColor = homeTeam.primaryColor ?? Colors.midTone;
-  const awayColor = awayTeam.primaryColor ?? Colors.midTone;
+  const homeColor = game.home.primaryColor ?? Colors.midTone;
+  const awayColor = game.away.primaryColor ?? Colors.midTone;
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
   const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
-  const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
+  const { details, score, warning, refresh } = useHockeyGameDetails(
+    LEAGUE,
+    gameId,
+  );
 
+  const isHomeActive = homeTeamDetails?.isActive ?? false;
+  const isAwayActive = awayTeamDetails?.isActive ?? false;
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const isLoading = !!details;
+  const global = globalStyles(isDark);
 
   const isChampionship = headline?.includes("Stanley Cup Final");
   const styles = GamePreviewModalStyles({
@@ -191,7 +203,18 @@ export default function HockeyGamePreviewModal({
         <View style={styles.rightCircle} />
 
         <BlurView intensity={100} style={styles.blurViewContainer}>
-          {!isLoading ? (
+          {!details && warning ? (
+            <View style={styles.loadingContainer}>
+              <Text style={global.errorText}>Couldn’t load game details</Text>
+              <Text
+                accessibilityRole="button"
+                style={global.text}
+                onPress={refresh}
+              >
+                Try again
+              </Text>
+            </View>
+          ) : !details ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
             </View>
@@ -204,7 +227,7 @@ export default function HockeyGamePreviewModal({
                 {/* Away Team Row */}
                 <TeamRow
                   id={awayId}
-                  isActive={awayTeam.isActive}
+                  isActive={isAwayActive}
                   name={awayCode}
                   logo={awayLogo}
                   rank={awayRank}
@@ -233,7 +256,7 @@ export default function HockeyGamePreviewModal({
                 {/* Home Team Row */}
                 <TeamRow
                   id={homeId}
-                  isActive={homeTeam.isActive}
+                  isActive={isHomeActive}
                   name={homeCode}
                   logo={homeLogo}
                   rank={homeRank}

@@ -1,11 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { useReducedMotion } from "hooks/useReducedMotion";
 import { BlurView } from "expo-blur";
-import { memo, useContext, useEffect, useMemo, useState } from "react";
-import { Animated, StyleSheet, TouchableOpacity } from "react-native";
+import { memo, useEffect, useMemo, useState } from "react";
+import { Animated, Platform, StyleSheet, TouchableOpacity } from "react-native";
 
 type Props = {
   isOpen: boolean;
@@ -23,11 +22,7 @@ function FloatingButton({
   const reduceMotion = useReducedMotion();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const navigationBarInset = useContext(NavigationBarInsetContext);
-  const styles = useMemo(
-    () => FloatingButtonStyles(isDark, navigationBarInset),
-    [isDark, navigationBarInset],
-  );
+  const styles = useMemo(() => FloatingButtonStyles(isDark), [isDark]);
   const [opacityAnim] = useState(() => new Animated.Value(isOpen ? 0 : 1));
 
   useEffect(() => {
@@ -51,7 +46,7 @@ function FloatingButton({
         },
       ]}
     >
-      <TouchableOpacity
+      <TouchableOpacity accessibilityState={{ disabled: isOpen }}
         disabled={isOpen}
         focusable={!isOpen}
         style={styles.floatingButton}
@@ -77,7 +72,7 @@ function FloatingButton({
 
 export default memo(FloatingButton);
 
-const FloatingButtonStyles = (isDark: boolean, navigationBarInset: number) =>
+const FloatingButtonStyles = (isDark: boolean) =>
   StyleSheet.create({
     floatingButtonWrapper: {
       position: "absolute",
@@ -100,12 +95,10 @@ const FloatingButtonStyles = (isDark: boolean, navigationBarInset: number) =>
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.white : Colors.black,
       shadowColor: Colors.black,
-      shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-      shadowOpacity: isDark ? 0.5 : 0.3,
-      shadowRadius: 4.65,
+      boxShadow:
+        Platform.OS === "android"
+          ? undefined
+          : `0px 3px 9.3px ${Colors.black}${isDark ? "80" : "4d"}`,
       elevation: 7,
     },
 

@@ -106,11 +106,11 @@ export const PostItem = memo(function PostItem({
         <View style={styles.postFooter}>
           {isEditing && (
             <View style={styles.editActionsContainer}>
-              <TouchableOpacity style={styles.button} onPress={onSaveEdit}>
+              <TouchableOpacity accessibilityRole="button" style={styles.button} onPress={onSaveEdit}>
                 <Text style={styles.saveText}>Save</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.button} onPress={onCancelEdit}>
+              <TouchableOpacity accessibilityRole="button" style={styles.button} onPress={onCancelEdit}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
             </View>

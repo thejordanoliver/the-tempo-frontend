@@ -1,3 +1,8 @@
+import {
+  getRouteGameId,
+  getRouteLeague,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   FanPrediction,
@@ -12,6 +17,7 @@ import {
   TeamInjuries,
   Venue,
 } from "@/components/Sports/Basketball/GameDetails";
+import Odds from "@/components/Sports/Basketball/GameDetails/Odds";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
@@ -43,7 +49,6 @@ import GameSummary from "components/Sports/Football/GameDetails/GameSummary";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
@@ -67,57 +72,6 @@ type RouteParams = {
 
 type FootballGame = FootballGameCardProps["game"];
 
-function getFirstParam(value?: string | string[]) {
-  if (Array.isArray(value)) return value[0];
-  return value;
-}
-
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): FootballGame | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // Dynamic route params are often just the game id.
-  // Only JSON strings should be parsed into a full game object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as FootballGame;
-  } catch {
-    return undefined;
-  }
-}
-
-function getRouteGameId(value?: string | string[]) {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return null;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-  return decodedValue && !decodedValue.startsWith("{") ? decodedValue : null;
-}
-
-function getRouteLeague(value?: string | string[]) {
-  const league = getFirstParam(value)?.trim().toLowerCase();
-  return league && /^[a-z0-9][a-z0-9._-]*$/.test(league) ? league : null;
-}
-
 export default function GameDetailsScreen(
   props: Partial<FootballGameCardProps> = {},
 ) {
@@ -130,57 +84,32 @@ export default function GameDetailsScreen(
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
-  const routeGame = useMemo(() => {
+  const game = useMemo(() => {
     return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+      props.game ??
+      parseGameParam<FootballGame>(params.data) ??
+      parseGameParam<FootballGame>(params.game)
     );
   }, [params.data, params.game, props.game]);
 
   const LEAGUE = (
-    routeGame?.league?.code ??
+    game?.league?.code ??
     getRouteLeague(params.league) ??
     "nfl"
   ).toLowerCase();
   const isCFB = LEAGUE === "cfb";
   const isNFL = LEAGUE === "nfl";
 
-  const rawGameId = routeGame?.id ?? getRouteGameId(params.game);
+  const rawGameId = game?.id ?? getRouteGameId(params.game);
   const parsedGameId = Number(rawGameId);
   const gameId = Number.isFinite(parsedGameId) ? parsedGameId : 0;
   const { score, details, loading } = useFootballGameDetails(LEAGUE, gameId);
 
-  const game = useMemo(() => {
-    if (routeGame) return routeGame;
-    if (!score) return undefined;
-
-    return {
-      id: Number(score.gameId),
-      date: score.date,
-      league: { code: LEAGUE },
-      home: {
-        ...score.home,
-        logo: score.home.logo ?? "",
-        primaryColor: score.home.color,
-        conferenceId: null,
-      },
-      away: {
-        ...score.away,
-        logo: score.away.logo ?? "",
-        primaryColor: score.away.color,
-        conferenceId: null,
-      },
-      situation: { isRedZone: false },
-    };
-  }, [LEAGUE, routeGame, score]);
-
-  const gameDateObj = useMemo(() => {
-    return game?.date ? new Date(game.date) : null;
-  }, [game]);
-
+  const chatDate = score?.date || game?.date;
+  const gameDateObj = chatDate ? new Date(chatDate) : null;
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
-  const showGameChat = useGameChatAvailability(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
 
   const home = game?.home;
@@ -340,6 +269,13 @@ export default function GameDetailsScreen(
 
   const downDistance = currentDrives[0]?.end?.downDistanceText;
 
+  const odds =
+    details?.odds === undefined
+      ? game?.odds
+      : Array.isArray(details.odds)
+        ? null
+        : details.odds;
+
   const homeHasPossession = score?.home?.possession ?? false;
   const awayHasPossession = score?.away?.possession ?? false;
 
@@ -472,6 +408,7 @@ export default function GameDetailsScreen(
       <ScrollView
         contentContainerStyle={navigationContentStyle(styles.container)}
         onScrollBeginDrag={handleScrollStart}
+        onScrollEndDrag={handleScrollEnd}
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
@@ -586,6 +523,18 @@ export default function GameDetailsScreen(
               state={state}
             />
 
+            <Odds
+              homeId={homeId}
+              homeCode={homeCode}
+              homeLogo={homeLogo}
+              awayId={awayId}
+              awayCode={awayCode}
+              awayLogo={awayLogo}
+              odds={odds}
+              isDark={isDark}
+              state={state}
+            />
+
             <GameLeaders
               leaders={leaders}
               awayId={awayId}
@@ -669,6 +618,8 @@ export default function GameDetailsScreen(
               awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
               homeGames={homeLastGames}
               awayGames={awayLastGames}
               league={LEAGUE}
@@ -720,16 +671,16 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      {!dontShowDetails && showGameChat && (
+      {!dontShowDetails && gameDateObj && (
         <GameLiveChatOverlay
           context={{
             sport: "football",
             league: LEAGUE,
-            date: gameDateObj?.toISOString(),
+            date: gameDateObj.toJSON() ?? undefined,
           }}
           gameId={String(gameId)}
           opacityAnim={opacityAnim}
-          state={state}
+          isLive={state === "in"}
         />
       )}
     </>

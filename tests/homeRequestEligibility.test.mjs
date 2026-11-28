@@ -16,6 +16,11 @@ const game = (id = "game") => ({
 const response = (id) => ({
   data: { games: [game(id)], events: [game(id)], matches: [game(id)] },
 });
+const { BROWSEABLE_LEAGUES, LEAGUE_CONFIG } = sportsHookHarness().load(
+  "constants/leagues.ts",
+);
+const leagueCount = BROWSEABLE_LEAGUES.length;
+const requestLeague = ({ url }) => url.split("/").at(-1);
 
 function setup(
   preferences = {},
@@ -48,7 +53,6 @@ function setup(
     "./useForYouFeed": {
       useForYouFeed: () => ({ loading: false, refresh: async () => {} }),
     },
-    "@/utils/common/dateUtils": { filterByDate: (games) => games },
     "utils/games/games": {
       normalizeGames: (games) => games,
       isGameLive: (game) => game.status?.state === "in",
@@ -89,11 +93,11 @@ function setup(
 }
 
 for (const [name, preferences, expected] of [
-  ["general Home", {}, 28],
+  ["general Home", {}, leagueCount],
   [
     "guest waiting for authenticated-only sports preferences",
     { userId: null, favoriteSportsReady: false },
-    28,
+    leagueCount,
   ],
   ["one favorite team", { favorites: ["nba:1"] }, 1],
   [
@@ -103,12 +107,15 @@ for (const [name, preferences, expected] of [
   ],
   ["preferences loading", { favoriteSportsReady: false }, 0],
   ["favorite teams loading", { ready: false }, 0],
-  ["loaded empty favorites", { favorites: [], favoriteSports: [] }, 28],
-  ["unsupported Home league", { favoriteSports: ["f1"] }, 0],
+  [
+    "loaded empty favorites",
+    { favorites: [], favoriteSports: [] },
+    leagueCount,
+  ],
   [
     "preference failure falls back without a permanent loader",
     { favoriteSportsReady: false, favoriteSportsError: "offline" },
-    28,
+    leagueCount,
   ],
 ]) {
   test(`${name}: requests ${expected} league feeds without rerender duplicates`, async () => {
@@ -123,6 +130,9 @@ for (const [name, preferences, expected] of [
       h.settle();
       await flush();
       if (expected) assert.equal(h.state.loading, false);
+      if (expected === leagueCount) {
+        assert.deepEqual(h.activeLeagues(), [...BROWSEABLE_LEAGUES].sort());
+      }
     } finally {
       h.stop();
     }
@@ -133,8 +143,14 @@ test("soccer team favorites retain all existing Home soccer competitions", async
   const h = setup({ favorites: ["socc:1"] });
   try {
     await flush();
-    assert.equal(h.requests.length, 12);
     assert.ok(h.requests.every(({ url }) => url.includes("/soccer/")));
+    const soccerLeagues = Array.from(BROWSEABLE_LEAGUES).filter(
+      (league) => LEAGUE_CONFIG[league].route === "/league/soccer",
+    );
+    assert.deepEqual(
+      h.requests.map(requestLeague).sort(),
+      soccerLeagues.sort(),
+    );
   } finally {
     h.stop();
   }
@@ -212,33 +228,37 @@ test("eligibility changes abort requests and ignore late results, including clie
   }
 });
 
-test("account switch masks retained results immediately and isolates late refresh responses", async () => {
-  const h = setup({ favoriteSports: ["nba"] });
-  try {
-    await flush();
-    h.settle("account-one");
-    await flush();
-    const pending = h.state.handleRefresh();
-    await flush();
-    const oldRefresh = h.requests.at(-1);
-    h.favorites.userId = 2;
-    h.update();
-    assert.equal(h.state.homeGameSections.length, 0);
-    await flush();
-    assert.equal(oldRefresh.config.signal.aborted, true);
-    h.requests.at(-1).resolve(response("account-two"));
-    await flush();
-    oldRefresh.resolve(response("account-one-late"));
-    await pending;
-    await flush();
-    assert.ok(JSON.stringify(h.state.homeGameSections).includes("account-two"));
-    assert.ok(
-      !JSON.stringify(h.state.homeGameSections).includes("account-one"),
-    );
-  } finally {
-    h.stop();
-  }
-});
+for (const league of ["nba", "f1"]) {
+  test(`${league}: account switch masks retained results immediately and isolates late refresh responses`, async () => {
+    const h = setup({ favoriteSports: [league] });
+    try {
+      await flush();
+      h.settle("account-one");
+      await flush();
+      const pending = h.state.handleRefresh();
+      await flush();
+      const oldRefresh = h.requests.at(-1);
+      h.favorites.userId = 2;
+      h.update();
+      assert.equal(h.state.homeGameSections.length, 0);
+      await flush();
+      assert.equal(oldRefresh.config.signal.aborted, true);
+      h.requests.at(-1).resolve(response("account-two"));
+      await flush();
+      oldRefresh.resolve(response("account-one-late"));
+      await pending;
+      await flush();
+      assert.ok(
+        JSON.stringify(h.state.homeGameSections).includes("account-two"),
+      );
+      assert.ok(
+        !JSON.stringify(h.state.homeGameSections).includes("account-one"),
+      );
+    } finally {
+      h.stop();
+    }
+  });
+}
 
 test("pull-to-refresh preserves content and refreshes only required feeds once", async () => {
   const h = setup({ favorites: ["nba:1"], favoriteSports: ["nfl"] });
@@ -330,7 +350,7 @@ test("general empty results keep the existing upcoming-date search across all le
     await new Promise((resolve) => setTimeout(resolve, 300));
     await flush();
     assert.ok(h.state.selectedDate.getTime() > initialDay);
-    assert.equal(h.requests.length, 56);
+    assert.equal(h.requests.length, leagueCount * 2);
     h.settle();
     await flush();
     assert.equal(h.state.loading, false);
@@ -372,3 +392,109 @@ for (const league of ["cb", "sb"]) {
     }
   });
 }
+
+test("Home fetches, displays, and refreshes its newly supported leagues", async () => {
+  const leagues = ["gleague", "fifaw", "f1", "nascarpremier"];
+  const routes = [
+    "api/games/basketball/gleague",
+    "api/games/soccer/fifaw",
+    "api/games/racing/f1",
+    "api/games/racing/nascarpremier",
+  ].sort();
+  const h = setup({ favoriteSports: leagues });
+  const sessionDate = (dayOffset) => {
+    const date = new Date(h.state.selectedDate);
+    date.setDate(date.getDate() + dayOffset);
+    date.setHours(12, 0, 0, 0);
+    return date.toISOString();
+  };
+
+  const fulfill = (request, suffix) => {
+    const league = requestLeague(request);
+    const id = `${league}-${suffix}`;
+    if (request.url.includes("/racing/")) {
+      request.resolve({
+        data: {
+          events: [
+            {
+              id: `${league}-weekend`,
+              name: `${league} weekend`,
+              competitions: [
+                {
+                  id,
+                  type: { text: "Race" },
+                  startDate: sessionDate(0),
+                  status: { state: "pre" },
+                  drivers: [],
+                },
+                {
+                  id: `${id}-tomorrow`,
+                  type: { text: "Practice" },
+                  startDate: sessionDate(1),
+                  status: { state: "pre" },
+                  drivers: [],
+                },
+              ],
+            },
+          ],
+        },
+      });
+    } else {
+      request.resolve(response(id));
+    }
+  };
+
+  try {
+    await flush();
+    assert.deepEqual(
+      h.requests.map(({ url }) => url.replace(/^\//, "")).sort(),
+      routes,
+    );
+    const { selectedDate } = h.state;
+    const dateParam = [
+      selectedDate.getFullYear(),
+      String(selectedDate.getMonth() + 1).padStart(2, "0"),
+      String(selectedDate.getDate()).padStart(2, "0"),
+    ].join("");
+    for (const { config } of h.requests.filter(({ url }) =>
+      url.includes("/racing/"),
+    )) {
+      assert.equal(config.params.date, dateParam);
+    }
+    assert.equal(h.state.loading, true);
+    h.requests.slice(0, -1).forEach((request) => fulfill(request, "initial"));
+    await flush();
+    assert.equal(h.state.loading, true);
+    fulfill(h.requests.at(-1), "initial");
+    await flush();
+    assert.equal(h.state.loading, false);
+    assert.deepEqual(h.activeLeagues(), [...leagues].sort());
+
+    function assertSections(suffix) {
+      const sections = Array.from(h.state.homeGameSections, (section) => [
+        section.id,
+        Array.from(section.data, ({ game }) => game.id),
+      ]);
+      assert.deepEqual(
+        sections,
+        leagues.map((league) => [league, [`${league}-${suffix}`]]),
+      );
+    }
+
+    assertSections("initial");
+    const refresh = h.state.handleRefresh();
+    await flush();
+    const refreshRequests = h.requests.slice(routes.length);
+    assert.deepEqual(
+      refreshRequests.map(({ url }) => url.replace(/^\//, "")).sort(),
+      routes,
+    );
+    assertSections("initial");
+    refreshRequests.forEach((request) => fulfill(request, "refresh"));
+    await refresh;
+    await flush();
+    assertSections("refresh");
+  } finally {
+    h.stop();
+  }
+});

@@ -21,11 +21,11 @@ import {
   View,
 } from "react-native";
 
+import LabeledInput from "@/components/Inputs/LabeledInput";
 import Button from "components/Buttons/Button";
 import ConfirmModal from "components/ConfirmModal";
 import CropEditorModal from "components/CropEditorModal";
 import { CustomHeader } from "components/CustomHeader";
-import LabeledInput from "components/LabeledInput";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";

@@ -24,6 +24,7 @@ import {
   DefaultTheme as NavigationLightTheme,
   Stack,
   ThemeProvider,
+  useGlobalSearchParams,
   usePathname,
 } from "expo-router";
 import {
@@ -111,6 +112,7 @@ function BadgeRealtimeBridge({
 
 function AppLayout() {
   const pathname = usePathname();
+  const { league: routeLeague } = useGlobalSearchParams<{ league?: string }>();
 
   const { resolvedColorScheme } = usePreferences();
 
@@ -219,7 +221,7 @@ function AppLayout() {
     if (pathname?.startsWith("/team/")) {
       void refreshTeamSubscriptions();
     }
-  }, [pathname, refreshTeamSubscriptions]);
+  }, [pathname, routeLeague, refreshTeamSubscriptions]);
 
   useEffect(() => {
     if (!loadingUser && !checkingStoredSession) {
@@ -241,7 +243,7 @@ function AppLayout() {
         userId={user?.id}
       >
         <Stack
-          screenOptions={({ route, navigation }) => {
+          screenOptions={({ route }) => {
             const isTabScreen = route.name === "(tabs)";
 
             const isSplashScreen =
@@ -259,15 +261,13 @@ function AppLayout() {
               headerShown: !isSplashScreen && !isTabScreen,
 
               header: !isSplashScreen
-                ? ({ options }) =>
+                ? ({ back, navigation, options }) =>
                     route.name.startsWith("league/") ? (
                       <GameHeaderPlaceholder />
                     ) : (
                       <CustomHeader
                         title={options.title ?? route.name}
-                        onBack={
-                          navigation.canGoBack() ? navigation.goBack : undefined
-                        }
+                        onBack={back ? navigation.goBack : undefined}
                       />
                     )
                 : undefined,

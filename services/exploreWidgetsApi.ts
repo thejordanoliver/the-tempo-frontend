@@ -31,6 +31,8 @@ const WIDGET_SPORTS: Record<ExploreWidgetLeague, ExploreWidgetGame["sport"]> = {
   cfb: "football",
   ufl: "football",
   nhl: "hockey",
+  mch: "hockey",
+  wch: "hockey",
   mcvb: "volleyball",
   wcvb: "volleyball",
 };

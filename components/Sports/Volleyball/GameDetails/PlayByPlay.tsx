@@ -1,7 +1,7 @@
-import { Text, View } from "react-native";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { Text, View } from "react-native";
+import { LastPlayStyles } from "@/styles/GameDetailStyles/LastPlayStyles";
 import { PlayByPlayStyles } from "styles/GameDetailStyles/PlayByPlayStyles";
-import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 import type { VolleyballPlay } from "types/volleyball/volleyball";
 
 export default function PlayByPlay({
@@ -11,7 +11,7 @@ export default function PlayByPlay({
   plays: VolleyballPlay[];
   isDark: boolean;
 }) {
-  const styles = lastPlayStyles(isDark);
+  const styles = LastPlayStyles(isDark);
   const playStyles = PlayByPlayStyles(isDark);
   if (!plays.length) return null;
   const recentPlays = plays.slice(-20).reverse();

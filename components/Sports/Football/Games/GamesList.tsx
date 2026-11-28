@@ -329,7 +329,7 @@ export default function GamesList({
       {viewMode === "grid" ? (
         <SectionList
           sections={gridSections}
-          keyExtractor={(item, index) => `row-${index}`}
+          keyExtractor={(_item, index) => `row-${index}`}
           renderItem={renderGridRow}
           ListHeaderComponent={
             showHeaders && showCountdown && countdownGame ? (
