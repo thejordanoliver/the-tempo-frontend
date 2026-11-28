@@ -1,4 +1,7 @@
-import { parseGameParam } from "utils/navigation/gameRouteParams";
+import {
+  getFirstParam,
+  parseGameParam,
+} from "utils/navigation/gameRouteParams";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import {
   GameLiveChatOverlay,
@@ -16,6 +19,7 @@ import { useLayoutEffect, useMemo } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { resolveRacingLeague } from "utils/customheader/racingConfig";
 
 type RouteParams = {
   game?: string | string[];
@@ -50,7 +54,13 @@ export default function GameDetailsScreen(
   }, [game]);
 
   const gameId = game?.id;
-  const drivers = game?.drivers ?? [];
+  const drivers = game?.drivers ?? game?.competitors ?? [];
+  const league =
+    resolveRacingLeague(
+      game?.league,
+      game?.leagueInfo?.key,
+      getFirstParam(params.league),
+    ) ?? "f1";
 
   const gameStatusDescription = game?.status?.description ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -99,7 +109,9 @@ export default function GameDetailsScreen(
       >
         <DriversHeader
           drivers={drivers}
-          gameStatusDescription={gameStatusDescription}
+          league={league}
+          status={game.driverCompetition?.status ?? game.status}
+          sessionName={game.driverCompetition?.type?.text}
           isDark={isDark}
         />
 

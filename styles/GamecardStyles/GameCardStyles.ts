@@ -289,6 +289,7 @@ export const RacingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     : Colors.light.itemBackground;
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
+  const live = isDark ? Colors.dark.green : Colors.light.green;
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
   const borderColor = isDark ? Colors.lightGray : Colors.darkGray;
   const goldColor = isDark ? Colors.dark.gold : Colors.light.gold;
@@ -369,7 +370,7 @@ export const RacingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        🏁 EVENT / TRACK
     ========================= */
     eventName: {
-      fontFamily: Fonts.BOLD,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       color: textColor,
     },
@@ -424,7 +425,6 @@ export const RacingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     leaderImageContainer: {
-      borderWidth: 1.5,
       borderColor: goldColor,
     },
 
@@ -511,11 +511,26 @@ export const RacingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       textAlign: "center",
     },
 
+    statusText: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: textColor,
+      textAlign: "center",
+    },
+
     liveText: {
       fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: accentRed,
       textAlign: "center",
+    },
+
+    statusDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      marginRight: 4,
+      backgroundColor: live,
     },
 
     scheduledText: {

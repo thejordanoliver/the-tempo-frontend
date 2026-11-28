@@ -237,14 +237,15 @@ for (const tab of ["home", "league", "explore", "profile"]) {
     );
     const stack = Layout();
     assert.equal(stack.type, Stack);
-    const back = () => {};
-    const headerFor = (name, title) =>
+    const goBack = () => {};
+    const navigation = {
+      goBack,
+      canGoBack: () => assert.fail("Header must use the stack's back prop"),
+    };
+    const headerFor = (name, title, back) =>
       stack.props
-        .screenOptions({
-          route: { name },
-          navigation: { canGoBack: () => true, goBack: back },
-        })
-        .header({ options: { title } });
+        .screenOptions({ route: { name }, navigation })
+        .header({ back, navigation, options: { title } });
 
     for (const route of [
       "game/football/[game]",
@@ -257,10 +258,16 @@ for (const tab of ["home", "league", "explore", "profile"]) {
     ]) {
       assert.equal(headerFor(route).type, GameHeaderPlaceholder);
     }
-    const messages = headerFor("messages/index", "Messages");
+    const messages = headerFor("messages/index", "Messages", {
+      title: "Previous screen",
+    });
     assert.equal(messages.type, CustomHeader);
     assert.equal(messages.props.title, "Messages");
-    assert.equal(messages.props.onBack, back);
+    assert.equal(messages.props.onBack, goBack);
+    assert.equal(
+      headerFor("messages/index", "Messages").props.onBack,
+      undefined,
+    );
   });
 }
 

@@ -5,6 +5,7 @@ import type { BaseballGame } from "./baseball/baseball";
 import type { BasketballGame } from "./basketball/basketball";
 import type { FootballGame } from "./football/football";
 import type { HockeyGame } from "./hockey/hockey";
+import type { RacingEvent } from "./racing/racing";
 import type { SoccerGame } from "./soccer/soccer";
 import type { TennisMatch } from "./tennis/tennis";
 
@@ -22,6 +23,7 @@ export type LeagueGame = (
   | SoccerGame
   | TennisMatch
   | MMAFight
+  | RacingEvent
 ) & { matchupPriority?: MatchupPriority | null };
 
 export type HomeLeagueSource = {

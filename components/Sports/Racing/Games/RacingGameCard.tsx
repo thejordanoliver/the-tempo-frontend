@@ -1,5 +1,4 @@
 import { RacingDriver, RacingEventCardProps } from "@/types/racing/racing";
-import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -109,14 +108,17 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
     .slice(0, 3);
 
   const gameStatusDescription = game.status?.description ?? null;
-  const gameStatusDetail = game.status?.shortDetail;
+  const gameStatusDetail = game.status?.detail;
+
+  const state = game.status?.state;
   const tbd = gameStatusDetail?.includes("TBD") ? "TBD" : null;
-  const isFinal = gameStatusDescription === "Final";
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
+  const isScheduled = state === "pre";
+  const inProgress = state === "in";
+  const isFinal = state === "post";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
+  const endOfSession = gameStatusDescription === "End of Session";
 
   const sessionType =
     game.primaryCompetition?.type ??
@@ -131,10 +133,10 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
     getBroadcastDisplay(game.broadcasts) || game.broadcast || null;
 
   const renderStatus = () => {
-    if (inProgress) {
+    if (endOfSession) {
       return (
         <Text style={styles.finalText} numberOfLines={1}>
-          {gameStatusDetail || "Live"}
+          {gameStatusDetail}
         </Text>
       );
     }
@@ -142,8 +144,19 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
     if (isDelayed || isCanceled || isPostponed) {
       return (
         <Text style={styles.finalText} numberOfLines={1}>
-          {gameStatusDescription || gameStatusDetail}
+          {gameStatusDescription}
         </Text>
+      );
+    }
+
+    if (inProgress) {
+      return (
+        <>
+          <View style={styles.statusDot} />
+          <Text style={styles.statusText} numberOfLines={1}>
+            {gameStatusDetail}
+          </Text>
+        </>
       );
     }
 
@@ -151,16 +164,10 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText} numberOfLines={1}>
-            {gameStatusDetail || "Final"}
+            {gameStatusDetail}
           </Text>
-
-          {formattedDate ? (
-            <>
-              <View style={styles.finalStatusDivider} />
-
-              <Text style={styles.finalText}>{formattedDate}</Text>
-            </>
-          ) : null}
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       );
     }
@@ -168,35 +175,9 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
     if (isScheduled) {
       return (
         <View style={styles.infoWrapper}>
-          {formattedDate ? (
-            <Text style={styles.date}>{formattedDate}</Text>
-          ) : null}
-
-          {formattedDate && (tbd || formattedTime) ? (
-            <View style={styles.statusDivider} />
-          ) : null}
-
-          {tbd || formattedTime ? (
-            <Text style={styles.date}>{tbd || formattedTime}</Text>
-          ) : null}
-        </View>
-      );
-    }
-
-    if (formattedDate || tbd || formattedTime) {
-      return (
-        <View style={styles.infoWrapper}>
-          {formattedDate ? (
-            <Text style={styles.date}>{formattedDate}</Text>
-          ) : null}
-
-          {formattedDate && (tbd || formattedTime) ? (
-            <View style={styles.statusDivider} />
-          ) : null}
-
-          {tbd || formattedTime ? (
-            <Text style={styles.date}>{tbd || formattedTime}</Text>
-          ) : null}
+          <Text style={styles.date}>{formattedDate}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{tbd || formattedTime}</Text>
         </View>
       );
     }
@@ -206,12 +187,9 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
 
   const renderDriverRow = (driver: RacingDriver, index: number) => {
     const isLast = index === topDrivers.length - 1;
-
     const position = driver.position ?? index + 1;
-
     const isLeader = position === 1;
     const gap = getDriverGap(driver);
-
     const driverName = driver.shortName ?? driver.fullName ?? "Unknown Driver";
 
     return (
@@ -276,19 +254,10 @@ export default function RacingGameCard({ game }: RacingEventCardProps) {
     return (
       <View style={styles.driverList}>
         <View style={[styles.driverRow, styles.lastDriverRow]}>
-          <View style={styles.positionContainer}>
-            <Ionicons
-              name="car-sport-outline"
-              size={18}
-              color={styles.statusIcon.color}
-            />
-          </View>
-
           <View style={styles.driverInfoWrapper}>
             <Text style={styles.driverName} numberOfLines={1}>
               {title}
             </Text>
-
             <Text style={styles.teamName} numberOfLines={2}>
               {description}
             </Text>

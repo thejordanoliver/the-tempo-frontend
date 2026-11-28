@@ -5,9 +5,16 @@ import {
   Fonts,
   MIN_TOUCH_TARGET,
 } from "constants/styles";
-import { BlurView } from "expo-blur";
+import { BlurTargetView, BlurView } from "expo-blur";
 import { useReducedMotion } from "hooks/useReducedMotion";
-import { useMemo, useState } from "react";
+import {
+  useMemo,
+  useRef,
+  useState,
+  type ComponentProps,
+  type ComponentRef,
+  type ReactNode,
+} from "react";
 import {
   Animated,
   Platform,
@@ -16,6 +23,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  type LayoutRectangle,
+  type ScrollViewInstance,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
@@ -35,6 +44,10 @@ type DropdownProps = {
   isDark: boolean;
   width?: number;
   style?: StyleProp<ViewStyle>;
+  triggerIcon?: ComponentProps<typeof Ionicons>["name"];
+  labelLines?: number;
+  scrollToSelected?: boolean;
+  children?: ReactNode;
 };
 
 export default function Dropdown({
@@ -45,12 +58,24 @@ export default function Dropdown({
   isDark,
   width = 180,
   style,
+  triggerIcon,
+  labelLines = 1,
+  scrollToSelected = false,
+  children,
 }: DropdownProps) {
   const reduceMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
   const [visibleOptionCount, setVisibleOptionCount] =
     useState(OPTION_BATCH_SIZE);
   const [anim] = useState(() => new Animated.Value(0));
+  const blurTarget = useRef<ComponentRef<typeof BlurTargetView>>(null);
+  const optionsScroll = useRef<ScrollViewInstance>(null);
+  const [anchor, setAnchor] = useState<LayoutRectangle | null>(null);
+  const hasContent = children != null;
+  const useAndroidBlur = hasContent && Platform.OS === "android";
+  const selectedIndex = options.findIndex(
+    (option) => option.value === selectedValue,
+  );
 
   const styles = DropdownStyles({
     isDark,
@@ -79,7 +104,11 @@ export default function Dropdown({
   const openDropdown = () => {
     anim.stopAnimation();
 
-    setVisibleOptionCount(OPTION_BATCH_SIZE);
+    setVisibleOptionCount(
+      scrollToSelected
+        ? selectedIndex + 1 + OPTION_BATCH_SIZE
+        : OPTION_BATCH_SIZE,
+    );
     setVisible(true);
 
     Animated.timing(anim, {
@@ -118,12 +147,11 @@ export default function Dropdown({
   };
 
   const selectedLabel =
-    options.find((option) => option.value === selectedValue)?.label ??
-    options[0]?.label ??
-    "";
+    options[selectedIndex]?.label ?? options[0]?.label ?? "";
 
   const renderOptions = () => (
     <ScrollView
+      ref={optionsScroll}
       style={styles.optionsScrollView}
       contentContainerStyle={styles.optionsContent}
       showsVerticalScrollIndicator={false}
@@ -157,6 +185,16 @@ export default function Dropdown({
             accessibilityState={{ selected: isSelected }}
             activeOpacity={activeOpacity}
             onPress={() => handleSelect(option.value)}
+            onLayout={
+              scrollToSelected && isSelected
+                ? ({ nativeEvent }) => {
+                    optionsScroll.current?.scrollTo({
+                      y: nativeEvent.layout.y,
+                      animated: false,
+                    });
+                  }
+                : undefined
+            }
             style={[
               styles.optionButton,
               !isLast && styles.optionBorder,
@@ -168,7 +206,7 @@ export default function Dropdown({
                 styles.optionText,
                 isSelected && styles.selectedOptionText,
               ]}
-              numberOfLines={1}
+              numberOfLines={labelLines}
             >
               {option.label}
             </Text>
@@ -186,54 +224,98 @@ export default function Dropdown({
     </ScrollView>
   );
 
+  const trigger = (
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityValue={{ text: selectedLabel }}
+      aria-expanded={visible}
+      onPress={toggleDropdown}
+      style={styles.toggleButton}
+    >
+      {triggerIcon && (
+        <Ionicons
+          name={triggerIcon}
+          size={18}
+          color={isDark ? Colors.dark.text : Colors.light.text}
+          style={styles.triggerIcon}
+          aria-hidden
+        />
+      )}
+      <Text style={styles.selectedLabel} numberOfLines={labelLines}>
+        {selectedLabel}
+      </Text>
+
+      <Animated.View
+        style={[
+          styles.chevronContainer,
+          {
+            transform: [{ rotate }],
+          },
+        ]}
+      >
+        <Ionicons
+          name="chevron-down"
+          size={20}
+          color={isDark ? Colors.white : Colors.black}
+        />
+      </Animated.View>
+    </TouchableOpacity>
+  );
+
+  const panel =
+    visible && (!hasContent || anchor) ? (
+      <Animated.View
+        onAccessibilityEscape={closeDropdown}
+        style={[
+          styles.dropdownPanel,
+          hasContent &&
+            anchor && {
+              left: anchor.x,
+              top: anchor.y + anchor.height,
+            },
+          {
+            transform: [{ translateY }],
+          },
+        ]}
+      >
+        <View style={styles.fallbackSurface}>
+          <BlurView
+            intensity={100}
+            tint={isDark ? "dark" : "light"}
+            pointerEvents="none"
+            blurMethod={useAndroidBlur ? "dimezisBlurViewSdk31Plus" : undefined}
+            blurTarget={useAndroidBlur ? blurTarget : undefined}
+            style={StyleSheet.absoluteFill}
+          />
+          {renderOptions()}
+        </View>
+      </Animated.View>
+    ) : null;
+
+  if (hasContent) {
+    // Keep the panel within the screen's touch bounds and above the content it blurs.
+    return (
+      <View style={styles.contentArea}>
+        <BlurTargetView ref={blurTarget} style={styles.contentArea}>
+          <View
+            onLayout={({ nativeEvent }) => setAnchor(nativeEvent.layout)}
+            style={[{ width }, style]}
+          >
+            {trigger}
+          </View>
+          {children}
+        </BlurTargetView>
+        {panel}
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, style]}>
-      <TouchableOpacity
-        activeOpacity={activeOpacity}
-        accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel}
-        accessibilityValue={{ text: selectedLabel }}
-        accessibilityState={{ expanded: visible }}
-        onPress={toggleDropdown}
-        style={styles.toggleButton}
-      >
-        <Text style={styles.selectedLabel} numberOfLines={1}>
-          {selectedLabel}
-        </Text>
-
-        <Animated.View
-          style={[
-            styles.chevronContainer,
-            {
-              transform: [{ rotate }],
-            },
-          ]}
-        >
-          <Ionicons
-            name="chevron-down"
-            size={20}
-            color={isDark ? Colors.white : Colors.black}
-          />
-        </Animated.View>
-      </TouchableOpacity>
-
-      {visible ? (
-        <Animated.View
-          onAccessibilityEscape={closeDropdown}
-          style={[
-            styles.dropdownPanel,
-            {
-              transform: [{ translateY }],
-            },
-          ]}
-        >
-          <View style={styles.fallbackSurface}>
-            <BlurView intensity={100} style={StyleSheet.absoluteFill} />
-
-            {renderOptions()}
-          </View>
-        </Animated.View>
-      ) : null}
+      {trigger}
+      {panel}
     </View>
   );
 }
@@ -250,6 +332,10 @@ export const DropdownStyles = ({
   visible,
 }: DropdownStylesParams) =>
   StyleSheet.create({
+    contentArea: {
+      flex: 1,
+    },
+
     container: {
       position: "relative",
       zIndex: visible ? 9999 : 1,
@@ -281,6 +367,10 @@ export const DropdownStyles = ({
     chevronContainer: {
       alignItems: "center",
       justifyContent: "center",
+    },
+
+    triggerIcon: {
+      marginRight: 8,
     },
 
     dropdownPanel: {

@@ -512,6 +512,7 @@ export type FavoriteSportId = BrowseableLeague;
 export const FAVORITE_SPORT_LEAGUES = BROWSEABLE_LEAGUES;
 export const HOME_SCORE_LEAGUES = [
   "nba",
+  "gleague",
   "nfl",
   "cb",
   "sb",
@@ -526,6 +527,7 @@ export const HOME_SCORE_LEAGUES = [
   "wsoc",
   "leaguescup",
   "fifa",
+  "fifaw",
   "europa",
   "champions",
   "epl",
@@ -541,6 +543,8 @@ export const HOME_SCORE_LEAGUES = [
   "ufc",
   "atp",
   "wta",
+  "f1",
+  "nascarpremier",
 ] as const satisfies readonly FavoriteSportId[];
 
 export type HomeLeagueId = (typeof HOME_SCORE_LEAGUES)[number];

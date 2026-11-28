@@ -23,6 +23,9 @@ import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/Bas
 import BaseballGameCard from "components/Sports/Baseball/Games/BaseballGameCard";
 import BaseballSquareGameCard from "components/Sports/Baseball/Games/BaseballSquareGameCard";
 import BaseballStackedGameCard from "components/Sports/Baseball/Games/BaseballStackedGameCard";
+import RacingGameCard from "components/Sports/Racing/Games/RacingGameCard";
+import RacingSquareGameCard from "components/Sports/Racing/Games/RacingSquareGameCard";
+import RacingStackedGameCard from "components/Sports/Racing/Games/RacingStackedGameCard";
 import VolleyballGameCard from "components/Sports/Volleyball/VolleyballGameCard";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
@@ -31,6 +34,7 @@ import { SectionList, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { leagueGamesListStyles } from "styles/GamecardStyles/LeagueGamesListStyles";
 import type { MMAFight } from "types/mma/mma";
+import type { RacingEvent } from "types/racing/racing";
 import { chunkIntoGridRows } from "utils/games/gameGrid";
 import HeadingTwo from "../../Headings/HeadingTwo";
 import SquareGameCardSkeleton from "../../Skeletons/GameCards/SquareGameCardSkeleton";
@@ -75,15 +79,18 @@ const BASKETBALL_LEAGUES = new Set<HomeLeagueId>([
   "mcbb",
   "wcbb",
   "wnba",
+  "gleague",
 ]);
 const FOOTBALL_LEAGUES = new Set<HomeLeagueId>(["nfl", "cfb", "ufl"]);
 const BASEBALL_LEAGUES = new Set<HomeLeagueId>(["mlb", "cb", "sb"]);
 const HOCKEY_LEAGUES = new Set<HomeLeagueId>(["nhl", "mch", "wch"]);
+const RACING_LEAGUES = new Set<HomeLeagueId>(["f1", "nascarpremier"]);
 const SOCCER_LEAGUES = new Set<HomeLeagueId>([
   "mls",
   "msoc",
   "wsoc",
   "fifa",
+  "fifaw",
   "bundesliga",
   "ligue1",
   "ligue2",
@@ -116,6 +123,7 @@ function basketballFlags(league: HomeLeagueId) {
     isMCBB: league === "mcbb",
     isWCBB: league === "wcbb",
     isWNBA: league === "wnba",
+    isGLEAGUE: league === "gleague",
   };
 }
 function footballFlags(league: HomeLeagueId) {
@@ -248,6 +256,11 @@ const CARDS = {
     grid: SoccerSquareGameCard,
     stacked: SoccerStackedGameCard,
   },
+  racing: {
+    list: RacingGameCard,
+    grid: RacingSquareGameCard,
+    stacked: RacingStackedGameCard,
+  },
   mma: {
     list: MMAGameCard,
     grid: MMASquareGameCard,
@@ -281,6 +294,10 @@ function renderCard({ league, game }: HomeGameItem, mode: ViewMode): ReactNode {
   if (SOCCER_LEAGUES.has(league)) {
     const Card = CARDS.soccer[mode];
     return <Card game={game as SoccerGame} />;
+  }
+  if (RACING_LEAGUES.has(league)) {
+    const Card = CARDS.racing[mode];
+    return <Card game={game as RacingEvent} />;
   }
   switch (league) {
     case "ufc": {
@@ -341,7 +358,12 @@ const GameCard = memo(function GameCard({
       {child}
     </View>
   );
-  if (item.league === "mcvb" || item.league === "wcvb") return content;
+  if (
+    RACING_LEAGUES.has(item.league) ||
+    item.league === "mcvb" ||
+    item.league === "wcvb"
+  )
+    return content;
   return (
     <LongPressGestureHandler
       minDurationMs={LONG_PRESS_MS}
@@ -373,7 +395,7 @@ function GamePreview({
         isWCBB={league === "wcbb"}
         isWNBA={league === "wnba"}
         isSL={false}
-        isGLEAGUE={false}
+        isGLEAGUE={league === "gleague"}
       />
     );
   if (FOOTBALL_LEAGUES.has(league))

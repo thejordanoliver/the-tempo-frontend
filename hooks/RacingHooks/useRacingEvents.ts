@@ -1,5 +1,6 @@
+import { useSportsRequestScope } from "hooks/Sports/useSportsRequestScope";
 import { shouldTrackGameUpdates } from "utils/games/gameStatus";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import {
   FetchRacingEventsOptions,
@@ -244,11 +245,12 @@ export function useRacingEvents({
   date,
   league = "f1",
   enabled = true,
+  scopeKey,
   onScoreboardCalendar,
   pollLiveEvents = true,
   pollIntervalMs = 90_000,
 }: UseRacingEventsOptions = {}) {
-  const [games, setGames] = useState<RacingEvent[]>([]);
+  const [storedGames, setGames] = useState<RacingEvent[]>([]);
 
   const [weekendEvents, setWeekendEvents] = useState<RacingEvent[]>([]);
 
@@ -258,9 +260,6 @@ export function useRacingEvents({
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // Ignore responses from superseded requests.
-  const latestRequestIdRef = useRef(0);
-
   const normalizedLeague = normalizeLeague(league);
 
   const formattedDate = useMemo(() => {
@@ -269,14 +268,19 @@ export function useRacingEvents({
 
   const endpoint = getEndpoint(normalizedLeague);
 
-  const canFetch =
-    enabled &&
-    (Boolean(formattedDate) || (!date && Boolean(onScoreboardCalendar)));
-  const requestKey = canFetch
-    ? `${normalizedLeague}:${formattedDate ?? ""}`
-    : null;
-  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
-    null,
+  const scope = useSportsRequestScope(
+    JSON.stringify([normalizedLeague, formattedDate]),
+    {
+      enabled:
+        enabled &&
+        (Boolean(formattedDate) || (!date && Boolean(onScoreboardCalendar))),
+      scopeKey,
+    },
+  );
+  const { enabled: canFetch, begin, accept, isCurrent, finish } = scope;
+  const games = useMemo(
+    () => (scope.hasData ? storedGames : []),
+    [scope.hasData, storedGames],
   );
 
   const fetchEvents = useCallback(
@@ -284,31 +288,15 @@ export function useRacingEvents({
       forceRefresh = false,
       silent = false,
     }: FetchRacingEventsOptions = {}) => {
-      const requestId = latestRequestIdRef.current + 1;
-
-      latestRequestIdRef.current = requestId;
-
-      if (!canFetch) {
-        setResolvedRequestKey(null);
-        setGames([]);
-        setWeekendEvents([]);
-        setResponse(null);
-        setError(null);
-        setLoading(false);
-        setRefreshing(false);
-        return;
-      }
+      const request = begin();
+      if (!request) return;
 
       try {
         setError(null);
 
-        if (forceRefresh) {
-          setRefreshing(true);
-        } else if (!silent) {
-          setLoading(true);
-
-          setGames([]);
-          setWeekendEvents([]);
+        setRefreshing(forceRefresh);
+        if (!forceRefresh && !silent) {
+          setLoading(!request.hasData);
         }
 
         const apiResponse = await apiClient.get<RacingEventsResponse>(
@@ -317,16 +305,11 @@ export function useRacingEvents({
             params: {
               ...(formattedDate ? { date: formattedDate } : {}),
             },
+            signal: request.controller.signal,
           },
         );
 
-        /*
-         * Ignore the response if a newer request was started
-         * before this one finished.
-         */
-        if (requestId !== latestRequestIdRef.current) {
-          return;
-        }
+        if (!isCurrent(request)) return;
 
         const nextResponse = apiResponse.data;
 
@@ -336,14 +319,14 @@ export function useRacingEvents({
 
         const sessionEvents = sortSessions(flattenRacingSessions(rawEvents));
 
-        onScoreboardCalendar?.(nextResponse);
-        setResponse(nextResponse);
-        setWeekendEvents(rawEvents);
-        setGames(sessionEvents);
-      } catch (requestError: unknown) {
-        if (requestId !== latestRequestIdRef.current) {
-          return;
+        if (accept(request)) {
+          onScoreboardCalendar?.(nextResponse);
+          setResponse(nextResponse);
+          setWeekendEvents(rawEvents);
+          setGames(sessionEvents);
         }
+      } catch (requestError: unknown) {
+        if (!isCurrent(request)) return;
 
         onScoreboardCalendar?.(null);
         console.error(
@@ -370,27 +353,27 @@ export function useRacingEvents({
           ),
         );
 
-        setGames([]);
-        setWeekendEvents([]);
-        setResponse(null);
+        if (!forceRefresh && !silent) {
+          setGames([]);
+          setWeekendEvents([]);
+          setResponse(null);
+        }
       } finally {
-        if (requestId === latestRequestIdRef.current) {
-          setResolvedRequestKey(requestKey);
-          if (!silent) {
-            setLoading(false);
-          }
-
+        if (finish(request)) {
+          setLoading(false);
           setRefreshing(false);
         }
       }
     },
     [
-      canFetch,
       endpoint,
       formattedDate,
       normalizedLeague,
       onScoreboardCalendar,
-      requestKey,
+      begin,
+      accept,
+      isCurrent,
+      finish,
     ],
   );
 
@@ -401,8 +384,14 @@ export function useRacingEvents({
   }, [fetchEvents]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchEvents());
-  }, [fetchEvents]);
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled && canFetch) void fetchEvents();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [canFetch, fetchEvents]);
 
   const hasLiveEvent = useMemo(() => {
     return games.some(isLiveEvent);
@@ -411,6 +400,7 @@ export function useRacingEvents({
   useLiveSportsSubscription<RacingEventsResponse>({
     enabled:
       canFetch &&
+      scope.settled &&
       pollLiveEvents &&
       !loading &&
       pollIntervalMs > 0 &&
@@ -423,6 +413,7 @@ export function useRacingEvents({
       date: formattedDate,
     },
     onUpdate: (payload) => {
+      if (!accept()) return;
       const rawEvents = Array.isArray(payload?.events) ? payload.events : [];
       const sessionEvents = sortSessions(flattenRacingSessions(rawEvents));
 
@@ -430,6 +421,8 @@ export function useRacingEvents({
       setWeekendEvents(rawEvents);
       setGames(sessionEvents);
       setError(null);
+      setLoading(false);
+      setRefreshing(false);
     },
   });
 
@@ -437,13 +430,13 @@ export function useRacingEvents({
     games,
     events: games,
 
-    weekendEvents,
+    weekendEvents: scope.hasData ? weekendEvents : [],
 
-    response,
+    response: scope.hasData ? response : null,
 
-    loading: canFetch && (loading || resolvedRequestKey !== requestKey),
-    refreshing,
-    error,
+    loading: canFetch && !scope.hasData && (!scope.settled || loading),
+    refreshing: canFetch && refreshing,
+    error: canFetch && scope.settled ? error : null,
 
     refreshEvents,
     refreshGames: refreshEvents,

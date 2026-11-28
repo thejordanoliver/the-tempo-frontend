@@ -378,6 +378,7 @@ export type UseRacingEventsOptions = {
   date?: Date | string | number | null;
   league?: RacingLeague | string;
   enabled?: boolean;
+  scopeKey?: string;
   pollLiveEvents?: boolean;
   pollIntervalMs?: number;
 };

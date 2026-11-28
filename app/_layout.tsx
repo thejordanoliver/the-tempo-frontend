@@ -243,7 +243,7 @@ function AppLayout() {
         userId={user?.id}
       >
         <Stack
-          screenOptions={({ route, navigation }) => {
+          screenOptions={({ route }) => {
             const isTabScreen = route.name === "(tabs)";
 
             const isSplashScreen =
@@ -261,15 +261,13 @@ function AppLayout() {
               headerShown: !isSplashScreen && !isTabScreen,
 
               header: !isSplashScreen
-                ? ({ options }) =>
+                ? ({ back, navigation, options }) =>
                     route.name.startsWith("league/") ? (
                       <GameHeaderPlaceholder />
                     ) : (
                       <CustomHeader
                         title={options.title ?? route.name}
-                        onBack={
-                          navigation.canGoBack() ? navigation.goBack : undefined
-                        }
+                        onBack={back ? navigation.goBack : undefined}
                       />
                     )
                 : undefined,

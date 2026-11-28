@@ -26,7 +26,7 @@ import { sbTeams } from "constants/teamsSB";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRoute, useSegments } from "expo-router";
-import { HeaderTitle } from "expo-router/react-navigation";
+import { HeaderTitle, useNavigationState } from "expo-router/react-navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
@@ -137,13 +137,12 @@ export function CustomHeader({
   const styles = CustomHeaderStyles(isDark, width);
 
   const isTabRoute = routeSegments.includes("(tabs)");
-  const navigationState = navigation.getState();
-  const canPopCurrentTabStack =
-    isTabRoute &&
-    navigationState != null &&
-    navigationState.type === "stack" &&
-    navigationState.routes.findIndex((route) => route.key === headerRoute.key) >
-      0;
+  const canPopCurrentTabStack = useNavigationState(
+    (state) =>
+      isTabRoute &&
+      state.type === "stack" &&
+      state.routes.findIndex((route) => route.key === headerRoute.key) > 0,
+  );
 
   const handleTabStackBack = useCallback(() => {
     const state = navigation.getState();

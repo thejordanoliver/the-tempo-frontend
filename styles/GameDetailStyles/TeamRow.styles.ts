@@ -102,24 +102,6 @@ export type TennisProps = {
 };
 
 /* ============================================================
- * Racing
- * ========================================================== */
-
-export type RacingProps = {
-  id?: number;
-  name: string;
-  headshot: string | null | undefined;
-  flag: string | null | undefined;
-  laps: string | null | undefined;
-  time: string | null | undefined;
-  rank?: string;
-  isDark: boolean;
-  isWinner: boolean | null | undefined;
-  size?: SizeType;
-  gameStatusDescription: string | null | undefined;
-};
-
-/* ============================================================
  * Baseball
  * ========================================================== */
 
@@ -429,83 +411,5 @@ export const CompetitorRowStyles = (isDark: boolean, isTie?: boolean) =>
       height: 7,
       borderRadius: 999,
       backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
-    },
-  });
-
-/* ============================================================
- * Racing Driver Row Styles
- * ========================================================== */
-
-export const DriverRowStyles = (isDark: boolean, _isTie?: boolean) =>
-  StyleSheet.create({
-    /* ----------------------------------------------------------
-     * Layout
-     * -------------------------------------------------------- */
-
-    row: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
-      paddingVertical: 12,
-    },
-
-    driverContainer: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-
-    profileContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-
-    /* ----------------------------------------------------------
-     * Driver Media
-     * -------------------------------------------------------- */
-
-    headshotContainer: {
-      width: 40,
-      height: 40,
-      marginHorizontal: 8,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      borderRadius: 999,
-      overflow: "hidden",
-    },
-
-    headshot: {
-      width: 40,
-      height: 40,
-      paddingTop: 4,
-    },
-
-    /* ----------------------------------------------------------
-     * Driver Information
-     * -------------------------------------------------------- */
-
-    rank: {
-      width: 30,
-      fontFamily: Fonts.BOLD,
-      fontSize: 24,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-
-    name: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-
-    subText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

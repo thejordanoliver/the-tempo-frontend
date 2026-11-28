@@ -23,19 +23,80 @@ type Props = {
   venueCapacity: number | null | undefined;
   venueAttendance: number | null | undefined;
   isDark: boolean;
-  circuitLength?: number | string | undefined;
-  circuitLaps?: number | string | undefined;
-  circuitEstablished?: number | string | undefined;
+  circuitLength?: number | string | null;
+  circuitLaps?: number | string | null;
+  circuitEstablished?: number | string | null;
   surface?: "football" | "default";
   grass?: boolean | undefined;
 };
 
-type DetailRowProps = {
-  icon: React.ComponentProps<typeof Ionicons>["name"];
+type IconName = React.ComponentProps<typeof Ionicons>["name"];
+
+type DetailItem = {
+  icon: IconName;
   label: string;
   value: string;
+};
+
+type DetailRowProps = DetailItem & {
   isDark: boolean;
   isLast?: boolean;
+};
+
+const formatCircuitValue = (
+  value: number | string | null | undefined,
+): string | null => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) && value > 0 ? String(value) : null;
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+
+    if (
+      !trimmed ||
+      ["n/a", "null", "undefined", "-", "0"].includes(trimmed.toLowerCase())
+    ) {
+      return null;
+    }
+
+    return trimmed;
+  }
+
+  return null;
+};
+
+const formatNumber = (value: number | null | undefined): string | null => {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+    return null;
+  }
+
+  return Intl.NumberFormat("en-US").format(value);
+};
+
+const getWeatherIcon = (desc?: string | null): IconName => {
+  if (!desc) return "cloud";
+
+  const description = desc.toLowerCase();
+
+  if (description.includes("thunder")) return "thunderstorm";
+  if (description.includes("clear")) return "sunny";
+  if (description.includes("rain")) return "rainy";
+  if (description.includes("drizzle")) return "rainy";
+  if (description.includes("snow")) return "snow";
+
+  if (
+    description.includes("fog") ||
+    description.includes("mist") ||
+    description.includes("haze")
+  ) {
+    return "cloudy";
+  }
+
+  if (description.includes("wind")) return "leaf";
+  if (description.includes("cloud")) return "cloud";
+
+  return "cloud";
 };
 
 const DetailRow: React.FC<DetailRowProps> = ({
@@ -69,32 +130,26 @@ export default function Venue({
   address,
   venueCapacity,
   venueAttendance,
+  circuitLength,
+  circuitLaps,
+  circuitEstablished,
   isDark = false,
   grass,
 }: Props) {
   const styles = VenueStyles(isDark);
+
   const [showMapsConfirmModal, setShowMapsConfirmModal] = useState(false);
 
-  const desc = weather?.main?.toLowerCase();
-
+  // Weather information
   const temperature =
-    typeof weather?.tempFahrenheit === "number"
+    typeof weather?.tempFahrenheit === "number" &&
+    Number.isFinite(weather.tempFahrenheit)
       ? `${weather.tempFahrenheit.toFixed(0)}°F`
       : null;
 
-  const formattedAttendance =
-    typeof venueAttendance === "number" &&
-    Number.isFinite(venueAttendance) &&
-    venueAttendance > 0
-      ? Intl.NumberFormat("en-US").format(venueAttendance)
-      : null;
-
-  const formattedCapacity =
-    venueCapacity !== null &&
-    venueCapacity !== undefined &&
-    Number.isFinite(venueCapacity)
-      ? Intl.NumberFormat("en-US").format(venueCapacity)
-      : "N/A";
+  // Venue information
+  const formattedCapacity = formatNumber(venueCapacity);
+  const formattedAttendance = formatNumber(venueAttendance);
 
   const surfaceLabel =
     typeof grass === "boolean"
@@ -103,39 +158,32 @@ export default function Venue({
         : "Artificial Turf"
       : null;
 
-  const getWeatherIcon = (
-    desc?: string,
-  ): React.ComponentProps<typeof Ionicons>["name"] => {
-    if (!desc) return "cloud";
+  // Circuit information
+  const formattedCircuitLength = formatCircuitValue(circuitLength);
 
-    if (desc.includes("clear")) return "sunny";
-    if (desc.includes("cloud")) return "cloud";
-    if (desc.includes("rain")) return "rainy";
-    if (desc.includes("drizzle")) return "rainy";
-    if (desc.includes("thunder")) return "thunderstorm";
-    if (desc.includes("snow")) return "snow";
-    if (
-      desc.includes("fog") ||
-      desc.includes("mist") ||
-      desc.includes("haze")
-    ) {
-      return "cloudy";
-    }
-    if (desc.includes("wind")) return "leaf";
+  const formattedCircuitLaps = formatCircuitValue(circuitLaps);
 
-    return "cloud";
-  };
+  const formattedCircuitEstablished = formatCircuitValue(circuitEstablished);
 
-  const getMapsUrl = () => {
-    if (!address) return null;
+  const hasCircuitInfo = Boolean(
+    formattedCircuitLength ||
+      formattedCircuitLaps ||
+      formattedCircuitEstablished,
+  );
 
-    const encodedAddress = encodeURIComponent(address);
+  // Maps
+  const getMapsUrl = (): string | null => {
+    if (!address?.trim()) return null;
 
-    return Platform.select({
-      ios: `http://maps.apple.com/?q=${encodedAddress}`,
-      android: `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`,
-      default: `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`,
-    });
+    const encodedAddress = encodeURIComponent(address.trim());
+
+    return (
+      Platform.select({
+        ios: `https://maps.apple.com/?q=${encodedAddress}`,
+        android: `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`,
+        default: `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`,
+      }) ?? null
+    );
   };
 
   const openInMaps = () => {
@@ -170,62 +218,96 @@ export default function Venue({
     setShowMapsConfirmModal(false);
   };
 
-  if (!venueName) {
+  // Do not render without a venue name
+  if (!venueName?.trim()) {
     return null;
   }
 
-  const details = [
-    temperature
-      ? {
-          icon: getWeatherIcon(desc),
-          label: "Temperature",
-          value: temperature,
-        }
-      : null,
-    {
-      icon: "person" as const,
-      label: "Capacity",
-      value: formattedCapacity,
-    },
-    formattedAttendance
-      ? {
-          icon: "people" as const,
-          label: "Attendance",
-          value: formattedAttendance,
-        }
-      : null,
-    surfaceLabel
-      ? {
-          icon: "leaf" as const,
-          label: "Surface",
-          value: surfaceLabel,
-        }
-      : null,
-  ].filter(Boolean) as {
-    icon: React.ComponentProps<typeof Ionicons>["name"];
-    label: string;
-    value: string;
-  }[];
+  // Build venue and circuit details
+  const details: DetailItem[] = (
+    [
+      temperature
+        ? {
+            icon: getWeatherIcon(weather?.main),
+            label: "Temperature",
+            value: temperature,
+          }
+        : null,
+
+      formattedCapacity || !hasCircuitInfo
+        ? {
+            icon: "person",
+            label: "Capacity",
+            value: formattedCapacity ?? "N/A",
+          }
+        : null,
+
+      formattedAttendance
+        ? {
+            icon: "people",
+            label: "Attendance",
+            value: formattedAttendance,
+          }
+        : null,
+
+      surfaceLabel
+        ? {
+            icon: "leaf",
+            label: "Surface",
+            value: surfaceLabel,
+          }
+        : null,
+
+      formattedCircuitLength
+        ? {
+            icon: "speedometer-outline",
+            label: "Circuit Length",
+            value: formattedCircuitLength,
+          }
+        : null,
+
+      formattedCircuitLaps
+        ? {
+            icon: "flag-outline",
+            label: "Laps",
+            value: formattedCircuitLaps,
+          }
+        : null,
+
+      formattedCircuitEstablished
+        ? {
+            icon: "calendar-outline",
+            label: "Established",
+            value: formattedCircuitEstablished,
+          }
+        : null,
+    ] satisfies (DetailItem | null)[]
+  ).filter((item): item is DetailItem => item !== null);
 
   return (
     <View>
       <HeadingTwo isDark={isDark}>Venue</HeadingTwo>
 
       <View style={styles.wrapper}>
-        {venueImage && (
+        {/* Venue image */}
+        {!!venueImage && (
           <Image
-            source={
-              typeof venueImage === "string" ? { uri: venueImage } : venueImage
-            }
+            source={{ uri: venueImage }}
             style={styles.venueImage}
             resizeMode="cover"
+            accessibilityLabel={`${venueName} venue`}
           />
         )}
 
         <View style={styles.content}>
+          {/* Venue header */}
           <View style={styles.venueHeader}>
             <View style={styles.venueIconCircle}>
-              <Ionicons name="business" size={20} color={styles.icon.color} />
+              <Ionicons
+                name={hasCircuitInfo ? "flag" : "business"}
+                size={20}
+                color={styles.icon.color}
+              />
             </View>
 
             <View style={styles.venueTextWrap}>
@@ -237,8 +319,11 @@ export default function Venue({
             </View>
           </View>
 
-          {address && (
-            <TouchableOpacity accessibilityRole="button"
+          {/* Venue address */}
+          {!!address && (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={`Open ${venueName} in Maps`}
               onPress={openInMaps}
               activeOpacity={activeOpacity}
               style={styles.mapCard}
@@ -249,11 +334,13 @@ export default function Venue({
 
               <View style={styles.mapCopy}>
                 <Text style={styles.mapLabel}>Address</Text>
+
                 <Text style={styles.addressText}>{address}</Text>
               </View>
 
               <View style={styles.mapAction}>
                 <Text style={styles.mapActionText}>Open</Text>
+
                 <Ionicons
                   name="chevron-forward"
                   size={17}
@@ -263,21 +350,25 @@ export default function Venue({
             </TouchableOpacity>
           )}
 
-          <View style={styles.detailsCard}>
-            {details.map((item, index) => (
-              <DetailRow
-                key={`${item.label}-${item.value}`}
-                icon={item.icon}
-                label={item.label}
-                value={item.value}
-                isDark={isDark}
-                isLast={index === details.length - 1}
-              />
-            ))}
-          </View>
+          {/* Venue and circuit details */}
+          {details.length > 0 && (
+            <View style={styles.detailsCard}>
+              {details.map((item, index) => (
+                <DetailRow
+                  key={item.label}
+                  icon={item.icon}
+                  label={item.label}
+                  value={item.value}
+                  isDark={isDark}
+                  isLast={index === details.length - 1}
+                />
+              ))}
+            </View>
+          )}
         </View>
       </View>
 
+      {/* Maps confirmation modal */}
       <ConfirmModal
         visible={showMapsConfirmModal}
         title="Open in Maps?"
