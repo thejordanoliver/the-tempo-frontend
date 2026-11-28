@@ -354,7 +354,7 @@ export const useHockeyGameDetails = (
           params,
         });
 
-        if (data?.score) {
+        if (data?.score && data.details) {
           setScore(data.score);
           setDetails(data.details);
           setLastRefresh(new Date());
@@ -385,7 +385,7 @@ export const useHockeyGameDetails = (
       gameId: gameId || "",
     },
     onUpdate: (payload) => {
-      if (!payload?.score) return;
+      if (!payload?.score || !payload.details) return;
 
       setScore(payload.score);
       setDetails(payload.details);

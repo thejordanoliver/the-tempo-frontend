@@ -252,9 +252,6 @@ export default function GamesList({
           game={previewGame}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
-          isNHL={isNHLGame(previewGame)}
-          isMCH={isMCHGame(previewGame)}
-          isWCH={isWCHGame(previewGame)}
         />
       )}
     </>

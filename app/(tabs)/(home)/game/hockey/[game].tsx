@@ -31,6 +31,7 @@ import {
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { GameHeaderPlaceholder } from "components/CustomHeader/GameHeaderPlaceholder";
 import Odds from "components/Sports/Basketball/GameDetails/Odds";
+import { getNHLTeam } from "constants/teamsNHL";
 import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -93,7 +94,7 @@ export default function GameDetailsScreen(
         : "nhl");
   const parsedGameId = Number(routeGame?.id ?? getFirstParam(params.game));
   const gameId =
-    Number.isFinite(parsedGameId) && parsedGameId > 0 ? parsedGameId : 0;
+    Number.isSafeInteger(parsedGameId) && parsedGameId > 0 ? parsedGameId : 0;
   const { details, score, warning, refresh } = useHockeyGameDetails(
     LEAGUE,
     gameId,
@@ -125,23 +126,45 @@ export default function GameDetailsScreen(
   const awayId = away?.id ?? 0;
   const homeTeam = score?.home ?? home;
   const awayTeam = score?.away ?? away;
-  const homeHeaderLogo =
-    resolveImage(homeTeam?.logoDark || homeTeam?.logo) ?? emptyHomeTeam.logo;
-  const awayHeaderLogo =
-    resolveImage(awayTeam?.logoDark || awayTeam?.logo) ?? emptyAwayTeam.logo;
+  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
+  const localHome = LEAGUE === "nhl" ? getNHLTeam(homeId) : undefined;
+  const localAway = LEAGUE === "nhl" ? getNHLTeam(awayId) : undefined;
+  const homeLogoSource =
+    homeTeam?.logo || home?.logo || homeTeamDetails?.logo || localHome?.logo;
+  const awayLogoSource =
+    awayTeam?.logo || away?.logo || awayTeamDetails?.logo || localAway?.logo;
+  const homeHeaderSource =
+    homeTeam?.logoDark ||
+    home?.logoDark ||
+    homeTeamDetails?.logoDark ||
+    localHome?.logoLight ||
+    homeLogoSource;
+  const awayHeaderSource =
+    awayTeam?.logoDark ||
+    away?.logoDark ||
+    awayTeamDetails?.logoDark ||
+    localAway?.logoLight ||
+    awayLogoSource;
+  const homeHeaderLogo = useMemo(
+    () => resolveImage(homeHeaderSource) ?? emptyHomeTeam.logo,
+    [homeHeaderSource],
+  );
+  const awayHeaderLogo = useMemo(
+    () => resolveImage(awayHeaderSource) ?? emptyAwayTeam.logo,
+    [awayHeaderSource],
+  );
   const homeLogo = isDark
     ? homeHeaderLogo
-    : (resolveImage(homeTeam?.logo) ?? emptyHomeTeam.logo);
+    : (resolveImage(homeLogoSource) ?? emptyHomeTeam.logo);
   const awayLogo = isDark
     ? awayHeaderLogo
-    : (resolveImage(awayTeam?.logo) ?? emptyAwayTeam.logo);
+    : (resolveImage(awayLogoSource) ?? emptyAwayTeam.logo);
   const awayCode = awayTeam?.code ?? "";
   const homeCode = homeTeam?.code ?? "";
   const awayColor = awayTeam?.primaryColor ?? Colors.midTone;
   const homeColor = homeTeam?.primaryColor ?? Colors.midTone;
 
-  const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
-  const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
 
@@ -293,14 +316,20 @@ export default function GameDetailsScreen(
     openGameNotificationSettings,
   ]);
 
-  if (isLoading && warning) {
+  if (isLoading && (!gameId || warning)) {
     const global = globalStyles(isDark);
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>Couldn’t load game details</Text>
-        <Text accessibilityRole="button" style={global.text} onPress={refresh}>
-          Try again
-        </Text>
+        {gameId > 0 && (
+          <Text
+            accessibilityRole="button"
+            style={global.text}
+            onPress={refresh}
+          >
+            Try again
+          </Text>
+        )}
       </View>
     );
   }

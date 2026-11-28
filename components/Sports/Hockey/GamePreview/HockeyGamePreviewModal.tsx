@@ -1,9 +1,9 @@
 import { emptyAwayTeam, emptyHomeTeam } from "types/team";
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
-import { getMCHTeamLogo } from "@/constants/teamsMCH";
-import { getNHLTeamLogo } from "@/constants/teamsNHL";
-import { getWCHTeamLogo } from "@/constants/teamsWCH";
+import { getMCHTeam } from "@/constants/teamsMCH";
+import { getNHLTeam } from "@/constants/teamsNHL";
+import { getWCHTeam } from "@/constants/teamsWCH";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLastFiveGames } from "@/hooks/useLastFiveGames";
@@ -18,10 +18,11 @@ import {
   safeDate,
 } from "@/utils/common/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Colors } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
+import { resolveImage } from "utils/customheader/utils";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -36,18 +37,12 @@ type Props = {
   game: HockeyGame;
   visible: boolean;
   onClose: () => void;
-  isNHL?: boolean;
-  isMCH?: boolean;
-  isWCH?: boolean;
 };
 
 export default function HockeyGamePreviewModal({
   game,
   visible,
   onClose,
-  isNHL,
-  isMCH,
-  isWCH,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -67,24 +62,24 @@ export default function HockeyGamePreviewModal({
   const away = game.away;
   const awayId = away.id;
   const homeId = home.id;
+  const getTeam =
+    LEAGUE === "mch" ? getMCHTeam : LEAGUE === "wch" ? getWCHTeam : getNHLTeam;
+  const localHome = getTeam(homeId);
+  const localAway = getTeam(awayId);
 
   const homeLogo =
-    homeId === emptyHomeTeam.id
-      ? emptyHomeTeam.logo
-      : isMCH
-        ? getMCHTeamLogo(homeId, isDark)
-        : isWCH
-          ? getWCHTeamLogo(homeId, isDark)
-          : getNHLTeamLogo(homeId, isDark);
+    resolveImage(
+      (isDark && (home.logoDark || localHome?.logoLight)) ||
+        home.logo ||
+        localHome?.logo,
+    ) ?? emptyHomeTeam.logo;
 
   const awayLogo =
-    awayId === emptyAwayTeam.id
-      ? emptyAwayTeam.logo
-      : isMCH
-        ? getMCHTeamLogo(awayId, isDark)
-        : isWCH
-          ? getWCHTeamLogo(awayId, isDark)
-          : getNHLTeamLogo(awayId, isDark);
+    resolveImage(
+      (isDark && (away.logoDark || localAway?.logoLight)) ||
+        away.logo ||
+        localAway?.logo,
+    ) ?? emptyAwayTeam.logo;
 
   // Modal open/close
   useEffect(() => {
@@ -104,14 +99,17 @@ export default function HockeyGamePreviewModal({
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
   const { teamDetails: homeTeamDetails } = useTeams(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeams(LEAGUE, awayId);
-  const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
+  const { details, score, warning, refresh } = useHockeyGameDetails(
+    LEAGUE,
+    gameId,
+  );
 
   const isHomeActive = homeTeamDetails?.isActive ?? false;
   const isAwayActive = awayTeamDetails?.isActive ?? false;
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const isLoading = !!details;
+  const global = globalStyles(isDark);
 
   const isChampionship = headline?.includes("Stanley Cup Final");
   const styles = GamePreviewModalStyles({
@@ -205,7 +203,18 @@ export default function HockeyGamePreviewModal({
         <View style={styles.rightCircle} />
 
         <BlurView intensity={100} style={styles.blurViewContainer}>
-          {!isLoading ? (
+          {!details && warning ? (
+            <View style={styles.loadingContainer}>
+              <Text style={global.errorText}>Couldn’t load game details</Text>
+              <Text
+                accessibilityRole="button"
+                style={global.text}
+                onPress={refresh}
+              >
+                Try again
+              </Text>
+            </View>
+          ) : !details ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
             </View>
